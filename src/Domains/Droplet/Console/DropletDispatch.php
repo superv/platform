@@ -2,7 +2,7 @@
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use SuperV\Platform\Feature\Command\FormulateFeature;
+use SuperV\Platform\Domains\Feature\Command\FormulateFeature;
 use Vizra\SupervModule\Drop\DropModel;
 use Vizra\SupervModule\Server\ServerModel;
 use Vizra\SupervModule\Server\ServerRepository;

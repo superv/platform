@@ -1,7 +1,7 @@
 <?php namespace SuperV\Platform\Domains\Droplet;
 
 use Composer\Autoload\ClassLoader;
-use SuperV\Platform\Domains\Droplet\Data\DropletModel;
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
 class DropletLoader
 {
@@ -26,10 +26,6 @@ class DropletLoader
     {
         $composer = $this->getComposerJson($model->getPath());
         
-        if (!array_key_exists('autoload', $composer)) {
-            return false;
-        }
-        
         foreach (array_get($composer['autoload'], 'psr-4', []) as $namespace => $autoload) {
             if (rtrim($autoload, '/') == 'src') {
                 $model->setNamespace(rtrim($namespace, '\\'));
@@ -52,6 +48,11 @@ class DropletLoader
         
         if (!$composer = json_decode(file_get_contents($path . '/composer.json'), true)) {
             throw new \Exception("A JSON syntax error was encountered in {$path}/composer.json");
+        }
+        
+        
+        if (!array_key_exists('autoload', $composer)) {
+            return false;
         }
         
         return $composer;

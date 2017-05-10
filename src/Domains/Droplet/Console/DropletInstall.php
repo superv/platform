@@ -1,16 +1,19 @@
 <?php namespace SuperV\Platform\Domains\Droplet\Console;
 
 use Illuminate\Console\Command;
-use SuperV\Platform\Domains\Droplet\DropletManager;
+use SuperV\Platform\Domains\Droplet\Feature\InstallDropletFeature;
+use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 
 class DropletInstall extends Command
 {
-    protected $signature = 'droplet:install {namespace}';
+    use ServesFeaturesTrait;
     
-    public function handle(DropletManager $droplets)
+    protected $signature = 'droplet:install {slug}';
+    
+    public function handle()
     {
-        if ($droplets->install($this->argument('namespace'))) {
-            $this->info('The [' . $this->argument('namespace') . '] droplet was installed.');
+        if ($this->serve(new InstallDropletFeature($this->argument('slug')))) {
+            $this->info('The [' . $this->argument('slug') . '] droplet was installed.');
         } else {
             $this->error('Droplet could not be installed');
         }

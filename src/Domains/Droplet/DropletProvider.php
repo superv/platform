@@ -5,7 +5,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Application;
 use Illuminate\Routing\Router;
-use SuperV\Platform\Feature\FeatureCollection;
+use SuperV\Platform\Domains\Feature\FeatureCollection;
 
 class DropletProvider
 {

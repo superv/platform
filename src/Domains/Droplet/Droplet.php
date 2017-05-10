@@ -1,6 +1,6 @@
 <?php namespace SuperV\Platform\Domains\Droplet;
 
-use SuperV\Platform\Domains\Droplet\Data\DropletModel;
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
 class Droplet
 {

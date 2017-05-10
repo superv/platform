@@ -1,11 +1,12 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Data;
+<?php namespace SuperV\Platform\Domains\Droplet\Model;
 
-use SuperV\Platform\Model\EloquentModel;
+use SuperV\Platform\Domains\Model\EloquentModel;
 
 class DropletModel extends EloquentModel
 {
     protected $table = 'platform_droplets';
     
+
     public function getPath()
     {
         return $this->getAttribute('path');

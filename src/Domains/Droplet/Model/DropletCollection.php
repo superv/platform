@@ -1,4 +1,4 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Data;
+<?php namespace SuperV\Platform\Domains\Droplet\Model;
 
 use Illuminate\Support\Collection;
 

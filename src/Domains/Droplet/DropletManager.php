@@ -1,24 +1,27 @@
 <?php namespace SuperV\Platform\Domains\Droplet;
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use SuperV\Platform\Domains\Droplet\Command\InstallDroplet;
-use SuperV\Platform\Domains\Droplet\Data\DropletRepository;
+use SuperV\Platform\Domains\Droplet\Model\DropletRepository;
+use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 
 class DropletManager
 {
-    use DispatchesJobs;
+    use ServesFeaturesTrait;
+    
     /**
      * @var DropletPaths
      */
     private $paths;
+    
     /**
      * @var DropletIntegrator
      */
     private $integrator;
+    
     /**
      * @var DropletRepository
      */
     private $droplets;
+    
     /**
      * @var DropletLoader
      */
@@ -44,9 +47,5 @@ class DropletManager
             $this->integrator->register($model);
         }
     }
-    
-    public function install($namespace)
-    {
-        return $this->dispatch(new InstallDroplet($namespace));
-    }
+
 }

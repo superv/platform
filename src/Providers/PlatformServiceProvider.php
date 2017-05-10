@@ -1,9 +1,7 @@
-<?php namespace SuperV\Platform;
+<?php namespace SuperV\Platform\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use SuperV\Platform\Domains\Droplet\DropletLoader;
+use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Droplet\DropletManager;
-use SuperV\Ports\Api\ApiPortServiceProvider;
 
 class PlatformServiceProvider extends ServiceProvider
 {
@@ -12,10 +10,12 @@ class PlatformServiceProvider extends ServiceProvider
         'SuperV\Platform\Domains\Droplet\Console\DropletServer',
         'SuperV\Platform\Domains\Droplet\Console\DropletDispatch',
     ];
+    
     protected $singletons = [
-        'SuperV\Platform\Feature\FeatureCollection'              => '~',
+        'SuperV\Platform\Domains\Feature\FeatureCollection'      => '~',
         'SuperV\Platform\Domains\Droplet\Data\DropletCollection' => '~',
     ];
+    
     protected $bindings = [];
     
     public function boot()
@@ -50,12 +50,5 @@ class PlatformServiceProvider extends ServiceProvider
         foreach ($this->singletons as $abstract => $concrete) {
             $this->app->singleton($abstract, $concrete == '~' ? $abstract : $concrete);
         }
-        
-        // Register Ports
-//        $loader = $this->app->make(DropletLoader::class);
-//        $loader->load(base_path('_/superv-ports/api'));
-//        $loader->register();
-//
-//        $this->app->register(ApiDropletServiceProvider::class);
     }
 }

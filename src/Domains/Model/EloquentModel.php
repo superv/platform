@@ -1,4 +1,5 @@
-<?php namespace SuperV\Platform\Model;
+<?php namespace SuperV\Platform\Domains\Model;
+
 
 use Illuminate\Database\Eloquent\Model;
 

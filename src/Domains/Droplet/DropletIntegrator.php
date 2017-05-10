@@ -1,7 +1,7 @@
 <?php namespace SuperV\Platform\Domains\Droplet;
 
-use SuperV\Platform\Domains\Droplet\Data\DropletCollection;
-use SuperV\Platform\Domains\Droplet\Data\DropletModel;
+use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
 class DropletIntegrator
 {
