@@ -1,4 +1,4 @@
-<?php namespace SuperV\Platform\Feature;
+<?php namespace SuperV\Platform\Domains\Feature;
 
 use Illuminate\Support\Collection;
 

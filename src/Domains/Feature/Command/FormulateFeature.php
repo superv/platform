@@ -1,7 +1,7 @@
-<?php namespace SuperV\Platform\Feature\Command;
+<?php namespace SuperV\Platform\Domains\Feature\Command;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use SuperV\Platform\Feature\FeatureCollection;
+use SuperV\Platform\Domains\Feature\FeatureCollection;
 use Vizra\SupervModule\Drop\DropModel;
 
 class FormulateFeature
