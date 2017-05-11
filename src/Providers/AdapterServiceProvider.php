@@ -2,9 +2,11 @@
 
 use SuperV\Platform\Adapters\Container\LaravelContainer;
 use SuperV\Platform\Adapters\Events\LaravelDispatcher;
+use SuperV\Platform\Adapters\LaravelFileSystem;
 use SuperV\Platform\Adapters\Validator\LaravelValidator;
 use SuperV\Platform\Contracts\Container;
 use SuperV\Platform\Contracts\Dispatcher;
+use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Contracts\Validator;
 
@@ -15,5 +17,6 @@ class AdapterServiceProvider extends ServiceProvider
         $this->app->bind(Container::class, LaravelContainer::class);
         $this->app->bind(Dispatcher::class, LaravelDispatcher::class);
         $this->app->bind(Validator::class, LaravelValidator::class);
+        $this->app->bind(Filesystem::class, LaravelFileSystem::class);
     }
 }

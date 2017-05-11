@@ -5,10 +5,8 @@ use SuperV\Platform\Domains\Droplet\DropletManager;
 
 class PlatformServiceProvider extends ServiceProvider
 {
-    protected $commands = [
-        'SuperV\Platform\Domains\Droplet\Console\DropletInstall',
-        'SuperV\Platform\Domains\Droplet\Console\DropletServer',
-        'SuperV\Platform\Domains\Droplet\Console\DropletDispatch',
+    protected $providers = [
+        'SuperV\Platform\Providers\AdapterServiceProvider',
     ];
     
     protected $singletons = [
@@ -17,6 +15,13 @@ class PlatformServiceProvider extends ServiceProvider
     ];
     
     protected $bindings = [];
+    
+    protected $commands = [
+        'SuperV\Platform\Domains\Droplet\Console\DropletInstall',
+        'SuperV\Platform\Domains\Droplet\Console\DropletServer',
+        'SuperV\Platform\Domains\Droplet\Console\DropletDispatch',
+        'SuperV\Platform\Domains\Droplet\Console\MakeDroplet',
+    ];
     
     public function boot()
     {
@@ -45,6 +50,11 @@ class PlatformServiceProvider extends ServiceProvider
         foreach ($this->bindings as $abstract => $concrete) {
             $this->app->bind($abstract, $concrete);
         }
+        
+        // Register providers.
+        array_map(function($provider) {
+            $this->app->register($provider);
+        }, $this->providers);
         
         // Register singletons.
         foreach ($this->singletons as $abstract => $concrete) {

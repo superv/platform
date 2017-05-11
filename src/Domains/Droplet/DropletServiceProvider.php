@@ -15,8 +15,6 @@ class DropletServiceProvider
      */
     protected $droplet;
     
-    protected $commands = [];
-    
     protected $listeners = [];
     
     protected $routes = [];

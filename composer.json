@@ -1,0 +1,8 @@
+{
+    "name": "superv/platform",
+    "autoload": {
+        "psr-4": {
+            "SuperV\\Platform\\": "src/"
+        }
+    }
+}

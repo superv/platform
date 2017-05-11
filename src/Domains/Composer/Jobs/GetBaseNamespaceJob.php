@@ -14,6 +14,7 @@ class GetBaseNamespaceJob
     
     public function handle()
     {
+        // @todo.ali: get rid of foreach
         foreach (array_get($this->composer['autoload'], 'psr-4', []) as $namespace => $autoload) {
             if (rtrim($autoload, '/') == 'src') {
                return rtrim($namespace, "\\");

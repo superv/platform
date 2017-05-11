@@ -26,6 +26,7 @@ trait JobDispatcherTrait
             if (!is_object($job)) {
                 $job = $this->marshal($job, new Collection(), $arguments);
             }
+            
 
             $result = $this->dispatch($job);
         }
