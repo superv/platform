@@ -4,5 +4,13 @@
         "psr-4": {
             "SuperV\\Platform\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SuperV\\Platform\\": "tests/"
+        }
+    },
+    "require" : {
+        "nicmart/string-template" : "~0.1"
     }
 }
