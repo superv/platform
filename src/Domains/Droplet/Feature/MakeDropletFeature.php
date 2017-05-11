@@ -2,7 +2,7 @@
 
 use SuperV\Platform\Domains\Droplet\Jobs\CreateDropletPathsJob;
 use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModelJob;
-use SuperV\Platform\Domains\Droplet\Jobs\WriteDropletClassFileJob;
+use SuperV\Platform\Domains\Droplet\Jobs\WriteDropletFilesJob;
 use SuperV\Platform\Domains\Feature\Feature;
 
 class MakeDropletFeature extends Feature
@@ -20,7 +20,7 @@ class MakeDropletFeature extends Feature
         
         $this->run(new CreateDropletPathsJob($model));
         
-        $this->run(new WriteDropletClassFileJob($model));
+        $this->run(new WriteDropletFilesJob($model));
         
         dd($model->toArray());
     }

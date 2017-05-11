@@ -1,38 +1,10 @@
-<?php namespace {namespace};
+<?php namespace {model.namespace};
 
-use Anomaly\Streams\Platform\Addon\AddonServiceProvider;
+use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
 
-class {provider} extends AddonServiceProvider
+class {class} extends DropletServiceProvider
 {
-
-    protected $plugins = [];
-
-    protected $commands = [];
-
     protected $routes = [];
 
-    protected $middleware = [];
-
-    protected $listeners = [];
-
-    protected $aliases = [];
-
-    protected $bindings = [];
-
-    protected $providers = [];
-
-    protected $singletons = [];
-
-    protected $overrides = [];
-
-    protected $mobile = [];
-
-    public function register()
-    {
-    }
-
-    public function map()
-    {
-    }
-
+    protected $features = [];
 }

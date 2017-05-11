@@ -22,16 +22,16 @@ class DropletLoader
         }
     }
     
-    public function locate(DropletModel $model)
+    public function locatexxxxxxx(DropletModel $model)
     {
-        $composer = $this->getComposerJson($model->getPath());
+//        $composer = $this->getComposerJson($model->getPath());
         
         foreach (array_get($composer['autoload'], 'psr-4', []) as $namespace => $autoload) {
             if (rtrim($autoload, '/') == 'src') {
-                $model->setNamespace(rtrim($namespace, '\\'));
-                $model->setType(array_get($composer, 'type', ''));
-                $model->setName(array_get($composer, 'name', ''));
-                $model->setVendor(array_get($composer, 'vendor', ''));
+//                $model->setNamespace(rtrim($namespace, '\\'));
+//                $model->setType(array_get($composer, 'type', ''));
+//                $model->setName(array_get($composer, 'name', ''));
+//                $model->setVendor(array_get($composer, 'vendor', ''));
                 
                 return true;
             }

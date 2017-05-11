@@ -6,44 +6,40 @@ class DropletModel extends EloquentModel
 {
     protected $table = 'platform_droplets';
     
-
-    public function getPath()
+    public function path($path = null)
     {
+        if ($path) {
+            $this->setAttribute('path', $path);
+            
+            return $this;
+        }
+        
         return $this->getAttribute('path');
+    }    
+    
+    public function namespace($namespace = null)
+    {
+        if ($namespace) {
+            $this->setAttribute('namespace', $namespace);
+            
+            return $this;
+        }
+        
+        return $this->getAttribute('namespace');
     }
     
-    public function setPath($path)
+    public function name()
     {
-        $this->setAttribute('path', $path);
-        
-        return $this;
+        return $this->name;
     }
     
-    public function setType($type)
+    public function type()
     {
-        $this->setAttribute('type', str_replace('superv-', '', $type));
-        
-        return $this;
+        return $this->type;
     }
     
-    public function setNamespace($namespace)
+    public function vendor()
     {
-        $this->setAttribute('namespace', $namespace);
-        
-        return $this;
-    }
-    
-    public function setName($name)
-    {
-        $this->setAttribute('name', $name);
-        
-        return $this;
-    }
-    
-    public function setVendor($vendor)
-    {
-        $this->setAttribute('vendor', $vendor);
-        
-        return $this;
+        return $this->vendor;
     }
 }

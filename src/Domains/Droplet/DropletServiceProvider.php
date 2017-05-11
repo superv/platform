@@ -27,6 +27,8 @@ class DropletServiceProvider
     
     protected $features = [];
     
+    protected $commands = [];
+    
     public function __construct(Application $app, Droplet $droplet)
     {
         $this->app = $app;

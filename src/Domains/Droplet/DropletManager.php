@@ -41,9 +41,10 @@ class DropletManager
     
     public function register()
     {
+        /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel $model */
         foreach ($this->droplets->enabled() as $model) {
             
-            $this->loader->load(base_path($model->getPath()));
+            $this->loader->load(base_path($model->path()));
             $this->integrator->register($model);
         }
     }

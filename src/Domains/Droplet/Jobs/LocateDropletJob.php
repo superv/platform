@@ -1,12 +1,15 @@
 <?php namespace SuperV\Platform\Domains\Droplet\Jobs;
 
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
+
 class LocateDropletJob
 {
+    /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel  */
     protected $model;
     
     protected $base = '_/droplets';
     
-    public function __construct($model)
+    public function __construct(DropletModel $model)
     {
         $this->model = $model;
     }
@@ -20,7 +23,7 @@ class LocateDropletJob
             foreach ($clues as $clue) {
                 $path = "{$path}/{$clue}";
                 if (is_dir(base_path($path))) {
-                    $this->model->setPath($path);
+                    $this->model->path($path);
                     
                     return $path;
                 }

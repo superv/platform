@@ -17,16 +17,17 @@ class InstallDropletFeature extends Feature
         $this->slug = $slug;
     }
     
-    public function handle(DropletPaths $paths, DropletLoader $loader)
+    public function handle()
     {
+        /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel $model */
         $model = $this->run(new MakeDropletModelJob($this->slug));
         
         $this->run(new LocateDropletJob($model));
         
-        $composer = $this->run(new GetComposerArrayJob(base_path($model->getPath())));
+        $composer = $this->run(new GetComposerArrayJob(base_path($model->path())));
         $namespace = $this->run(new GetBaseNamespaceJob($composer));
         
-        $model->setNamespace($namespace);
+        $model->namespace($namespace);
         
         $model->enabled = true;
         $model->slug = $model->vendor . '.' . $model->type . '.' . $model->name;

@@ -29,6 +29,7 @@ class MakeDropletModelJob
             'slug'   => $this->slug,
             'type'   => str_singular($type),
             'name'   => $name,
+            'namespace' => ucfirst(camel_case(($vendor == 'superv' ? 'super_v' : $vendor))). "\\" . ucfirst(camel_case(str_plural($type)))."\\" . ucfirst(camel_case($name))
         ]);
     }
 }

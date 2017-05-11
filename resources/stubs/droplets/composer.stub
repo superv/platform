@@ -1,9 +1,9 @@
 {
-    "name": "{vendor}/{name}-{type}",
-    "type": "streams-addon",
+    "name": "{model.vendor}/{model.name}-{model.type}",
+    "type": "superv-{model.type}",
     "autoload": {
         "psr-4": {
-            "{prefix}": "src/"
+            "{prefix}\\": "src/"
         }
     }
 }

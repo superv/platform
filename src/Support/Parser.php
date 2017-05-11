@@ -1,37 +1,20 @@
 <?php namespace SuperV\Platform\Support;
 
-use Illuminate\View\Engines\Engine;
+use Illuminate\Http\Request;
+use Illuminate\Routing\UrlGenerator;
+use StringTemplate\Engine;
 
 class Parser
 {
-    /**
-     * The URL generator.
-     *
-     * @var UrlGenerator
-     */
+    /** @var \Illuminate\Routing\UrlGenerator */
     protected $url;
     
-    /**
-     * The string parser.
-     *
-     * @var Engine
-     */
+    /** @var \StringTemplate\Engine */
     protected $parser;
     
-    /**
-     * The request object.
-     *
-     * @var Request
-     */
+    /** @var \Illuminate\Http\Request */
     protected $request;
     
-    /**
-     * Create a new Parser instance.
-     *
-     * @param UrlGenerator $url
-     * @param Engine       $parser
-     * @param Request      $request
-     */
     public function __construct(UrlGenerator $url, Engine $parser, Request $request)
     {
         $this->url = $url;
@@ -39,14 +22,6 @@ class Parser
         $this->request = $request;
     }
     
-    /**
-     * Parse data into the target recursively.
-     *
-     * @param        $target
-     * @param  array $data
-     *
-     * @return mixed
-     */
     public function parse($target, array $data = [])
     {
         $data = $this->prepareData($data);
@@ -72,25 +47,11 @@ class Parser
         return $target;
     }
     
-    /**
-     * Prepare the data.
-     *
-     * @param  array $data
-     *
-     * @return array
-     */
     protected function prepareData(array $data)
     {
         return $this->toArray($this->mergeDefaultData($data));
     }
     
-    /**
-     * Prep data for parsing.
-     *
-     * @param  array $data
-     *
-     * @return array
-     */
     protected function toArray(array $data)
     {
         foreach ($data as $key => &$value) {
@@ -102,13 +63,6 @@ class Parser
         return $data;
     }
     
-    /**
-     * Merge default data.
-     *
-     * @param  array $data
-     *
-     * @return array
-     */
     protected function mergeDefaultData(array $data)
     {
         $url = $this->urlData();
@@ -117,11 +71,6 @@ class Parser
         return array_merge(compact('url', 'request'), $data);
     }
     
-    /**
-     * Return the URL data.
-     *
-     * @return array
-     */
     protected function urlData()
     {
         return [
@@ -129,11 +78,6 @@ class Parser
         ];
     }
     
-    /**
-     * Return the request data.
-     *
-     * @return array
-     */
     protected function requestData()
     {
         $request = [
@@ -145,7 +89,7 @@ class Parser
         
         if ($route = $this->request->route()) {
             $request['route'] = [
-                'uri'                      => $route->getUri(),
+                'uri'                      => $route->uri(),
                 'parameters'               => $route->parameters(),
                 'parameters.to_urlencoded' => array_map(
                     function ($parameter) {
