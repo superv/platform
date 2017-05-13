@@ -10,7 +10,15 @@
             "SuperV\\Platform\\": "tests/"
         }
     },
-    "require" : {
-        "nicmart/string-template" : "~0.1"
+    "require": {
+        "laravel/framework": "5.4.*",
+        "nicmart/string-template": "~0.1",
+        "barryvdh/laravel-debugbar": "^2.3",
+        "barryvdh/laravel-cors": "^0.9.2"
+    },
+    "require-dev": {
+        "laravel/tinker": "~1.0",
+        "spatie/laravel-tail": "^1.4",
+        "barryvdh/laravel-ide-helper": "^2.3"
     }
 }

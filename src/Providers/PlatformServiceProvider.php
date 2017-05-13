@@ -43,6 +43,13 @@ class PlatformServiceProvider extends ServiceProvider
         if (!env('SUPERV_INSTALLED', false)) {
             return;
         }
+        
+        if ($this->app->environment() !== 'production') {
+            $this->app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');
+            $this->app->register('Laravel\Tinker\TinkerServiceProvider');
+            $this->app->register(' Spatie\Tail\TailServiceProvider');
+        }
+        
         // Register Console Commands
         $this->commands($this->commands);
         
@@ -52,7 +59,7 @@ class PlatformServiceProvider extends ServiceProvider
         }
         
         // Register providers.
-        array_map(function($provider) {
+        array_map(function ($provider) {
             $this->app->register($provider);
         }, $this->providers);
         
