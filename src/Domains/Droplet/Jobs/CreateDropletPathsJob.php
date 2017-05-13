@@ -17,7 +17,9 @@ class CreateDropletPathsJob
     
     public function handle(Filesystem $filesystem)
     {
-        $this->model->path("_/droplets/{$this->model->vendor}/{$this->model->name}-{$this->model->type}");
+        $type = str_plural($this->model->type);
+        
+        $this->model->path("_/droplets/{$this->model->vendor}/{$type}/{$this->model->name}");
         
         $path = base_path($this->model->path());
         $filesystem->makeDirectory($path, 0755, true, true);
