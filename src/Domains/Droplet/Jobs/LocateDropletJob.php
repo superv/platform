@@ -19,7 +19,7 @@ class LocateDropletJob
     
     public function handle()
     {
-        $clues = [$this->model->vendor . "/" . $this->model->name . "-" . $this->model->type];
+        $clues = [$this->model->path];
         
         foreach ($this->paths as $path) {
             foreach ($clues as $clue) {
