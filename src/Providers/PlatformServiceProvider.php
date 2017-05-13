@@ -47,7 +47,7 @@ class PlatformServiceProvider extends ServiceProvider
         if ($this->app->environment() !== 'production') {
             $this->app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');
             $this->app->register('Laravel\Tinker\TinkerServiceProvider');
-            $this->app->register(' Spatie\Tail\TailServiceProvider');
+            $this->app->register('Spatie\Tail\TailServiceProvider');
         }
         
         // Register Console Commands
