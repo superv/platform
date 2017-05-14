@@ -8,8 +8,8 @@ class LocateDropletJob
     protected $model;
     
     protected $paths = [
+        '_superv/droplets',
         'droplets',
-        '_/droplets',
     ];
     
     public function __construct(DropletModel $model)
