@@ -8,7 +8,7 @@ class LocateDropletJob
     protected $model;
     
     protected $paths = [
-        '_superv/droplets',
+        'workbench',
         'droplets',
     ];
     
@@ -32,6 +32,6 @@ class LocateDropletJob
             }
         }
         
-        throw new \Exception('Droplet could not be located');
+        //throw new \Exception('Droplet could not be located');
     }
 }
