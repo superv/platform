@@ -10,5 +10,7 @@ class MakeDroplet extends Command
     public function handle()
     {
         $this->serve(new MakeDropletFeature($this->argument('slug')));
+        
+        $this->info('The [' . $this->argument('slug') . '] droplet was created.');
     }
 }

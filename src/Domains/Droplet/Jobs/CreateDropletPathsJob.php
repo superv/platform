@@ -17,11 +17,14 @@ class CreateDropletPathsJob
     
     public function handle(Filesystem $filesystem)
     {
-        $this->model->path("_superv/droplets/{$this->model->path}");
+        $this->model->path("workbench/{$this->model->path}");
         
         $path = base_path($this->model->path());
         $filesystem->makeDirectory($path, 0755, true, true);
         $filesystem->makeDirectory("{$path}/src", 0755, true, true);
+        $filesystem->makeDirectory("{$path}/src/Domains", 0755, true, true);
+        $filesystem->makeDirectory("{$path}/src/Feature", 0755, true, true);
+        $filesystem->makeDirectory("{$path}/src/Console", 0755, true, true);
         $filesystem->makeDirectory("{$path}/resources", 0755, true, true);
         $filesystem->makeDirectory("{$path}/database/migrations", 0755, true, true);
     }

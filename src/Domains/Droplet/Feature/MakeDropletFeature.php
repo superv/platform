@@ -21,10 +21,5 @@ class MakeDropletFeature extends Feature
         $this->run(new CreateDropletPathsJob($model));
         
         $this->run(new WriteDropletFilesJob($model));
-        
-        dd($model->toArray());
     }
-    
-    
-    
 }
