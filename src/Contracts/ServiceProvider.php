@@ -2,5 +2,5 @@
 
 abstract class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-
+    abstract public function register();
 }

@@ -7,11 +7,15 @@ class DropletLoader
 {
     /** @var ClassLoader */
     protected $loader;
+    
     protected $composer;
     
     public function __construct()
     {
         foreach (spl_autoload_functions() as $loader) {
+            if ($loader instanceof \Closure) {
+                continue;
+            }
             if ($loader[0] instanceof ClassLoader) {
                 $this->loader = $loader[0];
             }
@@ -40,24 +44,6 @@ class DropletLoader
         return false;
     }
     
-    public function getComposerJson($path)
-    {
-        if (!file_exists($path . '/composer.json')) {
-            throw new \Exception("Composer file does not exist at {$path}/composer.json");
-        }
-        
-        if (!$composer = json_decode(file_get_contents($path . '/composer.json'), true)) {
-            throw new \Exception("A JSON syntax error was encountered in {$path}/composer.json");
-        }
-        
-        
-        if (!array_key_exists('autoload', $composer)) {
-            return false;
-        }
-        
-        return $composer;
-    }
-    
     public function load($path)
     {
         $composer = $this->getComposerJson($path);
@@ -69,6 +55,23 @@ class DropletLoader
         $this->loadComposer($composer, $path);
         
         $this->loader->register();
+    }
+    
+    public function getComposerJson($path)
+    {
+        if (!file_exists($path . '/composer.json')) {
+            throw new \Exception("Composer file does not exist at {$path}/composer.json");
+        }
+        
+        if (!$composer = json_decode(file_get_contents($path . '/composer.json'), true)) {
+            throw new \Exception("A JSON syntax error was encountered in {$path}/composer.json");
+        }
+        
+        if (!array_key_exists('autoload', $composer)) {
+            return false;
+        }
+        
+        return $composer;
     }
     
     public function loadComposer(array $composer, $path)

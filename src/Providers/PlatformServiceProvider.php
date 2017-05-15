@@ -7,6 +7,7 @@ class PlatformServiceProvider extends ServiceProvider
 {
     protected $providers = [
         'SuperV\Platform\Providers\AdapterServiceProvider',
+        'SuperV\Nucleus\NucleusServiceProvider'
     ];
     
     protected $singletons = [
