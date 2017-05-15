@@ -1,5 +1,5 @@
 <?php namespace SuperV\Platform\Contracts;
 
-interface Model
-{
+interface Collection {
+
 }

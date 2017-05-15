@@ -1,4 +1,4 @@
-<?php namespace SuperV\Platform\Adapters\Validator;
+<?php namespace SuperV\Platform\Adapters;
 
 use Illuminate\Validation\Factory;
 use SuperV\Platform\Contracts\Validator;

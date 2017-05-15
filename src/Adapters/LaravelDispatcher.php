@@ -1,4 +1,4 @@
-<?php namespace SuperV\Platform\Adapters\Events;
+<?php namespace SuperV\Platform\Adapters;
 
 use SuperV\Platform\Contracts\Dispatcher;
 
