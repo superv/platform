@@ -1,4 +1,4 @@
-<?php namespace SuperV\Platform\Providers;
+<?php namespace SuperV\Platform;
 
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Droplet\DropletManager;
@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Droplet\DropletManager;
 class PlatformServiceProvider extends ServiceProvider
 {
     protected $providers = [
-        'SuperV\Platform\Providers\AdapterServiceProvider',
+        'SuperV\Platform\Adapters\AdapterServiceProvider',
         'SuperV\Nucleus\NucleusServiceProvider'
     ];
     
