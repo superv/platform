@@ -1,7 +1,7 @@
 <?php namespace SuperV\Platform\Adapters;
 
-use Illuminate\Support\Collection;
+use SuperV\Platform\Contracts\Collection;
 
-class LaravelCollection extends Collection implements Collectio
+class LaravelCollection extends \Illuminate\Support\Collection implements Collection
 {
 }

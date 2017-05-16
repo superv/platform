@@ -1,24 +1,63 @@
 <?php
 
-use SuperV\Platform\Contracts\Container;
-
-if (!function_exists('superv')) {
-    /**
-     * Get the available container instance.
-     *
-     * @param  string $abstract
-     * @param  array  $parameters
-     *
-     * @return mixed|\Illuminate\Foundation\Application
-     */
-    function superv($abstract = null, array $parameters = [])
+namespace nucleus {
+    
+    use SuperV\Nucleus\Domains\Entry\EntryManager;
+    
+    function fields($type)
     {
-        if (is_null($abstract)) {
-            return Container::getInstance();
+        return superv("fields.{$type}");
+    }
+    
+    function entry($handle)
+    {
+        return superv(EntryManager::class)->instance($handle);
+    }
+}
+
+namespace {
+    
+    use Illuminate\Container\Container;
+    use SuperV\Platform\Support\Collection;
+    
+    /** @return \Predis\Client */
+    function redis()
+    {
+        return superv('redis');
+    }
+    
+    if (!function_exists('superv')) {
+        /**
+         * Get the available container instance.
+         *
+         * @param  string $abstract
+         * @param  array  $parameters
+         *
+         * @return mixed|\Illuminate\Foundation\Application
+         */
+        function superv($abstract = null, array $parameters = [])
+        {
+            if (is_null($abstract)) {
+                return Container::getInstance();
+            }
+            
+            return empty($parameters)
+                ? Container::getInstance()->make($abstract)
+                : Container::getInstance()->makeWith($abstract, $parameters);
         }
-        
-        return empty($parameters)
-            ? Container::getInstance()->make($abstract)
-            : Container::getInstance()->makeWith($abstract, $parameters);
+    }
+    
+    if (!function_exists('collect')) {
+        /**
+         * Create a collection from the given value.
+         *
+         * @param  mixed $value
+         *
+         * @return \SuperV\Platform\Support\Collection
+         */
+        function collect($value = null)
+        {
+            return new Collection($value);
+        }
     }
 }
