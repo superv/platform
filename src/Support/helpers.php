@@ -8,11 +8,7 @@ namespace nucleus {
     {
         return superv("fields.{$type}");
     }
-    
-    function entry($handle)
-    {
-        return superv(EntryManager::class)->instance($handle);
-    }
+
 }
 
 namespace {
