@@ -4,7 +4,7 @@ use SuperV\Platform\Domains\Model\EloquentModel;
 
 class DropletModel extends EloquentModel
 {
-    protected $table = 'platform_droplets';
+   protected $table = 'platform_droplets';
     
     public function path($path = null)
     {
