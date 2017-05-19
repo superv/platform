@@ -169,7 +169,7 @@ class DropletProvider
     {
         $features = app(FeatureCollection::class);
         foreach($provider->getFeatures() as $key => $feature) {
-            $features->put($key."@".$provider->getNamespace(), $feature);
+            $features->push($feature);
         }
     }
 }

@@ -6,8 +6,9 @@ use SuperV\Platform\Domains\Droplet\DropletManager;
 class PlatformServiceProvider extends ServiceProvider
 {
     protected $providers = [
+        'SuperV\Nucleus\NucleusServiceProvider',
         'SuperV\Platform\Adapters\AdapterServiceProvider',
-        'SuperV\Nucleus\NucleusServiceProvider'
+        'SuperV\Platform\Domains\Database\DatabaseServiceProvider',
     ];
     
     protected $singletons = [
@@ -18,10 +19,10 @@ class PlatformServiceProvider extends ServiceProvider
     protected $bindings = [];
     
     protected $commands = [
-        'SuperV\Platform\Domains\Droplet\Console\DropletInstall',
-        'SuperV\Platform\Domains\Droplet\Console\DropletServer',
-        'SuperV\Platform\Domains\Droplet\Console\DropletDispatch',
         'SuperV\Platform\Domains\Droplet\Console\MakeDroplet',
+        'SuperV\Platform\Domains\Droplet\Console\DropletServer',
+        'SuperV\Platform\Domains\Droplet\Console\DropletInstall',
+        'SuperV\Platform\Domains\Droplet\Console\DropletDispatch',
     ];
     
     public function boot()

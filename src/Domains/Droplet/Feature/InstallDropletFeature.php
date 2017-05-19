@@ -30,8 +30,7 @@ class InstallDropletFeature extends Feature
         $model->namespace($namespace);
         
         $model->enabled = true;
-        $model->slug = $model->vendor . '.' . $model->type . '.' . $model->name;
-        
+
         return $model->save();
     }
 }

@@ -4,8 +4,16 @@ use Illuminate\Support\Collection;
 
 class FeatureCollection extends Collection
 {
-    public function server()
+    public function routable()
     {
-        // return server features
+        $routables = new FeatureCollection();
+
+        foreach ($this->items as $item) {
+            if ($route = $item::$route) {
+                $routables->put($route, $item);
+            }
+        }
+
+        return $routables;
     }
 }

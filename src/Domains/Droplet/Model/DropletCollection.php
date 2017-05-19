@@ -1,8 +1,13 @@
 <?php namespace SuperV\Platform\Domains\Droplet\Model;
 
-use Illuminate\Support\Collection;
+
+use SuperV\Platform\Support\Collection;
 
 class DropletCollection extends Collection
 {
+    public function enabled()
+    {
+        
+    }
     
 }

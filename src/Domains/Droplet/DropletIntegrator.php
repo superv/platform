@@ -31,7 +31,6 @@ class DropletIntegrator
         $droplet = app($class)->setModel($model);
         
         $this->provider->register($droplet);
-        
-        $this->droplets->put($model->slug, $droplet);
+        $this->droplets->push($droplet);
     }
 }

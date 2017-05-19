@@ -1,6 +1,8 @@
 <?php namespace SuperV\Platform\Domains\Droplet;
 
+use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\DropletRepository;
+use SuperV\Platform\Domains\Droplet\Model\Droplets;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 
 class DropletManager
@@ -31,7 +33,7 @@ class DropletManager
         DropletPaths $paths,
         DropletIntegrator $integrator,
         DropletLoader $loader,
-        DropletRepository $droplets
+        Droplets $droplets
     ) {
         $this->paths = $paths;
         $this->integrator = $integrator;
