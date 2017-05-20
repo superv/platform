@@ -3,7 +3,7 @@
 use SuperV\Platform\Contracts\Command;
 use SuperV\Platform\Domains\Droplet\Feature\MakeDropletFeature;
 
-class MakeDroplet extends Command
+class MakeDropletCommand extends Command
 {
     protected $signature = 'make:droplet {slug}';
     

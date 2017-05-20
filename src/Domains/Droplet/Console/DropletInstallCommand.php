@@ -3,7 +3,7 @@
 use SuperV\Platform\Contracts\Command;
 use SuperV\Platform\Domains\Droplet\Feature\InstallDropletFeature;
 
-class DropletInstall extends Command
+class DropletInstallCommand extends Command
 {
     protected $signature = 'droplet:install {slug}';
     

@@ -19,9 +19,11 @@ class PlatformServiceProvider extends ServiceProvider
     protected $bindings = [];
     
     protected $commands = [
-        'SuperV\Platform\Domains\Droplet\Console\MakeDroplet',
+        'SuperV\Platform\Domains\Database\Migration\Console\MigrateCommand',
+        'SuperV\Platform\Domains\Database\Migration\Console\MakeMigrationCommand',
+        'SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand',
         'SuperV\Platform\Domains\Droplet\Console\DropletServer',
-        'SuperV\Platform\Domains\Droplet\Console\DropletInstall',
+        'SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand',
         'SuperV\Platform\Domains\Droplet\Console\DropletDispatch',
     ];
     
