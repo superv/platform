@@ -1,5 +1,6 @@
 <?php namespace SuperV\Platform\Domains\Feature;
 
+use Illuminate\Contracts\Bus\Dispatcher;
 use ReflectionClass;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -21,14 +22,14 @@ trait JobDispatcherTrait
     public function run($job, $arguments = [], $extra = [])
     {
         if ($arguments instanceof Request) {
-            $result = $this->dispatch($this->marshal($job, $arguments, $extra));
+            $result = $this->dispatchJob($this->marshal($job, $arguments, $extra));
         } else {
             if (!is_object($job)) {
                 $job = $this->marshal($job, new Collection(), $arguments);
             }
             
 
-            $result = $this->dispatch($job);
+            $result = $this->dispatchJob($job);
         }
 
         return $result;
@@ -50,6 +51,22 @@ trait JobDispatcherTrait
         $jobInstance = $reflection->newInstanceArgs($arguments);
         $jobInstance->onQueue((string) $queue);
 
-        return $this->dispatch($jobInstance);
+        return $this->dispatchJob($jobInstance);
+    }
+
+    protected function dispatchJob($job)
+    {
+        return app(Dispatcher::class)->dispatch($job);
+    }
+
+    /**
+     * Dispatch a command to its appropriate handler in the current process.
+     *
+     * @param  mixed  $job
+     * @return mixed
+     */
+    public function dispatchJobNow($job)
+    {
+        return app(Dispatcher::class)->dispatchNow($job);
     }
 }

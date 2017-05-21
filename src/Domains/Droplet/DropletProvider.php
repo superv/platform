@@ -5,10 +5,14 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Application;
 use Illuminate\Routing\Router;
+use SuperV\Platform\Domains\Droplet\Jobs\RegisterDropletRouteJob;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
+use SuperV\Platform\Domains\Feature\JobDispatcherTrait;
 
 class DropletProvider
 {
+    use JobDispatcherTrait;
+
     /**
      * The registered providers.
      *
@@ -132,36 +136,9 @@ class DropletProvider
         }
 
         foreach ($routes as $uri => $route) {
-
-            /*
-             * If the route definition is an
-             * not an array then let's make it one.
-             * Array type routes give us more control
-             * and allow us to pass information in the
-             * request's route action array.
-             */
-            if (!is_array($route)) {
-                $route = [
-                    'uses' => $route,
-                ];
-            }
-
-            $verb        = array_pull($route, 'verb', 'any');
-            $middleware  = array_pull($route, 'middleware', []);
-            $constraints = array_pull($route, 'constraints', []);
-
+            $route = !is_array($route) ? ['uses' => $route] : $route;
             array_set($route, 'superv::droplet', $droplet->getSlug());
-
-            if (is_string($route['uses']) && !str_contains($route['uses'], '@')) {
-                $this->router->resource($uri, $route['uses']);
-            } else {
-
-                $route = $this->router->{$verb}($uri, $route)->where($constraints);
-
-                if ($middleware) {
-                    call_user_func_array([$route, 'middleware'], (array)$middleware);
-                }
-            }
+            $this->run(new RegisterDropletRouteJob($uri, $route));
         }
     }
     
@@ -171,5 +148,19 @@ class DropletProvider
         foreach($provider->getFeatures() as $key => $feature) {
             $features->push($feature);
         }
+
+//       foreach($features->routable() as $uri => $feature) {
+//
+//            if (false !== strpos($uri, '@')) {
+//                list($verb, $uri) = explode('@', $uri);
+//            }
+//
+//            $route = [
+//                'uses' => "{$feature}@handle",
+//                'verb' => isset($verb) ? $verb : 'any'
+//            ];
+//
+//            $this->dispatchJob(new RegisterDropletRouteJob($uri, $route));
+//       }
     }
 }

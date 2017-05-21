@@ -9,6 +9,7 @@ class PlatformServiceProvider extends ServiceProvider
         'SuperV\Nucleus\NucleusServiceProvider',
         'SuperV\Platform\Adapters\AdapterServiceProvider',
         'SuperV\Platform\Domains\Database\DatabaseServiceProvider',
+        'SuperV\Modules\Console\ConsoleModuleServiceProvider'
     ];
     
     protected $singletons = [

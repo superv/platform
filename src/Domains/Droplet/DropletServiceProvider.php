@@ -26,7 +26,9 @@ class DropletServiceProvider
     protected $singletons = [];
     
     protected $features = [];
-    
+
+    protected $composers = [];
+
     protected $commands = [];
     
     public function __construct(Application $app, Droplet $droplet)
