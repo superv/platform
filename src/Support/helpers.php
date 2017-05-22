@@ -15,6 +15,11 @@ namespace {
     
     use Illuminate\Container\Container;
     use SuperV\Platform\Support\Collection;
+
+
+    function mysql_now() {
+        return date('Y-m-d H:i:s');
+    }
     
     /** @return \Predis\Client */
     function redis()

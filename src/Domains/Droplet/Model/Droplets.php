@@ -7,7 +7,7 @@ class Droplets extends EloquentRepository
     public function withSlug($slug)
     {
         /**
-         * Try to find by name if thats not ambiguous.
+         * Try to find by name where not ambiguous.
          */
         $droplets = $this->model->where('name', $slug)->get();
         if ($droplets->count() == 1) {

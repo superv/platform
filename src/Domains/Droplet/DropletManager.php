@@ -49,6 +49,7 @@ class DropletManager
             $this->loader->load(base_path($model->path()));
             $this->integrator->register($model);
         }
+
     }
 
 }

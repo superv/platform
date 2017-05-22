@@ -22,15 +22,14 @@ class DropletIntegrator
     
     public function register(DropletModel $model)
     {
-//        $class = studly_case(($vendor == 'superv' ? 'super_v' : $vendor)) . '\\Droplets\\' . studly_case($slug)  . '\\' . studly_case($slug) . 'Droplet';
-        
-        $class = $model->namespace . '\\' . studly_case($model->name) . studly_case($model->type);
-        
-        
+//        $class = $model->namespace . '\\' . studly_case($model->name) . studly_case($model->type);
+
+        $class = $model->droplet();
+
         /** @var Droplet $droplet */
         $droplet = app($class)->setModel($model);
         
         $this->provider->register($droplet);
-        $this->droplets->push($droplet);
+        $this->droplets->put($droplet->getSlug(), $droplet);
     }
 }

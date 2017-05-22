@@ -27,6 +27,11 @@ class DropletModel extends EloquentModel
         
         return $this->getAttribute('namespace');
     }
+
+    public function droplet()
+    {
+        return $this->namespace() . "\\" . studly_case("{$this->name}_{$this->type}");
+    }
     
     public function name()
     {

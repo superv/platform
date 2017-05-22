@@ -14,7 +14,7 @@ class PlatformServiceProvider extends ServiceProvider
     
     protected $singletons = [
         'SuperV\Platform\Domains\Feature\FeatureCollection'      => '~',
-        'SuperV\Platform\Domains\Droplet\Data\DropletCollection' => '~',
+        'SuperV\Platform\Domains\Droplet\Model\DropletCollection' => '~',
     ];
     
     protected $bindings = [];

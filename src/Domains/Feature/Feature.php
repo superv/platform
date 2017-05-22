@@ -1,6 +1,5 @@
 <?php namespace SuperV\Platform\Domains\Feature;
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
 
 abstract class Feature
 {
@@ -9,14 +8,13 @@ abstract class Feature
 
     public static $route;
 
-    protected $resolves = [];
+    public static $resolvable = [];
 
-    /** @var  \SuperV\Platform\Support\Collection */
-    protected $request;
+    protected $params;
 
-    public function request($request)
+    public function params($params)
     {
-        $this->request = $request;
+        $this->params = $params;
 
         return $this;
     }
@@ -24,5 +22,10 @@ abstract class Feature
     public function resolves()
     {
         return $this->resolves;
+    }
+
+    public function __get($name)
+    {
+       return array_get($this->params, $name);
     }
 }

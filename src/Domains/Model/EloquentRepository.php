@@ -19,6 +19,10 @@ abstract class EloquentRepository
 
     public function find($id)
     {
+        if (is_string($id)) {
+            return $this->withSlug($id);
+        }
+
         return $this->model->find($id);
     }
 
