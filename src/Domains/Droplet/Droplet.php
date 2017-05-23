@@ -9,9 +9,14 @@ class Droplet
 
     protected $commands;
 
+    public function __construct(DropletModel $model = null)
+    {
+        $this->model = $model;
+    }
+
     public static function from(DropletModel $model)
     {
-        return superv($model->droplet());
+        return superv($model->droplet(), ['model' => $model]);
     }
 
     public function newServiceProvider()
@@ -27,6 +32,11 @@ class Droplet
     public function getSlug()
     {
         return $this->model->slug;
+    }
+
+    public function identifier()
+    {
+        return $this->model->vendor . '.' . $this->model->name;
     }
 
     public function setModel(DropletModel $model)
