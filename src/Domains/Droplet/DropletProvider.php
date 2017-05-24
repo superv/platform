@@ -2,6 +2,7 @@
 
 use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Application;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Container;
 use SuperV\Platform\Contracts\Dispatcher;
@@ -25,7 +26,7 @@ class DropletProvider
      */
     private $events;
 
-    private $container;
+    private $app;
 
     /**
      * @var Router
@@ -39,12 +40,12 @@ class DropletProvider
 
     public function __construct(
         Dispatcher $events,
-        Container $container,
+        Application $app,
         Router $router,
         Schedule $schedule
     ) {
         $this->events = $events;
-        $this->container = $container;
+        $this->app = $app;
         $this->router = $router;
         $this->schedule = $schedule;
     }
@@ -69,7 +70,7 @@ class DropletProvider
         $this->registerEvents($provider, $droplet);
 
         if (method_exists($provider, 'register')) {
-            $this->container->call([$provider, 'register'], ['provider' => $this]);
+            $this->app->call([$provider, 'register'], ['provider' => $this]);
         }
     }
 
@@ -98,14 +99,14 @@ class DropletProvider
     protected function bindClasses(DropletServiceProvider $provider)
     {
         foreach ($provider->getBindings() as $abstract => $concrete) {
-            $this->container->bind($abstract, $concrete);
+            $this->app->bind($abstract, $concrete);
         }
     }
 
     protected function bindSingletons(DropletServiceProvider $provider)
     {
         foreach ($provider->getSingletons() as $abstract => $concrete) {
-            $this->container->singleton($abstract, $concrete);
+            $this->app->singleton($abstract, $concrete);
         }
     }
 

@@ -11,7 +11,7 @@ class AdapterServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->bind(Container::class, LaravelContainer::class);
+        $this->app->singleton(Container::class, LaravelContainer::class);
         $this->app->bind(Dispatcher::class, LaravelDispatcher::class);
         $this->app->bind(Validator::class, LaravelValidator::class);
         $this->app->bind(Filesystem::class, LaravelFileSystem::class);
