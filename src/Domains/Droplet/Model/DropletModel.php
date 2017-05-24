@@ -47,4 +47,9 @@ class DropletModel extends EloquentModel
     {
         return $this->vendor;
     }
+
+    public function slug()
+    {
+        return $this->slug;
+    }
 }

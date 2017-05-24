@@ -12,7 +12,7 @@ class EloquentModel extends Model
     public function getTable()
     {
         if (! isset($this->table)) {
-            return str_replace('\\', '', Str::snake(Str::plural(class_basename($this))));
+            return str_replace('\\', '', snake_case(str_plural(class_basename($this))));
         }
 
         return $this->table;
