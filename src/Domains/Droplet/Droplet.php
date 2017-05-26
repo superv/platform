@@ -9,6 +9,8 @@ class Droplet
 
     protected $commands;
 
+    protected $type;
+
     public function __construct(DropletModel $model = null)
     {
         $this->model = $model;
@@ -21,7 +23,8 @@ class Droplet
 
     public function newServiceProvider()
     {
-        return app()->make($this->getServiceProvider(), [app(), $this]);
+        $providerClass = $this->getServiceProvider();
+        return new $providerClass(app(), $this);
     }
 
     public function getServiceProvider()
@@ -32,6 +35,11 @@ class Droplet
     public function getSlug()
     {
         return $this->model->slug;
+    }
+
+    public function getName()
+    {
+        return $this->model->name;
     }
 
     public function identifier()
@@ -51,8 +59,16 @@ class Droplet
         return array_get($this->commands, $command);
     }
 
-    public function getPath()
+    public function getPath($path = null)
     {
-        return $this->model->path();
+        return $this->model->path() . ($path ? '/' . $path : '');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

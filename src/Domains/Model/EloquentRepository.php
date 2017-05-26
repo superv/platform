@@ -73,7 +73,8 @@ abstract class EloquentRepository
 
     public function enabled()
     {
-        return $this->collection($this->model->where('enabled', true)->get());
+        $droplets = $this->model->where('enabled', true)->orderBy('type', 'DESC')->get();
+        return $this->collection($droplets);
     }
 
     protected function collection($items)

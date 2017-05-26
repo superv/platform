@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Container;
 use SuperV\Platform\Contracts\Dispatcher;
+use SuperV\Platform\Domains\Droplet\Jobs\PackDropletRoutesJob;
 use SuperV\Platform\Domains\Droplet\Jobs\RegisterDropletRouteJob;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\JobDispatcherTrait;
@@ -130,10 +131,11 @@ class DropletProvider
 
     protected function registerRoutes(DropletServiceProvider $provider, Droplet $droplet)
     {
-
         if (!$routes = $provider->getRoutes()) {
             return;
         }
+
+        $routes = $this->run(new PackDropletRoutesJob($provider));
 
         foreach ($routes as $uri => $route) {
             $route = !is_array($route) ? ['uses' => $route] : $route;

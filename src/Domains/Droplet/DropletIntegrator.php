@@ -9,17 +9,18 @@ class DropletIntegrator
      * @var DropletProvider
      */
     private $provider;
+
     /**
      * @var DropletCollection
      */
     private $droplets;
-    
+
     public function __construct(DropletProvider $provider, DropletCollection $droplets)
     {
         $this->provider = $provider;
         $this->droplets = $droplets;
     }
-    
+
     public function register(DropletModel $model)
     {
 //        $class = $model->namespace . '\\' . studly_case($model->name) . studly_case($model->type);
@@ -28,8 +29,14 @@ class DropletIntegrator
 
         /** @var Droplet $droplet */
         $droplet = app($class)->setModel($model);
-        
+
         $this->provider->register($droplet);
         $this->droplets->put($droplet->getSlug(), $droplet);
+
+        if ($droplet->getType() == 'port') {
+            $portName = strtoupper($model->name());
+            $droplet->setHostname(env("PORTS_{$portName}_HOSTNAME"));
+            superv('ports')->push($droplet);
+        }
     }
 }
