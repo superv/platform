@@ -104,9 +104,4 @@ class DropletServiceProvider
     {
         return $this->droplet->getPath($path);
     }
-
-    public function getNamespace()
-    {
-        return $this->getDroplet()->getNamespace();
-    }
 }
