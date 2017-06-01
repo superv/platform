@@ -1,7 +1,14 @@
 <?php namespace SuperV\Platform;
 
+use Assetic\Extension\Twig\AsseticExtension;
+use Assetic\Factory\AssetFactory;
+use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
+use Collective\Html\HtmlServiceProvider;
+use Laravel\Tinker\TinkerServiceProvider;
+use Spatie\Tail\TailServiceProvider;
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Droplet\DropletManager;
+use TwigBridge\Bridge;
 
 class PlatformServiceProvider extends ServiceProvider
 {
@@ -52,10 +59,15 @@ class PlatformServiceProvider extends ServiceProvider
             return;
         }
 
+        $this->app->register('TwigBridge\ServiceProvider');
+        $this->app->register(HtmlServiceProvider::class);
+
+//        app(Bridge::class)->addExtension(app(AsseticExtension::class));
+
         if ($this->app->environment() !== 'production') {
-            $this->app->register('Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider');
-            $this->app->register('Laravel\Tinker\TinkerServiceProvider');
-            $this->app->register('Spatie\Tail\TailServiceProvider');
+            $this->app->register(IdeHelperServiceProvider::class);
+            $this->app->register(TinkerServiceProvider::class);
+            $this->app->register(TailServiceProvider::class);
         }
 
         // Register Console Commands
