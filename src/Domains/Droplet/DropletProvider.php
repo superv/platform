@@ -135,7 +135,7 @@ class DropletProvider
             return;
         }
 
-        $routes = $this->run(new PackDropletRoutesJob($provider));
+//        $routes = $this->run(new PackDropletRoutesJob($provider));
 
         foreach ($routes as $uri => $route) {
             $route = !is_array($route) ? ['uses' => $route] : $route;

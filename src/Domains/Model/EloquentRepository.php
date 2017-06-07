@@ -2,7 +2,7 @@
 
 use SuperV\Platform\Contracts\Container;
 
-abstract class EloquentRepository
+class EloquentRepository implements RepositoryInterface
 {
     protected $model;
 
@@ -51,19 +51,9 @@ abstract class EloquentRepository
         return $this->model->count();
     }
 
-    public function save(EloquentModel $entry)
-    {
-        return $entry->save();
-    }
-
     public function update(array $attributes = [])
     {
         return $this->model->update($attributes);
-    }
-
-    public function delete(EloquentModel $entry)
-    {
-        return $entry->delete();
     }
 
     public function withSlug($slug)
@@ -77,7 +67,7 @@ abstract class EloquentRepository
         return $this->collection($droplets);
     }
 
-    protected function collection($items)
+    public function collection($items)
     {
         return collect($items);
     }

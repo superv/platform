@@ -20,6 +20,8 @@ class PackDropletRoutesJob
     {
         $routes = [];
 
+        // $port = $this->run(new GetPortFromRequest()
+
         $hostname = trim(str_replace(['http://', 'https://'], '', $request->root()), '/');
         if ($port = $ports->byHostname($hostname)) {
             $portName = $port->getName();
