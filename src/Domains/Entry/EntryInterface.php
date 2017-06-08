@@ -2,4 +2,5 @@
 
 interface EntryInterface
 {
+    public function id();
 }

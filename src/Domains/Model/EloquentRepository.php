@@ -14,7 +14,8 @@ class EloquentRepository implements RepositoryInterface
 
     public function all()
     {
-        return $this->collection($this->model->all());
+        return $this->model->all();
+//        return $this->collection($this->model->all());
     }
 
     public function find($id)
@@ -24,11 +25,6 @@ class EloquentRepository implements RepositoryInterface
         }
 
         return $this->model->find($id);
-    }
-
-    public function findAll(array $ids)
-    {
-        return $this->collection($this->model->whereIn('id', $ids)->get());
     }
 
     public function create(array $attributes)
@@ -46,11 +42,6 @@ class EloquentRepository implements RepositoryInterface
         return $this->model->newInstance($attributes);
     }
 
-    public function count()
-    {
-        return $this->model->count();
-    }
-
     public function update(array $attributes = [])
     {
         return $this->model->update($attributes);
@@ -64,7 +55,8 @@ class EloquentRepository implements RepositoryInterface
     public function enabled()
     {
         $droplets = $this->model->where('enabled', true)->orderBy('type', 'DESC')->get();
-        return $this->collection($droplets);
+        return $droplets;
+//        return $this->collection($droplets);
     }
 
     public function collection($items)
