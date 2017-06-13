@@ -17,9 +17,4 @@ class EloquentModel extends Model
 
         return $this->table;
     }
-    
-    public function getId()
-    {
-        return $this->getKey();
-    }
 }
