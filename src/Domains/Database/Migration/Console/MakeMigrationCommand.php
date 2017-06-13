@@ -23,6 +23,9 @@ class MakeMigrationCommand extends Command
             $table = "{$droplet->name}_{$name}";
             array_set($options, '--create', $table);
             array_set($options, 'name', "create_{$table}_table");
+        } else {
+            array_set($options, 'name', $name);
+
         }
 
         $kernel->call('make:migration', $options, $this->output);
