@@ -123,7 +123,7 @@ class DropletProvider
             }
             foreach ($listeners as $key => $listener) {
                 if ($listener) {
-                    $this->events->listen($droplet->getSlug() . '.' . $event, $listener);
+                    $this->events->listen($droplet->getSlug() . '::' . $event, $listener);
                 }
             }
         }
