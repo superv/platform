@@ -20,7 +20,7 @@
         "barryvdh/laravel-cors": "0.9.*",
         "spatie/laravel-tail": "~1.4",
         "rcrowe/twigbridge": "0.9.*",
-        "laravel/framework": "dev-develop",
+        "laravel/framework": "dev-master",
         "tymon/jwt-auth": "0.5.*",
         "laravel/tinker": "~1.0",
         "predis/predis": "~1.1"
