@@ -3,17 +3,15 @@
 use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Router;
-use SuperV\Platform\Contracts\Container;
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Domains\Droplet\Jobs\PackDropletRoutesJob;
 use SuperV\Platform\Domains\Droplet\Jobs\RegisterDropletRouteJob;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
-use SuperV\Platform\Domains\Feature\JobDispatcherTrait;
 
 class DropletProvider
 {
-    use JobDispatcherTrait;
+    use DispatchesJobs;
 
     /**
      * The registered providers.
@@ -135,12 +133,10 @@ class DropletProvider
             return;
         }
 
-//        $routes = $this->run(new PackDropletRoutesJob($provider));
-
         foreach ($routes as $uri => $route) {
             $route = !is_array($route) ? ['uses' => $route] : $route;
             array_set($route, 'superv::droplet', $droplet->getSlug());
-            $this->run(new RegisterDropletRouteJob($uri, $route));
+            $this->dispatch(new RegisterDropletRouteJob($uri, $route));
         }
     }
 
@@ -150,19 +146,5 @@ class DropletProvider
         foreach ($provider->getFeatures() as $key => $feature) {
             $features->push($feature);
         }
-
-//       foreach($features->routable() as $uri => $feature) {
-//
-//            if (false !== strpos($uri, '@')) {
-//                list($verb, $uri) = explode('@', $uri);
-//            }
-//
-//            $route = [
-//                'uses' => "{$feature}@handle",
-//                'verb' => isset($verb) ? $verb : 'any'
-//            ];
-//
-//            $this->dispatchJob(new RegisterDropletRouteJob($uri, $route));
-//       }
     }
 }

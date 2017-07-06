@@ -1,12 +1,12 @@
 <?php namespace SuperV\Platform\Domains\Droplet;
 
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\Droplet\Jobs\PackDropletRoutesJob;
-use SuperV\Platform\Domains\Feature\JobDispatcherTrait;
 
 class DropletServiceProvider
 {
-    use JobDispatcherTrait;
+    use DispatchesJobs;
 
     /**
      * @var Application
@@ -55,7 +55,7 @@ class DropletServiceProvider
 
     public function getRoutes()
     {
-        $routes = $this->run(new PackDropletRoutesJob($this));
+        $routes = $this->dispatch(new PackDropletRoutesJob($this));
 
         return array_merge($this->routes, $routes);
     }

@@ -1,6 +1,6 @@
 <?php namespace SuperV\Platform\Domains\Feature\Command;
 
-class ResolveRequestParams
+class ResolveRequestParamsJob
 {
     /**
      * @var \SuperV\Platform\Domains\Feature\Feature

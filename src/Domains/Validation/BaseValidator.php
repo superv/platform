@@ -6,29 +6,35 @@ use SuperV\Platform\Contracts\Validator;
 abstract class BaseValidator
 {
     /**
-    	 * @var Validator
-    	 */
-    	protected $validator;
+     * @var Validator
+     */
+    protected $validator;
 
+    protected $rules;
 
-    	public function __construct(Validator $validator)
-    	{
-    		$this->validator = $validator;
-    	}
+    protected $messages = [];
 
-    	public function handle(Request $request)
-    	{
-    		$this->validator->make(
-    				$tactic->getRequestData(),
-    				$this->rules(),
-    				$this->messages()
-    		);
+    public function __construct(Validator $validator)
+    {
+        $this->validator = $validator;
+    }
 
-    		$result->ok();
+    public function handle(Request $request)
+    {
+        $this->validator->make(
+            $request->all(),
+            $this->rules(),
+            $this->messages()
+        );
+    }
 
-    		return $result;
-    	}
+    public function rules()
+    {
+        return $this->rules;
+    }
 
-    	abstract public function rules();
-    	abstract public function messages();
+    public function messages()
+    {
+        return $this->messages;
+    }
 }

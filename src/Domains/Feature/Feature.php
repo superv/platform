@@ -3,14 +3,15 @@
 
 abstract class Feature
 {
-    use MarshalTrait;
-    use JobDispatcherTrait;
+    use ServesFeaturesTrait;
 
     public static $route;
 
     public static $resolvable = [];
 
     protected $params;
+
+    protected $middlewares;
 
     public function params($params)
     {
@@ -27,5 +28,13 @@ abstract class Feature
     public function __get($name)
     {
        return array_get($this->params, $name);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMiddlewares()
+    {
+        return $this->middlewares;
     }
 }
