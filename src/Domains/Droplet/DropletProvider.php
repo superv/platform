@@ -71,6 +71,8 @@ class DropletProvider
         if (method_exists($provider, 'register')) {
             $this->app->call([$provider, 'register'], ['provider' => $this]);
         }
+
+        $this->registerProviders($provider);
     }
 
     protected function registerCommands(DropletServiceProvider $provider)
@@ -147,4 +149,12 @@ class DropletProvider
             $features->push($feature);
         }
     }
+
+    protected function registerProviders(DropletServiceProvider $provider)
+      {
+          foreach ($provider->getProviders() as $provider) {
+              $this->app->register($provider);
+          }
+      }
+
 }

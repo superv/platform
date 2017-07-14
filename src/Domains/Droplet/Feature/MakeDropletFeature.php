@@ -16,10 +16,10 @@ class MakeDropletFeature extends Feature
     
     public function handle()
     {
-        $model = $this->run(new MakeDropletModelJob($this->slug));
+        $model = $this->dispatch(new MakeDropletModelJob($this->slug));
         
-        $this->run(new CreateDropletPathsJob($model));
+        $this->dispatch(new CreateDropletPathsJob($model));
         
-        $this->run(new WriteDropletFilesJob($model));
+        $this->dispatch(new WriteDropletFilesJob($model));
     }
 }

@@ -34,6 +34,8 @@ class DropletServiceProvider
 
     protected $commands = [];
 
+    protected $providers = [];
+
     public function __construct(Application $app, Droplet $droplet)
     {
         $this->app = $app;
@@ -103,5 +105,13 @@ class DropletServiceProvider
     public function getPath($path = null)
     {
         return $this->droplet->getPath($path);
+    }
+
+    /**
+     * @return array
+     */
+    public function getProviders()
+    {
+        return $this->providers;
     }
 }

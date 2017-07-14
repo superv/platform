@@ -27,7 +27,7 @@ trait ServesFeaturesTrait
 
         if ($middlewares = $feature->getMiddlewares()) {
             foreach($middlewares as $middleware) {
-                $this->dispatch(superv($middleware));
+                $this->dispatch(superv($middleware, ['feature' => $feature]));
             }
         }
 
