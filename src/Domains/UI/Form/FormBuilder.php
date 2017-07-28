@@ -72,7 +72,6 @@ class FormBuilder
 
         $response = $this->form->createView();
 
-
         return $this->view->make('dash', ['form' => $response]);
     }
 

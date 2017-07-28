@@ -37,6 +37,6 @@ class MakeForm extends Feature
             ]
         );
 
-       $form->setSymfonyForm($symfonyForm);
+        $form->setSymfonyForm($symfonyForm);
     }
 }

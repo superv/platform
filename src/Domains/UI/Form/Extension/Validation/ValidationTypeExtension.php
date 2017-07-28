@@ -1,12 +1,11 @@
 <?php namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
 
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
@@ -14,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ValidationTypeExtension extends AbstractTypeExtension
 {
-    /** @var ValidationFactory  */
+    /** @var ValidationFactory */
     protected $validator;
 
     public function __construct(ValidationFactory $validator)
@@ -27,8 +26,8 @@ class ValidationTypeExtension extends AbstractTypeExtension
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefined(array('rules'));
-        $resolver->setDefault('rules', array());
+        $resolver->setDefined(['rules']);
+        $resolver->setDefault('rules', []);
 
         $hasNullable = version_compare(app()->version(), '5.3.0', '>=');
 
@@ -73,7 +72,7 @@ class ValidationTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if ( ! $form->isRoot() && isset($options['rules']) ) {
+        if (!$form->isRoot() && isset($options['rules'])) {
             $rules = $options['rules'];
 
             $innerType = $form->getConfig()->getType()->getInnerType();

@@ -1,7 +1,5 @@
 <?php namespace SuperV\Platform\Domains\UI\Form;
 
-use SuperV\Platform\Domains\UI\Button\Button;
-
 class Action
 {
     private $button;
@@ -19,25 +17,16 @@ class Action
         $this->options = $options;
     }
 
-    /**
-     * @return mixed
-     */
     public function getOptions()
     {
         return $this->options;
     }
 
-    /**
-     * @return mixed
-     */
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * @return mixed
-     */
     public function getSlug()
     {
         return $this->slug;

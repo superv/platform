@@ -1,12 +1,12 @@
 <?php namespace SuperV\Platform\Domains\UI\Form\Extension;
 
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FormDefaultsTypeExtension extends AbstractTypeExtension
 {
-    /** @var array  */
+    /** @var array */
     protected $defaults;
 
     public function __construct($defaults)

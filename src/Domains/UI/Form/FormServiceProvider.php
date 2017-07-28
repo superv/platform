@@ -1,12 +1,11 @@
 <?php namespace SuperV\Platform\Domains\UI\Form;
 
-use SuperV\Platform\Domains\UI\Form\Extension\EloquentExtension;
+use Illuminate\Support\ServiceProvider;
 use SuperV\Platform\Domains\UI\Form\Extension\FormDefaultsTypeExtension;
 use SuperV\Platform\Domains\UI\Form\Extension\FormValidatorExtension;
 use SuperV\Platform\Domains\UI\Form\Extension\Http\HttpExtension;
 use SuperV\Platform\Domains\UI\Form\Extension\SessionExtension;
 use SuperV\Platform\Domains\UI\Form\Extension\Validation\ValidationTypeExtension;
-use Illuminate\Support\ServiceProvider;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
@@ -34,6 +33,7 @@ class FormServiceProvider extends ServiceProvider
 
             return new TwigRenderer($renderer);
         });
+
         $this->app->alias(TwigRenderer::class, FormRendererInterface::class);
 
         $this->app->bind('form.type.extensions', function ($app) {
@@ -42,15 +42,14 @@ class FormServiceProvider extends ServiceProvider
                 new ValidationTypeExtension($app['validator']),
             ];
         });
-//        $this->app->bind('form.type.guessers', function ($app) {
-//            return [];
-//        });
+        $this->app->bind('form.type.guessers', function ($app) {
+            return [];
+        });
 
         $this->app->bind('form.extensions', function ($app) {
             return [
                 new SessionExtension(),
                 new HttpExtension(),
-                new EloquentExtension(),
                 new FormValidatorExtension(),
             ];
         });
@@ -63,7 +62,6 @@ class FormServiceProvider extends ServiceProvider
             return Forms::createFormFactoryBuilder()
                         ->addExtensions($app['form.extensions'])
                         ->addTypeExtensions($app['form.type.extensions'])
-//                        ->addTypeGuessers($app['form.type.guessers'])
                         ->setResolvedTypeFactory($app['form.resolved_type_factory'])
                         ->getFormFactory();
         });
@@ -86,8 +84,6 @@ class FormServiceProvider extends ServiceProvider
             $twig->setLoader($loader);
         }
 
-//        $reflected = new \ReflectionClass(FormExtension::class);
-//        $path = dirname($reflected->getFileName()) . '/../Resources/views/Form';
         $path = __DIR__ . '/../../../../resources/views/form';
         $loader->addLoader(new \Twig_Loader_Filesystem($path));
 
@@ -106,8 +102,8 @@ class FormServiceProvider extends ServiceProvider
 
         // trans filter is used in the forms
         $twig->addFilter(new \Twig_SimpleFilter('trans', 'trans'));
+
         // csrf_token needs to be replaced for Laravel
         $twig->addFunction(new \Twig_SimpleFunction('csrf_token', 'csrf_token'));
-//        $this->registerViewComposer();
     }
 }

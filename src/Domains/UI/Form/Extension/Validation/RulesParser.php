@@ -4,9 +4,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -22,7 +19,7 @@ class RulesParser
     /** @var  FormInterface */
     protected $form;
 
-    /** @var FormView  */
+    /** @var FormView */
     protected $view;
 
     /** @var array $rules */
@@ -42,7 +39,7 @@ class RulesParser
      */
     public function getAttributes()
     {
-        $attributes = array();
+        $attributes = [];
 
         foreach ($this->rules as $rule) {
             list($rule, $parameters) = $this->parseRule($rule);
@@ -68,7 +65,7 @@ class RulesParser
     {
         return [
             'required' => 'required',
-            'title' => $this->getTitle('accepted'),
+            'title'    => $this->getTitle('accepted'),
         ];
     }
 
@@ -84,7 +81,7 @@ class RulesParser
     protected function required()
     {
         return [
-            'required' => 'required'
+            'required' => 'required',
         ];
     }
 
@@ -99,7 +96,7 @@ class RulesParser
     {
         return [
             'pattern' => '[a-zA-Z]+',
-            'title' => $this->getTitle('alpha'),
+            'title'   => $this->getTitle('alpha'),
         ];
     }
 
@@ -116,7 +113,7 @@ class RulesParser
     {
         return [
             'pattern' => '[a-zA-Z0-9]+',
-            'title' => $this->getTitle('alpha_num'),
+            'title'   => $this->getTitle('alpha_num'),
         ];
     }
 
@@ -133,7 +130,7 @@ class RulesParser
     {
         return [
             'pattern' => '[a-zA-Z0-9_\-]+',
-            'title' => $this->getTitle('alpha_dash'),
+            'title'   => $this->getTitle('alpha_dash'),
         ];
     }
 
@@ -155,7 +152,7 @@ class RulesParser
 
         return [
             'pattern' => '\d+',
-            'title' => $this->getTitle('integer'),
+            'title'   => $this->getTitle('integer'),
         ];
     }
 
@@ -177,7 +174,7 @@ class RulesParser
 
         return [
             'pattern' => '[-+]?[0-9]*[.,]?[0-9]+',
-            'title' => $this->getTitle('numeric'),
+            'title'   => $this->getTitle('numeric'),
         ];
     }
 
@@ -194,7 +191,7 @@ class RulesParser
     {
         return [
             'pattern' => '0|1',
-            'title' => $this->getTitle('boolean'),
+            'title'   => $this->getTitle('boolean'),
         ];
     }
 
@@ -205,6 +202,7 @@ class RulesParser
      *   digits:3  --> pattern="\d{3,5}"  (text)
      *
      * @param $param
+     *
      * @return array
      *
      * @see http://laravel.com/docs/5.1/validation#rule-digits
@@ -221,8 +219,8 @@ class RulesParser
         }
 
         return [
-            'pattern' => '\d{'.$digits.'}',
-            'title' => $this->getTitle('digits', compact('digits')),
+            'pattern' => '\d{' . $digits . '}',
+            'title'   => $this->getTitle('digits', compact('digits')),
         ];
     }
 
@@ -233,6 +231,7 @@ class RulesParser
      *   digits_between:3,5  --> pattern="\d{3,5}"  (text)
      *
      * @param $param
+     *
      * @return array
      *
      * @see http://laravel.com/docs/5.1/validation#rule-digits-between
@@ -249,8 +248,8 @@ class RulesParser
         }
 
         return [
-            'pattern' => '\d{'.$min.','.$max.'}',
-            'title' => $this->getTitle('digits_between', compact('min', 'max')),
+            'pattern' => '\d{' . $min . ',' . $max . '}',
+            'title'   => $this->getTitle('digits_between', compact('min', 'max')),
         ];
     }
 
@@ -262,6 +261,7 @@ class RulesParser
      *   min:5  --> minlength="5" (text)
      *
      * @param $param
+     *
      * @return array
      *
      * @see http://laravel.com/docs/5.1/validation#rule-min
@@ -287,6 +287,7 @@ class RulesParser
      *   max:5  --> maxlength="5" (text)
      *
      * @param $param
+     *
      * @return array
      *
      * @see http://laravel.com/docs/5.1/validation#rule-max
@@ -310,6 +311,7 @@ class RulesParser
      *   between:3,5  --> minlength="3" maxlength="5" (text)
      *
      * @param $param
+     *
      * @return array
      *
      * @see http://laravel.com/docs/5.1/validation#rule-between
@@ -339,6 +341,7 @@ class RulesParser
      *   size:5 --> pattern=".{5}"  (text)
      *
      * @param $param
+     *
      * @return array
      *
      * @see http://laravel.com/docs/5.1/validation#rule-size
@@ -349,15 +352,15 @@ class RulesParser
 
         if ($this->isNumeric()) {
             return [
-                'min' => $size,
-                'max' => $size,
+                'min'   => $size,
+                'max'   => $size,
                 'title' => $this->getTitle('size.numeric', compact('size')),
             ];
         }
 
         return [
-            'pattern' =>  '.{'.$size.'}',
-            'title' => $this->getTitle('size.string', compact('size')),
+            'pattern' => '.{' . $size . '}',
+            'title'   => $this->getTitle('size.string', compact('size')),
         ];
     }
 
@@ -368,6 +371,7 @@ class RulesParser
      *   in:foo,bar  --> pattern="foo|bar"
      *
      * @param $params
+     *
      * @return array
      *
      * @see http://laravel.com/docs/5.1/validation#rule-in
@@ -376,7 +380,7 @@ class RulesParser
     {
         return [
             'pattern' => implode('|', $params),
-            'title' => $this->getTitle('in'),
+            'title'   => $this->getTitle('in'),
         ];
     }
 
@@ -387,6 +391,7 @@ class RulesParser
      *   not_in:foo,bar  --> pattern="(?:(?!^foo$|^bar$).)*"
      *
      * @param $params
+     *
      * @return array
      *
      * @see http://laravel.com/docs/5.1/validation#rule-not-in
@@ -395,7 +400,7 @@ class RulesParser
     {
         return [
             'pattern' => '(?:(?!^' . join('$|^', $params) . '$).)*',
-            'title' => $this->getTitle('not_in'),
+            'title'   => $this->getTitle('not_in'),
         ];
     }
 
@@ -406,6 +411,7 @@ class RulesParser
      *   after:01-12-2015 -> min="2015-12-01"
      *
      * @param  $params
+     *
      * @return array
      *
      * @see http://laravel.com/docs/5.1/validation#rule-after
@@ -426,6 +432,7 @@ class RulesParser
      *   before:01-12-2015 -> max="2015-12-01"
      *
      * @param  $params
+     *
      * @return array
      *
      * @see http://laravel.com/docs/5.1/validation#rule-before
@@ -458,6 +465,7 @@ class RulesParser
      *  mimes:xls,xlsx  --> accept=".xls, .xlsx"
      *
      * @param  array
+     *
      * @return array
      *
      * @see http://laravel.com/docs/5.1/validation#rule-mimes
@@ -467,7 +475,7 @@ class RulesParser
     {
         $mimes = '.' . implode(', .', $param);
 
-        return ['accept'  => $mimes];
+        return ['accept' => $mimes];
     }
 
     /**
@@ -475,9 +483,10 @@ class RulesParser
      *
      * @param  string $rule
      * @param  array  $params
+     *
      * @return string
      */
-    protected function getTitle($rule, $params = array())
+    protected function getTitle($rule, $params = [])
     {
         $params['attribute'] = $this->form->getName();
 
@@ -487,7 +496,8 @@ class RulesParser
     /**
      * Check if the field is one of certain types.
      *
-     * @param  string|array  $types
+     * @param  string|array $types
+     *
      * @return bool
      */
     protected function isType($types)
@@ -512,15 +522,16 @@ class RulesParser
      * Format a date to the correct format, based on the current field.
      *
      * @param $dateStr
+     *
      * @return bool|string
      */
     protected function getDateAttribute($dateStr)
     {
         $format = "Y-m-d";
         if ($this->isType([
-                DateType::class,
-                DateTimeType::class,
-            ])) {
+            DateType::class,
+            DateTimeType::class,
+        ])) {
             $format .= '\TH:i:s';
         }
 
@@ -529,7 +540,7 @@ class RulesParser
 
     /**
      * Methods below are copied from \Illuminate\Validation\Validator
-     * @see https://github.com/laravel/framework/blob/5.1/src/Illuminate/Validation/Validator.php
+     * @see       https://github.com/laravel/framework/blob/5.1/src/Illuminate/Validation/Validator.php
      * @copyright Taylor Otwell
      */
 
@@ -537,6 +548,7 @@ class RulesParser
      * Extract the rule name and parameters from a rule.
      *
      * @param  array|string $rules
+     *
      * @return array
      */
     protected function parseRule($rules)
@@ -544,6 +556,7 @@ class RulesParser
         if (is_array($rules)) {
             return $this->parseArrayRule($rules);
         }
+
         return $this->parseStringRule($rules);
     }
 
@@ -551,6 +564,7 @@ class RulesParser
      * Parse an array based rule.
      *
      * @param  array $rules
+     *
      * @return array
      */
     protected function parseArrayRule(array $rules)
@@ -562,6 +576,7 @@ class RulesParser
      * Parse a string based rule.
      *
      * @param  string $rules
+     *
      * @return array
      */
     protected function parseStringRule($rules)
@@ -574,6 +589,7 @@ class RulesParser
             list($rules, $parameter) = explode(':', $rules, 2);
             $parameters = $this->parseParameters($rules, $parameter);
         }
+
         return [Str::studly(trim($rules)), $parameters];
     }
 
@@ -582,6 +598,7 @@ class RulesParser
      *
      * @param  string $rule
      * @param  string $parameter
+     *
      * @return array
      */
     protected function parseParameters($rule, $parameter)
@@ -589,7 +606,7 @@ class RulesParser
         if (strtolower($rule) == 'regex') {
             return [$parameter];
         }
+
         return str_getcsv($parameter);
     }
-
 }

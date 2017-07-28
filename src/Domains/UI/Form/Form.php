@@ -9,16 +9,17 @@ class Form
 
     protected $actions;
 
-    /** @var  FormInterface  */
+    /** @var  FormInterface */
     protected $symfonyForm;
 
-    public function __construct( Collection $fields, Collection $actions)
+    public function __construct(Collection $fields, Collection $actions)
     {
         $this->fields = $fields;
         $this->actions = $actions;
     }
 
-    public function addField(FieldType $field) {
+    public function addField(FieldType $field)
+    {
         $this->fields->push($field);
     }
 

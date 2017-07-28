@@ -13,9 +13,9 @@ class SessionExtension extends AbstractExtension
      */
     protected function loadTypeExtensions()
     {
-        return array(
+        return [
             new Session\CsrfTypeExtension,
             new Session\SessionTypeExtension,
-        );
+        ];
     }
 }

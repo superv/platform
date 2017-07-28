@@ -1,7 +1,7 @@
 <?php namespace SuperV\Platform\Domains\UI\Form\Facade;
 
-use SuperV\Platform\Domains\UI\Form\FormRenderer as RealFormRenderer;
 use Illuminate\Support\Facades\Facade;
+use SuperV\Platform\Domains\UI\Form\FormRenderer as RealFormRenderer;
 
 class FormRenderer extends Facade
 {

@@ -1,9 +1,8 @@
 <?php namespace SuperV\Platform\Domains\UI\Form\Extension\Session;
 
-use Illuminate\Session\SessionManager;
+use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\AbstractTypeExtension;
 
 class SessionTypeExtension extends AbstractTypeExtension
 {

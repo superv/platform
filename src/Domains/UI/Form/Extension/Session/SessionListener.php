@@ -1,19 +1,18 @@
 <?php namespace SuperV\Platform\Domains\UI\Form\Extension\Session;
 
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormEvent;
-use Illuminate\Session\SessionManager;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 class SessionListener implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             FormEvents::PRE_SET_DATA => 'preSet',
-        );
+        ];
     }
 
     public function preSet(FormEvent $event)
@@ -21,7 +20,7 @@ class SessionListener implements EventSubscriberInterface
         $form = $event->getForm();
         $rootName = $form->getRoot()->getName();
 
-        if ( ! $form->isRoot() && $parent = $form->getParent()) {
+        if (!$form->isRoot() && $parent = $form->getParent()) {
             $name = $this->getDottedName($form);
             $fullName = $this->getFullName($rootName, $name);
 
@@ -67,7 +66,8 @@ class SessionListener implements EventSubscriberInterface
 
     /**
      * @param FormEvent $event
-     * @param mixed $value
+     * @param mixed     $value
+     *
      * @return mixed
      */
     protected function transformValue(FormEvent $event, $value)

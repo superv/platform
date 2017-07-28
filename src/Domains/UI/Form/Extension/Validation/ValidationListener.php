@@ -1,5 +1,6 @@
 <?php namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
 
+use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -8,9 +9,8 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
 
@@ -30,10 +30,10 @@ class ValidationListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
-                FormEvents::PRE_SUBMIT => 'gatherData',
-                FormEvents::POST_SUBMIT => 'validateRules',
-            );
+        return [
+            FormEvents::PRE_SUBMIT  => 'gatherData',
+            FormEvents::POST_SUBMIT => 'validateRules',
+        ];
     }
 
     /**
@@ -70,7 +70,6 @@ class ValidationListener implements EventSubscriberInterface
                     }
                 }
             }
-
         }
     }
 
@@ -78,7 +77,8 @@ class ValidationListener implements EventSubscriberInterface
      * Recursively find all rules.
      *
      * @param FormInterface $parent
-     * @param array $rules
+     * @param array         $rules
+     *
      * @return array
      */
     protected function findRules(FormInterface $parent, $rules = [])
@@ -87,7 +87,7 @@ class ValidationListener implements EventSubscriberInterface
             $config = $form->getConfig();
             $name = $form->getName();
 
-            if ($config->hasOption('rules') ) {
+            if ($config->hasOption('rules')) {
 
                 $rule = $config->getOption('rules');
                 $innerType = $form->getConfig()->getType()->getInnerType();
@@ -97,7 +97,7 @@ class ValidationListener implements EventSubscriberInterface
                     $name .= '.*';
                 }
 
-                if ( ! $parent->isRoot()) {
+                if (!$parent->isRoot()) {
                     $name = $parent->getName() . '.' . $name;
                 }
 
@@ -114,14 +114,15 @@ class ValidationListener implements EventSubscriberInterface
      * Recursively get the form using the dotted name.
      *
      * @param FormInterface $form
-     * @param $name
+     * @param               $name
+     *
      * @return FormInterface
      */
     protected function getByDotted(FormInterface $form, $name)
     {
         $parts = explode('.', $name);
 
-        while($name = array_shift($parts)) {
+        while ($name = array_shift($parts)) {
             $form = $form->get($name);
         }
 
@@ -132,7 +133,8 @@ class ValidationListener implements EventSubscriberInterface
      * Add default rules based on the type
      *
      * @param FormTypeInterface $type
-     * @param array $rules
+     * @param array             $rules
+     *
      * @return array
      */
     protected function addTypeRules(FormTypeInterface $type, array $rules)

@@ -70,17 +70,14 @@ class FieldType
             array_set($options, 'mapped', false);
             if ($related = array_get($this->config, 'related')) {
                 array_set($options, 'choices', $related::pluck('id', 'name'));
-                $options['data'] = [1,2];
+                $options['data'] = [1, 2];
             }
         }
 
         if ($this->type == 'relation') {
             array_set($options, 'multiple', array_get($this->config, 'multiple', false));
             array_set($options, 'expanded', array_get($this->config, 'expanded', false));
-
         }
-
-
 
         return $options;
     }
