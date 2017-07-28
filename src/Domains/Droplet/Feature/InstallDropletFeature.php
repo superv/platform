@@ -25,6 +25,7 @@ class InstallDropletFeature extends Feature
         $this->dispatch(new LocateDropletJob($model));
         
         $composer = $this->dispatch(new GetComposerArrayJob(base_path($model->path())));
+
         $namespace = $this->dispatch(new GetBaseNamespaceJob($composer));
         
         $model->namespace($namespace);

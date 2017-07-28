@@ -1,22 +1,21 @@
 <?php namespace SuperV\Platform;
 
-use Assetic\Extension\Twig\AsseticExtension;
-use Assetic\Factory\AssetFactory;
 use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Collective\Html\HtmlServiceProvider;
 use Laravel\Tinker\TinkerServiceProvider;
 use Spatie\Tail\TailServiceProvider;
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Droplet\DropletManager;
-use TwigBridge\Bridge;
+use SuperV\Platform\Domains\UI\Form\FormServiceProvider;
 
 class PlatformServiceProvider extends ServiceProvider
 {
     protected $providers = [
+        PlatformEventProvider::class,
+        FormServiceProvider::class,
         'SuperV\Nucleus\NucleusServiceProvider',
         'SuperV\Platform\Adapters\AdapterServiceProvider',
         'SuperV\Platform\Domains\Database\DatabaseServiceProvider',
-        'SuperV\Modules\Console\ConsoleModuleServiceProvider',
     ];
 
     protected $singletons = [
@@ -43,6 +42,9 @@ class PlatformServiceProvider extends ServiceProvider
         if (!env('SUPERV_INSTALLED', false)) {
             return;
         }
+
+        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'superv');
+
         $this->app->booted(
             function () {
                 /* @var DropletManager $manager */

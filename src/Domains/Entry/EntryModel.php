@@ -4,7 +4,7 @@ use SuperV\Platform\Domains\Model\EloquentModel;
 
 class EntryModel extends EloquentModel
 {
-    public function flushCache() { }
+    protected $fields;
 
     protected static function boot()
     {
@@ -25,4 +25,15 @@ class EntryModel extends EloquentModel
 
         parent::boot();
     }
+
+    public function getId()
+    {
+        return $this->getKey();
+    }
+
+    public function getFields() {
+        return $this->fields;
+    }
+
+    public function flushCache() { }
 }

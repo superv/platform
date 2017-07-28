@@ -1,0 +1,23 @@
+<thead>
+<tr role="row">
+    {% for col in columns %}
+        <th class="{{ col.getClasses() ? col.getClassString() : 'sorting' }}">
+            {% if col.isSortable() %}
+                <a href=" {{ col.getSortUrl() }}">
+                    {{ col.getLabel() | raw }}
+                    {% if col.isSorted() %}
+                        {% if col.getDirection() == 'asc' %}
+                            <span class="fa fa-sort-asc"></span>
+                        {% elseif col.getDirection() == 'desc' %}
+                            <span class="fa fa-sort-desc"></span>
+                        {% endif %}
+                    {% endif %}
+                </a>
+            {% else %}
+                {{ col.getLabel() | raw }}
+            {% endif %}
+
+        </th>
+    {% endfor %}
+</tr>
+</thead>

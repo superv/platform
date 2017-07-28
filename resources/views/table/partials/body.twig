@@ -1,0 +1,18 @@
+<tbody>
+    {% for row in table.rows %}
+        <tr>
+            {% for col in columns %}
+                <td class="{{ col.getClasses() ? col.getClassString() : 'sorting' }}">
+                    {% if col.hasRenderer() %}
+                        {{ col.render(row) | raw }}
+                    {% else %}
+                        {{ attribute(row, col.getField()) | raw }}
+                    {% endif %}
+                </td>
+            {% endfor %}
+                <td class="text-lg-right">
+                    {#<nobr>{{ buttons(row.buttons)|raw }}</nobr>#}
+                </td>
+        </tr>
+    {% endfor %}
+</tbody>

@@ -1,8 +1,8 @@
 <?php namespace SuperV\Platform\Domains\Droplet\Model;
 
-use SuperV\Platform\Domains\Model\EloquentModel;
+use SuperV\Platform\Domains\Entry\EntryModel;
 
-class DropletModel extends EloquentModel
+class DropletModel extends EntryModel
 {
    protected $table = 'platform_droplets';
     
@@ -15,7 +15,12 @@ class DropletModel extends EloquentModel
         }
         
         return $this->getAttribute('path');
-    }    
+    }
+
+    public function getPath($path = null)
+    {
+        return $this->path . ($path ? '/' . $path : '');
+    }
     
     public function namespace($namespace = null)
     {

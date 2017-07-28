@@ -61,7 +61,7 @@ class Droplet
 
     public function getPath($path = null)
     {
-        return $this->model->path() . ($path ? '/' . $path : '');
+        return $this->model->getPath($path);
     }
 
     /**

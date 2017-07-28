@@ -16,4 +16,5 @@ class Droplets extends EloquentRepository
 
         return parent::withSlug($slug);
     }
+
 }
