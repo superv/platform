@@ -22,7 +22,7 @@ class Form
         $this->fields->push($field);
     }
 
-    public function addAction(FormAction $action)
+    public function addAction(Action $action)
     {
         $this->actions->push($action);
     }

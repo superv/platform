@@ -2,7 +2,7 @@
 
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\UI\Form\FieldType;
-use SuperV\Platform\Domains\UI\Form\FormAction;
+use SuperV\Platform\Domains\UI\Form\Action;
 use SuperV\Platform\Domains\UI\Form\FormBuilder;
 
 class BuildForm extends Feature
@@ -42,7 +42,7 @@ class BuildForm extends Feature
             $form->addField(new FieldType($fieldName, $fieldType, $rules, $config));
         }
 
-        $form->addAction(new FormAction(
+        $form->addAction(new Action(
             'save', 'submit', [
                 'label' => 'Save',
                 'attr'  => ['class' => 'btn-success'],

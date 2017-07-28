@@ -1,7 +1,11 @@
 <?php namespace SuperV\Platform\Domains\UI\Form;
 
-class FormAction
+use SuperV\Platform\Domains\UI\Button\Button;
+
+class Action
 {
+    private $button;
+
     private $slug;
 
     private $type;
