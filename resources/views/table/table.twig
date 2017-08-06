@@ -1,18 +1,20 @@
 <div class="col-xs-12">
     <div class="box">
-        <div class="box-header">
-            <h3 class="box-title">Hover Data Table</h3>
-            <div class="pull-right">
-                {% for button in buttons %}
-                    {{ button.render()|raw }}
-                {% endfor %}
+        {% if not actions is empty %}
+            <div class="box-header">
+                <h3 class="box-title">s</h3>
+                <div class="pull-right">
+                    {% for button in actions %}
+                        {{ button.render()|raw }}
+                    {% endfor %}
+                </div>
             </div>
-        </div>
+        {% endif %}
         <!-- /.box-header -->
         <div class="box-body">
             <div class="row">
                 <div class="col-sm-12">
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-striped">
 
                         {% include 'superv::table/partials/header' %}
                         {% include 'superv::table/partials/body' %}
@@ -21,14 +23,16 @@
             </div>
             <div class="row">
                 <div class="col-sm-5">
-                    <div class="dataTables_info" id="example1_info" role="status" aria-live="polite">Showing 51 to 57 of
-                        57 entries {{ table.name }}
+                    <div class="dataTables_info" role="status" aria-live="polite">
+                        {% if table.data.pagination.total %}
+                      {{ table.data.pagination.total }} records found
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col-sm-7">
-                    <div class="dataTables_paginate paging_simple_numbers" id="example1_paginate">
-                        {% if table.hasPaginator() %}
-                            {{ rows.render() | raw }}
+                    <div class="dataTables_paginate paging_simple_numbers">
+                        {% if table.data.pagination.links %}
+                            {{ table.data.pagination.links|raw }}
                         {% endif %}
                     </div>
                 </div>
@@ -37,6 +41,7 @@
     </div>
 
 </div>
+
 
 
 

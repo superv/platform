@@ -1,5 +1,6 @@
 <?php namespace SuperV\Platform\Support;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
 use StringTemplate\Engine;

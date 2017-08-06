@@ -5,7 +5,7 @@ use SuperV\Platform\Domains\UI\Button\Button;
 use SuperV\Platform\Domains\UI\Button\Jobs\EvaluateButtonJob;
 use SuperV\Platform\Domains\UI\Button\Jobs\NormalizeButtonJob;
 
-class MakeButton
+class MakeButtons
 {
     use DispatchesJobs;
 
@@ -14,17 +14,31 @@ class MakeButton
      */
     private $arguments;
 
-    private $button;
+    /**
+     * @var array
+     */
+    private $buttons;
 
-    public function __construct($button, array $arguments)
+    public function __construct(array $buttons, array $arguments)
     {
         $this->arguments = $arguments;
-        $this->button = $button;
+        $this->buttons = $buttons;
     }
 
     public function handle()
     {
-        $params = $this->dispatch(new EvaluateButtonJob($this->button, $this->arguments));
+        $buttons = [];
+
+        foreach ($this->buttons as $button) {
+            $buttons[] = $this->makeButton($button);
+        }
+
+        return $buttons;
+    }
+
+    public function makeButton($data)
+    {
+        $params = $this->dispatch(new EvaluateButtonJob($data, $this->arguments));
 
         $params = $this->dispatch(new NormalizeButtonJob($params));
 
@@ -33,7 +47,7 @@ class MakeButton
         $button->key = array_get($params, 'button');
         $button->attributes = array_get($params, 'attributes', []);
         $button->text = array_get($params, 'text', 'Button');
-        $button->type  = array_get($params, 'type', 'default');
+        $button->type = array_get($params, 'type', 'default');
 
         return $button;
     }
