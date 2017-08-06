@@ -32,6 +32,14 @@ class NormalizeButtonJob
             array_set($button['attributes'], 'target', array_pull($button, 'target'));
         }
 
+        if (
+            isset($button['attributes']['href']) &&
+            is_string($button['attributes']['href']) &&
+            !starts_with($button['attributes']['href'], 'http')
+        ) {
+            $button['attributes']['href'] = url($button['attributes']['href']);
+        }
+
         return $button;
     }
 }

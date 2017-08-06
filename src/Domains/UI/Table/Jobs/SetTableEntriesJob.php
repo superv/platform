@@ -24,7 +24,7 @@ class SetTableEntriesJob
         $table = $builder->getTable();
 
         /** @var EntryModel $model */
-        $model = superv($builder->getModel());
+        $model = $table->getModel();
 
         /** @var Builder $query */
         $query = $model->newQuery();

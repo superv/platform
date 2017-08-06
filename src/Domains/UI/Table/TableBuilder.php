@@ -2,8 +2,7 @@
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\View\Factory;
-use SuperV\Modules\Auth\Domains\User\UserModel;
-use SuperV\Platform\Domains\UI\Button\Features\MakeButtons;
+use SuperV\Platform\Domains\Entry\EntryModel;
 use SuperV\Platform\Domains\UI\Table\Features\BuildTable;
 use SuperV\Platform\Traits\FiresCallbacks;
 
@@ -15,11 +14,11 @@ class TableBuilder
     /** @var  Table */
     protected $table;
 
-    /** @var string  */
-    protected $model = UserModel::class;
+    /** @var string */
+    protected $model;
 
     protected $buttons = [
-        'edit' => [
+        'edit'   => [
             'href' => 'auth/users/{entry.id}/edit',
             'text' => 'Edit',
             'type' => 'info',
@@ -36,9 +35,10 @@ class TableBuilder
      */
     private $view;
 
-    public function __construct(Factory $view)
+    public function __construct(Factory $view, Table $table)
     {
         $this->view = $view;
+        $this->table = $table;
     }
 
     public function make()
@@ -101,14 +101,6 @@ class TableBuilder
     }
 
     /**
-     * @return string
-     */
-    public function getModel(): string
-    {
-        return $this->model;
-    }
-
-    /**
      * @param Table $table
      *
      * @return TableBuilder
@@ -118,7 +110,7 @@ class TableBuilder
         $this->table = $table;
 
         return $this;
-}
+    }
 
     /**
      * @return array
@@ -126,5 +118,25 @@ class TableBuilder
     public function getButtons(): array
     {
         return $this->buttons;
+    }
+
+    /**
+     * @param string $model
+     *
+     * @return TableBuilder
+     */
+    public function setModel(string $model): TableBuilder
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+    /**
+     * @return string|EntryModel
+     */
+    public function getModel()
+    {
+        return $this->model;
     }
 }

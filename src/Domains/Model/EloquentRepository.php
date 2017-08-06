@@ -15,12 +15,11 @@ class EloquentRepository implements RepositoryInterface
     public function all()
     {
         return $this->model->all();
-//        return $this->collection($this->model->all());
     }
 
     public function find($id)
     {
-        if (is_string($id)) {
+        if (is_string($id) && !is_numeric($id)) {
             return $this->withSlug($id);
         }
 

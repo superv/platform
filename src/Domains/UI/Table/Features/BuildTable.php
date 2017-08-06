@@ -1,9 +1,11 @@
 <?php namespace SuperV\Platform\Domains\UI\Table\Features;
 
 use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\UI\Table\Jobs\BuildTableRowsJob;
+use SuperV\Platform\Domains\UI\Table\Jobs\BuildColumnsJob;
+use SuperV\Platform\Domains\UI\Table\Jobs\BuildRowsJob;
 use SuperV\Platform\Domains\UI\Table\Jobs\LoadPaginationJob;
 use SuperV\Platform\Domains\UI\Table\Jobs\SetTableEntriesJob;
+use SuperV\Platform\Domains\UI\Table\Jobs\SetTableModelJob;
 use SuperV\Platform\Domains\UI\Table\Row;
 use SuperV\Platform\Domains\UI\Table\Table;
 use SuperV\Platform\Domains\UI\Table\TableBuilder;
@@ -24,45 +26,17 @@ class BuildTable extends Feature
     {
         $builder = $this->builder;
 
-        /**
-         *  Build table data
-         */
-        $table = superv(Table::class);
-//        $table = (new Table())->setData((new $model)->paginate(10));
+        $this->dispatch(new SetTableModelJob($builder));
 
-        $table->setButtons($builder->getButtons());
-        $builder->setTable($table);
+        $builder->getTable()->setButtons($builder->getButtons());
 
         $this->dispatch(new SetTableEntriesJob($builder));
 
         $this->dispatch(new LoadPaginationJob($builder));
 
-        $this->dispatch(new BuildTableRowsJob($builder));
+        $this->dispatch(new BuildRowsJob($builder));
 
-        /**
-         *  Generate Table Columns
-         */
-        $table = $builder->getTable();
-        $collection = $table->getEntries();
-
-        if (!$collection->first()) {
-            return [];
-        }
-
-        $model = $collection->first();
-        // These are the Laravel basic timestamp fields which we don't want to display, by default
-        $timestamp_fields = ['created_at', 'updated_at', 'deleted_at'];
-
-        // Grab the basic fields from the first model
-        $fields = array_keys($model->toArray());
-
-        // Remove the timestamp fields
-        $fields = array_diff($fields, $timestamp_fields);
-        if ($model->isSortable) {
-            $fields = array_unique(array_merge($fields, $model->getSortable()));
-        }
-
-        $table->setColumns($fields);
+        $this->dispatch(new BuildColumnsJob($builder));
 
 //        $this->dispatch(new SetTableModel($builder));
 //        $this->dispatch(new SetTableStream($builder));

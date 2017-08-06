@@ -3,12 +3,17 @@
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Input;
 use SuperV\Platform\Domains\Entry\EntryCollection;
+use SuperV\Platform\Domains\Entry\EntryModel;
+use SuperV\Platform\Domains\Model\EloquentModel;
 use SuperV\Platform\Support\Collection;
 
 class Table
 {
     /** @var array */
     protected $data;
+
+    /** @var  EntryModel */
+    protected $model;
 
     protected $entries;
 
@@ -89,8 +94,6 @@ class Table
      */
     public function render()
     {
-        $this->appendPaginationLinks();
-
         $viewData = array_merge($this->viewVars, [
             'rows'    => $this->getRows(),
             'columns' => $this->getColumns(),
@@ -115,10 +118,6 @@ class Table
 
     public function setEntries($entries)
     {
-        if ($entries instanceof LengthAwarePaginator) {
-            $entries = new EntryCollection($entries->items());
-        }
-
         $this->entries = $entries;
 
         return $this;
@@ -127,15 +126,6 @@ class Table
     private function clearColumns()
     {
         $this->columns = [];
-    }
-
-    private function appendPaginationLinks()
-    {
-        if (class_basename($this->entries) == 'LengthAwarePaginator') {
-            // This set of models was paginated.  Make it append our current view variables.
-            $this->entries->appends(Input::only(config('gbrock-tables.key_field'),
-                config('gbrock-tables.key_direction')));
-        }
     }
 
     /**
@@ -244,4 +234,24 @@ class Table
     {
         return $this->rows;
     }
+
+    /**
+     * @return EntryModel
+     */
+    public function getModel(): EntryModel
+    {
+        return $this->model;
+    }
+
+    /**
+     * @param EntryModel $model
+     *
+     * @return Table
+     */
+    public function setModel(EntryModel $model): Table
+    {
+        $this->model = $model;
+
+        return $this;
+}
 }

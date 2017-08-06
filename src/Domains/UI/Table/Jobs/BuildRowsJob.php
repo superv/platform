@@ -4,7 +4,7 @@ use SuperV\Platform\Domains\UI\Table\Row;
 use SuperV\Platform\Domains\UI\Table\RowCollection;
 use SuperV\Platform\Domains\UI\Table\TableBuilder;
 
-class BuildTableRowsJob
+class BuildRowsJob
 {
     /**
      * @var TableBuilder

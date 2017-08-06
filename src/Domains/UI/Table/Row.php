@@ -19,12 +19,6 @@ class Row
 
     public function make()
     {
-        $args   = [
-                    'entry' => [
-                        'id' => 7,
-                        'name' => 'Entiri'
-                    ]
-                ];
        $this->buttons = $this->dispatch(new MakeButtons($this->buttons, ['entry' => $this->model]));
 
        return $this;
