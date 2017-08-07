@@ -4,7 +4,11 @@ use SuperV\Platform\Domains\Model\EloquentModel;
 
 class EntryModel extends EloquentModel
 {
-    protected $fields;
+    use RoutableTrait;
+
+    protected $fields = [];
+
+    protected $cache;
 
     protected static function boot()
     {
@@ -36,4 +40,8 @@ class EntryModel extends EloquentModel
     }
 
     public function flushCache() { }
+
+
+
+
 }
