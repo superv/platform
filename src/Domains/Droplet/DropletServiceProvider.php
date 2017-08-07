@@ -36,6 +36,8 @@ class DropletServiceProvider
 
     protected $providers = [];
 
+    protected $manifests = [];
+
     public function __construct(Application $app, Droplet $droplet)
     {
         $this->app = $app;
@@ -113,5 +115,13 @@ class DropletServiceProvider
     public function getProviders()
     {
         return $this->providers;
+    }
+
+    /**
+     * @return array
+     */
+    public function getManifests(): array
+    {
+        return $this->manifests;
     }
 }

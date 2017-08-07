@@ -8,10 +8,13 @@ use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Droplet\Jobs\RegisterDropletRouteJob;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
+use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
+use SuperV\Platform\Domains\Manifest\Features\RegisterManifest;
+use SuperV\Platform\Domains\Manifest\ManifestCollection;
 
 class DropletProvider
 {
-    use DispatchesJobs;
+    use ServesFeaturesTrait;
 
     /**
      * The registered providers.
@@ -67,6 +70,8 @@ class DropletProvider
         $this->registerCommands($provider);
         $this->registerFeatures($provider);
         $this->registerEvents($provider, $droplet);
+
+        $this->registerManifests($provider, $droplet);
 
         if (method_exists($provider, 'register')) {
             $this->app->call([$provider, 'register'], ['provider' => $this]);
@@ -147,6 +152,13 @@ class DropletProvider
         $features = app(FeatureCollection::class);
         foreach ($provider->getFeatures() as $key => $feature) {
             $features->push($feature);
+        }
+    }
+
+    protected function registerManifests(DropletServiceProvider $provider)
+    {
+        foreach ($provider->getManifests() as $key => $manifest) {
+           $this->serve(new RegisterManifest(superv($manifest)));
         }
     }
 
