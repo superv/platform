@@ -54,8 +54,8 @@ class FormBuilder
             if ($this->form->isSubmitted() && $this->form->isValid()) {
                 $this->entry->save();
 
-                $perms = $this->form->getFormData('permissions');
-                $this->entry->permissions()->sync($perms);
+//                $perms = $this->form->getFormData('permissions');
+//                $this->entry->permissions()->sync($perms);
 
                 return redirect('/')->withSuccess('Entry saved!');
             }

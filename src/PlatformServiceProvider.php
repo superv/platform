@@ -6,6 +6,7 @@ use Laravel\Tinker\TinkerServiceProvider;
 use Spatie\Tail\TailServiceProvider;
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Droplet\DropletManager;
+use SuperV\Platform\Domains\Manifest\ManifestCollection;
 use SuperV\Platform\Domains\UI\Form\FormServiceProvider;
 
 class PlatformServiceProvider extends ServiceProvider
@@ -22,6 +23,7 @@ class PlatformServiceProvider extends ServiceProvider
         'SuperV\Platform\Domains\Feature\FeatureCollection'       => '~',
         'SuperV\Platform\Domains\Droplet\Model\DropletCollection' => '~',
         'SuperV\Platform\Domains\Droplet\Types\PortCollection'    => '~',
+        ManifestCollection::class => '~'
     ];
 
     protected $bindings = [

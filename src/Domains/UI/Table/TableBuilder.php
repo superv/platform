@@ -19,7 +19,6 @@ class TableBuilder
 
     protected $buttons = [
         'edit'   => [
-            'href' => 'auth/users/{entry.id}/edit',
             'text' => 'Edit',
             'type' => 'info',
         ],

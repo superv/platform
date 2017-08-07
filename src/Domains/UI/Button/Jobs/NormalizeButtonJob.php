@@ -1,45 +1,54 @@
 <?php namespace SuperV\Platform\Domains\UI\Button\Jobs;
 
+use SuperV\Platform\Domains\Entry\EntryModel;
+
 class NormalizeButtonJob
 {
     private $button;
 
-    public function __construct($button)
+    private $arguments;
+
+    public function __construct($button, $arguments)
     {
         $this->button = $button;
+        $this->arguments = $arguments;
     }
 
     public function handle()
     {
-        $button = $this->button;
+        $buttonData = $this->button;
 
         /*
          * Make sure some default parameters exist.
          */
-        $button['attributes'] = array_get($button, 'attributes', []);
+        $buttonData['attributes'] = array_get($buttonData, 'attributes', []);
 
         /*
          * Move the HREF if any to the attributes.
          */
-        if (isset($button['href'])) {
-            array_set($button['attributes'], 'href', array_pull($button, 'href'));
+        if (isset($buttonData['href'])) {
+            array_set($buttonData['attributes'], 'href', array_pull($buttonData, 'href'));
+        } elseif ($entry = array_get($this->arguments, 'entry')) {
+            if ($entry instanceof EntryModel && $button = array_get($buttonData, 'button')) {
+                array_set($buttonData, 'attributes.href', $entry->route($button));
+            }
         }
 
         /*
          * Move the target if any to the attributes.
          */
-        if (isset($button['target'])) {
-            array_set($button['attributes'], 'target', array_pull($button, 'target'));
+        if (isset($buttonData['target'])) {
+            array_set($buttonData['attributes'], 'target', array_pull($buttonData, 'target'));
         }
 
         if (
-            isset($button['attributes']['href']) &&
-            is_string($button['attributes']['href']) &&
-            !starts_with($button['attributes']['href'], 'http')
+            isset($buttonData['attributes']['href']) &&
+            is_string($buttonData['attributes']['href']) &&
+            !starts_with($buttonData['attributes']['href'], 'http')
         ) {
-            $button['attributes']['href'] = url($button['attributes']['href']);
+            $buttonData['attributes']['href'] = url($buttonData['attributes']['href']);
         }
 
-        return $button;
+        return $buttonData;
     }
 }

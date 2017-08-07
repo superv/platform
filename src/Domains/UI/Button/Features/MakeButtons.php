@@ -29,7 +29,24 @@ class MakeButtons
     {
         $buttons = [];
 
-        foreach ($this->buttons as $button) {
+        foreach ($this->buttons as $key => $button) {
+            if (is_numeric($key) && is_string($button)) {
+                $button = [
+                    'button' => $button,
+                ];
+            }
+
+            if (!is_numeric($key) && is_string($button)) {
+                $button = [
+                    'text'   => $button,
+                    'button' => $key,
+                ];
+            }
+
+            if (!is_numeric($key) && is_array($button) && !isset($button['button'])) {
+                 $button['button'] = $key;
+             }
+
             $buttons[] = $this->makeButton($button);
         }
 
@@ -40,7 +57,7 @@ class MakeButtons
     {
         $params = $this->dispatch(new EvaluateButtonJob($data, $this->arguments));
 
-        $params = $this->dispatch(new NormalizeButtonJob($params));
+        $params = $this->dispatch(new NormalizeButtonJob($params, $this->arguments));
 
         // hydrate button
         $button = superv(Button::class);
