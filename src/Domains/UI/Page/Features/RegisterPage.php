@@ -1,8 +1,10 @@
 <?php namespace SuperV\Platform\Domains\UI\Page\Features;
 
 use Illuminate\Routing\Router;
+use SuperV\Platform\Domains\Droplet\Jobs\RegisterDropletRouteJob;
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\UI\Page\Page;
+use SuperV\Platform\Domains\UI\Page\PageCollection;
 
 class RegisterPage extends Feature
 {
@@ -16,16 +18,19 @@ class RegisterPage extends Feature
         $this->page = $page;
     }
 
-    public function handle(Router $router)
+    public function handle(Router $router, PageCollection $pages)
     {
-        $route = [
-            'as'   => $this->page->getRoute(),
-            'uses' => $this->page->getHandler() . '@' . $this->page->getPage(),
-        ];
-        $uri = $this->page->getUrl();
+        $page = $this->page;
+        $handler = $this->page->getHandler();
 
-        $constraints = [];
-        $route = $router->any($uri, $route)->where($constraints);
+        $route = [
+            'as'   => $page->getRoute(),
+            'uses' => is_callable($handler) ? $handler : $handler . '@' . $page->getPage(),
+        ];
+
+        $this->dispatch(new RegisterDropletRouteJob($page->getDroplet(), $page->getUrl(), $route));
+
+        $pages->put($page->getRoute(), $page);
 
         return $route;
     }

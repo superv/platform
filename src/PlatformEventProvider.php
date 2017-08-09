@@ -2,12 +2,17 @@
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActiveModuleJob;
+use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectCurrentPortJob;
 
 class PlatformEventProvider extends EventServiceProvider
 {
     protected $listen = [
-        'superv.app.loaded' => [
-            DetectActiveModuleJob::class
+//        'superv::app.loaded' => [
+//            DetectActiveModuleJob::class
+//        ],
+        'Illuminate\Routing\Events\RouteMatched' => [
+            DetectActiveModuleJob::class,
+            DetectCurrentPortJob::class
         ],
     ];
 

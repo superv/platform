@@ -27,7 +27,8 @@ class BuildPageJob
              ->setPage(array_get($this->pageData, 'page'))
              ->setRoute(array_get($this->pageData, 'route'))
              ->setUrl(array_get($this->pageData, 'url'))
-             ->setHandler(array_get($this->pageData, 'handler'));
+             ->setHandler(array_get($this->pageData, 'handler'))
+             ->setPageTitle(array_get($this->pageData, 'page_title'));
 
         return $page;
     }

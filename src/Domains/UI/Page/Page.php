@@ -1,8 +1,13 @@
 <?php namespace SuperV\Platform\Domains\UI\Page;
 
+use SuperV\Platform\Domains\Droplet\Droplet;
+
 class Page
 {
     protected $manifest;
+
+    /** @var  Droplet */
+    protected $droplet;
 
     protected $page;
 
@@ -12,6 +17,8 @@ class Page
     protected $url;
 
     protected $handler;
+
+    protected $pageTitle;
 
     protected $public = false;
 
@@ -25,7 +32,7 @@ class Page
         $this->page = $page;
 
         return $this;
-}
+    }
 
     /**
      * @param mixed $route
@@ -37,7 +44,7 @@ class Page
         $this->route = $route;
 
         return $this;
-}
+    }
 
     /**
      * @param mixed $url
@@ -49,7 +56,7 @@ class Page
         $this->url = $url;
 
         return $this;
-}
+    }
 
     /**
      * @param mixed $handler
@@ -61,7 +68,7 @@ class Page
         $this->handler = $handler;
 
         return $this;
-}
+    }
 
     /**
      * @param mixed $manifest
@@ -73,7 +80,7 @@ class Page
         $this->manifest = $manifest;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed
@@ -105,5 +112,45 @@ class Page
     public function getHandler()
     {
         return $this->handler;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPageTitle()
+    {
+        return $this->pageTitle;
+    }
+
+    /**
+     * @param mixed $pageTitle
+     *
+     * @return $this
+     */
+    public function setPageTitle($pageTitle)
+    {
+        $this->pageTitle = $pageTitle;
+
+        return $this;
+    }
+
+    /**
+     * @param Droplet $droplet
+     *
+     * @return Page
+     */
+    public function setDroplet(Droplet $droplet): Page
+    {
+        $this->droplet = $droplet;
+
+        return $this;
+}
+
+    /**
+     * @return Droplet
+     */
+    public function getDroplet(): Droplet
+    {
+        return $this->droplet;
     }
 }
