@@ -36,7 +36,6 @@ class DropletIntegrator
         /** @var Droplet $droplet */
         $droplet = app($class)->setModel($model);
 
-        $this->provider->register($droplet);
         $this->droplets->put($droplet->getSlug(), $droplet);
 
         if ($droplet instanceof Port) {
@@ -44,6 +43,8 @@ class DropletIntegrator
             $droplet->setHostname(env("PORTS_{$portName}_HOSTNAME"));
             superv('ports')->push($droplet);
         }
+
+        $this->provider->register($droplet);
 
         // add view namespaces
         $this->views->addNamespace(

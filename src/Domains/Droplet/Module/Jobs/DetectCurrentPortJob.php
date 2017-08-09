@@ -1,12 +1,11 @@
 <?php namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
 
-use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Route;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
 
-class DetectActiveModuleJob
+class DetectCurrentPortJob
 {
     /**
      * @var Droplets
@@ -25,16 +24,20 @@ class DetectActiveModuleJob
             return;
         }
 
-        if (!$slug = array_get($route->getAction(), 'superv::droplet')) {
+        \Log::info('current route', $event->route->getAction());
+
+//        dd($route->getAction());
+
+        if (!$slug = array_get($route->getAction(), 'superv::port')) {
             return;
         }
 
-        /** @var DropletModel $module */
-        $module = $this->droplets->withSlug($slug);
+        /** @var DropletModel $port */
+        $port = $this->droplets->withSlug($slug);
 
         superv('view')->addNamespace(
-            'module',
-            [base_path($module->getPath('resources/views'))]
+            'port',
+            [base_path($port->getPath('resources/views'))]
         );
     }
 }

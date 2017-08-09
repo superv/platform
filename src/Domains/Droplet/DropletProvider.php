@@ -2,15 +2,15 @@
 
 use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Droplet\Jobs\RegisterDropletRouteJob;
+use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\Manifest\Features\RegisterManifest;
-use SuperV\Platform\Domains\Manifest\ManifestCollection;
 
 class DropletProvider
 {
@@ -40,22 +40,28 @@ class DropletProvider
      */
     private $schedule;
 
+    /**
+     * @var PortCollection
+     */
+    private $ports;
+
     public function __construct(
         Dispatcher $events,
         Application $app,
         Router $router,
-        Schedule $schedule
+        Schedule $schedule,
+        PortCollection $ports
     ) {
         $this->events = $events;
         $this->app = $app;
         $this->router = $router;
         $this->schedule = $schedule;
+        $this->ports = $ports;
     }
 
     public function register(Droplet $droplet)
     {
         $provider = $droplet->getServiceProvider();
-
         if (!class_exists($provider)) {
             return;
         }
@@ -71,7 +77,7 @@ class DropletProvider
         $this->registerFeatures($provider);
         $this->registerEvents($provider, $droplet);
 
-        $this->registerManifests($provider, $droplet);
+        $this->registerManifests($provider);
 
         if (method_exists($provider, 'register')) {
             $this->app->call([$provider, 'register'], ['provider' => $this]);
@@ -83,9 +89,6 @@ class DropletProvider
     protected function registerCommands(DropletServiceProvider $provider)
     {
         if ($commands = $provider->getCommands()) {
-            // To register the commands with Artisan, we will grab each of the arguments
-            // passed into the method and listen for Artisan "start" event which will
-            // give us the Artisan console instance which we will give commands to.
             $this->events->listen(
                 'Illuminate\Console\Events\ArtisanStarting',
                 function (ArtisanStarting $event) use ($commands) {
@@ -134,7 +137,7 @@ class DropletProvider
         }
     }
 
-    protected function registerRoutes(DropletServiceProvider $provider, Droplet $droplet)
+    protected function registerRoutes(DropletServiceProvider $provider)
     {
         if (!$routes = $provider->getRoutes()) {
             return;
@@ -142,8 +145,8 @@ class DropletProvider
 
         foreach ($routes as $uri => $route) {
             $route = !is_array($route) ? ['uses' => $route] : $route;
-            array_set($route, 'superv::droplet', $droplet->getSlug());
-            $this->dispatch(new RegisterDropletRouteJob($uri, $route));
+
+            $this->dispatch(new RegisterDropletRouteJob($provider->getDroplet(), $uri, $route));
         }
     }
 
@@ -158,15 +161,14 @@ class DropletProvider
     protected function registerManifests(DropletServiceProvider $provider)
     {
         foreach ($provider->getManifests() as $key => $manifest) {
-           $this->serve(new RegisterManifest(superv($manifest)));
+            $this->serve(new RegisterManifest(superv($manifest), $provider->getDroplet()));
         }
     }
 
     protected function registerProviders(DropletServiceProvider $provider)
-      {
-          foreach ($provider->getProviders() as $provider) {
-              $this->app->register($provider);
-          }
-      }
-
+    {
+        foreach ($provider->getProviders() as $provider) {
+            $this->app->register($provider);
+        }
+    }
 }

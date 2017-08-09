@@ -4,7 +4,14 @@ use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 
-class PackDropletRoutesJob
+/**
+ * Class GetPortRoutesJob
+ * Determines the current Port from hostname, and returns
+ * relevant routes for that Port
+ *
+ * @package SuperV\Platform\Domains\Droplet\Jobs
+ */
+class GetPortRoutesJob
 {
     /**
      * @var \SuperV\Platform\Domains\Droplet\DropletServiceProvider
@@ -20,19 +27,29 @@ class PackDropletRoutesJob
     {
         $routes = [];
 
-        // $port = $this->run(new GetPortFromRequest()
-
-        $hostname = trim(str_replace(['http://', 'https://'], '', $request->root()), '/');
-        if ($port = $ports->byHostname($hostname)) {
+        $currentHostname = trim(str_replace(['http://', 'https://'], '', $request->root()), '/');
+        if ($port = $ports->byHostname($currentHostname)) {
             $portName = $port->getName();
-            $routesFile = base_path($this->provider->getPath("routes/{$portName}.php"));
+            $routesFile = base_path($this->provider->getResourcePath("routes/{$portName}.php"));
             if (file_exists($routesFile)) {
                 $include = require $routesFile;
                 if (is_array($include)) {
                     $routes = array_merge($include, $routes);
+
+                    if (!empty($routes)) {
+                        foreach ($routes as $route => &$data) {
+                            if (!is_array($data)) {
+                                $data = ['uses' => $data];
+                            }
+
+                            array_set($data, 'superv::port', $port->getSlug());
+                        }
+                    }
                 }
             }
         }
+
+
 
         return $routes;
     }
