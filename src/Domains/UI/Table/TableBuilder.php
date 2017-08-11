@@ -17,17 +17,9 @@ class TableBuilder
     /** @var string */
     protected $model;
 
-    protected $buttons = [
-        'edit'   => [
-            'text' => 'Edit',
-            'type' => 'info',
-        ],
-        'delete' => [
-            'href' => 'auth/users/{entry.id}/delete',
-            'text' => 'Delete',
-            'type' => 'danger',
-        ],
-    ];
+    protected $buttons = [];
+
+    protected $columns;
 
     /**
      * @var Factory
@@ -137,5 +129,13 @@ class TableBuilder
     public function getModel()
     {
         return $this->model;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getColumns()
+    {
+        return $this->columns;
     }
 }

@@ -17,10 +17,14 @@ class BuildColumnsJob
     public function handle()
     {
         $table = $this->builder->getTable();
+        if ($columns = $this->builder->getColumns()) {
+            $table->setColumns($columns);
+            return;
+        }
         $collection = $table->getEntries();
 
         if (!$collection->first()) {
-            return [];
+            return;
         }
 
         $model = $collection->first();

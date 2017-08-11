@@ -6,8 +6,6 @@ use SuperV\Platform\Domains\UI\Table\Jobs\BuildRowsJob;
 use SuperV\Platform\Domains\UI\Table\Jobs\LoadPaginationJob;
 use SuperV\Platform\Domains\UI\Table\Jobs\SetTableEntriesJob;
 use SuperV\Platform\Domains\UI\Table\Jobs\SetTableModelJob;
-use SuperV\Platform\Domains\UI\Table\Row;
-use SuperV\Platform\Domains\UI\Table\Table;
 use SuperV\Platform\Domains\UI\Table\TableBuilder;
 
 class BuildTable extends Feature
