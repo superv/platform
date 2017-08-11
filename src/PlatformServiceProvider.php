@@ -5,7 +5,6 @@ use Collective\Html\HtmlServiceProvider;
 use Illuminate\View\Factory;
 use Laravel\Tinker\TinkerServiceProvider;
 use Spatie\Tail\TailServiceProvider;
-use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Manifest\ManifestCollection;
@@ -13,6 +12,7 @@ use SuperV\Platform\Domains\UI\Form\FormServiceProvider;
 use SuperV\Platform\Domains\UI\Page\PageCollection;
 use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
+use SuperV\Platform\Http\Middleware\MiddlewareCollection;
 
 class PlatformServiceProvider extends ServiceProvider
 {
@@ -28,6 +28,7 @@ class PlatformServiceProvider extends ServiceProvider
         'SuperV\Platform\Domains\Feature\FeatureCollection'       => '~',
         'SuperV\Platform\Domains\Droplet\Model\DropletCollection' => '~',
         'SuperV\Platform\Domains\Droplet\Types\PortCollection'    => '~',
+        MiddlewareCollection::class                               => '~',
         ManifestCollection::class                                 => '~',
         PageCollection::class                                     => '~',
         ViewTemplate::class                                       => '~',

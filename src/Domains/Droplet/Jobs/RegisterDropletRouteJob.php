@@ -3,6 +3,7 @@
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Domains\Droplet\Droplet;
+use SuperV\Platform\Http\Middleware\MiddlewareCollection;
 
 class RegisterDropletRouteJob
 {
@@ -29,13 +30,16 @@ class RegisterDropletRouteJob
         if (array_has($route, 'as')) {
             if (str_contains($route['as'], '@')) {
                 list($port, $as) = explode('@', $route['as']);
-//                array_set($route, 'as', $as);
                 array_set($route, 'superv::port', "superv.ports.{$port}"); // TODO.ali: generic namespace
+
+                if ($middlewares = superv(MiddlewareCollection::class)->get("superv.ports.{$port}")) {
+                    array_set($route, 'middleware', $middlewares); // TODO.ali: merge instead of set
+                }
             }
         }
 
-        if (is_callable($route['uses']) && $route['uses'] instanceof  \Closure) {
-            $route['uses']->bindTo($router);
+        if (is_callable($route['uses']) && $route['uses'] instanceof \Closure) {
+//            $route['uses']->bindTo($router);
         }
 
         // Add droplet signature
