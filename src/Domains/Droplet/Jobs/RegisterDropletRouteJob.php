@@ -1,5 +1,6 @@
 <?php namespace SuperV\Platform\Domains\Droplet\Jobs;
 
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Domains\Droplet\Droplet;
 
@@ -33,22 +34,30 @@ class RegisterDropletRouteJob
             }
         }
 
+        if (is_callable($route['uses']) && $route['uses'] instanceof  \Closure) {
+            $route['uses']->bindTo($router);
+        }
+
         // Add droplet signature
         array_set($route, 'superv::droplet', $this->droplet->getSlug());
 
-        $verb = array_pull($route, 'verb', 'any');
-        $middleware = array_pull($route, 'middleware', []);
-        $constraints = array_pull($route, 'constraints', []);
+        /** @var Route $routex */
+        $routex = $router->{array_pull($route, 'verb', 'any')}($this->uri, $route);
 
-        if (is_string($route['uses']) && !str_contains($route['uses'], '@')) {
-            $router->resource($this->uri, $route['uses']);
-        } else {
+        $routex->middleware(array_pull($route, 'middleware', []));
+        $routex->where(array_pull($route, 'constraints', []));
+//        $routex->setAction(
+//            [
+//                'as' => array_get($route,'as'),
+//                'uses' => $route['uses'],
+//                'superv::droplet' => $this->droplet->getSlug()
+//            ]
+//        );
 
-            $route = $router->{$verb}($this->uri, $route)->where($constraints);
-
-            if ($middleware) {
-                call_user_func_array([$route, 'middleware'], (array)$middleware);
-            }
-        }
+//        if (is_string($route['uses']) && !str_contains($route['uses'], '@')) {
+//            $router->resource($this->uri, $route['uses']);
+//        } else {
+//
+//        }
     }
 }

@@ -1,10 +1,12 @@
 <?php namespace SuperV\Platform\Domains\Entry;
 
+use SuperV\Platform\Domains\Entry\Traits\PresentableTrait;
+use SuperV\Platform\Domains\Entry\Traits\RoutableTrait;
 use SuperV\Platform\Domains\Model\EloquentModel;
 
 class EntryModel extends EloquentModel
 {
-    use RoutableTrait;
+    use RoutableTrait, PresentableTrait;
 
     protected $fields = [];
 
@@ -40,8 +42,6 @@ class EntryModel extends EloquentModel
     }
 
     public function flushCache() { }
-
-
 
 
 }
