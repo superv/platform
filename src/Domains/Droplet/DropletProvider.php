@@ -68,22 +68,23 @@ class DropletProvider
 
         $this->providers[] = $provider = $droplet->newServiceProvider();
 
-        $this->bindAliases($provider);
-        $this->bindClasses($provider);
-        $this->bindSingletons($provider);
-
-        $this->registerRoutes($provider, $droplet);
-        $this->registerCommands($provider);
-        $this->registerFeatures($provider);
-        $this->registerEvents($provider, $droplet);
-
-        $this->registerManifests($provider);
-
+        $this->registerProviders($provider);
         if (method_exists($provider, 'register')) {
             $this->app->call([$provider, 'register'], ['provider' => $this]);
         }
 
-        $this->registerProviders($provider);
+        $this->bindAliases($provider);
+        $this->bindClasses($provider);
+        $this->bindSingletons($provider);
+
+        $this->registerRoutes($provider);
+        $this->registerCommands($provider);
+        $this->registerFeatures($provider);
+        $this->registerEvents($provider);
+
+        $this->registerManifests($provider);
+
+
     }
 
     protected function registerCommands(DropletServiceProvider $provider)
@@ -119,7 +120,7 @@ class DropletProvider
         }
     }
 
-    protected function registerEvents(DropletServiceProvider $provider, Droplet $droplet)
+    protected function registerEvents(DropletServiceProvider $provider)
     {
         if (!$listen = $provider->getListeners()) {
             return;
@@ -131,7 +132,7 @@ class DropletProvider
             }
             foreach ($listeners as $key => $listener) {
                 if ($listener) {
-                    $this->events->listen($droplet->getSlug() . '::' . $event, $listener);
+                    $this->events->listen($provider->getDroplet()->getSlug() . '::' . $event, $listener);
                 }
             }
         }
