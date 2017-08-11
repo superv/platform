@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\UI\Button\Button;
+use SuperV\Platform\Domains\UI\Button\ButtonRegistry;
 use SuperV\Platform\Domains\UI\Button\Jobs\EvaluateButtonJob;
 use SuperV\Platform\Domains\UI\Button\Jobs\NormalizeButtonJob;
 
@@ -44,8 +45,8 @@ class MakeButtons
             }
 
             if (!is_numeric($key) && is_array($button) && !isset($button['button'])) {
-                 $button['button'] = $key;
-             }
+                $button['button'] = $key;
+            }
 
             $buttons[] = $this->makeButton($button);
         }
@@ -56,8 +57,11 @@ class MakeButtons
     public function makeButton($data)
     {
         $params = $this->dispatch(new EvaluateButtonJob($data, $this->arguments));
-
         $params = $this->dispatch(new NormalizeButtonJob($params, $this->arguments));
+
+        if ($registered = superv(ButtonRegistry::class)->get($data['button'])) {
+            $params = array_replace_recursive($registered, array_except($params, 'button'));
+        }
 
         // hydrate button
         $button = superv(Button::class);

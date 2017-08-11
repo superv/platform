@@ -8,6 +8,11 @@ class ButtonRegistry
             'icon' => 'fa fa-eye',
             'type' => 'info',
         ],
+        'edit' => [
+            'text' => 'Edit',
+            'icon' => 'fa fa-pencil',
+            'type' => 'info',
+        ],
     ];
 
     public function get($button)
