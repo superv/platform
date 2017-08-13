@@ -80,7 +80,7 @@ class Asset
 
         $attributes['href'] = $this->path($collection, $filters);
 
-        return '<link' . $this->html->attributes($attributes) . '>';
+        return '<link' . html_attributes($attributes) . '>';
     }
 
     public function path($collection, array $filters = [])
