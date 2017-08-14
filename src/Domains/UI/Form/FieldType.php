@@ -69,8 +69,8 @@ class FieldType
         if ($this->type == 'relation') {
             array_set($options, 'mapped', false);
             if ($related = array_get($this->config, 'related')) {
-                array_set($options, 'choices', $related::pluck('id', 'name'));
-                $options['data'] = [1, 2];
+                $choices = $related::pluck('id', 'name')->toArray();
+                array_set($options, 'choices', $choices);
             }
         }
 

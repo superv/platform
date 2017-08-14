@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\UI\Form\FormBuilder;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\Form;
 
 class MakeForm extends Feature
 {
@@ -23,6 +24,7 @@ class MakeForm extends Feature
     {
         $form = $this->builder->getForm();
 
+        /** @var Form $symfonyForm */
         $symfonyForm = $factory->create(FormType::class, $this->builder->getEntry(), []);
 
         /** @var FieldType $field */
