@@ -138,4 +138,28 @@ class TableBuilder
     {
         return $this->columns;
     }
+
+    /**
+     * @param mixed $columns
+     *
+     * @return TableBuilder
+     */
+    public function setColumns($columns)
+    {
+        $this->columns = $columns;
+
+        return $this;
+}
+
+    /**
+     * @param array $buttons
+     *
+     * @return TableBuilder
+     */
+    public function setButtons(array $buttons): TableBuilder
+    {
+        $this->buttons = $buttons;
+
+        return $this;
+}
 }
