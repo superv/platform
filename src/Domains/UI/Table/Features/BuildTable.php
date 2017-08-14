@@ -32,9 +32,10 @@ class BuildTable extends Feature
 
         $this->dispatch(new LoadPaginationJob($builder));
 
+        $this->dispatch(new BuildColumnsJob($builder));
+
         $this->dispatch(new BuildRowsJob($builder));
 
-        $this->dispatch(new BuildColumnsJob($builder));
 
 //        $this->dispatch(new SetTableModel($builder));
 //        $this->dispatch(new SetTableStream($builder));

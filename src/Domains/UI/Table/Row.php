@@ -11,10 +11,13 @@ class Row
 
     protected $buttons;
 
-    public function __construct($model, $buttons)
+    private $columns;
+
+    public function __construct($model, $columns, $buttons)
     {
         $this->model = $model;
         $this->buttons = $buttons;
+        $this->columns = $columns;
     }
 
     public function make()

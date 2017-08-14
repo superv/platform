@@ -22,7 +22,7 @@ class BuildRowsJob
         $entries = $table->getEntries();
 
         foreach ($entries as $model) {
-            $rows->push((new Row($model, $table->getButtons()))->make());
+            $rows->push((new Row($model, $table->getColumns(), $table->getButtons()))->make());
         }
 
         $table->setRows($rows);
