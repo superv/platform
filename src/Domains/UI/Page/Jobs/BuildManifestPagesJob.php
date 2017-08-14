@@ -3,6 +3,7 @@
 use SuperV\Platform\Domains\Manifest\Manifest;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Support\Collection;
+use SuperV\Platform\Support\Hydrator;
 
 class BuildManifestPagesJob
 {
@@ -16,19 +17,13 @@ class BuildManifestPagesJob
         $this->manifest = $manifest;
     }
 
-    public function handle(Collection $pages)
+    public function handle(Collection $pages, Hydrator $hydrator)
     {
-        foreach ($this->manifest->getPages() as $page => $pageData) {
-            array_set($pageData, 'page', $page);
+        foreach ($this->manifest->getPages() as $page => $data) {
+            array_set($data, 'page', $page);
 
             $pages->push(
-                (new Page())->setManifest($this->manifest)
-                            ->setPage(array_get($pageData, 'page'))
-                            ->setRoute(array_get($pageData, 'route'))
-                            ->setUrl(array_get($pageData, 'url'))
-                            ->setHandler(array_get($pageData, 'handler'))
-                            ->setTitle(array_get($pageData, 'page_title'))
-                            ->setNavigation(array_get($pageData, 'navigation', false))
+                $hydrator->hydrate(superv(Page::class), $data)
             );
         }
 

@@ -24,6 +24,7 @@ class Page
 
     protected $navigation = false;
 
+
     /**
      * @param mixed $page
      *
