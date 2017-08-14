@@ -79,7 +79,10 @@
                 {{- block('choice_widget_options') -}}
             </optgroup>
         {%- else -%}
-            <option value="{{ choice.value }}"{% if choice.attr %}{% with { attr: choice.attr } %}{{ block('attributes') }}{% endwith %}{% endif %}{% if choice is selectedchoice(value) %} selected="selected"{% endif %}>{{ choice.label }}</option>
+            <option value="{{ choice.value }}"{% if choice.attr %}{% with { attr: choice.attr } %}{{ block('attributes') }}{% endwith %}{% endif %}{% if choice is selectedchoice(value) %} selected="selected"{% endif %}>
+                {#{{ choice.label }}#}
+                {{ choice_translation_domain is same as(false) ? choice.label : choice_translation_domain }}
+            </option>
         {%- endif -%}
     {% endfor %}
 {%- endblock choice_widget_options -%}

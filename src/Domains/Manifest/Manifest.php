@@ -6,6 +6,8 @@ abstract class Manifest
 {
     protected $pages;
 
+    protected $icon;
+
     public function __construct(Collection $pages)
     {
         $this->pages = $pages;
@@ -23,5 +25,23 @@ abstract class Manifest
         return $this;
     }
 
+    /**
+     * @param mixed $icon
+     *
+     * @return Manifest
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
 
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
 }

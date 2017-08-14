@@ -1,5 +1,8 @@
 <?php namespace SuperV\Platform\Domains\UI\Form;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Entry\EntryModel;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
@@ -36,13 +39,15 @@ class FormBuilder
         $this->serve(new BuildForm($this));
     }
 
-    public function make()
+    public function make($entry)
     {
+        $this->entry = $entry;
+
         $this->build();
 
         $this->serve(new MakeForm($this));
 
-        $this->post();
+        return $this->post();
     }
 
     public function post()
@@ -52,12 +57,23 @@ class FormBuilder
             $this->form->handleRequest();
 
             if ($this->form->isSubmitted() && $this->form->isValid()) {
+
+//                if ($relationships = $this->entry->getRelationships()) {
+//                    foreach ($relationships as $relationship) {
+//                        if ($formValue = $this->form->getFormData($relationship)) {
+//                            $relation = $this->entry->{$relationship}();
+//                            if ($relation instanceof HasOne) {
+//                                $this->entry->setAttribute("{$relationship}_id", $formValue);
+//                            } elseif ($relation instanceof BelongsToMany) {
+//                                $this->entry->{$relationship}()->sync($formValue);
+//                            }
+//                        }
+//                    }
+//                }
+
                 $this->entry->save();
 
-//                $perms = $this->form->getFormData('permissions');
-//                $this->entry->permissions()->sync($perms);
-
-                return redirect('/')->withSuccess('Entry saved!');
+                return redirect()->back()->withSuccess('Entry saved!');
             }
         }
 
@@ -66,9 +82,10 @@ class FormBuilder
 
     public function render($entry)
     {
-        $this->entry = $entry;
-
-        $this->make();
+        $response = $this->make($entry);
+        if ($response instanceof RedirectResponse) {
+            return $response;
+        }
 
         $response = $this->form->createView();
 

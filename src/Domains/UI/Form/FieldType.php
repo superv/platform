@@ -1,5 +1,6 @@
 <?php namespace SuperV\Platform\Domains\UI\Form;
 
+use SuperV\Platform\Domains\Entry\EntryModel;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -28,12 +29,18 @@ class FieldType
      */
     private $config;
 
-    public function __construct($field, $type, array $rules, array $config = [])
+    /**
+     * @var EntryModel
+     */
+    private $entry;
+
+    public function __construct(EntryModel $entry, $field, $type, array $rules, array $config = [])
     {
         $this->field = $field;
         $this->type = $type;
         $this->rules = $rules;
         $this->config = $config;
+        $this->entry = $entry;
     }
 
     /**
@@ -67,9 +74,13 @@ class FieldType
 
         array_set($options, 'rules', $this->rules);
         if ($this->type == 'relation') {
-            array_set($options, 'mapped', false);
+            array_set($options, 'mapped', true);
             if ($related = array_get($this->config, 'related')) {
-                $choices = $related::pluck('id', 'name')->toArray();
+                if ($this->entry->exists && method_exists($this->entry, $method = "getPossible" . studly_case(str_plural($this->field)))) {
+                    $choices = $this->entry->{$method}()->pluck('id', 'name')->toArray();
+                } else {
+                    $choices = $related::pluck('id', 'name')->toArray();
+                }
                 array_set($options, 'choices', $choices);
             }
         }
@@ -78,6 +89,8 @@ class FieldType
             array_set($options, 'multiple', array_get($this->config, 'multiple', false));
             array_set($options, 'expanded', array_get($this->config, 'expanded', false));
         }
+
+        array_set($options, 'translation_domain', false);
 
         return $options;
     }

@@ -10,6 +10,8 @@ class EntryModel extends EloquentModel
 
     protected $fields = [];
 
+    protected $relationships = [];
+
     protected $cache;
 
     protected static function boot()
@@ -37,11 +39,30 @@ class EntryModel extends EloquentModel
         return $this->getKey();
     }
 
-    public function getFields() {
+    public function getFields()
+    {
         return $this->fields;
     }
 
     public function flushCache() { }
 
+    /**
+     * @param array $relationships
+     *
+     * @return EntryModel
+     */
+    public function setRelationships(array $relationships): EntryModel
+    {
+        $this->relationships = $relationships;
 
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRelationships(): array
+    {
+        return $this->relationships;
+    }
 }
