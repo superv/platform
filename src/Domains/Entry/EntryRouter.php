@@ -36,7 +36,12 @@ class EntryRouter
             return app()->call([$this, $method], $parameters);
         }
 
-        if ($manifest = $this->manifests->byModel(get_class($this->entry))) {
+        /**
+         * If this model has a manifest and this
+         * route is defined there, return route
+         * info from the manifest data
+         */
+        if ($manifest = $this->manifests->model()->byModel(get_class($this->entry))) {
             if ($pages = $manifest->getPages()) {
                 if ($page = array_get($pages, $route)) {
                     if ($pageRoute = array_get($page, 'route')) {
