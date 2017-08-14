@@ -5,10 +5,17 @@ use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 class MakeDropletModelJob
 {
     private $slug;
-    
-    public function __construct($slug)
+
+    /**
+     * @var null
+     */
+    private $path;
+
+    public function __construct($slug, $path = null)
     {
         $this->slug = $slug;
+
+        $this->path = $path;
     }
     
     public function handle()
@@ -32,7 +39,7 @@ class MakeDropletModelJob
             'slug'      => $this->slug,
             'type'      => str_singular($type),
             'name'      => $name,
-            'path'      => "{$vendor}/{$type}/{$name}",
+            'path'      => $this->path ?: "workbench/{$vendor}/{$type}/{$name}",
             'namespace' => ucfirst(camel_case(($vendor == 'superv' ? 'super_v' : $vendor))) . "\\" . ucfirst(camel_case($type)) . "\\" . ucfirst(camel_case($name)),
         ]);
     }

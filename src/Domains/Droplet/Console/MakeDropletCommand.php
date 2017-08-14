@@ -5,12 +5,14 @@ use SuperV\Platform\Domains\Droplet\Feature\MakeDropletFeature;
 
 class MakeDropletCommand extends Command
 {
-    protected $signature = 'make:droplet {slug}';
+    protected $signature = 'make:droplet {slug} {--path= :}';
     
     public function handle()
     {
-        $this->serve(new MakeDropletFeature($this->argument('slug')));
+        $slug = $this->argument('slug');
+        $path = $this->option('path');
+        $this->serve(new MakeDropletFeature($slug, $path));
         
-        $this->info('The [' . $this->argument('slug') . '] droplet was created.');
+        $this->info('The [' . $slug . '] droplet was created.');
     }
 }

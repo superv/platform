@@ -16,7 +16,7 @@ class WriteDropletFilesJob
     
     public function handle(Filesystem $filesystem, Parser $parser)
     {
-        $name = ucfirst(camel_case($this->model->name()));
+        $name = ucfirst(camel_case($this->model->getName()));
         $type = ucfirst(camel_case($this->model->type()));
         
         $path = base_path($this->model->path());

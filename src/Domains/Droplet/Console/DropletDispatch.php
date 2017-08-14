@@ -2,10 +2,9 @@
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use SuperV\Modules\Supreme\Domains\Server\Model\ServerModel;
+use SuperV\Modules\Supreme\Domains\Server\Model\Servers;
 use SuperV\Platform\Domains\Feature\Command\FormulateFeature;
-use Vizra\SupervModule\Drop\DropModel;
-use Vizra\SupervModule\Server\ServerModel;
-use Vizra\SupervModule\Server\ServerRepository;
 
 class DropletDispatch extends Command
 {
@@ -15,10 +14,10 @@ class DropletDispatch extends Command
     
     protected $description = 'Runs droplet feature ';
     
-    public function handle(ServerRepository $servers)
+    public function handle(Servers $servers)
         {
             /** @var ServerModel $server */
-            if (!$server = $servers->findBySlug($this->option('server'))) {
+            if (!$server = $servers->find($this->option('server'))) {
                 throw new \Exception('Server not found');
             }
             

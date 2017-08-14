@@ -1,11 +1,8 @@
 <?php namespace SuperV\Platform\Domains\Droplet\Model;
 
-use SuperV\Platform\Domains\Entry\EntryModel;
 
-class DropletModel extends EntryModel
+class DropletModel extends DropletEntryModel
 {
-   protected $table = 'platform_droplets';
-    
     public function path($path = null)
     {
         if ($path) {
@@ -38,7 +35,7 @@ class DropletModel extends EntryModel
         return $this->namespace() . "\\" . studly_case("{$this->name}_{$this->type}");
     }
     
-    public function name()
+    public function getName()
     {
         return $this->name;
     }

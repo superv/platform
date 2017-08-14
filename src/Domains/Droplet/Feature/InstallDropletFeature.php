@@ -5,22 +5,33 @@ use SuperV\Platform\Domains\Composer\Jobs\GetComposerArrayJob;
 use SuperV\Platform\Domains\Droplet\Jobs\LocateDropletJob;
 use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModelJob;
 use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\Droplet\DropletLoader;
-use SuperV\Platform\Domains\Droplet\DropletPaths;
 
+/**
+ * Class InstallDropletFeature
+ *
+ * Installs a droplet into the platform
+ *
+ * @package SuperV\Platform\Domains\Droplet\Feature
+ */
 class InstallDropletFeature extends Feature
 {
     private $slug;
-    
-    public function __construct($slug)
+
+    /**
+     * @var null
+     */
+    private $path;
+
+    public function __construct($slug, $path = null)
     {
         $this->slug = $slug;
+        $this->path = $path;
     }
     
     public function handle()
     {
         /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel $model */
-        $model = $this->dispatch(new MakeDropletModelJob($this->slug));
+        $model = $this->dispatch(new MakeDropletModelJob($this->slug, $this->path));
         
         $this->dispatch(new LocateDropletJob($model));
         

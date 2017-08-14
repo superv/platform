@@ -39,7 +39,7 @@ class DropletIntegrator
         $this->droplets->put($droplet->getSlug(), $droplet);
 
         if ($droplet instanceof Port) {
-            $portName = strtoupper($model->name());
+            $portName = strtoupper($model->getName());
             $droplet->setHostname(env("PORTS_{$portName}_HOSTNAME"));
             superv('ports')->push($droplet);
         }
