@@ -1,36 +1,27 @@
 <?php namespace SuperV\Platform\Domains\Manifest;
 
+use SuperV\Platform\Support\Collection;
+
 abstract class Manifest
 {
-    protected $model;
+    protected $pages;
 
-    protected $pages = [];
+    public function __construct(Collection $pages)
+    {
+        $this->pages = $pages;
+    }
 
-    /**
-     * @return mixed
-     */
-    public function getPages()
+    public function pages()
     {
         return $this->pages;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getModel()
+    public function setPages($pages): Manifest
     {
-        return $this->model;
-    }
-
-    /**
-     * @param mixed $model
-     *
-     * @return Manifest
-     */
-    public function setModel($model)
-    {
-        $this->model = $model;
+        $this->pages = $pages;
 
         return $this;
-}
+    }
+
+
 }

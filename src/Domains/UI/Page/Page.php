@@ -18,9 +18,11 @@ class Page
 
     protected $handler;
 
-    protected $pageTitle;
+    protected $title;
 
     protected $public = false;
+
+    protected $navigation = false;
 
     /**
      * @param mixed $page
@@ -117,19 +119,19 @@ class Page
     /**
      * @return mixed
      */
-    public function getPageTitle()
+    public function getTitle()
     {
-        return $this->pageTitle;
+        return $this->title;
     }
 
     /**
-     * @param mixed $pageTitle
+     * @param mixed $title
      *
      * @return $this
      */
-    public function setPageTitle($pageTitle)
+    public function setTitle($title)
     {
-        $this->pageTitle = $pageTitle;
+        $this->title = $title;
 
         return $this;
     }
@@ -152,5 +154,25 @@ class Page
     public function getDroplet(): Droplet
     {
         return $this->droplet;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNavigation(): bool
+    {
+        return $this->navigation;
+    }
+
+    public function setNavigation(bool $navigation)
+    {
+        $this->navigation = $navigation;
+
+        return $this;
+    }
+
+    public function getHref()
+    {
+        return $this->url;
     }
 }
