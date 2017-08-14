@@ -31,15 +31,16 @@ class BuildForm extends Feature
             list($fieldName, $fieldType) = explode(':', array_shift($fieldParts));
 
             $rules = [];
-            if (in_array('unique', $fieldParts)) {
-                $rule = "unique:{$entry->getTable()},{$fieldName},{$entry->getId()},id";
-                array_push($rules, $rule);
-            }
-            if (in_array('required', $fieldParts)) {
-                array_push($rules, "required");
+            foreach ($fieldParts as $part) {
+                if ($part == 'unique') {
+                    $rule = "unique:{$entry->getTable()},{$fieldName},{$entry->getId()},id";
+                    array_push($rules, $rule);
+                } else {
+                    array_push($rules, $part);
+                }
             }
 
-            $form->addField(new FieldType($fieldName, $fieldType, $rules, $config));
+            $form->addField(new FieldType($entry, $fieldName, $fieldType, $rules, $config));
         }
 
         $form->addAction(new Action(
