@@ -1,7 +1,6 @@
 <?php namespace SuperV\Platform;
 
 use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
-use Collective\Html\HtmlServiceProvider;
 use Illuminate\View\Factory;
 use Laravel\Tinker\TinkerServiceProvider;
 use Spatie\Tail\TailServiceProvider;
@@ -20,6 +19,7 @@ use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Manifest\ManifestCollection;
 use SuperV\Platform\Domains\UI\Form\FormServiceProvider;
+use SuperV\Platform\Domains\UI\Menu\Menu;
 use SuperV\Platform\Domains\UI\Page\PageCollection;
 use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
@@ -43,11 +43,14 @@ class PlatformServiceProvider extends ServiceProvider
         PageCollection::class,
         PortCollection::class,
         ViewTemplate::class,
+        Menu::class,
     ];
 
     protected $bindings = [
-        'ports'    => PortCollection::class,
-        'droplets' => DropletCollection::class,
+        'manifests'      => ManifestCollection::class,
+        'droplets'      => DropletCollection::class,
+        'ports'         => PortCollection::class,
+        'view.template' => ViewTemplate::class,
     ];
 
     protected $commands = [
@@ -75,6 +78,8 @@ class PlatformServiceProvider extends ServiceProvider
                 $manager->register();
 
                 superv(Factory::class)->composer('*', ViewComposer::class);
+
+                superv('view.template')->set('menu', superv(Menu::class));
 
                 superv('events')->dispatch('superv::app.loaded');
             }
