@@ -20,6 +20,8 @@ class Page
 
     protected $title;
 
+    protected $buttons = [];
+
     protected $public = false;
 
     protected $navigation = false;
@@ -175,5 +177,25 @@ class Page
     public function getHref()
     {
         return $this->url;
+    }
+
+    /**
+     * @param array $buttons
+     *
+     * @return Page
+     */
+    public function setButtons(array $buttons): Page
+    {
+        $this->buttons = $buttons;
+
+        return $this;
+}
+
+    /**
+     * @return array
+     */
+    public function getButtons(): array
+    {
+        return $this->buttons;
     }
 }

@@ -32,6 +32,8 @@ class NormalizeButtonJob
             if ($entry instanceof EntryModel && $button = array_get($buttonData, 'button')) {
                 array_set($buttonData, 'attributes.href', $entry->route($button));
             }
+        } elseif ($route = array_get($buttonData, 'route')) {
+            array_set($buttonData, 'attributes.href', route($route));
         }
 
         /*
@@ -47,6 +49,12 @@ class NormalizeButtonJob
             !starts_with($buttonData['attributes']['href'], 'http')
         ) {
             $buttonData['attributes']['href'] = url($buttonData['attributes']['href']);
+        }
+
+        foreach ($buttonData as $attribute => $value) {
+            if (str_is('data-*', $attribute)) {
+                array_set($buttonData, 'attributes.' . $attribute, array_pull($buttonData, $attribute));
+            }
         }
 
         return $buttonData;

@@ -3,29 +3,31 @@
 use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\Manifest\Manifest;
+use SuperV\Platform\Domains\UI\Button\Features\MakeButtons;
 use SuperV\Platform\Domains\UI\Page\Page;
+use SuperV\Platform\Support\Collection;
 
-class RegisterManifestPages extends Feature
+class MakePages extends Feature
 {
-    /**
-     * @var Manifest
-     */
-    private $manifest;
-
     /**
      * @var Droplet
      */
     private $droplet;
 
-    public function __construct(Manifest $manifest, Droplet $droplet)
+    /**
+     * @var Collection
+     */
+    private $pages;
+
+    public function __construct(Collection $pages, Droplet $droplet)
     {
-        $this->manifest = $manifest;
         $this->droplet = $droplet;
+        $this->pages = $pages;
     }
 
     public function handle()
     {
-        $pages = $this->manifest->pages();
+        $pages = $this->pages;
 
         /** @var Page $page */
         foreach ($pages as $page) {
@@ -34,4 +36,5 @@ class RegisterManifestPages extends Feature
             $this->dispatch(new RegisterPage($page));
         }
     }
+
 }

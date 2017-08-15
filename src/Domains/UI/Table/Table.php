@@ -238,7 +238,7 @@ class Table
     /**
      * @return EntryModel
      */
-    public function getModel(): EntryModel
+    public function getModel()
     {
         return $this->model;
     }
@@ -248,7 +248,7 @@ class Table
      *
      * @return Table
      */
-    public function setModel(EntryModel $model): Table
+    public function setModel( $model): Table
     {
         $this->model = $model;
 

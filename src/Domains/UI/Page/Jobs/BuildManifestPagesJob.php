@@ -22,9 +22,11 @@ class BuildManifestPagesJob
         foreach ($this->manifest->getPages() as $page => $data) {
             array_set($data, 'page', $page);
 
-            $pages->push(
-                $hydrator->hydrate(superv(Page::class), $data)
-            );
+//            $pages->push(
+//                $hydrator->hydrate(superv(Page::class), $data)
+//            );
+            $page = $hydrator->hydrate(superv(Page::class), $data);
+            $pages->put($page->getRoute(), $page);
         }
 
         $this->manifest->setPages($pages);

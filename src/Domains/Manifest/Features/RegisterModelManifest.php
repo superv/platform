@@ -4,7 +4,8 @@ use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\Manifest\ManifestCollection;
 use SuperV\Platform\Domains\Manifest\ModelManifest;
-use SuperV\Platform\Domains\UI\Page\Features\RegisterManifestPages;
+use SuperV\Platform\Domains\UI\Page\Features\MakePageButtons;
+use SuperV\Platform\Domains\UI\Page\Features\MakePages;
 use SuperV\Platform\Domains\UI\Page\Jobs\BuildManifestPagesJob;
 
 class RegisterModelManifest extends Feature
@@ -41,7 +42,9 @@ class RegisterModelManifest extends Feature
 
         $this->dispatch(new BuildManifestPagesJob($manifest));
 
-        $this->serve(new RegisterManifestPages($manifest, $this->droplet));
+        $this->serve(new MakePages($manifest->pages(), $this->droplet));
+
+        $this->serve(new MakePageButtons($manifest->pages()));
 
         $manifests->push($manifest);
 

@@ -14,6 +14,18 @@ function redis()
     return superv('redis');
 }
 
+function array_set_if_not($condition, &$array, $key, $value)
+{
+    array_set_if(!$condition, $array, $key, $value);
+}
+
+function array_set_if($condition, &$array, $key, $value)
+{
+    if ($condition) {
+        array_set($array, $key, $value);
+    }
+}
+
 function html_attributes($attributes)
 {
     $html = [];
