@@ -7,9 +7,9 @@ use SuperV\Platform\Domains\UI\Form\PropertyAccessor;
 use SuperV\Platform\Domains\UI\Form\PropertyPathMapper;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\Form;
 
 class MakeForm extends Feature
 {
@@ -37,9 +37,11 @@ class MakeForm extends Feature
         /** @var Form $symfonyForm */
         $symfonyForm = $symfonyFormBuilder->getForm();
 
-
         /** @var FieldType $field */
         foreach ($form->getFields() as $field) {
+            if ($this->builder->hasSkip($field->getField())) {
+                continue;
+            }
             $symfonyForm->add($field->getField(), $field->getType(), $field->getOptions());
         }
 

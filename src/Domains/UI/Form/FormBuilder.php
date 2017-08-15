@@ -14,6 +14,8 @@ class FormBuilder
 {
     use ServesFeaturesTrait;
 
+    protected $ajax = false;
+
     /** @var  EntryModel */
     protected $entry;
 
@@ -28,6 +30,8 @@ class FormBuilder
      */
     private $view;
 
+    protected $skips = [];
+
     public function __construct(Form $form, Factory $view)
     {
         $this->form = $form;
@@ -37,6 +41,18 @@ class FormBuilder
     public function build()
     {
         $this->serve(new BuildForm($this));
+    }
+
+    public function skipFields($fields)
+    {
+        $this->skips = array_filter(array_merge($this->skips, $fields));
+
+        return $this;
+    }
+
+    public function hasSkip($field)
+    {
+        return in_array($field, $this->skips);
     }
 
     public function make($entry)
@@ -89,7 +105,8 @@ class FormBuilder
 
         $response = $this->form->createView();
 
-        return $this->view->make('superv::form.form', ['form' => $response]);
+        $view = $this->ajax ? 'superv::form.ajax' : 'superv::form.form';
+        return $this->view->make($view, ['form' => $response]);
     }
 
     /**
@@ -107,4 +124,16 @@ class FormBuilder
     {
         return $this->form;
     }
+
+    /**
+     * @param bool $ajax
+     *
+     * @return FormBuilder
+     */
+    public function setAjax(bool $ajax): FormBuilder
+    {
+        $this->ajax = $ajax;
+
+        return $this;
+}
 }
