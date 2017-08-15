@@ -5,6 +5,7 @@ use SuperV\Platform\Domains\UI\Button\Button;
 use SuperV\Platform\Domains\UI\Button\ButtonRegistry;
 use SuperV\Platform\Domains\UI\Button\Jobs\EvaluateButtonJob;
 use SuperV\Platform\Domains\UI\Button\Jobs\NormalizeButtonJob;
+use SuperV\Platform\Support\Hydrator;
 
 class MakeButtons
 {
@@ -20,7 +21,7 @@ class MakeButtons
      */
     private $buttons;
 
-    public function __construct(array $buttons, array $arguments)
+    public function __construct(array $buttons, array $arguments = [])
     {
         $this->arguments = $arguments;
         $this->buttons = $buttons;
@@ -54,22 +55,23 @@ class MakeButtons
         return $buttons;
     }
 
-    public function makeButton($data)
+    public function makeButton($params)
     {
-        $params = $this->dispatch(new EvaluateButtonJob($data, $this->arguments));
-        $params = $this->dispatch(new NormalizeButtonJob($params, $this->arguments));
-
-        if ($registered = superv(ButtonRegistry::class)->get($data['button'])) {
-            $params = array_replace_recursive($registered, array_except($params, 'button'));
+        if ($registered = superv(ButtonRegistry::class)->get($params['button'])) {
+            $params = array_replace_recursive($registered, $params);
         }
 
-        // hydrate button
-        $button = superv(Button::class);
-        $button->key = array_get($params, 'button');
-        $button->attributes = array_get($params, 'attributes', []);
-        $button->text = array_get($params, 'text', 'Button');
-        $button->type = array_get($params, 'type', 'default');
+        $params = $this->dispatch(new EvaluateButtonJob($params, $this->arguments));
+        $params = $this->dispatch(new NormalizeButtonJob($params, $this->arguments));
 
-        return $button;
+        // hydrate button
+        return superv(Hydrator::class)->hydrate(superv(Button::class), $params);
+//        $button = superv(Button::class);
+//        $button->button = array_get($params, 'button');
+//        $button->attributes = array_get($params, 'attributes', []);
+//        $button->text = array_get($params, 'text', 'Button');
+//        $button->type = array_get($params, 'type', 'default');
+//
+//        return $button;
     }
 }

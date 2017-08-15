@@ -4,17 +4,66 @@ use Illuminate\View\Factory;
 
 class Button
 {
-    public $key;
+    /**
+     * @return mixed
+     */
+    public function getButton()
+    {
+        return $this->button;
+    }
 
-    public $attributes;
+    /**
+     * @return mixed
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
 
-    public $text;
+    /**
+     * @return mixed
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
 
-    public $icon;
+    /**
+     * @return mixed
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
 
-    public $class;
+    /**
+     * @return mixed
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
 
-    public $type = 'default';
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+    protected $button;
+
+    protected $attributes;
+
+    protected $text;
+
+    protected $icon;
+
+    protected $class;
+
+    protected $type = 'default';
+
+    protected $size;
 
     /**
      * @var Factory
@@ -31,4 +80,83 @@ class Button
         return $this->view->make('superv::button.button', ['button' => $this]);
     }
 
+    /**
+     * @param mixed $button
+     *
+     * @return Button
+     */
+    public function setButton($button)
+    {
+        $this->button = $button;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $attributes
+     *
+     * @return Button
+     */
+    public function setAttributes($attributes)
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $text
+     *
+     * @return Button
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $icon
+     *
+     * @return Button
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $class
+     *
+     * @return Button
+     */
+    public function setClass($class)
+    {
+        $this->class = $class;
+
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return Button
+     */
+    public function setType(string $type): Button
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
 }

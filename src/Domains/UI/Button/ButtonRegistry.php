@@ -3,15 +3,32 @@
 class ButtonRegistry
 {
     protected $buttons = [
-        'view' => [
+        'view'   => [
             'text' => 'View',
             'icon' => 'fa fa-eye',
             'type' => 'info',
         ],
-        'edit' => [
-            'text' => 'Edit',
-            'icon' => 'fa fa-pencil',
-            'type' => 'info',
+        'index'  => [
+            'text'  => 'Index',
+            'icon'  => 'fa fa-list',
+            'type'  => '',
+            'class' => 'bg-orange',
+
+        ],
+        'edit'   => [
+            'text'        => 'Edit',
+            'icon'        => 'fa fa-save',
+            'type'        => 'warning',
+        ],
+        'create' => [
+            'text' => 'Create',
+            'icon' => 'fa fa-plus',
+            'type' => 'success',
+        ],
+        'delete' => [
+            'text' => 'Delete',
+            'icon' => 'fa fa-remove',
+            'type' => 'danger',
         ],
     ];
 

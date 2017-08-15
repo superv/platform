@@ -1,6 +1,9 @@
 {% if not button.attributes.name %}
     <a class="btn btn-{{ button.size }} btn-{{ button.type }} {{ button.disabled ? 'disabled' }} {{ button.class }}" {{ button.disabled ? 'disabled' }} {{ html_attributes(button.attributes) }}>
         {#{{ button.icon ? icon(button.icon)|raw }}#}
+        {% if button.icon %}
+            <span class="{{ button.icon }}"></span>
+        {% endif %}
         {{ button.text|raw }}
     </a>
 {% endif %}
