@@ -17,8 +17,9 @@ class CreatePlatformTasksTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('server_id');
             $table->longText('payload');
-            $table->longText('response')->nullable();
-            $table->string('status');
+            $table->longText('info')->nullable();
+            $table->longText('output')->nullable();
+            $table->tinyInteger('status')->default(0);
             $table->nullableTimestamps();
 
             $table->foreign('server_id')

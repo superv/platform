@@ -26,6 +26,10 @@ class Page
 
     protected $navigation = false;
 
+    protected $model;
+
+    protected $entry;
+
 
     /**
      * @param mixed $page
@@ -197,5 +201,45 @@ class Page
     public function getButtons(): array
     {
         return $this->buttons;
+    }
+
+    /**
+     * @param mixed $model
+     *
+     * @return Page
+     */
+    public function setModel($model)
+    {
+        $this->model = $model;
+
+        return $this;
+}
+
+    /**
+     * @return mixed
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
+     * @param mixed $entry
+     *
+     * @return Page
+     */
+    public function setEntry($entry)
+    {
+        $this->entry = $entry;
+
+        return $this;
+}
+
+    /**
+     * @return mixed
+     */
+    public function getEntry()
+    {
+        return $this->entry;
     }
 }
