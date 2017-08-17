@@ -19,7 +19,7 @@ class MakePageButtons extends Feature
      */
     private $pages;
 
-    public function __construct(Collection $pages)
+    public function __construct(array $pages)
     {
         $this->pages = $pages;
     }
@@ -30,7 +30,7 @@ class MakePageButtons extends Feature
         foreach ($this->pages as $page) {
 
             if ($buttons = $page->getButtons()) {
-                $arguments = [];
+                $arguments = ['entry' => $page->getEntry()];
                 foreach($buttons as $button => &$data) {
                     if (is_numeric($button)) {
                         $data = ['button' => $button = $data];

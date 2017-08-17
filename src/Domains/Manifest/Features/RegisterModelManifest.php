@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Manifest\ModelManifest;
 use SuperV\Platform\Domains\UI\Page\Features\MakePageButtons;
 use SuperV\Platform\Domains\UI\Page\Features\MakePages;
 use SuperV\Platform\Domains\UI\Page\Jobs\BuildManifestPagesJob;
+use SuperV\Platform\Domains\UI\Page\Page;
 
 class RegisterModelManifest extends Feature
 {
@@ -37,14 +38,22 @@ class RegisterModelManifest extends Feature
 
             $model = implode('\\', $parts);
 
-            $manifest->setModel($model);
+            if (class_exists($model)) {
+                $manifest->setModel($model);
+            }
         }
 
         $this->dispatch(new BuildManifestPagesJob($manifest));
 
+        if ($model = $manifest->getModel()) {
+            $manifest->pages()->map(function (Page $page) use ($model) {
+                $page->setModel($model);
+            });
+        }
+
+
         $this->serve(new MakePages($manifest->pages(), $this->droplet));
 
-        $this->serve(new MakePageButtons($manifest->pages()));
 
         $manifests->push($manifest);
 
