@@ -1,49 +1,59 @@
 <?php namespace SuperV\Platform\Domains\Droplet\Agent;
 
-use SuperV\Modules\Supreme\Domains\Script\Command\ParseFile;
-use SuperV\Modules\Supreme\Domains\Server\Server;
-use SuperV\Platform\Domains\Droplet\Jobs\LocateResourceJob;
+use SuperV\Modules\Supreme\Domains\Service\Model\ServiceModel;
 use SuperV\Platform\Domains\Feature\Feature;
+use SuperV\Platform\Domains\Task\Job;
+use SuperV\Platform\Domains\Task\Model\JobModel;
+use SuperV\Platform\Domains\Task\Task;
 
 class AgentFeature extends Feature
 {
-    /**
-     * @var array
-     */
-    protected $params;
-
-    /**
-     * @var \SuperV\Modules\Supreme\Domains\Server\Server
-     */
     protected $server;
 
-    public function __construct(Server $server, array $params = [])
-    {
-        $this->params = $params;
-        $this->server = $server;
-    }
+    protected $service;
 
-    public function setListener($listener)
+    protected $jobs = [];
+
+
+    public function addJob(Job $job)
     {
-        $this->server->setListener([$listener, 'listen']);
+        array_push($this->jobs, $job);
 
         return $this;
     }
 
-    public function __get($name)
+    public function server()
     {
-        if (property_exists($this, $name)) {
-            return $this->{$name};
+        if (!$this->server) {
+            if (!$serverId = $this->param('server_id')) {
+                /** @var ServiceModel $service */
+                if ($service = $this->service()) {
+                    $this->server = $service->getServer();
+                }
+            } else {
+                $this->server = superv('servers')->find($serverId);
+            }
         }
 
-        return array_get($this->params, $name);
+        return $this->server;
     }
 
-    protected function stub($stub, $tokens)
+    public function service()
     {
-        // TODO.ali: get agent slug from class name
-        $location = $this->dispatch(new LocateResourceJob("superv.agents.power_dns::{$stub}", 'stub'));
+        if (!$this->service) {
+            if ($serviceId = $this->param('service_id')) {
+                $this->service = superv('services')->find($serviceId);
+            }
+        }
 
-        return $this->dispatch(new ParseFile($location, $tokens));
+        return $this->service;
+    }
+
+    /**
+     * @return array
+     */
+    public function getJobs(): array
+    {
+        return $this->jobs;
     }
 }

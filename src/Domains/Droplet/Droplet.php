@@ -11,6 +11,8 @@ class Droplet
 
     protected $type;
 
+
+
     public function __construct(DropletModel $model = null)
     {
         $this->model = $model;
@@ -24,6 +26,7 @@ class Droplet
     public function newServiceProvider()
     {
         $providerClass = $this->getServiceProvider();
+
         return new $providerClass(app(), $this);
     }
 

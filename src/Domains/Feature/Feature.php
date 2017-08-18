@@ -9,20 +9,21 @@ abstract class Feature
 
     public static $resolvable = [];
 
-    protected $params;
-
     protected $middlewares;
 
-    public function params($params)
+    /**
+     * @var array
+     */
+    private $params;
+
+    public function __construct(array $params = null)
     {
         $this->params = $params;
-
-        return $this;
     }
 
-    public function resolves()
+    public function param($name, $default = null)
     {
-        return $this->resolves;
+       return array_get($this->params, $name, $default);
     }
 
     public function __get($name)

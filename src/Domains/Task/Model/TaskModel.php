@@ -1,23 +1,17 @@
 <?php namespace SuperV\Platform\Domains\Task\Model;
 
 use SuperV\Modules\Supreme\Domains\Server\Model\ServerModel;
-use SuperV\Platform\Domains\Entry\EntryModel;
 
-class TaskModel extends EntryModel
+class TaskModel extends TaskEntryModel
 {
-    const COMPLETED = 0;
-    const PENDING = 1;
-    const RUNNING = 2;
-    const FAILED = 3;
-    const COMPLETED_WITH_ERRORS = 4;
-    const ABORTING = 5;
-    const ABORTED = 6;
-
-    protected $table = 'platform_tasks';
-
     protected $casts = [
         'payload' => 'json',
     ];
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
 
     public function server()
     {
@@ -27,6 +21,26 @@ class TaskModel extends EntryModel
     public function getServer()
     {
         return $this->server;
+    }
+
+    public function subtasks()
+    {
+        return $this->hasMany(TaskModel::class, 'parent_id');
+    }
+
+    public function getSubTasks()
+    {
+        return $this->subtasks;
+    }
+
+    public function jobs()
+    {
+        return $this->hasMany(JobModel::class, 'task_id');
+    }
+
+    public function getJobs()
+    {
+        return $this->jobs;
     }
 
     public function appendOutput($buffer)

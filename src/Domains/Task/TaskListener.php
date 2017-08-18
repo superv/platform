@@ -14,8 +14,13 @@ class TaskListener
 
     public function listen($type, $buffer)
     {
-//        \Log::info("TASK LISTENER: {$type}: {$buffer}");
+      \Log::info("TASK LISTENER: {$type}: {$buffer}");
 
         $this->task->appendOutput($buffer);
+    }
+
+    public function callable()
+    {
+        return [$this, 'listen'];
     }
 }

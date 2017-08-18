@@ -57,9 +57,7 @@ class PlatformServiceProvider extends ServiceProvider
         DropletInstallCommand::class,
         MakeMigrationCommand::class,
         MakeDropletCommand::class,
-        DropletDispatch::class,
         MigrateCommand::class,
-        DropletServer::class,
     ];
 
     public function boot()
