@@ -1,5 +1,7 @@
 <?php namespace SuperV\Platform\Domains\Task;
 
+use SuperV\Platform\Domains\Task\Event\TaskOutputEvent;
+use SuperV\Platform\Domains\Task\Event\TaskStatusUpdatedEvent;
 use SuperV\Platform\Domains\Task\Model\TaskModel;
 
 class Task
@@ -17,7 +19,6 @@ class Task
      */
     private $model;
 
-
     public function setModel(TaskModel $model)
     {
         $this->model = $model;
@@ -30,8 +31,8 @@ class Task
         $model = $this->model->subtasks()->create(
             [
                 'payload' => ['job' => serialize($job)],
-                'title' => $job->getTitle(),
-                'status' => self::PENDING
+                'title'   => $job->getTitle(),
+                'status'  => self::PENDING,
             ]
         );
 
@@ -50,8 +51,8 @@ class Task
     {
         $jobModel = $this->model->jobs()->create(
             [
-                'title' => $job->getTitle(),
-                'status' => self::PENDING
+                'title'  => $job->getTitle(),
+                'status' => self::PENDING,
             ]
         );
 
@@ -68,6 +69,8 @@ class Task
     public function appendOutput($buffer)
     {
         $this->model->appendOutput($buffer);
+
+        event(new TaskOutputEvent($this->model, $buffer));
     }
 
     public function payload($key = null, $default = null)
@@ -79,39 +82,34 @@ class Task
         return $this->model->payload;
     }
 
-    public function completed()
+    public function status($status, $message = null)
     {
-        $this->model->update([
-            'status' => self::COMPLETED,
-        ]);
+        $update = [
+            'status' => $status,
+        ];
+        array_set_if_not(is_null($message), $update, 'message', $message);
 
-        \Log::info('TASK COMPLETED');
+        $this->model->update($update);
+
+
+        event(new TaskStatusUpdatedEvent($this->model));
+
 
         return $this;
+    }
+
+    public function completed()
+    {
+        return $this->status(self::COMPLETED);
     }
 
     public function started()
     {
-        \Log::info('TASK STARTED: ' . $this->model->getTitle());
-
-        $this->model->update([
-            'status' => self::RUNNING,
-        ]);
-
-        return $this;
+        return $this->status(self::RUNNING);
     }
 
     public function failed($message)
     {
-        $this->model->update([
-            'status' => self::FAILED,
-            'info'   => $message,
-        ]);
-
-        \Log::error('TASK FAILED: '.$message);
-
-        return $this;
+        return $this->status(self::FAILED, $message);
     }
-
-
 }

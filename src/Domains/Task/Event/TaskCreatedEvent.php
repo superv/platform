@@ -4,7 +4,7 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use SuperV\Platform\Domains\Task\Model\TaskModel;
 
-class TaskStatusUpdatedEvent implements ShouldBroadcast
+class TaskCreatedEvent implements ShouldBroadcast
 {
     /**
      * @var TaskModel
@@ -23,6 +23,6 @@ class TaskStatusUpdatedEvent implements ShouldBroadcast
 
     public function broadcastAs()
     {
-        return 'status.updated';
+        return 'task.created';
     }
 }

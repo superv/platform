@@ -1,8 +1,9 @@
 <?php namespace SuperV\Platform\Domains\Task;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 
-class Deployer
+class Deployer implements ShouldQueue
 {
     use ServesFeaturesTrait;
 

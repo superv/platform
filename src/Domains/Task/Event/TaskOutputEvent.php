@@ -4,16 +4,22 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use SuperV\Platform\Domains\Task\Model\TaskModel;
 
-class TaskStatusUpdatedEvent implements ShouldBroadcast
+class TaskOutputEvent implements ShouldBroadcast
 {
     /**
      * @var TaskModel
      */
     public $model;
 
-    public function __construct(TaskModel $model)
+    /**
+     * @var
+     */
+    public $buffer;
+
+    public function __construct(TaskModel $model, $buffer)
     {
         $this->model = $model;
+        $this->buffer = $buffer;
     }
 
     public function broadcastOn()
@@ -23,6 +29,6 @@ class TaskStatusUpdatedEvent implements ShouldBroadcast
 
     public function broadcastAs()
     {
-        return 'status.updated';
+        return 'task.output';
     }
 }

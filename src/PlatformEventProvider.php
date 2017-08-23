@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Support\Providers\EventServiceProvider;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActiveModuleJob;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectCurrentPortJob;
+use SuperV\Platform\Domains\Task\Event\TaskStatusUpdatedEvent;
 use SuperV\Platform\Domains\UI\Page\Jobs\InjectMatchedPageJob;
 
 class PlatformEventProvider extends EventServiceProvider
@@ -16,6 +17,10 @@ class PlatformEventProvider extends EventServiceProvider
             DetectCurrentPortJob::class,
             InjectMatchedPageJob::class
         ],
+
+        TaskStatusUpdatedEvent::class => [
+
+        ]
     ];
 
     public function boot()
