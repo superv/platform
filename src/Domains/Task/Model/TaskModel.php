@@ -17,6 +17,11 @@ class TaskModel extends TaskEntryModel
     {
         return $this->hasOne(ServerModel::class, 'id', 'server_id');
     }
+    
+    public function getStatus()
+    {
+        return $this->status;
+    }
 
     public function getServer()
     {

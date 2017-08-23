@@ -1,10 +1,11 @@
 <?php namespace SuperV\Platform\Domains\Entry;
 
+use Robbo\Presenter\PresentableInterface;
 use SuperV\Platform\Domains\Entry\Traits\PresentableTrait;
 use SuperV\Platform\Domains\Entry\Traits\RoutableTrait;
 use SuperV\Platform\Domains\Model\EloquentModel;
 
-class EntryModel extends EloquentModel
+class EntryModel extends EloquentModel implements PresentableInterface
 {
     use RoutableTrait, PresentableTrait;
 
