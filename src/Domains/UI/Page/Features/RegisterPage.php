@@ -18,7 +18,7 @@ class RegisterPage extends Feature
         $this->page = $page;
     }
 
-    public function handle(Router $router, PageCollection $pages)
+    public function handle(PageCollection $pages)
     {
         $page = $this->page;
         $handler = $this->page->getHandler();
@@ -27,7 +27,6 @@ class RegisterPage extends Feature
             'as'   => $page->getRoute(),
             'uses' => is_callable($handler) ? $handler : (str_contains($handler, '@') ? $handler : $handler . '@' . $page->getPage()),
         ];
-
 
         $this->dispatch(new RegisterDropletRouteJob($page->getDroplet(), $page->getUrl(), $route));
 
