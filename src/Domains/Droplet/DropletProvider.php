@@ -16,12 +16,12 @@ class DropletProvider
 {
     use ServesFeaturesTrait;
 
-    /**
-     * The registered providers.
-     *
-     * @var array
-     */
-    protected $providers = [];
+//    /**
+//     * The registered providers.
+//     *
+//     * @var array
+//     */
+//    protected $providers = [];
 
     /**
      * @var Dispatcher
@@ -66,7 +66,8 @@ class DropletProvider
             return;
         }
 
-        $this->providers[] = $provider = $droplet->newServiceProvider();
+//        $this->providers[] = $provider = $droplet->newServiceProvider();
+        $provider = $droplet->newServiceProvider();
 
         $this->registerProviders($provider);
         if (method_exists($provider, 'register')) {
@@ -80,11 +81,9 @@ class DropletProvider
         $this->registerRoutes($provider);
         $this->registerCommands($provider);
         $this->registerFeatures($provider);
-        $this->registerEvents($provider);
+        $this->registerListeners($provider);
 
         $this->registerManifests($provider);
-
-
     }
 
     protected function registerCommands(DropletServiceProvider $provider)
@@ -120,7 +119,7 @@ class DropletProvider
         }
     }
 
-    protected function registerEvents(DropletServiceProvider $provider)
+    protected function registerListeners(DropletServiceProvider $provider)
     {
         if (!$listen = $provider->getListeners()) {
             return;
