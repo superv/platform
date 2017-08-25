@@ -14,22 +14,22 @@ abstract class Feature
     /**
      * @var array
      */
-    private $params;
-
-    public function __construct(array $params = null)
-    {
-        $this->params = $params;
-    }
-
-    public function param($name, $default = null)
-    {
-       return array_get($this->params, $name, $default);
-    }
-
-    public function __get($name)
-    {
-       return array_get($this->params, $name);
-    }
+//    private $params;
+//
+//    public function __construct(array $params = null)
+//    {
+//        $this->params = $params;
+//    }
+//
+//    public function param($name, $default = null)
+//    {
+//       return array_get($this->params, $name, $default);
+//    }
+//
+//    public function __get($name)
+//    {
+//       return array_get($this->params, $name);
+//    }
 
     /**
      * @return mixed

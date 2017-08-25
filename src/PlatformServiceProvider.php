@@ -26,12 +26,20 @@ use SuperV\Platform\Domains\View\ViewTemplate;
 use SuperV\Platform\Http\Middleware\MiddlewareCollection;
 use TwigBridge\ServiceProvider as TwigBridgeServiceProvider;
 
+/**
+ * Class PlatformServiceProvider
+ *
+ * https://www.draw.io/#G0Byi-qvl6eS2ySW45cFAtVWVZVTQ
+ *
+ * @package SuperV\Platform
+ */
 class PlatformServiceProvider extends ServiceProvider
 {
     protected $providers = [
         DatabaseServiceProvider::class,
         AdapterServiceProvider::class,
         PlatformEventProvider::class,
+        TwigBridgeServiceProvider::class,
         FormServiceProvider::class,
     ];
 
@@ -47,7 +55,7 @@ class PlatformServiceProvider extends ServiceProvider
     ];
 
     protected $bindings = [
-        'manifests'      => ManifestCollection::class,
+        'manifests'     => ManifestCollection::class,
         'droplets'      => DropletCollection::class,
         'ports'         => PortCollection::class,
         'view.template' => ViewTemplate::class,
@@ -60,37 +68,13 @@ class PlatformServiceProvider extends ServiceProvider
         MigrateCommand::class,
     ];
 
-    public function boot()
-    {
-        if (!env('SUPERV_INSTALLED', false)) {
-            return;
-        }
-
-        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'superv');
-
-        $this->app->booted(
-            function () {
-                /* @var DropletManager $manager */
-                $manager = $this->app->make('SuperV\Platform\Domains\Droplet\DropletManager');
-
-                $manager->register();
-
-                superv(Factory::class)->composer('*', ViewComposer::class);
-
-                superv('view.template')->set('menu', superv(Menu::class));
-
-                superv('events')->dispatch('superv::app.loaded');
-            }
-        );
-    }
-
     public function register()
     {
         if (!env('SUPERV_INSTALLED', false)) {
             return;
         }
 
-        $this->app->register(TwigBridgeServiceProvider::class);
+//        $this->app->register(TwigBridgeServiceProvider::class);
 //        $this->app->register(HtmlServiceProvider::class);
 
 //        app(Bridge::class)->addExtension(app(AsseticExtension::class));
@@ -122,5 +106,25 @@ class PlatformServiceProvider extends ServiceProvider
             $this->app->singleton($abstract, $concrete);
 //            $this->app->singleton($abstract, $concrete == '~' ? $abstract : $concrete);
         }
+    }
+
+    public function boot()
+    {
+        if (!env('SUPERV_INSTALLED', false)) {
+            return;
+        }
+
+        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'superv');
+
+        /* @var DropletManager $manager */
+        $manager = $this->app->make('SuperV\Platform\Domains\Droplet\DropletManager');
+
+        $manager->boot();
+
+        superv(Factory::class)->composer('*', ViewComposer::class);
+
+        superv('view.template')->set('menu', superv(Menu::class));
+
+        superv('events')->dispatch('superv::app.loaded');
     }
 }
