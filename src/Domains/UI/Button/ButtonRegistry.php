@@ -29,6 +29,11 @@ class ButtonRegistry
             'text' => 'Delete',
             'icon' => 'fa fa-remove',
             'type' => 'danger',
+            'attributes' => [
+                           'data-toggle'  => 'confirm',
+                'data-target' => 'modal-danger',
+                           'data-message' => 'Are you sure you want to delete this?',
+                       ],
         ],
     ];
 

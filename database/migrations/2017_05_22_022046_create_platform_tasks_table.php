@@ -15,17 +15,14 @@ class CreatePlatformTasksTable extends Migration
     {
         Schema::create('platform_tasks', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('server_id');
+            $table->unsignedInteger('parent_id');
+            $table->string('title');
             $table->longText('payload');
             $table->longText('info')->nullable();
             $table->longText('output')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->nullableTimestamps();
 
-            $table->foreign('server_id')
-                  ->references('id')
-                  ->on('supreme_servers')
-                  ->onDelete('cascade');
         });
     }
 

@@ -1,16 +1,11 @@
 <?php namespace SuperV\Platform\Domains\Task;
 
-use SuperV\Platform\Domains\Task\Model\JobModel;
-
 class Job
 {
     /**
      * @var Task
      */
     protected $task;
-
-    /** @var  JobModel */
-    protected $model;
 
     protected $title;
 

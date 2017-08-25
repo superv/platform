@@ -6,9 +6,9 @@ use SuperV\Platform\Domains\Task\Model\TaskModel;
 
 class Task
 {
-    const COMPLETED = 0;
-    const PENDING = 1;
-    const RUNNING = 2;
+    const PENDING = 0;
+    const RUNNING = 1;
+    const COMPLETED = 2;
     const FAILED = 3;
     const COMPLETED_WITH_ERRORS = 4;
     const ABORTING = 5;
@@ -43,20 +43,6 @@ class Task
     {
         $job->setListener($this->newListener());
         $job->setTask($this);
-
-        return $this;
-    }
-
-    public function createJobModel(Job $job)
-    {
-        $jobModel = $this->model->jobs()->create(
-            [
-                'title'  => $job->getTitle(),
-                'status' => self::PENDING,
-            ]
-        );
-
-        $job->setModel($jobModel);
 
         return $this;
     }

@@ -41,7 +41,9 @@ class MakePageButtons extends Feature
                 }
                 if ($buttonPage = $this->findPage($pages, $button)) {
                     array_set($data, 'route', $buttonPage->getRoute());
-                    array_set_if_not(array_has($data, 'text'), $data, 'text', $buttonPage->getTitle());
+                    $buttonText = array_get($data, 'text', $buttonPage->getTitle());
+                    array_set_if($buttonText, $data, 'text', $buttonText);
+//                    array_set_if_not(array_has($data, 'text'), $data, 'text', $buttonPage->getTitle());
                 }
             }
             $buttons = $this->dispatch(new MakeButtons($buttons, $arguments));
@@ -51,7 +53,8 @@ class MakePageButtons extends Feature
 
     protected function findPage(PageCollection $pages, $button)
     {
-        foreach ($pages->byDroplet($this->page->getDroplet()->getSlug()) as $page) {
+        $dropletPages = $pages->byDroplet($this->page->getDroplet()->getSlug());
+        foreach ($dropletPages as $page) {
             if ($page->getPage() === $button) {
                 return $page;
             }

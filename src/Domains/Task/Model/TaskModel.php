@@ -38,16 +38,6 @@ class TaskModel extends TaskEntryModel
         return $this->subtasks;
     }
 
-    public function jobs()
-    {
-        return $this->hasMany(JobModel::class, 'task_id');
-    }
-
-    public function getJobs()
-    {
-        return $this->jobs;
-    }
-
     public function appendOutput($buffer)
     {
         $this->update([
