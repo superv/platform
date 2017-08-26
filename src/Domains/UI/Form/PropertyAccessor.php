@@ -1,7 +1,9 @@
 <?php namespace SuperV\Platform\Domains\UI\Form;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use SuperV\Nucleus\Domains\Entry\NucleusHasMany;
 use SuperV\Platform\Domains\Entry\EntryModel;
 use Symfony\Component\PropertyAccess\Exception;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -97,8 +99,9 @@ class PropertyAccessor implements PropertyAccessorInterface
 
                 if ($relation instanceof HasOne) {
                     return $objectOrArray->getAttribute("{$field}_id");
-                } elseif ($relation instanceof BelongsToMany) {
-                    $value = $objectOrArray->{$field}()->pluck('id', 'name')->toArray();
+                } elseif ($relation instanceof BelongsToMany || $relation instanceof  HasMany) {
+                    $related = $relation->getRelated();
+                    $value = $objectOrArray->{$field}()->pluck('id', $related->getTitleColumn())->toArray();
 
                     return $value;
                 }

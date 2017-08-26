@@ -9,6 +9,8 @@ class EloquentModel extends Model
     
     public $timestamps = false;
 
+    protected $titleColumn = 'name';
+
     public function getTable()
     {
         if (! isset($this->table)) {
@@ -16,5 +18,13 @@ class EloquentModel extends Model
         }
 
         return $this->table;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitleColumn(): string
+    {
+        return $this->titleColumn;
     }
 }

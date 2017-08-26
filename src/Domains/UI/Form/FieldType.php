@@ -79,7 +79,8 @@ class FieldType
                 if ($this->entry->exists && method_exists($this->entry, $method = "getPossible" . studly_case(str_plural($this->field)))) {
                     $choices = $this->entry->{$method}()->pluck('id', 'name')->toArray();
                 } else {
-                    $choices = $related::pluck('id', 'name')->toArray();
+                    $related = new $related;
+                    $choices = $related->newQuery()->pluck('id', $related->getTitleColumn())->toArray();
                 }
                 array_set($options, 'choices', $choices);
             }
