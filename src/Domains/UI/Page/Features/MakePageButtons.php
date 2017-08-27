@@ -55,7 +55,7 @@ class MakePageButtons extends Feature
     {
         $dropletPages = $pages->byDroplet($this->page->getDroplet()->getSlug());
         foreach ($dropletPages as $page) {
-            if ($page->getPage() === $button) {
+            if ($page->getPage() === $button && $page->getModel() == $this->page->getModel()) {
                 return $page;
             }
         }
