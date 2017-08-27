@@ -8,6 +8,16 @@ use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Domains\UI\Page\PageCollection;
 use SuperV\Platform\Domains\View\ViewTemplate;
 
+/**
+ * Class InjectMatchedPageJob
+ *
+ * Gets page from route,
+ * Finds the entry of the page model, sets the instance on Page (used in parsing buttons)
+ * Makes page buttons
+ * Sets page in the view template
+ *
+ * @package SuperV\Platform\Domains\UI\Page\Jobs
+ */
 class InjectMatchedPageJob extends Feature
 {
     /**
