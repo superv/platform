@@ -32,9 +32,14 @@ class DropletManager
     {
         /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel $model */
         foreach ($this->droplets->enabled() as $model) {
+            \Debugbar::startMeasure("droplet.{$model->slug()}", $model->getName());
+
+            \Debugbar::startMeasure('load', 'Load');
             $this->serve(new LoadDroplet(base_path($model->path())));
+            \Debugbar::stopMeasure('load', 'Load');
 
             $this->serve(new IntegrateDroplet($model));
+            \Debugbar::stopMeasure("droplet.{$model->slug()}");
         }
     }
 }

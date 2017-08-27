@@ -77,13 +77,16 @@ class DropletProvider
         $this->bindAliases($provider);
         $this->bindClasses($provider);
         $this->bindSingletons($provider);
-
         $this->registerRoutes($provider);
+
         $this->registerCommands($provider);
         $this->registerFeatures($provider);
-        $this->registerListeners($provider);
 
+        $this->registerListeners($provider);
+        \Debugbar::startMeasure('registerManifests', 'Register Manifests');
         $this->registerManifests($provider);
+        \Debugbar::stopMeasure('registerManifests');
+
     }
 
     protected function registerCommands(DropletServiceProvider $provider)

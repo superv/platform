@@ -25,6 +25,7 @@ use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
 use SuperV\Platform\Http\Middleware\MiddlewareCollection;
 use TwigBridge\ServiceProvider as TwigBridgeServiceProvider;
+use Debugbar;
 
 /**
  * Class PlatformServiceProvider
@@ -110,6 +111,7 @@ class PlatformServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        Debugbar::startMeasure('platform.boot','Platform Boot');
         if (!env('SUPERV_INSTALLED', false)) {
             return;
         }
@@ -126,5 +128,8 @@ class PlatformServiceProvider extends ServiceProvider
         superv('view.template')->set('menu', superv(Menu::class));
 
         superv('events')->dispatch('superv::app.loaded');
+
+        Debugbar::stopMeasure('platform.boot');
+
     }
 }

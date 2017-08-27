@@ -42,7 +42,9 @@ class RegisterModelManifest extends Feature
             }
         }
 
+        \Debugbar::startMeasure('BuildManifestPagesJob');
         $this->dispatch(new BuildManifestPagesJob($manifest));
+        \Debugbar::stopMeasure('BuildManifestPagesJob');
 
         if ($model = $manifest->getModel()) {
             $manifest->pages()->map(function (Page $page) use ($model) {
@@ -50,9 +52,9 @@ class RegisterModelManifest extends Feature
             });
         }
 
-
+        \Debugbar::startMeasure('MakePages');
         $this->serve(new MakePages($manifest->pages(), $this->droplet));
-
+        \Debugbar::stopMeasure('MakePages');
 
         $manifests->push($manifest);
 

@@ -36,7 +36,9 @@ class LoadDroplet extends Feature
 
     public function handle()
     {
-        $composer = $this->dispatch(new GetComposerConfigJob($this->path));
+        $composer = \Cache::remember('composer@'.md5($this->path), 60, function(){
+            return $this->dispatch(new GetComposerConfigJob($this->path));
+        });
 
         if (!array_key_exists('autoload', $composer)) {
             return null;

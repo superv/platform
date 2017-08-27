@@ -38,9 +38,9 @@ class RegisterDropletRouteJob
             }
         }
 
-        if (is_callable($route['uses']) && $route['uses'] instanceof \Closure) {
-//            $route['uses']->bindTo($router);
-        }
+//        if (is_callable($route['uses']) && $route['uses'] instanceof \Closure) {
+////            $route['uses']->bindTo($router);
+//        }
 
         // Add droplet signature
         array_set($route, 'superv::droplet', $this->droplet->getSlug());
