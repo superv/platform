@@ -1,5 +1,6 @@
 <?php namespace SuperV\Platform\Domains\Entry;
 
+use Closure;
 use Robbo\Presenter\PresentableInterface;
 use SuperV\Platform\Domains\Entry\Traits\PresentableTrait;
 use SuperV\Platform\Domains\Entry\Traits\RoutableTrait;
@@ -14,6 +15,8 @@ class EntryModel extends EloquentModel implements PresentableInterface
     protected $relationships = [];
 
     protected $cache;
+
+    protected $onCreate;
 
     protected static function boot()
     {
@@ -65,5 +68,25 @@ class EntryModel extends EloquentModel implements PresentableInterface
     public function getRelationships(): array
     {
         return $this->relationships;
+    }
+
+    /**
+     * @param Closure $callback
+     *
+     * @return EntryModel
+     */
+    public function onCreate(Closure $callback)
+    {
+        $this->onCreate = $callback;
+
+        return $this;
+}
+
+    /**
+     * @return mixed
+     */
+    public function getOnCreateCallback()
+    {
+        return $this->onCreate;
     }
 }

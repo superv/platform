@@ -17,6 +17,9 @@ class EntryObserver
 
     public function created(EntryModel $entry)
     {
+        if ($callback = $entry->getOnCreateCallback()) {
+            return call_user_func($callback, $entry);
+        }
     }
 
     public function updating(EntryModel $entry)

@@ -3,7 +3,6 @@
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use SuperV\Nucleus\Domains\Entry\NucleusHasMany;
 use SuperV\Platform\Domains\Entry\EntryModel;
 use Symfony\Component\PropertyAccess\Exception;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -42,18 +41,28 @@ class PropertyAccessor implements PropertyAccessorInterface
      */
     public function setValue(&$objectOrArray, $propertyPath, $value)
     {
+        /** @var EntryModel $entry */
+        $entry = $objectOrArray;
         $field = (string)$propertyPath;
-        if ($objectOrArray instanceof EntryModel) {
-            $relationships = $objectOrArray->getRelationships();
+
+        if ($entry instanceof EntryModel) {
+            $relationships = $entry->getRelationships();
             if (in_array($field, $relationships)) {
-                $relation = $objectOrArray->{$field}();
+                $relation = $entry->{$field}();
                 if ($relation instanceof HasOne) {
-                    $objectOrArray->setAttribute("{$field}_id", $value);
+                    $entry->setAttribute("{$field}_id", $value);
                 } elseif ($relation instanceof BelongsToMany) {
-                    $objectOrArray->{$field}()->sync($value);
+
+                    if (!$entry->exists) {
+                        $entry->onCreate(function ($entry) use ($field, $value) {
+                            $entry->{$field}()->sync($value);
+                        });
+                    } else {
+                        $entry->{$field}()->sync($value);
+                    }
                 }
             } else {
-                $objectOrArray->setAttribute($field, $value);
+                $entry->setAttribute($field, $value);
             }
         }
     }
@@ -99,9 +108,12 @@ class PropertyAccessor implements PropertyAccessorInterface
 
                 if ($relation instanceof HasOne) {
                     return $objectOrArray->getAttribute("{$field}_id");
-                } elseif ($relation instanceof BelongsToMany || $relation instanceof  HasMany) {
+                } elseif ($relation instanceof BelongsToMany || $relation instanceof HasMany) {
                     $related = $relation->getRelated();
-                    $value = $objectOrArray->{$field}()->pluck('id', $related->getTitleColumn())->toArray();
+                    $value = $objectOrArray->{$field}()
+                                           ->pluck(
+                                               $related->getQualifiedKeyName(), $related->getTitleColumn()
+                                           )->toArray();
 
                     return $value;
                 }
