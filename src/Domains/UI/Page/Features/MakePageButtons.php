@@ -41,8 +41,10 @@ class MakePageButtons extends Feature
                 }
                 if ($buttonPage = $this->findPage($pages, $button)) {
                     array_set($data, 'route', $buttonPage->getRoute());
-                    $buttonText = array_get($data, 'text', $buttonPage->getTitle());
-                    array_set_if($buttonText, $data, 'text', $buttonText);
+                    if(!$buttonText = array_get($data, 'text', $buttonPage->getTitle())) {
+                       $buttonText = ucwords(str_replace('_', ' ', $button));
+                    }
+                    array_set($data, 'text', $buttonText);
 //                    array_set_if_not(array_has($data, 'text'), $data, 'text', $buttonPage->getTitle());
                 }
             }
