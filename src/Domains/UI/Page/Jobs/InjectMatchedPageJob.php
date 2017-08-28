@@ -43,7 +43,7 @@ class InjectMatchedPageJob extends Feature
         }
 
         // page entry
-        if ($entryId = $route->parameter('id')) {
+        if ($entryId = $route->parameter($page->getManifest()->getRouteKeyName())) {
             if ($model = $page->getModel()) {
                 if ($entry = $model::find($entryId)) {
                     $page->setEntry($entry);
