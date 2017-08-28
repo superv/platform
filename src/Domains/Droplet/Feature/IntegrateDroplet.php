@@ -44,7 +44,7 @@ class IntegrateDroplet extends Feature
          */
         if ($droplet instanceof Port) {
             $portName = strtoupper($model->getName());
-            $droplet->setHostname(env("PORTS_{$portName}_HOSTNAME"));
+            $droplet->setHostname(env("SUPERV_PORTS_{$portName}_HOSTNAME"));
             superv('ports')->push($droplet);
         }
 
