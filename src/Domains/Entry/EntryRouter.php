@@ -29,11 +29,11 @@ class EntryRouter
 
     public function delete()
     {
-        $config = ['class' => get_class($this->entry), 'id' => $this->entry->getId()];
+        $config = ['model' => get_class($this->entry), 'id' => $this->entry->getId()];
         $ticket = md5(json_encode($config));
 
         superv('cache')->remember(
-            'superv::platform.tickets:' . $ticket,
+            'superv::entry.tickets.delete:' . $ticket,
             3600,
             function () use($config) {
                 return $config;
@@ -45,11 +45,11 @@ class EntryRouter
 
     public function edit()
     {
-        $config = ['class' => get_class($this->entry), 'id' => $this->entry->getId()];
+        $config = ['model' => get_class($this->entry), 'id' => $this->entry->getId()];
         $ticket = md5(json_encode($config));
 
         superv('cache')->remember(
-            'superv::platform.tickets:' . $ticket,
+            'superv::entry.tickets.edit:' . $ticket,
             3600,
             function () use($config) {
                 return $config;

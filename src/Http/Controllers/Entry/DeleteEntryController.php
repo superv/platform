@@ -6,11 +6,17 @@ class DeleteEntryController extends BasePlatformController
 {
     public function index($ticket)
     {
-        if ($config = superv('cache')->get('superv::platform.tickets:' . $ticket)) {
-            $class = array_get($config, 'class');
+        if ($config = superv('cache')->get('superv::entry.tickets.delete:' . $ticket)) {
+            $model = array_get($config, 'model');
             $id = array_get($config, 'id');
 
-            dd($class, $id);
+            $entry = $model::findOrFail($id);
+
+            $entry->delete();
+
+            return $this->redirect->back()->withSuccess('Entry deleted');
         }
+
+        throw new \Exception('Ticket not found: ' . $ticket);
     }
 }

@@ -7,8 +7,8 @@ class EditEntryController extends BasePlatformController
 {
     public function index($ticket, FormBuilder $builder)
     {
-        if ($config = superv('cache')->get('superv::platform.tickets:' . $ticket)) {
-            $model = array_get($config, 'class');
+        if ($config = superv('cache')->get('superv::entry.tickets.edit:' . $ticket)) {
+            $model = array_get($config, 'model');
             $id = array_get($config, 'id');
 
             return $builder->render($model::findOrFail($id));
