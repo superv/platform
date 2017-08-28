@@ -47,8 +47,9 @@ class RegisterModelManifest extends Feature
         \Debugbar::stopMeasure('BuildManifestPagesJob');
 
         if ($model = $manifest->getModel()) {
-            $manifest->pages()->map(function (Page $page) use ($model) {
-                $page->setModel($model);
+            $manifest->pages()->map(function (Page $page) use ($manifest) {
+                $page->setModel($manifest->getModel())
+                     ->setManifest($manifest);
             });
         }
 
