@@ -24,6 +24,7 @@ use SuperV\Platform\Domains\UI\Page\PageCollection;
 use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
 use SuperV\Platform\Http\Middleware\MiddlewareCollection;
+use SuperV\Platform\Traits\RegistersRoutes;
 use TwigBridge\ServiceProvider as TwigBridgeServiceProvider;
 use Debugbar;
 
@@ -36,6 +37,19 @@ use Debugbar;
  */
 class PlatformServiceProvider extends ServiceProvider
 {
+    use RegistersRoutes;
+
+    protected $routes = [
+        'platform/entries/{ticket}/delete' => [
+            'as' => 'superv::entries.delete',
+            'uses' => 'SuperV\Platform\Http\Controllers\Entry\DeleteEntryController@index'
+        ]      ,
+        'platform/entries/{ticket}/edit' => [
+            'as' => 'superv::entries.edit',
+            'uses' => 'SuperV\Platform\Http\Controllers\Entry\EditEntryController@index'
+        ]
+    ];
+
     protected $providers = [
         DatabaseServiceProvider::class,
         AdapterServiceProvider::class,
@@ -49,7 +63,7 @@ class PlatformServiceProvider extends ServiceProvider
         ManifestCollection::class,
         DropletCollection::class,
         FeatureCollection::class,
-        PageCollection::class,
+        PageCollection::class . '~pages',
         PortCollection::class,
         ViewTemplate::class,
         Menu::class,
@@ -75,9 +89,6 @@ class PlatformServiceProvider extends ServiceProvider
             return;
         }
 
-//        $this->app->register(TwigBridgeServiceProvider::class);
-//        $this->app->register(HtmlServiceProvider::class);
-
 //        app(Bridge::class)->addExtension(app(AsseticExtension::class));
 
         if ($this->app->environment() !== 'production') {
@@ -102,11 +113,17 @@ class PlatformServiceProvider extends ServiceProvider
         // Register singletons.
         foreach ($this->singletons as $abstract => $concrete) {
             if (is_numeric($abstract) && is_string($concrete)) {
+                if (str_is('*~*', $concrete)) {
+                    list($concrete, $binding) = explode('~', $concrete);
+                    $this->app->bind($binding, $concrete);
+                }
                 $abstract = $concrete;
             }
             $this->app->singleton($abstract, $concrete);
 //            $this->app->singleton($abstract, $concrete == '~' ? $abstract : $concrete);
         }
+
+        $this->registerRoutes($this->routes);
     }
 
     public function boot()
