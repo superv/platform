@@ -1,0 +1,7 @@
+<?php namespace {model.namespace};
+
+use SuperV\Platform\Domains\Droplet\Port\Port;
+
+class {class} extends Port
+{
+}

@@ -1,0 +1,7 @@
+<?php namespace {model.namespace};
+
+use SuperV\Platform\Domains\Droplet\Agent\Agent;
+
+class {class} extends Agent
+{
+}
