@@ -26,8 +26,11 @@ class MakeForm extends Feature
     public function handle(FormFactoryInterface $factory)
     {
         $form = $this->builder->getForm();
-        $options = [
-        ];
+        $options = [];
+
+        if ($this->builder->getEntry()->exists) {
+            $form->setMode('edit');
+        }
 
         /** @var FormBuilderInterface $symfonyFormBuilder */
         $symfonyFormBuilder = $factory->createBuilder(FormType::class, $this->builder->getEntry(), $options);

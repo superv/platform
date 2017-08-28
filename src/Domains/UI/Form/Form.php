@@ -9,6 +9,28 @@ class Form
 
     protected $actions;
 
+    protected $mode = 'create';
+
+    /**
+     * @return mixed
+     */
+    public function getMode()
+    {
+        return $this->mode;
+    }
+
+    /**
+     * @param mixed $mode
+     *
+     * @return Form
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
+
+        return $this;
+    }
+
     /** @var  FormInterface */
     protected $symfonyForm;
 

@@ -1,18 +1,18 @@
 <?php namespace SuperV\Platform\Domains\UI\Form;
 
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Entry\EntryModel;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\UI\Form\Features\BuildForm;
 use SuperV\Platform\Domains\UI\Form\Features\MakeForm;
+use SuperV\Platform\Traits\FiresCallbacks;
 use Symfony\Component\Form\FormInterface;
 
 class FormBuilder
 {
     use ServesFeaturesTrait;
+    use FiresCallbacks;
 
     protected $ajax = false;
 
@@ -25,12 +25,12 @@ class FormBuilder
     /** @var  FormInterface */
     protected $factory;
 
+    protected $skips = [];
+
     /**
      * @var Factory
      */
     private $view;
-
-    protected $skips = [];
 
     public function __construct(Form $form, Factory $view)
     {
@@ -74,20 +74,9 @@ class FormBuilder
 
             if ($this->form->isSubmitted() && $this->form->isValid()) {
 
-//                if ($relationships = $this->entry->getRelationships()) {
-//                    foreach ($relationships as $relationship) {
-//                        if ($formValue = $this->form->getFormData($relationship)) {
-//                            $relation = $this->entry->{$relationship}();
-//                            if ($relation instanceof HasOne) {
-//                                $this->entry->setAttribute("{$relationship}_id", $formValue);
-//                            } elseif ($relation instanceof BelongsToMany) {
-//                                $this->entry->{$relationship}()->sync($formValue);
-//                            }
-//                        }
-//                    }
-//                }
-
+                $this->fire('saving', ['entry' => $this->entry]);
                 $this->entry->save();
+                $this->fire('saved', ['entry' => $this->entry]);
 
                 return redirect()->back()->withSuccess('Entry saved!');
             }
@@ -106,6 +95,7 @@ class FormBuilder
         $response = $this->form->createView();
 
         $view = $this->ajax ? 'superv::form.ajax' : 'superv::form.form';
+
         return $this->view->make($view, ['form' => $response]);
     }
 
@@ -135,5 +125,15 @@ class FormBuilder
         $this->ajax = $ajax;
 
         return $this;
-}
+    }
+
+    public function onSaving(EntryModel $entry)
+    {
+
+    }
+
+    public function onSaved(EntryModel $entry)
+    {
+
+    }
 }
