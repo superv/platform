@@ -1,8 +1,9 @@
-<?php namespace SuperV\Platform\Domains\UI\Button\Jobs;
+<?php namespace SuperV\Platform\Domains\UI\Button\Features;
 
+use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Support\Parser;
 
-class EvaluateButtonJob
+class EvaluateButton extends Feature
 {
     private $button;
 

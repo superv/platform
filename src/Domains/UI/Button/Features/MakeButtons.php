@@ -3,8 +3,6 @@
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\UI\Button\Button;
 use SuperV\Platform\Domains\UI\Button\ButtonRegistry;
-use SuperV\Platform\Domains\UI\Button\Jobs\EvaluateButtonJob;
-use SuperV\Platform\Domains\UI\Button\Jobs\NormalizeButtonJob;
 use SuperV\Platform\Support\Hydrator;
 
 class MakeButtons
@@ -61,8 +59,8 @@ class MakeButtons
             $params = array_replace_recursive($registered, $params);
         }
 
-        $params = $this->dispatch(new EvaluateButtonJob($params, $this->arguments));
-        $params = $this->dispatch(new NormalizeButtonJob($params, $this->arguments));
+        $params = $this->dispatch(new EvaluateButton($params, $this->arguments));
+        $params = $this->dispatch(new NormalizeButton($params, $this->arguments));
 
         // hydrate button
         return superv(Hydrator::class)->hydrate(superv(Button::class), $params);
