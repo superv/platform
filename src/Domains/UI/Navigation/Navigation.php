@@ -4,24 +4,20 @@ use SuperV\Platform\Support\Collection;
 
 class Navigation
 {
-    protected $sections;
+    protected $sections = [];
 
     protected $activeModule;
 
-    public function __construct(Collection $sections)
-    {
-        $this->sections = $sections;
-    }
 
     public function addSection(Section $section)
     {
-        $this->sections->push($section);
+        $this->sections[] = $section;
     }
 
     /**
-     * @return Collection
+     * @return array
      */
-    public function getSections(): Collection
+    public function getSections(): array
     {
         return $this->sections;
     }

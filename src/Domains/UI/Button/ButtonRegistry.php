@@ -27,7 +27,7 @@ class ButtonRegistry
         ],
         'delete' => [
             'text' => 'Delete',
-            'icon' => 'fa fa-remove',
+            'icon' => 'fa fa-trash',
             'type' => 'danger',
             'attributes' => [
                            'data-toggle'  => 'confirm',

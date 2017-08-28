@@ -4,53 +4,6 @@ use Illuminate\View\Factory;
 
 class Button
 {
-    /**
-     * @return mixed
-     */
-    public function getButton()
-    {
-        return $this->button;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getText()
-    {
-        return $this->text;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIcon()
-    {
-        return $this->icon;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getClass()
-    {
-        return $this->class;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType(): string
-    {
-        return $this->type;
-    }
     protected $button;
 
     protected $attributes;
@@ -69,6 +22,8 @@ class Button
      * @var Factory
      */
     private $view;
+
+    protected $iconOnly = false;
 
     public function __construct(Factory $view)
     {
@@ -158,5 +113,73 @@ class Button
     public function getSize()
     {
         return $this->size;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getButton()
+    {
+        return $this->button;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIconOnly(): bool
+    {
+        return $this->iconOnly;
+    }
+
+    /**
+     * @param bool $iconOnly
+     *
+     * @return $this
+     */
+    public function setIconOnly(bool $iconOnly)
+    {
+        $this->iconOnly = $iconOnly;
+
+        return $this;
     }
 }

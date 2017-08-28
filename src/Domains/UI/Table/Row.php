@@ -1,6 +1,7 @@
 <?php namespace SuperV\Platform\Domains\UI\Table;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use SuperV\Platform\Domains\UI\Button\Button;
 use SuperV\Platform\Domains\UI\Button\Features\MakeButtons;
 
 class Row
@@ -22,9 +23,13 @@ class Row
 
     public function make()
     {
-       $this->buttons = $this->dispatch(new MakeButtons($this->buttons, ['entry' => $this->model]));
+        $this->buttons = $this->dispatch(new MakeButtons($this->buttons, ['entry' => $this->model]));
 
-       return $this;
+        $this->buttons = array_map(function (Button $button) {
+            return $button->setIconOnly(true);
+        }, $this->buttons);
+
+        return $this;
     }
 
     /**
