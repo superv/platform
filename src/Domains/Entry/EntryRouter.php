@@ -27,6 +27,38 @@ class EntryRouter
         $this->manifests = $manifests;
     }
 
+    public function delete()
+    {
+        $config = ['class' => get_class($this->entry), 'id' => $this->entry->getId()];
+        $ticket = md5(json_encode($config));
+
+        superv('cache')->remember(
+            'superv::platform.tickets:' . $ticket,
+            3600,
+            function () use($config) {
+                return $config;
+            }
+        );
+
+        return $this->url->route('superv::entries.delete', ['ticket' => $ticket]);
+    }
+
+    public function edit()
+    {
+        $config = ['class' => get_class($this->entry), 'id' => $this->entry->getId()];
+        $ticket = md5(json_encode($config));
+
+        superv('cache')->remember(
+            'superv::platform.tickets:' . $ticket,
+            3600,
+            function () use($config) {
+                return $config;
+            }
+        );
+
+        return $this->url->route('superv::entries.edit', ['ticket' => $ticket]);
+    }
+
     public function make($route, array $parameters = [])
     {
         if (method_exists($this, $method = camel_case(str_replace('.', '_', $route)))) {
@@ -50,7 +82,6 @@ class EntryRouter
                 }
             }
         }
-
 
 //
 //        if (!str_contains($route, '.') && $stream = $this->entry->getStreamSlug()) {
