@@ -9,7 +9,7 @@ class Page
     /** @var  Droplet */
     protected $droplet;
 
-    protected $page;
+    protected $verb;
 
     // buttons, table, form, url,
     protected $route;
@@ -30,18 +30,8 @@ class Page
 
     protected $entry;
 
+    protected $entryRouteKeyName = 'id';
 
-    /**
-     * @param mixed $page
-     *
-     * @return Page
-     */
-    public function setPage($page)
-    {
-        $this->page = $page;
-
-        return $this;
-    }
 
     /**
      * @param mixed $route
@@ -89,14 +79,6 @@ class Page
         $this->manifest = $manifest;
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPage()
-    {
-        return $this->page;
     }
 
     /**
@@ -241,5 +223,53 @@ class Page
     public function getEntry()
     {
         return $this->entry;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEntryRouteKeyName()
+    {
+        return $this->entryRouteKeyName;
+    }
+
+    /**
+     * @param mixed $entryRouteKeyName
+     *
+     * @return Page
+     */
+    public function setEntryRouteKeyName($entryRouteKeyName)
+    {
+        $this->entryRouteKeyName = $entryRouteKeyName;
+
+        return $this;
+}
+
+    /**
+     * @return mixed
+     */
+    public function getManifest()
+    {
+        return $this->manifest;
+    }
+
+    /**
+     * @param mixed $verb
+     *
+     * @return Page
+     */
+    public function setVerb($verb)
+    {
+        $this->verb = $verb;
+
+        return $this;
+}
+
+    /**
+     * @return mixed
+     */
+    public function getVerb()
+    {
+        return $this->verb;
     }
 }

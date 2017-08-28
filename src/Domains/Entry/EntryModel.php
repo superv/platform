@@ -5,6 +5,7 @@ use Robbo\Presenter\PresentableInterface;
 use SuperV\Platform\Domains\Entry\Traits\PresentableTrait;
 use SuperV\Platform\Domains\Entry\Traits\RoutableTrait;
 use SuperV\Platform\Domains\Model\EloquentModel;
+use SuperV\Platform\Domains\UI\Page\Page;
 
 class EntryModel extends EloquentModel implements PresentableInterface
 {
@@ -88,5 +89,15 @@ class EntryModel extends EloquentModel implements PresentableInterface
     public function getOnCreateCallback()
     {
         return $this->onCreate;
+    }
+
+    /**
+     * @param $verb
+     *
+     * @return Page
+     */
+    public function page($verb)
+    {
+        return superv('pages')->byModel(get_class($this))->get($verb);
     }
 }
