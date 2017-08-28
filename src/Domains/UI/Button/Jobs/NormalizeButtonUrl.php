@@ -32,7 +32,9 @@ class NormalizeButtonUrl
 
                 /** @var Page $page */
                 if ($page = $entry->page($verb)) {
-                    $url = route($page->getRoute(), ['entry' => $entry]);
+//                    $url = route($page->getRoute(), ['entry' => $entry]);
+                    $url = $page->makeRoute();
+                    array_set($this->params, 'text', $page->getTitle());
                 } else {
                     $url = $entry->route($verb);
                 }
