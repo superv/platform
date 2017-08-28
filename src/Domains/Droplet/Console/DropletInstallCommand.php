@@ -5,7 +5,7 @@ use SuperV\Platform\Domains\Droplet\Feature\InstallDropletFeature;
 
 class DropletInstallCommand extends Command
 {
-    protected $signature = 'droplet:install {slug} {--path= :}';
+    protected $signature = 'droplet:install {slug} {--path=}';
     
     public function handle()
     {

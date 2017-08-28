@@ -5,7 +5,7 @@ use SuperV\Platform\Domains\Droplet\Feature\MakeDropletFeature;
 
 class MakeDropletCommand extends Command
 {
-    protected $signature = 'make:droplet {slug} {--path= :}';
+    protected $signature = 'make:droplet {slug} {--path=}';
     
     public function handle()
     {
