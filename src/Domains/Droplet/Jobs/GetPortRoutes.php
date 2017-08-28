@@ -5,13 +5,14 @@ use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 
 /**
- * Class GetPortRoutesJob
+ * Class GetPortRoutes
+ *
  * Determines the current Port from hostname, and returns
  * relevant routes for that Port
  *
  * @package SuperV\Platform\Domains\Droplet\Jobs
  */
-class GetPortRoutesJob
+class GetPortRoutes
 {
     /**
      * @var \SuperV\Platform\Domains\Droplet\DropletServiceProvider

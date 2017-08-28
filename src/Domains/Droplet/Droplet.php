@@ -11,8 +11,6 @@ class Droplet
 
     protected $type;
 
-
-
     public function __construct(DropletModel $model = null)
     {
         $this->model = $model;
@@ -23,6 +21,7 @@ class Droplet
         return superv($model->droplet(), ['model' => $model]);
     }
 
+    /** @return DropletServiceProvider */
     public function newServiceProvider()
     {
         $providerClass = $this->getServiceProvider();

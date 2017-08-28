@@ -5,7 +5,7 @@
 use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
-class CreateDropletPathsJob
+class CreateDropletPaths
 {
     /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel  */
     private $model;

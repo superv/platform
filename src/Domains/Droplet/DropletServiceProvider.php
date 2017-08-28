@@ -2,7 +2,7 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutesJob;
+use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
 
 class DropletServiceProvider
 {
@@ -59,7 +59,7 @@ class DropletServiceProvider
 
     public function getRoutes()
     {
-        $routes = $this->dispatch(new GetPortRoutesJob($this));
+        $routes = $this->dispatch(new GetPortRoutes($this));
 
         return array_merge($this->routes, $routes);
     }

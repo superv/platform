@@ -1,6 +1,6 @@
 <?php namespace SuperV\Platform\Domains\Droplet\Jobs;
 
-class GetComposerConfigJob
+class GetComposerConfig
 {
     private $path;
 
