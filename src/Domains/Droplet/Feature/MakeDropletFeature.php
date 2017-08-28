@@ -1,6 +1,6 @@
 <?php namespace SuperV\Platform\Domains\Droplet\Feature;
 
-use SuperV\Platform\Domains\Droplet\Jobs\CreateDropletPathsJob;
+use SuperV\Platform\Domains\Droplet\Jobs\CreateDropletPaths;
 use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModelJob;
 use SuperV\Platform\Domains\Droplet\Jobs\WriteDropletFilesJob;
 use SuperV\Platform\Domains\Feature\Feature;
@@ -38,7 +38,7 @@ class MakeDropletFeature extends Feature
     {
         $model = $this->dispatch(new MakeDropletModelJob($this->slug, $this->path));
 
-        $this->dispatch(new CreateDropletPathsJob($model));
+        $this->dispatch(new CreateDropletPaths($model));
 
         $this->dispatch(new WriteDropletFilesJob($model));
     }

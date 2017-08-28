@@ -1,7 +1,7 @@
 <?php namespace SuperV\Platform\Domains\Droplet\Feature;
 
 use Composer\Autoload\ClassLoader;
-use SuperV\Platform\Domains\Droplet\Jobs\GetComposerConfigJob;
+use SuperV\Platform\Domains\Droplet\Jobs\GetComposerConfig;
 use SuperV\Platform\Domains\Feature\Feature;
 
 class LoadDroplet extends Feature
@@ -37,7 +37,7 @@ class LoadDroplet extends Feature
     public function handle()
     {
         $composer = \Cache::remember('composer@'.md5($this->path), 60, function(){
-            return $this->dispatch(new GetComposerConfigJob($this->path));
+            return $this->dispatch(new GetComposerConfig($this->path));
         });
 
         if (!array_key_exists('autoload', $composer)) {
