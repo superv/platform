@@ -6,15 +6,15 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Application;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Domains\Droplet\Jobs\RegisterDropletRouteJob;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\Manifest\Features\RegisterManifest;
+use SuperV\Platform\Traits\RegistersRoutes;
 
 class DropletProvider
 {
-    use ServesFeaturesTrait;
+    use ServesFeaturesTrait, RegistersRoutes;
 
 //    /**
 //     * The registered providers.
@@ -77,7 +77,11 @@ class DropletProvider
         $this->bindAliases($provider);
         $this->bindClasses($provider);
         $this->bindSingletons($provider);
-        $this->registerRoutes($provider);
+
+        $this->registerRoutes($provider->getRoutes(), function ($route) use($provider) {
+            array_set($route, 'superv::droplet', $provider->getDroplet()->getSlug());
+        });
+//        $this->registerRoutes($provider);
 
         $this->registerCommands($provider);
         $this->registerFeatures($provider);
@@ -86,8 +90,21 @@ class DropletProvider
         \Debugbar::startMeasure('registerManifests', 'Register Manifests');
         $this->registerManifests($provider);
         \Debugbar::stopMeasure('registerManifests');
-
     }
+
+
+//    protected function registerRoutesxxx(DropletServiceProvider $provider)
+//    {
+//        if (!$routes = $provider->getRoutes()) {
+//            return;
+//        }
+//
+//        foreach ($routes as $uri => $route) {
+//            $route = !is_array($route) ? ['uses' => $route] : $route;
+//
+//            $this->dispatch(new RegisterDropletRouteJob($provider->getDroplet(), $uri, $route));
+//        }
+//    }
 
     protected function registerCommands(DropletServiceProvider $provider)
     {
@@ -137,19 +154,6 @@ class DropletProvider
                     $this->events->listen($provider->getDroplet()->getSlug() . '::' . $event, $listener);
                 }
             }
-        }
-    }
-
-    protected function registerRoutes(DropletServiceProvider $provider)
-    {
-        if (!$routes = $provider->getRoutes()) {
-            return;
-        }
-
-        foreach ($routes as $uri => $route) {
-            $route = !is_array($route) ? ['uses' => $route] : $route;
-
-            $this->dispatch(new RegisterDropletRouteJob($provider->getDroplet(), $uri, $route));
         }
     }
 
