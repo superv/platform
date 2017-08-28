@@ -3,6 +3,13 @@
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\UI\Button\Jobs\NormalizeButtonUrl;
 
+/**
+ * Class NormalizeButton
+ *
+ * Refactorables: * $params to ButtonsParams object
+ *
+ * @package SuperV\Platform\Domains\UI\Button\Features
+ */
 class NormalizeButton extends Feature
 {
     private $button;
@@ -39,11 +46,7 @@ class NormalizeButton extends Feature
             }
         }
 
-        if (
-            isset($params['attributes']['href']) &&
-            is_string($params['attributes']['href']) &&
-            !starts_with($params['attributes']['href'], 'http')
-        ) {
+        if (is_string($href = array_get($params, 'attributes.href')) && !starts_with($href, 'http')) {
             $params['attributes']['href'] = url($params['attributes']['href']);
         }
 
@@ -51,6 +54,10 @@ class NormalizeButton extends Feature
             if (str_is('data-*', $attribute)) {
                 array_set($params, 'attributes.' . $attribute, array_pull($params, $attribute));
             }
+        }
+
+        if (!array_get($params, 'text')) {
+            array_set($params, 'text', ucwords(str_replace('_', ' ', array_get($params, 'button'))));
         }
 
         return $params;
