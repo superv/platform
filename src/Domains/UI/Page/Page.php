@@ -89,6 +89,11 @@ class Page
         return $this->route;
     }
 
+    public function makeRoute()
+    {
+        return route($this->route, ($this->entry && $this->entry->exists) ? ['entry' => $this->entry]:  []);
+    }
+
     /**
      * @return mixed
      */
@@ -203,6 +208,12 @@ class Page
     public function getModel()
     {
         return $this->model;
+    }
+
+    /** @return $this->model */
+    public function newEntry()
+    {
+        return superv($this->model);
     }
 
     /**

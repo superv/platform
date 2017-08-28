@@ -98,6 +98,9 @@ class EntryModel extends EloquentModel implements PresentableInterface
      */
     public function page($verb)
     {
-        return superv('pages')->byModel(get_class($this))->get($verb);
+        /** @var Page $page */
+        if ($page = superv('pages')->byModel(get_class($this))->get($verb)) {
+            return $page->setEntry($this);
+        }
     }
 }
