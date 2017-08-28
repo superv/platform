@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class FieldType
 {
-    public static $fieldMatrix = [
+    public static $fieldMap = [
         'text'     => TextType::class,
         'textarea' => TextareaType::class,
         'integer'  => IntegerType::class,
@@ -56,7 +56,7 @@ class FieldType
      */
     public function getType()
     {
-        return array_get(static::$fieldMatrix, $this->type, TextType::class);
+        return array_get(static::$fieldMap, $this->type, TextType::class);
     }
 
     /**
@@ -76,7 +76,7 @@ class FieldType
         if ($this->type == 'relation') {
             array_set($options, 'mapped', true);
             if ($related = array_get($this->config, 'related')) {
-                if ($this->entry->exists && method_exists($this->entry, $method = "getPossible" . studly_case(str_plural($this->field)))) {
+                if (method_exists($this->entry, $method = "get" . studly_case($this->field) . "Options")) {
                     $choices = $this->entry->{$method}()->pluck('id', 'name')->toArray();
                 } else {
                     $related = new $related;
