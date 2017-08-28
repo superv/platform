@@ -34,20 +34,10 @@ class MakePageButtons extends Feature
         $page = $this->page;
 
         if ($buttons = $page->getButtons()) {
-            $arguments = ['entry' => $page->getEntry()];
-            foreach ($buttons as $button => &$data) {
-                if (is_numeric($button)) {
-                    $data = ['button' => $button = $data];
-                }
-                if ($buttonPage = $this->findPage($pages, $button)) {
-                    array_set($data, 'route', $buttonPage->getRoute());
-                    if(!$buttonText = array_get($data, 'text', $buttonPage->getTitle())) {
-                       $buttonText = ucwords(str_replace('_', ' ', $button));
-                    }
-                    array_set($data, 'text', $buttonText);
-//                    array_set_if_not(array_has($data, 'text'), $data, 'text', $buttonPage->getTitle());
-                }
-            }
+            $arguments = [
+                'entry' => $page->getEntry() ?: $page->newEntry(),
+            ];
+
             $buttons = $this->dispatch(new MakeButtons($buttons, $arguments));
             $page->setButtons($buttons);
         }
@@ -57,7 +47,7 @@ class MakePageButtons extends Feature
     {
         $dropletPages = $pages->byDroplet($this->page->getDroplet()->getSlug());
         foreach ($dropletPages as $page) {
-            if ($page->getPage() === $button && $page->getModel() == $this->page->getModel()) {
+            if ($page->getVerb() === $button && $page->getModel() == $this->page->getModel()) {
                 return $page;
             }
         }
