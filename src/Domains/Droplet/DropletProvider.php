@@ -4,6 +4,7 @@ use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Application;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
@@ -78,9 +79,14 @@ class DropletProvider
         $this->bindClasses($provider);
         $this->bindSingletons($provider);
 
-        $this->registerRoutes($provider->getRoutes(), function ($route) use($provider) {
-            array_set($route, 'superv::droplet', $provider->getDroplet()->getSlug());
-        });
+        $this->registerRoutes(
+            $provider->getRoutes(),
+            function (Route $route) use ($provider) {
+                $route->setAction(array_merge([
+                    'superv::droplet' => $provider->getDroplet()->getSlug(),
+                ], $route->getAction()));
+            }
+        );
 //        $this->registerRoutes($provider);
 
         $this->registerCommands($provider);

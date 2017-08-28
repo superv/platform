@@ -24,9 +24,6 @@ trait RegistersRoutes
                 }
             }
 
-            if ($callable) {
-                call_user_func($callable, $route);
-            }
             // Add droplet signature
 //            array_set($route, 'superv::droplet', $this->droplet->getSlug());
 
@@ -35,6 +32,10 @@ trait RegistersRoutes
 
             $routeObject->middleware(array_pull($route, 'middleware', []));
             $routeObject->where(array_pull($route, 'constraints', []));
+
+            if ($callable) {
+                call_user_func($callable, $routeObject);
+            }
         }
     }
 }

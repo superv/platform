@@ -1,5 +1,6 @@
 <?php namespace SuperV\Platform\Domains\UI\Page\Features;
 
+use Illuminate\Routing\Route;
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Domains\UI\Page\PageCollection;
@@ -29,10 +30,14 @@ class RegisterPage extends Feature
             'uses' => is_callable($handler) ? $handler : (str_contains($handler, '@') ? $handler : $handler . '@' . $page->getVerb()),
         ];
 
-        $this->registerRoutes([$page->getUrl() => $route], function ($route) use ($page) {
-            array_set($route, 'superv::droplet', $page->getDroplet()->getSlug());
-        });
-//        $this->dispatch(new RegisterDropletRouteJob($page->getDroplet(), $page->getUrl(), $route));
+        $this->registerRoutes(
+            [$page->getUrl() => $route],
+            function (Route $route) use ($page) {
+                $route->setAction(array_merge([
+                    'superv::droplet' => $page->getDroplet()->getSlug(),
+                ], $route->getAction()));
+            }
+        );
 
         $pages->put($page->getRoute(), $page);
 
