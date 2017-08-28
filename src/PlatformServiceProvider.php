@@ -1,6 +1,7 @@
 <?php namespace SuperV\Platform;
 
 use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
+use Debugbar;
 use Illuminate\View\Factory;
 use Laravel\Tinker\TinkerServiceProvider;
 use Spatie\Tail\TailServiceProvider;
@@ -19,14 +20,13 @@ use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Manifest\ManifestCollection;
 use SuperV\Platform\Domains\UI\Form\FormServiceProvider;
-use SuperV\Platform\Domains\UI\Menu\Menu;
+use SuperV\Platform\Domains\UI\Navigation\Navigation;
 use SuperV\Platform\Domains\UI\Page\PageCollection;
 use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
 use SuperV\Platform\Http\Middleware\MiddlewareCollection;
 use SuperV\Platform\Traits\RegistersRoutes;
 use TwigBridge\ServiceProvider as TwigBridgeServiceProvider;
-use Debugbar;
 
 /**
  * Class PlatformServiceProvider
@@ -66,7 +66,7 @@ class PlatformServiceProvider extends ServiceProvider
         PageCollection::class . '~pages',
         PortCollection::class,
         ViewTemplate::class,
-        Menu::class,
+        Navigation::class,
     ];
 
     protected $bindings = [
@@ -142,7 +142,7 @@ class PlatformServiceProvider extends ServiceProvider
 
         superv(Factory::class)->composer('*', ViewComposer::class);
 
-        superv('view.template')->set('menu', superv(Menu::class));
+        superv('view.template')->set('menu', superv(Navigation::class));
 
         superv('events')->dispatch('superv::app.loaded');
 

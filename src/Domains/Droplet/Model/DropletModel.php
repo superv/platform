@@ -45,7 +45,7 @@ class DropletModel extends DropletEntryModel
         return $this->type;
     }
     
-    public function vendor()
+    public function getVendor()
     {
         return $this->vendor;
     }

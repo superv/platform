@@ -29,7 +29,7 @@ class MakePageButtons extends Feature
         $this->page = $page;
     }
 
-    public function handle(PageCollection $pages)
+    public function handle()
     {
         $page = $this->page;
 
@@ -40,16 +40,6 @@ class MakePageButtons extends Feature
 
             $buttons = $this->dispatch(new MakeButtons($buttons, $arguments));
             $page->setButtons($buttons);
-        }
-    }
-
-    protected function findPage(PageCollection $pages, $button)
-    {
-        $dropletPages = $pages->byDroplet($this->page->getDroplet()->getSlug());
-        foreach ($dropletPages as $page) {
-            if ($page->getVerb() === $button && $page->getModel() == $this->page->getModel()) {
-                return $page;
-            }
         }
     }
 }

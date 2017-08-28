@@ -10,19 +10,13 @@ use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
-use SuperV\Platform\Domains\Manifest\Features\RegisterManifest;
+use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
 use SuperV\Platform\Traits\RegistersRoutes;
 
 class DropletProvider
 {
-    use ServesFeaturesTrait, RegistersRoutes;
-
-//    /**
-//     * The registered providers.
-//     *
-//     * @var array
-//     */
-//    protected $providers = [];
+    use ServesFeaturesTrait;
+    use RegistersRoutes;
 
     /**
      * @var Dispatcher
@@ -62,13 +56,9 @@ class DropletProvider
 
     public function register(Droplet $droplet)
     {
-        $provider = $droplet->getServiceProvider();
-        if (!class_exists($provider)) {
+        if (!$provider = $droplet->newServiceProvider()) {
             return;
         }
-
-//        $this->providers[] = $provider = $droplet->newServiceProvider();
-        $provider = $droplet->newServiceProvider();
 
         $this->registerProviders($provider);
         if (method_exists($provider, 'register')) {
@@ -94,7 +84,8 @@ class DropletProvider
 
         $this->registerListeners($provider);
         \Debugbar::startMeasure('registerManifests', 'Register Manifests');
-        $this->registerManifests($provider);
+
+         $this->dispatch(new ManifestDroplet($droplet));
         \Debugbar::stopMeasure('registerManifests');
     }
 
@@ -168,13 +159,6 @@ class DropletProvider
         $features = app(FeatureCollection::class);
         foreach ($provider->getFeatures() as $key => $feature) {
             $features->push($feature);
-        }
-    }
-
-    protected function registerManifests(DropletServiceProvider $provider)
-    {
-        foreach ($provider->getManifests() as $key => $manifest) {
-            $this->serve(new RegisterManifest(superv($manifest), $provider->getDroplet()));
         }
     }
 

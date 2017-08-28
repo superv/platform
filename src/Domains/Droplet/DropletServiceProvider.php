@@ -111,7 +111,8 @@ class DropletServiceProvider
 
     public function getResourcePath($path = null)
     {
-        return $this->droplet->getPath('resources/' . $path);
+        return $this->droplet->getResourcePath($path);
+//        return $this->droplet->getPath('resources/' . $path);
     }
 
     /**

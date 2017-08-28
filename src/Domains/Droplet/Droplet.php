@@ -4,12 +4,22 @@ use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
 class Droplet
 {
+    protected $title = 'Droplet';
+
+    protected $link = '/';
+
+    protected $icon = 'droplet';
+
+    protected $navigation = false;
+
     /** @var  DropletModel */
     protected $model;
 
     protected $commands;
 
     protected $type;
+
+    protected $manifests = [];
 
     public function __construct(DropletModel $model = null)
     {
@@ -24,9 +34,13 @@ class Droplet
     /** @return DropletServiceProvider */
     public function newServiceProvider()
     {
-        $providerClass = $this->getServiceProvider();
+        $model = $this->getServiceProvider();
 
-        return new $providerClass(app(), $this);
+        if (!class_exists($model)) {
+            throw new \InvalidArgumentException("Provider class does not exist: {$model}");
+        }
+
+        return new $model(app(), $this);
     }
 
     public function getServiceProvider()
@@ -41,12 +55,12 @@ class Droplet
 
     public function getName()
     {
-        return $this->model->name;
+        return $this->model->getName();
     }
 
     public function identifier()
     {
-        return $this->model->vendor . '.' . $this->model->name;
+        return "{$this->model->getVendor()}.{$this->model->getName()}";
     }
 
     public function setModel(DropletModel $model)
@@ -66,6 +80,11 @@ class Droplet
         return $this->model->getPath($path);
     }
 
+    public function getResourcePath($path)
+    {
+        return $this->getPath("resources/{$path}");
+    }
+
     /**
      * @return mixed
      */
@@ -73,4 +92,62 @@ class Droplet
     {
         return $this->type;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getManifests()
+    {
+        return $this->manifests;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLink(): string
+    {
+        return $this->link;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIcon(): string
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNavigation(): bool
+    {
+        return $this->navigation;
+    }
+
+    /**
+     * @return DropletModel
+     */
+    public function getModel(): DropletModel
+    {
+        return $this->model;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCommands()
+    {
+        return $this->commands;
+    }
+
+
 }

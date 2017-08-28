@@ -32,6 +32,48 @@ class Page
 
     protected $entryRouteKeyName = 'id';
 
+    protected $icon;
+
+    /**
+     * @return bool
+     */
+    public function isPublic(): bool
+    {
+        return $this->public;
+    }
+
+    /**
+     * @param bool $public
+     *
+     * @return Page
+     */
+    public function setPublic(bool $public): Page
+    {
+        $this->public = $public;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @param mixed $icon
+     *
+     * @return Page
+     */
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
 
     /**
      * @param mixed $route

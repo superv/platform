@@ -22,6 +22,14 @@ class BuildManifestPagesJob
         foreach ($this->manifest->getPages() as $verb => $data) {
             array_set($data, 'verb', $verb);
 
+            if ($verb == 'create' && !array_has($data, 'icon')) {
+                array_set($data, 'icon', 'plus');
+            } elseif ($verb == 'index' && !array_has($data, 'icon')) {
+                array_set($data, 'icon', 'list');
+            } elseif ($verb == 'edit' && !array_has($data, 'icon')) {
+                array_set($data, 'icon', 'pencil-square-o');
+            }
+
             $page = $hydrator->hydrate(superv(Page::class), $data);
             $pages->put($page->getRoute(), $page);
         }

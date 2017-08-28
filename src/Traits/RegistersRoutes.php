@@ -10,31 +10,28 @@ trait RegistersRoutes
     {
         /** @var Router $router */
         $router = superv('router');
-        foreach ($routes as $uri => $route) {
-            $route = !is_array($route) ? ['uses' => $route] : $route;
+        foreach ($routes as $uri => $data) {
+            $data = !is_array($data) ? ['uses' => $data] : $data;
 
-            if (array_has($route, 'as')) {
-                if (str_contains($route['as'], '@')) {
-                    list($port, $as) = explode('@', $route['as']);
-                    array_set($route, 'superv::port', "superv.ports.{$port}"); // TODO.ali: generic namespace
+            if (array_has($data, 'as')) {
+                if (str_contains($data['as'], '@')) {
+                    list($port, $as) = explode('@', $data['as']);
+                    array_set($data, 'superv::port', "superv.ports.{$port}"); // TODO.ali: generic namespace
 
                     if ($middlewares = superv(MiddlewareCollection::class)->get("superv.ports.{$port}")) {
-                        array_set($route, 'middleware', $middlewares); // TODO.ali: merge instead of set
+                        array_set($data, 'middleware', $middlewares); // TODO.ali: merge instead of set
                     }
                 }
             }
 
-            // Add droplet signature
-//            array_set($route, 'superv::droplet', $this->droplet->getSlug());
+            /** @var Route $route */
+            $route = $router->{array_pull($data, 'verb', 'any')}($uri, $data);
 
-            /** @var Route $routeObject */
-            $routeObject = $router->{array_pull($route, 'verb', 'any')}($uri, $route);
-
-            $routeObject->middleware(array_pull($route, 'middleware', []));
-            $routeObject->where(array_pull($route, 'constraints', []));
+            $route->middleware(array_pull($data, 'middleware', []));
+            $route->where(array_pull($data, 'constraints', []));
 
             if ($callable) {
-                call_user_func($callable, $routeObject);
+                call_user_func($callable, $route);
             }
         }
     }

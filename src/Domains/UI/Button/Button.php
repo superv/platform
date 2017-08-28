@@ -63,7 +63,7 @@ class Button
 
     protected $type = 'default';
 
-    protected $size;
+    protected $size = 'sm';
 
     /**
      * @var Factory

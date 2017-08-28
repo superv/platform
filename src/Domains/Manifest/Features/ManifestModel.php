@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\UI\Page\Features\MakePages;
 use SuperV\Platform\Domains\UI\Page\Jobs\BuildManifestPagesJob;
 use SuperV\Platform\Domains\UI\Page\Page;
 
-class RegisterModelManifest extends Feature
+class ManifestModel extends Feature
 {
     /**
      * @var ModelManifest|string
