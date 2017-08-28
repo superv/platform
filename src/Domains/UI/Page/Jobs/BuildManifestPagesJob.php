@@ -19,12 +19,9 @@ class BuildManifestPagesJob
 
     public function handle(Collection $pages, Hydrator $hydrator)
     {
-        foreach ($this->manifest->getPages() as $page => $data) {
-            array_set($data, 'page', $page);
+        foreach ($this->manifest->getPages() as $verb => $data) {
+            array_set($data, 'verb', $verb);
 
-//            $pages->push(
-//                $hydrator->hydrate(superv(Page::class), $data)
-//            );
             $page = $hydrator->hydrate(superv(Page::class), $data);
             $pages->put($page->getRoute(), $page);
         }
