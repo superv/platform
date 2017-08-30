@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Feature\Command;
+<?php
+
+namespace SuperV\Platform\Domains\Feature\Command;
 
 class ResolveRequestParamsJob
 {
@@ -35,7 +37,6 @@ class ResolveRequestParamsJob
                 }
             }
             array_set($params, $inputKey, $inputValue);
-
         }
 
 //        if ($resolves = $this->resolvable) {

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Entry;
+<?php
+
+namespace SuperV\Platform\Domains\Entry;
 
 use Illuminate\Routing\UrlGenerator;
 use SuperV\Platform\Domains\Manifest\ManifestCollection;
@@ -33,9 +35,9 @@ class EntryRouter
         $ticket = md5(json_encode($config));
 
         superv('cache')->remember(
-            'superv::entry.tickets.delete:' . $ticket,
+            'superv::entry.tickets.delete:'.$ticket,
             3600,
-            function () use($config) {
+            function () use ($config) {
                 return $config;
             }
         );
@@ -49,9 +51,9 @@ class EntryRouter
         $ticket = md5(json_encode($config));
 
         superv('cache')->remember(
-            'superv::entry.tickets.edit:' . $ticket,
+            'superv::entry.tickets.edit:'.$ticket,
             3600,
-            function () use($config) {
+            function () use ($config) {
                 return $config;
             }
         );
@@ -62,13 +64,12 @@ class EntryRouter
     public function make($route, array $parameters = [])
     {
         if (method_exists($this, $method = camel_case(str_replace('.', '_', $route)))) {
-
             $parameters['parameters'] = $parameters;
 
             return app()->call([$this, $method], $parameters);
         }
 
-        /**
+        /*
          * If this model has a manifest and this
          * route is defined there, return route
          * info from the manifest data

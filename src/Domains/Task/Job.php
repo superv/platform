@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Task;
+<?php
+
+namespace SuperV\Platform\Domains\Task;
 
 class Job
 {

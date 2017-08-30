@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
 
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -37,7 +39,7 @@ class ValidationListener implements EventSubscriberInterface
     }
 
     /**
-     * Get the original data, before submitting
+     * Get the original data, before submitting.
      *
      * @param FormEvent $event
      */
@@ -54,7 +56,6 @@ class ValidationListener implements EventSubscriberInterface
     public function validateRules(FormEvent $event)
     {
         if ($event->getForm()->isRoot()) {
-
             $root = $event->getForm();
             $rules = $this->findRules($root);
 
@@ -88,7 +89,6 @@ class ValidationListener implements EventSubscriberInterface
             $name = $form->getName();
 
             if ($config->hasOption('rules')) {
-
                 $rule = $config->getOption('rules');
                 $innerType = $form->getConfig()->getType()->getInnerType();
                 $rule = $this->addTypeRules($innerType, $rule);
@@ -98,7 +98,7 @@ class ValidationListener implements EventSubscriberInterface
                 }
 
                 if (!$parent->isRoot()) {
-                    $name = $parent->getName() . '.' . $name;
+                    $name = $parent->getName().'.'.$name;
                 }
 
                 $rules[$name] = $rule;
@@ -130,7 +130,7 @@ class ValidationListener implements EventSubscriberInterface
     }
 
     /**
-     * Add default rules based on the type
+     * Add default rules based on the type.
      *
      * @param FormTypeInterface $type
      * @param array             $rules

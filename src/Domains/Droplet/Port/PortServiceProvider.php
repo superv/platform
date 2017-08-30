@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Port;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Port;
 
 use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
 use SuperV\Platform\Http\Middleware\MiddlewareCollection;
@@ -13,5 +15,4 @@ class PortServiceProvider extends DropletServiceProvider
 
         $middlewares->put($port, $this->middlewares);
     }
-
 }

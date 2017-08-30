@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Droplet;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet;
 
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
@@ -12,7 +14,7 @@ class Droplet
 
     protected $navigation = false;
 
-    /** @var  DropletModel */
+    /** @var DropletModel */
     protected $model;
 
     protected $commands;
@@ -45,7 +47,7 @@ class Droplet
 
     public function getServiceProvider()
     {
-        return get_class($this) . 'ServiceProvider';
+        return get_class($this).'ServiceProvider';
     }
 
     public function getSlug()
@@ -148,6 +150,4 @@ class Droplet
     {
         return $this->commands;
     }
-
-
 }

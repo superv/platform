@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\View;
+<?php
+
+namespace SuperV\Platform\Domains\View;
 
 use SuperV\Platform\Support\Collection;
 

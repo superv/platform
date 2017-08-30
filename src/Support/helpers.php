@@ -30,7 +30,7 @@ function html_attributes($attributes)
 {
     $html = [];
 
-    foreach ((array)$attributes as $key => $value) {
+    foreach ((array) $attributes as $key => $value) {
         $element = html_attribute_element($key, $value);
 
         if (!is_null($element)) {
@@ -38,13 +38,13 @@ function html_attributes($attributes)
         }
     }
 
-    return count($html) > 0 ? ' ' . implode(' ', $html) : '';
+    return count($html) > 0 ? ' '.implode(' ', $html) : '';
 }
 
 function html_attribute_element($key, $value)
 {
 
-    /**
+    /*
      * For numeric keys we will assume that the value is a boolean attribute
      * where the presence of the attribute represents a true value and the
      * absence represents a false value.
@@ -61,7 +61,7 @@ function html_attribute_element($key, $value)
     }
 
     if (!is_null($value)) {
-        return $key . '="' . e($value) . '"';
+        return $key.'="'.e($value).'"';
     }
 }
 
@@ -69,8 +69,8 @@ if (!function_exists('superv')) {
     /**
      * Get the available container instance.
      *
-     * @param  string $abstract
-     * @param  array  $parameters
+     * @param string $abstract
+     * @param array  $parameters
      *
      * @return mixed|\Illuminate\Foundation\Application
      */
@@ -90,7 +90,7 @@ if (!function_exists('collect')) {
     /**
      * Create a collection from the given value.
      *
-     * @param  mixed $value
+     * @param mixed $value
      *
      * @return \SuperV\Platform\Support\Collection
      */

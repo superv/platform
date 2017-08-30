@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
 
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -33,7 +35,6 @@ class ValidationTypeExtension extends AbstractTypeExtension
 
         // Split rule into array
         $rulesNormalizer = function (Options $options, $constraints) use ($resolver, $hasNullable) {
-
             if (is_string($constraints)) {
                 $rules = explode('|', $constraints);
             } elseif (is_object($constraints)) {

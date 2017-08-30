@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form;
 
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception;
@@ -22,6 +24,7 @@ class PropertyPathMapper implements DataMapperInterface
     {
         $this->propertyAccessor = $propertyAccessor ?: new PropertyAccessor();
     }
+
     /**
      * Maps properties of some data to a list of forms.
      *
@@ -32,7 +35,7 @@ class PropertyPathMapper implements DataMapperInterface
      */
     public function mapDataToForms($data, $forms)
     {
-        $empty = null === $data || array() === $data;
+        $empty = null === $data || [] === $data;
 
         if (!$empty && !is_array($data) && !is_object($data)) {
             throw new UnexpectedTypeException($data, 'object, array or empty');

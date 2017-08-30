@@ -1,5 +1,7 @@
-<?php namespace SuperV\Platform\Contracts;
+<?php
 
-interface Collection {
+namespace SuperV\Platform\Contracts;
 
+interface Collection
+{
 }

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Table;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Table;
 
 use SuperV\Platform\Support\Collection;
 

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\Factory;
@@ -17,13 +19,13 @@ class FormBuilder
 
     protected $ajax = false;
 
-    /** @var  EntryModel */
+    /** @var EntryModel */
     protected $entry;
 
-    /** @var  Form */
+    /** @var Form */
     protected $form;
 
-    /** @var  FormInterface */
+    /** @var FormInterface */
     protected $factory;
 
     protected $skips = [];
@@ -73,11 +75,9 @@ class FormBuilder
     public function post()
     {
         if (app('request')->isMethod('post')) {
-
             $this->form->handleRequest();
 
             if ($this->form->isSubmitted() && $this->form->isValid()) {
-
                 $this->fire('saving', ['entry' => $this->entry]);
                 $this->entry->save();
                 $this->fire('saved', ['entry' => $this->entry]);
@@ -133,14 +133,11 @@ class FormBuilder
 
     public function onSaving(EntryModel $entry)
     {
-
     }
 
     public function onSaved(EntryModel $entry)
     {
-
     }
-
 
     /**
      * @return array
@@ -149,5 +146,4 @@ class FormBuilder
     {
         return $this->buttons;
     }
-
 }

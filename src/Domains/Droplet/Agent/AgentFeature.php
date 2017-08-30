@@ -1,10 +1,10 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Agent;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Agent;
 
 use SuperV\Modules\Supreme\Domains\Service\Model\ServiceModel;
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\Task\Job;
-use SuperV\Platform\Domains\Task\Model\JobModel;
-use SuperV\Platform\Domains\Task\Task;
 
 class AgentFeature extends Feature
 {
@@ -13,7 +13,6 @@ class AgentFeature extends Feature
     protected $service;
 
     protected $jobs = [];
-
 
     public function addJob(Job $job)
     {

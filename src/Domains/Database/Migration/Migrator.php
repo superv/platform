@@ -1,4 +1,6 @@
-<?php namespace Anomaly\Streams\Platform\Database\Migration;
+<?php
+
+namespace Anomaly\Streams\Platform\Database\Migration;
 
 use Anomaly\Streams\Platform\Addon\Addon;
 use Anomaly\Streams\Platform\Database\Migration\Command\Migrate;
@@ -6,15 +8,15 @@ use Anomaly\Streams\Platform\Database\Migration\Command\Reset;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 /**
- * Class Migrator
+ * Class Migrator.
  *
  * @link   http://pyrocms.com/
+ *
  * @author PyroCMS, Inc. <support@pyrocms.com>
  * @author Ryan Thompson <ryan@pyrocms.com>
  */
 class Migrator extends \Illuminate\Database\Migrations\Migrator
 {
-
     use DispatchesJobs;
 
     /**
@@ -36,6 +38,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      *
      * @param array $paths
      * @param array $options
+     *
      * @return array
      */
     public function run($paths = [], array $options = [])
@@ -51,8 +54,9 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      * This is a carbon copy of the Laravel method
      * except in the "!isset($files[$migration])" part.
      *
-     * @param  array|string $paths
-     * @param  bool         $pretend
+     * @param array|string $paths
+     * @param bool         $pretend
+     *
      * @return array
      */
     public function reset($paths = [], $pretend = false)
@@ -82,7 +86,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
             // back to its original "empty" state and will be ready for migrations.
             foreach ($migrations as $migration) {
 
-                /**
+                /*
                  * This is the only adjustment to
                  * Laravel's method..
                  */
@@ -92,7 +96,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
 
                 $rolledBack[] = $files[$migration];
 
-                $this->runDown($files[$migration], (object)['migration' => $migration], $pretend);
+                $this->runDown($files[$migration], (object) ['migration' => $migration], $pretend);
             }
         }
 
@@ -102,8 +106,9 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
     /**
      * Rollback the last migration operation.
      *
-     * @param  array|string $paths
-     * @param  array        $options
+     * @param array|string $paths
+     * @param array        $options
+     *
      * @return array
      */
     public function rollback($paths = [], array $options = [])
@@ -116,9 +121,10 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
     /**
      * Run "up" a migration instance.
      *
-     * @param  string $file
-     * @param  int    $batch
-     * @param  bool   $pretend
+     * @param string $file
+     * @param int    $batch
+     * @param bool   $pretend
+     *
      * @return void
      */
     protected function runUp($file, $batch, $pretend)
@@ -126,7 +132,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
         /**
          * Run our migrations first.
          *
-         * @var Migration $migration
+         * @var Migration
          */
         $migration = $this->resolve($file);
 
@@ -134,7 +140,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
          * Set the addon if there is
          * one contextually available.
          *
-         * @var Addon $addon
+         * @var Addon
          */
         if ($addon = $this->getAddon()) {
             $migration->setAddon($addon);
@@ -150,9 +156,10 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
     /**
      * Run "down" a migration instance.
      *
-     * @param  string $file
-     * @param  object $migration
-     * @param  bool   $pretend
+     * @param string $file
+     * @param object $migration
+     * @param bool   $pretend
+     *
      * @return void
      */
     protected function runDown($file, $migration, $pretend)
@@ -160,7 +167,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
         /**
          * Run our migrations first.
          *
-         * @var Migration $migration
+         * @var Migration
          */
         $migration = $this->resolve($file);
 
@@ -168,7 +175,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
          * Set the addon if there is
          * one contextually available.
          *
-         * @var Addon $addon
+         * @var Addon
          */
         if ($addon = $this->getAddon()) {
             $migration->setAddon($addon);
@@ -184,7 +191,8 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
     /**
      * Resolve a migration instance from a file.
      *
-     * @param  string $file
+     * @param string $file
+     *
      * @return object
      */
     public function resolve($file)

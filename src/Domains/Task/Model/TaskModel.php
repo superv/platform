@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Task\Model;
+<?php
+
+namespace SuperV\Platform\Domains\Task\Model;
 
 use SuperV\Modules\Supreme\Domains\Server\Model\ServerModel;
 
@@ -17,7 +19,7 @@ class TaskModel extends TaskEntryModel
     {
         return $this->hasOne(ServerModel::class, 'id', 'server_id');
     }
-    
+
     public function getStatus()
     {
         return $this->status;
@@ -30,7 +32,7 @@ class TaskModel extends TaskEntryModel
 
     public function subtasks()
     {
-        return $this->hasMany(TaskModel::class, 'parent_id');
+        return $this->hasMany(self::class, 'parent_id');
     }
 
     public function getSubTasks()
@@ -41,7 +43,7 @@ class TaskModel extends TaskEntryModel
     public function appendOutput($buffer)
     {
         $this->update([
-            'output' => $buffer . $this->output,
+            'output' => $buffer.$this->output,
         ]);
     }
 }

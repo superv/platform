@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Table\Jobs;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Table\Jobs;
 
 use SuperV\Platform\Domains\UI\Table\Row;
 use SuperV\Platform\Domains\UI\Table\RowCollection;

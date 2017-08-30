@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Feature;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Feature;
 
 use Composer\Autoload\ClassLoader;
 use SuperV\Platform\Domains\Droplet\Jobs\GetComposerConfig;
@@ -30,22 +32,22 @@ class LoadDroplet extends Feature
         }
 
         if (!$this->loader) {
-            throw new \Exception("The ClassLoader could not be found.");
+            throw new \Exception('The ClassLoader could not be found.');
         }
     }
 
     public function handle()
     {
-        $composer = \Cache::remember('composer@'.md5($this->path), 60, function(){
+        $composer = \Cache::remember('composer@'.md5($this->path), 60, function () {
             return $this->dispatch(new GetComposerConfig($this->path));
         });
 
         if (!array_key_exists('autoload', $composer)) {
-            return null;
+            return;
         }
 
         foreach (array_get($composer['autoload'], 'psr-4', []) as $namespace => $autoload) {
-            $this->loader->addPsr4($namespace, $this->path . '/' . $autoload, false);
+            $this->loader->addPsr4($namespace, $this->path.'/'.$autoload, false);
         }
 
         $this->loader->register();

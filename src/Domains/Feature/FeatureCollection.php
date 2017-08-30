@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Feature;
+<?php
+
+namespace SuperV\Platform\Domains\Feature;
 
 use Illuminate\Support\Collection;
 
@@ -6,7 +8,7 @@ class FeatureCollection extends Collection
 {
     public function routable()
     {
-        $routables = new FeatureCollection();
+        $routables = new self();
 
         foreach ($this->items as $item) {
             if ($route = $item::$route) {

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Table;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Table;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\UI\Button\Button;

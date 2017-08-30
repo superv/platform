@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form\Extension;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Validator\ConstraintValidatorFactory;
@@ -7,7 +9,7 @@ use Symfony\Component\Validator\Mapping\Loader\StaticMethodLoader;
 use Symfony\Component\Validator\Validation;
 
 /**
- * Allows use of Symfony Validator in form
+ * Allows use of Symfony Validator in form.
  */
 class FormValidatorExtension extends ValidatorExtension
 {

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Traits;
+<?php
+
+namespace SuperV\Platform\Traits;
 
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;

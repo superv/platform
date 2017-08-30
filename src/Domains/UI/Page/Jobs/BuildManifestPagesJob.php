@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Page\Jobs;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Page\Jobs;
 
 use SuperV\Platform\Domains\Manifest\Manifest;
 use SuperV\Platform\Domains\UI\Page\Page;

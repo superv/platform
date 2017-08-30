@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Model;
+<?php
+
+namespace SuperV\Platform\Domains\Model;
 
 use Illuminate\Database\Eloquent\Builder;
 use SuperV\Platform\Support\Decorator;
@@ -56,7 +58,7 @@ class EloquentCriteria
      */
     public function __construct(Builder $query, $method = 'get')
     {
-        $this->query  = $query;
+        $this->query = $query;
         $this->method = $method;
     }
 
@@ -114,7 +116,7 @@ class EloquentCriteria
 
     protected function methodIsSafe($name)
     {
-        return (!in_array($name, $this->disabled));
+        return !in_array($name, $this->disabled);
     }
 
     protected function methodExists($name)
@@ -130,21 +132,18 @@ class EloquentCriteria
     public function __call($name, $arguments)
     {
         if ($this->methodExists($name) && $this->methodIsSafe($name)) {
-
             call_user_func_array([$this->query, $name], $arguments);
 
             return $this;
         }
 
         if (starts_with($name, 'findBy') && $column = snake_case(substr($name, 6))) {
-
             call_user_func_array([$this->query, 'where'], array_merge([$column], $arguments));
 
             return $this->first();
         }
 
         if (starts_with($name, 'where') && $column = snake_case(substr($name, 5))) {
-
             call_user_func_array([$this->query, 'where'], array_merge([$column], $arguments));
 
             return $this;

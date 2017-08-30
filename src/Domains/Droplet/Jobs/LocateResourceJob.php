@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Jobs;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Jobs;
 
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 
@@ -17,12 +19,12 @@ class LocateResourceJob
     public function handle(DropletCollection $droplets)
     {
         if (!str_is('*::*', $this->namespace)) {
-            return null;
+            return;
         }
         list($droplet, $resource) = explode('::', $this->namespace);
         $droplet = $droplets->get($droplet);
 
-        $location = base_path($droplet->getPath() . '/resources/' . str_plural($this->type) . '/' . $resource . '.' . $this->type);
+        $location = base_path($droplet->getPath().'/resources/'.str_plural($this->type).'/'.$resource.'.'.$this->type);
 
         return $location;
     }

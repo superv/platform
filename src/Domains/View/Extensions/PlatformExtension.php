@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\View\Extensions;
+<?php
+
+namespace SuperV\Platform\Domains\View\Extensions;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\Model\EloquentCriteria;
@@ -19,7 +21,7 @@ class PlatformExtension extends \Twig_Extension
                 return (new Decorator())->decorate(
                     new EloquentCriteria(TaskModel::query()
                                                   ->where('status', '!=', Task::COMPLETED)
-                                                  ->where('parent_id',null)->orderBy('id', 'DESC'))
+                                                  ->where('parent_id', null)->orderBy('id', 'DESC'))
                 );
             }),
             new Twig_SimpleFunction('buttons', function ($buttons) {

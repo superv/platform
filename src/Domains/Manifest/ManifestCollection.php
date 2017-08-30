@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Manifest;
+<?php
+
+namespace SuperV\Platform\Domains\Manifest;
 
 use SuperV\Platform\Support\Collection;
 

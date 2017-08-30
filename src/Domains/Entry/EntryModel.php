@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Entry;
+<?php
+
+namespace SuperV\Platform\Domains\Entry;
 
 use Closure;
 use Robbo\Presenter\PresentableInterface;
@@ -21,11 +23,11 @@ class EntryModel extends EloquentModel implements PresentableInterface
 
     protected static function boot()
     {
-        $instance = new static;
+        $instance = new static();
 
         $class = get_class($instance);
         $events = $instance->getObservableEvents();
-        $observer = substr($class, 0, -5) . 'Observer';
+        $observer = substr($class, 0, -5).'Observer';
         $observing = class_exists($observer);
 
         if ($events && $observing) {
@@ -49,7 +51,9 @@ class EntryModel extends EloquentModel implements PresentableInterface
         return $this->fields;
     }
 
-    public function flushCache() { }
+    public function flushCache()
+    {
+    }
 
     /**
      * @param array $relationships
@@ -81,7 +85,7 @@ class EntryModel extends EloquentModel implements PresentableInterface
         $this->onCreate = $callback;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed

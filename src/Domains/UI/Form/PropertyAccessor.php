@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -43,7 +45,7 @@ class PropertyAccessor implements PropertyAccessorInterface
     {
         /** @var EntryModel $entry */
         $entry = $objectOrArray;
-        $field = (string)$propertyPath;
+        $field = (string) $propertyPath;
 
         if ($entry instanceof EntryModel) {
             $relationships = $entry->getRelationships();
@@ -52,7 +54,6 @@ class PropertyAccessor implements PropertyAccessorInterface
                 if ($relation instanceof HasOne) {
                     $entry->setAttribute("{$field}_id", $value);
                 } elseif ($relation instanceof BelongsToMany) {
-
                     if (!$entry->exists) {
                         $entry->onCreate(function ($entry) use ($field, $value) {
                             $entry->{$field}()->sync($value);
@@ -91,16 +92,16 @@ class PropertyAccessor implements PropertyAccessorInterface
      * @param object|array                 $objectOrArray The object or array to traverse
      * @param string|PropertyPathInterface $propertyPath  The property path to read
      *
-     * @return mixed The value at the end of the property path
-     *
      * @throws Exception\InvalidArgumentException If the property path is invalid
      * @throws Exception\AccessException          If a property/index does not exist or is not public
      * @throws Exception\UnexpectedTypeException  If a value within the path is neither object
      *                                            nor array
+     *
+     * @return mixed The value at the end of the property path
      */
     public function getValue($objectOrArray, $propertyPath)
     {
-        $field = (string)$propertyPath;
+        $field = (string) $propertyPath;
         if ($objectOrArray instanceof EntryModel) {
             $relationships = $objectOrArray->getRelationships();
             if (in_array($field, $relationships)) {
@@ -132,13 +133,12 @@ class PropertyAccessor implements PropertyAccessorInterface
      * @param object|array                 $objectOrArray The object or array to check
      * @param string|PropertyPathInterface $propertyPath  The property path to check
      *
-     * @return bool Whether the value can be set
-     *
      * @throws Exception\InvalidArgumentException If the property path is invalid
+     *
+     * @return bool Whether the value can be set
      */
     public function isWritable($objectOrArray, $propertyPath)
     {
-
     }
 
     /**
@@ -150,9 +150,9 @@ class PropertyAccessor implements PropertyAccessorInterface
      * @param object|array                 $objectOrArray The object or array to check
      * @param string|PropertyPathInterface $propertyPath  The property path to check
      *
-     * @return bool Whether the property path can be read
-     *
      * @throws Exception\InvalidArgumentException If the property path is invalid
+     *
+     * @return bool Whether the property path can be read
      */
     public function isReadable($objectOrArray, $propertyPath)
     {

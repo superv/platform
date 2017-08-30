@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Jobs;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Jobs;
 
 class GetComposerConfig
 {
@@ -11,11 +13,11 @@ class GetComposerConfig
 
     public function handle()
     {
-        if (!file_exists($this->path . '/composer.json')) {
+        if (!file_exists($this->path.'/composer.json')) {
             throw new \Exception("Composer file does not exist at {$this->path}/composer.json");
         }
 
-        if (!$composer = json_decode(file_get_contents($this->path . '/composer.json'), true)) {
+        if (!$composer = json_decode(file_get_contents($this->path.'/composer.json'), true)) {
             throw new \Exception("A JSON syntax error was encountered in {$this->path}/composer.json");
         }
 

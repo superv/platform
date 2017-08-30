@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Task;
+<?php
+
+namespace SuperV\Platform\Domains\Task;
 
 class TaskListener
 {
@@ -14,7 +16,7 @@ class TaskListener
 
     public function listen($type, $buffer)
     {
-      \Log::info("TASK LISTENER: {$type}: {$buffer}");
+        \Log::info("TASK LISTENER: {$type}: {$buffer}");
 
         $this->task->appendOutput($buffer);
     }

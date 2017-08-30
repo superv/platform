@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Droplet;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet;
 
 use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Console\Scheduling\Schedule;
@@ -85,10 +87,9 @@ class DropletProvider
         $this->registerListeners($provider);
         \Debugbar::startMeasure('registerManifests', 'Register Manifests');
 
-         $this->dispatch(new ManifestDroplet($droplet));
+        $this->dispatch(new ManifestDroplet($droplet));
         \Debugbar::stopMeasure('registerManifests');
     }
-
 
 //    protected function registerRoutesxxx(DropletServiceProvider $provider)
 //    {
@@ -148,7 +149,7 @@ class DropletProvider
             }
             foreach ($listeners as $key => $listener) {
                 if ($listener) {
-                    $this->events->listen($provider->getDroplet()->getSlug() . '::' . $event, $listener);
+                    $this->events->listen($provider->getDroplet()->getSlug().'::'.$event, $listener);
                 }
             }
         }
