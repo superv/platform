@@ -4,8 +4,6 @@ namespace SuperV\Platform;
 
 use Debugbar;
 use Illuminate\View\Factory;
-use Spatie\Tail\TailServiceProvider;
-use Laravel\Tinker\TinkerServiceProvider;
 use SuperV\Platform\Traits\RegistersRoutes;
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\View\ViewComposer;
@@ -15,7 +13,6 @@ use SuperV\Platform\Domains\UI\Page\PageCollection;
 use SuperV\Platform\Adapters\AdapterServiceProvider;
 use SuperV\Platform\Domains\UI\Navigation\Navigation;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
-use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use SuperV\Platform\Domains\Manifest\ManifestCollection;
 use SuperV\Platform\Domains\UI\Form\FormServiceProvider;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
@@ -90,9 +87,9 @@ class PlatformServiceProvider extends ServiceProvider
 //        app(Bridge::class)->addExtension(app(AsseticExtension::class));
 
         if ($this->app->environment() !== 'production') {
-            $this->app->register(IdeHelperServiceProvider::class);
-            $this->app->register(TinkerServiceProvider::class);
-            $this->app->register(TailServiceProvider::class);
+            //$this->app->register(IdeHelperServiceProvider::class);
+            //$this->app->register(TinkerServiceProvider::class);
+            //$this->app->register(TailServiceProvider::class);
         }
 
         // Register Console Commands
@@ -113,12 +110,11 @@ class PlatformServiceProvider extends ServiceProvider
             if (is_numeric($abstract) && is_string($concrete)) {
                 if (str_is('*~*', $concrete)) {
                     list($concrete, $binding) = explode('~', $concrete);
-                    $this->app->bind($binding, $concrete);
+                    $this->app->bindIf($binding, $concrete);
                 }
                 $abstract = $concrete;
             }
             $this->app->singleton($abstract, $concrete);
-//            $this->app->singleton($abstract, $concrete == '~' ? $abstract : $concrete);
         }
 
         $this->registerRoutes($this->routes);
