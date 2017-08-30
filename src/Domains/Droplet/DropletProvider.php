@@ -2,18 +2,18 @@
 
 namespace SuperV\Platform\Domains\Droplet;
 
-use Illuminate\Console\Events\ArtisanStarting;
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Foundation\AliasLoader;
-use Illuminate\Foundation\Application;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
+use Illuminate\Foundation\AliasLoader;
+use Illuminate\Foundation\Application;
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Domains\Droplet\Types\PortCollection;
+use Illuminate\Console\Scheduling\Schedule;
+use SuperV\Platform\Traits\RegistersRoutes;
+use Illuminate\Console\Events\ArtisanStarting;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
+use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
-use SuperV\Platform\Traits\RegistersRoutes;
 
 class DropletProvider
 {

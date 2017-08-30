@@ -25,7 +25,7 @@ class WriteDropletFiles
 
         // Droplet Class
         $dropletClass = "{$name}{$type}";
-        $content = $parser->parse($filesystem->get(base_path("vendor/superv/platform/resources/stubs/droplets/".strtolower($type).".stub")),
+        $content = $parser->parse($filesystem->get(base_path('vendor/superv/platform/resources/stubs/droplets/'.strtolower($type).'.stub')),
             [
                 'class'   => $dropletClass,
                 'extends' => ucwords($type),
