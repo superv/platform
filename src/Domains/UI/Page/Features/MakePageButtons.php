@@ -2,24 +2,13 @@
 
 namespace SuperV\Platform\Domains\UI\Page\Features;
 
-use SuperV\Platform\Support\Collection;
-use SuperV\Platform\Domains\UI\Page\Page;
-use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Feature\Feature;
+use SuperV\Platform\Domains\UI\Button\Button;
 use SuperV\Platform\Domains\UI\Button\Features\MakeButtons;
+use SuperV\Platform\Domains\UI\Page\Page;
 
 class MakePageButtons extends Feature
 {
-    /**
-     * @var Droplet
-     */
-    private $droplet;
-
-    /**
-     * @var Collection
-     */
-    private $pages;
-
     /**
      * @var Page
      */
@@ -38,8 +27,10 @@ class MakePageButtons extends Feature
             $arguments = [
                 'entry' => $page->getEntry() ?: $page->newEntry(),
             ];
-
             $buttons = $this->dispatch(new MakeButtons($buttons, $arguments));
+            array_map(function (Button $button) {
+                $button->setSize('lg');
+            }, $buttons);
             $page->setButtons($buttons);
         }
     }
