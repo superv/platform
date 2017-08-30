@@ -2,10 +2,10 @@
 
 namespace SuperV\Platform\Domains\Droplet\Feature;
 
+use SuperV\Platform\Domains\Feature\Feature;
+use SuperV\Platform\Domains\Droplet\Jobs\WriteDropletFiles;
 use SuperV\Platform\Domains\Droplet\Jobs\CreateDropletPaths;
 use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModelJob;
-use SuperV\Platform\Domains\Droplet\Jobs\WriteDropletFiles;
-use SuperV\Platform\Domains\Feature\Feature;
 
 /**
  * Class MakeDropletFeature.
