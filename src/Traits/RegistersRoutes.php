@@ -15,16 +15,19 @@ trait RegistersRoutes
         foreach ($routes as $uri => $data) {
             $data = ! is_array($data) ? ['uses' => $data] : $data;
 
-            if (array_has($data, 'as')) {
-                if (str_contains($data['as'], '@')) {
-                    list($port, $as) = explode('@', $data['as']);
-                    array_set($data, 'superv::port', "superv.ports.{$port}"); // TODO.ali: generic namespace
 
-                    if ($middlewares = superv(MiddlewareCollection::class)->get("superv.ports.{$port}")) {
-                        array_set($data, 'middleware', $middlewares); // TODO.ali: merge instead of set
-                    }
-                }
-            }
+            // we dont need this now, as we doing it in DetectCurrentPort
+
+            //if (array_has($data, 'as')) {
+            //    if (str_contains($data['as'], '@')) {
+            //        list($port, $as) = explode('@', $data['as']);
+            //        array_set($data, 'superv::port', "superv.ports.{$port}"); // TODO.ali: generic namespace
+            //
+            //        if ($middlewares = superv(MiddlewareCollection::class)->get("superv.ports.{$port}")) {
+            //            array_set($data, 'middleware', $middlewares); // TODO.ali: merge instead of set
+            //        }
+            //    }
+            //}
 
             /** @var Route $route */
             $route = $router->{array_pull($data, 'verb', 'any')}($uri, $data);
