@@ -1,11 +1,13 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 /**
  * Laravel Validator rules to HTML5 attributes parser.
@@ -16,7 +18,7 @@ use Symfony\Component\Form\FormView;
  */
 class RulesParser
 {
-    /** @var  FormInterface */
+    /** @var FormInterface */
     protected $form;
 
     /** @var FormView */
@@ -219,7 +221,7 @@ class RulesParser
         }
 
         return [
-            'pattern' => '\d{' . $digits . '}',
+            'pattern' => '\d{'.$digits.'}',
             'title'   => $this->getTitle('digits', compact('digits')),
         ];
     }
@@ -248,7 +250,7 @@ class RulesParser
         }
 
         return [
-            'pattern' => '\d{' . $min . ',' . $max . '}',
+            'pattern' => '\d{'.$min.','.$max.'}',
             'title'   => $this->getTitle('digits_between', compact('min', 'max')),
         ];
     }
@@ -318,7 +320,7 @@ class RulesParser
      */
     protected function between($param)
     {
-        list ($min, $max) = $param;
+        list($min, $max) = $param;
 
         if ($this->isNumeric()) {
             return [
@@ -335,7 +337,7 @@ class RulesParser
 
     /**
      * For numbers: Check an exact value
-     * For strings: Check the length of the string
+     * For strings: Check the length of the string.
      *
      *   size:5 --> min="5" max="5" (number)
      *   size:5 --> pattern=".{5}"  (text)
@@ -359,7 +361,7 @@ class RulesParser
         }
 
         return [
-            'pattern' => '.{' . $size . '}',
+            'pattern' => '.{'.$size.'}',
             'title'   => $this->getTitle('size.string', compact('size')),
         ];
     }
@@ -399,7 +401,7 @@ class RulesParser
     protected function notIn($params)
     {
         return [
-            'pattern' => '(?:(?!^' . join('$|^', $params) . '$).)*',
+            'pattern' => '(?:(?!^'.join('$|^', $params).'$).)*',
             'title'   => $this->getTitle('not_in'),
         ];
     }
@@ -473,13 +475,13 @@ class RulesParser
      */
     protected function mimes($param)
     {
-        $mimes = '.' . implode(', .', $param);
+        $mimes = '.'.implode(', .', $param);
 
         return ['accept' => $mimes];
     }
 
     /**
-     * Get the title, used for validating a rule
+     * Get the title, used for validating a rule.
      *
      * @param  string $rule
      * @param  array  $params
@@ -490,7 +492,7 @@ class RulesParser
     {
         $params['attribute'] = $this->form->getName();
 
-        return trans('validation.' . $rule, $params);
+        return trans('validation.'.$rule, $params);
     }
 
     /**
@@ -527,7 +529,7 @@ class RulesParser
      */
     protected function getDateAttribute($dateStr)
     {
-        $format = "Y-m-d";
+        $format = 'Y-m-d';
         if ($this->isType([
             DateType::class,
             DateTimeType::class,
@@ -539,7 +541,7 @@ class RulesParser
     }
 
     /**
-     * Methods below are copied from \Illuminate\Validation\Validator
+     * Methods below are copied from \Illuminate\Validation\Validator.
      * @see       https://github.com/laravel/framework/blob/5.1/src/Illuminate/Validation/Validator.php
      * @copyright Taylor Otwell
      */

@@ -1,17 +1,19 @@
-<?php namespace SuperV\Platform\Domains\Droplet;
+<?php
 
-use Illuminate\Console\Events\ArtisanStarting;
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Foundation\AliasLoader;
-use Illuminate\Foundation\Application;
+namespace SuperV\Platform\Domains\Droplet;
+
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
+use Illuminate\Foundation\AliasLoader;
+use Illuminate\Foundation\Application;
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Domains\Droplet\Types\PortCollection;
+use Illuminate\Console\Scheduling\Schedule;
+use SuperV\Platform\Traits\RegistersRoutes;
+use Illuminate\Console\Events\ArtisanStarting;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
+use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
-use SuperV\Platform\Traits\RegistersRoutes;
 
 class DropletProvider
 {
@@ -56,7 +58,7 @@ class DropletProvider
 
     public function register(Droplet $droplet)
     {
-        if (!$provider = $droplet->newServiceProvider()) {
+        if (! $provider = $droplet->newServiceProvider()) {
             return;
         }
 
@@ -85,10 +87,9 @@ class DropletProvider
         $this->registerListeners($provider);
         \Debugbar::startMeasure('registerManifests', 'Register Manifests');
 
-         $this->dispatch(new ManifestDroplet($droplet));
+        $this->dispatch(new ManifestDroplet($droplet));
         \Debugbar::stopMeasure('registerManifests');
     }
-
 
 //    protected function registerRoutesxxx(DropletServiceProvider $provider)
 //    {
@@ -138,17 +139,17 @@ class DropletProvider
 
     protected function registerListeners(DropletServiceProvider $provider)
     {
-        if (!$listen = $provider->getListeners()) {
+        if (! $listen = $provider->getListeners()) {
             return;
         }
 
         foreach ($listen as $event => $listeners) {
-            if (!is_array($listeners)) {
+            if (! is_array($listeners)) {
                 $listeners = [$listeners];
             }
             foreach ($listeners as $key => $listener) {
                 if ($listener) {
-                    $this->events->listen($provider->getDroplet()->getSlug() . '::' . $event, $listener);
+                    $this->events->listen($provider->getDroplet()->getSlug().'::'.$event, $listener);
                 }
             }
         }

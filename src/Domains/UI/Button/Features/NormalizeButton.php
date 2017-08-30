@@ -1,14 +1,14 @@
-<?php namespace SuperV\Platform\Domains\UI\Button\Features;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Button\Features;
 
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\UI\Button\Jobs\NormalizeButtonUrl;
 
 /**
- * Class NormalizeButton
+ * Class NormalizeButton.
  *
  * Refactorables: * $params to ButtonsParams object
- *
- * @package SuperV\Platform\Domains\UI\Button\Features
  */
 class NormalizeButton extends Feature
 {
@@ -50,11 +50,11 @@ class NormalizeButton extends Feature
             array_set($params, 'class', 'remote');
         }
 
-        if (is_string($href = array_get($params, 'attributes.href')) && !starts_with($href, 'http')) {
+        if (is_string($href = array_get($params, 'attributes.href')) && ! starts_with($href, 'http')) {
             $params['attributes']['href'] = url($params['attributes']['href']);
         }
 
-        if (!array_get($params, 'text')) {
+        if (! array_get($params, 'text')) {
             array_set($params, 'text', ucwords(str_replace('_', ' ', array_get($params, 'button'))));
         }
 
@@ -75,7 +75,7 @@ class NormalizeButton extends Feature
 
         foreach ($params as $attribute => $value) {
             if (str_is('data-*', $attribute)) {
-                array_set($params, 'attributes.' . $attribute, array_pull($params, $attribute));
+                array_set($params, 'attributes.'.$attribute, array_pull($params, $attribute));
             }
         }
 

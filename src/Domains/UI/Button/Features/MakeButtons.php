@@ -1,9 +1,11 @@
-<?php namespace SuperV\Platform\Domains\UI\Button\Features;
+<?php
 
+namespace SuperV\Platform\Domains\UI\Button\Features;
+
+use SuperV\Platform\Support\Hydrator;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\UI\Button\Button;
 use SuperV\Platform\Domains\UI\Button\ButtonRegistry;
-use SuperV\Platform\Support\Hydrator;
 
 class MakeButtons
 {
@@ -36,14 +38,14 @@ class MakeButtons
                 ];
             }
 
-            if (!is_numeric($key) && is_string($button)) {
+            if (! is_numeric($key) && is_string($button)) {
                 $button = [
                     'text'   => $button,
                     'button' => $key,
                 ];
             }
 
-            if (!is_numeric($key) && is_array($button) && !isset($button['button'])) {
+            if (! is_numeric($key) && is_array($button) && ! isset($button['button'])) {
                 $button['button'] = $key;
             }
 

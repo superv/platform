@@ -1,8 +1,10 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Jobs;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form\Jobs;
 
 use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\UI\Button\Features\MakeButtons;
 use SuperV\Platform\Domains\UI\Form\FormBuilder;
+use SuperV\Platform\Domains\UI\Button\Features\MakeButtons;
 
 class MakeFormButtons extends Feature
 {

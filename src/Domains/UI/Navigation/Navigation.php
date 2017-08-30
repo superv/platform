@@ -1,13 +1,12 @@
-<?php namespace SuperV\Platform\Domains\UI\Navigation;
+<?php
 
-use SuperV\Platform\Support\Collection;
+namespace SuperV\Platform\Domains\UI\Navigation;
 
 class Navigation
 {
     protected $sections = [];
 
     protected $activeModule;
-
 
     public function addSection(Section $section)
     {
@@ -32,7 +31,7 @@ class Navigation
         $this->activeModule = $activeModule;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed

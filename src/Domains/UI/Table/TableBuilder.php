@@ -1,17 +1,19 @@
-<?php namespace SuperV\Platform\Domains\UI\Table;
+<?php
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
+namespace SuperV\Platform\Domains\UI\Table;
+
 use Illuminate\View\Factory;
+use SuperV\Platform\Traits\FiresCallbacks;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\Entry\EntryModel;
 use SuperV\Platform\Domains\UI\Table\Features\BuildTable;
-use SuperV\Platform\Traits\FiresCallbacks;
 
 class TableBuilder
 {
     use DispatchesJobs;
     use FiresCallbacks;
 
-    /** @var  Table */
+    /** @var Table */
     protected $table;
 
     /** @var string */
@@ -149,7 +151,7 @@ class TableBuilder
         $this->columns = $columns;
 
         return $this;
-}
+    }
 
     /**
      * @param array $buttons
@@ -161,5 +163,5 @@ class TableBuilder
         $this->buttons = $buttons;
 
         return $this;
-}
+    }
 }

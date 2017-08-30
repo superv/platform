@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Agent;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Agent;
 
 use SuperV\Platform\Domains\Droplet\Droplet;
 

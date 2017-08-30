@@ -1,8 +1,10 @@
-<?php namespace Merpa\ApiModule\Http\Controller;
+<?php
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
+namespace Merpa\ApiModule\Http\Controller;
+
 use Illuminate\Support\Collection;
 use Merpa\SupportModule\Compose\Composer;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Merpa\SupportModule\Http\Controller\BaseController;
 
 class BaseApiController extends BaseController
@@ -19,7 +21,7 @@ class BaseApiController extends BaseController
 
     protected $messages = [];
 
-    /** @var  Collection */
+    /** @var Collection */
     protected $response;
 
     public function __construct()
@@ -60,7 +62,7 @@ class BaseApiController extends BaseController
 
     protected function payload($key, $value = null)
     {
-        if (!is_array($key) && !is_null($value)) {
+        if (! is_array($key) && ! is_null($value)) {
             array_set($this->payload, $key, $value);
         } elseif (is_array($key)) {
             $this->payload = array_merge($this->payload, $key);
@@ -75,17 +77,14 @@ class BaseApiController extends BaseController
             'status' => $this->code == 200,
         ];
 
-
-        if (!empty($this->payload)) {
+        if (! empty($this->payload)) {
             $response['data'] = (new Composer(['user' => $this->user()]))->compose($this->payload);
         }
 
-        if (!empty($this->messages)) {
+        if (! empty($this->messages)) {
             $response['messages'] = $this->messages;
         }
 
         return response()->json($response, $this->code);
-
     }
-
 }

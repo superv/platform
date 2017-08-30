@@ -1,15 +1,17 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Features;
+<?php
 
+namespace SuperV\Platform\Domains\UI\Form\Features;
+
+use Symfony\Component\Form\Form;
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\UI\Form\FieldType;
 use SuperV\Platform\Domains\UI\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 use SuperV\Platform\Domains\UI\Form\PropertyAccessor;
 use SuperV\Platform\Domains\UI\Form\PropertyPathMapper;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormFactoryInterface;
 
 class MakeForm extends Feature
 {

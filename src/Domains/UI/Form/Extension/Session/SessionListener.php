@@ -1,10 +1,12 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension\Session;
+<?php
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+namespace SuperV\Platform\Domains\UI\Form\Extension\Session;
+
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SessionListener implements EventSubscriberInterface
 {
@@ -20,7 +22,7 @@ class SessionListener implements EventSubscriberInterface
         $form = $event->getForm();
         $rootName = $form->getRoot()->getName();
 
-        if (!$form->isRoot() && $parent = $form->getParent()) {
+        if (! $form->isRoot() && $parent = $form->getParent()) {
             $name = $this->getDottedName($form);
             $fullName = $this->getFullName($rootName, $name);
 
@@ -47,7 +49,7 @@ class SessionListener implements EventSubscriberInterface
         $name = [$form->getName()];
 
         while ($form = $form->getParent()) {
-            if ($form->getName() !== null && !$form->isRoot()) {
+            if ($form->getName() !== null && ! $form->isRoot()) {
                 array_unshift($name, $form->getName());
             }
         }
@@ -61,7 +63,7 @@ class SessionListener implements EventSubscriberInterface
             return $dottedName;
         }
 
-        return $rootName . '.' . $dottedName;
+        return $rootName.'.'.$dottedName;
     }
 
     /**

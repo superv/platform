@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Table\Jobs;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Table\Jobs;
 
 use SuperV\Platform\Domains\UI\Table\TableBuilder;
 
@@ -37,7 +39,7 @@ class SetTableModelJob
             $this->builder->setModel($model);
         }
 
-        if (!$model || !class_exists($model)) {
+        if (! $model || ! class_exists($model)) {
             return;
         }
 

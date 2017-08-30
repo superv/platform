@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Table\Jobs;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Table\Jobs;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use SuperV\Platform\Domains\UI\Table\TableBuilder;
@@ -19,11 +21,11 @@ class LoadPaginationJob
     {
         $table = $this->builder->getTable();
 
-        $pageName = $table->getOption('prefix') . 'page';
+        $pageName = $table->getOption('prefix').'page';
         $perPage = $table->getOption('limit') ?: 10;
         $page = superv('request')->get($pageName);
 
-        $path = '/' . app('request')->path();
+        $path = '/'.app('request')->path();
         $paginator = new LengthAwarePaginator(
             $table->getEntries(),
             $table->getOption('total_results', 0),

@@ -1,18 +1,20 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
+<?php
 
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
+
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 
 class ValidationListener implements EventSubscriberInterface
 {
@@ -37,7 +39,7 @@ class ValidationListener implements EventSubscriberInterface
     }
 
     /**
-     * Get the original data, before submitting
+     * Get the original data, before submitting.
      *
      * @param FormEvent $event
      */
@@ -54,7 +56,6 @@ class ValidationListener implements EventSubscriberInterface
     public function validateRules(FormEvent $event)
     {
         if ($event->getForm()->isRoot()) {
-
             $root = $event->getForm();
             $rules = $this->findRules($root);
 
@@ -88,7 +89,6 @@ class ValidationListener implements EventSubscriberInterface
             $name = $form->getName();
 
             if ($config->hasOption('rules')) {
-
                 $rule = $config->getOption('rules');
                 $innerType = $form->getConfig()->getType()->getInnerType();
                 $rule = $this->addTypeRules($innerType, $rule);
@@ -97,8 +97,8 @@ class ValidationListener implements EventSubscriberInterface
                     $name .= '.*';
                 }
 
-                if (!$parent->isRoot()) {
-                    $name = $parent->getName() . '.' . $name;
+                if (! $parent->isRoot()) {
+                    $name = $parent->getName().'.'.$name;
                 }
 
                 $rules[$name] = $rule;
@@ -130,7 +130,7 @@ class ValidationListener implements EventSubscriberInterface
     }
 
     /**
-     * Add default rules based on the type
+     * Add default rules based on the type.
      *
      * @param FormTypeInterface $type
      * @param array             $rules
@@ -141,21 +141,21 @@ class ValidationListener implements EventSubscriberInterface
     {
         if (
             ($type instanceof NumberType || $type instanceof IntegerType)
-            && !in_array('numeric', $rules)
+            && ! in_array('numeric', $rules)
         ) {
             $rules[] = 'numeric';
         }
 
         if (
             ($type instanceof EmailType)
-            && !in_array('email', $rules)
+            && ! in_array('email', $rules)
         ) {
             $rules[] = 'email';
         }
 
         if (
             ($type instanceof TextType || $type instanceof TextareaType)
-            && !in_array('string', $rules)
+            && ! in_array('string', $rules)
         ) {
             $rules[] = 'string';
         }

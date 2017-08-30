@@ -16,7 +16,7 @@ function redis()
 
 function array_set_if_not($condition, &$array, $key, $value)
 {
-    array_set_if(!$condition, $array, $key, $value);
+    array_set_if(! $condition, $array, $key, $value);
 }
 
 function array_set_if($condition, &$array, $key, $value)
@@ -30,21 +30,21 @@ function html_attributes($attributes)
 {
     $html = [];
 
-    foreach ((array)$attributes as $key => $value) {
+    foreach ((array) $attributes as $key => $value) {
         $element = html_attribute_element($key, $value);
 
-        if (!is_null($element)) {
+        if (! is_null($element)) {
             $html[] = $element;
         }
     }
 
-    return count($html) > 0 ? ' ' . implode(' ', $html) : '';
+    return count($html) > 0 ? ' '.implode(' ', $html) : '';
 }
 
 function html_attribute_element($key, $value)
 {
 
-    /**
+    /*
      * For numeric keys we will assume that the value is a boolean attribute
      * where the presence of the attribute represents a true value and the
      * absence represents a false value.
@@ -60,12 +60,12 @@ function html_attribute_element($key, $value)
         return $value ? $key : '';
     }
 
-    if (!is_null($value)) {
-        return $key . '="' . e($value) . '"';
+    if (! is_null($value)) {
+        return $key.'="'.e($value).'"';
     }
 }
 
-if (!function_exists('superv')) {
+if (! function_exists('superv')) {
     /**
      * Get the available container instance.
      *
@@ -86,7 +86,7 @@ if (!function_exists('superv')) {
     }
 }
 
-if (!function_exists('collect')) {
+if (! function_exists('collect')) {
     /**
      * Create a collection from the given value.
      *

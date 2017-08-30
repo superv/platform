@@ -1,16 +1,16 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Jobs;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Jobs;
 
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
+use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
 
 /**
- * Class GetPortRoutes
+ * Class GetPortRoutes.
  *
  * Determines the current Port from hostname, and returns
  * relevant routes for that Port
- *
- * @package SuperV\Platform\Domains\Droplet\Jobs
  */
 class GetPortRoutes
 {
@@ -37,9 +37,9 @@ class GetPortRoutes
                 if (is_array($include)) {
                     $routes = array_merge($include, $routes);
 
-                    if (!empty($routes)) {
+                    if (! empty($routes)) {
                         foreach ($routes as $route => &$data) {
-                            if (!is_array($data)) {
+                            if (! is_array($data)) {
                                 $data = ['uses' => $data];
                             }
 
@@ -49,8 +49,6 @@ class GetPortRoutes
                 }
             }
         }
-
-
 
         return $routes;
     }

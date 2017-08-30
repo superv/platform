@@ -1,7 +1,9 @@
-<?php namespace SuperV\Platform\Domains\UI\Button\Features;
+<?php
 
-use SuperV\Platform\Domains\Feature\Feature;
+namespace SuperV\Platform\Domains\UI\Button\Features;
+
 use SuperV\Platform\Support\Parser;
+use SuperV\Platform\Domains\Feature\Feature;
 
 class EvaluateButton extends Feature
 {
@@ -17,6 +19,7 @@ class EvaluateButton extends Feature
         $this->button = $button;
         $this->arguments = $arguments;
     }
+
     public function handle(Parser $evaluator)
     {
         return $evaluator->parse($this->button, $this->arguments);

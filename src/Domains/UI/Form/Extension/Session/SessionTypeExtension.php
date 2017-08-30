@@ -1,14 +1,15 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension\Session;
+<?php
 
+namespace SuperV\Platform\Domains\UI\Form\Extension\Session;
+
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\FormBuilderInterface;
 
 class SessionTypeExtension extends AbstractTypeExtension
 {
     /**
      * Constructor.
-     *
      */
     public function __construct()
     {

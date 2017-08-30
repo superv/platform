@@ -1,7 +1,9 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Features;
+<?php
 
-use SuperV\Platform\Domains\Feature\Feature;
+namespace SuperV\Platform\Domains\UI\Form\Features;
+
 use SuperV\Platform\Domains\UI\Form\Action;
+use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\UI\Form\FieldType;
 use SuperV\Platform\Domains\UI\Form\FormBuilder;
 
@@ -23,7 +25,7 @@ class BuildForm extends Feature
         $form = $this->builder->getForm();
 
         foreach ($entry->getFields() as $field => $config) {
-            if (!is_array($config)) {
+            if (! is_array($config)) {
                 $field = $config;
                 $config = [];
             }

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Entry\Traits;
+<?php
+
+namespace SuperV\Platform\Domains\Entry\Traits;
 
 use SuperV\Platform\Domains\Entry\EntryRouter;
 
@@ -8,7 +10,7 @@ trait RoutableTrait
 
     public function getRouterName()
     {
-        $router = substr(get_class($this), 0, -5) . 'Router';
+        $router = substr(get_class($this), 0, -5).'Router';
 
         return class_exists($router) ? $router : EntryRouter::class;
     }

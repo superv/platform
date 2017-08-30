@@ -1,7 +1,9 @@
-<?php namespace SuperV\Platform\Domains\UI\Navigation;
+<?php
 
-use SuperV\Platform\Domains\UI\Page\Page;
+namespace SuperV\Platform\Domains\UI\Navigation;
+
 use SuperV\Platform\Support\Collection;
+use SuperV\Platform\Domains\UI\Page\Page;
 
 class Section
 {
@@ -58,7 +60,7 @@ class Section
         $this->title = $title;
 
         return $this;
-}
+    }
 
     /**
      * @param int $sortOrder
@@ -70,7 +72,7 @@ class Section
         $this->sortOrder = $sortOrder;
 
         return $this;
-}
+    }
 
     /**
      * @param mixed $icon
@@ -82,7 +84,7 @@ class Section
         $this->icon = $icon;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed
@@ -102,7 +104,7 @@ class Section
         $this->module = $module;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed

@@ -1,10 +1,12 @@
-<?php namespace SuperV\Platform;
+<?php
 
-use Illuminate\Foundation\Support\Providers\EventServiceProvider;
-use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActiveModuleJob;
-use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectCurrentPortJob;
+namespace SuperV\Platform;
+
 use SuperV\Platform\Domains\Task\Event\TaskStatusUpdatedEvent;
 use SuperV\Platform\Domains\UI\Page\Jobs\InjectMatchedPageJob;
+use Illuminate\Foundation\Support\Providers\EventServiceProvider;
+use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectCurrentPortJob;
+use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActiveModuleJob;
 
 class PlatformEventProvider extends EventServiceProvider
 {
@@ -15,12 +17,12 @@ class PlatformEventProvider extends EventServiceProvider
         'Illuminate\Routing\Events\RouteMatched' => [
             DetectActiveModuleJob::class,
             DetectCurrentPortJob::class,
-            InjectMatchedPageJob::class
+            InjectMatchedPageJob::class,
         ],
 
         TaskStatusUpdatedEvent::class => [
 
-        ]
+        ],
     ];
 
     public function boot()

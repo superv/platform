@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\View;
+<?php
+
+namespace SuperV\Platform\Domains\View;
 
 use Illuminate\View\View;
 
@@ -20,7 +22,7 @@ class ViewComposer
             return;
         }
 
-        if (!$this->template->isLoaded()) {
+        if (! $this->template->isLoaded()) {
 //            $this->events->fire(new RegisteringTwigPlugins($this->twig));
 //            $this->events->fire(new TemplateDataIsLoading($this->template));
 
@@ -30,7 +32,6 @@ class ViewComposer
         if (array_merge($view->getFactory()->getShared(), $view->getData())) {
 //            $view['template'] = (new Decorator())->decorate($this->template);
             $view['template'] = $this->template;
-
         }
     }
 }

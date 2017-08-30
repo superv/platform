@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Task;
+<?php
+
+namespace SuperV\Platform\Domains\Task;
 
 class TaskResult
 {
@@ -36,7 +38,7 @@ class TaskResult
         $this->message = $message;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed

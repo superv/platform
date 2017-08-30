@@ -1,8 +1,10 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Jobs;
+<?php
 
+namespace SuperV\Platform\Domains\Droplet\Jobs;
+
+use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
-use SuperV\Platform\Support\Parser;
 
 class WriteDropletFilesJob
 {
@@ -33,7 +35,7 @@ class WriteDropletFilesJob
 
         // Service Provider
         $providerClass = "{$name}{$type}ServiceProvider";
-        $content = $parser->parse($filesystem->get(base_path("vendor/superv/platform/resources/stubs/droplets/provider.stub")),
+        $content = $parser->parse($filesystem->get(base_path('vendor/superv/platform/resources/stubs/droplets/provider.stub')),
             [
                 'class' => $providerClass,
                 'model' => $this->model->toArray(),
@@ -41,10 +43,10 @@ class WriteDropletFilesJob
         $filesystem->put("{$path}/src/{$providerClass}.php", $content);
 
         // composer.json
-        $content = $parser->parse($filesystem->get(base_path("vendor/superv/platform/resources/stubs/droplets/composer.stub")),
+        $content = $parser->parse($filesystem->get(base_path('vendor/superv/platform/resources/stubs/droplets/composer.stub')),
             [
                 'model'  => $this->model->toArray(),
-                'prefix' => str_replace("\\", "\\\\", $this->model->namespace()),
+                'prefix' => str_replace('\\', '\\\\', $this->model->namespace()),
             ]);
         $filesystem->put("{$path}/composer.json", $content);
     }

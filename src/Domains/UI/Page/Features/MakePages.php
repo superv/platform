@@ -1,11 +1,11 @@
-<?php namespace SuperV\Platform\Domains\UI\Page\Features;
+<?php
 
+namespace SuperV\Platform\Domains\UI\Page\Features;
+
+use SuperV\Platform\Support\Collection;
+use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\Manifest\Manifest;
-use SuperV\Platform\Domains\UI\Button\Features\MakeButtons;
-use SuperV\Platform\Domains\UI\Page\Page;
-use SuperV\Platform\Support\Collection;
 
 class MakePages extends Feature
 {
@@ -36,5 +36,4 @@ class MakePages extends Feature
             $this->dispatch(new RegisterPage($page));
         }
     }
-
 }

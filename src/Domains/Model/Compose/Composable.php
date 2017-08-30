@@ -1,4 +1,6 @@
-<?php namespace Merpa\SupportModule\Compose;
+<?php
+
+namespace Merpa\SupportModule\Compose;
 
 trait Composable
 {

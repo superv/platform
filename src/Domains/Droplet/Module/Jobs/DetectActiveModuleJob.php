@@ -1,11 +1,13 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
+<?php
 
-use Illuminate\Routing\Events\RouteMatched;
+namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
+
 use Illuminate\Routing\Route;
-use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
-use SuperV\Platform\Domains\Droplet\Model\Droplets;
+use Illuminate\Routing\Events\RouteMatched;
 use SuperV\Platform\Domains\Droplet\Module\Module;
+use SuperV\Platform\Domains\Droplet\Model\Droplets;
 use SuperV\Platform\Domains\UI\Navigation\Navigation;
+use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 
 class DetectActiveModuleJob
 {
@@ -13,7 +15,6 @@ class DetectActiveModuleJob
      * @var Droplets
      */
     private $droplets;
-
 
     /**
      * @var Navigation
@@ -29,11 +30,11 @@ class DetectActiveModuleJob
     public function handle(RouteMatched $event)
     {
         /** @var Route $route */
-        if (!$route = $event->route) {
+        if (! $route = $event->route) {
             return;
         }
 
-        if (!$slug = array_get($route->getAction(), 'superv::droplet')) {
+        if (! $slug = array_get($route->getAction(), 'superv::droplet')) {
             return;
         }
 

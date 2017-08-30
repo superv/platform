@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Resource;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Resource;
 
 use SuperV\Platform\Domains\Droplet\Droplet;
 

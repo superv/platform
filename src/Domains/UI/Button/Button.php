@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Button;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Button;
 
 use Illuminate\View\Factory;
 

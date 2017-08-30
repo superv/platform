@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Model;
+<?php
+
+namespace SuperV\Platform\Domains\Model;
 
 interface RepositoryInterface
 {

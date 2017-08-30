@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Database\Migration\Console;
+<?php
+
+namespace SuperV\Platform\Domains\Database\Migration\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Console\Kernel;
@@ -10,12 +12,12 @@ class MakeMigrationCommand extends Command
 
     public function handle(Droplets $droplets, Kernel $kernel)
     {
-        if (!$droplet = $droplets->withSlug($this->argument('droplet'))) {
+        if (! $droplet = $droplets->withSlug($this->argument('droplet'))) {
             throw new \InvalidArgumentException("Droplet [{$this->argument('droplet')} not found]");
         }
 
         $options = [
-            '--path' => $droplet->path . "/database/migrations",
+            '--path' => $droplet->path.'/database/migrations',
         ];
 
         $name = $this->argument('name');
@@ -25,7 +27,6 @@ class MakeMigrationCommand extends Command
             array_set($options, 'name', "create_{$table}_table");
         } else {
             array_set($options, 'name', $name);
-
         }
 
         $kernel->call('make:migration', $options, $this->output);

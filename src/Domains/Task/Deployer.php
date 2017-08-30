@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Task;
+<?php
+
+namespace SuperV\Platform\Domains\Task;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
@@ -35,7 +37,7 @@ class Deployer implements ShouldQueue
 
         $jobs = $this->serve($task->payload('feature'), ['params' => $task->payload()]);
 
-        /**
+        /*
          * First create sub tasks so that models
          * would be created in database
          */
@@ -48,7 +50,6 @@ class Deployer implements ShouldQueue
 
             /** @var Job $job */
             foreach ($jobs as $job) {
-
                 $subTask = $job->getTask();
                 $subTask->started();
                 try {
@@ -64,7 +65,6 @@ class Deployer implements ShouldQueue
 
             $task->completed();
         } catch (\Exception $e) {
-
             $task->failed($e->getMessage());
         }
     }

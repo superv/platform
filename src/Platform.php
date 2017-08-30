@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform;
+<?php
+
+namespace SuperV\Platform;
 
 class Platform
 {

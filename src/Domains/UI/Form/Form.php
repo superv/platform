@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form;
 
 use SuperV\Platform\Support\Collection;
 use Symfony\Component\Form\FormInterface;
@@ -33,7 +35,7 @@ class Form
         return $this;
     }
 
-    /** @var  FormInterface */
+    /** @var FormInterface */
     protected $symfonyForm;
 
     public function __construct(Collection $fields, Collection $actions)
@@ -127,5 +129,5 @@ class Form
         $this->buttons = $buttons;
 
         return $this;
-}
+    }
 }

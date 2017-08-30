@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Http\Middleware;
+<?php
+
+namespace SuperV\Platform\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

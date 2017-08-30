@@ -1,18 +1,17 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Feature;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Feature;
 
 use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Droplet\Droplet;
-use SuperV\Platform\Domains\Droplet\DropletProvider;
-use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
-use SuperV\Platform\Domains\Droplet\Types\Port;
 use SuperV\Platform\Domains\Feature\Feature;
+use SuperV\Platform\Domains\Droplet\Types\Port;
+use SuperV\Platform\Domains\Droplet\DropletProvider;
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
+use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 
 /**
- * Class IntegrateDroplet
- *
- *
- * @package SuperV\Platform\Domains\Droplet\Feature
+ * Class IntegrateDroplet.
  */
 class IntegrateDroplet extends Feature
 {
@@ -37,7 +36,7 @@ class IntegrateDroplet extends Feature
 
         $droplets->put($droplet->getSlug(), $droplet);
 
-        /**
+        /*
          * If this is a Port type droplet, set its hostname from
          * env file. We will use this to extract Port from current
          * request hostname.

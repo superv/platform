@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Resource;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Resource;
 
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 
@@ -16,13 +18,13 @@ class ResourceLocator
 
     public function locate($namespace, $type = null)
     {
-        if (!str_is('*::*', $namespace)) {
+        if (! str_is('*::*', $namespace)) {
             return null;
         }
         list($droplet, $resource) = explode('::', $namespace);
         $droplet = $this->droplets->get($droplet);
 
-        $location = base_path($droplet->getPath() . '/resources/' . str_plural($type) . '/' . $resource . '.' . $type);
+        $location = base_path($droplet->getPath().'/resources/'.str_plural($type).'/'.$resource.'.'.$type);
 
         return $location;
     }

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Http\Controllers\Entry;
+<?php
+
+namespace SuperV\Platform\Http\Controllers\Entry;
 
 use SuperV\Platform\Http\Controllers\BasePlatformController;
 
@@ -6,7 +8,7 @@ class DeleteEntryController extends BasePlatformController
 {
     public function index($ticket)
     {
-        if ($config = superv('cache')->get('superv::entry.tickets.delete:' . $ticket)) {
+        if ($config = superv('cache')->get('superv::entry.tickets.delete:'.$ticket)) {
             $model = array_get($config, 'model');
             $id = array_get($config, 'id');
 
@@ -17,6 +19,6 @@ class DeleteEntryController extends BasePlatformController
             return $this->redirect->back()->withSuccess('Entry deleted');
         }
 
-        throw new \Exception('Ticket not found: ' . $ticket);
+        throw new \Exception('Ticket not found: '.$ticket);
     }
 }
