@@ -6,7 +6,7 @@ use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
-class WriteDropletFilesJob
+class WriteDropletFiles
 {
     /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel */
     private $model;
@@ -25,7 +25,7 @@ class WriteDropletFilesJob
 
         // Droplet Class
         $dropletClass = "{$name}{$type}";
-        $content = $parser->parse($filesystem->get(base_path("vendor/superv/platform/resources/stubs/droplets/{$type}.stub")),
+        $content = $parser->parse($filesystem->get(base_path("vendor/superv/platform/resources/stubs/droplets/".strtolower($type).".stub")),
             [
                 'class'   => $dropletClass,
                 'extends' => ucwords($type),

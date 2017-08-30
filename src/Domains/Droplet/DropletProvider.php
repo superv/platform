@@ -2,18 +2,18 @@
 
 namespace SuperV\Platform\Domains\Droplet;
 
-use Illuminate\Routing\Route;
-use Illuminate\Routing\Router;
+use Illuminate\Console\Events\ArtisanStarting;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Application;
+use Illuminate\Routing\Route;
+use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Dispatcher;
-use Illuminate\Console\Scheduling\Schedule;
-use SuperV\Platform\Traits\RegistersRoutes;
-use Illuminate\Console\Events\ArtisanStarting;
+use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
-use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
+use SuperV\Platform\Traits\RegistersRoutes;
 
 class DropletProvider
 {
@@ -71,14 +71,11 @@ class DropletProvider
         $this->bindClasses($provider);
         $this->bindSingletons($provider);
 
-        $this->registerRoutes(
-            $provider->getRoutes(),
-            function (Route $route) use ($provider) {
-                $route->setAction(array_merge([
-                    'superv::droplet' => $provider->getDroplet()->getSlug(),
-                ], $route->getAction()));
-            }
-        );
+        $this->registerRoutes($provider->getRoutes(), function (Route $route) use ($provider) {
+            $route->setAction(array_merge([
+                'superv::droplet' => $provider->getDroplet()->getSlug(),
+            ], $route->getAction()));
+        });
 //        $this->registerRoutes($provider);
 
         $this->registerCommands($provider);
@@ -104,15 +101,10 @@ class DropletProvider
 //        }
 //    }
 
-    protected function registerCommands(DropletServiceProvider $provider)
+    protected function registerProviders(DropletServiceProvider $provider)
     {
-        if ($commands = $provider->getCommands()) {
-            $this->events->listen(
-                'Illuminate\Console\Events\ArtisanStarting',
-                function (ArtisanStarting $event) use ($commands) {
-                    $event->artisan->resolveCommands($commands);
-                }
-            );
+        foreach ($provider->getProviders() as $provider) {
+            $this->app->register($provider);
         }
     }
 
@@ -137,6 +129,25 @@ class DropletProvider
         }
     }
 
+    protected function registerCommands(DropletServiceProvider $provider)
+    {
+        if ($commands = $provider->getCommands()) {
+            $this->events->listen('Illuminate\Console\Events\ArtisanStarting', function (ArtisanStarting $event) use (
+                $commands
+            ) {
+                $event->artisan->resolveCommands($commands);
+            });
+        }
+    }
+
+    protected function registerFeatures(DropletServiceProvider $provider)
+    {
+        $features = app(FeatureCollection::class);
+        foreach ($provider->getFeatures() as $key => $feature) {
+            $features->push($feature);
+        }
+    }
+
     protected function registerListeners(DropletServiceProvider $provider)
     {
         if (! $listen = $provider->getListeners()) {
@@ -152,21 +163,6 @@ class DropletProvider
                     $this->events->listen($provider->getDroplet()->getSlug().'::'.$event, $listener);
                 }
             }
-        }
-    }
-
-    protected function registerFeatures(DropletServiceProvider $provider)
-    {
-        $features = app(FeatureCollection::class);
-        foreach ($provider->getFeatures() as $key => $feature) {
-            $features->push($feature);
-        }
-    }
-
-    protected function registerProviders(DropletServiceProvider $provider)
-    {
-        foreach ($provider->getProviders() as $provider) {
-            $this->app->register($provider);
         }
     }
 }

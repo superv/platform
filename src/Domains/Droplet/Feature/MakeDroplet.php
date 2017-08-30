@@ -2,17 +2,17 @@
 
 namespace SuperV\Platform\Domains\Droplet\Feature;
 
-use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\Droplet\Jobs\CreateDropletPaths;
 use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModelJob;
-use SuperV\Platform\Domains\Droplet\Jobs\WriteDropletFilesJob;
+use SuperV\Platform\Domains\Droplet\Jobs\WriteDropletFiles;
+use SuperV\Platform\Domains\Feature\Feature;
 
 /**
  * Class MakeDropletFeature.
  *
  * Generates a new droplet and creates files from stubs
  */
-class MakeDropletFeature extends Feature
+class MakeDroplet extends Feature
 {
     /**
      * Slug of the droplet as vendor.type.name.
@@ -40,6 +40,6 @@ class MakeDropletFeature extends Feature
 
         $this->dispatch(new CreateDropletPaths($model));
 
-        $this->dispatch(new WriteDropletFilesJob($model));
+        $this->dispatch(new WriteDropletFiles($model));
     }
 }
