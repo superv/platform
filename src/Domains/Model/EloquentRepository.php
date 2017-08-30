@@ -6,17 +6,18 @@ use SuperV\Platform\Contracts\Container;
 
 class EloquentRepository implements RepositoryInterface
 {
-    protected $model;
+    /** @var  \Illuminate\Database\Eloquent\Builder  */
+    protected $query;
 
     public function __construct(Container $container)
     {
         $class = str_singular(get_class($this)).'Model';
-        $this->model = $container->make($class);
+        $this->query = $container->make($class);
     }
 
     public function all()
     {
-        return $this->model->all();
+        return $this->query->all();
     }
 
     public function find($id)
@@ -25,37 +26,42 @@ class EloquentRepository implements RepositoryInterface
             return $this->withSlug($id);
         }
 
-        return $this->model->find($id);
+        return $this->query->find($id);
+    }
+
+    public function in(array $ids)
+    {
+        return $this->query->whereIn('id', $ids)->get();
     }
 
     public function create(array $attributes)
     {
-        return $this->model->create($attributes);
+        return $this->query->create($attributes);
     }
 
     public function newQuery()
     {
-        return $this->model->newQuery();
+        return $this->query->newQuery();
     }
 
     public function newInstance(array $attributes = [])
     {
-        return $this->model->newInstance($attributes);
+        return $this->query->newInstance($attributes);
     }
 
     public function update(array $attributes = [])
     {
-        return $this->model->update($attributes);
+        return $this->query->update($attributes);
     }
 
     public function withSlug($slug)
     {
-        return $this->model->where('slug', $slug)->first();
+        return $this->query->where('slug', $slug)->first();
     }
 
     public function enabled()
     {
-        $droplets = $this->model->where('enabled', true)->orderBy('type', 'DESC')->get();
+        $droplets = $this->query->where('enabled', true)->orderBy('type', 'DESC')->get();
 
         return $droplets;
 //        return $this->collection($droplets);

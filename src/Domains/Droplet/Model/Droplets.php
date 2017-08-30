@@ -11,7 +11,7 @@ class Droplets extends EloquentRepository
         /**
          * Try to find by name where not ambiguous.
          */
-        $droplets = $this->model->where('name', $slug)->get();
+        $droplets = $this->query->where('name', $slug)->get();
         if ($droplets->count() == 1) {
             return $droplets->first();
         }
