@@ -119,6 +119,11 @@ class FormBuilder
         return $this->form;
     }
 
+    public function getPostData($key, $default = null)
+    {
+        return $this->getForm()->getFormData($key, $default);
+    }
+
     /**
      * @param bool $ajax
      *
@@ -131,14 +136,6 @@ class FormBuilder
         return $this;
     }
 
-    public function onSaving(EntryModel $entry)
-    {
-    }
-
-    public function onSaved(EntryModel $entry)
-    {
-    }
-
     /**
      * @return array
      */
@@ -146,4 +143,22 @@ class FormBuilder
     {
         return $this->buttons;
     }
+
+    public function isCreating()
+    {
+        return $this->isFormMode('create');
+    }
+
+    public function isEditing()
+    {
+        return $this->isFormMode('edit');
+
+    }
+
+    public function isFormMode($mode)
+    {
+        return  $this->getForm()->getMode() == $mode;
+    }
+
+
 }

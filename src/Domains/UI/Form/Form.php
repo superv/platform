@@ -106,9 +106,9 @@ class Form
         $this->symfonyForm = $symfonyForm;
     }
 
-    public function getFormData($key)
+    public function getFormData($key, $default = null)
     {
-        return $this->symfonyForm->get($key)->getData();
+        return $this->symfonyForm->get($key)->getData() ?? $default;
     }
 
     /**
