@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Entry\EntryModel;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\UI\Form\Features\BuildForm;
 use SuperV\Platform\Domains\UI\Form\Features\MakeForm;
+use SuperV\Platform\Domains\UI\Form\Jobs\MakeFormButtons;
 use SuperV\Platform\Traits\FiresCallbacks;
 use Symfony\Component\Form\FormInterface;
 
@@ -26,6 +27,8 @@ class FormBuilder
     protected $factory;
 
     protected $skips = [];
+
+    protected $buttons = [];
 
     /**
      * @var Factory
@@ -62,6 +65,7 @@ class FormBuilder
         $this->build();
 
         $this->serve(new MakeForm($this));
+        $this->serve(new MakeFormButtons($this));
 
         return $this->post();
     }
@@ -96,7 +100,7 @@ class FormBuilder
 
         $view = $this->ajax ? 'superv::form.ajax' : 'superv::form.form';
 
-        return $this->view->make($view, ['form' => $response]);
+        return $this->view->make($view, ['response' => $response, 'form' => $this->getForm()]);
     }
 
     /**
@@ -136,4 +140,14 @@ class FormBuilder
     {
 
     }
+
+
+    /**
+     * @return array
+     */
+    public function getButtons(): array
+    {
+        return $this->buttons;
+    }
+
 }

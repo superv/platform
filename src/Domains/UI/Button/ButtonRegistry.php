@@ -16,9 +16,9 @@ class ButtonRegistry
 
         ],
         'edit'   => [
-            'text'        => 'Edit',
-            'icon'        => 'fa fa-save',
-            'type'        => 'warning',
+            'text' => 'Edit',
+            'icon' => 'fa fa-save',
+            'type' => 'warning',
         ],
         'create' => [
             'text' => 'Create',
@@ -26,14 +26,14 @@ class ButtonRegistry
             'type' => 'success',
         ],
         'delete' => [
-            'text' => 'Delete',
-            'icon' => 'fa fa-trash',
-            'type' => 'danger',
+            'text'       => 'Delete',
+            'icon'       => 'fa fa-trash',
+            'type'       => 'danger',
             'attributes' => [
-                           'data-toggle'  => 'confirm',
-                'data-target' => 'modal-danger',
-                           'data-message' => 'Are you sure you want to delete this?',
-                       ],
+                'data-toggle'  => 'confirm',
+                'data-target'  => 'modal-danger',
+                'data-message' => 'Are you sure you want to delete this?',
+            ],
         ],
     ];
 

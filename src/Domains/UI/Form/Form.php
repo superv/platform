@@ -9,6 +9,8 @@ class Form
 
     protected $actions;
 
+    protected $buttons;
+
     protected $mode = 'create';
 
     /**
@@ -106,4 +108,24 @@ class Form
     {
         return $this->symfonyForm->get($key)->getData();
     }
+
+    /**
+     * @return mixed
+     */
+    public function getButtons()
+    {
+        return $this->buttons;
+    }
+
+    /**
+     * @param mixed $buttons
+     *
+     * @return Form
+     */
+    public function setButtons($buttons)
+    {
+        $this->buttons = $buttons;
+
+        return $this;
+}
 }

@@ -10,6 +10,8 @@ class Button
 
     protected $text;
 
+    protected $title;
+
     protected $icon;
 
     protected $class;
@@ -181,5 +183,21 @@ class Button
         $this->iconOnly = $iconOnly;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param mixed $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
 }

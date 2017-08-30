@@ -71,6 +71,7 @@ class FieldType
     {
         $options = [];
         array_set($options, 'mapped', array_get($this->config, 'mapped', true));
+        array_set($options, 'required', array_get($this->config, 'required', false));
 
         array_set($options, 'rules', $this->rules);
         if ($this->type == 'relation') {

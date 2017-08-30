@@ -35,6 +35,8 @@ class BuildForm extends Feature
                 if ($part == 'unique') {
                     $rule = "unique:{$entry->getTable()},{$fieldName},{$entry->getId()},id";
                     array_push($rules, $rule);
+                } elseif ($part == 'required') {
+                    array_set($config, 'required', true);
                 } else {
                     array_push($rules, $part);
                 }
