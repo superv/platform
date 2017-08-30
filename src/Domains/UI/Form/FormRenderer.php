@@ -6,8 +6,10 @@ use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\FormView;
 
 /**
- * FormRenderer to use outside Twig Templates, based on hostnet/form-twig-bridge (Copyright Hostnetbv)
+ * FormRenderer to use outside Twig Templates, based on hostnet/form-twig-bridge (Copyright Hostnetbv).
+ *
  * @see    https://github.com/hostnet/form-twig-bridge/blob/master/src/PhpRenderer.php
+ *
  * @author Nico Schoenmaker <nschoenmaker@hostnet.nl>
  */
 class FormRenderer
@@ -21,10 +23,10 @@ class FormRenderer
     }
 
     /**
-     * Renders the form
+     * Renders the form.
      *
-     * @param  FormView $view
-     * @param  array    $variables
+     * @param FormView $view
+     * @param array    $variables
      *
      * @return string
      */
@@ -36,8 +38,8 @@ class FormRenderer
     /**
      * Renders the opening form tag of the form.
      *
-     * @param  FormView $view
-     * @param  array    $variables
+     * @param FormView $view
+     * @param array    $variables
      *
      * @return string
      */
@@ -60,10 +62,10 @@ class FormRenderer
     }
 
     /**
-     * Renders the form widget
+     * Renders the form widget.
      *
-     * @param  FormView $view
-     * @param  array    $variables
+     * @param FormView $view
+     * @param array    $variables
      *
      * @return string
      */
@@ -75,8 +77,8 @@ class FormRenderer
     /**
      * Renders only the errors of the passed FormView.
      *
-     * @param  FormView $view
-     * @param  array    $variables
+     * @param FormView $view
+     * @param array    $variables
      *
      * @return string
      */
@@ -88,8 +90,8 @@ class FormRenderer
     /**
      * Renders the label of a field.
      *
-     * @param  FormView $view
-     * @param  array    $variables
+     * @param FormView $view
+     * @param array    $variables
      *
      * @return string
      */
@@ -105,8 +107,8 @@ class FormRenderer
     /**
      * Renders a row for a field.
      *
-     * @param  FormView $view
-     * @param  array    $variables
+     * @param FormView $view
+     * @param array    $variables
      *
      * @return string
      */
@@ -118,8 +120,8 @@ class FormRenderer
     /**
      * Renders all unrendered children of the given form.
      *
-     * @param  FormView $view
-     * @param  array    $variables
+     * @param FormView $view
+     * @param array    $variables
      *
      * @return string
      */

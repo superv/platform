@@ -25,7 +25,7 @@ class CreatesDropletsTable extends Migration
             $table->unique(['namespace', 'name', 'slug']);
         });
     }
-    
+
     /**
      * Reverse the migrations.
      *

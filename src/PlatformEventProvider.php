@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform;
+<?php
+
+namespace SuperV\Platform;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActiveModuleJob;
@@ -15,12 +17,12 @@ class PlatformEventProvider extends EventServiceProvider
         'Illuminate\Routing\Events\RouteMatched' => [
             DetectActiveModuleJob::class,
             DetectCurrentPortJob::class,
-            InjectMatchedPageJob::class
+            InjectMatchedPageJob::class,
         ],
 
         TaskStatusUpdatedEvent::class => [
 
-        ]
+        ],
     ];
 
     public function boot()

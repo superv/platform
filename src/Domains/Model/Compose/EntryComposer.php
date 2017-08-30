@@ -1,10 +1,12 @@
-<?php namespace Merpa\SupportModule\Compose;
+<?php
+
+namespace Merpa\SupportModule\Compose;
 
 use Anomaly\Streams\Platform\Entry\EntryModel;
 
 class EntryComposer
 {
-    /** @var  EntryModel */
+    /** @var EntryModel */
     protected $object;
 
     protected $fields = [];
@@ -48,18 +50,17 @@ class EntryComposer
             return $this->object->getAttribute(snake_case(str_replace_first('get', '', $name)));
         }
 
-        throw new \InvalidArgumentException('Method not found: ' .$name);
+        throw new \InvalidArgumentException('Method not found: '.$name);
     }
 
     public function __get($key)
     {
-        $method = 'get' . studly_case($key);
+        $method = 'get'.studly_case($key);
 
         if (method_exists($this->object, $method)) {
             return call_user_func([$this->object, $method]);
         }
 
         return $this->object->getAttribute($key);
-
     }
 }

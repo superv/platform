@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Features;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form\Features;
 
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\UI\Form\Action;

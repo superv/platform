@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension\Http;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form\Extension\Http;
 
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationRequestHandler;
 use Symfony\Component\Form\FormInterface;

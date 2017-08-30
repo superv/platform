@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Http\Controllers;
+<?php
+
+namespace SuperV\Platform\Http\Controllers;
 
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\VerifyCsrfToken;
@@ -23,16 +25,16 @@ class BasePlatformController extends Controller
     /** @var Request */
     protected $request;
 
-    /** @var Route  */
+    /** @var Route */
     protected $route;
 
-    /** @var Redirector  */
+    /** @var Redirector */
     protected $redirect;
 
-    /** @var Factory  */
+    /** @var Factory */
     protected $view;
 
-    /** @var Dispatcher  */
+    /** @var Dispatcher */
     protected $events;
 
     /** @var MessageBag */

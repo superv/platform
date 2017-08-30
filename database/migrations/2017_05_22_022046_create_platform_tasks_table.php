@@ -22,7 +22,6 @@ class CreatePlatformTasksTable extends Migration
             $table->longText('output')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->nullableTimestamps();
-
         });
     }
 

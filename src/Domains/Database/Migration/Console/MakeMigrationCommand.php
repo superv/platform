@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Database\Migration\Console;
+<?php
+
+namespace SuperV\Platform\Domains\Database\Migration\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Console\Kernel;
@@ -15,7 +17,7 @@ class MakeMigrationCommand extends Command
         }
 
         $options = [
-            '--path' => $droplet->path . "/database/migrations",
+            '--path' => $droplet->path.'/database/migrations',
         ];
 
         $name = $this->argument('name');
@@ -25,7 +27,6 @@ class MakeMigrationCommand extends Command
             array_set($options, 'name', "create_{$table}_table");
         } else {
             array_set($options, 'name', $name);
-
         }
 
         $kernel->call('make:migration', $options, $this->output);

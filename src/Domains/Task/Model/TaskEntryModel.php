@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Task\Model;
+<?php
+
+namespace SuperV\Platform\Domains\Task\Model;
 
 use SuperV\Platform\Domains\Entry\EntryModel;
 

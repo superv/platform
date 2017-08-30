@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Task\Model;
+<?php
+
+namespace SuperV\Platform\Domains\Task\Model;
 
 use SuperV\Platform\Domains\Entry\EntryPresenter;
 use SuperV\Platform\Domains\Task\Task;
@@ -44,6 +46,6 @@ class TaskPresenter extends EntryPresenter
         $icon = "<i class='{$icon}'></i> ";
         $label = "<span>$label</span>";
 
-        return '<span class="status label label-' . $color . '">' . $icon . $label . '</span>';
+        return '<span class="status label label-'.$color.'">'.$icon.$label.'</span>';
     }
 }

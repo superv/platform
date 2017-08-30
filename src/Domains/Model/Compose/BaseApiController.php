@@ -1,4 +1,6 @@
-<?php namespace Merpa\ApiModule\Http\Controller;
+<?php
+
+namespace Merpa\ApiModule\Http\Controller;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Support\Collection;
@@ -19,7 +21,7 @@ class BaseApiController extends BaseController
 
     protected $messages = [];
 
-    /** @var  Collection */
+    /** @var Collection */
     protected $response;
 
     public function __construct()
@@ -75,7 +77,6 @@ class BaseApiController extends BaseController
             'status' => $this->code == 200,
         ];
 
-
         if (!empty($this->payload)) {
             $response['data'] = (new Composer(['user' => $this->user()]))->compose($this->payload);
         }
@@ -85,7 +86,5 @@ class BaseApiController extends BaseController
         }
 
         return response()->json($response, $this->code);
-
     }
-
 }

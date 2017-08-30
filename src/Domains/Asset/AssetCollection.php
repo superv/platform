@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Asset;
+<?php
+
+namespace SuperV\Platform\Domains\Asset;
 
 use SuperV\Platform\Support\Collection;
 

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
@@ -11,10 +13,10 @@ trait ValidatesForms
     /**
      * Validate the given request with the given rules.
      *
-     * @param  \Symfony\Component\Form\Form $form
-     * @param  \Illuminate\Http\Request     $request
-     * @param  array                        $rules
-     * @param  array                        $messages
+     * @param \Symfony\Component\Form\Form $form
+     * @param \Illuminate\Http\Request     $request
+     * @param array                        $rules
+     * @param array                        $messages
      *
      * @return void
      */

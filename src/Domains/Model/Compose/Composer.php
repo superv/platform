@@ -1,10 +1,9 @@
-<?php namespace Merpa\SupportModule\Compose;
+<?php
 
+namespace Merpa\SupportModule\Compose;
 
 use Anomaly\Streams\Platform\Entry\EntryCollection;
 use Anomaly\Streams\Platform\Entry\EntryPresenter;
-use Illuminate\Support\Collection;
-use PhpParser\Node\Expr\ArrayItem;
 
 class Composer
 {
@@ -25,7 +24,7 @@ class Composer
         }
 
         if (is_object($data) && method_exists($data, 'compose')) {
-              return $this->compose($data->compose($this->params));
+            return $this->compose($data->compose($this->params));
         }
 
         if ($data instanceof EntryCollection) {
@@ -39,19 +38,19 @@ class Composer
         }
 
         return $data;
-/*
-
-
-        if (!is_object($data) || !method_exists($data, 'compose')) {
-            return $data;
-        }
-        $composed = $composable->compose($this->params);
-        if (is_array($composed)) {
-            foreach ($composed as $key => &$value) {
-                $value = (new Composer($this->params))->compose($value);
-            }
-        }
-
-        return $composed;*/
+        /*
+        
+        
+                if (!is_object($data) || !method_exists($data, 'compose')) {
+                    return $data;
+                }
+                $composed = $composable->compose($this->params);
+                if (is_array($composed)) {
+                    foreach ($composed as $key => &$value) {
+                        $value = (new Composer($this->params))->compose($value);
+                    }
+                }
+        
+                return $composed;*/
     }
 }

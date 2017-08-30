@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Table;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Table;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Input;
@@ -27,8 +29,8 @@ class Column
 
     /**
      * @var closure
-     * A rendering closure used when generating cell data, accepts the model:
-     * $column->setRenderer(function($model){ return '<strong>' . $model->id . '</strong>'; })
+     *              A rendering closure used when generating cell data, accepts the model:
+     *              $column->setRenderer(function($model){ return '<strong>' . $model->id . '</strong>'; })
      */
     protected $renderer;
 
@@ -36,7 +38,7 @@ class Column
     {
         $args = func_get_args();
 
-        $class = new static;
+        $class = new static();
 
         // Detect instantiation scheme
         switch (count($args)) {
@@ -140,7 +142,8 @@ class Column
     }
 
     /**
-     * Returns the default sorting
+     * Returns the default sorting.
+     *
      * @return string
      */
     public function getDirection()
@@ -178,7 +181,7 @@ class Column
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isSortable()
     {
@@ -186,13 +189,13 @@ class Column
     }
 
     /**
-     * @param boolean $sortable
+     * @param bool $sortable
      *
      * @return $this
      */
     public function setSortable($sortable)
     {
-        $this->sortable = (bool)$sortable;
+        $this->sortable = (bool) $sortable;
 
         return $this;
     }
@@ -205,7 +208,7 @@ class Column
         // Grab the current URL
         $path = URL::getRequest()->path();
 
-        return url($path . '/?' . http_build_query($parameters));
+        return url($path.'/?'.http_build_query($parameters));
     }
 
     protected function getCurrentInput()
@@ -239,7 +242,7 @@ class Column
     public function setParameters($arguments)
     {
         foreach ($arguments as $k => $v) {
-            $this->{'set' . ucfirst($k)}($v);
+            $this->{'set'.ucfirst($k)}($v);
         }
 
         return $this;
@@ -268,7 +271,7 @@ class Column
 
     public function hasRenderer()
     {
-        return ($this->renderer != null);
+        return $this->renderer != null;
     }
 
     public function setRenderer($function)
@@ -291,7 +294,7 @@ class Column
 
     public function setClasses($class)
     {
-        $this->classes = explode(" ", $class);
+        $this->classes = explode(' ', $class);
 
         return $this;
     }

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Asset;
+<?php
+
+namespace SuperV\Platform\Domains\Asset;
 
 use Assetic\Asset\FileAsset;
 use Assetic\Asset\GlobAsset;
@@ -31,7 +33,7 @@ class Asset
      */
     private $url;
 
-    public function __construct(Filesystem $files, HtmlBuilder $html,UrlGenerator $url , Request $request)
+    public function __construct(Filesystem $files, HtmlBuilder $html, UrlGenerator $url, Request $request)
     {
         $this->html = $html;
         $this->request = $request;
@@ -66,7 +68,7 @@ class Asset
         }
 
         if (!$path = $this->getPath($collection, $filters)) {
-            return null;
+            return;
         }
 
         return $this->url->asset($this->getPath($collection, $filters), $parameters, $secure);
@@ -80,14 +82,14 @@ class Asset
 
         $attributes['href'] = $this->path($collection, $filters);
 
-        return '<link' . html_attributes($attributes) . '>';
+        return '<link'.html_attributes($attributes).'>';
     }
 
     public function path($collection, array $filters = [])
     {
         $basePath = $this->request->getBasePath();
 
-        return $basePath . $this->getPath($collection, $filters);
+        return $basePath.$this->getPath($collection, $filters);
     }
 
     protected function getPath($collection, array $filters = [])
@@ -95,7 +97,7 @@ class Asset
         $path = "/app/assets/supreme/{$collection}";
 
         if ($this->shouldPublish($path, $collection, $filters)) {
-            \Log::info('publishing ' . $collection);
+            \Log::info('publishing '.$collection);
             $this->publish($path, $collection, $filters);
         }
 
@@ -113,7 +115,6 @@ class Asset
         $this->files->makeDirectory((new \SplFileInfo($path))->getPath(), 0777, true, true);
 
         $this->files->put($path, $assets->dump());
-
     }
 
     protected function shouldPublish($path, $collection, array $filters = [])

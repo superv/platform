@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Model;
+<?php
+
+namespace SuperV\Platform\Domains\Model;
 
 use SuperV\Platform\Contracts\Container;
 
@@ -8,7 +10,7 @@ class EloquentRepository implements RepositoryInterface
 
     public function __construct(Container $container)
     {
-        $class = str_singular(get_class($this)) . 'Model';
+        $class = str_singular(get_class($this)).'Model';
         $this->model = $container->make($class);
     }
 
@@ -54,6 +56,7 @@ class EloquentRepository implements RepositoryInterface
     public function enabled()
     {
         $droplets = $this->model->where('enabled', true)->orderBy('type', 'DESC')->get();
+
         return $droplets;
 //        return $this->collection($droplets);
     }

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension\Session;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form\Extension\Session;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormError;
@@ -61,7 +63,7 @@ class SessionListener implements EventSubscriberInterface
             return $dottedName;
         }
 
-        return $rootName . '.' . $dottedName;
+        return $rootName.'.'.$dottedName;
     }
 
     /**

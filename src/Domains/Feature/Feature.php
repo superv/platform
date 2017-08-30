@@ -1,5 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Feature;
+<?php
 
+namespace SuperV\Platform\Domains\Feature;
 
 abstract class Feature
 {
@@ -10,7 +11,6 @@ abstract class Feature
     public static $resolvable = [];
 
     protected $middlewares;
-
 
     /**
      * @return mixed

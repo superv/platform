@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Task;
+<?php
+
+namespace SuperV\Platform\Domains\Task;
 
 use SuperV\Platform\Domains\Task\Model\Tasks;
 

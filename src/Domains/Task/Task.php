@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Task;
+<?php
+
+namespace SuperV\Platform\Domains\Task;
 
 use SuperV\Platform\Domains\Task\Event\TaskOutputEvent;
 use SuperV\Platform\Domains\Task\Event\TaskStatusUpdatedEvent;
@@ -36,7 +38,7 @@ class Task
             ]
         );
 
-        return (new Task())->setModel($model)->watch($job);
+        return (new self())->setModel($model)->watch($job);
     }
 
     public function watch(Job $job)
@@ -77,9 +79,7 @@ class Task
 
         $this->model->update($update);
 
-
         event(new TaskStatusUpdatedEvent($this->model));
-
 
         return $this;
     }

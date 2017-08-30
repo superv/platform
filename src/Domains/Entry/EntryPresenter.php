@@ -1,8 +1,9 @@
-<?php namespace SuperV\Platform\Domains\Entry;
+<?php
+
+namespace SuperV\Platform\Domains\Entry;
 
 use Robbo\Presenter\Presenter;
 
 class EntryPresenter extends Presenter
 {
-
 }

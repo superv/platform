@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Feature;
+<?php
+
+namespace SuperV\Platform\Domains\Feature;
 
 use ArrayAccess;
 use Exception;
@@ -26,7 +28,7 @@ trait ServesFeaturesTrait
         }
 
         if ($middlewares = $feature->getMiddlewares()) {
-            foreach($middlewares as $middleware) {
+            foreach ($middlewares as $middleware) {
                 $this->dispatch(superv($middleware, ['feature' => $feature]));
             }
         }
@@ -66,8 +68,9 @@ trait ServesFeaturesTrait
      * @param \ReflectionParameter $parameter
      * @param array                $extras
      *
-     * @return mixed
      * @throws Exception
+     *
+     * @return mixed
      */
     protected function getParameterValueForCommand(
         $command,

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform;
+<?php
+
+namespace SuperV\Platform;
 
 use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Debugbar;
@@ -10,9 +12,7 @@ use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Database\DatabaseServiceProvider;
 use SuperV\Platform\Domains\Database\Migration\Console\MakeMigrationCommand;
 use SuperV\Platform\Domains\Database\Migration\Console\MigrateCommand;
-use SuperV\Platform\Domains\Droplet\Console\DropletDispatch;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
-use SuperV\Platform\Domains\Droplet\Console\DropletServer;
 use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
@@ -29,11 +29,9 @@ use SuperV\Platform\Traits\RegistersRoutes;
 use TwigBridge\ServiceProvider as TwigBridgeServiceProvider;
 
 /**
- * Class PlatformServiceProvider
+ * Class PlatformServiceProvider.
  *
  * https://www.draw.io/#G0Byi-qvl6eS2ySW45cFAtVWVZVTQ
- *
- * @package SuperV\Platform
  */
 class PlatformServiceProvider extends ServiceProvider
 {
@@ -41,13 +39,13 @@ class PlatformServiceProvider extends ServiceProvider
 
     protected $routes = [
         'platform/entries/{ticket}/delete' => [
-            'as' => 'superv::entries.delete',
-            'uses' => 'SuperV\Platform\Http\Controllers\Entry\DeleteEntryController@index'
-        ]      ,
+            'as'   => 'superv::entries.delete',
+            'uses' => 'SuperV\Platform\Http\Controllers\Entry\DeleteEntryController@index',
+        ],
         'platform/entries/{ticket}/edit' => [
-            'as' => 'superv::entries.edit',
-            'uses' => 'SuperV\Platform\Http\Controllers\Entry\EditEntryController@index'
-        ]
+            'as'   => 'superv::entries.edit',
+            'uses' => 'SuperV\Platform\Http\Controllers\Entry\EditEntryController@index',
+        ],
     ];
 
     protected $providers = [
@@ -63,7 +61,7 @@ class PlatformServiceProvider extends ServiceProvider
         ManifestCollection::class,
         DropletCollection::class,
         FeatureCollection::class,
-        PageCollection::class . '~pages',
+        PageCollection::class.'~pages',
         PortCollection::class,
         ViewTemplate::class,
         Navigation::class,
@@ -128,12 +126,12 @@ class PlatformServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Debugbar::startMeasure('platform.boot','Platform Boot');
+        Debugbar::startMeasure('platform.boot', 'Platform Boot');
         if (!env('SUPERV_INSTALLED', false)) {
             return;
         }
 
-        $this->loadViewsFrom(__DIR__ . '/../resources/views/', 'superv');
+        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'superv');
 
         /* @var DropletManager $manager */
         $manager = $this->app->make('SuperV\Platform\Domains\Droplet\DropletManager');
@@ -147,6 +145,5 @@ class PlatformServiceProvider extends ServiceProvider
         superv('events')->dispatch('superv::app.loaded');
 
         Debugbar::stopMeasure('platform.boot');
-
     }
 }

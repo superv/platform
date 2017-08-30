@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Database\Migration\Console;
+<?php
+
+namespace SuperV\Platform\Domains\Database\Migration\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Console\Kernel;
@@ -15,17 +17,15 @@ class MigrateCommand extends Command
         }
 
         $options = [
-            '--path' => $droplet->path . "/database/migrations",
+            '--path' => $droplet->path.'/database/migrations',
         ];
 
         if ($this->option('refresh') || $this->option('rollback')) {
-             $kernel->call('migrate:rollback', $options, $this->output);
+            $kernel->call('migrate:rollback', $options, $this->output);
         }
 
         if (!$this->option('rollback')) {
             $kernel->call('migrate', $options, $this->output);
         }
-
-
     }
 }

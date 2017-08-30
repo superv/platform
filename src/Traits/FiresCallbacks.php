@@ -1,8 +1,9 @@
-<?php namespace SuperV\Platform\Traits;
+<?php
+
+namespace SuperV\Platform\Traits;
 
 trait FiresCallbacks
 {
-
     /**
      * The local callbacks.
      *
@@ -22,6 +23,7 @@ trait FiresCallbacks
      *
      * @param $trigger
      * @param $callback
+     *
      * @return $this
      */
     public function on($trigger, $callback)
@@ -40,11 +42,12 @@ trait FiresCallbacks
      *
      * @param $trigger
      * @param $callback
+     *
      * @return $this
      */
     public function listen($trigger, $callback)
     {
-        $trigger = get_class($this) . '::' . $trigger;
+        $trigger = get_class($this).'::'.$trigger;
 
         if (!isset(self::$listeners[$trigger])) {
             self::$listeners[$trigger] = [];
@@ -58,8 +61,9 @@ trait FiresCallbacks
     /**
      * Fire a set of closures by trigger.
      *
-     * @param        $trigger
-     * @param  array $parameters
+     * @param       $trigger
+     * @param array $parameters
+     *
      * @return $this
      */
     public function fire($trigger, array $parameters = [])
@@ -71,9 +75,7 @@ trait FiresCallbacks
         $classes = array_merge(class_parents($this), [get_class($this) => get_class($this)]);
 
         foreach (array_keys($classes) as $caller) {
-
-            foreach (array_get(self::$listeners, $caller . '::' . $trigger, []) as $callback) {
-
+            foreach (array_get(self::$listeners, $caller.'::'.$trigger, []) as $callback) {
                 if (is_string($callback) || $callback instanceof \Closure) {
                     app()->call($callback, $parameters);
                 }
@@ -88,7 +90,7 @@ trait FiresCallbacks
          * Next, check if the method
          * exists and run it if it does.
          */
-        $method = camel_case('on_' . $trigger);
+        $method = camel_case('on_'.$trigger);
 
         if (method_exists($this, $method)) {
             app()->call([$this, $method], $parameters);
@@ -99,7 +101,6 @@ trait FiresCallbacks
          * the registered callbacks.
          */
         foreach (array_get($this->callbacks, $trigger, []) as $callback) {
-
             if (is_string($callback) || $callback instanceof \Closure) {
                 app()->call($callback, $parameters);
             }
@@ -116,6 +117,7 @@ trait FiresCallbacks
      * Return if the callback exists.
      *
      * @param $trigger
+     *
      * @return bool
      */
     public function hasCallback($trigger)
@@ -127,10 +129,11 @@ trait FiresCallbacks
      * Return if the listener exists.
      *
      * @param $trigger
+     *
      * @return bool
      */
     public function hasListener($trigger)
     {
-        return isset(self::$listeners[get_class($this) . '::' . $trigger]);
+        return isset(self::$listeners[get_class($this).'::'.$trigger]);
     }
 }

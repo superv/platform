@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Entry;
+<?php
+
+namespace SuperV\Platform\Domains\Entry;
 
 interface EntryInterface
 {

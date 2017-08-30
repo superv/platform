@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Support;
+<?php
+
+namespace SuperV\Platform\Support;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
@@ -9,24 +11,24 @@ class Parser
 {
     /** @var \Illuminate\Routing\UrlGenerator */
     protected $url;
-    
+
     /** @var \StringTemplate\Engine */
     protected $parser;
-    
+
     /** @var \Illuminate\Http\Request */
     protected $request;
-    
+
     public function __construct(UrlGenerator $url, Engine $parser, Request $request)
     {
         $this->url = $url;
         $this->parser = $parser;
         $this->request = $request;
     }
-    
+
     public function parse($target, array $data = [])
     {
         $data = $this->prepareData($data);
-        
+
         /*
          * If the target is an array
          * then parse it recursively.
@@ -36,7 +38,7 @@ class Parser
                 $value = $this->parse($value, $data);
             }
         }
-        
+
         /*
          * if the target is a string and is in a parsable
          * format then parse the target with the payload.
@@ -44,15 +46,15 @@ class Parser
         if (is_string($target) && str_contains($target, ['{', '}'])) {
             $target = $this->parser->render($target, $data);
         }
-        
+
         return $target;
     }
-    
+
     protected function prepareData(array $data)
     {
         return $this->toArray($this->mergeDefaultData($data));
     }
-    
+
     protected function toArray(array $data)
     {
         foreach ($data as $key => &$value) {
@@ -60,25 +62,25 @@ class Parser
                 $value = $value->toArray();
             }
         }
-        
+
         return $data;
     }
-    
+
     protected function mergeDefaultData(array $data)
     {
         $url = $this->urlData();
         $request = $this->requestData();
-        
+
         return array_merge(compact('url', 'request'), $data);
     }
-    
+
     protected function urlData()
     {
         return [
             'previous' => $this->url->previous(),
         ];
     }
-    
+
     protected function requestData()
     {
         $request = [
@@ -87,7 +89,7 @@ class Parser
             'uri'   => $this->request->getRequestUri(),
             'query' => $this->request->getQueryString(),
         ];
-        
+
         if ($route = $this->request->route()) {
             $request['route'] = [
                 'uri'                      => $route->uri(),
@@ -109,7 +111,7 @@ class Parser
                 ],
             ];
         }
-        
+
         return $request;
     }
 }

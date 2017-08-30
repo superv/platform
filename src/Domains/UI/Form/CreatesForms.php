@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form;
 
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -6,7 +8,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 trait CreatesForms
 {
     /**
-     * Create a form with a give type
+     * Create a form with a give type.
      *
      * @param string|\Symfony\Component\Form\FormTypeInterface $type
      * @param mixed                                            $data
@@ -20,7 +22,7 @@ trait CreatesForms
     }
 
     /**
-     * Create a form with a give type
+     * Create a form with a give type.
      *
      * @param string|null                                      $name
      * @param string|\Symfony\Component\Form\FormTypeInterface $type
@@ -35,10 +37,10 @@ trait CreatesForms
     }
 
     /**
-     * Create a FormBuilder with default name
+     * Create a FormBuilder with default name.
      *
-     * @param  mixed $data
-     * @param  array $options
+     * @param mixed $data
+     * @param array $options
      *
      * @return \Symfony\Component\Form\FormBuilderInterface
      */
@@ -48,11 +50,11 @@ trait CreatesForms
     }
 
     /**
-     * Create a FormBuilder without name
+     * Create a FormBuilder without name.
      *
-     * @param  string $name
-     * @param  mixed  $data
-     * @param  array  $options
+     * @param string $name
+     * @param mixed  $data
+     * @param array  $options
      *
      * @return \Symfony\Component\Form\FormBuilder
      */
@@ -62,7 +64,7 @@ trait CreatesForms
     }
 
     /**
-     * Get the FormFactory
+     * Get the FormFactory.
      *
      * @return \Symfony\Component\Form\FormFactoryInterface
      */

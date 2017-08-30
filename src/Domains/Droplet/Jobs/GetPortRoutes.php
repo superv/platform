@@ -1,16 +1,16 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Jobs;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Jobs;
 
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 
 /**
- * Class GetPortRoutes
+ * Class GetPortRoutes.
  *
  * Determines the current Port from hostname, and returns
  * relevant routes for that Port
- *
- * @package SuperV\Platform\Domains\Droplet\Jobs
  */
 class GetPortRoutes
 {
@@ -49,8 +49,6 @@ class GetPortRoutes
                 }
             }
         }
-
-
 
         return $routes;
     }

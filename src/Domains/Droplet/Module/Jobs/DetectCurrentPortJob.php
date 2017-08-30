@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
 
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Route;

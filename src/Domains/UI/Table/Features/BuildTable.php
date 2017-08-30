@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Table\Features;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Table\Features;
 
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\UI\Table\Jobs\BuildColumnsJob;
@@ -36,7 +38,6 @@ class BuildTable extends Feature
 
         $this->dispatch(new BuildRowsJob($builder));
 
-
 //        $this->dispatch(new SetTableModel($builder));
 //        $this->dispatch(new SetTableStream($builder));
 //        $this->dispatch(new SetDefaultParameters($builder));
@@ -48,7 +49,7 @@ class BuildTable extends Feature
 //        $this->dispatch(new BuildViews($this->builder));
 //        $this->dispatch(new SetActiveView($this->builder));
 
-        /**
+        /*
          * Set the table options going forward.
          */
 //        $this->dispatch(new SetTableOptions($this->builder));

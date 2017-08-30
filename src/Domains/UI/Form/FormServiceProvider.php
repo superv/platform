@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form;
 
 use Illuminate\Support\ServiceProvider;
 use SuperV\Platform\Domains\UI\Form\Extension\FormDefaultsTypeExtension;
@@ -19,11 +21,11 @@ class FormServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $configPath = __DIR__ . '/../../../../resources/config/form.php';
+        $configPath = __DIR__.'/../../../../resources/config/form.php';
         $this->mergeConfigFrom($configPath, 'form');
 
         $this->app->singleton(TwigRendererEngine::class, function ($app) {
-            $theme = (array)$app['config']->get('form.theme', 'bootstrap_3_layout.html.twig');
+            $theme = (array) $app['config']->get('form.theme', 'bootstrap_3_layout.html.twig');
 
             return new TwigRendererEngine($theme);
         });
@@ -71,7 +73,7 @@ class FormServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $configPath = __DIR__ . '/../../../../resources/config/form.php';
+        $configPath = __DIR__.'/../../../../resources/config/form.php';
         $this->publishes([$configPath => config_path('form.php')], 'config');
 
         $twig = $this->app->make(\Twig_Environment::class);
@@ -84,7 +86,7 @@ class FormServiceProvider extends ServiceProvider
             $twig->setLoader($loader);
         }
 
-        $path = __DIR__ . '/../../../../resources/views/form';
+        $path = __DIR__.'/../../../../resources/views/form';
         $loader->addLoader(new \Twig_Loader_Filesystem($path));
 
         /** @var TwigRenderer $renderer */

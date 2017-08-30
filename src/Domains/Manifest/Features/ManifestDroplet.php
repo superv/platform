@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Manifest\Features;
+<?php
+
+namespace SuperV\Platform\Domains\Manifest\Features;
 
 use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Feature\Feature;
