@@ -14,13 +14,7 @@
         }
     },
     "require": {
-        "barryvdh/laravel-ide-helper": "~2.3",
-        "barryvdh/laravel-debugbar": "~2.3",
-        "nicmart/string-template": "~0.1",
-        "barryvdh/laravel-cors": "0.9.*",
-        "spatie/laravel-tail": "~1.4",
-        "rcrowe/twigbridge": "0.9.*",
-        "predis/predis": "~1.1"
+
     }
     
 }
