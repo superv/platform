@@ -202,4 +202,15 @@ class Button
     {
         $this->title = $title;
     }
+
+    /**
+     * @param string $size
+     * @return Button
+     */
+    public function setSize(string $size): Button
+    {
+        $this->size = $size;
+
+        return $this;
+    }
 }
