@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Page;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Page;
 
 use SuperV\Platform\Domains\Droplet\Droplet;
 
@@ -6,7 +8,7 @@ class Page
 {
     protected $manifest;
 
-    /** @var  Droplet */
+    /** @var Droplet */
     protected $droplet;
 
     protected $verb;
@@ -74,7 +76,6 @@ class Page
         return $this;
     }
 
-
     /**
      * @param mixed $route
      *
@@ -133,7 +134,7 @@ class Page
 
     public function makeRoute()
     {
-        return route($this->route, ($this->entry && $this->entry->exists) ? ['entry' => $this->entry]:  []);
+        return route($this->route, ($this->entry && $this->entry->exists) ? ['entry' => $this->entry] : []);
     }
 
     /**
@@ -182,7 +183,7 @@ class Page
         $this->droplet = $droplet;
 
         return $this;
-}
+    }
 
     /**
      * @return Droplet
@@ -222,7 +223,7 @@ class Page
         $this->buttons = $buttons;
 
         return $this;
-}
+    }
 
     /**
      * @return array
@@ -242,7 +243,7 @@ class Page
         $this->model = $model;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed
@@ -268,7 +269,7 @@ class Page
         $this->entry = $entry;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed
@@ -296,7 +297,7 @@ class Page
         $this->entryRouteKeyName = $entryRouteKeyName;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed
@@ -316,7 +317,7 @@ class Page
         $this->verb = $verb;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed

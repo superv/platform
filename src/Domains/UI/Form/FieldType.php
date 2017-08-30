@@ -1,11 +1,13 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form;
 
 use SuperV\Platform\Domains\Entry\EntryModel;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class FieldType
 {
@@ -77,7 +79,7 @@ class FieldType
         if ($this->type == 'relation') {
             array_set($options, 'mapped', true);
             if ($related = array_get($this->config, 'related')) {
-                if (method_exists($this->entry, $method = "get" . studly_case($this->field) . "Options")) {
+                if (method_exists($this->entry, $method = 'get'.studly_case($this->field).'Options')) {
                     $choices = $this->entry->{$method}()->pluck('id', 'name')->toArray();
                 } else {
                     $related = new $related;

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Traits;
+<?php
+
+namespace SuperV\Platform\Traits;
 
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
@@ -11,7 +13,7 @@ trait RegistersRoutes
         /** @var Router $router */
         $router = superv('router');
         foreach ($routes as $uri => $data) {
-            $data = !is_array($data) ? ['uses' => $data] : $data;
+            $data = ! is_array($data) ? ['uses' => $data] : $data;
 
             if (array_has($data, 'as')) {
                 if (str_contains($data['as'], '@')) {

@@ -1,8 +1,10 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension\Http;
+<?php
 
-use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationRequestHandler;
+namespace SuperV\Platform\Domains\UI\Form\Extension\Http;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\RequestHandlerInterface;
+use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationRequestHandler;
 
 class HttpRequestHandler extends HttpFoundationRequestHandler implements RequestHandlerInterface
 {

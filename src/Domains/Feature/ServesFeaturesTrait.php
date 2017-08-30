@@ -1,11 +1,13 @@
-<?php namespace SuperV\Platform\Domains\Feature;
+<?php
 
-use ArrayAccess;
+namespace SuperV\Platform\Domains\Feature;
+
 use Exception;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Support\Collection;
+use ArrayAccess;
 use ReflectionClass;
 use ReflectionParameter;
+use Illuminate\Support\Collection;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 
 trait ServesFeaturesTrait
 {
@@ -21,12 +23,12 @@ trait ServesFeaturesTrait
      */
     public function serve($feature, $arguments = [])
     {
-        if (!is_object($feature)) {
+        if (! is_object($feature)) {
             $feature = $this->marshal($feature, new Collection(), $arguments);
         }
 
         if ($middlewares = $feature->getMiddlewares()) {
-            foreach($middlewares as $middleware) {
+            foreach ($middlewares as $middleware) {
                 $this->dispatch(superv($middleware, ['feature' => $feature]));
             }
         }

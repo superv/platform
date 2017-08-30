@@ -1,7 +1,7 @@
 <?php
 
-return array(
-   
+return [
+
     /*
     |--------------------------------------------------------------------------
     | Form theme
@@ -13,13 +13,13 @@ return array(
     | - bootstrap_3_layout.html.twig
     | - bootstrap_3_horizontal_layout.html.twig
     | - (your own template..)
-    | 
+    |
     | See http://symfony.com/doc/current/cookbook/form/form_customization.html#what-are-form-themes
     */
     'theme' => 'bootstrap_3_horizontal_layout.html.twig',
 
     'defaults' => [
         'required' => true,
-    ]
+    ],
 
-);
+];

@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Support;
+<?php
+
+namespace SuperV\Platform\Support;
 
 use SuperV\Platform\Adapters\LaravelCollection;
 

@@ -1,12 +1,14 @@
-<?php namespace SuperV\Platform\Domains\Manifest\Features;
+<?php
 
+namespace SuperV\Platform\Domains\Manifest\Features;
+
+use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\Manifest\ManifestCollection;
 use SuperV\Platform\Domains\Manifest\ModelManifest;
 use SuperV\Platform\Domains\UI\Page\Features\MakePages;
+use SuperV\Platform\Domains\Manifest\ManifestCollection;
 use SuperV\Platform\Domains\UI\Page\Jobs\BuildManifestPagesJob;
-use SuperV\Platform\Domains\UI\Page\Page;
 
 class ManifestModel extends Feature
 {

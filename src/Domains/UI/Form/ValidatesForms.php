@@ -1,8 +1,10 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
 
-use Illuminate\Foundation\Validation\ValidatesRequests;
+namespace SuperV\Platform\Domains\UI\Form;
+
 use Illuminate\Http\Request;
 use Symfony\Component\Form\Form;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 
 trait ValidatesForms
 {

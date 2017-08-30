@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Contracts;
+<?php
+
+namespace SuperV\Platform\Contracts;
 
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 

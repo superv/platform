@@ -1,10 +1,12 @@
-<?php namespace SuperV\Platform\Domains\UI\Page\Features;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Page\Features;
 
 use Illuminate\Routing\Route;
-use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\UI\Page\Page;
-use SuperV\Platform\Domains\UI\Page\PageCollection;
 use SuperV\Platform\Traits\RegistersRoutes;
+use SuperV\Platform\Domains\Feature\Feature;
+use SuperV\Platform\Domains\UI\Page\PageCollection;
 
 class RegisterPage extends Feature
 {
@@ -27,7 +29,7 @@ class RegisterPage extends Feature
 
         $route = [
             'as'   => $page->getRoute(),
-            'uses' => is_callable($handler) ? $handler : (str_contains($handler, '@') ? $handler : $handler . '@' . $page->getVerb()),
+            'uses' => is_callable($handler) ? $handler : (str_contains($handler, '@') ? $handler : $handler.'@'.$page->getVerb()),
         ];
 
         $this->registerRoutes(

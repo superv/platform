@@ -1,9 +1,11 @@
-<?php namespace SuperV\Platform\Domains\UI\Table;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Request;
+namespace SuperV\Platform\Domains\UI\Table;
+
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Request;
 
 class Column
 {
@@ -59,7 +61,7 @@ class Column
                     // Normal complex initialization: field and quick parameters
                     $class->setField($args[0]);
                     $class->setParameters($args[1]);
-                    if (!isset($args[1]['label'])) {
+                    if (! isset($args[1]['label'])) {
                         $class->setLabel(ucwords(str_replace('_', ' ', $args[0])));
                     }
                 }
@@ -86,7 +88,7 @@ class Column
      */
     public function setOptionsFromModel($model)
     {
-        if (!$model) {
+        if (! $model) {
             return $this;
         }
 
@@ -109,7 +111,7 @@ class Column
             return true;
         }
 
-        if (!Request::input(config('gbrock-tables.key_field')) && $this->model && $this->model->getSortingField() == $this->getField()) {
+        if (! Request::input(config('gbrock-tables.key_field')) && $this->model && $this->model->getSortingField() == $this->getField()) {
             // No sorting was requested, but this is the default field.
             return true;
         }
@@ -122,7 +124,7 @@ class Column
      */
     public function getSortURL($direction = false)
     {
-        if (!$direction) {
+        if (! $direction) {
             // No direction indicated, determine automatically from defaults.
             $direction = $this->getDirection();
 
@@ -140,7 +142,7 @@ class Column
     }
 
     /**
-     * Returns the default sorting
+     * Returns the default sorting.
      * @return string
      */
     public function getDirection()
@@ -150,7 +152,7 @@ class Column
             $this->direction = Request::input(config('gbrock-tables.key_direction'));
         }
 
-        if (!$this->direction) {
+        if (! $this->direction) {
             $this->direction = config('gbrock-tables.default_direction');
         }
 
@@ -178,7 +180,7 @@ class Column
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isSortable()
     {
@@ -186,13 +188,13 @@ class Column
     }
 
     /**
-     * @param boolean $sortable
+     * @param bool $sortable
      *
      * @return $this
      */
     public function setSortable($sortable)
     {
-        $this->sortable = (bool)$sortable;
+        $this->sortable = (bool) $sortable;
 
         return $this;
     }
@@ -205,7 +207,7 @@ class Column
         // Grab the current URL
         $path = URL::getRequest()->path();
 
-        return url($path . '/?' . http_build_query($parameters));
+        return url($path.'/?'.http_build_query($parameters));
     }
 
     protected function getCurrentInput()
@@ -239,7 +241,7 @@ class Column
     public function setParameters($arguments)
     {
         foreach ($arguments as $k => $v) {
-            $this->{'set' . ucfirst($k)}($v);
+            $this->{'set'.ucfirst($k)}($v);
         }
 
         return $this;
@@ -268,12 +270,12 @@ class Column
 
     public function hasRenderer()
     {
-        return ($this->renderer != null);
+        return $this->renderer != null;
     }
 
     public function setRenderer($function)
     {
-        if (!is_callable($function)) {
+        if (! is_callable($function)) {
             throw new \Exception('CallableFunctionNotProvidedException');
         }
 
@@ -291,7 +293,7 @@ class Column
 
     public function setClasses($class)
     {
-        $this->classes = explode(" ", $class);
+        $this->classes = explode(' ', $class);
 
         return $this;
     }

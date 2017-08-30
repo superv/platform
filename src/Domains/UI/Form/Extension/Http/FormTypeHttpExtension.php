@@ -1,7 +1,9 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension\Http;
+<?php
 
-use Symfony\Component\Form\AbstractTypeExtension;
+namespace SuperV\Platform\Domains\UI\Form\Extension\Http;
+
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\RequestHandlerInterface;
 
 class FormTypeHttpExtension extends AbstractTypeExtension

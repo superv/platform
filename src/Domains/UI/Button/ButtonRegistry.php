@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Button;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Button;
 
 class ButtonRegistry
 {
@@ -39,7 +41,7 @@ class ButtonRegistry
 
     public function get($button)
     {
-        if (!$button) {
+        if (! $button) {
             return null;
         }
 

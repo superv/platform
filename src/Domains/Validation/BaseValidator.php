@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Validation;
+<?php
+
+namespace SuperV\Platform\Domains\Validation;
 
 use Illuminate\Http\Request;
 use SuperV\Platform\Contracts\Validator;

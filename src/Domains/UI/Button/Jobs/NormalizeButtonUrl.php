@@ -1,7 +1,9 @@
-<?php namespace SuperV\Platform\Domains\UI\Button\Jobs;
+<?php
 
-use SuperV\Platform\Domains\Entry\EntryModel;
+namespace SuperV\Platform\Domains\UI\Button\Jobs;
+
 use SuperV\Platform\Domains\UI\Page\Page;
+use SuperV\Platform\Domains\Entry\EntryModel;
 
 class NormalizeButtonUrl
 {
@@ -25,7 +27,6 @@ class NormalizeButtonUrl
 
         if ($entry = array_get($this->arguments, 'entry')) {
             if ($entry instanceof EntryModel) {
-
                 $verb = array_get($this->params, 'button');
                 // If entry model has a page for this verb, use it,
                 // otherwise check the entry router, for a (default) route

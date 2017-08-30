@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Facade;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form\Facade;
 
 use Illuminate\Support\Facades\Facade;
 use SuperV\Platform\Domains\UI\Form\FormRenderer as RealFormRenderer;
@@ -6,7 +8,7 @@ use SuperV\Platform\Domains\UI\Form\FormRenderer as RealFormRenderer;
 class FormRenderer extends Facade
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected static function getFacadeAccessor()
     {

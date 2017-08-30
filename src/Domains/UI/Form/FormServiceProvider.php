@@ -1,29 +1,31 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
 
+namespace SuperV\Platform\Domains\UI\Form;
+
+use Symfony\Component\Form\Forms;
 use Illuminate\Support\ServiceProvider;
-use SuperV\Platform\Domains\UI\Form\Extension\FormDefaultsTypeExtension;
-use SuperV\Platform\Domains\UI\Form\Extension\FormValidatorExtension;
-use SuperV\Platform\Domains\UI\Form\Extension\Http\HttpExtension;
-use SuperV\Platform\Domains\UI\Form\Extension\SessionExtension;
-use SuperV\Platform\Domains\UI\Form\Extension\Validation\ValidationTypeExtension;
-use Symfony\Bridge\Twig\Extension\FormExtension;
-use Symfony\Bridge\Twig\Form\TwigRenderer;
-use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Bridge\Twig\Form\TwigRenderer;
+use Symfony\Bridge\Twig\Extension\FormExtension;
+use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRendererInterface;
-use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\ResolvedFormTypeFactory;
+use SuperV\Platform\Domains\UI\Form\Extension\SessionExtension;
+use SuperV\Platform\Domains\UI\Form\Extension\Http\HttpExtension;
+use SuperV\Platform\Domains\UI\Form\Extension\FormValidatorExtension;
+use SuperV\Platform\Domains\UI\Form\Extension\FormDefaultsTypeExtension;
+use SuperV\Platform\Domains\UI\Form\Extension\Validation\ValidationTypeExtension;
 
 class FormServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $configPath = __DIR__ . '/../../../../resources/config/form.php';
+        $configPath = __DIR__.'/../../../../resources/config/form.php';
         $this->mergeConfigFrom($configPath, 'form');
 
         $this->app->singleton(TwigRendererEngine::class, function ($app) {
-            $theme = (array)$app['config']->get('form.theme', 'bootstrap_3_layout.html.twig');
+            $theme = (array) $app['config']->get('form.theme', 'bootstrap_3_layout.html.twig');
 
             return new TwigRendererEngine($theme);
         });
@@ -71,7 +73,7 @@ class FormServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $configPath = __DIR__ . '/../../../../resources/config/form.php';
+        $configPath = __DIR__.'/../../../../resources/config/form.php';
         $this->publishes([$configPath => config_path('form.php')], 'config');
 
         $twig = $this->app->make(\Twig_Environment::class);
@@ -79,12 +81,12 @@ class FormServiceProvider extends ServiceProvider
         $loader = $twig->getLoader();
 
         // If the loader is not already a chain, make it one
-        if (!$loader instanceof \Twig_Loader_Chain) {
+        if (! $loader instanceof \Twig_Loader_Chain) {
             $loader = new \Twig_Loader_Chain([$loader]);
             $twig->setLoader($loader);
         }
 
-        $path = __DIR__ . '/../../../../resources/views/form';
+        $path = __DIR__.'/../../../../resources/views/form';
         $loader->addLoader(new \Twig_Loader_Filesystem($path));
 
         /** @var TwigRenderer $renderer */

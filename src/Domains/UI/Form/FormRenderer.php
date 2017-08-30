@@ -2,11 +2,11 @@
 
 namespace SuperV\Platform\Domains\UI\Form;
 
-use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormRendererInterface;
 
 /**
- * FormRenderer to use outside Twig Templates, based on hostnet/form-twig-bridge (Copyright Hostnetbv)
+ * FormRenderer to use outside Twig Templates, based on hostnet/form-twig-bridge (Copyright Hostnetbv).
  * @see    https://github.com/hostnet/form-twig-bridge/blob/master/src/PhpRenderer.php
  * @author Nico Schoenmaker <nschoenmaker@hostnet.nl>
  */
@@ -21,7 +21,7 @@ class FormRenderer
     }
 
     /**
-     * Renders the form
+     * Renders the form.
      *
      * @param  FormView $view
      * @param  array    $variables
@@ -60,7 +60,7 @@ class FormRenderer
     }
 
     /**
-     * Renders the form widget
+     * Renders the form widget.
      *
      * @param  FormView $view
      * @param  array    $variables
@@ -95,7 +95,7 @@ class FormRenderer
      */
     public function label(FormView $view, $label, $variables = [])
     {
-        if (!isset($variables['label'])) {
+        if (! isset($variables['label'])) {
             $variables['label'] = $label;
         }
 

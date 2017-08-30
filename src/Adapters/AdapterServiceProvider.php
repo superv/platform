@@ -1,11 +1,13 @@
-<?php namespace SuperV\Platform\Adapters;
+<?php
 
-use SuperV\Platform\Contracts\Collection;
+namespace SuperV\Platform\Adapters;
+
 use SuperV\Platform\Contracts\Container;
+use SuperV\Platform\Contracts\Validator;
+use SuperV\Platform\Contracts\Collection;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Contracts\ServiceProvider;
-use SuperV\Platform\Contracts\Validator;
 
 class AdapterServiceProvider extends ServiceProvider
 {

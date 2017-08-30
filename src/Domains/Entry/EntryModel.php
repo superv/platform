@@ -1,11 +1,13 @@
-<?php namespace SuperV\Platform\Domains\Entry;
+<?php
+
+namespace SuperV\Platform\Domains\Entry;
 
 use Closure;
 use Robbo\Presenter\PresentableInterface;
-use SuperV\Platform\Domains\Entry\Traits\PresentableTrait;
-use SuperV\Platform\Domains\Entry\Traits\RoutableTrait;
-use SuperV\Platform\Domains\Model\EloquentModel;
 use SuperV\Platform\Domains\UI\Page\Page;
+use SuperV\Platform\Domains\Model\EloquentModel;
+use SuperV\Platform\Domains\Entry\Traits\RoutableTrait;
+use SuperV\Platform\Domains\Entry\Traits\PresentableTrait;
 
 class EntryModel extends EloquentModel implements PresentableInterface
 {
@@ -25,14 +27,14 @@ class EntryModel extends EloquentModel implements PresentableInterface
 
         $class = get_class($instance);
         $events = $instance->getObservableEvents();
-        $observer = substr($class, 0, -5) . 'Observer';
+        $observer = substr($class, 0, -5).'Observer';
         $observing = class_exists($observer);
 
         if ($events && $observing) {
             self::observe(app($observer));
         }
 
-        if ($events && !$observing) {
+        if ($events && ! $observing) {
             self::observe(EntryObserver::class);
         }
 
@@ -49,7 +51,9 @@ class EntryModel extends EloquentModel implements PresentableInterface
         return $this->fields;
     }
 
-    public function flushCache() { }
+    public function flushCache()
+    {
+    }
 
     /**
      * @param array $relationships
@@ -81,7 +85,7 @@ class EntryModel extends EloquentModel implements PresentableInterface
         $this->onCreate = $callback;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed

@@ -1,12 +1,14 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
 
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+namespace SuperV\Platform\Domains\UI\Form;
+
 use SuperV\Platform\Domains\Entry\EntryModel;
 use Symfony\Component\PropertyAccess\Exception;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 class PropertyAccessor implements PropertyAccessorInterface
 {
@@ -43,7 +45,7 @@ class PropertyAccessor implements PropertyAccessorInterface
     {
         /** @var EntryModel $entry */
         $entry = $objectOrArray;
-        $field = (string)$propertyPath;
+        $field = (string) $propertyPath;
 
         if ($entry instanceof EntryModel) {
             $relationships = $entry->getRelationships();
@@ -52,8 +54,7 @@ class PropertyAccessor implements PropertyAccessorInterface
                 if ($relation instanceof HasOne) {
                     $entry->setAttribute("{$field}_id", $value);
                 } elseif ($relation instanceof BelongsToMany) {
-
-                    if (!$entry->exists) {
+                    if (! $entry->exists) {
                         $entry->onCreate(function ($entry) use ($field, $value) {
                             $entry->{$field}()->sync($value);
                         });
@@ -100,7 +101,7 @@ class PropertyAccessor implements PropertyAccessorInterface
      */
     public function getValue($objectOrArray, $propertyPath)
     {
-        $field = (string)$propertyPath;
+        $field = (string) $propertyPath;
         if ($objectOrArray instanceof EntryModel) {
             $relationships = $objectOrArray->getRelationships();
             if (in_array($field, $relationships)) {
@@ -138,7 +139,6 @@ class PropertyAccessor implements PropertyAccessorInterface
      */
     public function isWritable($objectOrArray, $propertyPath)
     {
-
     }
 
     /**

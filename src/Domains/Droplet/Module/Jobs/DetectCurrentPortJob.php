@@ -1,9 +1,11 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
+<?php
 
-use Illuminate\Routing\Events\RouteMatched;
+namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
+
 use Illuminate\Routing\Route;
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
+use Illuminate\Routing\Events\RouteMatched;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Http\Middleware\MiddlewareCollection;
 
@@ -28,12 +30,12 @@ class DetectCurrentPortJob
     public function handle(RouteMatched $event)
     {
         /** @var Route $route */
-        if (!$route = $event->route) {
+        if (! $route = $event->route) {
             return;
         }
 
-        if (!$slug = array_get($route->getAction(), 'superv::port')) {
-            if (!$port = $this->ports->byHostname($event->request->getHttpHost())) {
+        if (! $slug = array_get($route->getAction(), 'superv::port')) {
+            if (! $port = $this->ports->byHostname($event->request->getHttpHost())) {
                 return;
             } else {
                 $collection = superv(MiddlewareCollection::class);

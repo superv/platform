@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Form;
 
 class Action
 {

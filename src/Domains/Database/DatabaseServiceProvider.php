@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Database;
+<?php
+
+namespace SuperV\Platform\Domains\Database;
 
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Database\Migration\MigrationServiceProvider;

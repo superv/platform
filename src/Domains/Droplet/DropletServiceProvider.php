@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\Droplet;
+<?php
+
+namespace SuperV\Platform\Domains\Droplet;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Bus\DispatchesJobs;

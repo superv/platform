@@ -1,10 +1,10 @@
-<?php namespace SuperV\Platform\Domains\Droplet\Agent;
+<?php
 
-use SuperV\Modules\Supreme\Domains\Service\Model\ServiceModel;
-use SuperV\Platform\Domains\Feature\Feature;
+namespace SuperV\Platform\Domains\Droplet\Agent;
+
 use SuperV\Platform\Domains\Task\Job;
-use SuperV\Platform\Domains\Task\Model\JobModel;
-use SuperV\Platform\Domains\Task\Task;
+use SuperV\Platform\Domains\Feature\Feature;
+use SuperV\Modules\Supreme\Domains\Service\Model\ServiceModel;
 
 class AgentFeature extends Feature
 {
@@ -13,7 +13,6 @@ class AgentFeature extends Feature
     protected $service;
 
     protected $jobs = [];
-
 
     public function addJob(Job $job)
     {
@@ -24,8 +23,8 @@ class AgentFeature extends Feature
 
     public function server()
     {
-        if (!$this->server) {
-            if (!$serverId = $this->param('server_id')) {
+        if (! $this->server) {
+            if (! $serverId = $this->param('server_id')) {
                 /** @var ServiceModel $service */
                 if ($service = $this->service()) {
                     $this->server = $service->getServer();
@@ -40,7 +39,7 @@ class AgentFeature extends Feature
 
     public function service()
     {
-        if (!$this->service) {
+        if (! $this->service) {
             if ($serviceId = $this->param('service_id')) {
                 $this->service = superv('services')->find($serviceId);
             }

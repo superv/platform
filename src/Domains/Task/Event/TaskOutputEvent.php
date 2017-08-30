@@ -1,8 +1,10 @@
-<?php namespace SuperV\Platform\Domains\Task\Event;
+<?php
+
+namespace SuperV\Platform\Domains\Task\Event;
 
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use SuperV\Platform\Domains\Task\Model\TaskModel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class TaskOutputEvent implements ShouldBroadcast
 {

@@ -1,12 +1,14 @@
-<?php namespace Anomaly\Streams\Platform\Database\Migration;
+<?php
+
+namespace Anomaly\Streams\Platform\Database\Migration;
 
 use Anomaly\Streams\Platform\Addon\Addon;
-use Anomaly\Streams\Platform\Database\Migration\Command\Migrate;
-use Anomaly\Streams\Platform\Database\Migration\Command\Reset;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Anomaly\Streams\Platform\Database\Migration\Command\Reset;
+use Anomaly\Streams\Platform\Database\Migration\Command\Migrate;
 
 /**
- * Class Migrator
+ * Class Migrator.
  *
  * @link   http://pyrocms.com/
  * @author PyroCMS, Inc. <support@pyrocms.com>
@@ -14,7 +16,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
  */
 class Migrator extends \Illuminate\Database\Migrations\Migrator
 {
-
     use DispatchesJobs;
 
     /**
@@ -82,17 +83,17 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
             // back to its original "empty" state and will be ready for migrations.
             foreach ($migrations as $migration) {
 
-                /**
+                /*
                  * This is the only adjustment to
                  * Laravel's method..
                  */
-                if (!isset($files[$migration])) {
+                if (! isset($files[$migration])) {
                     continue;
                 }
 
                 $rolledBack[] = $files[$migration];
 
-                $this->runDown($files[$migration], (object)['migration' => $migration], $pretend);
+                $this->runDown($files[$migration], (object) ['migration' => $migration], $pretend);
             }
         }
 
@@ -126,7 +127,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
         /**
          * Run our migrations first.
          *
-         * @var Migration $migration
+         * @var Migration
          */
         $migration = $this->resolve($file);
 
@@ -134,7 +135,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
          * Set the addon if there is
          * one contextually available.
          *
-         * @var Addon $addon
+         * @var Addon
          */
         if ($addon = $this->getAddon()) {
             $migration->setAddon($addon);
@@ -160,7 +161,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
         /**
          * Run our migrations first.
          *
-         * @var Migration $migration
+         * @var Migration
          */
         $migration = $this->resolve($file);
 
@@ -168,7 +169,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
          * Set the addon if there is
          * one contextually available.
          *
-         * @var Addon $addon
+         * @var Addon
          */
         if ($addon = $this->getAddon()) {
             $migration->setAddon($addon);

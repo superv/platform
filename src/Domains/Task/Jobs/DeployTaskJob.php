@@ -1,7 +1,9 @@
-<?php namespace SuperV\Platform\Domains\Task\Jobs;
+<?php
 
-use SuperV\Platform\Domains\Task\Deployer;
+namespace SuperV\Platform\Domains\Task\Jobs;
+
 use SuperV\Platform\Domains\Task\Task;
+use SuperV\Platform\Domains\Task\Deployer;
 
 class DeployTaskJob
 {
@@ -14,6 +16,7 @@ class DeployTaskJob
     {
         $this->task = $task;
     }
+
     public function handle(Deployer $deployer)
     {
         $deployer->task($this->task)->deploy();

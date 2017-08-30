@@ -1,4 +1,6 @@
-<?php namespace SuperV\Platform\Domains\UI\Table\Jobs;
+<?php
+
+namespace SuperV\Platform\Domains\UI\Table\Jobs;
 
 use SuperV\Platform\Domains\UI\Table\TableBuilder;
 
@@ -19,11 +21,12 @@ class BuildColumnsJob
         $table = $this->builder->getTable();
         if ($columns = $this->builder->getColumns()) {
             $table->setColumns($columns);
+
             return;
         }
         $collection = $table->getEntries();
 
-        if (!$collection->first()) {
+        if (! $collection->first()) {
             return;
         }
 

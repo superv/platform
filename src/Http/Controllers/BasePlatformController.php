@@ -1,20 +1,22 @@
-<?php namespace SuperV\Platform\Http\Controllers;
+<?php
 
+namespace SuperV\Platform\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\View\Factory;
+use Illuminate\Routing\Route;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Routing\Controller;
+use Illuminate\Routing\Redirector;
+use Illuminate\Support\MessageBag;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Events\Dispatcher;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Routing\Redirector;
-use Illuminate\Routing\Route;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\MessageBag;
-use Illuminate\View\Factory;
+use SuperV\Platform\Http\Middleware\PlatformReady;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
-use SuperV\Platform\Http\Middleware\PlatformReady;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class BasePlatformController extends Controller
 {
@@ -23,16 +25,16 @@ class BasePlatformController extends Controller
     /** @var Request */
     protected $request;
 
-    /** @var Route  */
+    /** @var Route */
     protected $route;
 
-    /** @var Redirector  */
+    /** @var Redirector */
     protected $redirect;
 
-    /** @var Factory  */
+    /** @var Factory */
     protected $view;
 
-    /** @var Dispatcher  */
+    /** @var Dispatcher */
     protected $events;
 
     /** @var MessageBag */

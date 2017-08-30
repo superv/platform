@@ -1,9 +1,11 @@
-<?php namespace Anomaly\Streams\Platform\Database\Migration;
+<?php
+
+namespace Anomaly\Streams\Platform\Database\Migration;
 
 use Illuminate\Database\Migrations\DatabaseMigrationRepository;
 
 /**
- * Class MigrationRepository
+ * Class MigrationRepository.
  *
  * @link   http://pyrocms.com/
  * @author PyroCMS, Inc. <support@pyrocms.com>
@@ -11,7 +13,6 @@ use Illuminate\Database\Migrations\DatabaseMigrationRepository;
  */
 class MigrationRepository extends DatabaseMigrationRepository
 {
-
     /**
      * The migrator instance.
      *
@@ -30,7 +31,7 @@ class MigrationRepository extends DatabaseMigrationRepository
             return $this->table()
                 ->orderBy('batch', 'asc')
                 ->orderBy('migration', 'asc')
-                ->where('migration', 'LIKE', '%' . $addon->getNamespace() . '%')
+                ->where('migration', 'LIKE', '%'.$addon->getNamespace().'%')
                 ->pluck('migration')->all();
         }
 

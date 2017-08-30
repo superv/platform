@@ -1,9 +1,11 @@
-<?php namespace SuperV\Platform\Domains\UI\Form;
+<?php
 
-use Symfony\Component\Form\DataMapperInterface;
+namespace SuperV\Platform\Domains\UI\Form;
+
 use Symfony\Component\Form\Exception;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\DataMapperInterface;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 class PropertyPathMapper implements DataMapperInterface
@@ -22,6 +24,7 @@ class PropertyPathMapper implements DataMapperInterface
     {
         $this->propertyAccessor = $propertyAccessor ?: new PropertyAccessor();
     }
+
     /**
      * Maps properties of some data to a list of forms.
      *
@@ -32,9 +35,9 @@ class PropertyPathMapper implements DataMapperInterface
      */
     public function mapDataToForms($data, $forms)
     {
-        $empty = null === $data || array() === $data;
+        $empty = null === $data || [] === $data;
 
-        if (!$empty && !is_array($data) && !is_object($data)) {
+        if (! $empty && ! is_array($data) && ! is_object($data)) {
             throw new UnexpectedTypeException($data, 'object, array or empty');
         }
 
@@ -42,7 +45,7 @@ class PropertyPathMapper implements DataMapperInterface
             $propertyPath = $form->getPropertyPath();
             $config = $form->getConfig();
 
-            if (!$empty && null !== $propertyPath && $config->getMapped()) {
+            if (! $empty && null !== $propertyPath && $config->getMapped()) {
                 $form->setData($this->propertyAccessor->getValue($data, $propertyPath));
             } else {
                 $form->setData($form->getConfig()->getData());
@@ -64,7 +67,7 @@ class PropertyPathMapper implements DataMapperInterface
             return;
         }
 
-        if (!is_array($data) && !is_object($data)) {
+        if (! is_array($data) && ! is_object($data)) {
             throw new UnexpectedTypeException($data, 'object, array or empty');
         }
 
@@ -74,7 +77,7 @@ class PropertyPathMapper implements DataMapperInterface
 
             // Write-back is disabled if the form is not synchronized (transformation failed),
             // if the form was not submitted and if the form is disabled (modification not allowed)
-            if (null !== $propertyPath && $config->getMapped() && $form->isSubmitted() && $form->isSynchronized() && !$form->isDisabled()) {
+            if (null !== $propertyPath && $config->getMapped() && $form->isSubmitted() && $form->isSynchronized() && ! $form->isDisabled()) {
                 // If the field is of type DateTime and the data is the same skip the update to
                 // keep the original object hash
                 if ($form->getData() instanceof \DateTime && $form->getData() == $this->propertyAccessor->getValue($data, $propertyPath)) {
@@ -83,7 +86,7 @@ class PropertyPathMapper implements DataMapperInterface
 
                 // If the data is identical to the value in $data, we are
                 // dealing with a reference
-                if (!is_object($data) || !$config->getByReference() || $form->getData() !== $this->propertyAccessor->getValue($data, $propertyPath)) {
+                if (! is_object($data) || ! $config->getByReference() || $form->getData() !== $this->propertyAccessor->getValue($data, $propertyPath)) {
                     $this->propertyAccessor->setValue($data, $propertyPath, $form->getData());
                 }
             }

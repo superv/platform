@@ -1,18 +1,17 @@
-<?php namespace SuperV\Platform\Domains\UI\Table;
+<?php
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Input;
-use SuperV\Platform\Domains\Entry\EntryCollection;
-use SuperV\Platform\Domains\Entry\EntryModel;
-use SuperV\Platform\Domains\Model\EloquentModel;
+namespace SuperV\Platform\Domains\UI\Table;
+
 use SuperV\Platform\Support\Collection;
+use SuperV\Platform\Domains\Entry\EntryModel;
+use SuperV\Platform\Domains\Entry\EntryCollection;
 
 class Table
 {
     /** @var array */
     protected $data;
 
-    /** @var  EntryModel */
+    /** @var EntryModel */
     protected $model;
 
     protected $entries;
@@ -36,8 +35,7 @@ class Table
         RowCollection $rows,
         Collection $data,
         Collection $options
-    )
-    {
+    ) {
         $this->entries = $entries;
         $this->data = $data;
         $this->options = $options;
@@ -52,7 +50,7 @@ class Table
 
         $new_column->setOptionsFromModel($model);
 
-        $this->columns[] =& $new_column;
+        $this->columns[] = &$new_column;
 
         return $new_column;
     }
@@ -248,10 +246,10 @@ class Table
      *
      * @return Table
      */
-    public function setModel( $model): Table
+    public function setModel($model): Table
     {
         $this->model = $model;
 
         return $this;
-}
+    }
 }

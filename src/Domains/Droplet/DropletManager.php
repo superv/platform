@@ -1,10 +1,12 @@
-<?php namespace SuperV\Platform\Domains\Droplet;
+<?php
 
-use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
-use SuperV\Platform\Domains\Droplet\Feature\LoadDroplet;
-use SuperV\Platform\Domains\Droplet\Model\DropletRepository;
+namespace SuperV\Platform\Domains\Droplet;
+
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
+use SuperV\Platform\Domains\Droplet\Feature\LoadDroplet;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
+use SuperV\Platform\Domains\Droplet\Model\DropletRepository;
+use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
 
 class DropletManager
 {

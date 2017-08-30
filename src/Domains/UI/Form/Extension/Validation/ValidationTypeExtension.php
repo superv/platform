@@ -1,15 +1,17 @@
-<?php namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
+<?php
 
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
-use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
+namespace SuperV\Platform\Domains\UI\Form\Extension\Validation;
+
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 
 class ValidationTypeExtension extends AbstractTypeExtension
 {
@@ -33,7 +35,6 @@ class ValidationTypeExtension extends AbstractTypeExtension
 
         // Split rule into array
         $rulesNormalizer = function (Options $options, $constraints) use ($resolver, $hasNullable) {
-
             if (is_string($constraints)) {
                 $rules = explode('|', $constraints);
             } elseif (is_object($constraints)) {
@@ -43,12 +44,12 @@ class ValidationTypeExtension extends AbstractTypeExtension
             }
 
             // If the required option is set for the Field, add it to the rules
-            if ($options['required'] && !in_array('required', $rules)) {
+            if ($options['required'] && ! in_array('required', $rules)) {
                 $rules[] = 'required';
             }
 
             if ($hasNullable) {
-                if (!in_array('required', $rules) && !in_array('nullable', $rules)) {
+                if (! in_array('required', $rules) && ! in_array('nullable', $rules)) {
                     $rules[] = 'nullable';
                 }
             }
@@ -72,13 +73,13 @@ class ValidationTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if (!$form->isRoot() && isset($options['rules'])) {
+        if (! $form->isRoot() && isset($options['rules'])) {
             $rules = $options['rules'];
 
             $innerType = $form->getConfig()->getType()->getInnerType();
             if (
                 ($innerType instanceof NumberType || $innerType instanceof IntegerType)
-                && !in_array('numeric', $rules)
+                && ! in_array('numeric', $rules)
             ) {
                 $rules[] = 'numeric';
             }

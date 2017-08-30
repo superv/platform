@@ -1,12 +1,13 @@
-<?php namespace SuperV\Platform\Domains\Model;
+<?php
 
+namespace SuperV\Platform\Domains\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
 class EloquentModel extends Model
 {
     protected $guarded = [];
-    
+
     public $timestamps = false;
 
     protected $titleColumn = 'name';
