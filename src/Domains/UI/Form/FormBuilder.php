@@ -106,7 +106,7 @@ class FormBuilder
     /**
      * @return EntryModel
      */
-    public function getEntry(): EntryModel
+    public function getEntry()
     {
         return $this->entry;
     }
@@ -114,7 +114,7 @@ class FormBuilder
     /**
      * @return Form
      */
-    public function getForm(): Form
+    public function getForm()
     {
         return $this->form;
     }
@@ -129,7 +129,7 @@ class FormBuilder
      *
      * @return FormBuilder
      */
-    public function setAjax(bool $ajax): FormBuilder
+    public function setAjax(bool $ajax)
     {
         $this->ajax = $ajax;
 
