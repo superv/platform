@@ -41,6 +41,13 @@ class ManifestModel extends Feature
 
             if (class_exists($model)) {
                 $manifest->setModel($model);
+            } else {
+                $model = str_replace(last($parts), 'Model\\'.last($parts), $model);
+                if (class_exists($model)) {
+                    $manifest->setModel($model);
+                } else {
+                    throw new \Exception('Manifest model not found ' . $model);
+                }
             }
         }
 
