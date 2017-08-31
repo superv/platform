@@ -39,8 +39,8 @@ class Composer
 
         return $data;
         /*
-        
-        
+
+
                 if (!is_object($data) || !method_exists($data, 'compose')) {
                     return $data;
                 }
@@ -50,7 +50,7 @@ class Composer
                         $value = (new Composer($this->params))->compose($value);
                     }
                 }
-        
+
                 return $composed;*/
     }
 }

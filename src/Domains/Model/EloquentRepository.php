@@ -6,14 +6,14 @@ use SuperV\Platform\Contracts\Container;
 
 class EloquentRepository implements RepositoryInterface
 {
-    /** @var  \Illuminate\Database\Eloquent\Builder  */
+    /** @var \Illuminate\Database\Eloquent\Builder */
     protected $query;
 
     public function __construct(Container $container)
     {
         $model = str_singular(get_class($this)).'Model';
-        if (!class_exists($model)) {
-            throw new \Exception('Repository model not found: '. $model);
+        if (! class_exists($model)) {
+            throw new \Exception('Repository model not found: '.$model);
         }
         $this->query = $container->make($model)->query();
     }

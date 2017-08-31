@@ -131,7 +131,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
          */
         $migration = $this->resolve($file);
 
-        /**
+        /*
          * Set the addon if there is
          * one contextually available.
          *
@@ -165,7 +165,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
          */
         $migration = $this->resolve($file);
 
-        /**
+        /*
          * Set the addon if there is
          * one contextually available.
          *

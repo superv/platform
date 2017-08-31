@@ -48,7 +48,7 @@ class DetectCurrentPort
         //}
 
         if (! $port = $this->ports->byHostname($event->request->getHttpHost())) {
-            throw new \LogicException('This should not happen!: '. $event->request->getHttpHost());
+            throw new \LogicException('This should not happen!: '.$event->request->getHttpHost());
         }
 
         // Add current ports default middlewares to route
