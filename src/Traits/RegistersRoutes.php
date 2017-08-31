@@ -15,7 +15,6 @@ trait RegistersRoutes
         foreach ($routes as $uri => $data) {
             $data = ! is_array($data) ? ['uses' => $data] : $data;
 
-
             // we dont need this now, as we doing it in DetectCurrentPort
 
             //if (array_has($data, 'as')) {

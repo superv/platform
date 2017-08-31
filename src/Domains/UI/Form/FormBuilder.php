@@ -152,13 +152,10 @@ class FormBuilder
     public function isEditing()
     {
         return $this->isFormMode('edit');
-
     }
 
     public function isFormMode($mode)
     {
         return  $this->getForm()->getMode() == $mode;
     }
-
-
 }
