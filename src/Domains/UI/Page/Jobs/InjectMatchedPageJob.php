@@ -53,6 +53,6 @@ class InjectMatchedPageJob extends Feature
 
         $this->serve(new MakePageButtons($page));
 
-        superv(ViewTemplate::class)->set('page', $page);
+        app(ViewTemplate::class)->set('page', $page);
     }
 }

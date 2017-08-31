@@ -30,7 +30,7 @@ class Droplet
 
     public static function from(DropletModel $model)
     {
-        return superv($model->droplet(), ['model' => $model]);
+        return app($model->droplet(), ['model' => $model]);
     }
 
     /** @return DropletServiceProvider */

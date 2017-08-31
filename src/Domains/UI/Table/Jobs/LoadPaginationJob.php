@@ -23,7 +23,7 @@ class LoadPaginationJob
 
         $pageName = $table->getOption('prefix').'page';
         $perPage = $table->getOption('limit') ?: 10;
-        $page = superv('request')->get($pageName);
+        $page = app('request')->get($pageName);
 
         $path = '/'.app('request')->path();
         $paginator = new LengthAwarePaginator(

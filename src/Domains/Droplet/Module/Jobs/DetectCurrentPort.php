@@ -37,7 +37,7 @@ class DetectCurrentPort
         //    if (! $port = $this->ports->byHostname($event->request->getHttpHost())) {
         //        return;
         //    } else {
-        //        $collection = superv(MiddlewareCollection::class);
+        //        $collection = app(MiddlewareCollection::class);
         //        if ($middlewares = $collection->get($port->getSlug())) {
         //            $route->middleware($middlewares);
         //        }
@@ -52,11 +52,11 @@ class DetectCurrentPort
         }
 
         // Add current ports default middlewares to route
-        $collection = superv(MiddlewareCollection::class);
+        $collection = app(MiddlewareCollection::class);
         if ($middlewares = $collection->get($port->getSlug())) {
             $route->middleware($middlewares);
         }
 
-        superv('view')->addNamespace('port', [base_path($port->getPath('resources/views'))]);
+        app('view')->addNamespace('port', [base_path($port->getPath('resources/views'))]);
     }
 }

@@ -134,11 +134,11 @@ class PlatformServiceProvider extends ServiceProvider
 
         $manager->boot();
 
-        superv(Factory::class)->composer('*', ViewComposer::class);
+        app(Factory::class)->composer('*', ViewComposer::class);
 
-        superv('view.template')->set('menu', superv(Navigation::class));
+        app('view.template')->set('menu', app(Navigation::class));
 
-        superv('events')->dispatch('superv::app.loaded');
+        app('events')->dispatch('superv::app.loaded');
 
         Debugbar::stopMeasure('platform.boot');
     }

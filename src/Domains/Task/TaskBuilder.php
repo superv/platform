@@ -26,7 +26,7 @@ class TaskBuilder
 
     public function build()
     {
-        $model = superv(Tasks::class)->create(
+        $model = app(Tasks::class)->create(
             [
                 'payload'    => $this->payload,
                 'title'      => $this->title,

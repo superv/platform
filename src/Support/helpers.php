@@ -11,7 +11,7 @@ function mysql_now()
 /** @return \Predis\Client */
 function redis()
 {
-    return superv('redis');
+    return app('redis');
 }
 
 function array_set_if_not($condition, &$array, $key, $value)

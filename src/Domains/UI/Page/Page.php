@@ -256,7 +256,7 @@ class Page
     /** @return $this->model */
     public function newEntry()
     {
-        return superv($this->model);
+        return app($this->model);
     }
 
     /**

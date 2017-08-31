@@ -30,7 +30,7 @@ class ManifestModel extends Feature
 
     public function handle(ManifestCollection $manifests)
     {
-        $manifest = is_object($this->manifest) ? $this->manifest : superv($this->manifest);
+        $manifest = is_object($this->manifest) ? $this->manifest : app($this->manifest);
 
         $model = $manifest->getModel();
 

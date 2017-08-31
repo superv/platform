@@ -11,7 +11,7 @@ trait RegistersRoutes
     protected function registerRoutes(array $routes, \Closure $callable = null)
     {
         /** @var Router $router */
-        $router = superv('router');
+        $router = app('router');
         foreach ($routes as $uri => $data) {
             $data = ! is_array($data) ? ['uses' => $data] : $data;
 
@@ -22,7 +22,7 @@ trait RegistersRoutes
             //        list($port, $as) = explode('@', $data['as']);
             //        array_set($data, 'superv::port', "superv.ports.{$port}"); // TODO.ali: generic namespace
             //
-            //        if ($middlewares = superv(MiddlewareCollection::class)->get("superv.ports.{$port}")) {
+            //        if ($middlewares = app(MiddlewareCollection::class)->get("superv.ports.{$port}")) {
             //            array_set($data, 'middleware', $middlewares); // TODO.ali: merge instead of set
             //        }
             //    }

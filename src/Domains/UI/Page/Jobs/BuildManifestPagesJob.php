@@ -32,7 +32,7 @@ class BuildManifestPagesJob
                 array_set($data, 'icon', 'pencil-square-o');
             }
 
-            $page = $hydrator->hydrate(superv(Page::class), $data);
+            $page = $hydrator->hydrate(app(Page::class), $data);
             $pages->put($page->getRoute(), $page);
         }
 

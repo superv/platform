@@ -57,7 +57,7 @@ class MakeButtons
 
     public function makeButton($params)
     {
-        if ($registered = superv(ButtonRegistry::class)->get($params['button'])) {
+        if ($registered = app(ButtonRegistry::class)->get($params['button'])) {
             $params = array_replace_recursive($registered, $params);
         }
 
@@ -65,8 +65,8 @@ class MakeButtons
         $params = $this->dispatch(new NormalizeButton($params, $this->arguments));
 
         // hydrate button
-        return superv(Hydrator::class)->hydrate(superv(Button::class), $params);
-//        $button = superv(Button::class);
+        return app(Hydrator::class)->hydrate(app(Button::class), $params);
+//        $button = app(Button::class);
 //        $button->button = array_get($params, 'button');
 //        $button->attributes = array_get($params, 'attributes', []);
 //        $button->text = array_get($params, 'text', 'Button');

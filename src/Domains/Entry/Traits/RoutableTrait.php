@@ -29,7 +29,7 @@ trait RoutableTrait
      */
     public function newRouter()
     {
-        return superv($this->getRouterName(), ['entry' => $this]);
+        return app($this->getRouterName(), ['entry' => $this]);
     }
 
     public function getRouter()

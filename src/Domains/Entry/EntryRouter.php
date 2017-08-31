@@ -34,7 +34,7 @@ class EntryRouter
         $config = ['model' => get_class($this->entry), 'id' => $this->entry->getId()];
         $ticket = md5(json_encode($config));
 
-        superv('cache')->remember(
+        app('cache')->remember(
             'superv::entry.tickets.delete:'.$ticket,
             3600,
             function () use ($config) {
@@ -50,7 +50,7 @@ class EntryRouter
         $config = ['model' => get_class($this->entry), 'id' => $this->entry->getId()];
         $ticket = md5(json_encode($config));
 
-        superv('cache')->remember(
+        app('cache')->remember(
             'superv::entry.tickets.edit:'.$ticket,
             3600,
             function () use ($config) {

@@ -45,7 +45,7 @@ class SetTableEntriesJob
         $table->setOption('total_results', $total);
 
         $limit = 15;
-        $page = (int) superv('request')->get('page', 1);
+        $page = (int) app('request')->get('page', 1);
         $offset = $limit * (($page ?: 1) - 1);
         if ($total < $offset && $page > 1) {
             $url = str_replace('page='.$page, 'page='.($page - 1), app('request')->fullUrl());

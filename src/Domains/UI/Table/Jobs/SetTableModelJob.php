@@ -46,6 +46,6 @@ class SetTableModelJob
         /*
          * Set the model on the table!
          */
-        $table->setModel(superv($model));
+        $table->setModel(app($model));
     }
 }

@@ -8,7 +8,7 @@ class DeleteEntryController extends BasePlatformController
 {
     public function index($ticket)
     {
-        if ($config = superv('cache')->get('superv::entry.tickets.delete:'.$ticket)) {
+        if ($config = app('cache')->get('superv::entry.tickets.delete:'.$ticket)) {
             $model = array_get($config, 'model');
             $id = array_get($config, 'id');
 

@@ -32,7 +32,7 @@ class ResolveRequestParamsJob
                     list($resolver, $property) = explode('->', $resolver);
                 }
 
-                if ($resolved = superv($resolver)->find($inputValue)) {
+                if ($resolved = app($resolver)->find($inputValue)) {
                     $inputValue = isset($property) ? $resolved->{$property} : $resolved;
                 }
             }
@@ -48,7 +48,7 @@ class ResolveRequestParamsJob
 //                    list($resolver, $property) = explode('->', $resolver);
 //                }
 //
-//                if (!$resolved = superv($resolver)->find($value)) {
+//                if (!$resolved = app($resolver)->find($value)) {
 //                    continue; // TODO.ali: required validation
 //                }
 //                array_set($params, $key, isset($property) ? $resolved->{$property} : $resolved);
