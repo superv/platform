@@ -8,8 +8,12 @@ class Agent extends Droplet
 {
     protected $features;
 
-    public function getFeature($feature)
+    public function getFeature($key)
     {
-        return array_get($this->features, $feature);
+        if (!$feature = array_get($this->features, $key)){
+            throw new \Exception("Feature <{$key}> not found on agent " . $this->getName());
+        }
+
+        return $feature;
     }
 }

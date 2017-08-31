@@ -11,8 +11,11 @@ class EloquentRepository implements RepositoryInterface
 
     public function __construct(Container $container)
     {
-        $class = str_singular(get_class($this)).'Model';
-        $this->query = $container->make($class);
+        $model = str_singular(get_class($this)).'Model';
+        if (!class_exists($model)) {
+            throw new \Exception('Repository model not found: '. $model);
+        }
+        $this->query = $container->make($model)->query();
     }
 
     public function all()
