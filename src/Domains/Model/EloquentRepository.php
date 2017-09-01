@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Model;
 
 use SuperV\Platform\Contracts\Container;
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
 class EloquentRepository implements RepositoryInterface
 {

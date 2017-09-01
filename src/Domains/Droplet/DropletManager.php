@@ -39,7 +39,6 @@ class DropletManager
 
             $this->serve(new IntegrateDroplet($model));
 
-
             \Debugbar::stopMeasure("droplet.{$model->slug()}");
         }
     }

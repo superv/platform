@@ -81,7 +81,7 @@ if (! function_exists('superv')) {
         }
 
         // handle platform bindings
-        if (!preg_match('/[^A-Za-z._\-]/', $abstract)) {
+        if (! preg_match('/[^A-Za-z._\-]/', $abstract)) {
             $abstract = "superv.{$abstract}";
         }
 
