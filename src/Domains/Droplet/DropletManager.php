@@ -2,11 +2,10 @@
 
 namespace SuperV\Platform\Domains\Droplet;
 
-use SuperV\Platform\Domains\Droplet\Model\Droplets;
-use SuperV\Platform\Domains\Droplet\Feature\LoadDroplet;
-use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
-use SuperV\Platform\Domains\Droplet\Model\DropletRepository;
 use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
+use SuperV\Platform\Domains\Droplet\Feature\LoadDroplet;
+use SuperV\Platform\Domains\Droplet\Model\Droplets;
+use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 
 class DropletManager
 {
@@ -18,14 +17,12 @@ class DropletManager
     private $paths;
 
     /**
-     * @var DropletRepository
+     * @var Droplets
      */
     private $droplets;
 
-    public function __construct(
-        DropletPaths $paths,
-        Droplets $droplets
-    ) {
+    public function __construct(DropletPaths $paths, Droplets $droplets)
+    {
         $this->paths = $paths;
         $this->droplets = $droplets;
     }
@@ -41,6 +38,8 @@ class DropletManager
             \Debugbar::stopMeasure('load', 'Load');
 
             $this->serve(new IntegrateDroplet($model));
+
+
             \Debugbar::stopMeasure("droplet.{$model->slug()}");
         }
     }

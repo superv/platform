@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Droplet\Model;
 
+use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Model\EloquentRepository;
 
 class Droplets extends EloquentRepository
@@ -17,5 +18,15 @@ class Droplets extends EloquentRepository
         }
 
         return parent::withSlug($slug);
+    }
+
+    public function enabled()
+    {
+        $droplets = $this->query->where('enabled', true)->orderBy('type', 'DESC')->get();
+
+        //$droplets->map(function(DropletModel $model) {
+        //    return app($model->droplet(), ['model' => $model]);
+        //});
+        return $droplets;
     }
 }

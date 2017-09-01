@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Traits;
 
+use Illuminate\Foundation\AliasLoader;
+
 trait BindsToContainer
 {
     public function registerBindings(array $bindings)
@@ -15,6 +17,13 @@ trait BindsToContainer
     {
         foreach ($providers as $provider) {
             app()->register($provider);
+        }
+    }
+
+    public function registerAliases($aliases)
+    {
+        if ($aliases && is_array($aliases) && ! empty($aliases)) {
+            AliasLoader::getInstance($aliases)->register();
         }
     }
 

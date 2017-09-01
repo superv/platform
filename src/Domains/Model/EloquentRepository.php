@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Model;
 
 use SuperV\Platform\Contracts\Container;
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
 class EloquentRepository implements RepositoryInterface
 {
@@ -64,10 +65,7 @@ class EloquentRepository implements RepositoryInterface
 
     public function enabled()
     {
-        $droplets = $this->query->where('enabled', true)->orderBy('type', 'DESC')->get();
-
-        return $droplets;
-//        return $this->collection($droplets);
+        return $this->query->where('enabled', true)->get();
     }
 
     public function collection($items)

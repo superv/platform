@@ -2,23 +2,23 @@
 
 namespace SuperV\Platform\Domains\Droplet;
 
+use Illuminate\Console\Events\ArtisanStarting;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Application;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
-use Illuminate\Foundation\AliasLoader;
-use Illuminate\Foundation\Application;
 use SuperV\Platform\Contracts\Dispatcher;
-use Illuminate\Console\Scheduling\Schedule;
-use SuperV\Platform\Traits\RegistersRoutes;
-use Illuminate\Console\Events\ArtisanStarting;
-use SuperV\Platform\Domains\Feature\FeatureCollection;
-use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
+use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
+use SuperV\Platform\Traits\BindsToContainer;
+use SuperV\Platform\Traits\RegistersRoutes;
 
 class DropletProvider
 {
     use ServesFeaturesTrait;
     use RegistersRoutes;
+    use BindsToContainer;
 
     /**
      * @var Dispatcher
@@ -62,71 +62,32 @@ class DropletProvider
             return;
         }
 
-        $this->registerProviders($provider);
+        $this->registerProviders($provider->getProviders());
         if (method_exists($provider, 'register')) {
             $this->app->call([$provider, 'register'], ['provider' => $this]);
         }
 
-        $this->bindAliases($provider);
-        $this->bindClasses($provider);
-        $this->bindSingletons($provider);
+        $this->registerAliases($provider->getAliases());
+        $this->registerBindings($provider->getBindings());
+        $this->registerSingletons($provider->getSingletons());
 
+        //
+        // Register Routes
+        //
         $this->registerRoutes($provider->getRoutes(), function (Route $route) use ($provider) {
             $route->setAction(array_merge([
                 'superv::droplet' => $provider->getDroplet()->getSlug(),
             ], $route->getAction()));
         });
-//        $this->registerRoutes($provider);
 
         $this->registerCommands($provider);
         $this->registerFeatures($provider);
 
         $this->registerListeners($provider);
-        \Debugbar::startMeasure('registerManifests', 'Register Manifests');
 
+        \Debugbar::startMeasure('registerManifests', 'Register Manifests');
         $this->dispatch(new ManifestDroplet($droplet));
         \Debugbar::stopMeasure('registerManifests');
-    }
-
-//    protected function registerRoutesxxx(DropletServiceProvider $provider)
-//    {
-//        if (!$routes = $provider->getRoutes()) {
-//            return;
-//        }
-//
-//        foreach ($routes as $uri => $route) {
-//            $route = !is_array($route) ? ['uses' => $route] : $route;
-//
-//            $this->dispatch(new RegisterDropletRouteJob($provider->getDroplet(), $uri, $route));
-//        }
-//    }
-
-    protected function registerProviders(DropletServiceProvider $provider)
-    {
-        foreach ($provider->getProviders() as $provider) {
-            $this->app->register($provider);
-        }
-    }
-
-    protected function bindAliases(DropletServiceProvider $provider)
-    {
-        if ($aliases = $provider->getAliases()) {
-            AliasLoader::getInstance($aliases)->register();
-        }
-    }
-
-    protected function bindClasses(DropletServiceProvider $provider)
-    {
-        foreach ($provider->getBindings() as $abstract => $concrete) {
-            $this->app->bind($abstract, $concrete);
-        }
-    }
-
-    protected function bindSingletons(DropletServiceProvider $provider)
-    {
-        foreach ($provider->getSingletons() as $abstract => $concrete) {
-            $this->app->singleton($abstract, $concrete);
-        }
     }
 
     protected function registerCommands(DropletServiceProvider $provider)
@@ -142,9 +103,8 @@ class DropletProvider
 
     protected function registerFeatures(DropletServiceProvider $provider)
     {
-        $features = app(FeatureCollection::class);
         foreach ($provider->getFeatures() as $key => $feature) {
-            $features->push($feature);
+            superv('features')->push($feature);
         }
     }
 

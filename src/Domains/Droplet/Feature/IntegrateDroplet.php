@@ -4,11 +4,11 @@ namespace SuperV\Platform\Domains\Droplet\Feature;
 
 use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Droplet\Droplet;
-use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\Droplet\Types\Port;
 use SuperV\Platform\Domains\Droplet\DropletProvider;
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
+use SuperV\Platform\Domains\Droplet\Types\Port;
+use SuperV\Platform\Domains\Feature\Feature;
 
 /**
  * Class IntegrateDroplet.
@@ -49,12 +49,9 @@ class IntegrateDroplet extends Feature
 
         $provider->register($droplet);
 
-        // add view namespaces
-        $views->addNamespace(
-            $model->slug(),
-            [
-                base_path($droplet->getPath('resources/views')),
-            ]
-        );
+        //
+        // Add view namespaces
+        //
+        $views->addNamespace($model->slug(), [base_path($droplet->getPath('resources/views')),]);
     }
 }
