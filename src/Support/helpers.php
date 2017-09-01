@@ -80,6 +80,11 @@ if (! function_exists('superv')) {
             return Container::getInstance();
         }
 
+        // handle platform bindings
+        if (!preg_match('/[^A-Za-z._\-]/', $abstract)) {
+            $abstract = "superv.{$abstract}";
+        }
+
         return empty($parameters)
             ? Container::getInstance()->make($abstract)
             : Container::getInstance()->makeWith($abstract, $parameters);

@@ -48,11 +48,12 @@ class DetectCurrentPort
         //}
 
         if (! $port = $this->ports->byHostname($event->request->getHttpHost())) {
+            dd($this->ports);
             throw new \LogicException('This should not happen!: '.$event->request->getHttpHost());
         }
 
         // Add current ports default middlewares to route
-        $collection = app(MiddlewareCollection::class);
+        $collection = superv('middlewares');
         if ($middlewares = $collection->get($port->getSlug())) {
             $route->middleware($middlewares);
         }
