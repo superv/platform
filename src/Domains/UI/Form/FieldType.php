@@ -87,6 +87,9 @@ class FieldType
                 }
                 array_set($options, 'choices', $choices);
             }
+        } else if ($this->type == 'choice') {
+            array_set($options, 'choices', array_get($this->config, 'choices', []));
+
         }
 
         array_set($options, 'mapped', array_get($this->config, 'mapped', true));
