@@ -12,13 +12,11 @@ class TaskObserver extends EntryObserver
     {
         parent::created($entry);
 
-        $this->events->dispatch(new TaskCreatedEvent($entry));
+        $this->events->dispatch(new TaskCreatedEvent($entry, $entry->getPresenter()->statusLabel()));
     }
 
     public function updated(EntryModel $entry)
     {
         parent::updated($entry);
-
-        \Log::info('TASK UPDATED'.$entry->response);
     }
 }

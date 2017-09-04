@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Entry\EntryPresenter;
 
 class TaskPresenter extends EntryPresenter
 {
-    public function statusLabel()
+    public function statusLabel($class = '')
     {
         $status = $this->object->getStatus();
 
@@ -43,9 +43,9 @@ class TaskPresenter extends EntryPresenter
                 $icon = 'fa fa-question';
         }
 
-        $icon = "<i class='{$icon}'></i> ";
-        $label = "<span>$label</span>";
+        $icon = "<i class='{$icon}'></i>";
+        $label = "<span>{$label}</span>";
 
-        return '<span class="status label label-'.$color.'">'.$icon.$label.'</span>';
+        return "<span class='{$class} status label label-{$color}'>{$icon} {$label}</span>";
     }
 }
