@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Model;
 
 use SuperV\Platform\Contracts\Container;
+use SuperV\Platform\Domains\Entry\EntryModel;
 
 class EloquentRepository implements RepositoryInterface
 {
@@ -23,6 +24,11 @@ class EloquentRepository implements RepositoryInterface
         return $this->query->all();
     }
 
+    /**
+     * @param $id
+     *
+     * @return EntryModel|null
+     */
     public function find($id)
     {
         if (is_string($id) && ! is_numeric($id)) {
