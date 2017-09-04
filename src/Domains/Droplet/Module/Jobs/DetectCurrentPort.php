@@ -48,7 +48,6 @@ class DetectCurrentPort
         //}
 
         if (! $port = $this->ports->byHostname($event->request->getHttpHost())) {
-            dd($this->ports);
             throw new \LogicException('This should not happen!: '.$event->request->getHttpHost());
         }
 
