@@ -35,15 +35,15 @@ class Deployer
         try {
             $task = $this->task;
 
-             $jobs = $this->serve($task->payload('feature'), ['params' => $task->payload()]);
+            $jobs = $this->serve($task->payload('feature'), ['params' => $task->payload()]);
 
-             /*
-              * First create sub tasks so that models
-              * would be created in database
-              */
-             foreach ($jobs as $job) {
-                 $task->createSubTask($job);
-             }
+            /*
+             * First create sub tasks so that models
+             * would be created in database
+             */
+            foreach ($jobs as $job) {
+                $task->createSubTask($job);
+            }
 
             $task->started();
 

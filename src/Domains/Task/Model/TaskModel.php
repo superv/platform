@@ -35,7 +35,7 @@ class TaskModel extends TaskEntryModel
         return $this->hasMany(self::class, 'parent_id');
     }
 
-    public function getSubTasks()
+    public function getSubtasks()
     {
         return $this->subtasks;
     }

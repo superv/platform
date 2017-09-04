@@ -2,16 +2,21 @@
 
 namespace SuperV\Platform\Domains\Droplet\Agent;
 
+use SuperV\Modules\Supreme\Domains\Drop\Model\DropModel;
 use SuperV\Modules\Supreme\Domains\Server\Jobs\RunServerScriptJob;
+use SuperV\Modules\Supreme\Domains\Server\Model\ServerModel;
+use SuperV\Modules\Supreme\Domains\Server\Server;
 use SuperV\Modules\Supreme\Domains\Service\Model\ServiceModel;
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\Task\Job;
 
 class AgentFeature extends Feature
 {
+    /** @var  ServerModel */
     protected $server;
 
-    protected $service;
+    /** @var  DropModel */
+    protected $drop;
 
     protected $jobs = [];
 
@@ -23,16 +28,17 @@ class AgentFeature extends Feature
     public function __construct(array $params = null)
     {
         $this->params = $params;
-    }
 
-    public function param($name, $default = null)
-    {
-        return array_get($this->params, $name, $default);
-    }
+        if ($dropId = $this->param('drop_id')) {
+            $this->drop = superv('drops')->find($dropId);
+            $serverModel = $this->drop->getServer();
+        } elseif ($serverId = $this->param('server_id')) {
+            $serverModel = superv('servers')->find($serverId);
+        } else {
+            throw new \InvalidArgumentException('Can not find server in feature params');
+        }
 
-    public function __get($name)
-    {
-        return array_get($this->params, $name);
+        $this->server = new Server($serverModel);
     }
 
     /**
@@ -44,7 +50,7 @@ class AgentFeature extends Feature
      */
     public function job($title, $script = null)
     {
-        $job = (new RunServerScriptJob($this->server()))->setTitle($title);
+        $job = (new RunServerScriptJob($this->server))->setTitle($title);
 
         if ($script) {
             $job->script($script);
@@ -55,38 +61,22 @@ class AgentFeature extends Feature
         return $job;
     }
 
-    public function server()
-    {
-        if (! $this->server) {
-            if (! $serverId = $this->param('server_id')) {
-                /** @var ServiceModel $service */
-                if ($service = $this->service()) {
-                    $this->server = $service->getServer();
-                }
-            } else {
-                $this->server = superv('servers')->find($serverId);
-            }
-        }
-
-        return $this->server;
-    }
-
-    public function service()
-    {
-        if (! $this->service) {
-            if ($serviceId = $this->param('service_id')) {
-                $this->service = superv('services')->find($serviceId);
-            }
-        }
-
-        return $this->service;
-    }
-
     /**
      * @return array
      */
     public function getJobs(): array
     {
         return $this->jobs;
+    }
+
+
+    public function param($name, $default = null)
+    {
+        return array_get($this->params, $name, $default);
+    }
+
+    public function __get($name)
+    {
+        return array_get($this->params, $name);
     }
 }
