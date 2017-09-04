@@ -8,8 +8,12 @@ class Listener
 {
     use DispatchesJobs;
 
+    protected $eventName;
+
     public function handle($eventName, array $data)
     {
+        $this->eventName = $eventName;
+
         if (str_is('*::*.*', $eventName)) {
             $eventName = last(explode('.', $eventName));
         }
