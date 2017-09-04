@@ -47,6 +47,6 @@ class TaskPresenter extends EntryPresenter
         $label = "<span>".($title ?: $label)."</span>";
         $id = $id ? "id='{$id}'" : "";
 
-        return "<span {$id} class='{$class} status label label-{$color}'>{$icon} {$label}</span>";
+        return "<span {$id} class='{$class} label label-{$color}'>{$icon} {$label}</span>";
     }
 }

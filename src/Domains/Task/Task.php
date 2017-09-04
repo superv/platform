@@ -79,7 +79,7 @@ class Task
 
         $this->model->update($update);
 
-        event(new TaskStatusUpdatedEvent($this->model, $this->model->getPresenter()->statusLabel('status')));
+        event(new TaskStatusUpdatedEvent($this->model, $this->model->getPresenter()->statusLabel()));
 
         return $this;
     }
