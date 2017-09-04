@@ -38,6 +38,10 @@ class AgentFeature extends Feature
             throw new \InvalidArgumentException('Can not find server in feature params');
         }
 
+        if (is_null($serverModel)) {
+            throw new \InvalidArgumentException('Can not find server from params:' . json_encode($this->params));
+        }
+
         $this->server = new Server($serverModel);
     }
 
