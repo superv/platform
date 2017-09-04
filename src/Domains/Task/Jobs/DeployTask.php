@@ -2,11 +2,16 @@
 
 namespace SuperV\Platform\Domains\Task\Jobs;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Queue;
 use SuperV\Platform\Domains\Task\Task;
 use SuperV\Platform\Domains\Task\Deployer;
 
-class DeployTaskJob
+class DeployTask implements ShouldQueue
 {
+    use InteractsWithQueue;
+
     /**
      * @var Task
      */
@@ -21,4 +26,9 @@ class DeployTaskJob
     {
         $deployer->task($this->task)->deploy();
     }
+
+    public function queue(Queue $queue, $command)
+      {
+          $queue->pushOn('superv-high', $command);
+      }
 }
