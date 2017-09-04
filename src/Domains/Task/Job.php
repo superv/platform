@@ -57,4 +57,16 @@ class Job
     {
         return $this->task;
     }
+
+    /**
+     * @param mixed $title
+     *
+     * @return $this
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
 }

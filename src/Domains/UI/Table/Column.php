@@ -28,7 +28,7 @@ class Column
     protected $classes = [];
 
     /**
-     * @var closure
+     * @var \Closure
      * A rendering closure used when generating cell data, accepts the model:
      * $column->setRenderer(function($model){ return '<strong>' . $model->id . '</strong>'; })
      */
@@ -264,7 +264,7 @@ class Column
         if ($this->hasRenderer()) {
             $renderer = $this->renderer;
 
-            return $renderer($data);
+            return call_user_func($renderer, $data);
         }
     }
 
