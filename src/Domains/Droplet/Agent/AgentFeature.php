@@ -2,9 +2,10 @@
 
 namespace SuperV\Platform\Domains\Droplet\Agent;
 
-use SuperV\Platform\Domains\Task\Job;
-use SuperV\Platform\Domains\Feature\Feature;
+use SuperV\Modules\Supreme\Domains\Server\Jobs\RunServerScriptJob;
 use SuperV\Modules\Supreme\Domains\Service\Model\ServiceModel;
+use SuperV\Platform\Domains\Feature\Feature;
+use SuperV\Platform\Domains\Task\Job;
 
 class AgentFeature extends Feature
 {
@@ -14,11 +15,44 @@ class AgentFeature extends Feature
 
     protected $jobs = [];
 
-    public function addJob(Job $job)
+    /**
+     * @var array
+     */
+    private $params;
+
+    public function __construct(array $params = null)
     {
+        $this->params = $params;
+    }
+
+    public function param($name, $default = null)
+    {
+        return array_get($this->params, $name, $default);
+    }
+
+    public function __get($name)
+    {
+        return array_get($this->params, $name);
+    }
+
+    /**
+     * @param      $title
+     *
+     * @param null $script
+     *
+     * @return RunServerScriptJob
+     */
+    public function job($title, $script = null)
+    {
+        $job = (new RunServerScriptJob($this->server()))->setTitle($title);
+
+        if ($script) {
+            $job->script($script);
+        }
+
         array_push($this->jobs, $job);
 
-        return $this;
+        return $job;
     }
 
     public function server()
