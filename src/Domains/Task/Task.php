@@ -75,11 +75,11 @@ class Task
         $update = [
             'status' => $status,
         ];
-        array_set_if_not(is_null($message), $update, 'message', $message);
+        array_set_if_not(is_null($message), $update, 'info', $message);
 
         $this->model->update($update);
 
-        event(new TaskStatusUpdatedEvent($this->model));
+        event(new TaskStatusUpdatedEvent($this->model, $this->model->getPresenter()->statusLabel('status')));
 
         return $this;
     }
