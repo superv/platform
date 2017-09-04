@@ -2,10 +2,10 @@
 
 namespace SuperV\Platform\Support;
 
-use StringTemplate\Engine;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
-use Illuminate\Contracts\Support\Arrayable;
+use StringTemplate\Engine;
 
 class Parser
 {
@@ -18,15 +18,27 @@ class Parser
     /** @var \Illuminate\Http\Request */
     protected $request;
 
-    public function __construct(UrlGenerator $url, Engine $parser, Request $request)
+    protected $delimiters = ['{', '}'];
+
+    public function __construct(UrlGenerator $url, Request $request)
     {
         $this->url = $url;
-        $this->parser = $parser;
         $this->request = $request;
+    }
+
+    public function delimiters($left, $right)
+    {
+        $this->delimiters = [$left, $right];
+
+        return $this;
     }
 
     public function parse($target, array $data = [])
     {
+        if (! $this->parser) {
+            $this->parser = new Engine($this->delimiters[0], $this->delimiters[1]);
+        }
+
         $data = $this->prepareData($data);
 
         /*
@@ -43,7 +55,7 @@ class Parser
          * if the target is a string and is in a parsable
          * format then parse the target with the payload.
          */
-        if (is_string($target) && str_contains($target, ['{', '}'])) {
+        if (is_string($target) && str_contains($target, $this->delimiters)) {
             $target = $this->parser->render($target, $data);
         }
 
