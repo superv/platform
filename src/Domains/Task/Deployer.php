@@ -2,10 +2,9 @@
 
 namespace SuperV\Platform\Domains\Task;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 
-class Deployer implements ShouldQueue
+class Deployer
 {
     use ServesFeaturesTrait;
 
@@ -33,19 +32,19 @@ class Deployer implements ShouldQueue
 
     public function deploy()
     {
-        $task = $this->task;
-
-        $jobs = $this->serve($task->payload('feature'), ['params' => $task->payload()]);
-
-        /*
-         * First create sub tasks so that models
-         * would be created in database
-         */
-        foreach ($jobs as $job) {
-            $task->createSubTask($job);
-        }
-
         try {
+            $task = $this->task;
+
+             $jobs = $this->serve($task->payload('feature'), ['params' => $task->payload()]);
+
+             /*
+              * First create sub tasks so that models
+              * would be created in database
+              */
+             foreach ($jobs as $job) {
+                 $task->createSubTask($job);
+             }
+
             $task->started();
 
             /** @var Job $job */
@@ -66,6 +65,7 @@ class Deployer implements ShouldQueue
             $task->completed();
         } catch (\Exception $e) {
             $task->failed($e->getMessage());
+            \Log::error("Task failed: " . $e->getMessage());
         }
     }
 }
