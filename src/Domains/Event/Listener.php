@@ -10,8 +10,8 @@ class Listener
 
     public function handle($eventName, array $data)
     {
-        if (str_is('*.*.*::*.*', $eventName)) {
-            $eventName = explode('.', $eventName)[3];
+        if (str_is('*::*.*', $eventName)) {
+            $eventName = last(explode('.', $eventName));
         }
         if (method_exists($this, $eventName)) {
             call_user_func_array([$this, $eventName], $data);
