@@ -13,9 +13,15 @@ class TaskStatusUpdatedEvent implements ShouldBroadcast
      */
     public $model;
 
-    public function __construct(TaskModel $model)
+    /**
+     * @var
+     */
+    public $label;
+
+    public function __construct(TaskModel $model, $label)
     {
         $this->model = $model;
+        $this->label = $label;
     }
 
     public function broadcastOn()
@@ -25,6 +31,6 @@ class TaskStatusUpdatedEvent implements ShouldBroadcast
 
     public function broadcastAs()
     {
-        return 'status.updated';
+        return $this->model->parent_id ? 'subtask.status' : 'task.status';
     }
 }
