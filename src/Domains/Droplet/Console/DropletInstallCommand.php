@@ -14,6 +14,7 @@ class DropletInstallCommand extends Command
         $slug = $this->argument('slug');
         $path = $this->option('path');
         if ($this->serve(new InstallDropletFeature($slug, $path))) {
+            $this->call('droplet:migrate', ['droplet' => $slug]);
             $this->info('The ['.$slug.'] droplet was installed.');
         } else {
             $this->error('Droplet could not be installed');
