@@ -1,0 +1,37 @@
+[program:superv]
+command=php artisan queue:work --queue=superv-high,superv-low --sleep=3 --tries=1 --daemon
+directory={{ home_dir }}
+process_name=queue_%(process_num)s
+numprocs=3
+numprocs_start=0
+stdout_logfile=/var/log/supervisor/superv-%(process_num)s-stdout.log
+stderr_logfile=/var/log/supervisor/superv-%(process_num)s-stderr.log
+stderr_logfile_maxbytes=1MB
+stdout_logfile_maxbytes=1MB
+redirect_stderr=true
+autostart=true
+autorestart=true
+
+[program:superv-socketio]
+command=node socket.js
+directory={{ home_dir }}
+numprocs=1
+autostart=true
+autorestart=true
+environment=HOME="{{ home_dir }}",NODE_ENV="production"
+stderr_logfile=/var/log/supervisor/superv-socket-stderr.log
+stdout_logfile=/var/log/supervisor/superv-socket-stdout.log
+stderr_logfile_maxbytes=1MB
+stdout_logfile_maxbytes=1MB
+
+[program:superv-default]
+command=php artisan queue:work --queue=superv-default --sleep=3 --tries=1 --daemon
+directory={{ home_dir }}
+numprocs=1
+stderr_logfile=/var/log/supervisor/superv-default-stderr.log
+stdout_logfile=/var/log/supervisor/superv-default-stdout.log
+stderr_logfile_maxbytes=1MB
+stdout_logfile_maxbytes=1MB
+redirect_stderr=true
+autostart=true
+autorestart=true
