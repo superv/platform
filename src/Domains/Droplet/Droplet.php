@@ -87,6 +87,11 @@ class Droplet
         return $this->getPath("resources/{$path}");
     }
 
+    public function getConfigPath($path)
+    {
+        return $this->getPath("config/{$path}");
+    }
+
     /**
      * @return mixed
      */

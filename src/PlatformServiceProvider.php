@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform;
 
+use davestewart\sketchpad\SketchpadServiceProvider;
 use Debugbar;
 use Illuminate\View\Factory;
 use SuperV\Platform\Adapters\AdapterServiceProvider;
@@ -24,12 +25,12 @@ use SuperV\Platform\Domains\Manifest\ManifestCollection;
 use SuperV\Platform\Domains\UI\Form\FormServiceProvider;
 use SuperV\Platform\Domains\UI\Navigation\Navigation;
 use SuperV\Platform\Domains\UI\Page\PageCollection;
+use SuperV\Platform\Domains\View\Twig\Bridge\TwigBridgeServiceProvider;
 use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
 use SuperV\Platform\Http\Middleware\MiddlewareCollection;
 use SuperV\Platform\Traits\BindsToContainer;
 use SuperV\Platform\Traits\RegistersRoutes;
-use TwigBridge\ServiceProvider as TwigBridgeServiceProvider;
 
 /**
  * Class PlatformServiceProvider.
@@ -103,6 +104,10 @@ class PlatformServiceProvider extends ServiceProvider
         }, true);
 
         $this->registerRoutes($this->routes);
+
+        if ($this->app->environment() == 'local') {
+            $this->app->register(SketchpadServiceProvider::class);
+        }
     }
 
     public function boot()
