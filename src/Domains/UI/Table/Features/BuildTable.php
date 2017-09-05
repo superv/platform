@@ -3,12 +3,11 @@
 namespace SuperV\Platform\Domains\UI\Table\Features;
 
 use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\UI\Table\TableBuilder;
-use SuperV\Platform\Domains\UI\Table\Jobs\BuildRowsJob;
 use SuperV\Platform\Domains\UI\Table\Jobs\BuildColumnsJob;
-use SuperV\Platform\Domains\UI\Table\Jobs\SetTableModelJob;
 use SuperV\Platform\Domains\UI\Table\Jobs\LoadPaginationJob;
 use SuperV\Platform\Domains\UI\Table\Jobs\SetTableEntriesJob;
+use SuperV\Platform\Domains\UI\Table\Jobs\SetTableModelJob;
+use SuperV\Platform\Domains\UI\Table\TableBuilder;
 
 class BuildTable extends Feature
 {
@@ -36,7 +35,7 @@ class BuildTable extends Feature
 
         $this->dispatch(new BuildColumnsJob($builder));
 
-        $this->dispatch(new BuildRowsJob($builder));
+        $this->dispatch(new BuildRows($builder));
 
 //        $this->dispatch(new SetTableModel($builder));
 //        $this->dispatch(new SetTableStream($builder));

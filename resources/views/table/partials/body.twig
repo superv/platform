@@ -3,11 +3,7 @@
     <tr>
         {% for col in columns %}
             <td class="{{ col.getClasses() ? col.getClassString() : 'sorting' }}">
-                {% if col.hasRenderer() %}
-                    {{ col.render(row) | raw }}
-                {% else %}
-                    {{ attribute(row.getModel(), col.getField()) | raw }}
-                {% endif %}
+                {{ row.content(col) | raw }}
             </td>
         {% endfor %}
         <td class="text-right">

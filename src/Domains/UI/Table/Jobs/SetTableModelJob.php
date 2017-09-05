@@ -35,6 +35,9 @@ class SetTableModelJob
             unset($parts[count($parts) - 2]);
 
             $model = implode('\\', $parts);
+            if (!class_exists($model)){
+                $model = str_replace(last($parts), "Model\\".last($parts), $model);
+            }
 
             $this->builder->setModel($model);
         }
