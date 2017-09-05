@@ -50,10 +50,17 @@ class AgentFeature extends Feature
      *
      * @param null $script
      *
-     * @return RunServerScriptJob
+     * @return Job
      */
     public function job($title, $script = null)
     {
+        if ($script instanceof Job) {
+            $job = $script;
+            array_push($this->jobs, $job->setTitle($title));
+
+            return $job;
+        }
+
         $job = (new RunServerScriptJob($this->server))->setTitle($title);
 
         if ($script) {
