@@ -38,12 +38,12 @@ class Install extends Command
 
         $kernel->call('droplet:install', [
             'slug'   => 'superv.modules.supreme',
-            'path' => 'droplets/superv/modules/supreme',
+            '--path' => 'droplets/superv/modules/supreme',
         ]);
 
         $kernel->call('droplet:install', [
             'slug'   => 'superv.modules.hosting',
-            'path' => 'droplets/superv/modules/hosting',
+            '--path' => 'droplets/superv/modules/hosting',
         ]);
     }
 }
