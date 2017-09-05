@@ -15,7 +15,7 @@ class Install extends Command
     {
         $this->call('migrate');
 
-        $this->call('migrate', ['path' => 'vendor/superv/platform/database/migrations']);
+        $this->call('migrate', ['--path' => 'vendor/superv/platform/database/migrations']);
 
         $droplets->create([
             'id'        => 1,
@@ -29,5 +29,19 @@ class Install extends Command
         ]);
 
         $this->call('env:set', ['line' => 'SUPERV_INSTALLED=true']);
+
+        $this->call('droplet:install', [
+            'slug'   => 'superv.modules.auth',
+            '--path' => 'droplets/superv/modules/auth',
+        ]);
+
+        $this->call('droplet:install', [
+            'slug'   => 'superv.modules.supreme',
+            '--path' => 'droplets/superv/modules/supreme',
+        ]);
+        $this->call('droplet:install', [
+            'slug'   => 'superv.modules.hosting',
+            '--path' => 'droplets/superv/modules/hosting',
+        ]);
     }
 }
