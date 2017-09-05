@@ -16,7 +16,7 @@ class EloquentRepository implements RepositoryInterface
         if (! class_exists($model)) {
             throw new \Exception('Repository model not found: '.$model);
         }
-        $this->query = $container->make($model)->query();
+        $this->query = $container->make($model);
     }
 
     public function all()
