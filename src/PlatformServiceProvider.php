@@ -6,6 +6,7 @@ use Debugbar;
 use Illuminate\View\Factory;
 use SuperV\Platform\Adapters\AdapterServiceProvider;
 use SuperV\Platform\Contracts\ServiceProvider;
+use SuperV\Platform\Domains\Application\Console\EnvSet;
 use SuperV\Platform\Domains\Database\DatabaseServiceProvider;
 use SuperV\Platform\Domains\Database\Migration\Console\MakeMigrationCommand;
 use SuperV\Platform\Domains\Database\Migration\Console\MigrateCommand;
@@ -14,7 +15,6 @@ use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
-use SuperV\Platform\Domains\Droplet\Model\Droplets;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
@@ -78,26 +78,28 @@ class PlatformServiceProvider extends ServiceProvider
         MakeMigrationCommand::class,
         MakeDropletCommand::class,
         MigrateCommand::class,
+        EnvSet::class,
     ];
 
     public function register()
     {
-        if (! env('SUPERV_INSTALLED', false)) {
-            return;
-        }
-
-        $this->app->bind('superv.platform', function() {
-            return new Platform(DropletModel::where('name', 'platform')->first());
-        }, true);
-
-//        app(Bridge::class)->addExtension(app(AsseticExtension::class));
-
         // Register Console Commands
         $this->commands($this->commands);
+
+//        app(Bridge::class)->addExtension(app(AsseticExtension::class));
 
         $this->registerBindings($this->bindings);
         $this->registerProviders($this->providers);
         $this->registerSingletons($this->singletons);
+
+        if (! env('SUPERV_INSTALLED', false)) {
+            return;
+        }
+
+        $this->app->bind('superv.platform', function () {
+            return new Platform(DropletModel::where('name', 'platform')->first());
+        }, true);
+
         $this->registerRoutes($this->routes);
     }
 
@@ -122,8 +124,6 @@ class PlatformServiceProvider extends ServiceProvider
         app(DropletManager::class)->boot();
 
         $this->dispatch(new ManifestDroplet(superv('platform')));
-
-
 
         app(Factory::class)->composer('*', ViewComposer::class);
 
