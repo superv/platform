@@ -15,7 +15,7 @@ class CreatePlatformTasksTable extends Migration
     {
         Schema::create('platform_tasks', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('parent_id');
+            $table->unsignedInteger('parent_id')->nullable();
             $table->string('title');
             $table->longText('payload');
             $table->longText('info')->nullable();
