@@ -7,6 +7,7 @@ use Illuminate\View\Factory;
 use SuperV\Platform\Adapters\AdapterServiceProvider;
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Application\Console\EnvSet;
+use SuperV\Platform\Domains\Application\Console\Install;
 use SuperV\Platform\Domains\Database\DatabaseServiceProvider;
 use SuperV\Platform\Domains\Database\Migration\Console\MakeMigrationCommand;
 use SuperV\Platform\Domains\Database\Migration\Console\MigrateCommand;
@@ -79,6 +80,7 @@ class PlatformServiceProvider extends ServiceProvider
         MakeDropletCommand::class,
         MigrateCommand::class,
         EnvSet::class,
+        Install::class,
     ];
 
     public function register()
