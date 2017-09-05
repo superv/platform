@@ -13,4 +13,8 @@ interface Filesystem
     public function exists($path);
 
     public function put($path, $contents, $lock = false);
+
+    public function getRequire($path);
+
+    public function allFiles($directory, $hidden = false);
 }

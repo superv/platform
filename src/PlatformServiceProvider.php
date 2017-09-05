@@ -107,6 +107,7 @@ class PlatformServiceProvider extends ServiceProvider
 
         if ($this->app->environment() == 'local') {
             $this->app->register(SketchpadServiceProvider::class);
+            $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
         }
     }
 
