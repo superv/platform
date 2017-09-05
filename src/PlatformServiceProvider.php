@@ -9,6 +9,7 @@ use SuperV\Platform\Adapters\AdapterServiceProvider;
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Application\Console\EnvSet;
 use SuperV\Platform\Domains\Application\Console\Install;
+use SuperV\Platform\Domains\Config\Jobs\AddConfigNamespace;
 use SuperV\Platform\Domains\Database\DatabaseServiceProvider;
 use SuperV\Platform\Domains\Database\Migration\Console\MakeMigrationCommand;
 use SuperV\Platform\Domains\Database\Migration\Console\MigrateCommand;
@@ -74,6 +75,9 @@ class PlatformServiceProvider extends ServiceProvider
     ];
 
     protected $bindings = [];
+    protected $aliases = [
+        'Debugbar' => \Barryvdh\Debugbar\Facade::class
+    ];
 
     protected $commands = [
         DropletInstallCommand::class,
@@ -91,13 +95,14 @@ class PlatformServiceProvider extends ServiceProvider
 
 //        app(Bridge::class)->addExtension(app(AsseticExtension::class));
 
-        $this->registerBindings($this->bindings);
-        $this->registerProviders($this->providers);
-        $this->registerSingletons($this->singletons);
-
         if (! env('SUPERV_INSTALLED', false)) {
             return;
         }
+
+        $this->registerAliases($this->aliases);
+        $this->registerBindings($this->bindings);
+        $this->registerProviders($this->providers);
+        $this->registerSingletons($this->singletons);
 
         $this->app->bind('superv.platform', function () {
             return new Platform(DropletModel::where('name', 'platform')->first());
@@ -113,11 +118,10 @@ class PlatformServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Debugbar::startMeasure('platform.boot', 'Platform Boot');
         if (! env('SUPERV_INSTALLED', false)) {
             return;
         }
-
+        Debugbar::startMeasure('platform.boot', 'Platform Boot');
         $this->loadViewsFrom(__DIR__.'/../resources/views/', 'superv');
         $this->loadViewsFrom(storage_path(), 'storage');
 
@@ -125,6 +129,8 @@ class PlatformServiceProvider extends ServiceProvider
          * Boot Platform
          */
         superv('droplets')->put('superv.platform', superv('platform'));
+
+        $this->dispatch(new AddConfigNamespace('superv', superv('platform')->getResourcePath('config')));
 
         /**
          * Boot Droplets
