@@ -13,8 +13,12 @@ use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
+use SuperV\Platform\Domains\Droplet\Model\Droplets;
 use SuperV\Platform\Domains\Droplet\Types\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
+use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
+use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
 use SuperV\Platform\Domains\Manifest\ManifestCollection;
 use SuperV\Platform\Domains\UI\Form\FormServiceProvider;
 use SuperV\Platform\Domains\UI\Navigation\Navigation;
@@ -33,6 +37,7 @@ use TwigBridge\ServiceProvider as TwigBridgeServiceProvider;
  */
 class PlatformServiceProvider extends ServiceProvider
 {
+    use ServesFeaturesTrait;
     use RegistersRoutes;
     use BindsToContainer;
 
@@ -81,6 +86,10 @@ class PlatformServiceProvider extends ServiceProvider
             return;
         }
 
+        $this->app->bind('superv.platform', function() {
+            return new Platform(DropletModel::where('name', 'platform')->first());
+        }, true);
+
 //        app(Bridge::class)->addExtension(app(AsseticExtension::class));
 
         // Register Console Commands
@@ -100,11 +109,21 @@ class PlatformServiceProvider extends ServiceProvider
         }
 
         $this->loadViewsFrom(__DIR__.'/../resources/views/', 'superv');
+        $this->loadViewsFrom(storage_path(), 'storage');
 
-        /* @var DropletManager $manager */
-        $manager = $this->app->make('SuperV\Platform\Domains\Droplet\DropletManager');
+        /**
+         * Boot Platform
+         */
+        superv('droplets')->put('superv.platform', superv('platform'));
 
-        $manager->boot();
+        /**
+         * Boot Droplets
+         */
+        app(DropletManager::class)->boot();
+
+        $this->dispatch(new ManifestDroplet(superv('platform')));
+
+
 
         app(Factory::class)->composer('*', ViewComposer::class);
 
