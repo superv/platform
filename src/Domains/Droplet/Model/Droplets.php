@@ -21,11 +21,6 @@ class Droplets extends EloquentRepository
 
     public function enabled()
     {
-        $droplets = $this->query->where('enabled', true)->orderBy('type', 'DESC')->get();
-
-        //$droplets->map(function(DropletModel $model) {
-        //    return app($model->droplet(), ['model' => $model]);
-        //});
-        return $droplets;
+        return $this->query->where('enabled', true)->orderBy('type', 'DESC');
     }
 }

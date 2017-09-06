@@ -32,6 +32,10 @@ class RegisterPage extends Feature
             'uses' => is_callable($handler) ? $handler : (str_contains($handler, '@') ? $handler : $handler.'@'.$page->getVerb()),
         ];
 
+        if ($port = $page->getPort()) {
+            array_set($route, 'superv::port', "superv.ports.{$port}"); // TODO.ali: generic namespace
+        }
+
         $this->registerRoutes(
             [$page->getUrl() => $route],
             function (Route $route) use ($page) {

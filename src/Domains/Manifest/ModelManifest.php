@@ -6,6 +6,8 @@ class ModelManifest extends Manifest
 {
     protected $model;
 
+    protected $port;
+
     protected $routeKeyName = 'id';
 
     /**
@@ -34,5 +36,13 @@ class ModelManifest extends Manifest
     public function getRouteKeyName(): string
     {
         return $this->routeKeyName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPort()
+    {
+        return $this->port;
     }
 }

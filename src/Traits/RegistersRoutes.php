@@ -4,7 +4,7 @@ namespace SuperV\Platform\Traits;
 
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
-use SuperV\Platform\Http\Middleware\MiddlewareCollection;
+use SuperV\Platform\Domains\Droplet\Port\Port;
 
 trait RegistersRoutes
 {
@@ -13,30 +13,41 @@ trait RegistersRoutes
         /** @var Router $router */
         $router = app('router');
         foreach ($routes as $uri => $data) {
+
             $data = ! is_array($data) ? ['uses' => $data] : $data;
 
-            // we dont need this now, as we doing it in DetectCurrentPort
-
-            //if (array_has($data, 'as')) {
-            //    if (str_contains($data['as'], '@')) {
-            //        list($port, $as) = explode('@', $data['as']);
-            //        array_set($data, 'superv::port', "superv.ports.{$port}"); // TODO.ali: generic namespace
-            //
-            //        if ($middlewares = app(MiddlewareCollection::class)->get("superv.ports.{$port}")) {
-            //            array_set($data, 'middleware', $middlewares); // TODO.ali: merge instead of set
-            //        }
-            //    }
-            //}
+            $middlewares = array_pull($data, 'middleware', []);
 
             /** @var Route $route */
             $route = $router->{array_pull($data, 'verb', 'any')}($uri, $data);
-
-            $route->middleware(array_pull($data, 'middleware', []));
             $route->where(array_pull($data, 'constraints', []));
+
 
             if ($callable) {
                 call_user_func($callable, $route);
             }
+
+            if (! $port = array_pull($data, 'superv::port')) {
+                if (! $port = array_pull($data, 'port')) {
+                    throw new \LogicException("URI {$uri} does not have a port");
+                }
+            }
+
+            if (! str_is('*.*.*', $port)) {
+                $port = "superv.ports.{$port}";
+            }
+            /** @var Port $port */
+            if (! $port = superv('ports')->bySlug($port)) {
+                throw new \LogicException("Port {$port} not found");
+            }
+
+            $route->domain($port->getHostname());
+
+            $middlewares = array_merge($middlewares, $port->getMiddlewares());
+
+            $port->addRoute($uri, $route);
+
+            $route->middleware($middlewares);
         }
     }
 }

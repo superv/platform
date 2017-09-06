@@ -18,7 +18,7 @@ use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
-use SuperV\Platform\Domains\Droplet\Types\PortCollection;
+use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
@@ -48,10 +48,12 @@ class PlatformServiceProvider extends ServiceProvider
         'platform/entries/{ticket}/delete' => [
             'as'   => 'superv::entries.delete',
             'uses' => 'SuperV\Platform\Http\Controllers\Entry\DeleteEntryController@index',
+            'port' => 'acp',
         ],
         'platform/entries/{ticket}/edit'   => [
             'as'   => 'superv::entries.edit',
             'uses' => 'SuperV\Platform\Http\Controllers\Entry\EditEntryController@index',
+            'port' => 'acp',
         ],
     ];
 
@@ -62,7 +64,6 @@ class PlatformServiceProvider extends ServiceProvider
     ];
 
     protected $singletons = [
-        'middlewares'   => MiddlewareCollection::class,
         'manifests'     => ManifestCollection::class,
         'droplets'      => DropletCollection::class,
         'features'      => FeatureCollection::class,
@@ -70,6 +71,7 @@ class PlatformServiceProvider extends ServiceProvider
         'ports'         => PortCollection::class,
         'view.template' => ViewTemplate::class,
         'navigation'    => Navigation::class,
+
     ];
 
     protected $bindings = [];
@@ -105,8 +107,6 @@ class PlatformServiceProvider extends ServiceProvider
             return new Platform(DropletModel::where('name', 'platform')->first());
         }, true);
 
-        $this->registerRoutes($this->routes);
-
         if ($this->app->environment() == 'local') {
             $this->app->register(SketchpadServiceProvider::class);
         }
@@ -140,11 +140,11 @@ class PlatformServiceProvider extends ServiceProvider
 
         $this->dispatch(new ManifestDroplet(superv('platform')));
 
+        $this->registerRoutes($this->routes);
+
         app(Factory::class)->composer('*', ViewComposer::class);
 
         superv('view.template')->set('menu', superv('navigation'));
-
-        app('events')->dispatch('superv::app.loaded');
 
         Debugbar::stopMeasure('platform.boot');
     }

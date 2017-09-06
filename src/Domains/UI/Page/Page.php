@@ -13,7 +13,8 @@ class Page
 
     protected $verb;
 
-    // buttons, table, form, url,
+    protected $port;
+
     protected $route;
 
     protected $url;
@@ -325,5 +326,25 @@ class Page
     public function getVerb()
     {
         return $this->verb;
+    }
+
+    /**
+     * @param mixed $port
+     *
+     * @return Page
+     */
+    public function setPort($port)
+    {
+        $this->port = $port;
+
+        return $this;
+}
+
+    /**
+     * @return mixed
+     */
+    public function getPort()
+    {
+        return $this->port;
     }
 }

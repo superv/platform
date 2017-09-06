@@ -63,7 +63,15 @@ class DropletServiceProvider
     {
         $routes = $this->dispatch(new GetPortRoutes($this));
 
-        return array_merge($this->routes, $routes);
+        $routes = array_merge($this->routes, $routes);
+
+        if ($this->droplet->isType('port')) {
+            $routes = array_map(function($route) {
+                return array_set($route, 'port', $this->droplet->getSlug());
+            } ,$routes);
+        }
+
+        return $routes;
     }
 
     /**

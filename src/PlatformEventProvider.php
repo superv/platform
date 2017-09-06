@@ -2,22 +2,23 @@
 
 namespace SuperV\Platform;
 
+use Illuminate\Foundation\Http\Events\RequestHandled;
+use SuperV\Platform\Domains\Droplet\Port\Jobs\RegisterActivePortRoutes;
 use SuperV\Platform\Domains\Task\Event\TaskStatusUpdatedEvent;
 use SuperV\Platform\Domains\UI\Page\Jobs\InjectMatchedPageJob;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider;
-use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectCurrentPort;
+use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActivePort;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActiveModuleJob;
 
 class PlatformEventProvider extends EventServiceProvider
 {
     protected $listen = [
-//        'superv::app.loaded' => [
-//            DetectActiveModuleJob::class
-//        ],
         'Illuminate\Routing\Events\RouteMatched' => [
             DetectActiveModuleJob::class,
-            DetectCurrentPort::class,
+            DetectActivePort::class,
             InjectMatchedPageJob::class,
+        ],
+        'Illuminate\Foundation\Http\Events\RequestHandled' => [
         ],
 
         TaskStatusUpdatedEvent::class => [

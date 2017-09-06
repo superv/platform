@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Droplet\DropletProvider;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
-use SuperV\Platform\Domains\Droplet\Types\Port;
+use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Feature\Feature;
 
 /**

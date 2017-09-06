@@ -8,7 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Domains\Droplet\Types\PortCollection;
+use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
 use SuperV\Platform\Traits\BindsToContainer;
@@ -74,11 +74,14 @@ class DropletProvider
         //
         // Register Routes
         //
-        $this->registerRoutes($provider->getRoutes(), function (Route $route) use ($provider) {
-            $route->setAction(array_merge([
-                'superv::droplet' => $provider->getDroplet()->getSlug(),
-            ], $route->getAction()));
-        });
+
+        $this->registerRoutes(
+            $provider->getRoutes(),
+            function (Route $route) use ($provider) {
+                $action = $route->getAction();
+                array_set($action, 'superv::droplet', $provider->getDroplet()->getSlug());
+                $route->setAction($action);
+            });
 
         $this->registerCommands($provider);
         $this->registerFeatures($provider);

@@ -65,13 +65,6 @@ class Droplet
         return "{$this->model->getVendor()}.{$this->model->getName()}";
     }
 
-    public function setModel(DropletModel $model)
-    {
-        $this->model = $model;
-
-        return $this;
-    }
-
     public function getCommand($command)
     {
         return array_get($this->commands, $command);
@@ -98,6 +91,11 @@ class Droplet
     public function getType()
     {
         return $this->type;
+    }
+
+    public function isType($type)
+    {
+        return $this->type = $type;
     }
 
     /**
@@ -146,6 +144,13 @@ class Droplet
     public function getModel(): DropletModel
     {
         return $this->model;
+    }
+
+    public function setModel(DropletModel $model)
+    {
+        $this->model = $model;
+
+        return $this;
     }
 
     /**
