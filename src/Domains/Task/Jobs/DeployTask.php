@@ -10,6 +10,8 @@ use SuperV\Platform\Domains\Task\Deployer;
 
 class DeployTask implements ShouldQueue
 {
+    public $timeout = 1200;
+
     use InteractsWithQueue;
 
     /**
