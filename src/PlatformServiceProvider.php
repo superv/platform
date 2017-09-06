@@ -109,11 +109,12 @@ class PlatformServiceProvider extends ServiceProvider
 
         if ($this->app->environment() == 'local') {
             $this->app->register(SketchpadServiceProvider::class);
-            $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
-            $this->registerAliases([
-                'Debugbar' => \Barryvdh\Debugbar\Facade::class,
-            ]);
         }
+
+        $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
+        $this->registerAliases([
+            'Debugbar' => \Barryvdh\Debugbar\Facade::class,
+        ]);
     }
 
     public function boot()
