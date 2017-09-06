@@ -17,7 +17,8 @@ class MigrateCommand extends Command
         }
 
         $options = [
-            '--path' => $droplet->path.'/database/migrations',
+            '--path'  => $droplet->path.'/database/migrations',
+            '--force' => true,
         ];
 
         if ($this->option('refresh') || $this->option('rollback')) {
