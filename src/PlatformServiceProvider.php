@@ -73,9 +73,6 @@ class PlatformServiceProvider extends ServiceProvider
     ];
 
     protected $bindings = [];
-    protected $aliases = [
-        'Debugbar' => \Barryvdh\Debugbar\Facade::class
-    ];
 
     protected $commands = [
         DropletInstallCommand::class,
@@ -100,7 +97,6 @@ class PlatformServiceProvider extends ServiceProvider
             return;
         }
 
-        $this->registerAliases($this->aliases);
         $this->registerBindings($this->bindings);
         $this->registerProviders($this->providers);
         $this->registerSingletons($this->singletons);
@@ -114,6 +110,9 @@ class PlatformServiceProvider extends ServiceProvider
         if ($this->app->environment() == 'local') {
             $this->app->register(SketchpadServiceProvider::class);
             $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
+            $this->registerAliases([
+                'Debugbar' => \Barryvdh\Debugbar\Facade::class,
+            ]);
         }
     }
 
