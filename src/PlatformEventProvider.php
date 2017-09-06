@@ -2,28 +2,21 @@
 
 namespace SuperV\Platform;
 
-use Illuminate\Foundation\Http\Events\RequestHandled;
-use SuperV\Platform\Domains\Droplet\Port\Jobs\RegisterActivePortRoutes;
+use Illuminate\Foundation\Support\Providers\EventServiceProvider;
+use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActiveModule;
 use SuperV\Platform\Domains\Task\Event\TaskStatusUpdatedEvent;
 use SuperV\Platform\Domains\UI\Page\Jobs\InjectMatchedPageJob;
-use Illuminate\Foundation\Support\Providers\EventServiceProvider;
-use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActivePort;
-use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActiveModuleJob;
 
 class PlatformEventProvider extends EventServiceProvider
 {
     protected $listen = [
-        'Illuminate\Routing\Events\RouteMatched' => [
-            DetectActiveModuleJob::class,
-            DetectActivePort::class,
+        'Illuminate\Routing\Events\RouteMatched'           => [
+            DetectActiveModule::class,
             InjectMatchedPageJob::class,
         ],
-        'Illuminate\Foundation\Http\Events\RequestHandled' => [
-        ],
+        'Illuminate\Foundation\Http\Events\RequestHandled' => [],
 
-        TaskStatusUpdatedEvent::class => [
-
-        ],
+        TaskStatusUpdatedEvent::class => [],
     ];
 
     public function boot()

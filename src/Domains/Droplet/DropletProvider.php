@@ -71,21 +71,22 @@ class DropletProvider
         $this->registerBindings($provider->getBindings());
         $this->registerSingletons($provider->getSingletons());
 
-        //
-        // Register Routes
-        //
+        $this->dispersePortRoutes($provider->getRoutes(),
+            function ($data) use ($provider) {
+                array_set($data, 'superv::droplet', $provider->getDroplet()->getSlug());
+            }
+        );
 
-        $this->registerRoutes(
-            $provider->getRoutes(),
-            function (Route $route) use ($provider) {
-                $action = $route->getAction();
-                array_set($action, 'superv::droplet', $provider->getDroplet()->getSlug());
-                $route->setAction($action);
-            });
+//        $this->registerRoutes(
+//            $provider->getRoutes(),
+//            function (Route $route) use ($provider) {
+//                $action = $route->getAction();
+//                array_set($action, 'superv::droplet', $provider->getDroplet()->getSlug());
+//                $route->setAction($action);
+//            });
 
         $this->registerCommands($provider);
         $this->registerFeatures($provider);
-
         $this->registerListeners($provider);
 
         \Debugbar::startMeasure('registerManifests', 'Register Manifests');
@@ -96,11 +97,12 @@ class DropletProvider
     protected function registerCommands(DropletServiceProvider $provider)
     {
         if ($commands = $provider->getCommands()) {
-            $this->events->listen('Illuminate\Console\Events\ArtisanStarting', function (ArtisanStarting $event) use (
-                $commands
-            ) {
-                $event->artisan->resolveCommands($commands);
-            });
+            $this->events->listen(
+                'Illuminate\Console\Events\ArtisanStarting',
+                function (ArtisanStarting $event) use ($commands) {
+                    $event->artisan->resolveCommands($commands);
+                }
+            );
         }
     }
 

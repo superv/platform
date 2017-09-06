@@ -2,43 +2,29 @@
 
 namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
 
-use Illuminate\Routing\Events\RouteMatched;
-use Illuminate\Routing\Route;
-use SuperV\Platform\Domains\Droplet\Model\Droplets;
+use Illuminate\Http\Request;
+use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Droplet\Port\ActivePort;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
+use SuperV\Platform\Traits\RegistersRoutes;
 
 class DetectActivePort
 {
-    /**
-     * @var Droplets
-     */
-    private $droplets;
+    use RegistersRoutes;
 
-    /**
-     * @var \SuperV\Platform\Domains\Droplet\Port\PortCollection
-     */
-    private $ports;
-
-    public function __construct(Droplets $droplets, PortCollection $ports)
+    public function handle(Request $request, PortCollection $ports, Factory $view)
     {
-        $this->droplets = $droplets;
-        $this->ports = $ports;
-    }
-
-    public function handle(RouteMatched $event)
-    {
-        /** @var Route $route */
-        if (! $route = $event->route) {
+        if (app()->runningInConsole()) {
             return;
         }
-
-        if (! $port = $this->ports->byHostname($event->request->getHttpHost())) {
-            throw new \LogicException('This should not happen!: '.$event->request->getHttpHost());
+        if (! $port = $ports->byHostname($request->getHttpHost())) {
+            throw new \LogicException('This should not happen!: '.$request->getHttpHost());
         }
 
-        app()->bindIf(ActivePort::class, function() use($port) { return $port; }, true);
+        app()->bindIf(ActivePort::class, function () use ($port) { return $port; }, true);
 
-        app('view')->addNamespace('port', [base_path($port->getPath('resources/views'))]);
+        $view->addNamespace('port', [base_path($port->getPath('resources/views'))]);
+
+        $this->registerPortRoutes($port);
     }
 }

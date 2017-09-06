@@ -35,16 +35,11 @@ class RegisterPage extends Feature
         if ($port = $page->getPort()) {
             array_set($route, 'superv::port', "superv.ports.{$port}"); // TODO.ali: generic namespace
         }
-
-        $this->registerRoutes(
-            [$page->getUrl() => $route],
-            function (Route $route) use ($page) {
-                $route->setAction(array_merge([
-                    'superv::droplet' => $page->getDroplet()->getSlug(),
-                ], $route->getAction()));
+        $this->dispersePortRoutes([$page->getUrl() => $route],
+            function ($data) use ($page) {
+                array_set($data, 'superv::droplet', $page->getDroplet()->getSlug());
             }
         );
-
         $pages->put($page->getRoute(), $page);
 
         return $route;

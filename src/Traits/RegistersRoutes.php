@@ -8,25 +8,17 @@ use SuperV\Platform\Domains\Droplet\Port\Port;
 
 trait RegistersRoutes
 {
-    protected function registerRoutes(array $routes, \Closure $callable = null)
+    protected function dispersePortRoutes(array $routes, \Closure $callable = null)
     {
-        /** @var Router $router */
-        $router = app('router');
         foreach ($routes as $uri => $data) {
-
             $data = ! is_array($data) ? ['uses' => $data] : $data;
-
-            $middlewares = array_pull($data, 'middleware', []);
-
-            /** @var Route $route */
-            $route = $router->{array_pull($data, 'verb', 'any')}($uri, $data);
-            $route->where(array_pull($data, 'constraints', []));
-
-
             if ($callable) {
-                call_user_func($callable, $route);
+                call_user_func($callable, $data);
             }
-
+            /**
+             * All routes registered through platform
+             * should have a port defined
+             */
             if (! $port = array_pull($data, 'superv::port')) {
                 if (! $port = array_pull($data, 'port')) {
                     throw new \LogicException("URI {$uri} does not have a port");
@@ -41,13 +33,23 @@ trait RegistersRoutes
                 throw new \LogicException("Port {$port} not found");
             }
 
+            $port->addRoute($uri, $data);
+        }
+    }
+
+    protected function registerPortRoutes(Port $port)
+    {
+        /** @var Router $router */
+        $router = app('router');
+        foreach ($port->getRoutes() as $uri => $data) {
+            $middlewares = array_pull($data, 'middleware', []);
+
+            $verb = array_pull($data, 'verb', 'any');
+            /** @var Route $route */
+            $route = $router->{$verb}($uri, $data);
+            $route->where(array_pull($data, 'constraints', []));
             $route->domain($port->getHostname());
-
-            $middlewares = array_merge($middlewares, $port->getMiddlewares());
-
-            $port->addRoute($uri, $route);
-
-            $route->middleware($middlewares);
+            $route->middleware(array_merge($middlewares, $port->getMiddlewares()));
         }
     }
 }

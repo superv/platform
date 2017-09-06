@@ -18,6 +18,7 @@ use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
+use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActivePort;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
@@ -29,7 +30,6 @@ use SuperV\Platform\Domains\UI\Page\PageCollection;
 use SuperV\Platform\Domains\View\Twig\Bridge\TwigBridgeServiceProvider;
 use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
-use SuperV\Platform\Http\Middleware\MiddlewareCollection;
 use SuperV\Platform\Traits\BindsToContainer;
 use SuperV\Platform\Traits\RegistersRoutes;
 
@@ -90,8 +90,7 @@ class PlatformServiceProvider extends ServiceProvider
         $this->app->register(DatabaseServiceProvider::class);
         $this->app->register(AdapterServiceProvider::class);
 
-        // Register Console Commands
-        $this->commands($this->commands);
+        $this->registerConsoleCommands();
 
 //        app(Bridge::class)->addExtension(app(AsseticExtension::class));
 
@@ -102,11 +101,60 @@ class PlatformServiceProvider extends ServiceProvider
         $this->registerBindings($this->bindings);
         $this->registerProviders($this->providers);
         $this->registerSingletons($this->singletons);
+        $this->registerPlatform();
+        $this->registerDevTools();
+    }
 
-        $this->app->bind('superv.platform', function () {
-            return new Platform(DropletModel::where('name', 'platform')->first());
-        }, true);
+    public function boot()
+    {
+        if (! env('SUPERV_INSTALLED', false)) {
+            return;
+        }
+        Debugbar::startMeasure('platform.boot', 'Platform Boot');
 
+        $this->setupView();
+        $this->setupConfig();
+        $this->bootDroplets();
+        $this->manifestPlatform();
+        $this->dispersePortRoutes($this->routes);
+        $this->detectActivePort();
+
+        Debugbar::stopMeasure('platform.boot');
+    }
+
+    protected function setupView(): void
+    {
+        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'superv');
+        $this->loadViewsFrom(storage_path(), 'storage');
+
+        app(Factory::class)->composer('*', ViewComposer::class);
+
+        superv('view.template')->set('menu', superv('navigation'));
+    }
+
+    protected function bootDroplets(): void
+    {
+        app(DropletManager::class)->boot();
+    }
+
+    protected function setupConfig(): void
+    {
+        $this->dispatch(new AddConfigNamespace('superv', superv('platform')->getResourcePath('config')));
+    }
+
+    protected function registerPlatform(): void
+    {
+        $this->app->singleton('superv.platform', function () {
+            $platform = new Platform(DropletModel::where('name', 'platform')->first());
+
+            superv('droplets')->put('superv.platform', $platform);
+
+            return $platform;
+        });
+    }
+
+    protected function registerDevTools(): void
+    {
         if ($this->app->environment() == 'local') {
             $this->app->register(SketchpadServiceProvider::class);
         }
@@ -117,35 +165,18 @@ class PlatformServiceProvider extends ServiceProvider
         ]);
     }
 
-    public function boot()
+    protected function registerConsoleCommands(): void
     {
-        if (! env('SUPERV_INSTALLED', false)) {
-            return;
-        }
-        Debugbar::startMeasure('platform.boot', 'Platform Boot');
-        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'superv');
-        $this->loadViewsFrom(storage_path(), 'storage');
+        $this->commands($this->commands);
+    }
 
-        /**
-         * Boot Platform
-         */
-        superv('droplets')->put('superv.platform', superv('platform'));
-
-        $this->dispatch(new AddConfigNamespace('superv', superv('platform')->getResourcePath('config')));
-
-        /**
-         * Boot Droplets
-         */
-        app(DropletManager::class)->boot();
-
+    protected function manifestPlatform(): void
+    {
         $this->dispatch(new ManifestDroplet(superv('platform')));
+    }
 
-        $this->registerRoutes($this->routes);
-
-        app(Factory::class)->composer('*', ViewComposer::class);
-
-        superv('view.template')->set('menu', superv('navigation'));
-
-        Debugbar::stopMeasure('platform.boot');
+    protected function detectActivePort(): void
+    {
+        $this->dispatch(new DetectActivePort());
     }
 }
