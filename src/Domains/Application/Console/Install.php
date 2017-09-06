@@ -37,6 +37,11 @@ class Install extends Command
         ]);
 
         $kernel->call('droplet:install', [
+            'slug'   => 'superv.ports.acp',
+            '--path' => 'droplets/superv/ports/acp',
+        ]);
+
+        $kernel->call('droplet:install', [
             'slug'   => 'superv.modules.supreme',
             '--path' => 'droplets/superv/modules/supreme',
         ]);
