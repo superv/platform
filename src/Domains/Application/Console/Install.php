@@ -14,9 +14,9 @@ class Install extends Command
 
     public function handle(Droplets $droplets,  Kernel $kernel)
     {
-        $kernel->call('migrate');
+        $kernel->call('migrate', ['--force' => true]);
 
-        $kernel->call('migrate', ['--path' => 'vendor/superv/platform/database/migrations']);
+        $kernel->call('migrate', ['--force' => true, '--path' => 'vendor/superv/platform/database/migrations']);
 
         $droplets->create([
             'id'        => 1,

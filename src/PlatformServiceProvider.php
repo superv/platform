@@ -56,8 +56,6 @@ class PlatformServiceProvider extends ServiceProvider
     ];
 
     protected $providers = [
-        DatabaseServiceProvider::class,
-        AdapterServiceProvider::class,
         PlatformEventProvider::class,
         TwigBridgeServiceProvider::class,
         FormServiceProvider::class,
@@ -90,6 +88,9 @@ class PlatformServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->app->register(DatabaseServiceProvider::class);
+        $this->app->register(AdapterServiceProvider::class);
+
         // Register Console Commands
         $this->commands($this->commands);
 
