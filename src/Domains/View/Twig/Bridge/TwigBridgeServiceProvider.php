@@ -13,6 +13,9 @@ namespace SuperV\Platform\Domains\View\Twig\Bridge;
 
 use Illuminate\View\ViewServiceProvider;
 use InvalidArgumentException;
+use SuperV\Platform\Domains\View\Twig\Bridge\Command\Clean;
+use SuperV\Platform\Domains\View\Twig\Bridge\Command\Lint;
+use SuperV\Platform\Domains\View\Twig\Bridge\Command\TwigBridge;
 use Twig_Loader_Array;
 use Twig_Loader_Chain;
 
@@ -38,7 +41,6 @@ class TwigBridgeServiceProvider extends ViewServiceProvider
         $this->registerOptions();
         $this->registerLoaders();
         $this->registerEngine();
-        $this->registerAliases();
     }
 
     /**
@@ -48,26 +50,6 @@ class TwigBridgeServiceProvider extends ViewServiceProvider
     {
         $this->loadConfiguration();
         $this->registerExtension();
-    }
-
-    /**
-     * Check if we are running Lumen or not.
-     *
-     * @return bool
-     */
-    protected function isLumen()
-    {
-        return strpos($this->app->version(), 'Lumen') !== false;
-    }
-
-    /**
-     * Check if we are running on PHP 7.
-     *
-     * @return bool
-     */
-    protected function isRunningOnPhp7()
-    {
-        return version_compare(PHP_VERSION, '7.0-dev', '>=');
     }
 
     /**
@@ -107,22 +89,10 @@ class TwigBridgeServiceProvider extends ViewServiceProvider
      */
     protected function registerCommands()
     {
-        $this->app->bindIf('command.twig', function () {
-            return new Command\TwigBridge;
-        });
-
-        $this->app->bindIf('command.twig.clean', function () {
-            return new Command\Clean;
-        });
-
-        $this->app->bindIf('command.twig.lint', function () {
-            return new Command\Lint;
-        });
-
         $this->commands(
-            'command.twig',
-            'command.twig.clean',
-            'command.twig.lint'
+            TwigBridge::class,
+            Clean::class,
+            Lint::class
         );
     }
 
@@ -268,42 +238,5 @@ class TwigBridgeServiceProvider extends ViewServiceProvider
                 $this->app['config']->get('twigbridge.twig.globals', [])
             );
         });
-    }
-
-    /**
-     * Register aliases for classes that had to be renamed because of reserved names in PHP7.
-     *
-     * @return void
-     */
-    protected function registerAliases()
-    {
-        if (! $this->isRunningOnPhp7() and ! class_exists('SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\String')) {
-            class_alias('SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Str', 'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\String');
-        }
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            'command.twig',
-            'command.twig.clean',
-            'command.twig.lint',
-            'twig.extension',
-            'twig.options',
-            'twig.extensions',
-            'twig.lexer',
-            'twig.templates',
-            'twig.loader.array',
-            'twig.loader.viewfinder',
-            'twig.loader',
-            'twig',
-            'twig.compiler',
-            'twig.engine',
-        ];
     }
 }
