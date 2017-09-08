@@ -36,6 +36,9 @@ class PageGateway implements Responsable
      */
     public function toResponse($request)
     {
+        if ($this->page->isAjax()) {
+            return view()->make('superv::page/ajax', ['page' => $this->page]);
+        }
         return view()->make('superv::page/page', ['page' => $this->page]);
     }
 }

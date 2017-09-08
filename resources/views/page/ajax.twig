@@ -1,0 +1,9 @@
+<div class="pull-right" style="position: absolute;
+            right: 17px;
+            top: 3px; padding:5px;">
+    {% for button in page.buttons %}
+        {{ button.render({size: 'sm'}) |raw }}
+    {% endfor %}
+</div>
+
+{{ page.content() |raw }}

@@ -25,6 +25,8 @@ class TableBuilder
 
     protected $columns;
 
+    protected $beforeCallback;
+
     /**
      * @var Factory
      */
@@ -198,4 +200,11 @@ class TableBuilder
 
         return $this;
     }
+
+    public function before($callback)
+    {
+        $this->listen('querying', $callback);
+
+        return $this;
+}
 }

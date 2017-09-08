@@ -45,6 +45,10 @@ class Page
 
     protected $content;
 
+    protected $tabs;
+
+    protected $ajax = false;
+
     public function render()
     {
         return $this->content = $this->dispatch(new RenderPage($this));
@@ -379,5 +383,45 @@ class Page
         $this->content = $content;
 
         return $this;
+    }
+
+    /**
+     * @param mixed $tabs
+     *
+     * @return Page
+     */
+    public function setTabs($tabs)
+    {
+        $this->tabs = $tabs;
+
+        return $this;
+}
+
+    /**
+     * @return mixed
+     */
+    public function getTabs()
+    {
+        return $this->tabs;
+    }
+
+    /**
+     * @param bool $ajax
+     *
+     * @return Page
+     */
+    public function setAjax(bool $ajax): Page
+    {
+        $this->ajax = $ajax;
+
+        return $this;
+}
+
+    /**
+     * @return bool
+     */
+    public function isAjax(): bool
+    {
+        return $this->ajax;
     }
 }

@@ -19,16 +19,17 @@ class RenderPage extends Feature
 
     public function handle()
     {
-        if (!$handler = $this->page->getHandler()) {
-            return null;
-        }
 
         $this->dispatch(new MakePageButtons($this->page));
+        $this->dispatch(new MakePageTabs($this->page));
 
-        $params = [];
-        if ($entry = $this->page->getEntry()) {
-            $params = ['entry' => $this->page->getEntry()];
+        if ($handler = $this->page->getHandler()) {
+            $params = [];
+            if ($entry = $this->page->getEntry()) {
+                $params = ['entry' => $this->page->getEntry()];
+            }
+
+            return app()->call($handler, $params);
         }
-        return app()->call($handler, $params);
     }
 }

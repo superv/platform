@@ -22,21 +22,53 @@ class Button
 
     protected $size = '';
 
+    protected $iconOnly = false;
+
     /**
      * @var Factory
      */
     private $view;
-
-    protected $iconOnly = false;
 
     public function __construct(Factory $view)
     {
         $this->view = $view;
     }
 
-    public function render()
+    public function render($params = [])
     {
+        if ($size = array_get($params, 'size')) {
+            $this->setSize($size);
+        }
+
         return $this->view->make('superv::button.button', ['button' => $this]);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    /**
+     * @param string $size
+     *
+     * @return Button
+     */
+    public function setSize(string $size): Button
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getButton()
+    {
+        return $this->button;
     }
 
     /**
@@ -52,6 +84,14 @@ class Button
     }
 
     /**
+     * @return mixed
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
      * @param mixed $attributes
      *
      * @return Button
@@ -61,6 +101,14 @@ class Button
         $this->attributes = $attributes;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getText()
+    {
+        return $this->text;
     }
 
     /**
@@ -76,6 +124,14 @@ class Button
     }
 
     /**
+     * @return mixed
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
      * @param mixed $icon
      *
      * @return Button
@@ -85,6 +141,14 @@ class Button
         $this->icon = $icon;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClass()
+    {
+        return $this->class;
     }
 
     /**
@@ -100,6 +164,14 @@ class Button
     }
 
     /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
      * @param string $type
      *
      * @return Button
@@ -109,62 +181,6 @@ class Button
         $this->type = $type;
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSize()
-    {
-        return $this->size;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getButton()
-    {
-        return $this->button;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getText()
-    {
-        return $this->text;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIcon()
-    {
-        return $this->icon;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getClass()
-    {
-        return $this->class;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType(): string
-    {
-        return $this->type;
     }
 
     /**
@@ -201,16 +217,5 @@ class Button
     public function setTitle($title)
     {
         $this->title = $title;
-    }
-
-    /**
-     * @param string $size
-     * @return Button
-     */
-    public function setSize(string $size): Button
-    {
-        $this->size = $size;
-
-        return $this;
     }
 }
