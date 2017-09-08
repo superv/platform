@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Asset;
 use Assetic\Asset\FileAsset;
 use Assetic\Asset\GlobAsset;
 use Illuminate\Http\Request;
-use Collective\Html\HtmlBuilder;
 use Illuminate\Routing\UrlGenerator;
 use SuperV\Platform\Contracts\Filesystem;
 
@@ -33,9 +32,8 @@ class Asset
      */
     private $url;
 
-    public function __construct(Filesystem $files, HtmlBuilder $html, UrlGenerator $url, Request $request)
+    public function __construct(Filesystem $files, UrlGenerator $url, Request $request)
     {
-        $this->html = $html;
         $this->request = $request;
         $this->files = $files;
         $this->url = $url;
