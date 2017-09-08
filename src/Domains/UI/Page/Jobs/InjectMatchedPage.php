@@ -2,13 +2,12 @@
 
 namespace SuperV\Platform\Domains\UI\Page\Jobs;
 
-use Illuminate\Routing\Route;
-use SuperV\Platform\Domains\UI\Page\Page;
 use Illuminate\Routing\Events\RouteMatched;
+use Illuminate\Routing\Route;
 use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\View\ViewTemplate;
+use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Domains\UI\Page\PageCollection;
-use SuperV\Platform\Domains\UI\Page\Features\MakePageButtons;
+use SuperV\Platform\Domains\UI\Page\PageGateway;
 
 /**
  * Class InjectMatchedPageJob.
@@ -18,7 +17,7 @@ use SuperV\Platform\Domains\UI\Page\Features\MakePageButtons;
  * Makes page buttons
  * Sets page in the view template
  */
-class InjectMatchedPageJob extends Feature
+class InjectMatchedPage extends Feature
 {
     /**
      * @var PageCollection
@@ -43,16 +42,18 @@ class InjectMatchedPageJob extends Feature
         }
 
         // page entry
-        if ($entryId = $route->parameter($page->getManifest()->getRouteKeyName())) {
-            if ($model = $page->getModel()) {
-                if ($entry = $model::find($entryId)) {
-                    $page->setEntry($entry);
-                }
+        $model = $page->getModel();
+        if ($entryId = $route->parameter($model::$routeKeyname)) {
+            if ($entry = $model::find($entryId)) {
+                $page->setEntry($entry);
             }
         }
 
-        $this->serve(new MakePageButtons($page));
+        $route->uses(\Closure::fromCallable([new PageGateway($page), 'handle']));
+//        $route->uses(PageController::class. '@handle');
 
-        app(ViewTemplate::class)->set('page', $page);
+//        $this->serve(new MakePageButtons($page));
+//
+//        app(ViewTemplate::class)->set('page', $page);
     }
 }

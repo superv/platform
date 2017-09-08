@@ -5,14 +5,14 @@ namespace SuperV\Platform;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActiveModule;
 use SuperV\Platform\Domains\Task\Event\TaskStatusUpdatedEvent;
-use SuperV\Platform\Domains\UI\Page\Jobs\InjectMatchedPageJob;
+use SuperV\Platform\Domains\UI\Page\Jobs\InjectMatchedPage;
 
 class PlatformEventProvider extends EventServiceProvider
 {
     protected $listen = [
         'Illuminate\Routing\Events\RouteMatched'           => [
             DetectActiveModule::class,
-            InjectMatchedPageJob::class,
+            InjectMatchedPage::class,
         ],
         'Illuminate\Foundation\Http\Events\RequestHandled' => [],
 

@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\UI\Form\Features\MakeForm;
 use SuperV\Platform\Domains\UI\Form\Features\BuildForm;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\UI\Form\Jobs\MakeFormButtons;
+use Symfony\Component\HttpFoundation\Response;
 
 class FormBuilder
 {
@@ -67,6 +68,7 @@ class FormBuilder
         $this->build();
 
         $this->serve(new MakeForm($this));
+
         $this->serve(new MakeFormButtons($this));
 
         return $this->post();
@@ -92,15 +94,15 @@ class FormBuilder
     public function render($entry)
     {
         $response = $this->make($entry);
-        if ($response instanceof RedirectResponse) {
+        if ($response instanceof Response) {
             return $response;
         }
 
         $response = $this->form->createView();
 
-        $view = $this->ajax ? 'superv::form.ajax' : 'superv::form.form';
+        $wrapper = $this->ajax ? 'superv::form.ajax' : 'superv::form.form';
 
-        return $this->view->make($view, ['response' => $response, 'form' => $this->getForm()]);
+        return $this->view->make($wrapper, ['response' => $response, 'form' => $this->getForm()]);
     }
 
     /**

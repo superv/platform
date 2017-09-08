@@ -4,10 +4,11 @@ namespace SuperV\Platform\Domains\Manifest\Features;
 
 use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Feature\Feature;
+use SuperV\Platform\Domains\Manifest\Jobs\BuildManifestPages;
+use SuperV\Platform\Domains\Manifest\Jobs\SetManifestModel;
 use SuperV\Platform\Domains\Manifest\ManifestCollection;
 use SuperV\Platform\Domains\Manifest\ModelManifest;
 use SuperV\Platform\Domains\UI\Page\Features\MakePages;
-use SuperV\Platform\Domains\UI\Page\Jobs\BuildManifestPagesJob;
 use SuperV\Platform\Domains\UI\Page\Page;
 
 class ManifestModel extends Feature
@@ -32,28 +33,9 @@ class ManifestModel extends Feature
     {
         $manifest = is_object($this->manifest) ? $this->manifest : app($this->manifest);
 
-        $model = $manifest->getModel();
+        $this->dispatch(new SetManifestModel($manifest));
 
-        if ($model === null) {
-            $parts = explode('\\', str_replace('Manifest', 'Model', get_class($manifest)));
-
-            $model = implode('\\', $parts);
-
-            if (class_exists($model)) {
-                $manifest->setModel($model);
-            } else {
-                $model = str_replace(last($parts), 'Model\\'.last($parts), $model);
-                if (class_exists($model)) {
-                    $manifest->setModel($model);
-                } else {
-                    throw new \Exception('Manifest model not found '.$model);
-                }
-            }
-        }
-
-        \Debugbar::startMeasure('BuildManifestPagesJob');
-        $this->dispatch(new BuildManifestPagesJob($manifest));
-        \Debugbar::stopMeasure('BuildManifestPagesJob');
+        $this->dispatch(new BuildManifestPages($manifest));
 
         if ($model = $manifest->getModel()) {
             $manifest->pages()->map(function (Page $page) use ($manifest) {

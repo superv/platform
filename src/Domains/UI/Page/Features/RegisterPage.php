@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\UI\Page\Features;
 
-use Illuminate\Routing\Route;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Traits\RegistersRoutes;
 use SuperV\Platform\Domains\Feature\Feature;
@@ -25,12 +24,7 @@ class RegisterPage extends Feature
     public function handle(PageCollection $pages)
     {
         $page = $this->page;
-        $handler = $this->page->getHandler();
-
-        $route = [
-            'as'   => $page->getRoute(),
-            'uses' => is_callable($handler) ? $handler : (str_contains($handler, '@') ? $handler : $handler.'@'.$page->getVerb()),
-        ];
+        $route = ['as'   => $page->getRoute()];
 
         if ($port = $page->getPort()) {
             array_set($route, 'superv::port', "superv.ports.{$port}"); // TODO.ali: generic namespace

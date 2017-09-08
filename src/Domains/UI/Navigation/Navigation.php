@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\UI\Navigation;
 
+use SuperV\Platform\Domains\Droplet\Droplet;
+
 class Navigation
 {
     protected $sections = [];
@@ -22,6 +24,14 @@ class Navigation
     }
 
     /**
+     * @return mixed
+     */
+    public function getActiveModule()
+    {
+        return $this->activeModule;
+    }
+
+    /**
      * @param mixed $activeModule
      *
      * @return Navigation
@@ -33,11 +43,15 @@ class Navigation
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getActiveModule()
+    public function addDropletSection(Droplet $droplet)
     {
-        return $this->activeModule;
+        $section = (new Section($this))->setTitle($droplet->getTitle())
+                                       ->setIcon($droplet->getIcon())
+                                       ->setModule($droplet)
+                                       ->setSortOrder($droplet->getSortOrder());
+
+        $this->addSection($section);
+
+        return $section;
     }
 }

@@ -3,9 +3,13 @@
 namespace SuperV\Platform\Domains\UI\Page;
 
 use SuperV\Platform\Domains\Droplet\Droplet;
+use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
+use SuperV\Platform\Domains\UI\Page\Features\RenderPage;
 
 class Page
 {
+    use ServesFeaturesTrait;
+
     protected $manifest;
 
     /** @var Droplet */
@@ -36,6 +40,15 @@ class Page
     protected $entryRouteKeyName = 'id';
 
     protected $icon;
+
+    protected $rendered;
+
+    protected $content;
+
+    public function render()
+    {
+        return $this->content = $this->dispatch(new RenderPage($this));
+    }
 
     /**
      * @return bool
@@ -78,6 +91,14 @@ class Page
     }
 
     /**
+     * @return mixed
+     */
+    public function getRoute()
+    {
+        return $this->route;
+    }
+
+    /**
      * @param mixed $route
      *
      * @return Page
@@ -87,50 +108,6 @@ class Page
         $this->route = $route;
 
         return $this;
-    }
-
-    /**
-     * @param mixed $url
-     *
-     * @return Page
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $handler
-     *
-     * @return Page
-     */
-    public function setHandler($handler)
-    {
-        $this->handler = $handler;
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $manifest
-     *
-     * @return Page
-     */
-    public function setManifest($manifest)
-    {
-        $this->manifest = $manifest;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRoute()
-    {
-        return $this->route;
     }
 
     public function makeRoute()
@@ -147,11 +124,35 @@ class Page
     }
 
     /**
+     * @param mixed $url
+     *
+     * @return Page
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     public function getHandler()
     {
         return $this->handler;
+    }
+
+    /**
+     * @param mixed $handler
+     *
+     * @return Page
+     */
+    public function setHandler($handler)
+    {
+        $this->handler = $handler;
+
+        return $this;
     }
 
     /**
@@ -175,6 +176,14 @@ class Page
     }
 
     /**
+     * @return Droplet
+     */
+    public function getDroplet(): Droplet
+    {
+        return $this->droplet;
+    }
+
+    /**
      * @param Droplet $droplet
      *
      * @return Page
@@ -184,14 +193,6 @@ class Page
         $this->droplet = $droplet;
 
         return $this;
-    }
-
-    /**
-     * @return Droplet
-     */
-    public function getDroplet(): Droplet
-    {
-        return $this->droplet;
     }
 
     /**
@@ -215,6 +216,14 @@ class Page
     }
 
     /**
+     * @return array
+     */
+    public function getButtons(): array
+    {
+        return $this->buttons;
+    }
+
+    /**
      * @param array $buttons
      *
      * @return Page
@@ -227,11 +236,11 @@ class Page
     }
 
     /**
-     * @return array
+     * @return mixed
      */
-    public function getButtons(): array
+    public function getModel()
     {
-        return $this->buttons;
+        return $this->model;
     }
 
     /**
@@ -246,18 +255,18 @@ class Page
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getModel()
-    {
-        return $this->model;
-    }
-
     /** @return $this->model */
     public function newEntry()
     {
         return app($this->model);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEntry()
+    {
+        return $this->entry;
     }
 
     /**
@@ -270,14 +279,6 @@ class Page
         $this->entry = $entry;
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getEntry()
-    {
-        return $this->entry;
     }
 
     /**
@@ -309,6 +310,26 @@ class Page
     }
 
     /**
+     * @param mixed $manifest
+     *
+     * @return Page
+     */
+    public function setManifest($manifest)
+    {
+        $this->manifest = $manifest;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVerb()
+    {
+        return $this->verb;
+    }
+
+    /**
      * @param mixed $verb
      *
      * @return Page
@@ -323,9 +344,9 @@ class Page
     /**
      * @return mixed
      */
-    public function getVerb()
+    public function getPort()
     {
-        return $this->verb;
+        return $this->port;
     }
 
     /**
@@ -338,13 +359,25 @@ class Page
         $this->port = $port;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed
      */
-    public function getPort()
+    public function getContent()
     {
-        return $this->port;
+        return $this->content;
+    }
+
+    /**
+     * @param mixed $content
+     *
+     * @return Page
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+
+        return $this;
     }
 }

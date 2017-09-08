@@ -19,20 +19,15 @@ class MakePages extends Feature
      */
     private $pages;
 
-    public function __construct(Collection $pages, Droplet $droplet)
+    public function __construct(Collection $pages)
     {
-        $this->droplet = $droplet;
         $this->pages = $pages;
     }
 
     public function handle()
     {
-        $pages = $this->pages;
-
         /** @var Page $page */
-        foreach ($pages as $page) {
-            $page->setDroplet($this->droplet);
-
+        foreach ($this->pages as $page) {
             $this->dispatch(new RegisterPage($page));
         }
     }

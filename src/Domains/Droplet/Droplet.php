@@ -23,6 +23,8 @@ class Droplet
 
     protected $manifests = [];
 
+    protected $sortOrder = 10;
+
     public function __construct(DropletModel $model = null)
     {
         $this->model = $model;
@@ -159,5 +161,10 @@ class Droplet
     public function getCommands()
     {
         return $this->commands;
+    }
+
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
     }
 }

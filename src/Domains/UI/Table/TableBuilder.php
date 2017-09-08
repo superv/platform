@@ -2,11 +2,11 @@
 
 namespace SuperV\Platform\Domains\UI\Table;
 
-use Illuminate\View\Factory;
-use SuperV\Platform\Traits\FiresCallbacks;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Entry\EntryModel;
 use SuperV\Platform\Domains\UI\Table\Features\BuildTable;
+use SuperV\Platform\Traits\FiresCallbacks;
 
 class TableBuilder
 {
@@ -18,6 +18,8 @@ class TableBuilder
 
     /** @var string */
     protected $model;
+
+    protected $wrapper = 'superv::table.layout';
 
     protected $buttons = [];
 
@@ -32,6 +34,7 @@ class TableBuilder
     {
         $this->view = $view;
         $this->table = $table;
+        $this->wrapper = '';
     }
 
     public function make()
@@ -71,7 +74,13 @@ class TableBuilder
     {
         $this->make();
 
-        return $this->build();
+        $this->build();
+
+        if (! $this->wrapper) {
+            return $this->table->render();
+        }
+
+        return $this->view->make($this->wrapper, ['table' => $this->table]);
     }
 
     public function build()
@@ -81,8 +90,6 @@ class TableBuilder
         $this->dispatch(new BuildTable($this));
 
         $this->fire('built', ['builder' => $this]);
-
-        return $this->view->make('superv::table.layout', ['table' => $this->table]);
     }
 
     /**
@@ -114,13 +121,13 @@ class TableBuilder
     }
 
     /**
-     * @param string $model
+     * @param array $buttons
      *
      * @return TableBuilder
      */
-    public function setModel(string $model): TableBuilder
+    public function setButtons(array $buttons): TableBuilder
     {
-        $this->model = $model;
+        $this->buttons = $buttons;
 
         return $this;
     }
@@ -131,6 +138,18 @@ class TableBuilder
     public function getModel()
     {
         return $this->model;
+    }
+
+    /**
+     * @param string $model
+     *
+     * @return TableBuilder
+     */
+    public function setModel(string $model): TableBuilder
+    {
+        $this->model = $model;
+
+        return $this;
     }
 
     /**
@@ -154,13 +173,28 @@ class TableBuilder
     }
 
     /**
-     * @param array $buttons
+     * @return string
+     */
+    public function getWrapper(): string
+    {
+        return $this->wrapper;
+    }
+
+    /**
+     * @param string $wrapper
      *
      * @return TableBuilder
      */
-    public function setButtons(array $buttons): TableBuilder
+    public function setWrapper(string $wrapper): TableBuilder
     {
-        $this->buttons = $buttons;
+        $this->wrapper = $wrapper;
+
+        return $this;
+    }
+
+    public function noWrapper()
+    {
+        $this->wrapper = null;
 
         return $this;
     }

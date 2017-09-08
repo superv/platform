@@ -1,0 +1,38 @@
+{% extends "port::layouts.default" %}
+
+{% block pageheader %}
+    <section class="content-header"
+             style="background-color: #e5e5e5;
+             display: block;
+             height: 70px;
+             padding: 10px;">
+        <h1 style="font-size: 1.10em;
+        position: absolute;
+        top: 18px;
+        color: #918f83;">
+
+            {% if page.icon %}
+                <i class="fa fa-{{ page.icon }}"></i>
+            {% endif %}
+            {{ page.title }}
+            <small>{{ page.subtitle }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{{ route('hosting::packages.index') }}"> Packages</a></li>
+            <li class="active">Edit Package Details</li>
+        </ol>
+        <div class="pull-right" style="position: absolute;
+            right: 10px;
+            top: 10px; padding:5px;">
+            {% for button in page.buttons %}
+                {{ button.render({size: 'lg'})|raw }}
+            {% endfor %}
+        </div>
+
+    </section>
+{% endblock %}
+
+
+{% block content %}
+    {{ page.content() |raw }}
+{% endblock %}

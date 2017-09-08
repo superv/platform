@@ -75,7 +75,7 @@ class EntryRouter
          * info from the manifest data
          */
         if ($manifest = $this->manifests->model()->byModel(get_class($this->entry))) {
-            if ($pages = $manifest->getPages()) {
+            if ($pages = $manifest->getData('pages')) {
                 if ($page = array_get($pages, $route)) {
                     if ($pageRoute = array_get($page, 'route')) {
                         return $this->url->route($pageRoute, ['id' => $this->entry->id]);

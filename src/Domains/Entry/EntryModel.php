@@ -13,6 +13,8 @@ class EntryModel extends EloquentModel implements PresentableInterface
 {
     use RoutableTrait, PresentableTrait;
 
+    public static $routeKeyname = 'id';
+
     protected $fields = [];
 
     protected $relationships = [];
