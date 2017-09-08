@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Droplet\Agent;
 
 use SuperV\Modules\Supreme\Domains\Drop\Model\DropModel;
-use SuperV\Modules\Supreme\Domains\Server\Jobs\RunServerScriptJob;
+use SuperV\Modules\Supreme\Domains\Server\Jobs\RunServerScript;
 use SuperV\Modules\Supreme\Domains\Server\Model\ServerModel;
 use SuperV\Modules\Supreme\Domains\Server\Server;
 use SuperV\Modules\Supreme\Domains\Service\Model\ServiceModel;
@@ -61,7 +61,7 @@ class AgentFeature extends Feature
             return $job;
         }
 
-        $job = (new RunServerScriptJob($this->server))->setTitle($title);
+        $job = (new RunServerScript($this->server))->setTitle($title);
 
         if ($script) {
             $job->script($script);

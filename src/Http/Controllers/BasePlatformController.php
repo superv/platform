@@ -2,21 +2,15 @@
 
 namespace SuperV\Platform\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\View\Factory;
-use Illuminate\Routing\Route;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
+use Illuminate\Routing\Route;
 use Illuminate\Support\MessageBag;
-use App\Http\Middleware\EncryptCookies;
-use App\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Session\Middleware\StartSession;
-use SuperV\Platform\Http\Middleware\PlatformReady;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use SuperV\Platform\Http\Middleware\PlatformReady;
 
 class BasePlatformController extends Controller
 {
@@ -42,23 +36,18 @@ class BasePlatformController extends Controller
 
     public function __construct()
     {
-        $this->middleware(EncryptCookies::class);
-        $this->middleware(AddQueuedCookiesToResponse::class);
-        $this->middleware(StartSession::class);
-        $this->middleware(ShareErrorsFromSession::class);
-        $this->middleware(VerifyCsrfToken::class);
-        $this->middleware(SubstituteBindings::class);
-
-        $this->middleware('auth');
+//        $this->middleware(EncryptCookies::class);
+//        $this->middleware(AddQueuedCookiesToResponse::class);
+//        $this->middleware(StartSession::class);
+//        $this->middleware(ShareErrorsFromSession::class);
+//        $this->middleware(VerifyCsrfToken::class);
+//        $this->middleware(SubstituteBindings::class);
 
         $this->request = app('Illuminate\Http\Request');
         $this->redirect = app('Illuminate\Routing\Redirector');
         $this->view = app('Illuminate\Contracts\View\Factory');
         $this->events = app('Illuminate\Contracts\Events\Dispatcher');
         $this->messages = app('Illuminate\Support\MessageBag');
-
         $this->route = $this->request->route();
-
-        $this->middleware(PlatformReady::class);
     }
 }
