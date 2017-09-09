@@ -14,10 +14,10 @@
         </div>
 
         <div class="box-body">
-            {{ form(response) }}
-            {#{{ form_start(form) }}#}
-            {#{{ form_errors(form) }}#}
-            {#{{ form_widget(form) }}#}
-            {#{{ form_end(form) }}#}
+            {#{{ form(response) }}#}
+            {{ form_start(response) }}
+            {{ form_errors(response) }}
+            {{ form_widget(response) }}
+            {{ form_end(response) }}
         </div>
     </div>

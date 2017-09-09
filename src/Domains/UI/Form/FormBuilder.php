@@ -38,6 +38,7 @@ class FormBuilder
      */
     private $view;
 
+
     public function __construct(Form $form, Factory $view)
     {
         $this->form = $form;
