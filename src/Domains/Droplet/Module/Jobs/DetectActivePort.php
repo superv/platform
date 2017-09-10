@@ -25,6 +25,6 @@ class DetectActivePort
 
         $view->addNamespace('port', [base_path($port->getPath('resources/views'))]);
 
-        $this->registerPortRoutes($port);
+        $this->registerRoutes($port);
     }
 }

@@ -12,7 +12,7 @@ class PageGateway implements Responsable
      */
     private $page;
 
-    public function __construct(Page $page)
+    public function __construct($page)
     {
         $this->page = $page;
     }

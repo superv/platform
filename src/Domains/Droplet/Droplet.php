@@ -23,6 +23,8 @@ class Droplet
 
     protected $manifests = [];
 
+    protected $seeders = [];
+
     protected $sortOrder = 10;
 
     public function __construct(DropletModel $model = null)
@@ -97,7 +99,7 @@ class Droplet
 
     public function isType($type)
     {
-        return $this->type = $type;
+        return $this->type == $type;
     }
 
     /**
@@ -167,4 +169,26 @@ class Droplet
     {
         return $this->sortOrder;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getSeeders()
+    {
+        return $this->seeders;
+    }
+
+    /**
+     * @param mixed $seeders
+     *
+     * @return Droplet
+     */
+    public function setSeeders($seeders)
+    {
+        $this->seeders = $seeders;
+
+        return $this;
+    }
+
+
 }

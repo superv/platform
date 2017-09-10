@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Droplet;
 use Illuminate\Console\Events\ArtisanStarting;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
-use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
@@ -71,27 +70,19 @@ class DropletProvider
         $this->registerBindings($provider->getBindings());
         $this->registerSingletons($provider->getSingletons());
 
-        $this->dispersePortRoutes($provider->getRoutes(),
+        $this->disperseRoutes($provider->getRoutes(),
             function ($data) use ($provider) {
                 array_set($data, 'superv::droplet', $provider->getDroplet()->getSlug());
+
+                return $data;
             }
         );
-
-//        $this->registerRoutes(
-//            $provider->getRoutes(),
-//            function (Route $route) use ($provider) {
-//                $action = $route->getAction();
-//                array_set($action, 'superv::droplet', $provider->getDroplet()->getSlug());
-//                $route->setAction($action);
-//            });
 
         $this->registerCommands($provider);
         $this->registerFeatures($provider);
         $this->registerListeners($provider);
 
-        \Debugbar::startMeasure('registerManifests', 'Register Manifests');
         $this->dispatch(new ManifestDroplet($droplet));
-        \Debugbar::stopMeasure('registerManifests');
     }
 
     protected function registerCommands(DropletServiceProvider $provider)

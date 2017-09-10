@@ -77,4 +77,9 @@ class EloquentRepository implements RepositoryInterface
     {
         return collect($items);
     }
+
+    public function truncate()
+    {
+       $this->query->truncate();
+    }
 }

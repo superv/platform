@@ -53,7 +53,7 @@ class IntegrateDroplet extends Feature
         //
         // Add view namespace
         //
-        $views->addNamespace($model->slug(), [base_path($droplet->getPath('resources/views'))]);
+        $views->addNamespace($model->getSlug(), [base_path($droplet->getPath('resources/views'))]);
 
         //
         // Add config namespace

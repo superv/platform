@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Droplet\Console;
 
 use SuperV\Platform\Contracts\Command;
-use SuperV\Platform\Domains\Droplet\Feature\InstallDropletFeature;
+use SuperV\Platform\Domains\Droplet\Feature\InstallDroplet;
 
 class DropletInstallCommand extends Command
 {
@@ -13,7 +13,7 @@ class DropletInstallCommand extends Command
     {
         $slug = $this->argument('slug');
         $path = $this->option('path');
-        if ($this->serve(new InstallDropletFeature($slug, $path))) {
+        if ($this->serve(new InstallDroplet($slug, $path))) {
             $this->call('droplet:migrate', ['droplet' => $slug]);
             $this->info('The ['.$slug.'] droplet was installed.');
         } else {

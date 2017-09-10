@@ -8,12 +8,12 @@ use SuperV\Platform\Domains\Droplet\Port\Port;
 
 trait RegistersRoutes
 {
-    protected function dispersePortRoutes(array $routes, \Closure $callable = null)
+    protected function disperseRoutes(array $routes, \Closure $callable = null)
     {
         foreach ($routes as $uri => $data) {
             $data = ! is_array($data) ? ['uses' => $data] : $data;
             if ($callable) {
-                call_user_func($callable, $data);
+                $data = call_user_func($callable, $data);
             }
             /**
              * All routes registered through platform
@@ -37,7 +37,7 @@ trait RegistersRoutes
         }
     }
 
-    protected function registerPortRoutes(Port $port)
+    protected function registerRoutes(Port $port)
     {
         /** @var Router $router */
         $router = app('router');

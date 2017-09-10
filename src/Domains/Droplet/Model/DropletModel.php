@@ -51,7 +51,7 @@ class DropletModel extends DropletEntryModel
         return $this->vendor;
     }
 
-    public function slug()
+    public function getSlug()
     {
         return $this->slug;
     }

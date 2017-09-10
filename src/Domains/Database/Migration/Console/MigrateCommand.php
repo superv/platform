@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Droplet\Model\Droplets;
 
 class MigrateCommand extends Command
 {
-    protected $signature = 'droplet:migrate {droplet} {--refresh} {--rollback}';
+    protected $signature = 'droplet:migrate {droplet} {--refresh} {--rollback} {--seed}';
 
     public function handle(Droplets $droplets, Kernel $kernel)
     {
@@ -27,6 +27,10 @@ class MigrateCommand extends Command
 
         if (! $this->option('rollback')) {
             $kernel->call('migrate', $options, $this->output);
+        }
+
+        if ($this->option('seed')) {
+            $kernel->call('droplet:seed', ['droplet' => $this->argument('droplet')]);
         }
     }
 }

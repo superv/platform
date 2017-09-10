@@ -1,17 +1,31 @@
-{% block content %}
-    <div class="col-md-12">
-        <div class="box box-primary">
-            <div class="box-header with-border">
-                <h3 class="box-title"></h3>
-            </div>
-            <div class="box-body">
-                {{ form(form) }}
-                {#{{ form_start(form) }}#}
-                {#{{ form_errors(form) }}#}
-                {#{{ form_widget(form) }}#}
-                {#{{ form_end(form) }}#}
-            </div>
-        </div>
-    </div>
+{{ form(response) }}
+{#{{ form_start(form) }}#}
+{#{{ form_errors(form) }}#}
+{#{{ form_widget(form) }}#}
+{#{{ form_end(form) }}#}
 
-{% endblock %}
+
+<script>
+    $(function () {
+        $('#jForm').on('submit', function (e) {
+            let form = $(this);
+            $.post(form.attr('action'), form.serializeArray(), function (data) {
+
+                if (!data.success) {
+                    messages = [];
+                    $.each(data.errors, function (field, errors) {
+                        messages.push(errors.join('\n'));
+                    });
+                    alert(messages.join('\n'));
+
+                    return false;
+                }
+
+                alert('success');
+                return false;
+            });
+            e.preventDefault();
+        });
+    });
+</script>
+

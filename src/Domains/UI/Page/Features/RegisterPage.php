@@ -2,10 +2,10 @@
 
 namespace SuperV\Platform\Domains\UI\Page\Features;
 
-use SuperV\Platform\Domains\UI\Page\Page;
-use SuperV\Platform\Traits\RegistersRoutes;
 use SuperV\Platform\Domains\Feature\Feature;
+use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Domains\UI\Page\PageCollection;
+use SuperV\Platform\Traits\RegistersRoutes;
 
 class RegisterPage extends Feature
 {
@@ -24,14 +24,16 @@ class RegisterPage extends Feature
     public function handle(PageCollection $pages)
     {
         $page = $this->page;
-        $route = ['as'   => $page->getRoute()];
+        $route = ['as' => $page->getRoute()];
 
         if ($port = $page->getPort()) {
             array_set($route, 'superv::port', "superv.ports.{$port}"); // TODO.ali: generic namespace
         }
-        $this->dispersePortRoutes([$page->getUrl() => $route],
+        $this->disperseRoutes([$page->getUrl() => $route],
             function ($data) use ($page) {
                 array_set($data, 'superv::droplet', $page->getDroplet()->getSlug());
+
+                return $data;
             }
         );
         $pages->put($page->getRoute(), $page);

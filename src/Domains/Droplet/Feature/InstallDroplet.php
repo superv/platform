@@ -9,11 +9,11 @@ use SuperV\Platform\Domains\Composer\Jobs\GetBaseNamespaceJob;
 use SuperV\Platform\Domains\Composer\Jobs\GetComposerArrayJob;
 
 /**
- * Class InstallDropletFeature.
+ * Class InstallDroplet.
  *
  * Installs a droplet into the platform
  */
-class InstallDropletFeature extends Feature
+class InstallDroplet extends Feature
 {
     private $slug;
 

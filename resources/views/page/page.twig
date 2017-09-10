@@ -41,7 +41,8 @@
                 <ul class="nav nav-tabs" id="pageTabs">
                     {% for tab in tabs %}
                         <li>
-                            <a href="{{ url(tab.url) }}" data-target="#{{ tab.tab }}" data-toggle="tab">{{ tab.title }}</a>
+                            <a href="{{ url(tab.url) }}" data-target="#{{ tab.tab }}"
+                               data-toggle="tab">{{ tab.title }}</a>
                         </li>
                     {% endfor %}
 
@@ -57,7 +58,27 @@
             <!-- nav-tabs-custom -->
         </div>
     {% else %}
-        {{ page.content() |raw }}
+        <div class="wrapper" style='
+                    padding: 10px;
+                    display: grid;
+                    grid-template-columns: 1fr 1fr 1fr 1fr;
+                    grid-template-rows: 100px auto;
+                    grid-gap: 10px;
+                    grid-template-areas:
+                        "header header header header"
+                        "cell-A cell-A cell-A sidebar";
+        '>
+            <div style="grid-area: header; background-color: #900a00">
+                Header
+            </div>
+            <div style="grid-area: cell-A">
+                {{ page.content() |raw }}
+            </div>
+            <div style="grid-area: sidebar; background-color: #0a907c">
+               sidebar
+            </div>
+        </div>
+
     {% endif %}
 {% endblock %}
 

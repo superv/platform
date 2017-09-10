@@ -13,4 +13,6 @@ interface RepositoryInterface
     public function update(array $attributes = []);
 
     public function withSlug($slug);
+
+    public function truncate();
 }

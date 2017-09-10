@@ -14,6 +14,7 @@ use SuperV\Platform\Domains\Database\DatabaseServiceProvider;
 use SuperV\Platform\Domains\Database\Migration\Console\MakeMigrationCommand;
 use SuperV\Platform\Domains\Database\Migration\Console\MigrateCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
+use SuperV\Platform\Domains\Droplet\Console\DropletSeedCommand;
 use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
@@ -78,6 +79,7 @@ class PlatformServiceProvider extends ServiceProvider
 
     protected $commands = [
         DropletInstallCommand::class,
+        DropletSeedCommand::class,
         MakeMigrationCommand::class,
         MakeDropletCommand::class,
         MigrateCommand::class,
@@ -116,7 +118,7 @@ class PlatformServiceProvider extends ServiceProvider
         $this->setupConfig();
         $this->bootDroplets();
         $this->manifestPlatform();
-        $this->dispersePortRoutes($this->routes);
+        $this->disperseRoutes($this->routes);
         $this->detectActivePort();
 
         Debugbar::stopMeasure('platform.boot');

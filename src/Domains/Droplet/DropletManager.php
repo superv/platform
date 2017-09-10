@@ -43,7 +43,7 @@ class DropletManager
 
     private function bootDroplet($model)
     {
-        \Debugbar::startMeasure("droplet.{$model->slug()}", $model->getName());
+        \Debugbar::startMeasure("droplet.{$model->getSlug()}", $model->getName());
 
         \Debugbar::startMeasure('load', 'Load');
         $this->serve(new LoadDroplet(base_path($model->path())));
@@ -51,6 +51,6 @@ class DropletManager
 
         $this->serve(new IntegrateDroplet($model));
 
-        \Debugbar::stopMeasure("droplet.{$model->slug()}");
+        \Debugbar::stopMeasure("droplet.{$model->getSlug()}");
     }
 }
