@@ -114,6 +114,12 @@ class PlatformServiceProvider extends ServiceProvider
         }
         Debugbar::startMeasure('platform.boot', 'Platform Boot');
 
+        /**
+         * Refactor idea: instead of registering routes views etc
+         * by looping all droplets, first collect the droplets
+         * then perform registeration depending on port, cli
+         */
+
         $this->setupView();
         $this->setupConfig();
         $this->bootDroplets();

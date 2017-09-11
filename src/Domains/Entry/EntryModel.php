@@ -102,7 +102,7 @@ class EntryModel extends EloquentModel implements PresentableInterface
      *
      * @return Page
      */
-    public function page($verb)
+    public function page_deprecated($verb)
     {
         /** @var Page $page */
         if ($page = superv('pages')->byModel(get_class($this))->get($verb)) {

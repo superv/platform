@@ -18,7 +18,7 @@ class EloquentModel extends Model
             return str_replace('\\', '', snake_case(str_plural(class_basename($this))));
         }
 
-        return $this->table;
+        return parent::getTable();
     }
 
     /**
