@@ -82,4 +82,14 @@ class EloquentRepository implements RepositoryInterface
     {
        $this->query->truncate();
     }
+
+    public function __call($name, $arguments)
+    {
+        if (starts_with($name, 'by')) {
+            $keyName = studly_case(str_replace_first('by', '', $name));
+            return $this->query->where($keyName, $arguments[0])->first();
+        }
+
+        throw new \BadMethodCallException("Method {$name} does not exists");
+    }
 }
