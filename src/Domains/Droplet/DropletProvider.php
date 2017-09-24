@@ -83,6 +83,10 @@ class DropletProvider
         $this->registerListeners($provider);
 
         $this->dispatch(new ManifestDroplet($droplet));
+
+        if (method_exists($provider, 'boot')) {
+            $this->app->call([$provider, 'boot'], ['provider' => $this]);
+        }
     }
 
     protected function registerCommands(DropletServiceProvider $provider)
