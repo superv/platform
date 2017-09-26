@@ -2,13 +2,13 @@
 
 namespace SuperV\Platform\Domains\View\Extensions;
 
-use Twig_SimpleFunction;
-use SuperV\Platform\Domains\Task\Task;
-use SuperV\Platform\Support\Decorator;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use SuperV\Platform\Domains\Task\Model\TaskModel;
 use SuperV\Platform\Domains\Model\EloquentCriteria;
+use SuperV\Platform\Domains\Task\Model\TaskModel;
+use SuperV\Platform\Domains\Task\Task;
 use SuperV\Platform\Domains\UI\Button\Features\MakeButtons;
+use SuperV\Platform\Support\Decorator;
+use Twig_SimpleFunction;
 
 class PlatformExtension extends \Twig_Extension
 {
@@ -27,6 +27,11 @@ class PlatformExtension extends \Twig_Extension
             }),
             new Twig_SimpleFunction('buttons', function ($buttons) {
                 return $this->dispatch(new MakeButtons($buttons));
+            }, [
+                'is_safe' => ['html'],
+            ]),
+            new Twig_SimpleFunction('mix', function ($path) {
+                return mix($path);
             }, [
                 'is_safe' => ['html'],
             ]),
