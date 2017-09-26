@@ -28,7 +28,7 @@ class MakeForm extends Feature
     public function handle(FormFactoryInterface $factory)
     {
         $form = $this->builder->getForm();
-        $options = ['attr' => ['id' => 'jForm'], 'action' => url()->current()];
+        $options = ['attr' => $this->builder->getFormAttributes(), 'action' => url()->current()];
 
         if ($this->builder->getEntry()->exists) {
             $form->setMode('edit');
