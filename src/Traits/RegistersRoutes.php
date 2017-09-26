@@ -49,7 +49,7 @@ trait RegistersRoutes
             $route = $router->{$verb}($uri, $data);
             $route->where(array_pull($data, 'constraints', []));
             $route->domain($port->getHostname());
-            $route->middleware(array_merge($middlewares, $port->getMiddlewares()));
+            $route->middleware(array_merge((array)$middlewares, $port->getMiddlewares()));
         }
     }
 }
