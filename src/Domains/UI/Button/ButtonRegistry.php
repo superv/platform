@@ -22,6 +22,11 @@ class ButtonRegistry
             'icon' => 'fa fa-save',
             'type' => 'warning',
         ],
+        'manage'   => [
+            'text' => 'Manage',
+            'icon' => 'fa fa-cog',
+            'type' => 'info',
+        ],
         'create' => [
             'text' => 'Create',
             'icon' => 'fa fa-plus',
