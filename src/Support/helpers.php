@@ -2,6 +2,7 @@
 
 use Illuminate\Container\Container;
 use SuperV\Platform\Support\Collection;
+use SuperV\Platform\Support\Decorator;
 
 function mysql_now()
 {
@@ -101,6 +102,13 @@ if (! function_exists('collect')) {
     function collect($value = null)
     {
         return new Collection($value);
+    }
+}
+
+if (! function_exists('decorate')) {
+    function decorate($presentable)
+    {
+        return (new Decorator())->decorate($presentable);
     }
 }
 
