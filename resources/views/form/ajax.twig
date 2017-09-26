@@ -5,27 +5,3 @@
 {#{{ form_end(form) }}#}
 
 
-<script>
-    $(function () {
-        $('#jForm').on('submit', function (e) {
-            let form = $(this);
-            $.post(form.attr('action'), form.serializeArray(), function (data) {
-
-                if (!data.success) {
-                    messages = [];
-                    $.each(data.errors, function (field, errors) {
-                        messages.push(errors.join('\n'));
-                    });
-                    alert(messages.join('\n'));
-
-                    return false;
-                }
-
-                alert('success');
-                return false;
-            });
-            e.preventDefault();
-        });
-    });
-</script>
-

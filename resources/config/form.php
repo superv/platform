@@ -16,10 +16,10 @@ return [
     |
     | See http://symfony.com/doc/current/cookbook/form/form_customization.html#what-are-form-themes
     */
-    'theme' => 'bootstrap_3_horizontal_layout.html.twig',
+    'theme' => 'bootstrap_3_layout.html.twig',
 
     'defaults' => [
-        'required' => true,
+        'required' => false,
     ],
 
 ];

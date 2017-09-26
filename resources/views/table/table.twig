@@ -1,43 +1,35 @@
-    <div class="box">
-        {% if not actions is empty %}
-            <div class="box-header">
-                <h3 class="box-title">s</h3>
-                <div class="pull-right">
-                    {% for button in actions %}
-                        {{ button.render()|raw }}
-                    {% endfor %}
-                </div>
-            </div>
-        {% endif %}
-        <!-- /.box-header -->
-        <div class="box-body">
-            <div class="row">
-                <div class="col-sm-12">
-                    <table class="table">
-
-                        {% include 'superv::table/partials/header' %}
-                        {% include 'superv::table/partials/body' %}
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-5">
-                    <div class="dataTables_info" role="status" aria-live="polite">
-                        {% if table.data.pagination.total %}
-                      {{ table.data.pagination.total }} records found
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-sm-7">
-                    <div class="dataTables_paginate paging_simple_numbers">
-                        {% if table.data.pagination.links %}
-                            {{ table.data.pagination.links|raw }}
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
+{% if not actions is empty %}
+    <div class="pull-right">
+        {% for button in actions %}
+            {{ button.render()|raw }}
+        {% endfor %}
+    </div>
+{% endif %}
+<!-- /.box-header -->
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table">
+            {% include 'superv::table/partials/header' %}
+            {% include 'superv::table/partials/body' %}
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-5">
+        <div class="dataTables_info" role="status" aria-live="polite">
+            {% if table.data.pagination.total %}
+                {{ table.data.pagination.total }} records found
+            {% endif %}
         </div>
     </div>
+    <div class="col-sm-7">
+        <div class="dataTables_paginate paging_simple_numbers">
+            {% if table.data.pagination.links %}
+                {{ table.data.pagination.links|raw }}
+            {% endif %}
+        </div>
+    </div>
+</div>
 
 
 

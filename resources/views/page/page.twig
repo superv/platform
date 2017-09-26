@@ -49,7 +49,7 @@
                     <li class="pull-right" id="tabButtons"></li>
                 </ul>
                 <div class="tab-content">
-                    {% for tab in tabs %}
+                    {% for tab in tabs %}"
                         <div class="tab-pane" id="{{ tab.tab }}" style="min-height: 300px;"></div>
                     {% endfor %}
                 </div>
@@ -58,25 +58,8 @@
             <!-- nav-tabs-custom -->
         </div>
     {% else %}
-        <div class="wrapper" style='
-                    padding: 10px;
-                    display: grid;
-                    grid-template-columns: 1fr 1fr 1fr 1fr;
-                    grid-template-rows: 100px auto;
-                    grid-gap: 10px;
-                    grid-template-areas:
-                        "header header header header"
-                        "cell-A cell-A cell-A sidebar";
-        '>
-            <div style="grid-area: header; background-color: #900a00">
-                Header
-            </div>
-            <div style="grid-area: cell-A">
-                {{ page.content() |raw }}
-            </div>
-            <div style="grid-area: sidebar; background-color: #0a907c">
-               sidebar
-            </div>
+        <div class="col-md-12">
+            {{ page.content() |raw }}
         </div>
 
     {% endif %}
