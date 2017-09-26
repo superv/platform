@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\UI\Page\Features;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Domains\UI\Page\PageCollection;
 use SuperV\Platform\Domains\UI\Page\Tab;
-use SuperV\Platform\Support\Hydrator;
+use SuperV\Platform\Support\Inflator;
 use SuperV\Platform\Support\Parser;
 
 class MakePageTabs
@@ -20,14 +20,14 @@ class MakePageTabs
         $this->page = $page;
     }
 
-    public function handle(Hydrator $hydrator, Parser $parser, PageCollection $pages)
+    public function handle(Inflator $inflator, Parser $parser, PageCollection $pages)
     {
         if ($tabs = $this->page->getTabs()) {
             foreach ($tabs as $id => &$tab) {
                 array_set($tab, 'tab', $id);
                 $url = array_get($tab, 'url');
                 $url = $parser->parse($url, ['entry' => $this->page->getEntry()]);
-                $tab = $hydrator->hydrate(app(Tab::class), $tab);
+                $tab = $inflator->inflate(app(Tab::class), $tab);
                 
                 $tab->setUrl($url);
             }
