@@ -2,14 +2,9 @@
 
 namespace SuperV\Platform\Support;
 
-/**
- * Class Hydrator
- * Builds and object setting properties from a parameters,
- * array by using available setter methods .
- */
-class Hydrator
+class Inflator
 {
-    public function hydrate($object, array $parameters)
+    public function inflate($object, array $parameters)
     {
         foreach ($parameters as $parameter => $value) {
             $method = camel_case('set_'.$parameter);
