@@ -19,6 +19,6 @@ class Platform extends Module
        protected $navigation = true;
 
        protected $manifests = [
-//           TaskManifest::class
+           TaskManifest::class
           ];
 }
