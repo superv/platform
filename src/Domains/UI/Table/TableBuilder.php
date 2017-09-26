@@ -206,5 +206,10 @@ class TableBuilder
         $this->listen('querying', $callback);
 
         return $this;
-}
+    }
+
+    public function handle()
+    {
+        return $this->render();
+    }
 }
