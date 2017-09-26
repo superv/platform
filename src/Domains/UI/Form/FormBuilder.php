@@ -3,14 +3,13 @@
 namespace SuperV\Platform\Domains\UI\Form;
 
 use Illuminate\View\Factory;
-use Illuminate\Http\RedirectResponse;
-use Symfony\Component\Form\FormInterface;
-use SuperV\Platform\Traits\FiresCallbacks;
 use SuperV\Platform\Domains\Entry\EntryModel;
-use SuperV\Platform\Domains\UI\Form\Features\MakeForm;
-use SuperV\Platform\Domains\UI\Form\Features\BuildForm;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
+use SuperV\Platform\Domains\UI\Form\Features\BuildForm;
+use SuperV\Platform\Domains\UI\Form\Features\MakeForm;
 use SuperV\Platform\Domains\UI\Form\Jobs\MakeFormButtons;
+use SuperV\Platform\Traits\FiresCallbacks;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class FormBuilder
@@ -38,6 +37,7 @@ class FormBuilder
      */
     private $view;
 
+    private $formAttributes = [];
 
     public function __construct(Form $form, Factory $view)
     {
@@ -62,10 +62,8 @@ class FormBuilder
         return in_array($field, $this->skips);
     }
 
-    public function make($entry)
+    public function make()
     {
-        $this->entry = $entry;
-
         $this->build();
 
         $this->serve(new MakeForm($this));
@@ -85,16 +83,24 @@ class FormBuilder
                 $this->entry->save();
                 $this->fire('saved', ['entry' => $this->entry]);
 
-                return redirect()->back()->withSuccess('Entry saved!');
+                if (!request()->wantsJson()) {
+                    return redirect()->back()->withSuccess('Entry saved!');
+                } else {
+                    return response()->json(['status' => 'ok']);
+                }
             }
         }
 
         return $this;
     }
 
-    public function render($entry)
+    public function render($entry = null)
     {
-        $response = $this->make($entry);
+        if ($entry) {
+            $this->setEntry($entry);
+        }
+
+        $response = $this->make();
         if ($response instanceof Response) {
             return $response;
         }
@@ -112,6 +118,18 @@ class FormBuilder
     public function getEntry()
     {
         return $this->entry;
+    }
+
+    /**
+     * @param EntryModel $entry
+     *
+     * @return FormBuilder
+     */
+    public function setEntry(EntryModel $entry): FormBuilder
+    {
+        $this->entry = $entry;
+
+        return $this;
     }
 
     /**
@@ -159,6 +177,18 @@ class FormBuilder
 
     public function isFormMode($mode)
     {
-        return  $this->getForm()->getMode() == $mode;
+        return $this->getForm()->getMode() == $mode;
+    }
+
+    public function getFormAttributes()
+    {
+
+        $attributes = $this->formAttributes;
+
+        if ($this->ajax) {
+            array_set($attributes, 'class', 'ajax');
+        }
+
+        return $attributes;
     }
 }
