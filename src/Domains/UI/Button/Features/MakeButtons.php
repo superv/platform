@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\UI\Button\Features;
 
-use SuperV\Platform\Support\Hydrator;
+use SuperV\Platform\Support\Inflator;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\UI\Button\Button;
 use SuperV\Platform\Domains\UI\Button\ButtonRegistry;
@@ -64,14 +64,6 @@ class MakeButtons
         $params = $this->dispatch(new EvaluateButton($params, $this->arguments));
         $params = $this->dispatch(new NormalizeButton($params, $this->arguments));
 
-        // hydrate button
-        return app(Hydrator::class)->hydrate(app(Button::class), $params);
-//        $button = app(Button::class);
-//        $button->button = array_get($params, 'button');
-//        $button->attributes = array_get($params, 'attributes', []);
-//        $button->text = array_get($params, 'text', 'Button');
-//        $button->type = array_get($params, 'type', 'default');
-//
-//        return $button;
+        return app(Inflator::class)->inflate(app(Button::class), $params);
     }
 }

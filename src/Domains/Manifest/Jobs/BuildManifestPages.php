@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Manifest\Jobs;
 use SuperV\Platform\Domains\Manifest\ManifestBuilder;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Domains\UI\Page\PageBuilder;
-use SuperV\Platform\Support\Hydrator;
 
 class BuildManifestPages
 {
