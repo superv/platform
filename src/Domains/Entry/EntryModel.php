@@ -4,7 +4,6 @@ namespace SuperV\Platform\Domains\Entry;
 
 use Closure;
 use Robbo\Presenter\PresentableInterface;
-use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Domains\Model\EloquentModel;
 use SuperV\Platform\Domains\Entry\Traits\RoutableTrait;
 use SuperV\Platform\Domains\Entry\Traits\PresentableTrait;
@@ -102,7 +101,7 @@ class EntryModel extends EloquentModel implements PresentableInterface
      *
      * @return Page
      */
-    public function page_deprecated($verb)
+    public function page($verb)
     {
         /** @var Page $page */
         if ($page = superv('pages')->byModel(get_class($this))->get($verb)) {
