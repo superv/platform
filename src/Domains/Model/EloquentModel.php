@@ -28,4 +28,9 @@ class EloquentModel extends Model
     {
         return $this->titleColumn;
     }
+
+    public function newEloquentBuilder($query)
+    {
+        return new EloquentQueryBuilder($query);
+    }
 }

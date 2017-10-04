@@ -3,10 +3,12 @@
 namespace SuperV\Platform\Domains\Entry;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
+use Ramsey\Uuid\Uuid;
 use Robbo\Presenter\PresentableInterface;
-use SuperV\Platform\Domains\Model\EloquentModel;
-use SuperV\Platform\Domains\Entry\Traits\RoutableTrait;
 use SuperV\Platform\Domains\Entry\Traits\PresentableTrait;
+use SuperV\Platform\Domains\Entry\Traits\RoutableTrait;
+use SuperV\Platform\Domains\Model\EloquentModel;
 
 class EntryModel extends EloquentModel implements PresentableInterface
 {
@@ -20,7 +22,11 @@ class EntryModel extends EloquentModel implements PresentableInterface
 
     protected $cache;
 
+    protected $modelSlug;
+
     protected $onCreate;
+
+    protected $hasUUID;
 
     protected static function boot()
     {
@@ -37,6 +43,17 @@ class EntryModel extends EloquentModel implements PresentableInterface
 
         if ($events && ! $observing) {
             self::observe(EntryObserver::class);
+        }
+
+        if ($instance->hasUUID) {
+            $instance->incrementing = false;
+            static::creating(function (Model $model) {
+                if (! isset($model->attributes[$model->getKeyName()])) {
+                    $model->incrementing = false;
+                    $uuid = Uuid::uuid4();
+                    $model->attributes[$model->getKeyName()] = str_replace('-', '', $uuid->toString());
+                }
+            });
         }
 
         parent::boot();
@@ -57,6 +74,14 @@ class EntryModel extends EloquentModel implements PresentableInterface
     }
 
     /**
+     * @return array
+     */
+    public function getRelationships(): array
+    {
+        return $this->relationships;
+    }
+
+    /**
      * @param array $relationships
      *
      * @return EntryModel
@@ -66,14 +91,6 @@ class EntryModel extends EloquentModel implements PresentableInterface
         $this->relationships = $relationships;
 
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRelationships(): array
-    {
-        return $this->relationships;
     }
 
     /**
@@ -107,5 +124,17 @@ class EntryModel extends EloquentModel implements PresentableInterface
         if ($page = superv('pages')->byModel(get_class($this))->get($verb)) {
             return $page->setEntry($this);
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSlug()
+    {
+        if ($this->modelSlug) {
+            return $this->modelSlug;
+        }
+
+        return str_replace("\\", ".", strtolower(get_class($this)));
     }
 }

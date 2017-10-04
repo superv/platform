@@ -3,9 +3,13 @@
 namespace SuperV\Platform\Domains\Entry;
 
 use SuperV\Platform\Contracts\Dispatcher;
+use SuperV\Platform\Domains\Entry\Generic\Features\CreateGenericEntry;
+use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 
 class EntryObserver
 {
+    use ServesFeaturesTrait;
+
     protected $events;
 
     public function __construct(Dispatcher $events)
@@ -22,6 +26,8 @@ class EntryObserver
         if ($callback = $entry->getOnCreateCallback()) {
             return call_user_func($callback, $entry);
         }
+
+        $this->dispatch(new CreateGenericEntry($entry));
     }
 
     public function updating(EntryModel $entry)
@@ -30,11 +36,6 @@ class EntryObserver
 
     public function updated(EntryModel $entry)
     {
-    }
-
-    public function updatedMultiple(EntryModel $entry)
-    {
-        $entry->flushCache();
     }
 
     public function saving(EntryModel $entry)

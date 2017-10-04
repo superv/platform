@@ -56,6 +56,11 @@ class PlatformServiceProvider extends ServiceProvider
             'uses' => 'SuperV\Platform\Http\Controllers\Entry\EditEntryController@index',
             'port' => 'acp',
         ],
+        'platform/entries/{entry}' => [
+            'as'   => 'superv::entries.show',
+            'uses' => 'SuperV\Platform\Http\Controllers\Entry\EntriesController@show',
+            'port' => 'acp',
+        ],
     ];
 
     protected $providers = [
