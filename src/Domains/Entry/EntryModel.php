@@ -28,6 +28,8 @@ class EntryModel extends EloquentModel implements PresentableInterface
 
     protected $hasUUID;
 
+    protected $hidden = ['created_at', 'updated_at'];
+
     protected static function boot()
     {
         $instance = new static;

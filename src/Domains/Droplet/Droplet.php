@@ -150,6 +150,11 @@ class Droplet
         return $this->model;
     }
 
+    public function getModelId()
+    {
+        return $this->model->getId();
+    }
+
     public function setModel(DropletModel $model)
     {
         $this->model = $model;

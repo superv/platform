@@ -11,7 +11,9 @@ trait RegistersRoutes
     protected function disperseRoutes(array $routes, \Closure $callable = null)
     {
         foreach ($routes as $uri => $data) {
+
             $data = ! is_array($data) ? ['uses' => $data] : $data;
+
             if ($callable) {
                 $data = call_user_func($callable, $data);
             }
@@ -43,8 +45,12 @@ trait RegistersRoutes
         $router = app('router');
         foreach ($port->getRoutes() as $uri => $data) {
             $middlewares = array_pull($data, 'middleware', []);
+            if (str_contains($uri, '@')) {
+                list($verb, $uri) = explode('@', $uri);
+            } else {
+                $verb = array_pull($data, 'verb', 'any');
+            }
 
-            $verb = array_pull($data, 'verb', 'any');
             /** @var Route $route */
             $route = $router->{$verb}($uri, $data);
             $route->where(array_pull($data, 'constraints', []));

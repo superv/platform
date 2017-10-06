@@ -3,8 +3,6 @@
 namespace SuperV\Platform\Domains\Droplet\Jobs;
 
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
-use SuperV\Platform\Domains\Droplet\Port\ActivePort;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 
 /**
@@ -20,12 +18,12 @@ class GetPortRoutes
      */
     private $provider;
 
-    public function __construct(DropletServiceProvider $provider)
+    public function __construct($provider)
     {
         $this->provider = $provider;
     }
 
-    public function handle(Request $request, PortCollection $ports, ActivePort $activePort)
+    public function handle(Request $request, PortCollection $ports)
     {
         $routes = [];
 

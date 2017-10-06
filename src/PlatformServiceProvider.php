@@ -17,6 +17,7 @@ use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletSeedCommand;
 use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Droplet\DropletManager;
+use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActivePort;
@@ -45,23 +46,7 @@ class PlatformServiceProvider extends ServiceProvider
     use RegistersRoutes;
     use BindsToContainer;
 
-    protected $routes = [
-        'platform/entries/{ticket}/delete' => [
-            'as'   => 'superv::entries.delete',
-            'uses' => 'SuperV\Platform\Http\Controllers\Entry\DeleteEntryController@index',
-            'port' => 'acp',
-        ],
-        'platform/entries/{ticket}/edit'   => [
-            'as'   => 'superv::entries.edit',
-            'uses' => 'SuperV\Platform\Http\Controllers\Entry\EditEntryController@index',
-            'port' => 'acp',
-        ],
-        'platform/entries/{entry}' => [
-            'as'   => 'superv::entries.show',
-            'uses' => 'SuperV\Platform\Http\Controllers\Entry\EntriesController@show',
-            'port' => 'acp',
-        ],
-    ];
+    protected $platform;
 
     protected $providers = [
         PlatformEventProvider::class,
@@ -129,7 +114,11 @@ class PlatformServiceProvider extends ServiceProvider
         $this->setupConfig();
         $this->bootDroplets();
         $this->manifestPlatform();
-        $this->disperseRoutes($this->routes);
+
+        $routes = $this->dispatch(new GetPortRoutes($this));
+        $routes = array_merge($this->routes, $routes);
+        $this->disperseRoutes($routes);
+
         $this->detectActivePort();
 
         Debugbar::stopMeasure('platform.boot');
@@ -158,11 +147,11 @@ class PlatformServiceProvider extends ServiceProvider
     protected function registerPlatform(): void
     {
         $this->app->singleton('superv.platform', function () {
-            $platform = new Platform(DropletModel::where('name', 'platform')->first());
+            $this->platform = new Platform(DropletModel::where('name', 'platform')->first());
 
-            superv('droplets')->put('superv.platform', $platform);
+            superv('droplets')->put('superv.platform', $this->platform);
 
-            return $platform;
+            return $this->platform;
         });
     }
 
@@ -191,5 +180,11 @@ class PlatformServiceProvider extends ServiceProvider
     protected function detectActivePort(): void
     {
         $this->dispatch(new DetectActivePort());
+    }
+
+    public function getResourcePath($path = null)
+    {
+        return $this->platform->getResourcePath($path);
+//        return $this->droplet->getPath('resources/' . $path);
     }
 }
