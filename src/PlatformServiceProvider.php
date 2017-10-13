@@ -116,7 +116,7 @@ class PlatformServiceProvider extends ServiceProvider
         $this->manifestPlatform();
 
         $routes = $this->dispatch(new GetPortRoutes($this));
-        $routes = array_merge($this->routes, $routes);
+        $routes = array_merge($this->routes ?? [], $routes);
         $this->disperseRoutes($routes);
 
         $this->detectActivePort();
