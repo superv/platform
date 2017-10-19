@@ -32,7 +32,9 @@ trait RegistersRoutes
             }
             /** @var Port $port */
             if (! $port = superv('ports')->bySlug($port)) {
-                throw new \LogicException("Port {$port} not found");
+//                throw new \LogicException("Port {$port} not found");
+                \Log::warning("Port {$port} not found for route: {$uri}");
+                continue;
             }
 
             $port->addRoute($uri, $data);
