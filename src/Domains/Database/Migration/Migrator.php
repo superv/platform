@@ -1,34 +1,22 @@
 <?php
 
-namespace Anomaly\Streams\Platform\Database\Migration;
+namespace SuperV\Platform\Domains\Database\Migration;
 
-use Anomaly\Streams\Platform\Addon\Addon;
+use Illuminate\Database\Migrations\Migrator as BaseMigrator;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Anomaly\Streams\Platform\Database\Migration\Command\Reset;
-use Anomaly\Streams\Platform\Database\Migration\Command\Migrate;
+use SuperV\Platform\Domains\Droplet\Droplet;
 
-/**
- * Class Migrator.
- *
- * @link   http://pyrocms.com/
- * @author PyroCMS, Inc. <support@pyrocms.com>
- * @author Ryan Thompson <ryan@pyrocms.com>
- */
-class Migrator extends \Illuminate\Database\Migrations\Migrator
+class Migrator extends BaseMigrator
 {
     use DispatchesJobs;
 
-    /**
-     * The addon instance.
-     *
-     * @var Addon
-     */
-    protected $addon = null;
+    /** @var Droplet */
+    protected $droplet = null;
 
     /**
      * The migration repository.
      *
-     * @var MigrationRepository
+     * @var DatabaseMigrationRepository
      */
     protected $repository;
 
@@ -37,6 +25,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      *
      * @param array $paths
      * @param array $options
+     *
      * @return array
      */
     public function run($paths = [], array $options = [])
@@ -54,6 +43,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      *
      * @param  array|string $paths
      * @param  bool         $pretend
+     *
      * @return array
      */
     public function reset($paths = [], $pretend = false)
@@ -93,7 +83,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
 
                 $rolledBack[] = $files[$migration];
 
-                $this->runDown($files[$migration], (object) ['migration' => $migration], $pretend);
+                $this->runDown($files[$migration], (object)['migration' => $migration], $pretend);
             }
         }
 
@@ -105,6 +95,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      *
      * @param  array|string $paths
      * @param  array        $options
+     *
      * @return array
      */
     public function rollback($paths = [], array $options = [])
@@ -120,6 +111,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      * @param  string $file
      * @param  int    $batch
      * @param  bool   $pretend
+     *
      * @return void
      */
     protected function runUp($file, $batch, $pretend)
@@ -131,19 +123,13 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
          */
         $migration = $this->resolve($file);
 
-        /*
-         * Set the addon if there is
-         * one contextually available.
-         *
-         * @var Addon
-         */
-        if ($addon = $this->getAddon()) {
-            $migration->setAddon($addon);
-        }
-
         if ($migration instanceof Migration) {
-            $this->dispatch(new Migrate($migration));
-        }
+             if ($droplet = $this->getDroplet()) {
+                    $migration->setDroplet($droplet);
+                }
+//            $this->dispatch(new Migrate($migration));
+         }
+
 
         parent::runUp($file, $batch, $pretend);
     }
@@ -154,6 +140,7 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
      * @param  string $file
      * @param  object $migration
      * @param  bool   $pretend
+     *
      * @return void
      */
     protected function runDown($file, $migration, $pretend)
@@ -165,69 +152,53 @@ class Migrator extends \Illuminate\Database\Migrations\Migrator
          */
         $migration = $this->resolve($file);
 
-        /*
-         * Set the addon if there is
-         * one contextually available.
-         *
-         * @var Addon
-         */
-        if ($addon = $this->getAddon()) {
-            $migration->setAddon($addon);
-        }
+
 
         if ($migration instanceof Migration) {
-            $this->dispatch(new Reset($migration));
+            if ($droplet = $this->getDroplet()) {
+                   $migration->setDroplet($droplet);
+               }
+//            $this->dispatch(new Reset($migration));
         }
 
         parent::runDown($file, $migration, $pretend);
     }
 
-    /**
-     * Resolve a migration instance from a file.
-     *
-     * @param  string $file
-     * @return object
-     */
     public function resolve($file)
     {
-        $migration = app((new MigrationName($file))->className());
+        $migrationFile = new MigrationName($file);
 
-        $migration->migration = (new MigrationName($file))->migration();
+        $migration = app($migrationFile->className());
+
+        $migration->migration = $migrationFile->migration();
 
         return $migration;
     }
 
-    /**
-     * Set the addon.
-     *
-     * @param Addon $addon
-     */
-    public function setAddon(Addon $addon)
+    public function clearDroplet()
     {
-        $this->addon = $addon;
+        $this->droplet = null;
 
         return $this;
     }
 
     /**
-     * Clear the addon.
-     *
-     * @param Addon $addon
+     * @return Droplet
      */
-    public function clearAddon()
+    public function getDroplet()
     {
-        $this->addon = null;
-
-        return $this;
+        return $this->droplet;
     }
 
     /**
-     * Get the addon.
+     * @param Droplet $droplet
      *
-     * @return Addon
+     * @return Migrator
      */
-    public function getAddon()
+    public function setDroplet(Droplet $droplet)
     {
-        return $this->addon;
+        $this->droplet = $droplet;
+
+        return $this;
     }
 }

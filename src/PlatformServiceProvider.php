@@ -2,20 +2,16 @@
 
 namespace SuperV\Platform;
 
-use davestewart\sketchpad\SketchpadServiceProvider;
 use Debugbar;
+use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\View\Factory;
 use SuperV\Platform\Adapters\AdapterServiceProvider;
 use SuperV\Platform\Contracts\ServiceProvider;
-use SuperV\Platform\Domains\Application\Console\EnvSet;
-use SuperV\Platform\Domains\Application\Console\InstallSuperV;
 use SuperV\Platform\Domains\Config\Jobs\AddConfigNamespace;
+use SuperV\Platform\Domains\Console\ConsoleServiceProvider;
+use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
 use SuperV\Platform\Domains\Database\DatabaseServiceProvider;
-use SuperV\Platform\Domains\Database\Migration\Console\MakeMigrationCommand;
-use SuperV\Platform\Domains\Database\Migration\Console\MigrateCommand;
-use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
-use SuperV\Platform\Domains\Droplet\Console\DropletSeedCommand;
-use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
+use SuperV\Platform\Domains\Database\Migration\DatabaseMigrationRepository;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
@@ -50,6 +46,7 @@ class PlatformServiceProvider extends ServiceProvider
     protected $platform;
 
     protected $providers = [
+        ConsoleServiceProvider::class,
         PlatformEventProvider::class,
         TwigBridgeServiceProvider::class,
         FormServiceProvider::class,
@@ -66,24 +63,14 @@ class PlatformServiceProvider extends ServiceProvider
 
     ];
 
-    protected $bindings = [];
-
-    protected $commands = [
-        DropletInstallCommand::class,
-        DropletSeedCommand::class,
-        MakeMigrationCommand::class,
-        MakeDropletCommand::class,
-        MigrateCommand::class,
-        EnvSet::class,
-        InstallSuperV::class,
+    protected $bindings = [
+//      MigrationRepositoryInterface::class => DatabaseMigrationRepository::class
     ];
 
     public function register()
     {
         $this->app->register(DatabaseServiceProvider::class);
         $this->app->register(AdapterServiceProvider::class);
-
-        $this->registerConsoleCommands();
 
 //        app(Bridge::class)->addExtension(app(AsseticExtension::class));
 
@@ -119,6 +106,9 @@ class PlatformServiceProvider extends ServiceProvider
         $routes = $this->dispatch(new GetPortRoutes($this));
         $routes = array_merge($this->routes ?? [], $routes);
         $this->disperseRoutes($routes);
+
+
+        $this->registerConsoleCommands();
 
         $this->detectActivePort();
 
@@ -170,7 +160,8 @@ class PlatformServiceProvider extends ServiceProvider
 
     protected function registerConsoleCommands(): void
     {
-        $this->commands($this->commands);
+        $this->dispatch(new RegisterConsoleCommands($this->platform));
+//        $this->commands($this->commands);
     }
 
     protected function manifestPlatform(): void
@@ -187,6 +178,7 @@ class PlatformServiceProvider extends ServiceProvider
     {
         return $this->platform->getResourcePath($path);
     }
+
     public function getPath($path = null)
     {
         return $this->platform->getPath($path);

@@ -16,13 +16,4 @@ class PortCollection extends Collection
         }
     }
 
-    public function bySlug($slug)
-    {
-        /** @var \SuperV\Platform\Domains\Droplet\Port\Port $port */
-        foreach ($this->items as $port) {
-            if ($port->getSlug() == $slug) {
-                return $port;
-            }
-        }
-    }
 }
