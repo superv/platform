@@ -58,7 +58,6 @@ class IntegrateDroplet extends Feature
         //
         // Add config namespace
 
-        $this->dispatch(new AddConfigNamespace($droplet->getSlug(), base_path($droplet->getResourcePath('config'))));
-
+        $this->dispatch(new AddConfigNamespace($droplet->getSlug(), base_path($droplet->getPath('config'))));
     }
 }

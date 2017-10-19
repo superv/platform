@@ -25,10 +25,7 @@ class CreateGenericEntry extends Feature
             return;
         }
 
-        $modelEntry = $genericModel->firstOrCreate([
-            'model' => get_class($this->entry),
-            'slug'  => $this->entry->getSlug(),
-        ]);
+        $modelEntry = $genericModel->firstOrCreate(['model' => get_class($this->entry)], ['slug' => $this->entry->getSlug()]);
 
         $genericEntry->create(
             [

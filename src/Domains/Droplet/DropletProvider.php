@@ -7,6 +7,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Dispatcher;
+use SuperV\Platform\Domains\Config\Jobs\AddConfigNamespace;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
@@ -84,6 +85,7 @@ class DropletProvider
 
         $this->dispatch(new ManifestDroplet($droplet));
 
+        // TODO: booting should be done after all droplets are registered
         if (method_exists($provider, 'boot')) {
             $this->app->call([$provider, 'boot'], ['provider' => $this]);
         }

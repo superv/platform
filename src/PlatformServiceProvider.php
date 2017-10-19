@@ -46,6 +46,7 @@ class PlatformServiceProvider extends ServiceProvider
     use RegistersRoutes;
     use BindsToContainer;
 
+    /** @var  Platform */
     protected $platform;
 
     protected $providers = [
@@ -185,6 +186,9 @@ class PlatformServiceProvider extends ServiceProvider
     public function getResourcePath($path = null)
     {
         return $this->platform->getResourcePath($path);
-//        return $this->droplet->getPath('resources/' . $path);
+    }
+    public function getPath($path = null)
+    {
+        return $this->platform->getPath($path);
     }
 }

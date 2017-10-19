@@ -23,9 +23,11 @@ class CreateDropletPaths
         $filesystem->makeDirectory($path, 0755, true, true);
         $filesystem->makeDirectory("{$path}/src", 0755, true, true);
         $filesystem->makeDirectory("{$path}/src/Domains", 0755, true, true);
-        $filesystem->makeDirectory("{$path}/src/Feature", 0755, true, true);
+        $filesystem->makeDirectory("{$path}/src/Features", 0755, true, true);
         $filesystem->makeDirectory("{$path}/src/Console", 0755, true, true);
         $filesystem->makeDirectory("{$path}/resources", 0755, true, true);
+        $filesystem->makeDirectory("{$path}/routes", 0755, true, true);
+        $filesystem->makeDirectory("{$path}/config", 0755, true, true);
         $filesystem->makeDirectory("{$path}/database/migrations", 0755, true, true);
     }
 }

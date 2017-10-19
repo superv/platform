@@ -17,8 +17,12 @@ class DetectActivePort
         if (app()->runningInConsole()) {
             return;
         }
-        if (! $port = $ports->byHostname($request->getHttpHost())) {
-            throw new \LogicException('This should not happen!: '.$request->getHttpHost());
+        $httpHost = $request->getHttpHost();
+        if (! $port = $ports->byHostname($httpHost)) {
+//            throw new \LogicException('This should not happen!: '.$request->getHttpHost());
+            \Log::warning("Unknown hostname {$httpHost}, can not detect active port");
+
+            return;
         }
 
         app()->bindIf(ActivePort::class, function () use ($port) { return $port; }, true);

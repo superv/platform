@@ -8,8 +8,8 @@ use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 /**
  * Class GetPortRoutes.
  *
- * Determines the current Port from hostname, and returns
- * relevant routes for that Port
+ * Determines the current Port from hostname,
+ * and returns relevant routes
  */
 class GetPortRoutes
 {
@@ -18,6 +18,8 @@ class GetPortRoutes
      */
     private $provider;
 
+    private $routes = [];
+
     public function __construct($provider)
     {
         $this->provider = $provider;
@@ -25,30 +27,32 @@ class GetPortRoutes
 
     public function handle(Request $request, PortCollection $ports)
     {
-        $routes = [];
 
         $currentHostname = trim(str_replace(['http://', 'https://'], '', $request->root()), '/');
         if ($port = $ports->byHostname($currentHostname)) {
             $portName = $port->getName();
-            $routesFile = base_path($this->provider->getResourcePath("routes/{$portName}.php"));
-            if (file_exists($routesFile)) {
-                $include = require $routesFile;
-                if (is_array($include)) {
-                    $routes = array_merge($include, $routes);
 
-                    if (! empty($routes)) {
-                        foreach ($routes as $route => &$data) {
-                            if (! is_array($data)) {
-                                $data = ['uses' => $data];
-                            }
+            $this->mergeRouteFile(base_path($this->provider->getPath("routes/{$portName}.php")));
 
-                            array_set($data, 'superv::port', $port->getSlug());
-                        }
-                    }
+            foreach ($this->routes as $route => &$data) {
+                if (! is_array($data)) {
+                    $data = ['uses' => $data];
                 }
+
+                array_set($data, 'superv::port', $port->getSlug());
             }
         }
 
-        return $routes;
+        return $this->routes;
+    }
+
+    protected function mergeRouteFile($routesFile)
+    {
+        if (file_exists($routesFile)) {
+            $include = require $routesFile;
+            if (is_array($include)) {
+                $this->routes = array_merge($include, $this->routes);
+            }
+        }
     }
 }
