@@ -158,7 +158,7 @@ class PlatformServiceProvider extends ServiceProvider
     protected function registerDevTools(): void
     {
         if ($this->app->environment() == 'local') {
-            $this->app->register(SketchpadServiceProvider::class);
+//            $this->app->register(SketchpadServiceProvider::class);
         }
 
         $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);

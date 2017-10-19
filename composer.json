@@ -31,14 +31,6 @@
         "symfony/validator": "^3.3",
         "twig/twig": "~2.4",
         "tymon/jwt-auth": "^0.5.11"
-    },
-    "require-dev": {
-        "barryvdh/laravel-ide-helper": "~2.3",
-        "fzaninotto/faker": "~1.4",
-        "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~6.0",
-        "davestewart/sketchpad": "^1.2",
-        "barryvdh/laravel-debugbar": "~2.3"
     }
     
 }
