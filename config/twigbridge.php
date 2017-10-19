@@ -98,23 +98,23 @@ return [
         |
         */
         'enabled' => [
-            'TwigBridge\Extension\Loader\Facades',
-            'TwigBridge\Extension\Loader\Filters',
-            'TwigBridge\Extension\Loader\Functions',
+            'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Loader\Facades',
+            'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Loader\Filters',
+            'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Loader\Functions',
 
-            'TwigBridge\Extension\Laravel\Auth',
-            'TwigBridge\Extension\Laravel\Config',
-            'TwigBridge\Extension\Laravel\Dump',
-            'TwigBridge\Extension\Laravel\Input',
-            'TwigBridge\Extension\Laravel\Session',
-            'TwigBridge\Extension\Laravel\Str',
-            'TwigBridge\Extension\Laravel\Translator',
-            'TwigBridge\Extension\Laravel\Url',
-            // 'TwigBridge\Extension\Laravel\Gate',
+            'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Auth',
+            'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Config',
+            'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Dump',
+            'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Input',
+            'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Session',
+            'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Str',
+            'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Translator',
+            'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Url',
+            // 'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Gate',
 
-            // 'TwigBridge\Extension\Laravel\Form',
-            // 'TwigBridge\Extension\Laravel\Html',
-            // 'TwigBridge\Extension\Laravel\Legacy\Facades',
+            // 'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Form',
+            // 'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Html',
+            // 'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Legacy\Facades',
         ],
 
         /*
