@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+use SuperV\Platform\Domains\View\Extensions\PlatformExtension;
+
 /**
  * Configuration options for Twig.
  */
@@ -46,7 +48,7 @@ return [
 
             // The base template class to use for generated templates.
             // default: TwigBridge\Twig\Template
-            'base_template_class' => 'TwigBridge\Twig\Template',
+            'base_template_class' => 'SuperV\Platform\Domains\View\Twig\Bridge\Twig\Template',
 
             // An absolute path where to store the compiled templates, or false to disable caching. If null
             // then the cache file path is used.
@@ -113,8 +115,9 @@ return [
             // 'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Gate',
 
             // 'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Form',
-            // 'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Html',
+             'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Html',
             // 'SuperV\Platform\Domains\View\Twig\Bridge\Extension\Laravel\Legacy\Facades',
+            PlatformExtension::class
         ],
 
         /*
@@ -178,7 +181,6 @@ return [
             'elixir',
             'head',
             'last',
-            'mix',
         ],
 
         /*
