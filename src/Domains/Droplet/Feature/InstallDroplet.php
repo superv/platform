@@ -2,11 +2,11 @@
 
 namespace SuperV\Platform\Domains\Droplet\Feature;
 
-use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\Droplet\Jobs\LocateDropletJob;
-use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModelJob;
 use SuperV\Platform\Domains\Composer\Jobs\GetBaseNamespaceJob;
 use SuperV\Platform\Domains\Composer\Jobs\GetComposerArrayJob;
+use SuperV\Platform\Domains\Droplet\Jobs\LocateDropletJob;
+use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModelJob;
+use SuperV\Platform\Domains\Feature\Feature;
 
 /**
  * Class InstallDroplet.
@@ -43,6 +43,11 @@ class InstallDroplet extends Feature
 
         $model->enabled = true;
 
-        return $model->save();
+        $model->save();
+
+        $this->dispatch(new LoadDroplet($this->path));
+        $this->dispatch(new IntegrateDroplet($model));
+
+        return true;
     }
 }

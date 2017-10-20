@@ -7,11 +7,13 @@ use SuperV\Platform\Domains\Droplet\Feature\UninstallDroplet;
 
 class DropletUninstallCommand extends Command
 {
-    protected $signature = 'droplet:uninstall {slug}';
+    protected $signature = 'droplet:uninstall {droplet}';
 
     public function handle()
     {
-        $slug = $this->argument('slug');
+        $slug = $this->argument('droplet');
+        $this->call('migrate:reset', ['--droplet' => $slug]);
+
         if ($this->serve(new UninstallDroplet($slug))) {
             $this->info('The ['.$slug.'] droplet successfully uninstalled.');
         } else {
