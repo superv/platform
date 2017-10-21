@@ -50,14 +50,14 @@ class IntegrateDroplet extends Feature
 
         $provider->register($droplet);
 
-        //
-        // Add view namespace
-        //
-        $views->addNamespace($model->getSlug(), [base_path($droplet->getPath('resources/views'))]);
-
-        //
-        // Add config namespace
+        /**
+         *  Add namespaces for view and config,
+         *  Both for "name::" and "superv.type.name::"
+         */
+        $views->addNamespace($droplet->getSlug(), [base_path($droplet->getPath('resources/views'))]);
+        $views->addNamespace($droplet->getName(), [base_path($droplet->getPath('resources/views'))]);
 
         $this->dispatch(new AddConfigNamespace($droplet->getSlug(), base_path($droplet->getPath('config'))));
+        $this->dispatch(new AddConfigNamespace($droplet->getName(), base_path($droplet->getPath('config'))));
     }
 }
