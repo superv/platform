@@ -48,6 +48,13 @@ class InstallDroplet extends Feature
         $this->dispatch(new LoadDroplet($this->path));
         $this->dispatch(new IntegrateDroplet($model));
 
+        if ($model->getType() == 'port') {
+            $where = public_path("ports/{$model->getName()}");
+            $what = base_path($model->getPath('public'));
+            \Log::info("where $where what $what");
+            symlink($what, $where);
+        }
+
         return true;
     }
 }
