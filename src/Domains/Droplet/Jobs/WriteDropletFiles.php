@@ -19,7 +19,7 @@ class WriteDropletFiles
     public function handle(Filesystem $filesystem, Parser $parser)
     {
         $name = ucfirst(camel_case($this->model->getName()));
-        $type = ucfirst(camel_case($this->model->type()));
+        $type = ucfirst(camel_case($this->model->getType()));
 
         $path = base_path($this->model->path());
 

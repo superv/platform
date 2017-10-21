@@ -41,7 +41,7 @@ class DropletModel extends DropletEntryModel
         return $this->name;
     }
 
-    public function type()
+    public function getType()
     {
         return $this->type;
     }
