@@ -48,7 +48,6 @@ class TwigBridgeServiceProvider extends ViewServiceProvider
      */
     public function boot()
     {
-        $this->loadConfiguration();
         $this->registerExtension();
     }
 
@@ -104,11 +103,11 @@ class TwigBridgeServiceProvider extends ViewServiceProvider
     protected function registerOptions()
     {
         $this->app->bindIf('twig.extension', function () {
-            return $this->app['config']->get('twigbridge.twig.extension');
+            return config('platform::twigbridge.twig.extension');
         });
 
         $this->app->bindIf('twig.options', function () {
-            $options = $this->app['config']->get('twigbridge.twig.environment', []);
+            $options = config('platform::twigbridge.twig.environment', []);
 
             // Check whether we have the cache path set
             if (! isset($options['cache']) || is_null($options['cache'])) {
@@ -120,7 +119,7 @@ class TwigBridgeServiceProvider extends ViewServiceProvider
         });
 
         $this->app->bindIf('twig.extensions', function () {
-            $load = $this->app['config']->get('twigbridge.extensions.enabled', []);
+            $load = config('platform::twigbridge.extensions.enabled', []);
 
             // Is debug enabled?
             // If so enable debug extension
@@ -235,7 +234,7 @@ class TwigBridgeServiceProvider extends ViewServiceProvider
             return new Engine\Twig(
                 $this->app['twig.compiler'],
                 $this->app['twig.loader.viewfinder'],
-                $this->app['config']->get('twigbridge.twig.globals', [])
+                config('platform::twigbridge.twig.globals', [])
             );
         });
     }

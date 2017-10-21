@@ -3,15 +3,12 @@
 namespace SuperV\Platform;
 
 use Debugbar;
-use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\View\Factory;
 use SuperV\Platform\Adapters\AdapterServiceProvider;
 use SuperV\Platform\Contracts\ServiceProvider;
-use SuperV\Platform\Domains\Config\Jobs\AddConfigNamespace;
 use SuperV\Platform\Domains\Console\ConsoleServiceProvider;
 use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
 use SuperV\Platform\Domains\Database\DatabaseServiceProvider;
-use SuperV\Platform\Domains\Database\Migration\DatabaseMigrationRepository;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
@@ -77,6 +74,7 @@ class PlatformServiceProvider extends ServiceProvider
         if (! env('SUPERV_INSTALLED', false)) {
             return;
         }
+        $this->setupConfig();
 
         $this->registerBindings($this->bindings);
         $this->registerProviders($this->providers);
@@ -99,14 +97,12 @@ class PlatformServiceProvider extends ServiceProvider
          */
 
         $this->setupView();
-        $this->setupConfig();
         $this->bootDroplets();
         $this->manifestPlatform();
 
         $routes = $this->dispatch(new GetPortRoutes($this));
         $routes = array_merge($this->routes ?? [], $routes);
         $this->disperseRoutes($routes);
-
 
         $this->registerConsoleCommands();
 
@@ -125,17 +121,23 @@ class PlatformServiceProvider extends ServiceProvider
         superv('view.template')->set('menu', superv('navigation'));
     }
 
-    protected function bootDroplets(): void
+    protected function bootDroplets()
     {
         app(DropletManager::class)->boot();
     }
 
-    protected function setupConfig(): void
+    protected function setupConfig()
     {
-        $this->dispatch(new AddConfigNamespace('superv', superv('platform')->getResourcePath('config')));
+        foreach (glob(__DIR__.'/../config/*') as $path) {
+            $key = pathinfo($path, PATHINFO_FILENAME);
+            $config = config()->get("superv.{$key}", []);
+
+            $merged = array_replace(require $path, $config);
+            config()->set('platform::'.$key, $merged);
+        }
     }
 
-    protected function registerPlatform(): void
+    protected function registerPlatform()
     {
         $this->app->singleton('superv.platform', function () {
             $this->platform = new Platform(DropletModel::where('name', 'platform')->first());

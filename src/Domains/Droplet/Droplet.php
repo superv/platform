@@ -79,6 +79,11 @@ class Droplet
         return $this->model->getPath($path);
     }
 
+    public function getBasePath($path = null)
+    {
+        return base_path($this->model->getPath($path));
+    }
+
     public function getResourcePath($path)
     {
         return $this->getPath("resources/{$path}");
@@ -150,16 +155,16 @@ class Droplet
         return $this->model;
     }
 
-    public function getModelId()
-    {
-        return $this->model->getId();
-    }
-
     public function setModel(DropletModel $model)
     {
         $this->model = $model;
 
         return $this;
+    }
+
+    public function getModelId()
+    {
+        return $this->model->getId();
     }
 
     /**
@@ -194,6 +199,4 @@ class Droplet
 
         return $this;
     }
-
-
 }
