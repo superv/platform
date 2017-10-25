@@ -4,9 +4,11 @@ namespace SuperV\Platform\Domains\Model;
 
 use SuperV\Platform\Contracts\Container;
 use SuperV\Platform\Domains\Entry\EntryModel;
+use SuperV\Platform\Traits\EnforcableTrait;
 
 class EloquentRepository implements RepositoryInterface
 {
+    use EnforcableTrait;
     /** @var \Illuminate\Database\Eloquent\Builder */
     protected $query;
 
