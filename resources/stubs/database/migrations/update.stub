@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Schema\Blueprint;
-use Anomaly\Streams\Platform\Database\Migration\Migration;
+use SuperV\Platform\Domains\Database\Migration\Migration;
 
 class {class} extends Migration
 {
