@@ -4,25 +4,26 @@ namespace SuperV\Platform\Domains\Database\Migration\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Console\Kernel;
+use SuperV\Platform\Domains\Droplet\DropletFactory;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
 
-class MakeMigrationCommand extends Command
+class DropletMigrationCommand extends Command
 {
     protected $signature = 'droplet:migration {droplet} {name} {--create}';
 
-    public function handle(Droplets $droplets, Kernel $kernel)
+    public function handle(Droplets $droplets, Kernel $kernel, DropletFactory $factory)
     {
-        if (! $droplet = $droplets->withSlug($this->argument('droplet'))) {
+        if (! $droplet = $factory->fromSlug($this->argument('droplet'))) {
             throw new \InvalidArgumentException("Droplet [{$this->argument('droplet')} not found]");
         }
 
         $options = [
-            '--path' => $droplet->path.'/database/migrations',
+            '--droplet' => $droplet->getSlug()
         ];
 
         $name = $this->argument('name');
         if ($this->option('create')) {
-            $table = "{$droplet->name}_{$name}";
+            $table = "{$droplet->getName()}_{$name}";
             array_set($options, '--create', $table);
             array_set($options, 'name', "create_{$table}_table");
         } else {

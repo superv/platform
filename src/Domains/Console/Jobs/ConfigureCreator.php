@@ -41,11 +41,12 @@ class ConfigureCreator
     {
         $this->droplet = $droplet;
         $this->input = $input;
+        $this->creator = $creator;
     }
 
     public function handle(DropletFactory $factory)
     {
-        if (!$this->droplet) {
+        if (! $this->droplet) {
             return;
         }
 
@@ -53,13 +54,14 @@ class ConfigureCreator
         if (! $droplet = $factory->fromSlug($this->droplet)) {
             throw new \InvalidArgumentException("Droplet {$this->droplet} not found");
         }
-        $this->input->setArgument('name', $droplet->getSlug() . '__' . $this->input->getArgument('name'));
+        $this->creator->setDroplet($droplet);
+
+        $this->input->setArgument('name', $droplet->getSlug().'__'.$this->input->getArgument('name'));
 
         $this->input->setOption('path', $droplet->getPath('database/migrations'));
 
-        if (!is_dir($directory = $droplet->getPath('database/migrations'))) {
+        if (! is_dir($directory = $droplet->getPath('database/migrations'))) {
             mkdir($directory);
         }
-
     }
 }

@@ -4,17 +4,16 @@ namespace SuperV\Platform\Domains\Database\Migration;
 
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use SuperV\Platform\Domains\Droplet\Droplet;
 
 abstract class Migration extends \Illuminate\Database\Migrations\Migration
 {
-
     use DispatchesJobs;
 
-
+    /** @var  Droplet */
     protected $droplet;
 
     protected $namespace;
-
 
     /**
      * Return the schema builder.
@@ -79,6 +78,24 @@ abstract class Migration extends \Illuminate\Database\Migrations\Migration
         $this->namespace = $namespace;
 
         return $this;
+    }
+
+    protected function guessNamespace()
+    {
+        $pattern = '/Module([A-Z][a-z]+)[A-Z]/';
+
+        preg_match($pattern, get_class($this), $matches);
+
+        return strtolower($matches[1]);
+    }
+
+    protected function guessVendor()
+    {
+        $pattern = '/([A-Z][a-z]+)Module/';
+
+        preg_match($pattern, get_class($this), $matches);
+
+        return strtolower($matches[1]);
     }
 
 
