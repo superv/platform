@@ -204,4 +204,9 @@ class Droplet
     {
         return $this->model->getNamespace();
     }
+
+    public function destroy()
+    {
+        $this->model->delete();
+    }
 }
