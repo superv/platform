@@ -5,9 +5,12 @@ namespace SuperV\Platform\Domains\Droplet;
 use SuperV\Platform\Contracts\Container;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
+use SuperV\Platform\Traits\EnforcableTrait;
 
 class DropletFactory
 {
+    use EnforcableTrait;
+
     /**
      * @var Container
      */
