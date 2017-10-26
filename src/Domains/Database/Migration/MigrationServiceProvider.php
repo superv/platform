@@ -2,10 +2,8 @@
 
 namespace SuperV\Platform\Domains\Database\Migration;
 
-use Illuminate\Database\Migrations\MigrationCreator;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Database\MigrationServiceProvider as BaseMigrationServiceProvider;
-use SuperV\Platform\Domains\Database\Migration\Console\MigrateCommand;
 
 class MigrationServiceProvider extends BaseMigrationServiceProvider
 {
