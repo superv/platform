@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
 
 use Illuminate\Http\Request;
 use Illuminate\View\Factory;
+use SuperV\Platform\Domains\Droplet\DropletFactory;
 use SuperV\Platform\Domains\Droplet\Port\ActivePort;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Traits\RegistersRoutes;
@@ -27,7 +28,13 @@ class DetectActivePort
 
         app()->bindIf(ActivePort::class, function () use ($port) { return $port; }, true);
 
-        $view->addNamespace('port', [base_path($port->getPath('resources/views'))]);
+        if ($themeSlug = $port->getTheme()) {
+            if ($theme = app(DropletFactory::class)->fromSlug($themeSlug)) {
+                $viewsPath = [base_path($theme->getPath('resources/views'))];
+            }
+        }
+
+        $view->addNamespace('port', $viewsPath ?? [base_path($port->getPath('resources/views'))]);
 
         $this->registerRoutes($port);
     }

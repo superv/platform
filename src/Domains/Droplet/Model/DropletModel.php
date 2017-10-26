@@ -15,6 +15,13 @@ class DropletModel extends DropletEntryModel
         return $this->getAttribute('path');
     }
 
+    public function setPath($path)
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
     public function getPath($path = null)
     {
         return $this->path.($path ? '/'.$path : '');
@@ -29,6 +36,25 @@ class DropletModel extends DropletEntryModel
         }
 
         return $this->getAttribute('namespace');
+    }
+
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    public function setNamespace($namespace)
+    {
+        $this->namespace = $namespace;
+
+        return $this;
+    }
+
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+
+        return $this;
     }
 
     public function droplet()

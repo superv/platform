@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Droplet\Feature;
 
 use Illuminate\View\Factory;
-use SuperV\Platform\Domains\Config\Jobs\AddConfigNamespace;
 use SuperV\Platform\Domains\Config\Jobs\EnableConfigFiles;
 use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Droplet\DropletFactory;
@@ -36,6 +35,7 @@ class IntegrateDroplet extends Feature
 
         /** @var Droplet $droplet */
         $droplet = app($class)->setModel($model);
+        $this->dispatch(new EnableConfigFiles($droplet));
 
         $droplets->put($droplet->getSlug(), $droplet);
 
@@ -56,9 +56,10 @@ class IntegrateDroplet extends Feature
          *  Add namespaces for view and config,
          *  Both for "name::" and "superv.type.name::"
          */
-        $views->addNamespace($droplet->getSlug(), [base_path($droplet->getPath('resources/views'))]);
-        $views->addNamespace($droplet->getName(), [base_path($droplet->getPath('resources/views'))]);
+        $viewsPath = [base_path($droplet->getPath('resources/views'))];
+        $views->addNamespace($droplet->getSlug(), $viewsPath);
+        $views->addNamespace($droplet->getName(), $viewsPath);
 
-        $this->dispatch(new EnableConfigFiles($droplet));
+//        $this->dispatch(new EnableConfigFiles($droplet));
     }
 }

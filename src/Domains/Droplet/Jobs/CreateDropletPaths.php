@@ -19,7 +19,7 @@ class CreateDropletPaths
     {
         $this->model->path("{$this->model->path}");
 
-        $path = base_path($this->model->path());
+        $path = base_path($this->model->getPath());
         $filesystem->makeDirectory($path, 0755, true, true);
         $filesystem->makeDirectory("{$path}/src", 0755, true, true);
         $filesystem->makeDirectory("{$path}/src/Domains", 0755, true, true);

@@ -6,6 +6,8 @@ use SuperV\Platform\Domains\Droplet\Droplet;
 
 class Port extends Droplet
 {
+    protected $theme;
+
     protected $hostname;
 
     protected $type = 'port';
@@ -14,22 +16,14 @@ class Port extends Droplet
 
     protected $middlewares = [];
 
-    public function getHostname()
-    {
-        return $this->hostname;
-    }
-
-    public function setHostname($hostname)
-    {
-        $this->hostname = $hostname;
-
-        return $this;
-    }
-
     public function addRoute($uri, $data)
     {
         array_set($this->routes, $uri, $data);
     }
+
+    /**
+     *  Setters & Getters
+     */
 
     /**
      * @return array
@@ -37,6 +31,54 @@ class Port extends Droplet
     public function getRoutes(): array
     {
         return $this->routes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTheme()
+    {
+        return $this->theme;
+    }
+
+    /**
+     * @param mixed $theme
+     *
+     * @return Port
+     */
+    public function setTheme($theme)
+    {
+        $this->theme = $theme;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHostname()
+    {
+        return $this->hostname;
+    }
+
+    /**
+     * @param mixed $hostname
+     *
+     * @return Port
+     */
+    public function setHostname($hostname)
+    {
+        $this->hostname = $hostname;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
     }
 
     /**
@@ -49,13 +91,5 @@ class Port extends Droplet
         $this->middlewares = $middlewares;
 
         return $this;
-}
-
-    /**
-     * @return array
-     */
-    public function getMiddlewares(): array
-    {
-        return $this->middlewares;
     }
 }

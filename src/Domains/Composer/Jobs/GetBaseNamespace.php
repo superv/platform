@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Composer\Jobs;
 
-class GetBaseNamespaceJob
+class GetBaseNamespace
 {
     /**
      * @var array

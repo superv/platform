@@ -18,7 +18,7 @@
 
 {# Render normal buttons as a button #}
 {% if button.attributes.name %}
-    <button class="btn btn-{{ button.size }} btn-{{ button.type }} {{ button.disabled ? 'disabled' }} {{ button.class }}" {{ button.disabled ? 'disabled' }} {{ html_attributes(button.attributes) }}>
+    <button class="btn {{ button.size ? 'btn-' ~btn.size : '' }} btn-{{ button.type }} {{ button.disabled ? 'disabled' }} {{ button.class }}" {{ button.disabled ? 'disabled' }} {{ html_attributes(button.attributes) }}>
         {#{{ button.icon ? icon(button.icon)|raw }}#}
         {{ button.text|raw }}
     </button>

@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
 use SuperV\Platform\Domains\Droplet\Feature\LoadDroplet;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
+use SuperV\Platform\Support\Collection;
 
 class DropletManager
 {
@@ -29,28 +30,29 @@ class DropletManager
 
     public function boot()
     {
+        /** @var Collection $enabled */
+        $enabled = $this->droplets->enabled();
+
+        foreach ($enabled->get() as $model) {
+            $this->serve(new LoadDroplet(base_path($model->path())));
+        }
+
         /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel $model */
-        foreach ($this->droplets->enabled()->where('type', 'port')->get() as $model) {
+        foreach ($enabled->where('type', 'port')->get() as $model) {
 
             $this->bootDroplet($model);
         }
 
-        foreach ($this->droplets->enabled()->where('type','!=', 'port')->get() as $model) {
+        foreach ($this->droplets->enabled()->where('type', '!=', 'port')->get() as $model) {
 
-                 $this->bootDroplet($model);
-             }
+            $this->bootDroplet($model);
+        }
     }
 
     private function bootDroplet($model)
     {
-        \Debugbar::startMeasure("droplet.{$model->getSlug()}", $model->getName());
-
-        \Debugbar::startMeasure('load', 'Load');
-        $this->serve(new LoadDroplet(base_path($model->path())));
-        \Debugbar::stopMeasure('load', 'Load');
+//        $this->serve(new LoadDroplet(base_path($model->path())));
 
         $this->serve(new IntegrateDroplet($model));
-
-        \Debugbar::stopMeasure("droplet.{$model->getSlug()}");
     }
 }

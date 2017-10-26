@@ -80,7 +80,7 @@ class PlatformServiceProvider extends ServiceProvider
         $this->registerProviders($this->providers);
         $this->registerSingletons($this->singletons);
         $this->registerPlatform();
-        $this->registerDevTools();
+//        $this->registerDevTools();
     }
 
     public function boot()
@@ -88,7 +88,6 @@ class PlatformServiceProvider extends ServiceProvider
         if (! env('SUPERV_INSTALLED', false)) {
             return;
         }
-        Debugbar::startMeasure('platform.boot', 'Platform Boot');
 
         /**
          * Refactor idea: instead of registering routes views etc
@@ -107,8 +106,6 @@ class PlatformServiceProvider extends ServiceProvider
         $this->registerConsoleCommands();
 
         $this->detectActivePort();
-
-        Debugbar::stopMeasure('platform.boot');
     }
 
     protected function setupView(): void

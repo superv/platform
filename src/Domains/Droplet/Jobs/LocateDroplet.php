@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Droplet\Jobs;
 
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
-class LocateDropletJob
+class LocateDroplet
 {
     /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel */
     protected $model;
@@ -25,15 +25,15 @@ class LocateDropletJob
 
         foreach ($this->paths as $path) {
             foreach ($clues as $clue) {
-                $path = "{$path}/{$clue}";
+                $path = starts_with($clue, $this->paths) ? $clue : "{$path}/{$clue}";
                 if (is_dir(base_path($path))) {
-                    $this->model->path($path);
+                    $this->model->setPath($path);
 
-                    return $path;
+                    return;
                 }
             }
         }
 
-        //throw new \Exception('Droplet could not be located');
+        throw new \Exception('Droplet could not be located');
     }
 }

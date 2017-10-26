@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Droplet\Feature;
 
-use SuperV\Platform\Domains\Composer\Jobs\GetBaseNamespaceJob;
+use SuperV\Platform\Domains\Composer\Jobs\GetBaseNamespace;
 use SuperV\Platform\Domains\Composer\Jobs\GetComposerArrayJob;
-use SuperV\Platform\Domains\Droplet\Jobs\LocateDropletJob;
+use SuperV\Platform\Domains\Droplet\Jobs\LocateDroplet;
 use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModelJob;
 use SuperV\Platform\Domains\Feature\Feature;
 
@@ -33,25 +33,26 @@ class InstallDroplet extends Feature
         /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel $model */
         $model = $this->dispatch(new MakeDropletModelJob($this->slug, $this->path));
 
-        $this->dispatch(new LocateDropletJob($model));
+        $this->dispatch(new LocateDroplet($model));
 
-        $composer = $this->dispatch(new GetComposerArrayJob(base_path($model->path())));
+        $composer = $this->dispatch(new GetComposerArrayJob(base_path($model->getPath())));
 
-        $namespace = $this->dispatch(new GetBaseNamespaceJob($composer));
 
-        $model->namespace($namespace);
-
-        $model->enabled = true;
-
-        $model->save();
+        $model->setNamespace($this->dispatch(new GetBaseNamespace($composer)))
+              ->setEnabled(true)
+              ->save();
 
         $this->dispatch(new LoadDroplet($this->path));
         $this->dispatch(new IntegrateDroplet($model));
 
-        if ($model->getType() == 'port') {
-            $where = public_path("ports/{$model->getName()}");
+        // symlink public folder
+        if (in_array($model->getType(), ['port', 'theme'])) {
+            $publicPath = public_path(str_plural($model->getType()));
+            if (!file_exists($publicPath)) {
+                mkdir($publicPath);
+            }
+            $where = $publicPath."/".$model->getName();
             $what = base_path($model->getPath('public'));
-            \Log::info("where $where what $what");
             symlink($what, $where);
         }
 

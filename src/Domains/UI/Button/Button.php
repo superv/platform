@@ -40,6 +40,10 @@ class Button
             $this->setSize($size);
         }
 
+        if ($class = array_get($params, 'class')) {
+            $this->setClass($class);
+        }
+
         return $this->view->make('superv::button.button', ['button' => $this]);
     }
 
