@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Composer\Jobs;
 
-class GetComposerArrayJob
+class GetComposerArray
 {
     private $path;
 

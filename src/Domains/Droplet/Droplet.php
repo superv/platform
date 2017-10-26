@@ -199,4 +199,9 @@ class Droplet
 
         return $this;
     }
+
+    public function getNamespace()
+    {
+        return $this->model->getNamespace();
+    }
 }

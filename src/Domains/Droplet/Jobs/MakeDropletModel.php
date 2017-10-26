@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Droplet\Jobs;
 
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
-class MakeDropletModelJob
+class MakeDropletModel
 {
     private $slug;
 

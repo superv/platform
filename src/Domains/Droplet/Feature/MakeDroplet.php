@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Droplet\Feature;
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\Droplet\Jobs\WriteDropletFiles;
 use SuperV\Platform\Domains\Droplet\Jobs\CreateDropletPaths;
-use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModelJob;
+use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModel;
 
 /**
  * Class MakeDropletFeature.
@@ -36,7 +36,7 @@ class MakeDroplet extends Feature
 
     public function handle()
     {
-        $model = $this->dispatch(new MakeDropletModelJob($this->slug, $this->path));
+        $model = $this->dispatch(new MakeDropletModel($this->slug, $this->path));
 
         $this->dispatch(new CreateDropletPaths($model));
 
