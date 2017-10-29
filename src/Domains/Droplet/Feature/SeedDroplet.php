@@ -21,7 +21,7 @@ class SeedDroplet extends Feature
         $seeders = $droplet->getSeeders();
 
         foreach ($seeders as $seeder) {
-            app($seeder)->seed();
+            app()->call([app($seeder), 'seed']);
         }
     }
 }

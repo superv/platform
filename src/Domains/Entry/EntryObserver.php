@@ -27,7 +27,7 @@ class EntryObserver
             return call_user_func($callback, $entry);
         }
 
-        $this->dispatch(new CreateGenericEntry($entry));
+//        $this->dispatch(new CreateGenericEntry($entry));
     }
 
     public function updating(EntryModel $entry)

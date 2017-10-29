@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Model;
 
 use SuperV\Platform\Contracts\Container;
 use SuperV\Platform\Domains\Entry\EntryModel;
+use SuperV\Platform\Support\Collection;
 use SuperV\Platform\Traits\EnforcableTrait;
 
 class EloquentRepository implements RepositoryInterface
@@ -21,6 +22,7 @@ class EloquentRepository implements RepositoryInterface
         $this->query = $container->make($model);
     }
 
+    /** @return Collection */
     public function all()
     {
         return $this->query->all();
@@ -65,9 +67,16 @@ class EloquentRepository implements RepositoryInterface
         return $this->query->update($attributes);
     }
 
+    /** @return EntryModel */
     public function withSlug($slug)
     {
         return $this->query->where('slug', $slug)->first();
+    }
+
+    /** @return EntryModel */
+    public function withUUID($uuid)
+    {
+        return $this->query->where('uuid', $uuid)->first();
     }
 
     public function enabled()
