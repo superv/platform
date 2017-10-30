@@ -28,7 +28,7 @@ class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateComm
 
         parent::handle();
 
-        if ($droplet = $this->migrator->getDroplet()) {
+        if ($this->migrator->hasDroplet()) {
              if ($this->option('seed')) {
                  app(Kernel::class)->call('droplet:seed', ['droplet' => $this->option('droplet')]);
              }

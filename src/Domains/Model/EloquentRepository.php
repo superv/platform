@@ -91,7 +91,8 @@ class EloquentRepository implements RepositoryInterface
 
     public function truncate()
     {
-       $this->query->truncate();
+        $this->query->get()->each->delete();
+//       $this->query->truncate();
     }
 
     public function __call($name, $arguments)

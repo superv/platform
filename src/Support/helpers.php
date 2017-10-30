@@ -112,19 +112,11 @@ if (! function_exists('decorate')) {
     }
 }
 
-function method_inject($tactic, $method)
+function uuid()
 {
-    $reflection = new \ReflectionClass($tactic);
+    $uuid = Ramsey\Uuid\Uuid::uuid4()->toString();
 
-    $methodParams = $reflection->getMethod($method)->getParameters();
-    $concreteParams = [];
-
-    foreach ($methodParams as $param) {
-        /** @var \ReflectionParameter $param */
-        $concreteParams[] = app($param->getClass()->getName());
-    }
-
-    return call_user_func_array([$tactic, $method], $concreteParams);
+    return str_replace('-', '', $uuid);
 }
 
 function pkey()

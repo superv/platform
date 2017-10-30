@@ -190,6 +190,11 @@ class Migrator extends BaseMigrator
         return $this->droplet;
     }
 
+    public function hasDroplet()
+    {
+        return $this->droplet ? true : false;
+    }
+
     /**
      * @param Droplet $droplet
      *

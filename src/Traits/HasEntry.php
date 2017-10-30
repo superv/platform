@@ -12,7 +12,8 @@ trait HasEntry
     public function __call($method, $arguments)
     {
         if ($this->entry) {
-            return $this->entry->getAttribute($method);
+            return call_user_func_array([$this->entry, $method], $arguments);
+//            return $this->entry->getAttribute($method);
         }
 
         throw new \BadMethodCallException("Method {$method} does not exist.");
@@ -26,6 +27,14 @@ trait HasEntry
     }
 
     /**
+     * @return EntryModel
+     */
+    public function getEntry()
+    {
+        return $this->entry;
+    }
+
+    /**
      * @param EntryModel $entry
      *
      * @return $this
@@ -35,13 +44,5 @@ trait HasEntry
         $this->entry = $entry;
 
         return $this;
-    }
-
-    /**
-     * @return EntryModel
-     */
-    public function getEntry()
-    {
-        return $this->entry;
     }
 }
