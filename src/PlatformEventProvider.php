@@ -22,7 +22,7 @@ class PlatformEventProvider extends EventServiceProvider
     public function boot()
     {
         foreach ($this->listen as $event => $listeners) {
-            foreach ($listeners as $key => $listener) {
+            foreach ($listeners as $listener) {
                 app('events')->listen($event, $listener);
             }
         }

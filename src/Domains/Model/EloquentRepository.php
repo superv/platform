@@ -42,6 +42,11 @@ class EloquentRepository implements RepositoryInterface
         return $this->query->find($id);
     }
 
+    public function first()
+    {
+        return $this->query->first();
+    }
+
     public function in(array $ids)
     {
         return $this->query->whereIn('id', $ids)->get();

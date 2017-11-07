@@ -34,7 +34,7 @@ class GetPortRoutes
 
             $this->mergeRouteFile(base_path($this->provider->getPath("routes/{$portName}.php")));
 
-            foreach ($this->routes as $route => &$data) {
+            foreach ($this->routes as &$data) {
                 if (! is_array($data)) {
                     $data = ['uses' => $data];
                 }
