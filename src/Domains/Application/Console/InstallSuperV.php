@@ -21,7 +21,7 @@ class InstallSuperV extends Command
 
     protected $description = '';
 
-    public function handle(Droplets $droplets,  Kernel $kernel)
+    public function handleNot(Droplets $droplets,  Kernel $kernel)
     {
         $this->alert('SuperV Setup');
         /** @var RemoteManager $ssh */
@@ -47,13 +47,9 @@ class InstallSuperV extends Command
 //        $this->postInstall($droplets, $kernel);
     }
 
-    /**
-     * @param Droplets $droplets
-     * @param Kernel   $kernel
-     */
-    protected function postInstall(Droplets $droplets, Kernel $kernel): void
+    public function handle(Droplets $droplets, Kernel $kernel)
     {
-        $kernel->call('migrate', ['--force' => true]);
+//        $kernel->call('migrate', ['--force' => true]);
 
         $kernel->call('migrate', ['--force' => true, '--path' => 'vendor/superv/platform/database/migrations']);
 
@@ -70,24 +66,24 @@ class InstallSuperV extends Command
 
         $kernel->call('env:set', ['line' => 'SUPERV_INSTALLED=true']);
 
-        $kernel->call('droplet:install', [
-            'slug'   => 'superv.modules.auth',
-            '--path' => 'droplets/superv/modules/auth',
-        ]);
-
-        $kernel->call('droplet:install', [
-            'slug'   => 'superv.ports.acp',
-            '--path' => 'droplets/superv/ports/acp',
-        ]);
-
-        $kernel->call('droplet:install', [
-            'slug'   => 'superv.modules.supreme',
-            '--path' => 'droplets/superv/modules/supreme',
-        ]);
-
-        $kernel->call('droplet:install', [
-            'slug'   => 'superv.modules.hosting',
-            '--path' => 'droplets/superv/modules/hosting',
-        ]);
+//        $kernel->call('droplet:install', [
+//            'slug'   => 'superv.modules.auth',
+//            '--path' => 'droplets/superv/modules/auth',
+//        ]);
+//
+//        $kernel->call('droplet:install', [
+//            'slug'   => 'superv.ports.acp',
+//            '--path' => 'droplets/superv/ports/acp',
+//        ]);
+//
+//        $kernel->call('droplet:install', [
+//            'slug'   => 'superv.modules.supreme',
+//            '--path' => 'droplets/superv/modules/supreme',
+//        ]);
+//
+//        $kernel->call('droplet:install', [
+//            'slug'   => 'superv.modules.hosting',
+//            '--path' => 'droplets/superv/modules/hosting',
+//        ]);
     }
 }
