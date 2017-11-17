@@ -16,6 +16,5 @@ return [
     DropletSeedCommand::class,
     DropletMigrationCommand::class,
     MakeDropletCommand::class,
-    EnvSet::class,
-    InstallSuperV::class,
+
 ];
