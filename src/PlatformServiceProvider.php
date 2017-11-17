@@ -6,6 +6,8 @@ use Debugbar;
 use Illuminate\View\Factory;
 use SuperV\Platform\Adapters\AdapterServiceProvider;
 use SuperV\Platform\Contracts\ServiceProvider;
+use SuperV\Platform\Domains\Application\Console\EnvSet;
+use SuperV\Platform\Domains\Application\Console\InstallSuperV;
 use SuperV\Platform\Domains\Console\ConsoleServiceProvider;
 use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
 use SuperV\Platform\Domains\Database\DatabaseServiceProvider;
@@ -27,6 +29,7 @@ use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
 use SuperV\Platform\Traits\BindsToContainer;
 use SuperV\Platform\Traits\RegistersRoutes;
+use Illuminate\Console\Application as Artisan;
 
 /**
  * Class PlatformServiceProvider.
@@ -64,10 +67,20 @@ class PlatformServiceProvider extends ServiceProvider
 //      MigrationRepositoryInterface::class => DatabaseMigrationRepository::class
     ];
 
+    protected $commands = [
+        EnvSet::class,
+        InstallSuperV::class,
+    ];
+
     public function register()
     {
         $this->app->register(DatabaseServiceProvider::class);
         $this->app->register(AdapterServiceProvider::class);
+
+        // commmands needed before the platform is installed
+        Artisan::starting(function ($artisan) {
+            $artisan->resolveCommands($this->commands);
+        });
 
 //        app(Bridge::class)->addExtension(app(AsseticExtension::class));
 
