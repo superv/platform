@@ -10,7 +10,6 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\MessageBag;
 use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
-use SuperV\Platform\Http\Middleware\PlatformReady;
 
 class BasePlatformController extends Controller
 {
