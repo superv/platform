@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform;
 
-use Debugbar;
+use Illuminate\Console\Application as Artisan;
 use Illuminate\View\Factory;
 use SuperV\Platform\Adapters\AdapterServiceProvider;
 use SuperV\Platform\Contracts\ServiceProvider;
@@ -16,6 +16,7 @@ use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActivePort;
+use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
@@ -27,9 +28,10 @@ use SuperV\Platform\Domains\UI\Page\PageCollection;
 use SuperV\Platform\Domains\View\Twig\Bridge\TwigBridgeServiceProvider;
 use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
+use SuperV\Platform\Events\DropletsBooted;
+use SuperV\Platform\Events\PlatformReady;
 use SuperV\Platform\Traits\BindsToContainer;
 use SuperV\Platform\Traits\RegistersRoutes;
-use Illuminate\Console\Application as Artisan;
 
 /**
  * Class PlatformServiceProvider.
@@ -96,7 +98,7 @@ class PlatformServiceProvider extends ServiceProvider
 //        $this->registerDevTools();
     }
 
-    public function boot()
+    public function boot(DropletManager $dropletManager)
     {
         if (! env('SUPERV_INSTALLED', false)) {
             return;
@@ -108,17 +110,23 @@ class PlatformServiceProvider extends ServiceProvider
          * then perform registeration depending on port, cli
          */
 
+        $dropletManager->load();
         $this->setupView();
-        $this->bootDroplets();
-        $this->manifestPlatform();
-
-        $routes = $this->dispatch(new GetPortRoutes($this));
-        $routes = array_merge($this->routes ?? [], $routes);
-        $this->disperseRoutes($routes);
-
-        $this->registerConsoleCommands();
 
         $this->detectActivePort();
+        $dropletManager->bootPorts();
+
+        $this->manifestPlatform();
+
+        $dropletManager->bootAllButPorts();
+        $this->app['events']->fire(new DropletsBooted());
+
+        $this->disperseRoutes(array_merge($this->routes ?? [], $this->dispatch(new GetPortRoutes($this))));
+        $this->registerConsoleCommands();
+
+        $this->registerRoutes(app(Port::class));
+
+        $this->app['events']->fire(new PlatformReady());
     }
 
     protected function setupView(): void
@@ -129,11 +137,6 @@ class PlatformServiceProvider extends ServiceProvider
         app(Factory::class)->composer('*', ViewComposer::class);
 
         superv('view.template')->set('menu', superv('navigation'));
-    }
-
-    protected function bootDroplets()
-    {
-        app(DropletManager::class)->boot();
     }
 
     protected function setupConfig()

@@ -2,8 +2,7 @@
 
 namespace SuperV\Platform\Domains\Droplet\Jobs;
 
-use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Droplet\Port\PortCollection;
+use SuperV\Platform\Domains\Droplet\Port\Port;
 
 /**
  * Class GetPortRoutes.
@@ -25,22 +24,18 @@ class GetPortRoutes
         $this->provider = $provider;
     }
 
-    public function handle(Request $request, PortCollection $ports)
+    public function handle(Port $activePort)
     {
+        $portName = $activePort->getName();
 
-        $currentHostname = trim(str_replace(['http://', 'https://'], '', $request->root()), '/');
-        if ($port = $ports->byHostname($currentHostname)) {
-            $portName = $port->getName();
+        $this->mergeRouteFile(base_path($this->provider->getPath("routes/{$portName}.php")));
 
-            $this->mergeRouteFile(base_path($this->provider->getPath("routes/{$portName}.php")));
-
-            foreach ($this->routes as &$data) {
-                if (! is_array($data)) {
-                    $data = ['uses' => $data];
-                }
-
-                array_set($data, 'superv::port', $port->getSlug());
+        foreach ($this->routes as &$data) {
+            if (! is_array($data)) {
+                $data = ['uses' => $data];
             }
+
+            array_set($data, 'superv::port', $activePort->getSlug());
         }
 
         return $this->routes;

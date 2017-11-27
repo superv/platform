@@ -21,6 +21,15 @@ class Droplets extends EloquentRepository
 
     public function enabled()
     {
-        return $this->query->where('enabled', true)->orderBy('type', 'DESC');
+        return $this->query->where('enabled', true);
+    }
+
+    public function ports()
+    {
+        return $this->query->where('type', 'port');
+    }
+    public function allButPorts()
+    {
+        return $this->query->where('type', '!=', 'port');
     }
 }

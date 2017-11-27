@@ -18,37 +18,28 @@ use SuperV\Platform\Domains\Feature\Feature;
 class IntegrateDroplet extends Feature
 {
     /**
-     * @var DropletModel
+     * @var Droplet
      */
-    private $model;
+    private $droplet;
 
-    public function __construct(DropletModel $model)
+    public function __construct(Droplet $droplet)
     {
-        $this->model = $model;
+        $this->droplet = $droplet;
     }
 
     public function handle(DropletProvider $provider, DropletCollection $droplets, Factory $views)
     {
-        $model = $this->model;
-
-        $class = $model->droplet();
-
-        /** @var Droplet $droplet */
-        $droplet = app($class)->setModel($model);
+        $droplet = $this->droplet;
+//        $model = $this->model;
+//
+//        $class = $model->droplet();
+//
+//        /** @var Droplet $droplet */
+//        $droplet = app($class)->setModel($model);
         $this->dispatch(new EnableConfigFiles($droplet));
 
         $droplets->put($droplet->getSlug(), $droplet);
 
-        /*
-         * If this is a Port type droplet, set its hostname from
-         * env file. We will use this to extract Port from current
-         * request hostname.
-         */
-        if ($droplet instanceof Port) {
-            $portName = strtoupper($model->getName());
-            $droplet->setHostname(env("SUPERV_PORTS_{$portName}_HOSTNAME"));
-            superv('ports')->push($droplet);
-        }
 
         $provider->register($droplet);
 

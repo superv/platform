@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Droplet\DropletFactory;
 use SuperV\Platform\Domains\Droplet\Port\ActivePort;
+use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Traits\RegistersRoutes;
 
@@ -26,7 +27,8 @@ class DetectActivePort
             return;
         }
 
-        app()->bindIf(ActivePort::class, function () use ($port) { return $port; }, true);
+//        app()->instance(ActivePort::class, new ActivePort($port->getModel()));
+        app()->instance(Port::class, $port);
 
         if ($themeSlug = $port->getTheme()) {
             if ($theme = app(DropletFactory::class)->fromSlug($themeSlug)) {
@@ -35,7 +37,5 @@ class DetectActivePort
         }
 
         $view->addNamespace('port', $viewsPath ?? [base_path($port->getPath('resources/views'))]);
-
-        $this->registerRoutes($port);
     }
 }

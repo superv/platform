@@ -7,7 +7,6 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Domains\Config\Jobs\AddConfigNamespace;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
@@ -37,23 +36,16 @@ class DropletProvider
      */
     private $schedule;
 
-    /**
-     * @var PortCollection
-     */
-    private $ports;
-
     public function __construct(
         Dispatcher $events,
         Application $app,
         Router $router,
-        Schedule $schedule,
-        PortCollection $ports
+        Schedule $schedule
     ) {
         $this->events = $events;
         $this->app = $app;
         $this->router = $router;
         $this->schedule = $schedule;
-        $this->ports = $ports;
     }
 
     public function register(Droplet $droplet)

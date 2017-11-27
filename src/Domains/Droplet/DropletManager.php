@@ -4,7 +4,10 @@ namespace SuperV\Platform\Domains\Droplet;
 
 use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
 use SuperV\Platform\Domains\Droplet\Feature\LoadDroplet;
+use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
+use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Support\Collection;
 
@@ -22,28 +25,61 @@ class DropletManager
      */
     private $droplets;
 
-    public function __construct(DropletPaths $paths, Droplets $droplets)
+    public function __construct(DropletPaths $paths, DropletCollection $droplets)
     {
         $this->paths = $paths;
         $this->droplets = $droplets;
     }
 
-    public function boot()
+    public function load()
     {
-        /** @var Collection $enabled */
-        $enabled = $this->droplets->enabled();
+        /** @var DropletModel $model  */
+        foreach(app(Droplets::class)->enabled()->get() as $model) {
+            $this->serve(new LoadDroplet(base_path($model->getPath())));
 
-        foreach ($enabled->get() as $model) {
-            $this->serve(new LoadDroplet(base_path($model->path())));
+            /** @var Droplet $droplet */
+            $droplet = app($model->droplet())->setModel($model);
+
+            $this->droplets->put($droplet->getSlug(), $droplet);
+
+            /*
+             * If this is a Port type droplet, set its hostname from
+             * env file. We will use this to extract Port from current
+             * request hostname.
+             */
+            if ($droplet instanceof Port) {
+                $portName = strtoupper($droplet->getName());
+                $droplet->setHostname(env("SUPERV_PORTS_{$portName}_HOSTNAME"));
+                superv('ports')->push($droplet);
+
+            }
+
         }
+    }
 
-        /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel $model */
-        foreach ($enabled->where('type', 'port')->get() as $model) {
+    public function bootPorts()
+    {
+        $ports = $this->droplets->ports();
 
-            $this->bootDroplet($model);
+//        /** @var Port $port */
+//        foreach($ports as $port) {
+//            $this->serve(new LoadDroplet(base_path($port->getPath())));
+//        }
+        foreach($ports as $model) {
+           $this->bootDroplet($model);
         }
+    }
 
-        foreach ($this->droplets->enabled()->where('type', '!=', 'port')->get() as $model) {
+    public function bootAllButPorts()
+    {
+        $droplets = $this->droplets->allButPorts();
+
+//        /** @var Droplet $droplet */
+//        foreach ($droplets as $droplet) {
+//            $this->serve(new LoadDroplet(base_path($droplet->getPath())));
+//        }
+
+        foreach ($droplets as $model) {
 
             $this->bootDroplet($model);
         }
@@ -51,8 +87,6 @@ class DropletManager
 
     private function bootDroplet($model)
     {
-//        $this->serve(new LoadDroplet(base_path($model->path())));
-
         $this->serve(new IntegrateDroplet($model));
     }
 }

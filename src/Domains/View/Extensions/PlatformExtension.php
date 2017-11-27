@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\View\Extensions;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use SuperV\Platform\Contracts\Navigation\Navigation;
 use SuperV\Platform\Domains\Model\EloquentCriteria;
 use SuperV\Platform\Domains\Task\Model\TaskModel;
 use SuperV\Platform\Domains\Task\Task;
@@ -35,6 +36,9 @@ class PlatformExtension extends \Twig_Extension
             }, [
                 'is_safe' => ['html'],
             ]),
+            new Twig_SimpleFunction('navigation', function () {
+                return app(Navigation::class);
+            }),
         ];
     }
 }
