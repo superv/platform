@@ -4,17 +4,6 @@ namespace SuperV\Platform\Domains\Droplet\Model;
 
 class DropletModel extends DropletEntryModel
 {
-    public function path($path = null)
-    {
-        if ($path) {
-            $this->setAttribute('path', $path);
-
-            return $this;
-        }
-
-        return $this->getAttribute('path');
-    }
-
     public function setPath($path)
     {
         $this->path = $path;
@@ -25,17 +14,6 @@ class DropletModel extends DropletEntryModel
     public function getPath($path = null)
     {
         return $this->path.($path ? '/'.$path : '');
-    }
-
-    public function namespace($namespace = null)
-    {
-        if ($namespace) {
-            $this->setAttribute('namespace', $namespace);
-
-            return $this;
-        }
-
-        return $this->getAttribute('namespace');
     }
 
     public function getNamespace()
@@ -59,7 +37,7 @@ class DropletModel extends DropletEntryModel
 
     public function droplet()
     {
-        return $this->namespace().'\\'.studly_case("{$this->name}_{$this->type}");
+        return $this->getNamespace().'\\'.studly_case("{$this->name}_{$this->type}");
     }
 
     public function getName()

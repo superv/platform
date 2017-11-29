@@ -17,7 +17,7 @@ class CreateDropletPaths
 
     public function handle(Filesystem $filesystem)
     {
-        $this->model->path("{$this->model->path}");
+        $this->model->setPath("{$this->model->path}");
 
         $path = base_path($this->model->getPath());
         $filesystem->makeDirectory($path, 0755, true, true);

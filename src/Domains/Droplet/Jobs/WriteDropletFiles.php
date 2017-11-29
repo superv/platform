@@ -21,7 +21,7 @@ class WriteDropletFiles
         $name = ucfirst(camel_case($this->model->getName()));
         $type = ucfirst(camel_case($this->model->getType()));
 
-        $path = base_path($this->model->path());
+        $path = base_path($this->model->getPath());
 
         // Droplet Class
         $dropletClass = "{$name}{$type}";
@@ -46,7 +46,7 @@ class WriteDropletFiles
         $content = $parser->parse($filesystem->get(base_path('vendor/superv/platform/resources/stubs/droplets/composer.stub')),
             [
                 'model'  => $this->model->toArray(),
-                'prefix' => str_replace('\\', '\\\\', $this->model->namespace()),
+                'prefix' => str_replace('\\', '\\\\', $this->model->getNamespace()),
             ]);
         $filesystem->put("{$path}/composer.json", $content);
     }

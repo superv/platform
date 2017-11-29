@@ -43,7 +43,7 @@ class InstallDroplet extends Feature
               ->save();
 
         $this->dispatch(new LoadDroplet($model->getPath()));
-        $this->dispatch(new IntegrateDroplet($model));
+        $this->dispatch(new IntegrateDroplet(app($model->droplet())->setModel($model)));
 
         // symlink public folder
         if (in_array($model->getType(), ['port', 'theme'])) {
