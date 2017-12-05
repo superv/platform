@@ -10,6 +10,8 @@ class Port extends Droplet
 
     protected $hostname;
 
+    protected $prefix;
+
     protected $type = 'port';
 
     protected $routes = [];
@@ -18,6 +20,9 @@ class Port extends Droplet
 
     public function addRoute($uri, $data)
     {
+        if ($this->prefix) {
+            array_set($data, 'prefix', $this->prefix);
+        }
         array_set($this->routes, $uri, $data);
     }
 
@@ -91,5 +96,25 @@ class Port extends Droplet
         $this->middlewares = $middlewares;
 
         return $this;
+    }
+
+    /**
+     * @param mixed $prefix
+     *
+     * @return Port
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
+
+        return $this;
+}
+
+    /**
+     * @return mixed
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
     }
 }

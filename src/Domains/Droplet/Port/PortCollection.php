@@ -16,4 +16,15 @@ class PortCollection extends Collection
         }
     }
 
+    public function byRequest($hostname, $uri)
+    {
+        /** @var \SuperV\Platform\Domains\Droplet\Port\Port $port */
+        foreach ($this->items as $port) {
+            if ($hostname == $port->getHostname())
+            if (starts_with(ltrim($uri, '/'), $port->getPrefix())) {
+                return $port;
+            }
+        }
+    }
+
 }

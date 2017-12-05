@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Contracts\Navigation;
 
+use SuperV\Platform\Domains\Droplet\Port\Port;
+
 interface Navigation
 {
     public function addSection(array $section);
@@ -11,4 +13,8 @@ interface Navigation
     public function make();
 
     public function getSections();
+
+    public function getPort();
+
+    public function setPort(Port $port);
 }

@@ -30,6 +30,7 @@ use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
 use SuperV\Platform\Events\DropletsBooted;
 use SuperV\Platform\Events\PlatformReady;
+use SuperV\Platform\Support\UrlGenerator;
 use SuperV\Platform\Traits\BindsToContainer;
 use SuperV\Platform\Traits\RegistersRoutes;
 
@@ -67,6 +68,7 @@ class PlatformServiceProvider extends ServiceProvider
 
     protected $bindings = [
 //      MigrationRepositoryInterface::class => DatabaseMigrationRepository::class
+        'Illuminate\Contracts\Routing\UrlGenerator' => UrlGenerator::class,
     ];
 
     protected $commands = [

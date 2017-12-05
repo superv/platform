@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
 use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
-use SuperV\Platform\Support\Collection;
+use SuperV\Platform\Support\Inflator;
 
 class DropletManager
 {
@@ -33,8 +33,8 @@ class DropletManager
 
     public function load()
     {
-        /** @var DropletModel $model  */
-        foreach(app(Droplets::class)->enabled()->get() as $model) {
+        /** @var DropletModel $model */
+        foreach (app(Droplets::class)->enabled()->get() as $model) {
             $this->serve(new LoadDroplet(base_path($model->getPath())));
 
             /** @var Droplet $droplet */
@@ -48,12 +48,12 @@ class DropletManager
              * request hostname.
              */
             if ($droplet instanceof Port) {
-                $portName = strtoupper($droplet->getName());
-                $droplet->setHostname(env("SUPERV_PORTS_{$portName}_HOSTNAME"));
+                $portName = strtolower($droplet->getName());
+                if ($config = config("superv.ports.{$portName}")) {
+                    app(Inflator::class)->inflate($droplet, $config);
+                }
                 superv('ports')->push($droplet);
-
             }
-
         }
     }
 
@@ -65,8 +65,8 @@ class DropletManager
 //        foreach($ports as $port) {
 //            $this->serve(new LoadDroplet(base_path($port->getPath())));
 //        }
-        foreach($ports as $model) {
-           $this->bootDroplet($model);
+        foreach ($ports as $model) {
+            $this->bootDroplet($model);
         }
     }
 

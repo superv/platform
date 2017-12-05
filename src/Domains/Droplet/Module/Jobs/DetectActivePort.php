@@ -20,7 +20,8 @@ class DetectActivePort
             return;
         }
         $httpHost = $request->getHttpHost();
-        if (! $port = $ports->byHostname($httpHost)) {
+        $requestUri =  $request->getRequestUri();
+        if (! $port = $ports->byRequest($httpHost, $requestUri)) {
 //            throw new \LogicException('This should not happen!: '.$request->getHttpHost());
             \Log::warning("Unknown hostname {$httpHost}, can not detect active port");
 
