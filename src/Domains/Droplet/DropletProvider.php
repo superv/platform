@@ -7,6 +7,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Dispatcher;
+use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
@@ -71,7 +72,8 @@ class DropletProvider
             }
         );
 
-        $this->registerCommands($provider);
+        $this->dispatch(new RegisterConsoleCommands($provider));
+
         $this->registerFeatures($provider);
         $this->registerListeners($provider);
 
@@ -85,14 +87,19 @@ class DropletProvider
 
     protected function registerCommands(DropletServiceProvider $provider)
     {
-        if ($commands = $provider->getCommands()) {
-            $this->events->listen(
-                'Illuminate\Console\Events\ArtisanStarting',
-                function (ArtisanStarting $event) use ($commands) {
-                    $event->artisan->resolveCommands($commands);
-                }
-            );
-        }
+//        if ($commands = $provider->getCommands()) {
+//
+//            Artisan::starting(function ($artisan) use ($commands) {
+//                           $artisan->resolveCommands($commands);
+//                       });
+//
+//            $this->events->listen(
+//                'Illuminate\Console\Events\ArtisanStarting',
+//                function (ArtisanStarting $event) use ($commands) {
+//                    $event->artisan->resolveCommands($commands);
+//                }
+//            );
+//        }
     }
 
     protected function registerFeatures(DropletServiceProvider $provider)

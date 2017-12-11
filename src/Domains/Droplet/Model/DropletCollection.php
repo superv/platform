@@ -21,6 +21,16 @@ class DropletCollection extends Collection
         return new self($items);
     }
 
+    public function bySlug($slug)
+    {
+        foreach ($this->items as $droplet) {
+            /** @var Droplet $droplet */
+            if ($droplet->getSlug() == $slug) {
+                return $droplet;
+            }
+        }
+    }
+
     public function allButPorts()
     {
         $items = [];

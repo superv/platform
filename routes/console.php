@@ -16,5 +16,4 @@ return [
     DropletSeedCommand::class,
     DropletMigrationCommand::class,
     MakeDropletCommand::class,
-
 ];

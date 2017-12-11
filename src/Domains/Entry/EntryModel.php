@@ -132,20 +132,6 @@ class EntryModel extends EloquentModel implements PresentableInterface
     public function getHashId()
     {
         return (new \Hashids\Hashids('SuperV Platform', 6, 'abcdefghijklmnopqrstuvwxyz'))->encode($this->id);
-//        return (new \Hashids\Hashids('SuperV Platform', 6, 'abcdefghijklmnopqrstuvwxyz'))->encode($this->id);
     }
-
-    /**
-     * @return mixed
-     */
-    public function getSlugggggg()
-    {
-        if ($this->modelSlug) {
-            return $this->modelSlug;
-        }
-
-        return str_replace("\\", ".", strtolower(get_class($this)));
-    }
-
 
 }

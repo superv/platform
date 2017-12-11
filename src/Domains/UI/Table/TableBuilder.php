@@ -36,7 +36,6 @@ class TableBuilder
     {
         $this->view = $view;
         $this->table = $table;
-        $this->wrapper = '';
     }
 
     public function make()

@@ -20,11 +20,11 @@ class PortCollection extends Collection
     {
         /** @var \SuperV\Platform\Domains\Droplet\Port\Port $port */
         foreach ($this->items as $port) {
-            if ($hostname == $port->getHostname())
-            if (starts_with(ltrim($uri, '/'), $port->getPrefix())) {
-                return $port;
+            if ($hostname == $port->getHostname()) {
+                if (! $port->getPrefix() || starts_with(ltrim($uri, '/'), $port->getPrefix())) {
+                    return $port;
+                }
             }
         }
     }
-
 }

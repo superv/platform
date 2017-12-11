@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
 use Illuminate\Http\Request;
 use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Droplet\DropletFactory;
-use SuperV\Platform\Domains\Droplet\Port\ActivePort;
 use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Traits\RegistersRoutes;

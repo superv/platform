@@ -6,7 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
 
-class DropletServiceProvider
+class DropletServiceProvider implements DropletServiceProviderInterface
 {
     use DispatchesJobs;
 

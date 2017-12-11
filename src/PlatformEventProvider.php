@@ -12,7 +12,7 @@ class PlatformEventProvider extends EventServiceProvider
     protected $listen = [
         'Illuminate\Routing\Events\RouteMatched'           => [
             DetectActiveModule::class,
-            InjectMatchedPage::class,
+//            InjectMatchedPage::class,
         ],
         'Illuminate\Foundation\Http\Events\RequestHandled' => [],
 

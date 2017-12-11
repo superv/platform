@@ -12,6 +12,7 @@ use SuperV\Platform\Domains\Console\ConsoleServiceProvider;
 use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
 use SuperV\Platform\Domains\Database\DatabaseServiceProvider;
 use SuperV\Platform\Domains\Droplet\DropletManager;
+use SuperV\Platform\Domains\Droplet\DropletServiceProviderInterface;
 use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
@@ -39,7 +40,7 @@ use SuperV\Platform\Traits\RegistersRoutes;
  *
  * https://www.draw.io/#G0Byi-qvl6eS2ySW45cFAtVWVZVTQ
  */
-class PlatformServiceProvider extends ServiceProvider
+class PlatformServiceProvider extends ServiceProvider implements DropletServiceProviderInterface
 {
     use ServesFeaturesTrait;
     use RegistersRoutes;
@@ -177,8 +178,7 @@ class PlatformServiceProvider extends ServiceProvider
 
     protected function registerConsoleCommands(): void
     {
-        $this->dispatch(new RegisterConsoleCommands($this->platform));
-//        $this->commands($this->commands);
+        $this->dispatch(new RegisterConsoleCommands($this));
     }
 
     protected function manifestPlatform(): void
@@ -199,5 +199,10 @@ class PlatformServiceProvider extends ServiceProvider
     public function getPath($path = null)
     {
         return $this->platform->getPath($path);
+    }
+
+    public function getCommands()
+    {
+        return $this->commands;
     }
 }
