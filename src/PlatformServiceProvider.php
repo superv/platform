@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\Application\Console\InstallSuperV;
 use SuperV\Platform\Domains\Console\ConsoleServiceProvider;
 use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
 use SuperV\Platform\Domains\Database\DatabaseServiceProvider;
+use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\DropletServiceProviderInterface;
 use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
@@ -50,7 +51,6 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
     protected $platform;
 
     protected $providers = [
-        ConsoleServiceProvider::class,
         PlatformEventProvider::class,
         TwigBridgeServiceProvider::class,
         FormServiceProvider::class,
@@ -68,19 +68,20 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
     ];
 
     protected $bindings = [
-//      MigrationRepositoryInterface::class => DatabaseMigrationRepository::class
         'Illuminate\Contracts\Routing\UrlGenerator' => UrlGenerator::class,
     ];
 
     protected $commands = [
         EnvSet::class,
         InstallSuperV::class,
+        DropletInstallCommand::class,
     ];
 
     public function register()
     {
         $this->app->register(DatabaseServiceProvider::class);
         $this->app->register(AdapterServiceProvider::class);
+        $this->app->register(ConsoleServiceProvider::class);
 
         // commmands needed before the platform is installed
         Artisan::starting(function ($artisan) {
@@ -166,10 +167,6 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
 
     protected function registerDevTools(): void
     {
-        if ($this->app->environment() == 'local') {
-//            $this->app->register(SketchpadServiceProvider::class);
-        }
-
         $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
         $this->registerAliases([
             'Debugbar' => \Barryvdh\Debugbar\Facade::class,

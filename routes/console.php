@@ -10,7 +10,6 @@ use SuperV\Platform\Domains\Droplet\Console\DropletUninstallCommand;
 use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 
 return [
-    DropletInstallCommand::class,
     DropletUninstallCommand::class,
     DropletReinstallCommand::class,
     DropletSeedCommand::class,

@@ -28,19 +28,6 @@ class DatabaseMigrationRepository extends BaseDatabaseMigrationRepository
                     ->pluck('migration')->all();
     }
 
-//    public function getRan()
-//    {
-//        if ($droplet = $this->migrator->getDroplet()) {
-//            return $this->table()
-//                        ->orderBy('batch', 'asc')
-//                        ->orderBy('migration', 'asc')
-//                        ->where('droplet', $droplet->getSlug())
-//                        ->pluck('migration')->all();
-//        }
-//
-//        return parent::getRan();
-//    }
-
     public function getLast()
     {
 //        $query = $this->table()->where('batch', $this->getLastBatchNumber());
@@ -101,7 +88,7 @@ class DatabaseMigrationRepository extends BaseDatabaseMigrationRepository
 
         $schema = $this->getConnection()->getSchemaBuilder();
         $schema->table($this->table, function ($table) {
-            $table->string('droplet');
+            $table->string('droplet')->nullable();
         });
     }
 }
