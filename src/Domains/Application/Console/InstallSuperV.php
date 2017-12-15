@@ -59,6 +59,16 @@ class InstallSuperV extends Command
         ]);
 
         $kernel->call('droplet:install', [
+            'droplet' => 'superv.modules.ui',
+            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/ui',
+        ]);
+
+        $kernel->call('droplet:install', [
+            'droplet' => 'superv.modules.nucleo',
+            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/nucleo',
+        ]);
+
+        $kernel->call('droplet:install', [
             'droplet' => 'superv.themes.starter',
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/starter',
         ]);
