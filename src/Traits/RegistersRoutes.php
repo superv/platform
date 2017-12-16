@@ -11,8 +11,7 @@ trait RegistersRoutes
     protected function disperseRoutes(array $routes, \Closure $callable = null)
     {
         foreach ($routes as $uri => $data) {
-
-            $data = ! is_array($data) ? ['uses' => $data] : $data;
+            $data = !is_array($data) ? ['uses' => $data] : $data;
 
             if ($callable) {
                 $data = call_user_func($callable, $data);
@@ -21,18 +20,18 @@ trait RegistersRoutes
              * All routes registered through platform
              * should have a port defined
              */
-            if (! $port = array_pull($data, 'superv::port')) {
-                if (! $port = array_pull($data, 'port')) {
+            if (!$port = array_pull($data, 'superv::port')) {
+                if (!$port = array_pull($data, 'port')) {
                     throw new \LogicException("URI {$uri} does not have a port");
                 }
             }
 
-            if (! str_is('*.*.*', $port)) {
+            if (!str_is('*.*.*', $port)) {
                 $port = "superv.ports.{$port}";
             }
+
             /** @var Port $port */
-            if (! $port = superv('ports')->bySlug($port)) {
-//                throw new \LogicException("Port {$port} not found");
+            if (!$port = superv('ports')->bySlug($port)) {
                 \Log::warning("Port {$port} not found for route: {$uri}");
                 continue;
             }
