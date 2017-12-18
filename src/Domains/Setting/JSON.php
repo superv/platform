@@ -18,8 +18,8 @@ class JSON  implements \JsonSerializable
     public function __construct($src)
     {
         $this->data = [];
-        $this->load();
         $this->src = $src;
+        $this->load();
     }
 
     public function load()

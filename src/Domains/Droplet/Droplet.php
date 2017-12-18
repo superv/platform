@@ -2,9 +2,10 @@
 
 namespace SuperV\Platform\Domains\Droplet;
 
+use JsonSerializable;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
-class Droplet
+class Droplet implements JsonSerializable
 {
     protected $title = 'Droplet';
 
@@ -208,5 +209,15 @@ class Droplet
     public function destroy()
     {
         $this->model->delete();
+    }
+
+    public function toArray()
+    {
+        return $this->model->toArray();
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 }
