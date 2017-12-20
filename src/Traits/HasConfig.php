@@ -4,8 +4,12 @@ namespace SuperV\Platform\Traits;
 
 trait HasConfig
 {
-    public function config($key, $default = null)
+    public function config($key = null, $default = null)
     {
+        if (is_null($key)) {
+            return $this->getConfig();
+        }
+
         return $this->getConfigValue($key, $default);
     }
 

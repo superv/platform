@@ -53,7 +53,6 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
     protected $providers = [
         PlatformEventProvider::class,
         TwigBridgeServiceProvider::class,
-        FormServiceProvider::class,
     ];
 
     protected $singletons = [
