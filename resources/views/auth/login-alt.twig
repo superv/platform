@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="e29zB45102RH5AG7hVykW2IJ8NuLPlu4tq4iDDTt">
+
+    <title>Laravel</title>
+
+    <!-- Styles -->
+    <link href="http://laravel55.dev.io/css/app.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/themes/element/theme-chalk/index.css">
+
+    <link rel="stylesheet" href="/themes/metronic/assets/vendors/toastr/toastr.css">
+</head>
+<body>
+<div id="app">
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+
+                <!-- Collapsed Hamburger -->
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#app-navbar-collapse" aria-expanded="false">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <!-- Branding Image -->
+                <a class="navbar-brand" href="http://laravel55.dev.io">
+                    Laravel
+                </a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="app-navbar-collapse">
+                <!-- Left Side Of Navbar -->
+                <ul class="nav navbar-nav">
+                    &nbsp;
+                </ul>
+
+                <!-- Right Side Of Navbar -->
+                <ul class="nav navbar-nav navbar-right">
+                    <!-- Authentication Links -->
+                    <li><a href="{{ route("auth::login") }}">Login</a></li>
+                    <li><a href="{{ route("auth::register") }}">Register</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Login</div>
+
+                    <div class="panel-body">
+                        <div id="app">
+                                <sv-form
+                                        id="{{ form.id }}"
+                                        :fields="{{ form.fields |json_encode }}"
+                                        :config="{{ form.config |json_encode }}">
+                                </sv-form>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'port::partials/js' %}
+{% include 'port::partials/modals' %}
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

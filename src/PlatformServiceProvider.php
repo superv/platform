@@ -8,6 +8,7 @@ use SuperV\Platform\Adapters\AdapterServiceProvider;
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Application\Console\EnvSet;
 use SuperV\Platform\Domains\Application\Console\InstallSuperV;
+use SuperV\Platform\Domains\Auth\AuthServiceProvider;
 use SuperV\Platform\Domains\Console\ConsoleServiceProvider;
 use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
 use SuperV\Platform\Domains\Database\DatabaseServiceProvider;
@@ -80,6 +81,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
 
     public function register()
     {
+        $this->app->register(AuthServiceProvider::class);
         $this->app->register(DatabaseServiceProvider::class);
         $this->app->register(AdapterServiceProvider::class);
         $this->app->register(ConsoleServiceProvider::class);
