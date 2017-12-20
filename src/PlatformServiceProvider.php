@@ -32,6 +32,8 @@ use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
 use SuperV\Platform\Events\DropletsBooted;
 use SuperV\Platform\Events\PlatformReady;
+use SuperV\Platform\Support\Inflator;
+use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\UrlGenerator;
 use SuperV\Platform\Traits\BindsToContainer;
 use SuperV\Platform\Traits\RegistersRoutes;
@@ -99,6 +101,9 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         $this->registerSingletons($this->singletons);
         $this->registerPlatform();
 //        $this->registerDevTools();
+
+        $this->app->singleton('superv.parser', function($app){ return $app->make(Parser::class);});
+        $this->app->singleton('superv.inflator', function($app){ return $app->make(Inflator::class);});
     }
 
     public function boot(DropletManager $dropletManager)
