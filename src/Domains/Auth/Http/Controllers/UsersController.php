@@ -12,10 +12,7 @@ class UsersController extends BasePlatformController
     public function index(TableFactory $factory)
     {
         $builder = $factory->fromJson('users.json');
-
-        $builder->build();
-
-        $table = $builder->getTable();
+        $table = $builder->build()->getTable();
 
         $data = [
             'block' => [
@@ -26,22 +23,22 @@ class UsersController extends BasePlatformController
                 ],
             ],
             'page'  => [
-                'title' => 'Users Index',
+                'title'   => 'Users Index',
+                'buttons' => [
+                    [
+                        'title'      => 'New User',
+                        'button'     => 'create',
+                        'type'       => 'success',
+                        'attributes' => [
+                            'href' => '/acp/auth/users/create',
+                        ],
+                    ],
+                ],
             ],
         ];
 
         if ($this->request->wantsJson()) {
-            return response(['data' => [
-                'block' => [
-                    'component' => 'sv-table',
-                    'props'     => [
-                        'columns' => $table->getColumns(),
-                        'rows'    => $table->getRows(),
-                    ],
-                ],
-                'page'  => [
-                    'title' => 'Users Index',
-                ]]]);
+            return response(['data' => $data]);
         }
 
         return $this->view->make('ui::page', ['page' => $data]);
@@ -55,7 +52,42 @@ class UsersController extends BasePlatformController
         $this->dispatch(new MapForm($form, $user));
         $this->dispatch(new MakeFormInstance($form));
 
-        return $this->view->make('ui::form', ['form' => $form]);
+        $data = [
+            'block' => [
+                'component' => 'sv-form',
+                'props'     => [
+                    'fields' => $form->getFields(),
+                    'config' => $form->getConfig(),
+                ],
+            ],
+            'page'  => [
+                'title'   => 'User Edit',
+                'buttons' => [
+                    [
+                        'title'      => 'Users',
+                        'button'     => 'index',
+                        'type'       => 'success',
+                        'attributes' => [
+                            'href' => '/acp/auth/users/index',
+                        ],
+                    ],
+                    [
+                        'title'      => 'New User',
+                        'button'     => 'create',
+                        'type'       => 'success',
+                        'attributes' => [
+                            'href' => '/acp/auth/users/create',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        if ($this->request->wantsJson()) {
+            return response(['data' => $data]);
+        }
+
+        return $this->view->make('ui::page', ['page' => $data]);
     }
 
     public function create(FormFactory $factory)
@@ -64,6 +96,33 @@ class UsersController extends BasePlatformController
 
         $this->dispatch(new MakeFormInstance($form));
 
-        return $this->view->make('ui::form', ['form' => $form]);
+        $data = [
+            'block' => [
+                'component' => 'sv-form',
+                'props'     => [
+                    'fields' => $form->getFields(),
+                    'config' => $form->getConfig(),
+                ],
+            ],
+            'page'  => [
+                'title'   => 'User Create',
+                'buttons' => [
+                    [
+                        'title'      => 'Users',
+                        'button'     => 'index',
+                        'type'       => 'success',
+                        'attributes' => [
+                            'href' => '/acp/auth/users/index',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        if ($this->request->wantsJson()) {
+            return response(['data' => $data]);
+        }
+
+        return $this->view->make('ui::page', ['page' => $data]);
     }
 }
