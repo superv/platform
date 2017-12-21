@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\View\Extensions;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Contracts\Navigation\Navigation;
 use SuperV\Platform\Domains\Model\EloquentCriteria;
+use SuperV\Platform\Domains\Setting\JSON;
 use SuperV\Platform\Domains\Task\Model\TaskModel;
 use SuperV\Platform\Domains\Task\Task;
 use SuperV\Platform\Domains\UI\Button\Features\MakeButtons;
@@ -36,8 +37,15 @@ class PlatformExtension extends \Twig_Extension
             }, [
                 'is_safe' => ['html'],
             ]),
-            new Twig_SimpleFunction('navigation', function () {
-                return app(Navigation::class);
+            new Twig_SimpleFunction('navigation', function ($key = null) {
+                if (! $key) {
+                    return app(Navigation::class);
+                }
+
+                $id =  (new JSON(storage_path("superv/compiled/navigation/index.json")))->get($key);
+                $nav = (new JSON(storage_path("superv/compiled/navigation/{$id}.json")));
+
+                return $nav->get('sections');
             }),
         ];
     }
