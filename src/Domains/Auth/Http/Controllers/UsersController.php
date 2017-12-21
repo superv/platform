@@ -1,11 +1,10 @@
 <?php namespace SuperV\Platform\Domains\Auth\Http\Controllers;
 
-use SuperV\Platform\Domains\Auth\Domains\User\Users;
 use SuperV\Modules\Ui\Domains\Form\FormFactory;
 use SuperV\Modules\Ui\Domains\Form\Jobs\MakeFormInstance;
 use SuperV\Modules\Ui\Domains\Form\Jobs\MapForm;
 use SuperV\Modules\Ui\Domains\Table\TableFactory;
-use SuperV\Platform\Facades\Parser;
+use SuperV\Platform\Domains\Auth\Domains\User\Users;
 use SuperV\Platform\Http\Controllers\BasePlatformController;
 
 class UsersController extends BasePlatformController
@@ -18,7 +17,34 @@ class UsersController extends BasePlatformController
 
         $table = $builder->getTable();
 
-        return $this->view->make('ui::table', ['table' => $table]);
+        $data = [
+            'block' => [
+                'component' => 'sv-table',
+                'props'     => [
+                    'columns' => $table->getColumns(),
+                    'rows'    => $table->getRows(),
+                ],
+            ],
+            'page'  => [
+                'title' => 'Users Index',
+            ],
+        ];
+
+        if ($this->request->wantsJson()) {
+            return response(['data' => [
+                'block' => [
+                    'component' => 'sv-table',
+                    'props'     => [
+                        'columns' => $table->getColumns(),
+                        'rows'    => $table->getRows(),
+                    ],
+                ],
+                'page'  => [
+                    'title' => 'Users Index',
+                ]]]);
+        }
+
+        return $this->view->make('ui::page', ['page' => $data]);
     }
 
     public function edit($id, Users $users, FormFactory $factory)
