@@ -41,7 +41,7 @@ class UsersController extends BasePlatformController
             return response(['data' => $data]);
         }
 
-        return $this->view->make('ui::page', ['page' => $data]);
+        return $this->view->make('ui::container', ['page' => $data]);
     }
 
     public function edit($id, Users $users, FormFactory $factory)
@@ -56,7 +56,7 @@ class UsersController extends BasePlatformController
             'block' => [
                 'component' => 'sv-form',
                 'props'     => [
-                    'fields' => $form->getFields(),
+                    'fields' => $form->getFields()->values()->toArray(),
                     'config' => $form->getConfig(),
                 ],
             ],
@@ -87,7 +87,7 @@ class UsersController extends BasePlatformController
             return response(['data' => $data]);
         }
 
-        return $this->view->make('ui::page', ['page' => $data]);
+        return $this->view->make('ui::container', ['page' => $data]);
     }
 
     public function create(FormFactory $factory)
@@ -100,7 +100,7 @@ class UsersController extends BasePlatformController
             'block' => [
                 'component' => 'sv-form',
                 'props'     => [
-                    'fields' => $form->getFields(),
+                    'fields' => $form->getFields()->values()->toArray(),
                     'config' => $form->getConfig(),
                 ],
             ],
@@ -123,6 +123,6 @@ class UsersController extends BasePlatformController
             return response(['data' => $data]);
         }
 
-        return $this->view->make('ui::page', ['page' => $data]);
+        return $this->view->make('ui::container', ['page' => $data]);
     }
 }

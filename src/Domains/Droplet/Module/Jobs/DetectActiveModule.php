@@ -8,7 +8,6 @@ use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
 use SuperV\Platform\Domains\Droplet\Module\Module;
-use SuperV\Platform\Domains\UI\Navigation\Navigation;
 
 class DetectActiveModule
 {
@@ -18,19 +17,13 @@ class DetectActiveModule
     private $droplets;
 
     /**
-     * @var Navigation
-     */
-    private $navigation;
-
-    /**
      * @var Factory
      */
     private $view;
 
-    public function __construct(DropletCollection $droplets, Navigation $navigation, Factory $view)
+    public function __construct(DropletCollection $droplets, Factory $view)
     {
         $this->droplets = $droplets;
-        $this->navigation = $navigation;
         $this->view = $view;
     }
 
@@ -49,7 +42,5 @@ class DetectActiveModule
         $module = $this->droplets->get($slug);
 
         $this->view->addNamespace('module', [base_path($module->getPath('resources/views'))]);
-
-        $this->navigation->setActiveModule($module);
     }
 }

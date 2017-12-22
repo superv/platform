@@ -77,8 +77,6 @@ class DropletProvider
         $this->registerFeatures($provider);
         $this->registerListeners($provider);
 
-        $this->dispatch(new ManifestDroplet($droplet));
-
         // TODO: booting should be done after all droplets are registered
         if (method_exists($provider, 'boot')) {
             $this->app->call([$provider, 'boot'], ['provider' => $this]);
