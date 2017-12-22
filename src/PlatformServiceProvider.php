@@ -126,7 +126,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         $this->detectActivePort();
         $dropletManager->bootPorts();
 
-        $this->manifestPlatform();
+        superv('platform');
 
         $dropletManager->bootAllButPorts();
         $this->app['events']->fire(new DropletsBooted());
@@ -145,8 +145,6 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         $this->loadViewsFrom(storage_path(), 'storage');
 
         app(Factory::class)->composer('*', ViewComposer::class);
-
-        superv('view.template')->set('menu', superv('navigation'));
     }
 
     protected function setupConfig()
@@ -184,10 +182,6 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         $this->dispatch(new RegisterConsoleCommands($this));
     }
 
-    protected function manifestPlatform(): void
-    {
-        $this->dispatch(new ManifestDroplet(superv('platform')));
-    }
 
     protected function detectActivePort(): void
     {
