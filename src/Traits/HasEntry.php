@@ -9,21 +9,28 @@ trait HasEntry
     /** @var  EntryModel */
     protected $entry;
 
-    public function __call($method, $arguments)
-    {
-        if ($this->entry) {
-            return call_user_func_array([$this->entry, $method], $arguments);
-//            return $this->entry->getAttribute($method);
-        }
+//    public function __call($method, $arguments)
+//    {
+//        if ($this->entry) {
+//            return call_user_func_array([$this->entry, $method], $arguments);
+//        }
+//
+//        throw new \BadMethodCallException("Method {$method} does not exist.");
+//    }
+//
+//    public function __get($name)
+//    {
+//        if ($this->entry) {
+//            return $this->entry->getAttribute($name);
+//        }
+//    }
 
-        throw new \BadMethodCallException("Method {$method} does not exist.");
-    }
-
-    public function __get($name)
+    /**
+     * @return bool
+     */
+    public function hasEntry()
     {
-        if ($this->entry) {
-            return $this->entry->getAttribute($name);
-        }
+        return !is_null($this->entry);
     }
 
     /**
@@ -44,5 +51,10 @@ trait HasEntry
         $this->entry = $entry;
 
         return $this;
+    }
+
+    public function getEntryId()
+    {
+        return $this->entry ? $this->entry->getKey() : null;
     }
 }

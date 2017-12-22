@@ -4,6 +4,8 @@ namespace SuperV\Platform\Traits;
 
 trait HasConfig
 {
+    protected $config;
+
     public function config($key = null, $default = null)
     {
         if (is_null($key)) {
@@ -23,6 +25,16 @@ trait HasConfig
         array_set($this->config, $key, $value);
 
         return $this;
+    }
+
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
+    public function hasConfigValue($key)
+    {
+        return array_has($this->config, $key);
     }
 
     public function setConfig(array $config)
