@@ -10,6 +10,16 @@ function platform_path($path = null)
     return 'vendor/superv/platform'.(is_null($path) ? '' : DIRECTORY_SEPARATOR.$path);
 }
 
+function reload_env()
+{
+    foreach (file(base_path('.env'), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        // Check for # comments.
+        if (! starts_with($line, '#')) {
+            putenv($line);
+        }
+    }
+}
+
 function mysql_now()
 {
     return date('Y-m-d H:i:s');

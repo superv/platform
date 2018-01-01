@@ -7,41 +7,22 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Console\Kernel;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
 
-class InstallSuperV extends Command
+class InstallSuperVCommand extends Command
 {
     use DispatchesJobs;
 
-    protected $signature = 'superv:install';
+    protected $signature = 'install';
 
     protected $description = '';
 
-    public function handle(Droplets $droplets, Kernel $kernel)
+    public function handle(Kernel $kernel)
     {
-        $kernel->call('env:set', ['line' => 'SUPERV_INSTALLED=false']);
-
         $kernel->call('migrate', ['--force' => true,
                                   '--path'  => 'vendor/superv/platform/database/migrations']);
 
-//        $droplets->create([
-//            'id'        => 1,
-//            'name'      => 'platform',
-//            'vendor'    => 'superv',
-//            'slug'      => 'superv.platform',
-//            'namespace' => 'SuperV\Platform',
-//            'path'      => 'vendor/superv/platform',
-//            'type'      => 'module',
-//            'enabled'   => false,
-//        ]);
-
         $kernel->call('env:set', ['line' => 'SUPERV_INSTALLED=true']);
 
-        // Reload environment file
-        foreach (file(base_path('.env'), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-            // Check for # comments.
-            if (! starts_with($line, '#')) {
-                putenv($line);
-            }
-        }
+        reload_env();
 
         $kernel->call('droplet:install', [
             'droplet' => 'superv.ports.acp',
