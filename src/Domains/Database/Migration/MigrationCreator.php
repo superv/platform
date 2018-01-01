@@ -71,7 +71,8 @@ class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
      */
     public function stubPath()
     {
-        return superv('platform')->getResourcePath('stubs/database/migrations');
+        return platform_path('resources/stubs/database/migrations');
+//        return superv('platform')->getResourcePath('stubs/database/migrations');
     }
 
     /**

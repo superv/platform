@@ -22,16 +22,16 @@ class InstallSuperV extends Command
         $kernel->call('migrate', ['--force' => true,
                                   '--path'  => 'vendor/superv/platform/database/migrations']);
 
-        $droplets->create([
-            'id'        => 1,
-            'name'      => 'platform',
-            'vendor'    => 'superv',
-            'slug'      => 'superv.platform',
-            'namespace' => 'SuperV\Platform',
-            'path'      => 'vendor/superv/platform',
-            'type'      => 'module',
-            'enabled'   => false,
-        ]);
+//        $droplets->create([
+//            'id'        => 1,
+//            'name'      => 'platform',
+//            'vendor'    => 'superv',
+//            'slug'      => 'superv.platform',
+//            'namespace' => 'SuperV\Platform',
+//            'path'      => 'vendor/superv/platform',
+//            'type'      => 'module',
+//            'enabled'   => false,
+//        ]);
 
         $kernel->call('env:set', ['line' => 'SUPERV_INSTALLED=true']);
 
@@ -61,11 +61,17 @@ class InstallSuperV extends Command
         $kernel->call('droplet:install', [
             'droplet' => 'superv.modules.nucleo',
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/nucleo',
+            '--seed' => true
         ]);
 
         $kernel->call('droplet:install', [
-            'droplet' => 'superv.themes.starter',
-            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/starter',
+            'droplet' => 'superv.themes.tailwind',
+            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/tailwind',
+        ]);
+
+        $kernel->call('droplet:install', [
+            'droplet' => 'superv.themes.bulma',
+            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/bulma',
         ]);
 
         $this->comment("SuperV installed..!!!");

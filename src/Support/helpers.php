@@ -4,6 +4,12 @@ use Illuminate\Container\Container;
 use SuperV\Platform\Support\Collection;
 use SuperV\Platform\Support\Decorator;
 
+function platform_path($path = null)
+{
+
+    return 'vendor/superv/platform'.(is_null($path) ? '' : DIRECTORY_SEPARATOR.$path);
+}
+
 function mysql_now()
 {
     return date('Y-m-d H:i:s');

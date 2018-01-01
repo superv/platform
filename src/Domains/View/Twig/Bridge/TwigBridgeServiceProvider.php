@@ -58,7 +58,8 @@ class TwigBridgeServiceProvider extends ViewServiceProvider
      */
     protected function loadConfiguration()
     {
-        $configPath = base_path(superv('platform')->getConfigPath('twigbridge.php'));
+        $configPath = base_path(platform_path('config/twigbridge.php'));
+//        $configPath = base_path(superv('platform')->getConfigPath('twigbridge.php'));
 
         $this->publishes([$configPath => config_path('twigbridge.php')], 'config');
 

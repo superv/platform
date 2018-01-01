@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Application\Console\EnvSet;
 use SuperV\Platform\Domains\Application\Console\InstallSuperV;
 use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
+use SuperV\Platform\Domains\Droplet\Console\DropletSeedCommand;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\DropletServiceProviderInterface;
 use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
@@ -58,6 +59,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         EnvSet::class,
         InstallSuperV::class,
         DropletInstallCommand::class,
+        DropletSeedCommand::class
     ];
 
     public function register()
@@ -67,9 +69,9 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         }
 
         // commmands needed before the platform is installed
-        Artisan::starting(function ($artisan) {
-            $artisan->resolveCommands($this->commands);
-        });
+        if ($this->app->runningInConsole()) {
+            $this->commands($this->commands);
+        }
 
 //        app(Bridge::class)->addExtension(app(AsseticExtension::class));
 
@@ -81,7 +83,6 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         $this->registerBindings($this->bindings);
         $this->registerProviders($this->providers);
         $this->registerSingletons($this->singletons);
-        $this->registerPlatform();
 
         $this->app->singleton('superv.parser', function ($app) { return $app->make(Parser::class); });
         $this->app->singleton('superv.inflator', function ($app) { return $app->make(Inflator::class); });
@@ -107,9 +108,6 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         $this->dispatch(new DetectActivePort());
         $dropletManager->bootPorts();
 
-        /** ???? */
-        superv('platform');
-
         // boot other droplets
         $dropletManager->bootAllButPorts();
         DropletsBooted::dispatch();
@@ -118,7 +116,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
          * disperse routes to ports
          * and register the routes for the active port
          */
-        $this->disperseRoutes(array_merge($this->routes ?? [], $this->dispatch(new GetPortRoutes($this))));
+        $this->disperseRoutes(array_merge($this->routes ?? [], $this->dispatch(new GetPortRoutes(platform_path()))));
         $this->registerRoutes(app(Port::class));
 
         $this->dispatch(new RegisterConsoleCommands($this));
@@ -151,12 +149,12 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
 
     public function getResourcePath($path = null)
     {
-        return $this->platform->getResourcePath($path);
+        return $this->getPath('resource' . DIRECTORY_SEPARATOR . $path);
     }
 
     public function getPath($path = null)
     {
-        return $this->platform->getPath($path);
+        return platform_path($path);
     }
 
     public function getCommands()

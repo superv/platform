@@ -61,7 +61,7 @@ class DropletServiceProvider implements DropletServiceProviderInterface
 
     public function getRoutes()
     {
-        $routes = $this->dispatch(new GetPortRoutes($this));
+        $routes = $this->dispatch(new GetPortRoutes($this->getPath()));
 
         $routes = array_merge($this->routes, $routes);
 
