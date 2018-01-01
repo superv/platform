@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\UI\Form;
+usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm;
 
 use SuperV\Platform\Domains\Entry\EntryModel;
 use Symfony\Component\PropertyAccess\Exception;

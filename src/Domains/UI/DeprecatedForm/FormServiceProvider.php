@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\UI\Form;
+usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm;
 
 use Symfony\Component\Form\Forms;
 use Illuminate\Support\ServiceProvider;

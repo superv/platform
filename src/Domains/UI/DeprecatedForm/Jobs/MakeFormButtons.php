@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\UI\Form\Jobs;
+usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm\Jobs;
 
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\UI\Form\FormBuilder;

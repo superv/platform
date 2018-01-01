@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\UI\Form;
+usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm;
 
 use SuperV\Platform\Support\Collection;
 use Symfony\Component\Form\FormInterface;

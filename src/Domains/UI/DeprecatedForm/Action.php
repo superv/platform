@@ -1,11 +1,9 @@
 <?php
 
-namespace SuperV\Platform\Domains\UI\Form;
+namespace SuperV\Platform\Domains\UI\DeprecatedForm;
 
 class Action
 {
-    private $button;
-
     private $slug;
 
     private $type;

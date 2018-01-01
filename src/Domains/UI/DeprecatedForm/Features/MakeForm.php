@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\UI\Form\Features;
+usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm\Features;
 
 use Symfony\Component\Form\Form;
 use SuperV\Platform\Domains\Feature\Feature;
