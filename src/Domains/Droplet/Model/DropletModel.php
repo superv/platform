@@ -2,8 +2,12 @@
 
 namespace SuperV\Platform\Domains\Droplet\Model;
 
-class DropletModel extends DropletEntryModel
+use SuperV\Platform\Domains\Entry\EntryModel;
+
+class DropletModel extends EntryModel
 {
+    protected $table = 'platform_droplets';
+
     public function locate()
     {
         $paths = [

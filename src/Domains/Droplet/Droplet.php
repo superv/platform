@@ -7,14 +7,6 @@ use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
 class Droplet implements JsonSerializable
 {
-    protected $title = 'Droplet';
-
-    protected $link = '/';
-
-    protected $icon = 'droplet';
-
-    protected $navigation = false;
-
     /** @var DropletModel */
     protected $model;
 
@@ -31,11 +23,6 @@ class Droplet implements JsonSerializable
     public function __construct(DropletModel $model = null)
     {
         $this->model = $model;
-    }
-
-    public static function from(DropletModel $model)
-    {
-        return app($model->droplet(), ['model' => $model]);
     }
 
     /** @return DropletServiceProvider */
@@ -65,11 +52,6 @@ class Droplet implements JsonSerializable
         return $this->model->getName();
     }
 
-    public function identifier()
-    {
-        return "{$this->model->getVendor()}.{$this->model->getName()}";
-    }
-
     public function getCommand($command)
     {
         return array_get($this->commands, $command);
@@ -95,9 +77,6 @@ class Droplet implements JsonSerializable
         return $this->getPath("config/{$path}");
     }
 
-    /**
-     * @return mixed
-     */
     public function getType()
     {
         return $this->type;
@@ -106,46 +85,6 @@ class Droplet implements JsonSerializable
     public function isType($type)
     {
         return $this->type == $type;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getManifests()
-    {
-        return $this->manifests;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLink(): string
-    {
-        return $this->link;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIcon(): string
-    {
-        return $this->icon;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isNavigation(): bool
-    {
-        return $this->navigation;
     }
 
     /**
@@ -166,19 +105,6 @@ class Droplet implements JsonSerializable
     public function getModelId()
     {
         return $this->model->getId();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCommands()
-    {
-        return $this->commands;
-    }
-
-    public function getSortOrder()
-    {
-        return $this->sortOrder;
     }
 
     /**
