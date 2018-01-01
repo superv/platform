@@ -90,7 +90,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         if (! env('SUPERV_INSTALLED', false)) {
             return;
         }
-        $this->setupConfig();
+        $this->mergeConfigs();
 
         $this->registerBindings($this->bindings);
         $this->registerProviders($this->providers);
@@ -114,7 +114,8 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
          * then perform registeration depending on port, cli
          */
         $dropletManager->load();
-        $this->setupView();
+
+        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'superv');
 
         $this->detectActivePort();
         $dropletManager->bootPorts();
@@ -132,15 +133,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         PlatformReady::dispatch();
     }
 
-    protected function setupView(): void
-    {
-        $this->loadViewsFrom(__DIR__.'/../resources/views/', 'superv');
-//        $this->loadViewsFrom(storage_path(), 'storage');
-
-//        app(Factory::class)->composer('*', ViewComposer::class);
-    }
-
-    protected function setupConfig()
+    protected function mergeConfigs()
     {
         foreach (glob(__DIR__.'/../config/*') as $path) {
             $key = pathinfo($path, PATHINFO_FILENAME);
