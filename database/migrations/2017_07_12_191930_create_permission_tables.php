@@ -7,56 +7,56 @@ class CreatePermissionTables extends Migration
 {
     public function up()
     {
-        Schema::create('auth_perms', function (Blueprint $table) {
+        Schema::create('user_perms', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->string('guard_name');
             $table->timestamps();
         });
 
-        Schema::create('auth_roles', function (Blueprint $table) {
+        Schema::create('user_roles', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->string('guard_name');
             $table->timestamps();
         });
 
-        Schema::create('auth_model_has_perms', function (Blueprint $table) {
+        Schema::create('user_model_has_perms', function (Blueprint $table) {
             $table->integer('permission_id')->unsigned();
             $table->morphs('model');
 
             $table->foreign('permission_id')
                 ->references('id')
-                ->on('auth_perms')
+                ->on('user_perms')
                 ->onDelete('cascade');
 
             $table->primary(['permission_id', 'model_id', 'model_type']);
         });
 
-        Schema::create('auth_model_has_roles', function (Blueprint $table)  {
+        Schema::create('user_model_has_roles', function (Blueprint $table)  {
             $table->integer('role_id')->unsigned();
             $table->morphs('model');
 
             $table->foreign('role_id')
                 ->references('id')
-                ->on('auth_roles')
+                ->on('user_roles')
                 ->onDelete('cascade');
 
             $table->primary(['role_id', 'model_id', 'model_type']);
         });
 
-        Schema::create('auth_role_has_perms', function (Blueprint $table) {
+        Schema::create('user_role_has_perms', function (Blueprint $table) {
             $table->integer('permission_id')->unsigned();
             $table->integer('role_id')->unsigned();
 
             $table->foreign('permission_id')
                 ->references('id')
-                ->on('auth_perms')
+                ->on('user_perms')
                 ->onDelete('cascade');
 
             $table->foreign('role_id')
                 ->references('id')
-                ->on('auth_roles')
+                ->on('user_roles')
                 ->onDelete('cascade');
 
             $table->primary(['permission_id', 'role_id']);
@@ -70,10 +70,10 @@ class CreatePermissionTables extends Migration
      */
     public function down()
     {
-        Schema::drop('auth_role_has_perms');
-        Schema::drop('auth_model_has_roles');
-        Schema::drop('auth_model_has_perms');
-        Schema::drop('auth_roles');
-        Schema::drop('auth_perms');
+        Schema::drop('user_role_has_perms');
+        Schema::drop('user_model_has_roles');
+        Schema::drop('user_model_has_perms');
+        Schema::drop('user_roles');
+        Schema::drop('user_perms');
     }
 }

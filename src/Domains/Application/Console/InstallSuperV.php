@@ -17,7 +17,7 @@ class InstallSuperV extends Command
 
     public function handle(Droplets $droplets, Kernel $kernel)
     {
-//        $kernel->call('migrate', ['--force' => true]);
+        $kernel->call('env:set', ['line' => 'SUPERV_INSTALLED=false']);
 
         $kernel->call('migrate', ['--force' => true,
                                   '--path'  => 'vendor/superv/platform/database/migrations']);
@@ -54,11 +54,6 @@ class InstallSuperV extends Command
         ]);
 
         $kernel->call('droplet:install', [
-            'droplet' => 'superv.modules.auth',
-            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/auth',
-        ]);
-
-        $kernel->call('droplet:install', [
             'droplet' => 'superv.modules.ui',
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/ui',
         ]);
@@ -72,6 +67,8 @@ class InstallSuperV extends Command
             'droplet' => 'superv.themes.starter',
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/starter',
         ]);
+
+        $this->comment("SuperV installed..!!!");
     }
 
 

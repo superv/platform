@@ -7,7 +7,7 @@ class ValidateUserData extends BaseValidator
     protected $rules = [
         'first_name' => 'required|max:255',
         'last_name'  => 'required|max:255',
-        'email'      => 'required|email|max:255|unique:auth_users',
+        'email'      => 'required|email|max:255|unique:users',
         'password'   => 'required|min:6',
     ];
 

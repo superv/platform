@@ -4,6 +4,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Spatie\Permission\Traits\HasRoles;
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Entry\EntryModel;
 
 class UserModel extends EntryModel implements AuthenticatableContract
@@ -13,7 +14,7 @@ class UserModel extends EntryModel implements AuthenticatableContract
 
     public $timestamps = true;
 
-    protected $table = 'auth_users';
+    protected $table = 'users';
 
     protected $fillable = [
         'name',
@@ -26,6 +27,11 @@ class UserModel extends EntryModel implements AuthenticatableContract
         'name',
         'email',
     ];
+
+    public function droplet()
+    {
+        return $this->belongsTo(DropletModel::class, 'droplet_id');
+    }
 
     public function setPasswordAttribute($value)
     {

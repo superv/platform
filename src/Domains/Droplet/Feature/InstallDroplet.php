@@ -38,7 +38,6 @@ class InstallDroplet extends Feature
 
         $composer = $this->dispatch(new GetComposerArray(base_path($model->getPath())));
 
-
         $model->setNamespace($this->dispatch(new GetBaseNamespace($composer)))
               ->setEnabled(true)
               ->save();
@@ -52,12 +51,14 @@ class InstallDroplet extends Feature
         // symlink public folder
         if (in_array($model->getType(), ['theme'])) {
             $publicPath = public_path(str_plural($model->getType()));
-            if (!file_exists($publicPath)) {
+            if (! file_exists($publicPath)) {
                 mkdir($publicPath);
             }
             $where = $publicPath."/".$model->getName();
-            $what = base_path($model->getPath('public'));
-            symlink($what, $where);
+            if (! file_exists($where)) {
+                $what = base_path($model->getPath('public'));
+                symlink($what, $where);
+            }
         }
 
         return true;

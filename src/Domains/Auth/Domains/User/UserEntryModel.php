@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Entry\EntryModel;
 
 class UserEntryModel extends EntryModel
 {
-    protected $table = 'auth_users';
+    protected $table = 'users';
 
     protected $relationships = ['roles', 'permissions'];
 
