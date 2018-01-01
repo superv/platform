@@ -4,7 +4,6 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use SuperV\Modules\Ui\Domains\Form\FormFactory;
 use SuperV\Modules\Ui\Domains\Form\Jobs\MakeFormInstance;
-use SuperV\Platform\Domains\Auth\Features\Logout;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Http\Controllers\BasePlatformController;
 
@@ -17,7 +16,9 @@ class LoginController extends BasePlatformController
 
     public function logout()
     {
-        return $this->serve(Logout::class);
+        \Auth::logout();
+
+        return $this->redirect->route('auth::login');
     }
 
     public function show(FormFactory $factory)
@@ -26,11 +27,11 @@ class LoginController extends BasePlatformController
 
         $this->dispatch(new MakeFormInstance($form));
 
-        return $this->view->make('superv::auth/login-alt', ['form' => $form]);
-    }
+        $data = [
+            'fields' => $form->getFields()->values()->toArray(),
+            'config' => $form->getConfig(),
+        ];
 
-    public function showLoginForm()
-    {
-        return $this->view->make('superv::login');
+        return $this->view->make('superv::auth/login-alt', $data);
     }
 }

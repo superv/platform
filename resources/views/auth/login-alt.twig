@@ -63,9 +63,8 @@
                     <div class="panel-body">
                         <div id="app">
                                 <sv-form
-                                        id="{{ form.id }}"
-                                        :fields="{{ form.fields |json_encode }}"
-                                        :config="{{ form.config |json_encode }}">
+                                        :fields="{{ fields |json_encode }}"
+                                        :config="{{ config |json_encode }}">
                                 </sv-form>
                             </div>
                     </div>
