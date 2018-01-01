@@ -38,7 +38,6 @@ class LoadDroplet extends Feature
 
     public function handle()
     {
-        return;
         $composer = \Cache::remember('composer@'.md5($this->path), 60, function () {
             return $this->dispatch(new GetComposerConfig($this->path));
         });

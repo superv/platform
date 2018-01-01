@@ -19,6 +19,7 @@
         "kriswallsmith/assetic": "^1.4",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
+        ""
         "laravelcollective/html": "5.5",
         "nicmart/string-template": "~0.1",
         "predis/predis": "~1.1",
@@ -32,7 +33,11 @@
     "extra": {
         "laravel": {
             "providers": [
-                "SuperV\\Platform\\PlatformServiceProvider"
+                "SuperV\\Platform\\PlatformServiceProvider",
+                "SuperV\\Platform\\Adapters\\AdapterServiceProvider",
+                "SuperV\\Platform\\Domains\\Auth\\AuthServiceProvider",
+                "SuperV\\Platform\\Domains\\Database\\DatabaseServiceProvider",
+                "SuperV\\Platform\\Domains\\Console\\ConsoleServiceProvider"
             ]
         }
     }

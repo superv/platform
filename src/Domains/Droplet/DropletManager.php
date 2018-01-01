@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Droplet;
 
 use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
+use SuperV\Platform\Domains\Droplet\Feature\LoadDroplet;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;

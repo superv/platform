@@ -23,13 +23,7 @@ use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
-use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
-use SuperV\Platform\Domains\Manifest\ManifestCollection;
-use SuperV\Platform\Domains\UI\Form\FormServiceProvider;
-use SuperV\Platform\Domains\UI\Navigation\Navigation;
-use SuperV\Platform\Domains\UI\Page\PageCollection;
 use SuperV\Platform\Domains\View\Twig\Bridge\TwigBridgeServiceProvider;
-use SuperV\Platform\Domains\View\ViewComposer;
 use SuperV\Platform\Domains\View\ViewTemplate;
 use SuperV\Platform\Events\DropletsBooted;
 use SuperV\Platform\Events\PlatformReady;
@@ -77,10 +71,10 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
 
     public function register()
     {
-        $this->app->register(AuthServiceProvider::class);
-        $this->app->register(DatabaseServiceProvider::class);
-        $this->app->register(AdapterServiceProvider::class);
-        $this->app->register(ConsoleServiceProvider::class);
+//        $this->app->register(AuthServiceProvider::class);
+//        $this->app->register(DatabaseServiceProvider::class);
+//        $this->app->register(AdapterServiceProvider::class);
+//        $this->app->register(ConsoleServiceProvider::class);
 
         if (config('superv.clockwork')) {
             $this->app->register(\Clockwork\Support\Laravel\ClockworkServiceProvider::class);
