@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Droplet;
 
 use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
-use SuperV\Platform\Domains\Droplet\Feature\LoadDroplet;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
@@ -35,8 +34,6 @@ class DropletManager
     {
         /** @var DropletModel $model */
         foreach (app(Droplets::class)->enabled()->get() as $model) {
-//            $this->serve(new LoadDroplet(base_path($model->getPath())));
-
             /** @var Droplet $droplet */
             $droplet = app($model->droplet())->setModel($model);
 
@@ -61,12 +58,8 @@ class DropletManager
     {
         $ports = $this->droplets->ports();
 
-//        /** @var Port $port */
-//        foreach($ports as $port) {
-//            $this->serve(new LoadDroplet(base_path($port->getPath())));
-//        }
         foreach ($ports as $model) {
-            $this->bootDroplet($model);
+            $this->serve(new IntegrateDroplet($model));
         }
     }
 
@@ -74,19 +67,8 @@ class DropletManager
     {
         $droplets = $this->droplets->allButPorts();
 
-//        /** @var Droplet $droplet */
-//        foreach ($droplets as $droplet) {
-//            $this->serve(new LoadDroplet(base_path($droplet->getPath())));
-//        }
-
         foreach ($droplets as $model) {
-
-            $this->bootDroplet($model);
+            $this->serve(new IntegrateDroplet($model));
         }
-    }
-
-    private function bootDroplet($model)
-    {
-        $this->serve(new IntegrateDroplet($model));
     }
 }

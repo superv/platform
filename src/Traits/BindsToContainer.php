@@ -13,9 +13,9 @@ trait BindsToContainer
         }
     }
 
-    public function registerProviders(array $providers)
+    public function registerProviders($providers)
     {
-        foreach ($providers as $provider) {
+        foreach ((array)$providers as $provider) {
             app()->register($provider);
         }
     }
