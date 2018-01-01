@@ -34,6 +34,6 @@ class LocateDroplet
             }
         }
 
-        throw new \Exception('Droplet could not be located');
+        throw new \Exception("Droplet could not be located: {$this->model->name}");
     }
 }
