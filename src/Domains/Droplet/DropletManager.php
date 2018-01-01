@@ -15,18 +15,12 @@ class DropletManager
     use ServesFeaturesTrait;
 
     /**
-     * @var DropletPaths
-     */
-    private $paths;
-
-    /**
      * @var Droplets
      */
     private $droplets;
 
-    public function __construct(DropletPaths $paths, DropletCollection $droplets)
+    public function __construct( DropletCollection $droplets)
     {
-        $this->paths = $paths;
         $this->droplets = $droplets;
     }
 
