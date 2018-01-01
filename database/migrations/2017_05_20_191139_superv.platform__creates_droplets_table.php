@@ -23,6 +23,8 @@ class SuperVPlatformCreatesDropletsTable extends Migration
             $table->string('type');
             $table->boolean('enabled');
             $table->unique(['namespace', 'name', 'slug']);
+
+            $table->nullableTimestamps();
         });
     }
 
