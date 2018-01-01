@@ -8,16 +8,18 @@ trait BindsToContainer
 {
     public function registerBindings(array $bindings)
     {
-        foreach ($bindings as $abstract => $concrete) {
-            app()->bind($abstract, $concrete);
-        }
+        collect($bindings)
+            ->map(function ($concrete, $abstract) {
+                app()->bind($abstract, $concrete);
+            });
     }
 
     public function registerProviders($providers)
     {
-        foreach ((array)$providers as $provider) {
-            app()->register($provider);
-        }
+        collect($providers)
+            ->map(function ($provider) {
+                app()->register($provider);
+            });
     }
 
     public function registerAliases($aliases)
@@ -29,24 +31,21 @@ trait BindsToContainer
 
     public function registerSingletons(array $singletons)
     {
-        foreach ($singletons as $abstract => $concrete) {
-            if (is_numeric($abstract) && is_string($concrete)) {
-                //if (str_is('*~*', $concrete)) {
-                //    list($concrete, $binding) = explode('~', $concrete);
-                //    $this->app->bindIf("superv.{$binding}", $concrete);
-                //}
-                $abstract = $concrete;
-            } else {
-                if (! preg_match('/[^A-Za-z._\-]/', $abstract)) {
-                    // platform binding
-                    app()->singleton("superv.{$abstract}", $concrete);
+        collect($singletons)
+            ->map(function ($concrete, $abstract) {
+                if (is_numeric($abstract) && is_string($concrete)) {
                     $abstract = $concrete;
                 } else {
-                    app()->singleton($abstract, $concrete);
+                    if (! preg_match('/[^A-Za-z._\-]/', $abstract)) {
+                        // platform binding
+                        app()->singleton("superv.{$abstract}", $concrete);
+                        $abstract = $concrete;
+                    } else {
+                        app()->singleton($abstract, $concrete);
+                    }
                 }
-            }
 
-            app()->singleton($abstract, $concrete);
-        }
+                app()->singleton($abstract, $concrete);
+            });
     }
 }

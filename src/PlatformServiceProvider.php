@@ -102,9 +102,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
          */
         $dropletManager->load();
 
-        /**
-         *  Detect the active port and boot all ports
-         */
+        // Detect the active port and boot all ports
         $this->dispatch(new DetectActivePort());
         $dropletManager->bootPorts();
 
@@ -112,11 +110,8 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         $dropletManager->bootAllButPorts();
         DropletsBooted::dispatch();
 
-        /**
-         * disperse routes to ports
-         * and register the routes for the active port
-         */
-        $this->disperseRoutes(array_merge($this->routes ?? [], $this->dispatch(new GetPortRoutes(platform_path()))));
+
+        $this->disperseRoutes($this->dispatch(new GetPortRoutes(platform_path())));
         $this->registerRoutes(app(Port::class));
 
         $this->dispatch(new RegisterConsoleCommands($this));

@@ -19,15 +19,12 @@ class DetectActivePort
             return;
         }
         $httpHost = $request->getHttpHost();
-        $requestUri =  $request->getRequestUri();
+        $requestUri = $request->getRequestUri();
         if (! $port = $ports->byRequest($httpHost, $requestUri)) {
-//            throw new \LogicException('This should not happen!: '.$request->getHttpHost());
-            \Log::warning("Unknown hostname {$httpHost}, can not detect active port");
-
+            //\Log::warning("Unknown hostname {$httpHost}, can not detect active port");
             return;
         }
 
-//        app()->instance(ActivePort::class, new ActivePort($port->getModel()));
         app()->instance(Port::class, $port);
 
         if ($themeSlug = $port->getTheme()) {

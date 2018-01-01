@@ -5,11 +5,8 @@ namespace SuperV\Platform\Domains\Droplet\Feature;
 use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Config\Jobs\EnableConfigFiles;
 use SuperV\Platform\Domains\Droplet\Droplet;
-use SuperV\Platform\Domains\Droplet\DropletFactory;
 use SuperV\Platform\Domains\Droplet\DropletProvider;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
-use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Feature\Feature;
 
 /**
@@ -30,16 +27,10 @@ class IntegrateDroplet extends Feature
     public function handle(DropletProvider $provider, DropletCollection $droplets, Factory $views)
     {
         $droplet = $this->droplet;
-//        $model = $this->model;
-//
-//        $class = $model->droplet();
-//
-//        /** @var Droplet $droplet */
-//        $droplet = app($class)->setModel($model);
+
         $this->dispatch(new EnableConfigFiles($droplet));
 
         $droplets->put($droplet->getSlug(), $droplet);
-
 
         $provider->register($droplet);
 
@@ -50,7 +41,5 @@ class IntegrateDroplet extends Feature
         $viewsPath = [base_path($droplet->getPath('resources/views'))];
         $views->addNamespace($droplet->getSlug(), $viewsPath);
         $views->addNamespace($droplet->getName(), $viewsPath);
-
-//        $this->dispatch(new EnableConfigFiles($droplet));
     }
 }

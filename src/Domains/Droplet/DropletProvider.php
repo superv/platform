@@ -2,15 +2,11 @@
 
 namespace SuperV\Platform\Domains\Droplet;
 
-use Illuminate\Console\Events\ArtisanStarting;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
-use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
-use SuperV\Platform\Domains\Manifest\Features\ManifestDroplet;
 use SuperV\Platform\Traits\BindsToContainer;
 use SuperV\Platform\Traits\RegistersRoutes;
 
@@ -32,21 +28,11 @@ class DropletProvider
      */
     private $router;
 
-    /**
-     * @var Schedule
-     */
-    private $schedule;
-
-    public function __construct(
-        Dispatcher $events,
-        Application $app,
-        Router $router,
-        Schedule $schedule
-    ) {
+    public function __construct(Dispatcher $events, Application $app, Router $router)
+    {
         $this->events = $events;
         $this->app = $app;
         $this->router = $router;
-        $this->schedule = $schedule;
     }
 
     public function register(Droplet $droplet)
@@ -74,55 +60,23 @@ class DropletProvider
 
         $this->dispatch(new RegisterConsoleCommands($provider));
 
-        $this->registerFeatures($provider);
-        $this->registerListeners($provider);
+        collect($provider->getFeatures())
+            ->map(function ($feature) {
+                superv('features')->push($feature);
+            });
 
-        // TODO: booting should be done after all droplets are registered
+        collect($provider->getListeners())
+            ->map(function ($listeners, $event) {
+                if (! is_array($listeners)) {
+                    $listeners = [$listeners];
+                }
+                collect($listeners)->map(function ($listener) use ($event) {
+                    $this->events->listen($event, $listener);
+                });
+            });
+
         if (method_exists($provider, 'boot')) {
             $this->app->call([$provider, 'boot'], ['provider' => $this]);
-        }
-    }
-
-    protected function registerCommands(DropletServiceProvider $provider)
-    {
-//        if ($commands = $provider->getCommands()) {
-//
-//            Artisan::starting(function ($artisan) use ($commands) {
-//                           $artisan->resolveCommands($commands);
-//                       });
-//
-//            $this->events->listen(
-//                'Illuminate\Console\Events\ArtisanStarting',
-//                function (ArtisanStarting $event) use ($commands) {
-//                    $event->artisan->resolveCommands($commands);
-//                }
-//            );
-//        }
-    }
-
-    protected function registerFeatures(DropletServiceProvider $provider)
-    {
-        foreach ($provider->getFeatures() as $key => $feature) {
-            superv('features')->push($feature);
-        }
-    }
-
-    protected function registerListeners(DropletServiceProvider $provider)
-    {
-        if (! $listen = $provider->getListeners()) {
-            return;
-        }
-
-        foreach ($listen as $event => $listeners) {
-            if (! is_array($listeners)) {
-                $listeners = [$listeners];
-            }
-            foreach ($listeners as $key => $listener) {
-                if ($listener) {
-                    $this->events->listen($event, $listener);
-                    //$this->events->listen($provider->getDroplet()->getSlug().'::'.$event, $listener);
-                }
-            }
         }
     }
 }
