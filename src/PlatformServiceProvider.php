@@ -47,11 +47,6 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
     /** @var  Platform */
     protected $platform;
 
-    protected $providers = [
-        PlatformEventProvider::class,
-        TwigBridgeServiceProvider::class,
-    ];
-
     protected $singletons = [
         'droplets'      => DropletCollection::class,
         'features'      => FeatureCollection::class,
