@@ -28,6 +28,13 @@
         "symfony/twig-bridge": "^3.3",
         "twig/twig": "~2.4",
         "tymon/jwt-auth": "^0.5.11"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SuperV\\Platform\\PlatformServiceProvider"
+            ]
+        }
     }
     
 }
