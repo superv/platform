@@ -1,13 +1,13 @@
 <?php
 
-usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm;
+namespace SuperV\Platform\Domains\UI\DeprecatedForm;
 
 use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Entry\EntryModel;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
-use SuperV\Platform\Domains\UI\Form\Features\BuildForm;
-use SuperV\Platform\Domains\UI\Form\Features\MakeForm;
-use SuperV\Platform\Domains\UI\Form\Jobs\MakeFormButtons;
+use SuperV\Platform\Domains\UI\DeprecatedForm\Features\BuildForm;
+use SuperV\Platform\Domains\UI\DeprecatedForm\Features\MakeForm;
+use SuperV\Platform\Domains\UI\DeprecatedForm\Jobs\MakeFormButtons;
 use SuperV\Platform\Traits\FiresCallbacks;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;

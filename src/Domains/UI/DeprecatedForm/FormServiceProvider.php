@@ -1,6 +1,6 @@
 <?php
 
-usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm;
+namespace SuperV\Platform\Domains\UI\DeprecatedForm;
 
 use Symfony\Component\Form\Forms;
 use Illuminate\Support\ServiceProvider;
@@ -11,11 +11,11 @@ use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\ResolvedFormTypeFactory;
-use SuperV\Platform\Domains\UI\Form\Extension\SessionExtension;
-use SuperV\Platform\Domains\UI\Form\Extension\Http\HttpExtension;
-use SuperV\Platform\Domains\UI\Form\Extension\FormValidatorExtension;
-use SuperV\Platform\Domains\UI\Form\Extension\FormDefaultsTypeExtension;
-use SuperV\Platform\Domains\UI\Form\Extension\Validation\ValidationTypeExtension;
+use SuperV\Platform\Domains\UI\DeprecatedForm\Extension\SessionExtension;
+use SuperV\Platform\Domains\UI\DeprecatedForm\Extension\Http\HttpExtension;
+use SuperV\Platform\Domains\UI\DeprecatedForm\Extension\FormValidatorExtension;
+use SuperV\Platform\Domains\UI\DeprecatedForm\Extension\FormDefaultsTypeExtension;
+use SuperV\Platform\Domains\UI\DeprecatedForm\Extension\Validation\ValidationTypeExtension;
 
 class FormServiceProvider extends ServiceProvider
 {

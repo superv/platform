@@ -1,6 +1,6 @@
 <?php
 
-usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm;
+namespace SuperV\Platform\Domains\UI\DeprecatedForm;
 
 use SuperV\Platform\Domains\Entry\EntryModel;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

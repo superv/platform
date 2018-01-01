@@ -1,9 +1,9 @@
 <?php
 
-usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm\Jobs;
+namespace SuperV\Platform\Domains\UI\DeprecatedForm\Jobs;
 
 use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\UI\Form\FormBuilder;
+use SuperV\Platform\Domains\UI\DeprecatedForm\FormBuilder;
 use SuperV\Platform\Domains\UI\Button\Features\MakeButtons;
 
 class MakeFormButtons extends Feature

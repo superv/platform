@@ -1,6 +1,6 @@
 <?php
 
-usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm;
+namespace SuperV\Platform\Domains\UI\DeprecatedForm;
 
 use Symfony\Component\Form\Exception;
 use Symfony\Component\Form\FormInterface;

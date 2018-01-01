@@ -1,11 +1,11 @@
 <?php
 
-usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm\Features;
+namespace SuperV\Platform\Domains\UI\DeprecatedForm\Features;
 
-use SuperV\Platform\Domains\UI\Form\Action;
+use SuperV\Platform\Domains\UI\DeprecatedForm\Action;
 use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\UI\Form\FieldType;
-use SuperV\Platform\Domains\UI\Form\FormBuilder;
+use SuperV\Platform\Domains\UI\DeprecatedForm\FieldType;
+use SuperV\Platform\Domains\UI\DeprecatedForm\FormBuilder;
 
 class BuildForm extends Feature
 {

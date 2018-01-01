@@ -1,6 +1,6 @@
 <?php
 
-usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm;
+namespace SuperV\Platform\Domains\UI\DeprecatedForm;
 
 use Illuminate\Http\Request;
 use Symfony\Component\Form\Form;

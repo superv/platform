@@ -1,15 +1,15 @@
 <?php
 
-usersnamespace SuperV\Platform\Domains\UI\DeprecatedForm\Features;
+namespace SuperV\Platform\Domains\UI\DeprecatedForm\Features;
 
 use Symfony\Component\Form\Form;
 use SuperV\Platform\Domains\Feature\Feature;
-use SuperV\Platform\Domains\UI\Form\FieldType;
-use SuperV\Platform\Domains\UI\Form\FormBuilder;
+use SuperV\Platform\Domains\UI\DeprecatedForm\FieldType;
+use SuperV\Platform\Domains\UI\DeprecatedForm\FormBuilder;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use SuperV\Platform\Domains\UI\Form\PropertyAccessor;
-use SuperV\Platform\Domains\UI\Form\PropertyPathMapper;
+use SuperV\Platform\Domains\UI\DeprecatedForm\PropertyAccessor;
+use SuperV\Platform\Domains\UI\DeprecatedForm\PropertyPathMapper;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
