@@ -59,14 +59,10 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
     ];
 
     protected $singletons = [
-        'manifests'     => ManifestCollection::class,
         'droplets'      => DropletCollection::class,
         'features'      => FeatureCollection::class,
-        'pages'         => PageCollection::class,
         'ports'         => PortCollection::class,
         'view.template' => ViewTemplate::class,
-        'navigation'    => Navigation::class,
-
     ];
 
     protected $bindings = [
@@ -85,6 +81,10 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         $this->app->register(DatabaseServiceProvider::class);
         $this->app->register(AdapterServiceProvider::class);
         $this->app->register(ConsoleServiceProvider::class);
+
+        if (config('superv.clockwork')) {
+            $this->app->register(\Clockwork\Support\Laravel\ClockworkServiceProvider::class);
+        }
 
         // commmands needed before the platform is installed
         Artisan::starting(function ($artisan) {
@@ -119,7 +119,6 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
          * by looping all droplets, first collect the droplets
          * then perform registeration depending on port, cli
          */
-
         $dropletManager->load();
         $this->setupView();
 
@@ -129,31 +128,32 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         superv('platform');
 
         $dropletManager->bootAllButPorts();
-        $this->app['events']->fire(new DropletsBooted());
+
+        DropletsBooted::dispatch();
 
         $this->disperseRoutes(array_merge($this->routes ?? [], $this->dispatch(new GetPortRoutes($this))));
         $this->registerConsoleCommands();
-
         $this->registerRoutes(app(Port::class));
 
-        $this->app['events']->fire(new PlatformReady());
+        PlatformReady::dispatch();
     }
 
     protected function setupView(): void
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views/', 'superv');
-        $this->loadViewsFrom(storage_path(), 'storage');
+//        $this->loadViewsFrom(storage_path(), 'storage');
 
-        app(Factory::class)->composer('*', ViewComposer::class);
+//        app(Factory::class)->composer('*', ViewComposer::class);
     }
 
     protected function setupConfig()
     {
         foreach (glob(__DIR__.'/../config/*') as $path) {
             $key = pathinfo($path, PATHINFO_FILENAME);
-            $config = config()->get("superv.{$key}", []);
+            $config = (array)config()->get("superv.{$key}", []);
 
-            $merged = array_replace(require $path, $config);
+            $fromFile = (array)require $path;
+            $merged = array_replace($fromFile, $config);
             config()->set('platform::'.$key, $merged);
         }
     }
@@ -169,19 +169,10 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         });
     }
 
-    protected function registerDevTools(): void
-    {
-        $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
-        $this->registerAliases([
-            'Debugbar' => \Barryvdh\Debugbar\Facade::class,
-        ]);
-    }
-
     protected function registerConsoleCommands(): void
     {
         $this->dispatch(new RegisterConsoleCommands($this));
     }
-
 
     protected function detectActivePort(): void
     {
