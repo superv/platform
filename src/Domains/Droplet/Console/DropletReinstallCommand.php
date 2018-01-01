@@ -3,8 +3,8 @@
 namespace SuperV\Platform\Domains\Droplet\Console;
 
 use SuperV\Platform\Contracts\Command;
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
-use SuperV\Platform\Domains\Droplet\Model\Droplets;
+use SuperV\Platform\Domains\Droplet\Droplet;
+use SuperV\Platform\Domains\Droplet\Droplets;
 
 class DropletReinstallCommand extends Command
 {
@@ -14,7 +14,7 @@ class DropletReinstallCommand extends Command
     {
         $slug = $this->argument('droplet');
 
-        /** @var DropletModel $droplet */
+        /** @var Droplet $droplet */
         abort_unless($droplet = $droplets->withSlug($slug), 404);
 
         $this->call('droplet:uninstall', ['droplet' => $droplet->getSlug()]);

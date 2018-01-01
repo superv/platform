@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Droplet\Resource;
 
-use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
+use SuperV\Platform\Domains\Droplet\DropletCollection;
 
 class ResourceLocator
 {

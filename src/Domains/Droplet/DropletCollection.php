@@ -1,9 +1,7 @@
 <?php
 
-namespace SuperV\Platform\Domains\Droplet\Model;
+namespace SuperV\Platform\Domains\Droplet;
 
-use SuperV\Platform\Domains\Droplet\Droplet;
-use SuperV\Platform\Platform;
 use SuperV\Platform\Support\Collection;
 
 class DropletCollection extends Collection
@@ -13,6 +11,7 @@ class DropletCollection extends Collection
         $items = [];
         /** @var Droplet $droplet */
         foreach ($this->items as $droplet) {
+            $type = $droplet->getType();
             if ($droplet->isType('port')) {
                 $items[] = $droplet;
             }
@@ -31,12 +30,22 @@ class DropletCollection extends Collection
         }
     }
 
+    public function byName($name)
+    {
+        foreach ($this->items as $droplet) {
+            /** @var Droplet $droplet */
+            if ($droplet->getName() == $name) {
+                return $droplet;
+            }
+        }
+    }
+
     public function allButPorts()
     {
         $items = [];
         /** @var Droplet $droplet */
         foreach ($this->items as $droplet) {
-            if (!$droplet->isType('port') && !$droplet instanceof Platform) {
+            if (!$droplet->isType('port')) {
                 $items[] = $droplet;
             }
         }

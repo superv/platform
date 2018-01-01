@@ -2,27 +2,74 @@
 
 namespace SuperV\Platform\Domains\Droplet;
 
-use JsonSerializable;
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
+use SuperV\Platform\Domains\Entry\EntryModel;
 
-class Droplet implements JsonSerializable
+class Droplet extends EntryModel
 {
-    /** @var DropletModel */
-    protected $model;
-
-    protected $commands;
-
-    protected $type;
-
-    protected $manifests = [];
+    protected $table = 'platform_droplets';
 
     protected $seeders = [];
 
-    protected $sortOrder = 10;
-
-    public function __construct(DropletModel $model = null)
+    public function locate()
     {
-        $this->model = $model;
+        $paths = [
+            'workbench',
+            'droplets',
+        ];
+
+        $clues = [$this->path];
+
+        foreach ($paths as $path) {
+            foreach ($clues as $clue) {
+                $path = starts_with($clue, $paths) ? $clue : "{$path}/{$clue}";
+                if (is_dir(base_path($path))) {
+                    $this->setPath($path);
+
+                    return $this;
+                }
+            }
+        }
+
+        throw new \Exception("Droplet could not be located: {$this->name}");
+    }
+
+    public function setPath($path)
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
+    public function getPath($path = null)
+    {
+        return $this->path.($path ? '/'.$path : '');
+    }
+
+    public function getBasePath($path = null)
+    {
+        return base_path($this->getPath($path));
+    }
+
+    public function getResourcePath($path)
+    {
+        return $this->getPath("resources/{$path}");
+    }
+
+    public function getConfigPath($path)
+    {
+        return $this->getPath("config/{$path}");
+    }
+
+    public function enable()
+    {
+        $this->enabled = true;
+
+        return $this;
+    }
+
+    public function getNamespace()
+    {
+        return ucfirst(camel_case(($this->vendor == 'superv' ? 'super_v' : $this->vendor))).'\\'.ucfirst(camel_case(str_plural($this->type))).'\\'.ucfirst(camel_case($this->name));
     }
 
     /** @return DropletServiceProvider */
@@ -42,44 +89,14 @@ class Droplet implements JsonSerializable
         return get_class($this).'ServiceProvider';
     }
 
-    public function getSlug()
+    public function droplet()
     {
-        return $this->model->slug;
+        return $this->getNamespace().'\\'.studly_case("{$this->name}_{$this->type}");
     }
 
-    public function getName()
+    public function newDropletInstance()
     {
-        return $this->model->getName();
-    }
-
-    public function getCommand($command)
-    {
-        return array_get($this->commands, $command);
-    }
-
-    public function getPath($path = null)
-    {
-        return $this->model->getPath($path);
-    }
-
-    public function getBasePath($path = null)
-    {
-        return base_path($this->model->getPath($path));
-    }
-
-    public function getResourcePath($path)
-    {
-        return $this->getPath("resources/{$path}");
-    }
-
-    public function getConfigPath($path)
-    {
-        return $this->getPath("config/{$path}");
-    }
-
-    public function getType()
-    {
-        return $this->type;
+        return app($this->droplet(), ['attributes' => $this->toArray()]);
     }
 
     public function isType($type)
@@ -87,63 +104,35 @@ class Droplet implements JsonSerializable
         return $this->type == $type;
     }
 
-    /**
-     * @return DropletModel
-     */
-    public function getModel(): DropletModel
+    public function getName()
     {
-        return $this->model;
+        return $this->name;
     }
 
-    public function setModel(DropletModel $model)
+    public function getType()
     {
-        $this->model = $model;
-
-        return $this;
+        return $this->type;
     }
 
-    public function getModelId()
+    public function getVendor()
     {
-        return $this->model->getId();
+        return $this->vendor;
     }
 
-    /**
-     * @return mixed
-     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
     public function getSeeders()
     {
         return $this->seeders;
     }
 
-    /**
-     * @param mixed $seeders
-     *
-     * @return Droplet
-     */
     public function setSeeders($seeders)
     {
         $this->seeders = $seeders;
 
         return $this;
-    }
-
-    public function getNamespace()
-    {
-        return $this->model->getNamespace();
-    }
-
-    public function destroy()
-    {
-        $this->model->delete();
-    }
-
-    public function toArray()
-    {
-        return $this->model->toArray();
-    }
-
-    public function jsonSerialize()
-    {
-        return $this->toArray();
     }
 }

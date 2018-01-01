@@ -3,8 +3,8 @@
 namespace SuperV\Platform\Domains\Droplet;
 
 use SuperV\Platform\Contracts\Container;
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
-use SuperV\Platform\Domains\Droplet\Model\Droplets;
+use SuperV\Platform\Domains\Droplet\Droplet;
+use SuperV\Platform\Domains\Droplet\Droplets;
 use SuperV\Platform\Traits\EnforcableTrait;
 
 class DropletFactory
@@ -32,11 +32,11 @@ class DropletFactory
     }
 
     /**
-     * @param DropletModel $model
+     * @param Droplet $model
      *
      * @return Droplet
      */
-    public function create(DropletModel $model)
+    public function create(Droplet $model)
     {
         return $this->container->makeWith($model->droplet(), ['model' => $model]);
     }
@@ -49,10 +49,10 @@ class DropletFactory
      */
     public function fromSlug($slug)
     {
-        if (! $model = $this->droplets->withSlug($slug)) {
+        if (! $droplet = $this->droplets->withSlug($slug)) {
             throw new \Exception("Droplet model with slug {$slug} not found");
         }
 
-        return $this->create($model);
+        return $droplet;
     }
 }

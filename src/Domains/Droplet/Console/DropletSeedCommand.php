@@ -11,9 +11,7 @@ class DropletSeedCommand extends Command
 
     public function handle()
     {
-        $slug = $this->argument('droplet');
-
-        $this->serve(new SeedDroplet($slug));
+        $this->serve(new SeedDroplet($this->argument('droplet')));
 
         $this->comment('Seeding complete');
     }

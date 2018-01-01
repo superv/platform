@@ -2,16 +2,16 @@
 
 namespace SuperV\Platform\Domains\Droplet\Jobs;
 
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
+use SuperV\Platform\Domains\Droplet\Droplet;
 
 class LinkPublicFolders
 {
     /**
-     * @var DropletModel
+     * @var Droplet
      */
     private $model;
 
-    public function __construct(DropletModel $model)
+    public function __construct(Droplet $model)
     {
         $this->model = $model;
     }

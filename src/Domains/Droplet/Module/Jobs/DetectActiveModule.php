@@ -5,8 +5,8 @@ namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Route;
 use Illuminate\View\Factory;
-use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
-use SuperV\Platform\Domains\Droplet\Model\Droplets;
+use SuperV\Platform\Domains\Droplet\DropletCollection;
+use SuperV\Platform\Domains\Droplet\Droplets;
 use SuperV\Platform\Domains\Droplet\Module\Module;
 
 class DetectActiveModule

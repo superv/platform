@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Droplet\Feature;
 
 use SuperV\Platform\Domains\Droplet\DropletFactory;
+use SuperV\Platform\Domains\Droplet\Droplets;
 use SuperV\Platform\Domains\Droplet\Events\DropletUninstallingEvent;
 use SuperV\Platform\Domains\Feature\Feature;
 
@@ -15,14 +16,14 @@ class UninstallDroplet extends Feature
         $this->slug = $slug;
     }
 
-    public function handle(DropletFactory $factory)
+    public function handle(Droplets $droplets)
     {
-        $droplet = $factory->must("Droplet {$this->slug} not found")
-                           ->fromSlug($this->slug);
+        $droplet = $droplets->must("Droplet {$this->slug} not found")
+                           ->withSlug($this->slug);
 
         event(new DropletUninstallingEvent($droplet));
 
-        $droplet->destroy();
+        $droplet->delete();
 
         return true;
     }

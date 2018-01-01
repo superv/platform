@@ -5,7 +5,9 @@ namespace SuperV\Platform\Domains\Console\Jobs;
 use SuperV\Platform\Domains\Database\Migration\MigrationCreator;
 use SuperV\Platform\Domains\Database\Migration\Migrator;
 use SuperV\Platform\Domains\Droplet\Droplet;
+use SuperV\Platform\Domains\Droplet\DropletCollection;
 use SuperV\Platform\Domains\Droplet\DropletFactory;
+use SuperV\Platform\Domains\Droplet\Droplets;
 use Symfony\Component\Console\Input\InputInterface;
 
 class ConfigureCreator
@@ -44,14 +46,14 @@ class ConfigureCreator
         $this->creator = $creator;
     }
 
-    public function handle(DropletFactory $factory)
+    public function handle(Droplets $droplets)
     {
         if (! $this->droplet) {
             return;
         }
 
         /** @var Droplet $droplet */
-        if (! $droplet = $factory->fromSlug($this->droplet)) {
+        if (! $droplet = $droplets->withSlug($this->droplet)) {
             throw new \InvalidArgumentException("Droplet {$this->droplet} not found");
         }
         $this->creator->setDroplet($droplet);

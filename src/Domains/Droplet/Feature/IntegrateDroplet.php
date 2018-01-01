@@ -6,8 +6,7 @@ use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Config\Jobs\EnableConfigFiles;
 use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
 use SuperV\Platform\Domains\Droplet\Droplet;
-use SuperV\Platform\Domains\Droplet\DropletProvider;
-use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
+use SuperV\Platform\Domains\Droplet\DropletCollection;
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Traits\BindsToContainer;
@@ -36,7 +35,7 @@ class IntegrateDroplet extends Feature
     {
         $droplet = $this->droplet;
 
-        $this->dispatch(new EnableConfigFiles($droplet->getModel()));
+        $this->dispatch(new EnableConfigFiles($droplet));
 
         $droplets->put($droplet->getSlug(), $droplet);
 

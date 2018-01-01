@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Droplet\Jobs;
 
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
+use SuperV\Platform\Domains\Droplet\Droplet;
 
 class MakeDropletModel
 {
@@ -36,7 +36,7 @@ class MakeDropletModel
         // single point of truth
         $type = str_plural($type);
 
-        return new DropletModel([
+        return new Droplet([
             'vendor'    => $vendor,
             'slug'      => $this->slug,
             'type'      => str_singular($type),

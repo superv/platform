@@ -1,11 +1,13 @@
 <?php
 
-namespace SuperV\Platform\Domains\Droplet\Model;
+namespace SuperV\Platform\Domains\Droplet;
 
 use SuperV\Platform\Domains\Model\EloquentRepository;
 
 class Droplets extends EloquentRepository
 {
+
+    /** @return Droplet */
     public function withSlug($slug)
     {
         /**

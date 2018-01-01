@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Application\Console;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Console\Kernel;
-use SuperV\Platform\Domains\Droplet\Model\Droplets;
 
 class InstallSuperVCommand extends Command
 {
@@ -17,43 +16,45 @@ class InstallSuperVCommand extends Command
 
     public function handle(Kernel $kernel)
     {
-        $kernel->call('migrate', ['--force' => true,
-                                  '--path'  => 'vendor/superv/platform/database/migrations']);
+        $kernel->call('migrate', [
+            '--force' => true,
+            '--path'  => 'vendor/superv/platform/database/migrations',
+        ], $this->getOutput());
 
-        $kernel->call('env:set', ['line' => 'SUPERV_INSTALLED=true']);
+        $kernel->call('env:set', ['line' => 'SUPERV_INSTALLED=true'], $this->getOutput());
 
         reload_env();
 
         $kernel->call('droplet:install', [
             'droplet' => 'superv.ports.acp',
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/ports/acp',
-        ]);
+        ], $this->getOutput());
 
         $kernel->call('droplet:install', [
             'droplet' => 'superv.ports.web',
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/ports/web',
-        ]);
+        ], $this->getOutput());
 
         $kernel->call('droplet:install', [
             'droplet' => 'superv.modules.ui',
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/ui',
-        ]);
+        ], $this->getOutput());
 
         $kernel->call('droplet:install', [
             'droplet' => 'superv.modules.nucleo',
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/nucleo',
-            '--seed' => true
-        ]);
+            '--seed'  => true,
+        ], $this->getOutput());
 
         $kernel->call('droplet:install', [
             'droplet' => 'superv.themes.tailwind',
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/tailwind',
-        ]);
+        ], $this->getOutput());
 
         $kernel->call('droplet:install', [
             'droplet' => 'superv.themes.bulma',
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/bulma',
-        ]);
+        ], $this->getOutput());
 
         $this->comment("SuperV installed..!!!");
     }
@@ -66,7 +67,7 @@ class InstallSuperVCommand extends Command
     //        $ssh = app('remote');
     //
     //        /** @var Connection $ssh */
-    //        $ssh = $ssh->connect(['host' => '192.168.5.10', 'username' => 'root', 'keytext' => pkey(), 'keyphrase' => '']);
+    //        $ssh = $ssh->connect(['host' => '192.168.5.10', 'username' => 'root', 'keytext' => pkey(), 'keyphrase' => ''], $this->getOutput());
     //
     //        $ssh->run(['pwd', 'apt5-get upgrade'], function($line) {
     //            $this->comment($line);

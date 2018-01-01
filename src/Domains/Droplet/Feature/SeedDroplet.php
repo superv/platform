@@ -2,7 +2,10 @@
 
 namespace SuperV\Platform\Domains\Droplet\Feature;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use SuperV\Platform\Domains\Droplet\DropletCollection;
 use SuperV\Platform\Domains\Droplet\DropletFactory;
+use SuperV\Platform\Domains\Droplet\Droplets;
 use SuperV\Platform\Domains\Feature\Feature;
 
 class SeedDroplet extends Feature
@@ -14,9 +17,13 @@ class SeedDroplet extends Feature
         $this->slug = $slug;
     }
 
-    public function handle(DropletFactory $factory)
+    public function handle(Droplets $droplets)
     {
-        $droplet = $factory->fromSlug($this->slug);
+        if (!$droplet = $droplets->withSlug($this->slug)) {
+            throw new ModelNotFoundException("Droplet not found {$this->slug}");
+        }
+
+        $droplet = $droplet->newDropletInstance();
 
         $seeders = $droplet->getSeeders();
 

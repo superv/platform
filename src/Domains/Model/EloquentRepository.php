@@ -10,14 +10,16 @@ use SuperV\Platform\Traits\EnforcableTrait;
 class EloquentRepository implements RepositoryInterface
 {
     use EnforcableTrait;
+
     /** @var \Illuminate\Database\Eloquent\Builder */
     protected $query;
 
     public function __construct(Container $container)
     {
-        $model = str_singular(get_class($this)).'Model';
-        if (! class_exists($model)) {
-            throw new \Exception('Repository model not found: '.$model);
+        if (! class_exists($model = str_singular(get_class($this)).'Model')) {
+            if (! class_exists($model = str_singular(get_class($this)))) {
+                throw new \Exception('Repository model not found: '.$model);
+            }
         }
         $this->query = $container->make($model);
     }
@@ -104,6 +106,7 @@ class EloquentRepository implements RepositoryInterface
     {
         if (starts_with($name, 'by')) {
             $keyName = studly_case(str_replace_first('by', '', $name));
+
             return $this->query->where($keyName, $arguments[0])->first();
         }
 

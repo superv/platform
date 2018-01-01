@@ -3,9 +3,6 @@
 namespace SuperV\Platform\Domains\Droplet;
 
 use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
-use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
-use SuperV\Platform\Domains\Droplet\Model\Droplets;
 use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Support\Inflator;
@@ -19,18 +16,18 @@ class DropletManager
      */
     private $droplets;
 
-    public function __construct( DropletCollection $droplets)
+    public function __construct(DropletCollection $droplets)
     {
         $this->droplets = $droplets;
     }
 
     public function load()
     {
-        /** @var DropletModel $model */
-        foreach (app(Droplets::class)->enabled()->get() as $model) {
-            /** @var Droplet $droplet */
-            $droplet = app($model->droplet())->setModel($model);
+        $enabledDroplets = Droplet::query()->where('enabled', true)->get();
 
+        /** @var Droplet $droplet */
+        foreach ($enabledDroplets as $droplet) {
+            $droplet = $droplet->newDropletInstance();
             $this->droplets->put($droplet->getSlug(), $droplet);
 
             /*
@@ -38,7 +35,7 @@ class DropletManager
              * env file. We will use this to extract Port from current
              * request hostname.
              */
-            if ($droplet instanceof Port) {
+            if ($droplet->isType('port')) {
                 $portName = strtolower($droplet->getName());
                 if ($config = config("superv.ports.{$portName}")) {
                     app(Inflator::class)->inflate($droplet, $config);

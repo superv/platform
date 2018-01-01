@@ -3,14 +3,14 @@
 namespace SuperV\Platform\Domains\Droplet\Jobs;
 
 use SuperV\Platform\Contracts\Filesystem;
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
+use SuperV\Platform\Domains\Droplet\Droplet;
 
 class CreateDropletPaths
 {
-    /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel */
+    /** @var \SuperV\Platform\Domains\Droplet\Droplet */
     private $model;
 
-    public function __construct(DropletModel $model)
+    public function __construct(Droplet $model)
     {
         $this->model = $model;
     }

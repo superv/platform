@@ -29,7 +29,7 @@ class InstallDroplet extends Feature
 
     public function handle()
     {
-        /** @var \SuperV\Platform\Domains\Droplet\Model\DropletModel $model */
+        /** @var \SuperV\Platform\Domains\Droplet\Droplet $model */
         $model = $this->dispatch(new MakeDropletModel($this->slug, $this->path));
 
         $model->locate()

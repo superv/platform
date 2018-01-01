@@ -12,8 +12,8 @@ use SuperV\Platform\Domains\Droplet\Console\DropletSeedCommand;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\DropletServiceProviderInterface;
 use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
-use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
-use SuperV\Platform\Domains\Droplet\Model\DropletModel;
+use SuperV\Platform\Domains\Droplet\DropletCollection;
+use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActivePort;
 use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
@@ -129,17 +129,6 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
             $merged = array_replace($fromFile, $config);
             config()->set('platform::'.$key, $merged);
         }
-    }
-
-    protected function registerPlatform()
-    {
-        $this->app->singleton('superv.platform', function () {
-            $this->platform = new Platform(DropletModel::where('name', 'platform')->first());
-
-            superv('droplets')->put('superv.platform', $this->platform);
-
-            return $this->platform;
-        });
     }
 
     public function getResourcePath($path = null)

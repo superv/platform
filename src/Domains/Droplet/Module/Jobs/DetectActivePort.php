@@ -28,7 +28,7 @@ class DetectActivePort
         app()->instance(Port::class, $port);
 
         if ($themeSlug = $port->getTheme()) {
-            if ($theme = app(DropletFactory::class)->fromSlug($themeSlug)) {
+            if ($theme = superv('droplets')->bySlug($themeSlug)) {
                 $viewsPath = [base_path($theme->getPath('resources/views'))];
             }
         }

@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 return [
     DropletUninstallCommand::class,
     DropletReinstallCommand::class,
-    DropletMigrationCommand::class,
     MakeDropletCommand::class,
     CreateUserCommand::class,
 ];
