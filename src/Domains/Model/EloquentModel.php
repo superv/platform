@@ -8,7 +8,7 @@ class EloquentModel extends Model
 {
     protected $guarded = [];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $titleColumn = 'name';
 

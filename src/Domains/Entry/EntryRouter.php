@@ -17,16 +17,10 @@ class EntryRouter
      */
     protected $entry;
 
-    /**
-     * @var ManifestCollection
-     */
-    private $manifests;
-
-    public function __construct(EntryModel $entry, UrlGenerator $url, ManifestCollection $manifests)
+    public function __construct(EntryModel $entry, UrlGenerator $url)
     {
         $this->url = $url;
         $this->entry = $entry;
-        $this->manifests = $manifests;
     }
 
     public function delete()
@@ -68,31 +62,5 @@ class EntryRouter
 
             return app()->call([$this, $method], $parameters);
         }
-
-        /*
-         * If this model has a manifest and this
-         * route is defined there, return route
-         * info from the manifest data
-         */
-        if ($manifest = $this->manifests->model()->byModel(get_class($this->entry))) {
-            if ($pages = $manifest->getData('pages')) {
-                if ($page = array_get($pages, $route)) {
-                    if ($pageRoute = array_get($page, 'route')) {
-                        return $this->url->route($pageRoute, ['id' => $this->entry->id]);
-                    }
-                }
-            }
-        }
-
-//
-//        if (!str_contains($route, '.') && $stream = $this->entry->getStreamSlug()) {
-//            $route = "{$stream}.{$route}";
-//        }
-//
-//        if (!str_contains($route, '::') && $namespace = $this->locator->locate($this->entry)) {
-//            $route = "{$namespace}::{$route}";
-//        }
-//
-//        return $this->url->make($route, $this->entry, $parameters);
     }
 }

@@ -37,7 +37,7 @@ class EntryModel extends EloquentModel implements PresentableInterface
 
         $class = get_class($instance);
         $events = $instance->getObservableEvents();
-        $observer = substr($class, 0, -5).'Observer';
+        $observer = str_replace_last('Model', '', $class).'Observer';
         $observing = class_exists($observer);
 
         if ($events && $observing) {
@@ -133,5 +133,4 @@ class EntryModel extends EloquentModel implements PresentableInterface
     {
         return (new \Hashids\Hashids('SuperV Platform', 6, 'abcdefghijklmnopqrstuvwxyz'))->encode($this->id);
     }
-
 }
