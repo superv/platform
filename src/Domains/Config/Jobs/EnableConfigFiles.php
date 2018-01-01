@@ -2,16 +2,16 @@
 
 namespace SuperV\Platform\Domains\Config\Jobs;
 
-use SuperV\Platform\Domains\Droplet\Droplet;
+use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 
 class EnableConfigFiles
 {
     /**
-     * @var Droplet
+     * @var DropletModel
      */
     private $droplet;
 
-    public function __construct(Droplet $droplet)
+    public function __construct(DropletModel $droplet)
     {
         $this->droplet = $droplet;
     }

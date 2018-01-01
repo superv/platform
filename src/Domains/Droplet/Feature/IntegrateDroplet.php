@@ -36,7 +36,7 @@ class IntegrateDroplet extends Feature
     {
         $droplet = $this->droplet;
 
-        $this->dispatch(new EnableConfigFiles($droplet));
+        $this->dispatch(new EnableConfigFiles($droplet->getModel()));
 
         $droplets->put($droplet->getSlug(), $droplet);
 

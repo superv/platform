@@ -5,7 +5,7 @@ namespace SuperV\Platform;
 use Illuminate\Console\Application as Artisan;
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Application\Console\EnvSet;
-use SuperV\Platform\Domains\Application\Console\InstallSuperV;
+use SuperV\Platform\Domains\Application\Console\InstallSuperVCommand;
 use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletSeedCommand;
@@ -57,7 +57,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
 
     protected $commands = [
         EnvSet::class,
-        InstallSuperV::class,
+        InstallSuperVCommand::class,
         DropletInstallCommand::class,
         DropletSeedCommand::class
     ];

@@ -4,6 +4,36 @@ namespace SuperV\Platform\Domains\Droplet\Model;
 
 class DropletModel extends DropletEntryModel
 {
+    public function locate()
+    {
+        $paths = [
+            'workbench',
+            'droplets',
+        ];
+
+        $clues = [$this->path];
+
+        foreach ($paths as $path) {
+            foreach ($clues as $clue) {
+                $path = starts_with($clue, $paths) ? $clue : "{$path}/{$clue}";
+                if (is_dir(base_path($path))) {
+                    $this->setPath($path);
+
+                    return $this;
+                }
+            }
+        }
+
+        throw new \Exception("Droplet could not be located: {$this->name}");
+    }
+
+    public function enable()
+    {
+        $this->enabled = true;
+
+        return $this;
+    }
+
     public function setPath($path)
     {
         $this->path = $path;
@@ -16,16 +46,14 @@ class DropletModel extends DropletEntryModel
         return $this->path.($path ? '/'.$path : '');
     }
 
-    public function getNamespace()
+    public function getBasePath($path = null)
     {
-        return $this->namespace;
+        return base_path($this->getPath($path));
     }
 
-    public function setNamespace($namespace)
+    public function getNamespace()
     {
-        $this->namespace = $namespace;
-
-        return $this;
+        return ucfirst(camel_case(($this->vendor == 'superv' ? 'super_v' : $this->vendor))).'\\'.ucfirst(camel_case(str_plural($this->type))).'\\'.ucfirst(camel_case($this->name));
     }
 
     public function setEnabled($enabled)
@@ -38,6 +66,11 @@ class DropletModel extends DropletEntryModel
     public function droplet()
     {
         return $this->getNamespace().'\\'.studly_case("{$this->name}_{$this->type}");
+    }
+
+    public function newDropletInstance()
+    {
+        return app($this->droplet())->setModel($this);
     }
 
     public function getName()
