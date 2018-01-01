@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Droplet;
 
 use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
-use SuperV\Platform\Domains\Droplet\Feature\LoadDroplet;
 use SuperV\Platform\Domains\Droplet\Model\DropletCollection;
 use SuperV\Platform\Domains\Droplet\Model\DropletModel;
 use SuperV\Platform\Domains\Droplet\Model\Droplets;
@@ -35,7 +34,7 @@ class DropletManager
     {
         /** @var DropletModel $model */
         foreach (app(Droplets::class)->enabled()->get() as $model) {
-            $this->serve(new LoadDroplet(base_path($model->getPath())));
+//            $this->serve(new LoadDroplet(base_path($model->getPath())));
 
             /** @var Droplet $droplet */
             $droplet = app($model->droplet())->setModel($model);

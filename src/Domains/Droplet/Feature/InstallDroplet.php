@@ -42,7 +42,7 @@ class InstallDroplet extends Feature
               ->setEnabled(true)
               ->save();
 
-        $this->dispatch(new LoadDroplet($model->getPath()));
+//        $this->dispatch(new LoadDroplet($model->getPath()));
 
         $droplet = app($model->droplet())->setModel($model);
         $this->dispatch(new EnableConfigFiles($droplet));
