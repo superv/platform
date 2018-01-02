@@ -13,7 +13,7 @@ class SuperVPlatformCreatesDropletsTable extends Migration
      */
     public function up()
     {
-        Schema::create('platform_droplets', function (Blueprint $table) {
+        Schema::create('droplets', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->string('vendor');
@@ -35,6 +35,6 @@ class SuperVPlatformCreatesDropletsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('platform_droplets');
+        Schema::dropIfExists('droplets');
     }
 }

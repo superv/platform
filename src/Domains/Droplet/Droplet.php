@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Entry\EntryModel;
 
 class Droplet extends EntryModel
 {
-    protected $table = 'platform_droplets';
+    protected $table = 'droplets';
 
     protected $seeders = [];
 

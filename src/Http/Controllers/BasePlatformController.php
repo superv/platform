@@ -49,4 +49,9 @@ class BasePlatformController extends Controller
         $this->messages = app('Illuminate\Support\MessageBag');
         $this->route = $this->request->route();
     }
+
+    public static function at($method)
+    {
+        return get_called_class().'@'.$method;
+    }
 }
