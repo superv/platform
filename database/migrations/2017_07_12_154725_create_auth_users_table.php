@@ -20,6 +20,8 @@ class CreateAuthUsersTable extends Migration
             $table->string('password', 60);
             $table->rememberToken();
             $table->timestamps();
+
+            $table->integer('droplet_id')->nullable();
         });
     }
 
