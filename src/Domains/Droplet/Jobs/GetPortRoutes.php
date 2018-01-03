@@ -18,6 +18,7 @@ class GetPortRoutes
     public function handle(Port $activePort)
     {
         $portName = $activePort->getName();
+        if (!$portName) return [];
 
         $this->mergeRouteFile(base_path($this->path . "/routes/{$portName}.php"));
 
