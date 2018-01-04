@@ -52,8 +52,8 @@ class InstallSuperVCommand extends Command
         ], $this->getOutput());
 
         $kernel->call('droplet:install', [
-            'droplet' => 'superv.themes.bulma',
-            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/bulma',
+            'droplet' => 'superv.themes.starter',
+            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/starter',
         ], $this->getOutput());
 
         $this->comment("SuperV installed..!!!");

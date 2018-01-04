@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Droplet\Agent;
 use SuperV\Modules\Supreme\Domains\Drop\Model\DropModel;
 use SuperV\Modules\Supreme\Domains\Server\Jobs\RunServerScript;
 use SuperV\Modules\Supreme\Domains\Server\Model\ServerModel;
-use SuperV\Modules\Supreme\Domains\Server\Server;
+use SuperV\Modules\Supreme\Domains\Server\Terminal;
 use SuperV\Modules\Supreme\Domains\Service\Model\ServiceModel;
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\Task\Job;
@@ -42,7 +42,7 @@ class AgentFeature extends Feature
             throw new \InvalidArgumentException('Can not find server from params:' . json_encode($this->params));
         }
 
-        $this->server = new Server($serverModel);
+        $this->server = new Terminal($serverModel);
     }
 
     /**
