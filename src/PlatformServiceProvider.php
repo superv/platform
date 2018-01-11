@@ -2,23 +2,18 @@
 
 namespace SuperV\Platform;
 
-use Illuminate\Console\Application as Artisan;
 use SuperV\Platform\Contracts\ServiceProvider;
-use SuperV\Platform\Domains\Application\Console\EnvSet;
-use SuperV\Platform\Domains\Application\Console\InstallSuperVCommand;
-use SuperV\Platform\Domains\Console\Features\RegisterConsoleCommands;
-use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
-use SuperV\Platform\Domains\Droplet\Console\DropletSeedCommand;
+use SuperV\Platform\Domains\Asset\Asset;
+use SuperV\Platform\Domains\Droplet\DropletCollection;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\DropletServiceProviderInterface;
 use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
-use SuperV\Platform\Domains\Droplet\DropletCollection;
-use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActivePort;
 use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Droplet\Port\PortCollection;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
+use SuperV\Platform\Domains\View\Twig\Bridge\TwigBridgeServiceProvider;
 use SuperV\Platform\Domains\View\ViewTemplate;
 use SuperV\Platform\Events\DropletsBooted;
 use SuperV\Platform\Events\PlatformReady;
@@ -42,7 +37,9 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
     /** @var  Platform */
     protected $platform;
 
-    protected $providers;
+    protected $providers  = [
+        TwigBridgeServiceProvider::class
+    ];
 
     protected $singletons = [
         'droplets'      => DropletCollection::class,
@@ -55,25 +52,15 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         'Illuminate\Contracts\Routing\UrlGenerator' => UrlGenerator::class,
     ];
 
-    protected $commands = [
-        EnvSet::class,
-        InstallSuperVCommand::class,
-        DropletInstallCommand::class,
-        DropletSeedCommand::class
-    ];
-
     public function register()
     {
         if (config('superv.clockwork')) {
             $this->app->register(\Clockwork\Support\Laravel\ClockworkServiceProvider::class);
         }
 
-        // commmands needed before the platform is installed
         if ($this->app->runningInConsole()) {
-            $this->commands($this->commands);
+            $this->commands(require base_path(platform_path("routes/console.php")));
         }
-
-//        app(Bridge::class)->addExtension(app(AsseticExtension::class));
 
         if (! env('SUPERV_INSTALLED', false)) {
             return;
@@ -86,6 +73,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
 
         $this->app->singleton('superv.parser', function ($app) { return $app->make(Parser::class); });
         $this->app->singleton('superv.inflator', function ($app) { return $app->make(Inflator::class); });
+        $this->app->singleton('superv.assets', function ($app) { return $app->make(Asset::class); });
     }
 
     public function boot(DropletManager $dropletManager)
@@ -93,6 +81,10 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         if (! env('SUPERV_INSTALLED', false)) {
             return;
         }
+
+//        $factory = new AssetFactory('public/app/assets');
+//        app(Bridge::class)->addExtension(new AsseticExtension($factory));
+
         $this->loadViewsFrom(__DIR__.'/../resources/views/', 'superv');
 
         /**
@@ -110,11 +102,10 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         $dropletManager->bootAllButPorts();
         DropletsBooted::dispatch();
 
-
         $this->disperseRoutes($this->dispatch(new GetPortRoutes(platform_path())));
         $this->registerRoutes(app(Port::class));
 
-        $this->dispatch(new RegisterConsoleCommands($this));
+//        $this->dispatch(new RegisterConsoleCommands($this));
 
         PlatformReady::dispatch();
     }
@@ -133,7 +124,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
 
     public function getResourcePath($path = null)
     {
-        return $this->getPath('resource' . DIRECTORY_SEPARATOR . $path);
+        return $this->getPath('resource'.DIRECTORY_SEPARATOR.$path);
     }
 
     public function getPath($path = null)

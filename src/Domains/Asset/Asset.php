@@ -4,9 +4,11 @@ namespace SuperV\Platform\Domains\Asset;
 
 use Assetic\Asset\FileAsset;
 use Assetic\Asset\GlobAsset;
+use Collective\Html\HtmlBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
 use SuperV\Platform\Contracts\Filesystem;
+use SuperV\Platform\Support\Template;
 
 class Asset
 {
@@ -32,31 +34,15 @@ class Asset
      */
     private $url;
 
-    public function __construct(Filesystem $files, UrlGenerator $url, Request $request)
+    protected $paths = [];
+
+    public function __construct(Filesystem $files, UrlGenerator $url, Request $request, HtmlBuilder $html)
     {
+        \Log::info('asset construct');
         $this->request = $request;
         $this->files = $files;
         $this->url = $url;
-    }
-
-    public function add($collection, $file, array $filters = [])
-    {
-        if (! isset($this->collections[$collection])) {
-            $this->collections[$collection] = [];
-        }
-
-//        $filters = $this->addConvenientFilters($file, $filters);
-
-//        $file = $this->paths->realPath($file);
-        $file = base_path($file);
-
-        if (count(glob($file)) > 0) {
-            $this->collections[$collection][$file] = array_merge($filters, ['glob']);
-
-            return $this;
-        }
-
-        throw new \Exception("Asset [{$file}] does not exist!");
+        $this->html = $html;
     }
 
     public function url($collection, array $filters = [], array $parameters = [], $secure = null)
@@ -72,6 +58,17 @@ class Asset
         return $this->url->asset($this->getPath($collection, $filters), $parameters, $secure);
     }
 
+    public function script($collection, array $filters = [], array $attributes = [])
+    {
+        if (! array_has($this->collections, $collection)) {
+            return null;
+        }
+
+        $attributes['src'] = $this->path($collection, $filters);
+
+        return '<script'.$this->html->attributes($attributes).'></script>';
+    }
+
     public function style($collection, array $filters = [], array $attributes = [])
     {
         $defaults = ['media' => 'all', 'type' => 'text/css', 'rel' => 'stylesheet'];
@@ -83,21 +80,88 @@ class Asset
         return '<link'.html_attributes($attributes).'>';
     }
 
+    public function styles($collection, array $filters = [], array $attributes = [])
+    {
+        return array_map(
+            function ($path) use ($attributes) {
+                $defaults = ['media' => 'all', 'type' => 'text/css', 'rel' => 'stylesheet'];
+
+                $attributes = $attributes + $defaults;
+
+                $attributes['href'] = $path;
+
+                return '<link'.$this->html->attributes($attributes).'>';
+            },
+            $this->paths($collection, $filters)
+        );
+    }
+
+
+    public function add($collection, $file, array $filters = [])
+    {
+        if (! isset($this->collections[$collection])) {
+            $this->collections[$collection] = [];
+        }
+
+//        $filters = $this->addConvenientFilters($file, $filters);
+
+        $file = $this->realPath($file);
+
+        if (count(glob($file)) > 0) {
+            $this->collections[$collection][$file] = array_merge($filters, ['glob']);
+
+            return $this;
+        }
+
+        throw new \Exception("Asset [{$file}] does not exist!");
+    }
+
     public function path($collection, array $filters = [])
     {
-        $basePath = $this->request->getBasePath();
+        if (! isset($this->collections[$collection])) {
+            $this->add($collection, $collection, $filters);
+        }
 
-        return $basePath.$this->getPath($collection, $filters);
+        return $this->request->getBasePath().$this->getPath($collection, $filters);
+    }
+
+    public function paths($collection, array $additionalFilters = [])
+    {
+        if (! isset($this->collections[$collection])) {
+            return [];
+        }
+
+        return array_filter(
+            array_map(
+                function ($file, $filters) use ($additionalFilters) {
+                    $filters = array_filter(array_unique(array_merge($filters, $additionalFilters)));
+
+                    return $this->asset($file, $filters);
+                },
+                array_keys($this->collections[$collection]),
+                array_values($this->collections[$collection])
+            )
+        );
+    }
+
+    public function asset($collection, array $filters = [])
+    {
+        if (! isset($this->collections[$collection])) {
+            $this->add($collection, $collection, $filters);
+        }
+
+        return $this->path($collection, $filters);
     }
 
     protected function getPath($collection, array $filters = [])
     {
-        $path = "/app/assets/supreme/{$collection}";
+        $path = "/app/assets/{$collection}";
 
         if ($this->shouldPublish($path, $collection, $filters)) {
-            \Log::info('publishing '.$collection);
             $this->publish($path, $collection, $filters);
         }
+
+        $path .= '?v=' . filemtime(public_path(trim($path, '/\\')));
 
         return $path;
     }
@@ -112,12 +176,28 @@ class Asset
 
         $this->files->makeDirectory((new \SplFileInfo($path))->getPath(), 0777, true, true);
 
-        $this->files->put($path, $assets->dump());
+        $contents = $assets->dump();
+
+        $hint = pathinfo($collection, PATHINFO_EXTENSION);
+
+        if ($hint == 'css') {
+                 try {
+                     $contents = app(Template::class)
+                         ->render($contents)
+                         ->render();
+                 } catch (\Exception $e) {
+                     if (env('APP_DEBUG')) {
+                         dd($e->getMessage());
+                     }
+                 }
+             }
+
+
+        $this->files->put($path, $contents);
     }
 
     protected function shouldPublish($path, $collection, array $filters = [])
     {
-        return true;
         $path = ltrim($path, '/\\');
 
         if (starts_with($path, 'http')) {
@@ -132,7 +212,9 @@ class Asset
             return true;
         }
 
-        $debug = config('superv.assets.live', false);
+        $debug = config('superv.assets.live', true);
+
+        if ($debug) return true;
 
         $live = in_array('live', $this->collectionFilters($collection, $filters));
 
@@ -183,5 +265,36 @@ class Asset
         }
 
         return $assets;
+    }
+
+    /**
+     * Return nothing.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return '';
+    }
+
+    public function addPath($hint, $location)
+    {
+        $this->paths[$hint] = $location;
+    }
+
+    protected function realPath($file)
+    {
+        if (str_is('*::*', $file)) {
+            list($slug, $file) = explode('::', $file);
+
+            if ($path = array_get($this->paths, $slug)) {
+                $file = $this->paths['theme'].DIRECTORY_SEPARATOR.$file;
+            } else {
+                $droplet = superv('droplets')->bySlug($slug);
+                $file = $droplet->path.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.$file;
+            }
+        }
+
+        return base_path($file);
     }
 }

@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Application\Console;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Console\Kernel;
+use SuperV\Platform\PlatformServiceProvider;
 
 class InstallSuperVCommand extends Command
 {
@@ -24,6 +25,8 @@ class InstallSuperVCommand extends Command
         $kernel->call('env:set', ['line' => 'SUPERV_INSTALLED=true'], $this->getOutput());
 
         reload_env();
+
+       $this->getLaravel()->register(PlatformServiceProvider::class, [], true);
 
         $kernel->call('droplet:install', [
             'droplet' => 'superv.ports.acp',

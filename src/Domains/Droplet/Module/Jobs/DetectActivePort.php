@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Droplet\Module\Jobs;
 
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Droplet\DropletFactory;
@@ -12,6 +13,7 @@ use SuperV\Platform\Traits\RegistersRoutes;
 class DetectActivePort
 {
     use RegistersRoutes;
+    use DispatchesJobs;
 
     public function handle(Request $request, PortCollection $ports, Factory $view)
     {
@@ -25,14 +27,6 @@ class DetectActivePort
             return;
         }
 
-        app()->instance(Port::class, $port);
-
-        if ($themeSlug = $port->getTheme()) {
-            if ($theme = superv('droplets')->bySlug($themeSlug)) {
-                $viewsPath = [base_path($theme->getPath('resources/views'))];
-            }
-        }
-
-        $view->addNamespace('port', $viewsPath ?? [base_path($port->getPath('resources/views'))]);
+        $this->dispatch(new ActivatePort($port));
     }
 }

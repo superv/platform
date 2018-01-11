@@ -17,7 +17,7 @@ class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateComm
                 {--pretend : Dump the SQL queries that would be run.}
                 {--seed : Indicates if the seed task should be re-run.}
                 {--step : Force the migrations to be run so they can be rolled back individually.}
-                {--platform : Migrate SuperV Platform.}
+                {--no-platform : Migrate SuperV Platform.}
                 {--droplet= : The droplet slug to migrate.}';
 
     /** @var  Migrator */
@@ -25,10 +25,10 @@ class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateComm
 
     public function handle()
     {
-        if ($this->option('platform')) {
-            $this->input->setOption('path', 'vendor/superv/platform/database/migrations');
-        } else {
+        if ($this->option('droplet')) {
             $this->dispatch(new ConfigureMigrator($this->migrator, $this->option('droplet'), $this->input));
+        } elseif (!$this->option('no-platform')) {
+            $this->input->setOption('path', 'vendor/superv/platform/database/migrations');
         }
 
         parent::handle();

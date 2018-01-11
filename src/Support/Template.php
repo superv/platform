@@ -63,6 +63,8 @@ class Template
             $this->files->put($path . '.twig', $template);
         }
 
+        $this->view->addNamespace('storage', storage_path());
+
         return $this->view->make('storage::' . $view, $payload);
     }
 }

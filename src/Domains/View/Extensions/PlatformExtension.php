@@ -8,7 +8,6 @@ use SuperV\Platform\Domains\Model\EloquentCriteria;
 use SuperV\Platform\Domains\Setting\JSON;
 use SuperV\Platform\Domains\Task\Model\TaskModel;
 use SuperV\Platform\Domains\Task\Task;
-use SuperV\Platform\Domains\UI\Button\Features\MakeButtons;
 use SuperV\Platform\Support\Decorator;
 use Twig_SimpleFunction;
 
@@ -32,11 +31,14 @@ class PlatformExtension extends \Twig_Extension
             }, [
                 'is_safe' => ['html'],
             ]),
-            new Twig_SimpleFunction('mix', function ($path) {
-                return mix($path);
-            }, [
-                'is_safe' => ['html'],
-            ]),
+            new \Twig_SimpleFunction(
+                    'asset_*',
+                    function ($name) {
+                        $arguments = array_slice(func_get_args(), 1);
+
+                        return call_user_func_array([superv('assets'), camel_case($name)], $arguments);
+                    }, ['is_safe' => ['html']]
+                ),
             new Twig_SimpleFunction('navigation', function ($key = null) {
                 if (! $key) {
                     return app(Navigation::class);
