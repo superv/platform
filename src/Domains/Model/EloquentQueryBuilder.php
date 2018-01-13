@@ -8,7 +8,7 @@ class EloquentQueryBuilder extends Builder
 {
     public function get($columns = ['*'])
     {
-        \Log::info($this->toSql());
+//        \Log::info($this->toSql());
 
         return parent::get($columns);
     }

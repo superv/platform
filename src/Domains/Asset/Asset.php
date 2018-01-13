@@ -38,7 +38,6 @@ class Asset
 
     public function __construct(Filesystem $files, UrlGenerator $url, Request $request, HtmlBuilder $html)
     {
-        \Log::info('asset construct');
         $this->request = $request;
         $this->files = $files;
         $this->url = $url;

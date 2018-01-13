@@ -4,7 +4,6 @@ namespace SuperV\Platform\Domains\Auth\Console;
 
 use SuperV\Platform\Contracts\Command;
 use SuperV\Platform\Domains\Auth\Domains\User\Services\UserCreator;
-use SuperV\Platform\Domains\Auth\Jobs\CreateUser;
 
 class CreateUserCommand extends Command
 {

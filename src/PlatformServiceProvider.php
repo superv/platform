@@ -62,7 +62,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
             $this->commands(require base_path(platform_path("routes/console.php")));
         }
 
-        if (! env('SUPERV_INSTALLED', false)) {
+        if (! config('superv.installed', false)) {
             return;
         }
         $this->mergeConfigs();
@@ -78,12 +78,9 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
 
     public function boot(DropletManager $dropletManager)
     {
-        if (! env('SUPERV_INSTALLED', false)) {
+        if (! config('superv.installed', false)) {
             return;
         }
-
-//        $factory = new AssetFactory('public/app/assets');
-//        app(Bridge::class)->addExtension(new AsseticExtension($factory));
 
         $this->loadViewsFrom(__DIR__.'/../resources/views/', 'superv');
 

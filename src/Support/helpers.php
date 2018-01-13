@@ -15,7 +15,9 @@ function reload_env()
     foreach (file(base_path('.env'), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
         // Check for # comments.
         if (! starts_with($line, '#')) {
-            putenv($line);
+            if (starts_with($line, 'SUPERV_')) {
+              putenv($line);
+          }
         }
     }
 }
