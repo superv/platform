@@ -10,9 +10,9 @@ trait RegistersRoutes
 {
     protected function disperseRoutes(array $routes, \Closure $callable = null)
     {
-        if (! empty(array_keys($routes))) {
-            \Log::info('Dispersing routes', ['routes' => array_keys($routes)]);
-        }
+//        if (! empty(array_keys($routes))) {
+//            \Log::info('Dispersing routes', ['routes' => array_keys($routes)]);
+//        }
         foreach ($routes as $uri => $data) {
             $data = ! is_array($data) ? ['uses' => $data] : $data;
 
@@ -48,9 +48,9 @@ trait RegistersRoutes
         /** @var Router $router */
         $router = app('router');
 
-        if (! empty($port->getRoutes())) {
-            \Log::info('Registering routes', ['routes' => array_keys($port->getRoutes())]);
-        }
+//        if (! empty($port->getRoutes())) {
+//            \Log::info('Registering routes', ['routes' => array_keys($port->getRoutes())]);
+//        }
 
         foreach ($port->getRoutes() as $uri => $data) {
             $middlewares = array_pull($data, 'middleware', []);

@@ -4,7 +4,6 @@ namespace SuperV\Platform\Domains\Database\Migration\Console;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\Console\Jobs\ConfigureCreator;
-use SuperV\Platform\Domains\Console\Jobs\ConfigureMigrator;
 use SuperV\Platform\Domains\Database\Migration\MigrationCreator;
 
 class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\MigrateMakeCommand
@@ -21,7 +20,8 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
         {--create= : The table to be created.}
         {--fields : Create a fields migration.}
         {--droplet= : The droplet to create a migration for.}
-        {--path= : The location where the migration file should be created.}';
+        {--path= : The location where the migration file should be created.}
+        {--platform}';
 
     /**
      * The migration creator.
@@ -35,7 +35,13 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
      */
     public function handle()
     {
-        $this->dispatch(new ConfigureCreator($this->option('droplet'), $this->input, $this->creator));
+        if ($this->option('platform')) {
+            $this->input->setArgument('name', 'platform__'.$this->input->getArgument('name'));
+
+            $this->input->setOption('path', platform_path('database/migrations'));
+        } else {
+            $this->dispatch(new ConfigureCreator($this->option('droplet'), $this->input, $this->creator));
+        }
 
         $this->creator->setInput($this->input);
 

@@ -38,8 +38,7 @@
                 "SuperV\\Platform\\Adapters\\AdapterServiceProvider",
                 "SuperV\\Platform\\Domains\\Auth\\AuthServiceProvider",
                 "SuperV\\Platform\\Domains\\Database\\DatabaseServiceProvider",
-                "SuperV\\Platform\\Domains\\Console\\ConsoleServiceProvider",
-                "SuperV\\Platform\\Domains\\View\\Twig\\Bridge\\TwigBridgeServiceProvider"
+                "SuperV\\Platform\\Domains\\Console\\ConsoleServiceProvider"
             ]
         }
     }

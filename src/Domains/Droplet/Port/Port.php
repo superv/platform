@@ -27,10 +27,6 @@ class Port extends Droplet
     }
 
     /**
-     *  Setters & Getters
-     */
-
-    /**
      * @return array
      */
     public function getRoutes(): array
