@@ -10,7 +10,6 @@ use SuperV\Platform\Domains\Droplet\DropletCollection;
 use SuperV\Platform\Domains\Feature\Feature;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Traits\BindsToContainer;
-use SuperV\Platform\Traits\RegistersRoutes;
 
 /**
  * Class IntegrateDroplet.
@@ -18,7 +17,6 @@ use SuperV\Platform\Traits\RegistersRoutes;
 class IntegrateDroplet extends Feature
 {
     use ServesFeaturesTrait;
-    use RegistersRoutes;
     use BindsToContainer;
 
     /**
@@ -34,8 +32,6 @@ class IntegrateDroplet extends Feature
     public function handle(DropletCollection $droplets, Factory $views)
     {
         $droplet = $this->droplet;
-
-        $this->dispatch(new EnableConfigFiles($droplet));
 
         $droplets->put($droplet->getSlug(), $droplet);
 
@@ -65,7 +61,7 @@ class IntegrateDroplet extends Feature
         $this->registerBindings($provider->getBindings());
         $this->registerSingletons($provider->getSingletons());
 
-        $this->disperseRoutes($provider->getRoutes(),
+        superv('routes')->disperse($provider->getRoutes(),
             function ($data) use ($provider) {
                 array_set($data, 'superv::droplet', $provider->getDroplet()->getSlug());
 

@@ -37,9 +37,6 @@ class InstallDroplet extends Feature
               ->save();
 
         $this->dispatch(new EnableConfigFiles($model));
-        $this->dispatch(new IntegrateDroplet($model));
-
-        superv('droplets')->put($model->getSlug(), $model->newDropletInstance());
 
         return true;
     }

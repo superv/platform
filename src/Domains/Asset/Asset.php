@@ -102,8 +102,6 @@ class Asset
             $this->collections[$collection] = [];
         }
 
-//        $filters = $this->addConvenientFilters($file, $filters);
-
         $file = $this->realPath($file);
 
         if (count(glob($file)) > 0) {
@@ -289,7 +287,9 @@ class Asset
             if ($path = array_get($this->paths, $slug)) {
                 $file = $this->paths['theme'].DIRECTORY_SEPARATOR.$file;
             } else {
-                $droplet = superv('droplets')->bySlug($slug);
+                if (!$droplet = superv('droplets')->bySlug($slug)) {
+                    throw new \Exception("Asset Droplet not found: {$slug}");
+                }
                 $file = $droplet->path.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.$file;
             }
         }

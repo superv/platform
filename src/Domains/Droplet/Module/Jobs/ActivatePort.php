@@ -21,6 +21,8 @@ class ActivatePort
     {
         app()->instance(Port::class, $this->port);
 
+        $this->port->setActive(true);
+
         if ($themeSlug = $this->port->getTheme()) {
             if ($theme = superv('droplets')->bySlug($themeSlug)) {
                 $view->addNamespace('theme', [base_path($theme->getPath('resources/views'))]);

@@ -4,8 +4,13 @@ namespace SuperV\Platform\Domains\Droplet\Port;
 
 use SuperV\Platform\Support\Collection;
 
-class PortCollection extends Collection
+class Ports extends Collection
 {
+    public function push($value)
+    {
+        return parent::push($value);
+    }
+
     public function byHostname($hostname)
     {
         /** @var \SuperV\Platform\Domains\Droplet\Port\Port $port */

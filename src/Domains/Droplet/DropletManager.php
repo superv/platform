@@ -32,8 +32,8 @@ class DropletManager
 
             /*
              * If this is a Port type droplet, set its hostname from
-             * env file. We will use this to extract Port from current
-             * request hostname.
+             * env file. We will use this to extract Port from
+             * the current request hostname.
              */
             if ($droplet->isType('port')) {
                 $portName = strtolower($droplet->getName());
@@ -54,7 +54,7 @@ class DropletManager
         }
     }
 
-    public function bootAllButPorts()
+    public function boot()
     {
         $droplets = $this->droplets->allButPorts();
 

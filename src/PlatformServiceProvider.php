@@ -7,10 +7,12 @@ use SuperV\Platform\Domains\Asset\Asset;
 use SuperV\Platform\Domains\Droplet\DropletCollection;
 use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\DropletServiceProviderInterface;
+use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
 use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
+use SuperV\Platform\Domains\Droplet\Module\Jobs\ActivatePort;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActivePort;
-use SuperV\Platform\Domains\Droplet\Port\Port;
-use SuperV\Platform\Domains\Droplet\Port\PortCollection;
+use SuperV\Platform\Domains\Droplet\Port\Ports;
+use SuperV\Platform\Domains\Droplet\Port\Routes;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\View\Twig\Bridge\TwigBridgeServiceProvider;
@@ -31,20 +33,20 @@ use SuperV\Platform\Traits\RegistersRoutes;
 class PlatformServiceProvider extends ServiceProvider implements DropletServiceProviderInterface
 {
     use ServesFeaturesTrait;
-    use RegistersRoutes;
     use BindsToContainer;
 
     /** @var  Platform */
     protected $platform;
 
-    protected $providers  = [
-        TwigBridgeServiceProvider::class
+    protected $providers = [
+        TwigBridgeServiceProvider::class,
     ];
 
     protected $singletons = [
         'droplets'      => DropletCollection::class,
         'features'      => FeatureCollection::class,
-        'ports'         => PortCollection::class,
+        'ports'         => Ports::class,
+        'routes'        => Routes::class,
         'view.template' => ViewTemplate::class,
     ];
 
@@ -73,7 +75,9 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
 
         $this->app->singleton('superv.parser', function ($app) { return $app->make(Parser::class); });
         $this->app->singleton('superv.inflator', function ($app) { return $app->make(Inflator::class); });
-        $this->app->singleton('superv.assets', function ($app) { return $app->make(Asset::class); });
+        $this->app->singleton('superv.assets', function ($app) {
+            return $app->make(Asset::class);
+        });
     }
 
     public function boot(DropletManager $dropletManager)
@@ -91,19 +95,20 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
          */
         $dropletManager->load();
 
-        // Detect the active port and boot all ports
-        $this->dispatch(new DetectActivePort());
-        $dropletManager->bootPorts();
+        $port = $this->dispatch(new DetectActivePort());
 
-        // boot other droplets
-        $dropletManager->bootAllButPorts();
+        if ($port) {
+            superv('routes')->disperse($this->dispatch(new GetPortRoutes(platform_path())));
+
+            $this->dispatch(new ActivatePort($port));
+            $this->dispatch(new IntegrateDroplet($port));
+
+            $routes = superv('routes')->byPort($port->getSlug());
+            $port->registerRoutes($routes);
+        }
+
+        $dropletManager->boot();
         DropletsBooted::dispatch();
-
-        $this->disperseRoutes($this->dispatch(new GetPortRoutes(platform_path())));
-        $this->registerRoutes(app(Port::class));
-
-//        $this->dispatch(new RegisterConsoleCommands($this));
-
         PlatformReady::dispatch();
     }
 

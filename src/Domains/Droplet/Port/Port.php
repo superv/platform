@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Droplet\Port;
 
+use Illuminate\Routing\Route;
+use Illuminate\Routing\Router;
 use SuperV\Platform\Domains\Droplet\Droplet;
 
 class Port extends Droplet
@@ -17,6 +19,35 @@ class Port extends Droplet
     protected $routes = [];
 
     protected $middlewares = [];
+
+    protected $active = false;
+
+    public function registerRoutes($routes = null)
+    {
+        /** @var Router $router */
+        $router = app('router');
+
+        $routes = $routes ?? $this->getRoutes();
+
+//        if (! empty($routes)) {
+//            \Log::info('Registering routes', ['routes' => array_keys($routes)]);
+//        }
+
+        foreach ($routes as $uri => $data) {
+            $middlewares = array_pull($data, 'middleware', []);
+            if (str_contains($uri, '@')) {
+                list($verb, $uri) = explode('@', $uri);
+            } else {
+                $verb = array_pull($data, 'verb', 'any');
+            }
+
+            /** @var Route $route */
+            $route = $router->{$verb}($uri, $data);
+            $route->where(array_pull($data, 'constraints', []));
+            $route->domain($this->getHostname());
+            $route->middleware(array_merge((array)$middlewares, $this->getMiddlewares()));
+        }
+    }
 
     public function addRoute($uri, $data)
     {
@@ -104,7 +135,7 @@ class Port extends Droplet
         $this->prefix = $prefix;
 
         return $this;
-}
+    }
 
     /**
      * @return mixed
@@ -112,5 +143,21 @@ class Port extends Droplet
     public function getPrefix()
     {
         return $this->prefix;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param bool $active
+     */
+    public function setActive(bool $active)
+    {
+        $this->active = $active;
     }
 }
