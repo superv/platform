@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Auth\Handlers;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use SuperV\Modules\Ui\Domains\Form\FormHandler;
 use SuperV\Modules\Ui\Exceptions\FormHandlerException;
 
@@ -28,5 +29,10 @@ class LoginFormHandler extends FormHandler
         $this->incrementLoginAttempts($request);
 
         throw new FormHandlerException("Invalid credentials");
+    }
+
+    protected function guard()
+    {
+        return Auth::guard('acp');
     }
 }

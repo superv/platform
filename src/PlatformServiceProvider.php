@@ -103,6 +103,8 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
             $port->registerRoutes($routes);
             $platformRoutes = $this->dispatch(new GetPortRoutes(platform_path()));
             $port->registerRoutes($platformRoutes);
+
+            config()->set('auth.defaults.guard', strtolower($port->getName()));
         }
 
         $dropletManager->boot();

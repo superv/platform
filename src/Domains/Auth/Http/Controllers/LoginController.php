@@ -34,4 +34,9 @@ class LoginController extends BasePlatformController
 
         return $this->view->make('superv::auth/login-alt', $data);
     }
+
+    protected function guard()
+    {
+        return Auth::guard('web');
+    }
 }
