@@ -95,16 +95,14 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
          */
         $dropletManager->load();
 
-        $port = $this->dispatch(new DetectActivePort());
-
-        if ($port) {
-            superv('routes')->disperse($this->dispatch(new GetPortRoutes(platform_path())));
-
+        if ($port = $this->dispatch(new DetectActivePort())) {
             $this->dispatch(new ActivatePort($port));
             $this->dispatch(new IntegrateDroplet($port));
 
             $routes = superv('routes')->byPort($port->getSlug());
             $port->registerRoutes($routes);
+            $platformRoutes = $this->dispatch(new GetPortRoutes(platform_path()));
+            $port->registerRoutes($platformRoutes);
         }
 
         $dropletManager->boot();

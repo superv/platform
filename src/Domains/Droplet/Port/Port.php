@@ -27,8 +27,6 @@ class Port extends Droplet
         /** @var Router $router */
         $router = app('router');
 
-        $routes = $routes ?? $this->getRoutes();
-
 //        if (! empty($routes)) {
 //            \Log::info('Registering routes', ['routes' => array_keys($routes)]);
 //        }
@@ -44,6 +42,9 @@ class Port extends Droplet
             /** @var Route $route */
             $route = $router->{$verb}($uri, $data);
             $route->where(array_pull($data, 'constraints', []));
+            if ($this->prefix) {
+                $route->prefix($this->prefix);
+            }
             $route->domain($this->getHostname());
             $route->middleware(array_merge((array)$middlewares, $this->getMiddlewares()));
         }
