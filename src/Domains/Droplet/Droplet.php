@@ -3,9 +3,12 @@
 namespace SuperV\Platform\Domains\Droplet;
 
 use SuperV\Platform\Domains\Entry\EntryModel;
+use SuperV\Platform\Traits\FiresCallbacks;
 
 class Droplet extends EntryModel
 {
+    use FiresCallbacks;
+
     protected $table = 'droplets';
 
     protected $seeders = [];
@@ -94,6 +97,7 @@ class Droplet extends EntryModel
         return $this->getNamespace().'\\'.studly_case("{$this->name}_{$this->type}");
     }
 
+    /** @return self */
     public function newDropletInstance()
     {
         return app($this->droplet(), ['attributes' => $this->toArray()]);

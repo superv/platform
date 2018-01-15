@@ -38,6 +38,8 @@ class InstallDroplet extends Feature
 
         $this->dispatch(new EnableConfigFiles($model));
 
+        $model->newDropletInstance()->fire('installed');
+
         return true;
     }
 }

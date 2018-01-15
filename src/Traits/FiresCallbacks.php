@@ -25,16 +25,16 @@ trait FiresCallbacks
      * @param $callback
      * @return $this
      */
-    public function on($trigger, $callback)
-    {
-        if (! isset($this->callbacks[$trigger])) {
-            $this->callbacks[$trigger] = [];
-        }
-
-        $this->callbacks[$trigger][] = $callback;
-
-        return $this;
-    }
+//    public function on($trigger, $callback)
+//    {
+//        if (! isset($this->callbacks[$trigger])) {
+//            $this->callbacks[$trigger] = [];
+//        }
+//
+//        $this->callbacks[$trigger][] = $callback;
+//
+//        return $this;
+//    }
 
     /**
      * Register a new listener.

@@ -34,18 +34,8 @@ class InstallSuperVCommand extends Command
         ], $this->getOutput());
 
         $kernel->call('droplet:install', [
-            'droplet' => 'superv.ports.acp',
-            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/acp/droplets/ports/acp',
-        ], $this->getOutput());
-
-        $kernel->call('droplet:install', [
             'droplet' => 'superv.modules.web',
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/web',
-        ], $this->getOutput());
-
-        $kernel->call('droplet:install', [
-            'droplet' => 'superv.ports.web',
-            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/web/droplets/ports/web',
         ], $this->getOutput());
 
         $kernel->call('droplet:install', [
