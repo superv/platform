@@ -1,7 +1,7 @@
 {% extends "port::layouts/login" %}
 
 {% block content %}
-<form class="m-login__form m-form"  method="POST" action="{{ route('auth::login') }}">
+<form class="m-login__form m-form"  method="POST" action="{{ route('acp::login') }}">
                       {{ csrf_field() }}
 
                       <div class="form-group m-form__group">

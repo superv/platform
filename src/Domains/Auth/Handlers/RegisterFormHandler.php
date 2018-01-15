@@ -15,6 +15,6 @@ class RegisterFormHandler extends FormHandler
                 ->create()
                 ->getUser();
 
-        return ['redirect' => route('auth::login')];
+        return ['redirect' => route('acp::login')];
     }
 }
