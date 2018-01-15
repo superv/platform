@@ -30,7 +30,7 @@ class Droplet extends EntryModel
             }
         }
 
-        throw new \Exception("Droplet could not be located: {$this->name}");
+        throw new \Exception("Droplet could not be located: {$this->slug}");
     }
 
     public function setPath($path)

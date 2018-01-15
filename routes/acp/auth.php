@@ -5,7 +5,6 @@ use SuperV\Platform\Domains\Auth\Http\Controllers\RegisterController;
 use SuperV\Platform\Domains\Auth\Http\Controllers\UsersController;
 
 return [
-
     'auth/users/{id}/edit' => [
         'as'   => 'auth::users.edit',
         'uses' => UsersController::at('edit'),

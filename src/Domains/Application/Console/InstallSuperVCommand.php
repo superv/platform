@@ -29,8 +29,13 @@ class InstallSuperVCommand extends Command
        $this->getLaravel()->register(PlatformServiceProvider::class, [], true);
 
         $kernel->call('droplet:install', [
+            'droplet' => 'superv.modules.acp',
+            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/acp',
+        ], $this->getOutput());
+
+        $kernel->call('droplet:install', [
             'droplet' => 'superv.ports.acp',
-            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/ports/acp',
+            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/acp/droplets/ports/acp',
         ], $this->getOutput());
 
         $kernel->call('droplet:install', [
@@ -40,7 +45,7 @@ class InstallSuperVCommand extends Command
 
         $kernel->call('droplet:install', [
             'droplet' => 'superv.ports.web',
-            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/web/droplets/superv/ports/web',
+            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/web/droplets/ports/web',
         ], $this->getOutput());
 
         $kernel->call('droplet:install', [
