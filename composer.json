@@ -31,7 +31,6 @@
                 "SuperV\\Platform\\PlatformServiceProvider",
                 "SuperV\\Platform\\PlatformEventProvider",
                 "SuperV\\Platform\\Adapters\\AdapterServiceProvider",
-                "SuperV\\Platform\\Domains\\Auth\\AuthServiceProvider",
                 "SuperV\\Platform\\Domains\\Database\\DatabaseServiceProvider",
                 "SuperV\\Platform\\Domains\\Console\\ConsoleServiceProvider"
             ]
