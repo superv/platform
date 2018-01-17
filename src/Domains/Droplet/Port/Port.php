@@ -36,7 +36,7 @@ class Port extends Droplet
             if (str_contains($uri, '@')) {
                 list($verb, $uri) = explode('@', $uri);
             } else {
-                $verb = array_pull($data, 'verb', 'any');
+                $verb = array_pull($data, 'verb', 'get');
             }
 
             /** @var Route $route */
