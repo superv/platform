@@ -51,6 +51,8 @@ class PlatformTestCase extends TestCase
         $manager->boot();
 
         $this->setUpTheme();
+
+        $this->app['router']->getRoutes()->refreshNameLookups();
     }
 
     protected function setUpMacros()

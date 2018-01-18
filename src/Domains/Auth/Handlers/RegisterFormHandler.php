@@ -2,8 +2,8 @@
 
 namespace SuperV\Platform\Domains\Auth\Handlers;
 
+use SuperV\Modules\Acp\Domains\User\Services\UserCreator;
 use SuperV\Modules\Ui\Domains\Form\FormHandler;
-use SuperV\Platform\Domains\Auth\Domains\User\Services\UserCreator;
 
 class RegisterFormHandler extends FormHandler
 {

@@ -31,7 +31,10 @@ class Port extends Droplet
 //            \Log::info('Registering routes', ['routes' => array_keys($routes)]);
 //        }
 
-        foreach ($routes as $uri => $data) {
+        foreach ($routes as $routeData) {
+            $uri = array_get($routeData, 'uri');
+            $data = array_get($routeData, 'data');
+
             $middlewares = array_pull($data, 'middleware', []);
             if (str_contains($uri, '@')) {
                 list($verb, $uri) = explode('@', $uri);

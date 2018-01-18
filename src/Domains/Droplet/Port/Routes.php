@@ -10,7 +10,7 @@ class Routes
     {
         $routes = array_get($this->routes, $port, []);
 
-        $routes[$uri] = $data;
+        $routes[] = ['uri' => $uri, 'data' => $data];
 
         array_set($this->routes, $port, $routes);
     }
@@ -49,7 +49,7 @@ class Routes
             }
 
             if ($port->isActive()) {
-                $port->registerRoutes([$uri => $data]);
+                $port->registerRoutes([['uri' => $uri, 'data' => $data]]);
             } else {
                 $this->put($port->getSlug(), $uri, $data);
             }

@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Droplet\Feature;
 
 use SuperV\Platform\Domains\Config\Jobs\EnableConfigFiles;
-use SuperV\Platform\Domains\Droplet\Jobs\LinkPublicFolders;
 use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModel;
 use SuperV\Platform\Domains\Feature\Feature;
 

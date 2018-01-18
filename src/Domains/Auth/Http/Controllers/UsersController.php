@@ -1,10 +1,10 @@
 <?php namespace SuperV\Platform\Domains\Auth\Http\Controllers;
 
+use SuperV\Modules\Acp\Domains\User\Users;
 use SuperV\Modules\Ui\Domains\Form\FormFactory;
 use SuperV\Modules\Ui\Domains\Form\Jobs\MakeFormInstance;
 use SuperV\Modules\Ui\Domains\Form\Jobs\MapForm;
 use SuperV\Modules\Ui\Domains\Table\TableFactory;
-use SuperV\Platform\Domains\Auth\Domains\User\Users;
 use SuperV\Platform\Http\Controllers\BasePlatformController;
 
 class UsersController extends BasePlatformController

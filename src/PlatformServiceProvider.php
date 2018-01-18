@@ -5,25 +5,17 @@ namespace SuperV\Platform;
 use SuperV\Platform\Contracts\ServiceProvider;
 use SuperV\Platform\Domains\Asset\Asset;
 use SuperV\Platform\Domains\Droplet\DropletCollection;
-use SuperV\Platform\Domains\Droplet\DropletManager;
 use SuperV\Platform\Domains\Droplet\DropletServiceProviderInterface;
-use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
-use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
-use SuperV\Platform\Domains\Droplet\Module\Jobs\ActivatePort;
-use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActivePort;
 use SuperV\Platform\Domains\Droplet\Port\Ports;
 use SuperV\Platform\Domains\Droplet\Port\Routes;
 use SuperV\Platform\Domains\Feature\FeatureCollection;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
 use SuperV\Platform\Domains\View\Twig\Bridge\TwigBridgeServiceProvider;
 use SuperV\Platform\Domains\View\ViewTemplate;
-use SuperV\Platform\Events\DropletsBooted;
-use SuperV\Platform\Events\PlatformReady;
 use SuperV\Platform\Support\Inflator;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\UrlGenerator;
 use SuperV\Platform\Traits\BindsToContainer;
-use SuperV\Platform\Traits\RegistersRoutes;
 
 /**
  * Class PlatformServiceProvider.
@@ -35,19 +27,18 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
     use ServesFeaturesTrait;
     use BindsToContainer;
 
-    /** @var  Platform */
-    protected $platform;
-
     protected $providers = [
         TwigBridgeServiceProvider::class,
     ];
 
     protected $singletons = [
+        Platform::class,
         'droplets'      => DropletCollection::class,
         'features'      => FeatureCollection::class,
         'ports'         => Ports::class,
         'routes'        => Routes::class,
         'view.template' => ViewTemplate::class,
+        'inflator'      => Inflator::class,
     ];
 
     protected $bindings = [
@@ -64,9 +55,9 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
             $this->commands(require base_path(platform_path("routes/console.php")));
         }
 
-        if (! config('superv.installed', false)) {
-            return;
-        }
+//        if (! config('superv.installed', false)) {
+//            return;
+//        }
         $this->mergeConfigs();
 
         $this->registerBindings($this->bindings);
@@ -74,42 +65,20 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         $this->registerSingletons($this->singletons);
 
         $this->app->singleton('superv.parser', function ($app) { return $app->make(Parser::class); });
-        $this->app->singleton('superv.inflator', function ($app) { return $app->make(Inflator::class); });
-        $this->app->singleton('superv.assets', function ($app) {
-            return $app->make(Asset::class);
-        });
+//        $this->app->singleton('superv.inflator', function ($app) { return $app->make(Inflator::class); });
+        $this->app->singleton('superv.assets', function ($app) { return $app->make(Asset::class); });
     }
 
-    public function boot(DropletManager $dropletManager)
+    public function boot()
     {
         if (! config('superv.installed', false)) {
             return;
         }
-
         $this->loadViewsFrom(__DIR__.'/../resources/views/', 'superv');
 
-        /**
-         * Refactor idea: instead of registering routes views etc
-         * by looping all droplets, first collect the droplets
-         * then perform registeration depending on port, cli
-         */
-        $dropletManager->load();
-
-        if ($port = $this->dispatch(new DetectActivePort())) {
-            $this->dispatch(new ActivatePort($port));
-            $this->dispatch(new IntegrateDroplet($port));
-
-            $routes = superv('routes')->byPort($port->getSlug());
-            $port->registerRoutes($routes);
-            $platformRoutes = $this->dispatch(new GetPortRoutes(platform_path()));
-            $port->registerRoutes($platformRoutes);
-
-            config()->set('auth.defaults.guard', strtolower($port->getName()));
-        }
-
-        $dropletManager->boot();
-        DropletsBooted::dispatch();
-        PlatformReady::dispatch();
+        $this->app->booted(function () {
+            app(Platform::class)->boot();
+        });
     }
 
     protected function mergeConfigs()

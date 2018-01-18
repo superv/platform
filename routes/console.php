@@ -1,7 +1,7 @@
 <?php
 
 use SuperV\Platform\Domains\Application\Console\EnvSet;
-use SuperV\Platform\Domains\Application\Console\InstallSuperVCommand;
+use SuperV\Platform\Domains\Application\Console\InstallCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletReinstallCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletSeedCommand;
@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 
 return [
     EnvSet::class,
-    InstallSuperVCommand::class,
+    InstallCommand::class,
     DropletInstallCommand::class,
     DropletSeedCommand::class,
     DropletUninstallCommand::class,
