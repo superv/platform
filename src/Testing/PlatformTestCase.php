@@ -17,6 +17,8 @@ class PlatformTestCase extends TestCase
     use CreatesApplication;
     use DispatchesJobs;
 
+    protected $installs = [];
+
     protected $port;
 
     protected $theme;
@@ -32,6 +34,10 @@ class PlatformTestCase extends TestCase
         $this->setUpMacros();
 
         $this->artisan('install');
+
+        foreach ($this->installs as $droplet) {
+            $this->artisan('droplet:install', ['droplet' => $droplet]);
+        }
 
         foreach ($this->afterPlatformInstalledCallbacks as $callback) {
             call_user_func($callback);
