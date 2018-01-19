@@ -3,9 +3,9 @@
 namespace SuperV\Platform\Domains\Droplet;
 
 use SuperV\Platform\Domains\Droplet\Feature\IntegrateDroplet;
-use SuperV\Platform\Domains\Droplet\Port\Port;
 use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
-use SuperV\Platform\Support\Inflator;
+use SuperV\Platform\Events\DropletsBooted;
+use SuperV\Platform\Facades\Inflator;
 
 class DropletManager
 {
@@ -38,19 +38,10 @@ class DropletManager
             if ($droplet->isType('port')) {
                 $portName = strtolower($droplet->getName());
                 if ($config = config("superv.ports.{$portName}")) {
-                    app(Inflator::class)->inflate($droplet, $config);
+                    Inflator::inflate($droplet, $config);
                 }
                 superv('ports')->push($droplet);
             }
-        }
-    }
-
-    public function bootPorts()
-    {
-        $ports = $this->droplets->ports();
-
-        foreach ($ports as $model) {
-            $this->serve(new IntegrateDroplet($model));
         }
     }
 
@@ -61,5 +52,8 @@ class DropletManager
         foreach ($droplets as $model) {
             $this->serve(new IntegrateDroplet($model));
         }
+
+
+        DropletsBooted::dispatch();
     }
 }

@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Droplet;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use SuperV\Platform\Domains\Droplet\Jobs\GetPortRoutes;
+use SuperV\Platform\Domains\Droplet\Jobs\LoadRouteFiles;
 
 class DropletServiceProvider implements DropletServiceProviderInterface
 {
@@ -61,7 +61,7 @@ class DropletServiceProvider implements DropletServiceProviderInterface
 
     public function getRoutes()
     {
-        $routes = $this->dispatch(new GetPortRoutes($this->getPath()));
+        $routes = $this->dispatch(new LoadRouteFiles($this->getPath()));
 
         $routes = array_merge($this->routes, $routes);
 

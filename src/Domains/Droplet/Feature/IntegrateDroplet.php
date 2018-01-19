@@ -42,6 +42,7 @@ class IntegrateDroplet extends Feature
          *  Both for "name::" and "superv.type.name::"
          */
         $viewsPath = [base_path($droplet->getPath('resources/views'))];
+
         $views->addNamespace($droplet->getSlug(), $viewsPath);
         $views->addNamespace($droplet->getName(), $viewsPath);
     }
@@ -53,6 +54,7 @@ class IntegrateDroplet extends Feature
         }
 
         $this->registerProviders($provider->getProviders());
+
         if (method_exists($provider, 'register')) {
             app()->call([$provider, 'register'], ['provider' => $this]);
         }
