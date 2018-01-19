@@ -38,7 +38,9 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
         'ports'         => Ports::class,
         'routes'        => Routes::class,
         'view.template' => ViewTemplate::class,
+        'assets'        => Asset::class,
         'inflator'      => Inflator::class,
+        'parser'        => Parser::class,
     ];
 
     protected $bindings = [
@@ -55,18 +57,11 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
             $this->commands(require base_path(platform_path("routes/console.php")));
         }
 
-//        if (! config('superv.installed', false)) {
-//            return;
-//        }
         $this->mergeConfigs();
 
         $this->registerBindings($this->bindings);
         $this->registerProviders($this->providers);
         $this->registerSingletons($this->singletons);
-
-        $this->app->singleton('superv.parser', function ($app) { return $app->make(Parser::class); });
-//        $this->app->singleton('superv.inflator', function ($app) { return $app->make(Inflator::class); });
-        $this->app->singleton('superv.assets', function ($app) { return $app->make(Asset::class); });
     }
 
     public function boot()
