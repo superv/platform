@@ -18,8 +18,12 @@ class InstallCommand extends Command
     public function handle(Kernel $kernel)
     {
         $kernel->call('migrate', [
-            '--force' => true,
-            '--path'  => 'vendor/superv/platform/database/migrations',
+            '--force'    => true,
+        ], $this->getOutput());
+
+        $kernel->call('migrate', [
+            '--force'    => true,
+            '--platform' => true,
         ], $this->getOutput());
 
         $kernel->call('env:set', ['line' => 'SUPERV_INSTALLED=true'], $this->getOutput());
