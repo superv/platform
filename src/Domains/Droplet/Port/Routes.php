@@ -22,7 +22,10 @@ class Routes
 
     public function disperse(array $routes, \Closure $callable = null)
     {
-        foreach ($routes as $uri => $data) {
+        foreach ($routes as $routeData) {
+            $uri = array_get($routeData, 'uri');
+            $data = array_get($routeData, 'data');
+
             $data = ! is_array($data) ? ['uses' => $data] : $data;
 
             if ($callable) {
