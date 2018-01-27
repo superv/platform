@@ -42,7 +42,7 @@ class Platform
         PlatformReady::dispatch();
     }
 
-    protected function handleActivePort(): void
+    protected function handleActivePort()
     {
         if ($port = $this->dispatch(new DetectActivePort())) {
             $this->dispatch(new ActivatePort($port));
