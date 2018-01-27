@@ -58,10 +58,10 @@ class InstallCommand extends Command
 //            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/tailwind',
 //        ], $this->getOutput());
 
-        $kernel->call('droplet:install', [
-            'droplet' => 'superv.themes.starter',
-            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/starter',
-        ], $this->getOutput());
+//        $kernel->call('droplet:install', [
+//            'droplet' => 'superv.themes.starter',
+//            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/themes/starter',
+//        ], $this->getOutput());
 
         $this->comment("SuperV installed..!!!");
     }
