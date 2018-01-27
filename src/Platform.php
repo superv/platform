@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Droplet\Jobs\LoadRouteFiles;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\ActivatePort;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActivePort;
 use SuperV\Platform\Domains\Droplet\Port\Routes;
-use SuperV\Platform\Events\DropletsBooted;
 use SuperV\Platform\Events\PlatformReady;
 
 class Platform
