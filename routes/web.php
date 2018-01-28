@@ -1,8 +1,19 @@
 <?php
 
 use App\Nucleo\Blueprint;
-use App\Nucleo\IsStruct;
+use App\Nucleo\Structable;
 use Illuminate\Database\Eloquent\Model;
+
+
+class Task extends Model
+{
+    use Structable;
+
+    protected $guarded = [];
+
+    public $timestamps = false;
+}
+
 
 return [
     'devel/nucleo' => [
@@ -22,20 +33,11 @@ return [
                 $table->string('title');
             });
 
-            class Task extends Model {
-                    use IsStruct;
-
-                    protected $guarded = [];
-
-                    public $timestamps = false;
-                }
-
-
-
             $task = Task::create(['title' => 'Important Task']);
+            $task->setAttribute('title', 'Second Title')->save();
+            $task->setAttribute('title', 'Third Title')->save();
 
             return $task->struct()->members;
-
         },
     ],
 ];

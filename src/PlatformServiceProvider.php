@@ -44,7 +44,7 @@ class PlatformServiceProvider extends ServiceProvider implements DropletServiceP
     ];
 
     protected $bindings = [
-        'Illuminate\Contracts\Routing\UrlGenerator' => UrlGenerator::class,
+        'Illuminate\Contracts\Routing\UrlGenerator' => \SuperV\Platform\Support\UrlGenerator::class,
     ];
 
     public function register()

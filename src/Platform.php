@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Droplet\Jobs\LoadRouteFiles;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\ActivatePort;
 use SuperV\Platform\Domains\Droplet\Module\Jobs\DetectActivePort;
 use SuperV\Platform\Domains\Droplet\Port\Routes;
-use SuperV\Platform\Events\DropletsBooted;
 use SuperV\Platform\Events\PlatformReady;
 
 class Platform
@@ -43,7 +42,7 @@ class Platform
         PlatformReady::dispatch();
     }
 
-    protected function handleActivePort(): void
+    protected function handleActivePort()
     {
         if ($port = $this->dispatch(new DetectActivePort())) {
             $this->dispatch(new ActivatePort($port));
