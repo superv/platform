@@ -15,19 +15,9 @@ trait RegistersUsers
      */
     protected $redirectTo = '/home';
 
-    public function register()
+    public function register(UserRegistrar $registrar)
     {
-        $this->validate(request(), [
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|confirmed|min:6',
-        ]);
-
-        $user = User::create([
-            'email'    => request('email'),
-            'password' => bcrypt(request('password')),
-        ]);
-
-        event(new UserCreatedEvent($user, request()));
+        $registrar(request(['email', 'password', 'password_confirmation']));
 
         return redirect()->to($this->getRedirectTo());
     }
