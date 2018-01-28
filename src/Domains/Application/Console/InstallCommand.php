@@ -47,11 +47,11 @@ class InstallCommand extends Command
             '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/ui',
         ], $this->getOutput());
 
-        $kernel->call('droplet:install', [
-            'droplet' => 'superv.modules.nucleo',
-            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/nucleo',
-            '--seed'  => true,
-        ], $this->getOutput());
+//        $kernel->call('droplet:install', [
+//            'droplet' => 'superv.modules.nucleo',
+//            '--path'  => env('SUPERV_DROPLETS', 'droplets').'/superv/modules/nucleo',
+//            '--seed'  => true,
+//        ], $this->getOutput());
 
 //        $kernel->call('droplet:install', [
 //            'droplet' => 'superv.themes.tailwind',

@@ -13,15 +13,14 @@ class CreateAuthUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('auth_users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+//            $table->string('name');
             $table->string('email')->unique();
             $table->string('password', 60);
+            $table->string('level')->default('client');
             $table->rememberToken();
             $table->timestamps();
-
-            $table->integer('droplet_id')->nullable();
         });
     }
 
@@ -32,6 +31,6 @@ class CreateAuthUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('auth_users');
     }
 }
