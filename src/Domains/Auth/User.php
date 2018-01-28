@@ -10,15 +10,11 @@ class User extends Model implements AuthenticatableContract
 {
     use Authenticatable;
 
-    protected $table = 'auth_users';
+    protected $table = 'users';
 
     protected $guarded = [];
 
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-    public function profile() {
-        return $this->hasOne(Profile::class);
-    }
 }
