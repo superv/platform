@@ -1,19 +1,6 @@
 <?php
 
-use App\Nucleo\Blueprint;
-use App\Nucleo\Structable;
 use Illuminate\Database\Eloquent\Model;
-
-
-class Task extends Model
-{
-    use Structable;
-
-    protected $guarded = [];
-
-    public $timestamps = false;
-}
-
 
 return [
     'devel/nucleo' => [
