@@ -1,0 +1,15 @@
+{
+    "model": "SuperV\\Platform\\Domains\\Auth\\Domains\\User\\UserModel",
+    "columns": [
+        {"slug": "name", "label": "Name"},
+        {"slug": "email", "label": "E-Mail"}
+    ],
+    "buttons": {
+        "delete": {
+            "href": "auth/users/{entry.id}/delete"
+        },
+        "edit": {
+            "href": "auth/users/{entry.id}/edit"
+        }
+    }
+}

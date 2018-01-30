@@ -1,0 +1,16 @@
+{
+    "model": "SuperV\\Modules\\Supreme\\Domains\\Account\\Account",
+    "columns": [
+        {"slug": "name", "label": "Name"},
+        {"slug": "username", "label": "Username"},
+        {"slug": "slug", "label": "Slug"}
+    ],
+    "buttons": {
+        "delete": {
+            "href": "supreme/accounts/{entry.id}/delete"
+        },
+        "edit": {
+            "href": "supreme/accounts/{entry.id}/edit"
+        }
+    }
+}

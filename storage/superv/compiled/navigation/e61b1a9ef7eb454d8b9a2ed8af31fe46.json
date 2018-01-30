@@ -1,0 +1,61 @@
+{
+    "key": "acp.main",
+    "port": "superv.ports.acp",
+    "sections": [
+        {
+            "title": "Dashboard",
+            "slug": "dashboard",
+            "icon": "tachometer-alt",
+            "url": "acp/"
+        },
+        {
+            "title": "Supreme",
+            "slug": "supreme",
+            "icon": "server",
+            "sections": [
+                {
+                    "title": "Servers",
+                    "icon": "server",
+                    "sections": [
+                        {
+                            "title": "Servers",
+                            "icon": "server",
+                            "url": "acp/supreme/servers/index"
+                        },
+                        {
+                            "title": "Accounts",
+                            "icon": "lock",
+                            "url": "acp/supreme/accounts/index"
+                        }
+                    ]
+                }
+            
+            ]
+        },
+        {
+            "title": "Platform",
+            "slug": "platform",
+            "icon": "microchip",
+            "sections": [
+                {
+                    "title": "Auth",
+                    "icon": "",
+                    "sections": [
+                        {
+                            "title": "Users",
+                            "icon": "user",
+                            "url": "acp/auth/users/index"
+                        },
+                        {
+                            "title": "Roles",
+                            "icon": "user-plus",
+                            "url": "acp/auth/roles/index"
+                        }
+                    ]
+                }
+            
+            ]
+        }
+    ]
+    
+}

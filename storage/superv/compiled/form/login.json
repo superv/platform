@@ -1,0 +1,28 @@
+{
+    "id": "login.json",
+    "handler": "\\SuperV\\Platform\\Domains\\Auth\\Handlers\\LoginFormHandler",
+    "fields": [
+        {
+            "id": "login.email",
+            "label": "Email",
+            "type": "input",
+            "name": "email",
+            "config": {
+                "clearable": true
+            },
+            "placeholder": "Enter your email address",
+            "rules": "required|email"
+        },
+        {
+            "id": "login.password",
+            "label": "Password",
+            "type": "input",
+            "name": "password",
+            "rules": "required|string",
+            "config": {
+                "type": "password",
+                "clearable": true
+            }
+        }
+    ]
+}

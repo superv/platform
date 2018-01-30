@@ -1,0 +1,48 @@
+{
+    "id": "register.json",
+    "handler": "\\SuperV\\Modules\\Auth\\Domains\\Auth\\RegisterFormHandler",
+    "fields": [
+        {
+            "label": "Name",
+            "type": "input",
+            "name": "name",
+            "config": {},
+            "rules": [
+                "required",
+                "string",
+                "min:3",
+                "max:128"
+            ]
+        },
+        {
+            "label": "Email",
+            "type": "input",
+            "name": "email",
+            "config": {},
+            "rules": [
+                "required",
+                "string",
+                "email",
+                "max:255",
+                "unique:users"
+            ]
+        },
+        {
+            "label": "Password",
+            "type": "input",
+            "name": "password",
+            "config": {
+                "type": "password"
+            },
+            "rules": "required|string|min:6|confirmed"
+        },
+        {
+            "label": "Confirm Password",
+            "type": "input",
+            "name": "password_confirmation",
+            "config": {
+                "type": "password"
+            }
+        }
+    ]
+}

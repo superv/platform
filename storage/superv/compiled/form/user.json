@@ -1,0 +1,57 @@
+{
+    "id": "user.json",
+    "models": {
+        "user": "SuperV\\Platform\\Domains\\Auth\\Domains\\User\\UserModel"
+    },
+    "config": {
+    },
+    "fields": [
+        {
+            "label": "Name",
+            "type": "input",
+            "name": "user::name",
+            "config": {},
+            "rules": [
+                "required",
+                "string",
+                "min:3",
+                "max:128"
+            ]
+        },
+        {
+            "label": "Email",
+            "type": "input",
+            "name": "user::email",
+            "config": {},
+            "rules": [
+                "required",
+                "string",
+                "email",
+                "max:255",
+                "unique:users,email,{user.id},id"
+            ]
+        },
+        {
+            "label": "Roles",
+            "type": "relation",
+            "name": "user::roles",
+            "config": {
+                "multiple": true,
+                "provider": "/acp/nucleo/relations/uuid123",
+                "mutator": "\\SuperV\\Modules\\Nucleo\\Domains\\Struct\\Types\\Relation\\PropertyMutator",
+                "accessor": "\\SuperV\\Modules\\Nucleo\\Domains\\Struct\\Types\\Relation\\PropertyAccessor"
+            }
+        },
+        {
+            "label": "Droplet",
+            "type": "relation",
+            "name": "user::droplet",
+            "config": {
+                "multiple": false,
+                "provider": "/acp/nucleo/relations/uuid345",
+                "mutator": "\\SuperV\\Modules\\Nucleo\\Domains\\Struct\\Types\\Relation\\PropertyMutator",
+                "accessor": "\\SuperV\\Modules\\Nucleo\\Domains\\Struct\\Types\\Relation\\PropertyAccessor"
+            }
+        }
+    ]
+}

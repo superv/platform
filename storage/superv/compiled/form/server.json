@@ -1,0 +1,58 @@
+{
+    "id": "server.json",
+    "models": {
+        "server": "SuperV\\Modules\\Supreme\\Domains\\Server\\Server"
+    },
+    "fields": [
+        {
+            "label": "Server Name",
+            "type": "input",
+            "name": "server::name",
+            "config": {},
+            "rules": [
+                "required"
+            ]
+        },
+        {
+            "label": "Server Slug",
+            "type": "input",
+            "name": "server::slug",
+            "config": {},
+            "rules": [
+                "required",
+                "unique:supreme_servers,slug,{server.id},id"
+            ]
+        },
+        {
+            "label": "Distribution",
+            "type": "input",
+            "name": "server::distribution",
+            "config": {}
+        },
+        {
+            "label": "Ip Address",
+            "type": "input",
+            "name": "server::ip",
+            "config": {},
+            "rules": [
+                "required"
+            ]
+        },
+        {
+            "label": "Port",
+            "type": "input",
+            "name": "server::port",
+            "config": {}
+        },
+        {
+            "label": "Account",
+            "type": "relation",
+            "name": "server::account",
+            "config": {},
+            "rules": [
+                "required"
+            ]
+        }
+    ],
+    "config": {}
+}
