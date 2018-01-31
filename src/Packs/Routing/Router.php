@@ -1,11 +1,11 @@
 <?php
 
-namespace SuperV\Platform\Domains\Routing;
+namespace SuperV\Platform\Packs\Routing;
 
 class Router
 {
     /**
-     * @var \SuperV\Platform\Domains\Routing\RouteLoader
+     * @var \SuperV\Platform\Packs\Routing\RouteLoader
      */
     protected $loader;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Database\Migrations;
+namespace SuperV\Platform\Packs\Database\Migrations;
 
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 

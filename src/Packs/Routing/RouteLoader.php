@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Routing;
+namespace SuperV\Platform\Packs\Routing;
 
 use Illuminate\Routing\Router;
 use Platform;

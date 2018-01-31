@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Database\Migrations;
+namespace SuperV\Platform\Packs\Database\Migrations;
 
 class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\DatabaseMigrationRepository
 {

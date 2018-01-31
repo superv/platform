@@ -2,12 +2,12 @@
 
 namespace SuperV\Platform\Listeners;
 
-use SuperV\Platform\Domains\Port\PortDetector;
+use SuperV\Platform\Packs\Port\PortDetector;
 
 class RouteMatchedListener
 {
     /**
-     * @var \SuperV\Platform\Domains\Port\PortDetector
+     * @var \SuperV\Platform\Packs\Port\PortDetector
      */
     protected $detector;
 

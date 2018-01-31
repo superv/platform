@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Port;
+namespace SuperV\Platform\Packs\Port;
 
 class PortDetector
 {

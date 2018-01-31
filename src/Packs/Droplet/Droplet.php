@@ -1,11 +1,11 @@
 <?php
 
-namespace SuperV\Platform\Domains\Droplet;
+namespace SuperV\Platform\Packs\Droplet;
 
 class Droplet
 {
     /**
-     * @var \SuperV\Platform\Domains\Droplet\DropletModel
+     * @var \SuperV\Platform\Packs\Droplet\DropletModel
      */
     protected $entry;
 
@@ -17,7 +17,7 @@ class Droplet
     /**
      * Creates new Droplet Service Provider instance
      *
-     * @return \SuperV\Platform\Domains\Droplet\ServiceProvider
+     * @return \SuperV\Platform\Packs\Droplet\ServiceProvider
      */
     public function resolveProvider()
     {
@@ -29,7 +29,7 @@ class Droplet
     /**
      * Returns Droplet Entry
      *
-     * @return \SuperV\Platform\Domains\Droplet\DropletModel
+     * @return \SuperV\Platform\Packs\Droplet\DropletModel
      */
     public function entry()
     {

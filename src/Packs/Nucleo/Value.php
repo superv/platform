@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Nucleo;
+namespace SuperV\Platform\Packs\Nucleo;
 
 use Illuminate\Database\Eloquent\Model;
 

@@ -5,7 +5,7 @@ namespace SuperV\Platform;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use Platform;
-use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
+use SuperV\Platform\Packs\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\Listeners\RouteMatchedListener;
 

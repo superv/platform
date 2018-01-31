@@ -1,14 +1,14 @@
 <?php
 
-namespace SuperV\Platform\Domains\Droplet;
+namespace SuperV\Platform\Packs\Droplet;
 
-use SuperV\Platform\Domains\Routing\Router;
+use SuperV\Platform\Packs\Routing\Router;
 use SuperV\Platform\PlatformServiceProvider;
 
 class ServiceProvider extends PlatformServiceProvider
 {
     /**
-     * @var \SuperV\Platform\Domains\Droplet\Droplet
+     * @var \SuperV\Platform\Packs\Droplet\Droplet
      */
     protected $droplet;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Droplet;
+namespace SuperV\Platform\Packs\Droplet;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +13,7 @@ class DropletModel extends Model
     /**
      * Creates new Droplet instance
      *
-     * @return \SuperV\Platform\Domains\Droplet\Droplet
+     * @return \SuperV\Platform\Packs\Droplet\Droplet
      */
     public function resolveDroplet()
     {

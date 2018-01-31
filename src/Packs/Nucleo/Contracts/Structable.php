@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Nucleo\Contracts;
+namespace SuperV\Platform\Packs\Nucleo\Contracts;
 
 interface Structable
 {

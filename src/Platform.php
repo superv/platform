@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform;
 
-use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Packs\Droplet\DropletModel;
 
 class Platform
 {

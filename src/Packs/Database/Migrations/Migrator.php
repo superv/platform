@@ -1,13 +1,13 @@
 <?php
 
-namespace SuperV\Platform\Domains\Database\Migrations;
+namespace SuperV\Platform\Packs\Database\Migrations;
 
 use Illuminate\Database\Migrations\Migrator as BaseMigrator;
 
 /**
  * Class Migrator
- * @package SuperV\Platform\Domains\Database\Migrations
- * @property \SuperV\Platform\Domains\Database\Migrations\DatabaseMigrationRepository $repository
+ * @package SuperV\Platform\Packs\Database\Migrations
+ * @property \SuperV\Platform\Packs\Database\Migrations\DatabaseMigrationRepository $repository
  */
 class Migrator extends BaseMigrator
 {
