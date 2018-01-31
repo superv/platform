@@ -16,19 +16,21 @@ class PortDetectorTest extends BaseTestCase
     {
         $this->setUpPorts();
 
-        $this->assertEquals('web', $this->app->make(PortDetector::class)->detectFor('superv.io', 'foo/bar'));
-        $this->assertEquals('web', $this->app->make(PortDetector::class)->detectFor('superv.io', '/'));
-        $this->assertEquals('web', $this->app->make(PortDetector::class)->detectFor('superv.io', ''));
+        $this->assertNull($this->setUpDetector()->detectFor('other.io', 'foo/bar'));
 
-        $this->assertEquals('acp', $this->app->make(PortDetector::class)->detectFor('superv.io', 'acp/foo/bar'));
-        $this->assertEquals('acp', $this->app->make(PortDetector::class)->detectFor('superv.io', '/acp/foo'));
-        $this->assertEquals('acp', $this->app->make(PortDetector::class)->detectFor('superv.io', '/acp'));
-        $this->assertEquals('acp', $this->app->make(PortDetector::class)->detectFor('superv.io', 'acp'));
+        $this->assertEquals('web', $this->setUpDetector()->detectFor('superv.io', 'foo/bar'));
+        $this->assertEquals('web', $this->setUpDetector()->detectFor('superv.io', '/'));
+        $this->assertEquals('web', $this->setUpDetector()->detectFor('superv.io', ''));
 
-        $this->assertEquals('api', $this->app->make(PortDetector::class)->detectFor('api.superv.io', '/'));
-        $this->assertEquals('api', $this->app->make(PortDetector::class)->detectFor('api.superv.io', '/acp'));
-        $this->assertEquals('api', $this->app->make(PortDetector::class)->detectFor('api.superv.io', '/acp/foo/bar'));
-        $this->assertEquals('api', $this->app->make(PortDetector::class)->detectFor('api.superv.io', 'foo/bar'));
+        $this->assertEquals('acp', $this->setUpDetector()->detectFor('superv.io', 'acp/foo/bar'));
+        $this->assertEquals('acp', $this->setUpDetector()->detectFor('superv.io', '/acp/foo'));
+        $this->assertEquals('acp', $this->setUpDetector()->detectFor('superv.io', '/acp'));
+        $this->assertEquals('acp', $this->setUpDetector()->detectFor('superv.io', 'acp'));
+
+        $this->assertEquals('api', $this->setUpDetector()->detectFor('api.superv.io', '/'));
+        $this->assertEquals('api', $this->setUpDetector()->detectFor('api.superv.io', '/acp'));
+        $this->assertEquals('api', $this->setUpDetector()->detectFor('api.superv.io', '/acp/foo/bar'));
+        $this->assertEquals('api', $this->setUpDetector()->detectFor('api.superv.io', 'foo/bar'));
     }
 
     /**
@@ -46,5 +48,13 @@ class PortDetectorTest extends BaseTestCase
         );
 
         $this->assertEquals('web', \Platform::activePort());
+    }
+
+    /**
+     * @return mixed|\SuperV\Platform\Domains\Port\PortDetector
+     */
+    public function setUpDetector()
+    {
+        return $this->app->make(PortDetector::class);
     }
 }

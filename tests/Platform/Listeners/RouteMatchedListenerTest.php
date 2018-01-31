@@ -13,7 +13,7 @@ class RouteMatchedListenerTest extends BaseTestCase
     /**
      * @test
      */
-    function calls_port_detector_when_route_matched_event_is_dispatched()
+    function invokes_port_detector_when_dispatched()
     {
         $detector = m::mock(PortDetector::class);
         $this->app->singleton(PortDetector::class, function () use($detector) {return $detector;});
