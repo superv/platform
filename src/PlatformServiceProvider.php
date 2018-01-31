@@ -4,6 +4,7 @@ namespace SuperV\Platform;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Platform;
 use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\Listeners\RouteMatchedListener;
 
@@ -29,7 +30,9 @@ class PlatformServiceProvider extends ServiceProvider
 
     public function boot()
     {
-
+        if ($this->app->environment() !== 'testing') {
+            Platform::boot();
+        }
     }
 
     public function registerBindings(array $bindings)
