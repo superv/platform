@@ -29,8 +29,8 @@ class ServiceProvider extends PlatformServiceProvider
         parent::register();
 
         $this->addViewNamespaces([
-            $this->droplet->entry()->name => $this->droplet->entry()->path.'/resources/views',
-            $this->droplet->entry()->slug => $this->droplet->entry()->path.'/resources/views',
+            $this->droplet->entry()->name => base_path($this->droplet->entry()->path.'/resources/views'),
+            $this->droplet->entry()->slug => base_path($this->droplet->entry()->path.'/resources/views'),
         ]);
     }
 
