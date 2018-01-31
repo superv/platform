@@ -20,6 +20,7 @@
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./app</directory>
+            <directory suffix=".php">./__workbench__</directory>
         </whitelist>
     </filter>
     <php>
