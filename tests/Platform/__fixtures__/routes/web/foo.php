@@ -1,6 +1,3 @@
 <?php
 
-return [
-    'foo/bar' => 'FooController@bar',
-    'foo/baz' => 'FooController@baz',
-];
+return $_SERVER['test.routes.web.foo'];
