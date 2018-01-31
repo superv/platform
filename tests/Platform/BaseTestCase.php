@@ -2,12 +2,18 @@
 
 namespace Tests\SuperV\Platform;
 
+use Mockery as m;
 use Platform;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use Tests\SuperV\TestCase;
 
 class BaseTestCase extends TestCase
 {
+    protected function make($abstract, $params = [])
+    {
+        return $this->app->make($abstract, $params);
+    }
+
     /**
      * @return \SuperV\Platform\Domains\Droplet\Droplet
      */
@@ -17,6 +23,14 @@ class BaseTestCase extends TestCase
         $entry = DropletModel::bySlug('superv.droplets.sample');
 
         return $entry->resolveDroplet();
+    }
+
+    protected function setUpMock($class)
+    {
+        $mock = m::mock($class);
+        $this->app->singleton($class, function () use ($mock) { return $mock; });
+
+        return $mock;
     }
 
     protected function setUpPorts()
