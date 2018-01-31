@@ -5,11 +5,15 @@ namespace SuperV\Platform;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use Platform;
+use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\Listeners\RouteMatchedListener;
 
 class PlatformServiceProvider extends ServiceProvider
 {
+    protected $providers = [
+        MigrationServiceProvider::class
+    ];
     protected $bindings = [];
 
     protected $aliases = ['Platform' => PlatformFacade::class];
@@ -22,6 +26,7 @@ class PlatformServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->registerProviders($this->providers);
         $this->registerBindings($this->bindings);
         $this->registerSingletons($this->singletons);
         $this->registerAliases($this->aliases);
@@ -35,6 +40,13 @@ class PlatformServiceProvider extends ServiceProvider
         }
     }
 
+    public function registerProviders(array $providers)
+    {
+        collect($providers)
+            ->map(function ($provider) {
+                $this->app->register($provider);
+            });
+    }
     public function registerBindings(array $bindings)
     {
         collect($bindings)

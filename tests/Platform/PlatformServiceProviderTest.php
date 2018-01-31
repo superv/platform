@@ -5,6 +5,7 @@ namespace Tests\SuperV\Platform;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Platform;
+use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\PlatformServiceProvider;
 
 class PlatformServiceProviderTest extends BaseTestCase
@@ -30,6 +31,16 @@ class PlatformServiceProviderTest extends BaseTestCase
 
         Platform::shouldReceive('boot')->never();
         (new PlatformServiceProvider($this->app))->boot();
+    }
+
+    /**
+     * @test
+     */
+    function registers_required_providers()
+    {
+        (new PlatformServiceProvider($this->app))->register();
+
+        $this->assertContains(MigrationServiceProvider::class, array_keys($this->app->getLoadedProviders()));
     }
 
 
