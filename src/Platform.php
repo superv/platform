@@ -60,5 +60,17 @@ class Platform
 
         return $this;
     }
+
+    public function path($prefix = null)
+    {
+        $path = $this->config('droplets.location') . '/superv/platform';
+
+        return $path . ($prefix ? '/'.$prefix : '');
+    }
+
+    public function fullPath($prefix = null)
+    {
+        return base_path($this->path($prefix));
+    }
 }
 
