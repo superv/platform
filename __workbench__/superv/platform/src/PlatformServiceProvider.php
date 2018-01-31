@@ -27,6 +27,11 @@ class PlatformServiceProvider extends ServiceProvider
         $this->registerListeners($this->listeners);
     }
 
+    public function boot()
+    {
+
+    }
+
     public function registerBindings(array $bindings)
     {
         collect($bindings)

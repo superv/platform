@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Droplet;
 
+use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\PlatformServiceProvider;
 
 class ServiceProvider extends PlatformServiceProvider
@@ -31,5 +32,12 @@ class ServiceProvider extends PlatformServiceProvider
             $this->droplet->entry()->name => $this->droplet->entry()->path.'/resources/views',
             $this->droplet->entry()->slug => $this->droplet->entry()->path.'/resources/views',
         ]);
+    }
+
+    public function boot()
+    {
+        parent::boot();
+
+        app(Router::class)->loadFromPath($this->droplet->entry()->path. '/routes');
     }
 }
