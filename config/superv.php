@@ -2,6 +2,9 @@
 
 return [
     'installed' => env('SUPERV_INSTALLED', false),
+    'droplets' => [
+        'location' => env('SUPERV_DROPLETS', 'droplets')
+    ],
     'assets' => [
         'live' => true,
     ],
