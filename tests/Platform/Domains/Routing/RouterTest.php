@@ -5,7 +5,6 @@ namespace Tests\SuperV\Platform\Domains\Routing;
 use SuperV\Platform\Domains\Routing\RouteLoader;
 use SuperV\Platform\Domains\Routing\Router;
 use Tests\SuperV\Platform\BaseTestCase;
-use Mockery as m;
 
 class RouterTest extends BaseTestCase
 {
@@ -14,16 +13,37 @@ class RouterTest extends BaseTestCase
      */
     function registers_route_files()
     {
-        $loader = m::mock(RouteLoader::class);
-        $this->app->singleton(RouteLoader::class, function() use ($loader) { return $loader;});
+        $_SERVER['test.routes.web.foo'] = [
+            'foo/bar' => 'FooWebController@bar',
+            'foo/baz' => 'FooWebController@baz',
+        ];
 
-        $loader->shouldReceive('load')->with([
-            'foo/bar' => 'FooController@bar',
-            'foo/baz' => 'FooController@baz',
-        ])->once();
+        $loader = $this->setUpMock(RouteLoader::class);
+        $loader->shouldReceive('load')->with($_SERVER['test.routes.web.foo'])->once();
 
-        $router = app(Router::class);
-        $router->loadFromFile('tests/Platform/__fixtures__/routes/web/foo.php');
+        $this->make(Router::class)->loadFromFile('tests/Platform/__fixtures__/routes/web/foo.php');
     }
 
+    /**
+     * @test
+     */
+    function registers_port_routes()
+    {
+        $_SERVER['test.routes.web.foo'] = [
+            'foo/baz' => 'FooWebController@baz',
+        ];
+        $_SERVER['test.routes.web.bar'] = [
+            'bar/baz' => 'BarWebController@baz',
+        ];
+        $_SERVER['test.routes.acp.foo'] = [
+            'foo/baz' => 'FooAcpController@baz',
+        ];
+
+        $loader = $this->setUpMock(RouteLoader::class);
+        $loader->shouldReceive('load')->with(['foo/baz' => 'FooWebController@baz',], 'web')->once();
+        $loader->shouldReceive('load')->with(['bar/baz' => 'BarWebController@baz',], 'web')->once();
+        $loader->shouldReceive('load')->with(['foo/baz' => 'FooAcpController@baz'], 'acp')->once();
+
+        $this->make(Router::class)->forPorts('tests/Platform/__fixtures__/routes');
+    }
 }
