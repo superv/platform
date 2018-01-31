@@ -2,7 +2,7 @@
 
 namespace SuperV\Droplets\Sample;
 
-use SuperV\Platform\Domains\Droplet\Droplet;
+use SuperV\Platform\Packs\Droplet\Droplet;
 
 class SampleDroplet extends Droplet
 {

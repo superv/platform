@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
 use Platform;
-use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Packs\Droplet\DropletModel;
 
 class PlatformTest extends BaseTestCase
 {

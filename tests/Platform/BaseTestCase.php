@@ -4,13 +4,13 @@ namespace Tests\SuperV\Platform;
 
 use Mockery as m;
 use Platform;
-use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Packs\Droplet\DropletModel;
 use Tests\SuperV\TestCase;
 
 class BaseTestCase extends TestCase
 {
     /**
-     * @return \SuperV\Platform\Domains\Droplet\Droplet
+     * @return \SuperV\Platform\Packs\Droplet\Droplet
      */
     protected function setUpDroplet()
     {

@@ -3,7 +3,7 @@
 namespace Tests\SuperV\Platform\Listeners;
 
 use Illuminate\Routing\Events\RouteMatched;
-use SuperV\Platform\Domains\Port\PortDetector;
+use SuperV\Platform\Packs\Port\PortDetector;
 use SuperV\Platform\Listeners\RouteMatchedListener;
 use Tests\SuperV\Platform\BaseTestCase;
 use Mockery as m;

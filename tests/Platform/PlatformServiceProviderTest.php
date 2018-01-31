@@ -5,7 +5,7 @@ namespace Tests\SuperV\Platform;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Platform;
-use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
+use SuperV\Platform\Packs\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\PlatformServiceProvider;
 
 class PlatformServiceProviderTest extends BaseTestCase

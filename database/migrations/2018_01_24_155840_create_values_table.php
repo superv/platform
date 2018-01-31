@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Database\Migrations\Migration;
+use SuperV\Platform\Packs\Database\Migrations\Migration;
 
 class CreateValuesTable extends Migration
 {

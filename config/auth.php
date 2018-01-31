@@ -1,6 +1,6 @@
 <?php
 
-use SuperV\Platform\Domains\Auth\Domains\User\UserModel;
+use SuperV\Platform\Packs\Auth\Domains\User\UserModel;
 
 return [
 

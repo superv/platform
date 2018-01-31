@@ -16,8 +16,8 @@ return [
             'theme'    => env('SUPERV_ACP_THEME'),
         ],
         'api' => [
-            'hostname' => env('SUPERV_HOSTNAME'),
-            'prefix'   => 'api',
+            'hostname' => 'api.'.env('SUPERV_HOSTNAME'),
+            'prefix'   => 'v1',
         ],
     ],
     'clockwork' => env('SUPERV_CLOCKWORK', false)
