@@ -39,5 +39,7 @@ class PortDetector
                 return $slug;
             }
         }
+
+        return null;
     }
 }
