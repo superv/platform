@@ -14,7 +14,7 @@ class Router
         $this->loader = $loader;
     }
 
-    public function forPorts($path) {
+    public function loadFromPath($path) {
         if ($folders = glob(base_path("{$path}/*"), GLOB_ONLYDIR)) {
 
             foreach ($folders as $folder) {
