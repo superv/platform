@@ -3,10 +3,23 @@
 namespace Tests\SuperV\Platform;
 
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\PlatformServiceProvider;
 
 class PlatformServiceProviderTest extends BaseTestCase
 {
+    use RefreshDatabase;
+
+    /**
+     * @test
+     */
+//    function boots_platform()
+//    {
+//        PlatformFacade::shouldReceive('boot')->once();
+//        (new PlatformServiceProvider($this->app))->boot($force = true);
+//    }
+
     /**
      * @test
      */

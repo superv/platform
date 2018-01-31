@@ -17,6 +17,9 @@ class PlatformTest extends BaseTestCase
      */
     function installs_droplet_from_a_directory()
     {
+        /**
+         * 1. verify path
+         */
         $this->setUpDroplet();
 
         $this->assertDatabaseHas('droplets', [
