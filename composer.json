@@ -34,7 +34,8 @@
         ],
         "psr-4": {
             "App\\": "app/",
-            "SuperV\\Platform\\": "__workbench__/superv/platform/src/"
+            "SuperV\\Platform\\": "__workbench__/superv/platform/src/",
+            "SuperV\\Droplets\\Supreme\\": "droplets/superv/droplets/supreme/src/"
         }
     },
     "autoload-dev": {
