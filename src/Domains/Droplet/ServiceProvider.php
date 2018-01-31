@@ -23,29 +23,13 @@ class ServiceProvider extends PlatformServiceProvider
         return $this->droplet;
     }
 
-    public function setBindings($bindings)
-    {
-        $this->bindings = $bindings;
-    }
-
-    public function setAliases($aliases)
-    {
-        $this->aliases = $aliases;
-    }
-
-    public function setSingletons($singletons)
-    {
-        $this->singletons = $singletons;
-    }
-
     public function register()
     {
         parent::register();
 
         $this->addViewNamespaces([
             $this->droplet->entry()->name => $this->droplet->entry()->path.'/resources/views',
-            $this->droplet->entry()->slug =>  $this->droplet->entry()->path.'/resources/views'
+            $this->droplet->entry()->slug => $this->droplet->entry()->path.'/resources/views',
         ]);
-
     }
 }
