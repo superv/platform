@@ -12,7 +12,7 @@ class RouteLoaderTest extends BaseTestCase
      */
     function loads_routes_from_array()
     {
-        $this->make(RouteLoader::class)
+        app(RouteLoader::class)
              ->load([
                  'web/foo'       => 'WebController@foo',
                  'web/bar'       => [

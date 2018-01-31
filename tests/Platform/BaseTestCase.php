@@ -9,11 +9,6 @@ use Tests\SuperV\TestCase;
 
 class BaseTestCase extends TestCase
 {
-    protected function make($abstract, $params = [])
-    {
-        return $this->app->make($abstract, $params);
-    }
-
     /**
      * @return \SuperV\Platform\Domains\Droplet\Droplet
      */

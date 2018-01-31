@@ -21,7 +21,7 @@ class RouterTest extends BaseTestCase
         $loader = $this->setUpMock(RouteLoader::class);
         $loader->shouldReceive('load')->with($_SERVER['test.routes.web.foo'])->once();
 
-        $this->make(Router::class)->loadFromFile('tests/Platform/__fixtures__/routes/web/foo.php');
+        app(Router::class)->loadFromFile('tests/Platform/__fixtures__/routes/web/foo.php');
     }
 
     /**
@@ -44,6 +44,6 @@ class RouterTest extends BaseTestCase
         $loader->shouldReceive('load')->with(['bar/baz' => 'BarWebController@baz',], 'web')->once();
         $loader->shouldReceive('load')->with(['foo/baz' => 'FooAcpController@baz'], 'acp')->once();
 
-        $this->make(Router::class)->forPorts('tests/Platform/__fixtures__/routes');
+        app(Router::class)->loadFromPath('tests/Platform/__fixtures__/routes');
     }
 }
