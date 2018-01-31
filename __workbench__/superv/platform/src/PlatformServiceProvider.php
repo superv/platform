@@ -30,7 +30,7 @@ class PlatformServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        if ($this->app->environment() !== 'testing') {
+        if (config('superv.installed') === true) {
             Platform::boot();
         }
     }

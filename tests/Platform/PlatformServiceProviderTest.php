@@ -4,7 +4,7 @@ namespace Tests\SuperV\Platform;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Facades\PlatformFacade;
+use Platform;
 use SuperV\Platform\PlatformServiceProvider;
 
 class PlatformServiceProviderTest extends BaseTestCase
@@ -14,11 +14,24 @@ class PlatformServiceProviderTest extends BaseTestCase
     /**
      * @test
      */
-//    function boots_platform()
-//    {
-//        PlatformFacade::shouldReceive('boot')->once();
-//        (new PlatformServiceProvider($this->app))->boot($force = true);
-//    }
+    function boots_platform_if_superv_is_installed()
+    {
+        config(['superv.installed' => true]);
+
+        Platform::shouldReceive('boot')->once();
+        (new PlatformServiceProvider($this->app))->boot();
+    }
+    /**
+     * @test
+     */
+    function does_not_boot_platform_if_superv_is_not_installed()
+    {
+        config(['superv.installed' => false]);
+
+        Platform::shouldReceive('boot')->never();
+        (new PlatformServiceProvider($this->app))->boot();
+    }
+
 
     /**
      * @test
@@ -87,10 +100,10 @@ class PlatformServiceProviderTest extends BaseTestCase
     {
         unset($_SERVER['__event.class']);
         (new PlatformServiceProvider($this->app))->registerListeners([
-            TestEvent::class => TestListener::class,
+            TestEvent::class    => TestListener::class,
             AnotherEvent::class => [
-                TestListener::class
-            ]
+                TestListener::class,
+            ],
         ]);
 
         $this->app['events']->fire(new TestEvent());
