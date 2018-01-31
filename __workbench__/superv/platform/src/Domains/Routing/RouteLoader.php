@@ -16,7 +16,7 @@ class RouteLoader
         $this->router = $router;
     }
 
-    public function fromArray(array $routes)
+    public function load(array $routes)
     {
         foreach ($routes as $uri => $data) {
 
