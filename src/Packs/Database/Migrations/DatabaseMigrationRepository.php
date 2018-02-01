@@ -10,12 +10,19 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
 
     public function getMigrations($steps)
     {
-        return $this->filterScope(parent::getMigrations($steps));
+        $query = $this->table()->where('batch', '>=', '1');
+
+        return $this->filterScope($query)
+                    ->orderBy('batch', 'desc')
+                    ->orderBy('migration', 'desc')
+                    ->take($steps)->get()->all();
     }
 
     public function getLast()
     {
-        return $this->filterScope(parent::getLast());
+        $query = $this->table()->where('batch', $this->getLastBatchNumber());
+
+        return $this->filterScope($query)->orderBy('migration', 'desc')->get()->all();
     }
 
     public function createRepository()
@@ -45,6 +52,21 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
     }
 
     /**
+     * Get the last migration batch number.
+     *
+     * @return int
+     */
+    public function getLastBatchNumber()
+    {
+        $query = $this->table();
+        if ($this->scope) {
+            $query->where('scope', $this->scope);
+        }
+
+        return $query->max('batch');
+    }
+
+    /**
      * @param mixed $migration
      */
     public function setMigration($migration)
@@ -62,24 +84,12 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
         return $this;
     }
 
-    /**
-     * @param $migrations
-     *
-     * @return array
-     */
-    public function filterScope($migrations)
+    public function filterScope($query)
     {
-        if (! $this->scope) {
-            return $migrations;
+        if ($this->scope) {
+            $query->where('scope', $this->scope);
         }
 
-        $migrations = collect($migrations)->filter(
-            function ($migration) {
-                return $migration->scope === $this->scope;
-            })->values()->toArray();
-
-        $this->scope = null;
-
-        return $migrations;
+        return $query;
     }
 }
