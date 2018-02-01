@@ -3,8 +3,8 @@
 namespace Tests\SuperV\Platform;
 
 use Mockery as m;
-use Platform;
 use SuperV\Platform\Packs\Droplet\DropletModel;
+use SuperV\Platform\Packs\Droplet\Installer;
 use Tests\SuperV\TestCase;
 
 class BaseTestCase extends TestCase
@@ -22,8 +22,12 @@ class BaseTestCase extends TestCase
      */
     protected function setUpDroplet()
     {
-        Platform::install('superv.droplets.sample', 'tests/Platform/__fixtures__/sample-droplet');
-        $entry = DropletModel::bySlug('superv.droplets.sample');
+        app(Installer::class)
+            ->slug('droplets.sample')
+            ->path('tests/Platform/__fixtures__/sample-droplet')
+            ->install();
+
+        $entry = DropletModel::bySlug('droplets.sample');
 
         return $entry->resolveDroplet();
     }

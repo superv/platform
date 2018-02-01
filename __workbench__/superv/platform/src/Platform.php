@@ -18,26 +18,6 @@ class Platform
         }
     }
 
-    public function install($slug, $path)
-    {
-        list($vendor, $type, $name) = array_map(
-            function ($value) {
-                return str_slug(strtolower($value), '_');
-            },
-            explode('.', $slug)
-        );
-
-        $droplet = new DropletModel([
-            'name'      => $name,
-            'slug'      => $slug,
-            'path'      => $path,
-            'type'      => str_singular($type),
-            'namespace' => ucfirst(camel_case(($vendor == 'superv' ? 'super_v' : $vendor))).'\\'.ucfirst(camel_case($type)).'\\'.ucfirst(camel_case($name)),
-            'enabled'   => true,
-        ]);
-
-        $droplet->save();
-    }
 
     public function config($key, $default = null)
     {

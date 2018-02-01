@@ -37,6 +37,6 @@ class DropletModel extends Model
      */
     public function dropletClass()
     {
-        return $this->namespace.'\\'.studly_case("{$this->name}_{$this->type}");
+        return $this->namespace.'\\'.$this->name;
     }
 }

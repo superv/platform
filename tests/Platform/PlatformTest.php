@@ -15,31 +15,11 @@ class PlatformTest extends BaseTestCase
     /**
      * @test
      */
-    function installs_droplet_from_a_directory()
-    {
-        /**
-         * 1. verify path
-         */
-        $this->setUpDroplet();
-
-        $this->assertDatabaseHas('droplets', [
-            'name'      => 'sample',
-            'slug'      => 'superv.droplets.sample',
-            'type'      => 'droplet',
-            'path'      => 'tests/Platform/__fixtures__/sample-droplet',
-            'enabled'   => true,
-            'namespace' => 'SuperV\\Droplets\\Sample',
-        ]);
-    }
-
-    /**
-     * @test
-     */
     function registers_service_providers_for_enabled_droplets()
     {
         $this->setUpDroplet();
 
-        $entry = DropletModel::bySlug('superv.droplets.sample');
+        $entry = DropletModel::bySlug('droplets.sample');
 
         Platform::boot();
 
