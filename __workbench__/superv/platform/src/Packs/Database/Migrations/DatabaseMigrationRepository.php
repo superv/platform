@@ -58,12 +58,7 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
      */
     public function getLastBatchNumber()
     {
-        $query = $this->table();
-        if ($this->scope) {
-            $query->where('scope', $this->scope);
-        }
-
-        return $query->max('batch');
+        return $this->filterScope($this->table())->max('batch');
     }
 
     /**
