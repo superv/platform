@@ -2,21 +2,33 @@
 
 namespace Tests\SuperV\Platform\Packs\Database\Migrations\Console;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use SuperV\Platform\Packs\Database\Migrations\Console\MigrateMakeCommand;
+use SuperV\Platform\Packs\Database\Migrations\MigrationCreator;
 use Tests\SuperV\Platform\BaseTestCase;
+use Mockery as m;
 
 class MigrationMakeCommandTest extends BaseTestCase
 {
-    use RefreshDatabase;
-
     /**
      * @test
      */
-    function can_set_scope_parameter_on_migration_file()
+    function configures_creator_if_scope_option_is_provided()
     {
-        // dive into MigrationCreator Test..
-        // 1 - override stub path
-        // 2 - parse scope while populating stub
-        // 3 - 
+        $command = new MigrateMakeCommand(
+            $creator = m::mock(MigrationCreator::class),
+            m::mock('Illuminate\Support\Composer')->shouldIgnoreMissing()
+        );
+        $creator->shouldReceive('setScope')->with('test-scope')->once();
+        $creator->shouldReceive('create')->once();
+        $command->setLaravel($this->app);
+        $this->runCommand($command, ['name' => 'CreateMigrationMake', '--scope' => 'test-scope']);
+    }
+
+    protected function runCommand($command, $input = [])
+    {
+        return $command->run(
+            new \Symfony\Component\Console\Input\ArrayInput($input),
+            new \Symfony\Component\Console\Output\NullOutput
+        );
     }
 }

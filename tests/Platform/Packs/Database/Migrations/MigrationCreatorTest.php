@@ -8,6 +8,7 @@ use Tests\SuperV\Platform\BaseTestCase;
 
 class MigrationCreatorTest extends BaseTestCase
 {
+    protected $tmpDirectory = 'testing-migrations';
     /**
      * @test
      */
@@ -31,17 +32,17 @@ class MigrationCreatorTest extends BaseTestCase
     {
         $file = $this->creator()
                      ->setScope('blank')
-                     ->create('Create', storage_path('testing'));
+                     ->create('Create', storage_path($this->tmpDirectory));
         $this->assertContains("\$scope = 'blank'", file_get_contents($file));
 
         $file = $this->creator()
                      ->setScope('create')
-                     ->create('Create', storage_path('testing'), 'FooTable', $create = true);
+                     ->create('Create', storage_path($this->tmpDirectory), 'FooTable', $create = true);
         $this->assertContains("\$scope = 'create'", file_get_contents($file));
 
         $file = $this->creator()
                      ->setScope('update')
-                     ->create('Update', storage_path('testing'), 'FooTable');
+                     ->create('Update', storage_path($this->tmpDirectory), 'FooTable');
         $this->assertContains("\$scope = 'update'", file_get_contents($file));
     }
 
@@ -51,21 +52,5 @@ class MigrationCreatorTest extends BaseTestCase
     protected function creator()
     {
         return app(MigrationCreator::class);
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        if (! file_exists(storage_path('testing'))) {
-            app('files')->makeDirectory(storage_path('testing'));
-        }
-    }
-
-    protected function tearDown()
-    {
-        app('files')->deleteDirectory(storage_path('testing'));
-
-        parent::tearDown();
     }
 }

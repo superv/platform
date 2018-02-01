@@ -4,6 +4,7 @@ namespace Tests\SuperV\Platform\Packs\Database\Migrations;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Packs\Database\Migrations\DatabaseMigrationRepository;
+use SuperV\Platform\Packs\Database\Migrations\MigrationCreator;
 use SuperV\Platform\Packs\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Packs\Database\Migrations\Migrator;
 use Tests\SuperV\Platform\BaseTestCase;
@@ -15,7 +16,7 @@ class MigrationServiceProviderTest extends BaseTestCase
     /**
      * @test
      */
-    function binds_database_migration_repository()
+    function registers_database_migration_repository()
     {
         $this->assertInstanceOf(\Illuminate\Database\MigrationServiceProvider::class, new MigrationServiceProvider($this->app));
         $this->assertInstanceOf(DatabaseMigrationRepository::class, $this->app['migration.repository']);
@@ -24,8 +25,16 @@ class MigrationServiceProviderTest extends BaseTestCase
     /**
      * @test
      */
-    function overrides_framework_migrator()
+    function registers_migrator()
     {
         $this->assertInstanceOf(Migrator::class, $this->app['migrator']);
+    }
+
+    /**
+     * @test
+     */
+    function registers_migration_creator()
+    {
+        $this->assertInstanceOf(MigrationCreator::class, $this->app['migration.creator']);
     }
 }

@@ -10,6 +10,14 @@ use Tests\SuperV\TestCase;
 class BaseTestCase extends TestCase
 {
     /**
+     * Temporary directory to be created and
+     * afterwards deleted in storage folder
+     *
+     * @var string
+     */
+    protected $tmpDirectory;
+
+    /**
      * @return \SuperV\Platform\Packs\Droplet\Droplet
      */
     protected function setUpDroplet()
@@ -26,6 +34,26 @@ class BaseTestCase extends TestCase
         $this->app->singleton($class, function () use ($mock) { return $mock; });
 
         return $mock;
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        if ($this->tmpDirectory) {
+            if (! file_exists(storage_path($this->tmpDirectory))) {
+                app('files')->makeDirectory(storage_path($this->tmpDirectory));
+            }
+        }
+    }
+
+    protected function tearDown()
+    {
+        if ($this->tmpDirectory) {
+            app('files')->deleteDirectory(storage_path($this->tmpDirectory));
+        }
+
+        parent::tearDown();
     }
 
     protected function setUpPorts()
