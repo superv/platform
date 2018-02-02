@@ -4,6 +4,7 @@ namespace SuperV\Platform\Packs\Database\Migrations;
 
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use SuperV\Platform\Packs\Database\Migrations\Console\MigrateMakeCommand;
+use SuperV\Platform\Packs\Database\Migrations\Console\RefreshCommand;
 use SuperV\Platform\Packs\Database\Migrations\Console\RollbackCommand;
 
 class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProvider
@@ -23,6 +24,13 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
             'command.migrate.rollback',
             function ($command, $app) {
                 return new RollbackCommand($app['migrator']);
+            }
+        );
+
+        $this->app->extend(
+            'command.migrate.refresh',
+            function () {
+                return new RefreshCommand();
             }
         );
 
