@@ -25,7 +25,7 @@ class ThemeServiceProvider extends ServiceProvider
                     throw new DropletNotFoundException($themeSlug);
                 }
 
-                $this->app['view']->addNamespace('theme', $theme->path.'/resources/views');
+                $this->app['view']->addNamespace('theme', base_path($theme->path.'/resources/views'));
             });
     }
 }

@@ -43,7 +43,8 @@ class ThemeServiceProviderTest extends BaseTestCase
         PortDetectedEvent::dispatch('web');
 
         $hints = $this->app['view']->getFinder()->getHints();
-        $this->assertContains('tests/Platform/__fixtures__/starter-theme/resources/views', $hints['theme']);
+        $this->assertContains(base_path('tests/Platform/__fixtures__/starter-theme/resources/views'), $hints['theme']);
+        $this->assertDirectoryExists(reset($hints['theme']));
     }
 
     /**
