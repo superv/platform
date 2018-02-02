@@ -7,7 +7,7 @@ use SuperV\Platform\Packs\Database\Migrations\MigrationCreator;
 use Tests\SuperV\Platform\BaseTestCase;
 use Mockery as m;
 
-class MigrationMakeCommandTest extends BaseTestCase
+class MigrateMakeCommandTest extends BaseTestCase
 {
     /**
      * @test
