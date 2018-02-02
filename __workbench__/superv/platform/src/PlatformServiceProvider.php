@@ -28,16 +28,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         PortDetectedEvent::class                 => PortDetectedListener::class,
     ];
 
-    public function register()
-    {
-        if (config('superv.platform.registered') === true) {
-            throw new CorePlatformException('Platform already registered');
-        }
-        parent::register();
-
-        config(['superv.platform.registered' => true]);
-    }
-
     public function boot()
     {
         if (config('superv.installed') === true) {
