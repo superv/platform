@@ -16,7 +16,7 @@ class RefreshCommandTest extends BaseTestCase
     /**
      * @test
      */
-    function refresh_command_calls_commands_with_scope_parameter_with_step()
+    function refresh_command_calls_other_commands_with_proper_arguments_with_step()
     {
         $command = new RefreshCommand();
 
@@ -29,8 +29,12 @@ class RefreshCommandTest extends BaseTestCase
         $console->shouldReceive('find')->with('migrate:rollback')->andReturn($rollbackCommand = m::mock(RollbackCommand::class));
         $console->shouldReceive('find')->with('migrate')->andReturn($migrateCommand = m::mock(MigrateCommand::class));
 
-        $rollbackCommand->shouldReceive('run')->with(new InputMatcher("--database --path --step=2 --force --scope=test-scope 'migrate:rollback'"), m::any());
-        $migrateCommand->shouldReceive('run')->with(new InputMatcher('--database --path --force --scope=test-scope migrate'), m::any());
+        $rollbackCommand->shouldReceive('run')->with(
+            new InputMatcher("--database --path --step=2 --force --scope=test-scope 'migrate:rollback'"), m::any()
+        );
+        $migrateCommand->shouldReceive('run')->with(
+            new InputMatcher('--database --path --force --scope=test-scope migrate'), m::any()
+        );
 
         $this->runCommand($command, ['--step' => 2, '--scope' => 'test-scope']);
     }
@@ -38,7 +42,7 @@ class RefreshCommandTest extends BaseTestCase
     /**
      * @test
      */
-    function refresh_command_calls_commands_with_scope_parameter_without_step()
+    function refresh_command_calls_other_commands_with_proper_arguments_without_step()
     {
         $command = new RefreshCommand();
 
@@ -48,11 +52,17 @@ class RefreshCommandTest extends BaseTestCase
         $command->setLaravel($app);
         $command->setApplication($console);
 
-        $console->shouldReceive('find')->with('migrate:reset')->andReturn($resetCommand = m::mock(ResetCommand::class));
-        $console->shouldReceive('find')->with('migrate')->andReturn($migrateCommand = m::mock(MigrateCommand::class));
+        $console->shouldReceive('find')->with('migrate:reset')
+                                       ->andReturn($resetCommand = m::mock(ResetCommand::class));
+        $console->shouldReceive('find')->with('migrate')
+                                       ->andReturn($migrateCommand = m::mock(MigrateCommand::class));
 
-        $resetCommand->shouldReceive('run')->with(new InputMatcher("--database --path --force --scope=test-scope 'migrate:reset'"), m::any());
-        $migrateCommand->shouldReceive('run')->with(new InputMatcher('--database --path --force --scope=test-scope migrate'), m::any());
+        $resetCommand->shouldReceive('run')->with(
+            new InputMatcher("--database --path --force --scope=test-scope 'migrate:reset'"), m::any()
+        );
+        $migrateCommand->shouldReceive('run')->with(
+            new InputMatcher('--database --path --force --scope=test-scope migrate'), m::any()
+        );
 
         $this->runCommand($command, [ '--scope' => 'test-scope']);
     }

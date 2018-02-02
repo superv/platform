@@ -7,12 +7,12 @@ use SuperV\Platform\Packs\Database\Migrations\MigrationCreator;
 use Tests\SuperV\Platform\BaseTestCase;
 use Mockery as m;
 
-class MigrateMakeCommandTest extends BaseTestCase
+class MakeCommandTest extends BaseTestCase
 {
     /**
      * @test
      */
-    function configures_creator_if_scope_option_is_provided()
+    function make_command_calls_creator_with_proper_arguments()
     {
         $command = new MigrateMakeCommand(
             $creator = m::mock(MigrationCreator::class),
