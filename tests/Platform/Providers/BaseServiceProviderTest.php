@@ -2,9 +2,11 @@
 
 namespace Tests\SuperV\Platform\Providers;
 
-use SuperV\Platform\Providers\BaseServiceProvider;
-use Tests\SuperV\Platform\BaseTestCase;
+use Illuminate\Console\Application as Artisan;
 use Illuminate\Foundation\AliasLoader;
+use SuperV\Platform\Providers\BaseServiceProvider;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
+use Tests\SuperV\Platform\BaseTestCase;
 
 class BaseServiceProviderTest extends BaseTestCase
 {
@@ -91,6 +93,25 @@ class BaseServiceProviderTest extends BaseTestCase
     /**
      * @test
      */
+    function registers_console_commands()
+    {
+        (new TestServiceProvider($this->app))->registerCommands(
+            [FooTestCommand::class, BarTestCommand::class]
+        );
+
+        try {
+            $this->artisan('test:foo');
+            $this->artisan('test:bar');
+
+            $this->addToAssertionCount(1);
+        } catch (CommandNotFoundException $e) {
+            $this->fail('Failed to register console commands');
+        }
+    }
+
+    /**
+     * @test
+     */
     function adds_view_namespaces()
     {
         (new TestServiceProvider($this->app))->addViewNamespaces([
@@ -104,7 +125,9 @@ class BaseServiceProviderTest extends BaseTestCase
     }
 }
 
-class TestServiceProvider extends BaseServiceProvider {}
+class TestServiceProvider extends BaseServiceProvider
+{
+}
 
 class Foo
 {
@@ -132,4 +155,18 @@ class TestListener
     {
         $_SERVER['__event.class'] = get_class($event);
     }
+}
+
+class BarTestCommand extends \Illuminate\Console\Command
+{
+    protected $signature = 'test:bar';
+
+    public function handle() { }
+}
+
+class FooTestCommand extends \Illuminate\Console\Command
+{
+    protected $signature = 'test:foo';
+
+    public function handle() { }
 }
