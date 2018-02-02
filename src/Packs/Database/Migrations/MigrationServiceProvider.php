@@ -11,30 +11,15 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
 {
     public function register()
     {
-        $this->app->bind(MigrationRepositoryInterface::class, DatabaseMigrationRepository::class);
+        $this->registerRepository();
 
-        $this->app->extend(
-            'command.migrate.make',
-            function ($command, $app) {
-                return new MigrateMakeCommand($app['migration.creator'], $app['composer']);
-            }
-        );
+        $this->registerMigrator();
 
-        $this->app->extend(
-            'command.migrate.rollback',
-            function ($command, $app) {
-                return new RollbackCommand($app['migrator']);
-            }
-        );
+        $this->registerCreator();
 
-        $this->app->extend(
-            'command.migrate.refresh',
-            function () {
-                return new RefreshCommand();
-            }
-        );
+        $this->extendMigrationRepository();
 
-        parent::register();
+        $this->extendConsoleCommands();
     }
 
     protected function registerRepository()
@@ -60,5 +45,34 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
         $this->app->singleton('migration.creator', function ($app) {
              return new MigrationCreator($app['files']);
          });
+    }
+
+    protected function extendConsoleCommands(): void
+    {
+        $this->app->extend(
+            'command.migrate.make',
+            function ($command, $app) {
+                return new MigrateMakeCommand($app['migration.creator'], $app['composer']);
+            }
+        );
+
+        $this->app->extend(
+            'command.migrate.rollback',
+            function ($command, $app) {
+                return new RollbackCommand($app['migrator']);
+            }
+        );
+
+        $this->app->extend(
+            'command.migrate.refresh',
+            function () {
+                return new RefreshCommand();
+            }
+        );
+    }
+
+    protected function extendMigrationRepository(): void
+    {
+        $this->app->bind(MigrationRepositoryInterface::class, DatabaseMigrationRepository::class);
     }
 }
