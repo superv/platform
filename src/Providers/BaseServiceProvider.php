@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Providers;
 
+use Illuminate\Console\Application as Artisan;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,6 +18,8 @@ abstract class BaseServiceProvider extends ServiceProvider
 
     protected $listeners = [];
 
+    protected $commands = [];
+
     public function register()
     {
         $this->registerProviders($this->providers);
@@ -24,6 +27,7 @@ abstract class BaseServiceProvider extends ServiceProvider
         $this->registerSingletons($this->singletons);
         $this->registerAliases($this->aliases);
         $this->registerListeners($this->listeners);
+        $this->registerCommands($this->commands);
     }
 
     public function registerProviders(array $providers)
@@ -72,6 +76,13 @@ abstract class BaseServiceProvider extends ServiceProvider
                     $this->app['events']->listen($event, $listener);
                 });
             });
+    }
+
+    public function registerCommands(array $commands)
+    {
+        Artisan::starting(function (Artisan $artisan) use ($commands) {
+            $artisan->resolveCommands($commands);
+        });
     }
 
     public function addViewNamespaces($namespaces)
