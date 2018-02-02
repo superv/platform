@@ -17,7 +17,7 @@ class Droplet
     /**
      * Creates new Droplet Service Provider instance
      *
-     * @return \SuperV\Platform\Packs\Droplet\ServiceProvider
+     * @return \SuperV\Platform\Packs\Droplet\DropletServiceProvider
      */
     public function resolveProvider()
     {

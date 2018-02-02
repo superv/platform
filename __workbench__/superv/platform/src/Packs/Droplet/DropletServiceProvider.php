@@ -3,9 +3,9 @@
 namespace SuperV\Platform\Packs\Droplet;
 
 use SuperV\Platform\Packs\Routing\Router;
-use SuperV\Platform\PlatformServiceProvider;
+use SuperV\Platform\Providers\BaseServiceProvider;
 
-class ServiceProvider extends PlatformServiceProvider
+class DropletServiceProvider extends BaseServiceProvider
 {
     /**
      * @var \SuperV\Platform\Packs\Droplet\Droplet
@@ -35,8 +35,6 @@ class ServiceProvider extends PlatformServiceProvider
 
     public function boot()
     {
-        parent::boot();
-
         app(Router::class)->loadFromPath($this->droplet->entry()->path. '/routes');
     }
 }
