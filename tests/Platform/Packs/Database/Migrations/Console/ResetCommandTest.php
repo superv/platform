@@ -2,27 +2,25 @@
 
 namespace Tests\SuperV\Platform\Packs\Database\Migrations\Console;
 
-use SuperV\Platform\Packs\Database\Migrations\Console\RollbackCommand;
+use SuperV\Platform\Packs\Database\Migrations\Console\ResetCommand;
 use SuperV\Platform\Packs\Database\Migrations\Migrator;
 use Tests\SuperV\Platform\BaseTestCase;
 use Mockery as m;
 
-class MigrateRollbackCommandTest extends BaseTestCase
+class ResetCommandTest extends BaseTestCase
 {
     /**
      * @test
      */
-    function configures_creator_if_scope_option_is_provided()
+    function reset_command_calls_migrator_with_proper_arguments()
     {
-        $command = new RollbackCommand(
+        $command = new ResetCommand(
             $migrator = m::mock(Migrator::class)->shouldIgnoreMissing()
         );
-        $migrator->shouldReceive('setScope')->with('test-scope')->once();
-        $migrator->shouldReceive('paths')->once()->andReturn([__DIR__.'/migrations']);
-        $migrator->shouldReceive('rollback')->once();
-        $migrator->shouldReceive('getNotes')->andReturn([]);
-
         $command->setLaravel($this->app);
+
+        $migrator->shouldReceive('setScope')->with('test-scope')->once();
+
         $this->runCommand($command, ['--scope' => 'test-scope']);
     }
 
