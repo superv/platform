@@ -36,17 +36,6 @@ class PlatformServiceProviderTest extends BaseTestCase
     /**
      * @test
      */
-    function registers_required_providers()
-    {
-        (new PlatformServiceProvider($this->app))->register();
-
-        $this->assertContains(MigrationServiceProvider::class, array_keys($this->app->getLoadedProviders()));
-    }
-
-
-    /**
-     * @test
-     */
     function registers_bindings()
     {
         (new PlatformServiceProvider($this->app))->registerBindings([
