@@ -7,7 +7,7 @@ use SuperV\Droplets\Sample\SampleDroplet;
 use SuperV\Droplets\Sample\SampleDropletServiceProvider;
 use SuperV\Platform\Packs\Droplet\Droplet;
 use SuperV\Platform\Packs\Droplet\DropletModel;
-use SuperV\Platform\Packs\Droplet\ServiceProvider as DropletServiceProvider;
+use SuperV\Platform\Packs\Droplet\DropletServiceProvider as DropletServiceProvider;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class DropletTest extends BaseTestCase
