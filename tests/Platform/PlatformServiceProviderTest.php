@@ -5,12 +5,20 @@ namespace Tests\SuperV\Platform;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Platform;
-use SuperV\Platform\Packs\Database\Migrations\MigrationServiceProvider;
+use SuperV\Platform\Exceptions\CorePlatformException;
 use SuperV\Platform\PlatformServiceProvider;
 
 class PlatformServiceProviderTest extends BaseTestCase
 {
     use RefreshDatabase;
+
+    /**
+     * @test
+     */
+    function get_registered_with_platform()
+    {
+        $this->assertProviderRegistered(PlatformServiceProvider::class);
+    }
 
     /**
      * @test
