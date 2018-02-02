@@ -2,8 +2,8 @@
 
 namespace SuperV\Themes\Starter;
 
-use SuperV\Platform\Packs\Droplet\ServiceProvider;
+use SuperV\Platform\Packs\Droplet\DropletServiceProvider;
 
-class StarterThemeServiceProvider extends ServiceProvider
+class StarterThemeServiceProvider extends DropletServiceProvider
 {
 }

@@ -2,8 +2,8 @@
 
 namespace SuperV\Droplets\Sample;
 
-use SuperV\Platform\Packs\Droplet\ServiceProvider;
+use SuperV\Platform\Packs\Droplet\DropletServiceProvider;
 
-class SampleDropletServiceProvider extends ServiceProvider
+class SampleDropletServiceProvider extends DropletServiceProvider
 {
 }
