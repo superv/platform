@@ -2,11 +2,17 @@
 
 namespace SuperV\Platform;
 
+use SuperV\Platform\Events\PlatformBootedEvent;
 use SuperV\Platform\Packs\Droplet\DropletModel;
 
 class Platform
 {
     protected $activePort;
+
+    /**
+     * @var \Illuminate\Events\Dispatcher
+     */
+    protected $events;
 
     public function boot()
     {
@@ -16,6 +22,8 @@ class Platform
         foreach ($entries as $entry) {
             app()->register($entry->resolveDroplet()->resolveProvider());
         }
+
+        PlatformBootedEvent::dispatch();
     }
 
 

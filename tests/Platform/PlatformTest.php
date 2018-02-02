@@ -5,8 +5,11 @@ namespace Tests\SuperV\Platform;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
+use Illuminate\Support\Facades\Event;
 use Platform;
+use SuperV\Platform\Events\PlatformBootedEvent;
 use SuperV\Platform\Packs\Droplet\DropletModel;
+use SuperV\Platform\Packs\Port\PortDetectedEvent;
 
 class PlatformTest extends BaseTestCase
 {
@@ -29,6 +32,18 @@ class PlatformTest extends BaseTestCase
     /**
      * @test
      */
+    function dispatches_event_when_platform_is_booted()
+    {
+        Event::fake();
+
+        Platform::boot();
+
+        Event::assertDispatched(PlatformBootedEvent::class);
+    }
+
+    /**
+     * @test
+     */
     function gets_config_from_superv_namespace()
     {
         config(['superv.foo' => 'bar']);
@@ -42,36 +57,13 @@ class PlatformTest extends BaseTestCase
     /**
      * @test
      */
-    function sets_active_port_when_a_route_is_matched()
+    function listens_port_detected_event_and_sets_active_port()
     {
-        $this->setUpPorts();
+        PortDetectedEvent::dispatch('acp');
 
-        $route = $this->app['router']->get('', 'a@b');
-
-        event(
-            new RouteMatched(
-                $route,
-                $request = Request::create('http://superv.io/foo/bar')
-            )
-        );
-        $this->assertEquals('web', \Platform::activePort());
-
-        event(
-            new RouteMatched(
-                $route,
-                $request = Request::create('http://api.superv.io/foo/bar')
-            )
-        );
-        $this->assertEquals('api', \Platform::activePort());
-
-        event(
-            new RouteMatched(
-                $route,
-                $request = Request::create('http://superv.io/acp/bar')
-            )
-        );
-        $this->assertEquals('acp', \Platform::activePort());
+        $this->assertEquals('acp', Platform::activePort());
     }
+
 
     /**
      * @test
@@ -80,10 +72,11 @@ class PlatformTest extends BaseTestCase
     {
         $this->assertEquals('__workbench__/superv/platform', Platform::path());
         $this->assertEquals('__workbench__/superv/platform/resources', Platform::path('resources'));
-    }    /**
+    }
+
+    /**
      * @test
      */
-
     function returns_platform_full_path()
     {
         $this->assertEquals(base_path('__workbench__/superv/platform'), Platform::fullPath());

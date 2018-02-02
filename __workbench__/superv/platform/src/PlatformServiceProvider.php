@@ -5,23 +5,30 @@ namespace SuperV\Platform;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use Platform;
+use SuperV\Platform\Listeners\PortDetectedListener;
 use SuperV\Platform\Packs\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\Listeners\RouteMatchedListener;
+use SuperV\Platform\Packs\Port\PortDetectedEvent;
+use SuperV\Platform\Providers\ThemeServiceProvider;
 
 class PlatformServiceProvider extends ServiceProvider
 {
     protected $providers = [
-        MigrationServiceProvider::class
+        MigrationServiceProvider::class,
+        ThemeServiceProvider::class
     ];
     protected $bindings = [];
 
-    protected $aliases = ['Platform' => PlatformFacade::class];
+    protected $aliases = [
+        'Platform' => PlatformFacade::class
+    ];
 
     protected $singletons = [];
 
     protected $listeners = [
         'Illuminate\Routing\Events\RouteMatched' => RouteMatchedListener::class,
+        PortDetectedEvent::class => PortDetectedListener::class
     ];
 
     public function register()
