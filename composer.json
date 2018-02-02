@@ -35,7 +35,8 @@
         "psr-4": {
             "App\\": "app/",
             "SuperV\\Platform\\": "__workbench__/superv/platform/src/",
-            "SuperV\\Droplets\\Supreme\\": "droplets/superv/droplets/supreme/src/"
+            "SuperV\\Droplets\\Supreme\\": "droplets/superv/droplets/supreme/src/",
+            "SuperV\\Themes\\Tailwind\\": "droplets/superv/themes/tailwind/src/"
         }
     },
     "autoload-dev": {
@@ -43,7 +44,8 @@
         ],
         "psr-4": {
             "Tests\\SuperV\\": "tests/",
-            "SuperV\\Droplets\\Sample\\": "tests/Platform/__fixtures__/sample-droplet/src/"
+            "SuperV\\Droplets\\Sample\\": "tests/Platform/__fixtures__/sample-droplet/src/",
+            "SuperV\\Themes\\Starter\\": "tests/Platform/__fixtures__/starter-theme/src/"
         }
     },
     "extra": {

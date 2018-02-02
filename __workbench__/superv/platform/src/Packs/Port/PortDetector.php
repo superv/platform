@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Packs\Port;
 
+use Platform;
+
 class PortDetector
 {
     /**
@@ -9,17 +11,19 @@ class PortDetector
      */
     public function detect($request)
     {
-        \Platform::setActivePort(
-            $this->detectFor(
-                $request->getHttpHost(),
-                $request->getRequestUri()
-            )
-        );
+        if ($port = $this->detectFor(
+            $request->getHttpHost(),
+            $request->getRequestUri()
+        )) {
+//            Platform::setActivePort($port);
+
+            PortDetectedEvent::dispatch($port);
+        }
     }
 
     public function detectFor($httpHost, $requestUri)
     {
-        $ports = \Platform::config('ports');
+        $ports = Platform::config('ports');
         $requestUri = ltrim($requestUri, '/');
 
         foreach ($ports as $slug => $port) {

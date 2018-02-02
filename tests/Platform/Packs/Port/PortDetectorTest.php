@@ -4,6 +4,8 @@ namespace Tests\SuperV\Platform\Packs\Port;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
+use Illuminate\Support\Facades\Event;
+use SuperV\Platform\Packs\Port\PortDetectedEvent;
 use SuperV\Platform\Packs\Port\PortDetector;
 use Tests\SuperV\Platform\BaseTestCase;
 
@@ -36,9 +38,11 @@ class PortDetectorTest extends BaseTestCase
     /**
      * @test
      */
-    function sets_active_port_when_a_route_is_matched()
+    function dispatches_event_when_active_port_detected()
     {
         $this->setUpPorts();
+
+        Event::fake([PortDetectedEvent::class]);
 
         event(
             new RouteMatched(
@@ -47,8 +51,11 @@ class PortDetectorTest extends BaseTestCase
             )
         );
 
-        $this->assertEquals('web', \Platform::activePort());
+        Event::assertDispatched(PortDetectedEvent::class, function($event) {
+            return $event->port == 'web';
+        });
     }
+
 
     /**
      * @return mixed|\SuperV\Platform\Packs\Port\PortDetector
