@@ -3,8 +3,10 @@
 namespace Tests\SuperV\Platform\Packs\Database\Migrations;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use SuperV\Platform\Packs\Database\Migrations\Console\MigrateCommand;
 use SuperV\Platform\Packs\Database\Migrations\Console\MigrateMakeCommand;
 use SuperV\Platform\Packs\Database\Migrations\Console\RefreshCommand;
+use SuperV\Platform\Packs\Database\Migrations\Console\ResetCommand;
 use SuperV\Platform\Packs\Database\Migrations\Console\RollbackCommand;
 use SuperV\Platform\Packs\Database\Migrations\DatabaseMigrationRepository;
 use SuperV\Platform\Packs\Database\Migrations\MigrationCreator;
@@ -54,8 +56,10 @@ class MigrationServiceProviderTest extends BaseTestCase
      */
     function extends_migration_console_commands()
     {
+        $this->assertInstanceOf(MigrateCommand::class, $this->app['command.migrate']);
+        $this->assertInstanceOf(MigrateMakeCommand::class, $this->app['command.migrate.make']);
         $this->assertInstanceOf(RollbackCommand::class, $this->app['command.migrate.rollback']);
         $this->assertInstanceOf(RefreshCommand::class, $this->app['command.migrate.refresh']);
-        $this->assertInstanceOf(MigrateMakeCommand::class, $this->app['command.migrate.make']);
+        $this->assertInstanceOf(ResetCommand::class, $this->app['command.migrate.reset']);
     }
 }

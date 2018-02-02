@@ -72,6 +72,25 @@ class DatabaseMigrationRepositoryTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    function applies_scope_filter_on_ran_migrations()
+    {
+        $this->app['migrator']->run(__DIR__.'/migrations');
+
+        $this->assertCount(2, $this->repositoryWithScope('bar')->getRan());
+        $this->assertArraySubset(
+            [
+             "2016_01_01_200000_bar_scope_migration",
+             "2016_01_01_200010_another_bar_scope_migration",
+            ],
+            $this->repositoryWithScope('bar')->getRan()
+        );
+
+        $this->assertCount(1, $this->repositoryWithScope('foo')->getRan());
+    }
+
+    /**
      * @param null $scope
      *
      * @return \SuperV\Platform\Packs\Database\Migrations\DatabaseMigrationRepository

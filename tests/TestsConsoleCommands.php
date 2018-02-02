@@ -2,11 +2,12 @@
 
 namespace Tests\SuperV;
 
+use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;
 
 trait TestsConsoleCommands
 {
-    protected function runCommand($command, $input = [])
+    protected function runCommand(Command $command, $input = [])
     {
         return $command->run(
             new \Symfony\Component\Console\Input\ArrayInput($input),
