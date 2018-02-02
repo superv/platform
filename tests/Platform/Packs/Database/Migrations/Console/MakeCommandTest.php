@@ -6,9 +6,12 @@ use SuperV\Platform\Packs\Database\Migrations\Console\MigrateMakeCommand;
 use SuperV\Platform\Packs\Database\Migrations\MigrationCreator;
 use Tests\SuperV\Platform\BaseTestCase;
 use Mockery as m;
+use Tests\SuperV\TestsConsoleCommands;
 
 class MakeCommandTest extends BaseTestCase
 {
+    use TestsConsoleCommands;
+
     /**
      * @test
      */
@@ -18,17 +21,11 @@ class MakeCommandTest extends BaseTestCase
             $creator = m::mock(MigrationCreator::class),
             m::mock('Illuminate\Support\Composer')->shouldIgnoreMissing()
         );
+        $command->setLaravel($this->app);
+
         $creator->shouldReceive('setScope')->with('test-scope')->once();
         $creator->shouldReceive('create')->once();
-        $command->setLaravel($this->app);
-        $this->runCommand($command, ['name' => 'CreateMigrationMake', '--scope' => 'test-scope']);
-    }
 
-    protected function runCommand($command, $input = [])
-    {
-        return $command->run(
-            new \Symfony\Component\Console\Input\ArrayInput($input),
-            new \Symfony\Component\Console\Output\NullOutput
-        );
+        $this->runCommand($command, ['name' => 'CreateMigrationMake', '--scope' => 'test-scope']);
     }
 }

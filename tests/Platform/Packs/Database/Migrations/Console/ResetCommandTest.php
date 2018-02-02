@@ -6,9 +6,12 @@ use SuperV\Platform\Packs\Database\Migrations\Console\ResetCommand;
 use SuperV\Platform\Packs\Database\Migrations\Migrator;
 use Tests\SuperV\Platform\BaseTestCase;
 use Mockery as m;
+use Tests\SuperV\TestsConsoleCommands;
 
 class ResetCommandTest extends BaseTestCase
 {
+    use TestsConsoleCommands;
+
     /**
      * @test
      */
@@ -22,13 +25,5 @@ class ResetCommandTest extends BaseTestCase
         $migrator->shouldReceive('setScope')->with('test-scope')->once();
 
         $this->runCommand($command, ['--scope' => 'test-scope']);
-    }
-
-    protected function runCommand($command, $input = [])
-    {
-        return $command->run(
-            new \Symfony\Component\Console\Input\ArrayInput($input),
-            new \Symfony\Component\Console\Output\NullOutput
-        );
     }
 }
