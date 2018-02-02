@@ -16,6 +16,14 @@ class MigrationServiceProviderTest extends BaseTestCase
     /**
      * @test
      */
+    function get_registered_with_platform()
+    {
+        $this->assertProviderRegistered(MigrationServiceProvider::class);
+    }
+
+    /**
+     * @test
+     */
     function registers_database_migration_repository()
     {
         $this->assertInstanceOf(\Illuminate\Database\MigrationServiceProvider::class, new MigrationServiceProvider($this->app));

@@ -66,6 +66,7 @@ class BaseTestCase extends TestCase
             'superv.ports' => [
                 'web' => [
                     'hostname' => 'superv.io',
+                    'theme' => 'themes.starter'
                 ],
                 'acp' => [
                     'hostname' => 'superv.io',
@@ -76,5 +77,10 @@ class BaseTestCase extends TestCase
                 ],
             ],
         ]);
+    }
+
+    protected function assertProviderRegistered($provider)
+    {
+        $this->assertContains($provider, array_keys($this->app->getLoadedProviders()));
     }
 }
