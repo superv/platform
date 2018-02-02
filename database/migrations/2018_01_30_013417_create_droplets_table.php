@@ -1,16 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
+use SuperV\Platform\Packs\Database\Migrations\Migration;
 
 class CreateDropletsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+    protected $scope = 'platform';
+
     public function up()
     {
         Schema::create('droplets', function (Blueprint $table) {
