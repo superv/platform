@@ -3,6 +3,7 @@
 namespace SuperV\Platform;
 
 use Platform;
+use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Exceptions\CorePlatformException;
 use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\Listeners\PortDetectedListener;
@@ -30,7 +31,8 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $commands = [
-        DropletInstallCommand::class
+        SuperVInstallCommand::class,
+        DropletInstallCommand::class,
     ];
 
     public function boot()
