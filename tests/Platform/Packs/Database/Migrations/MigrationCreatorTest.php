@@ -9,6 +9,7 @@ use Tests\SuperV\Platform\BaseTestCase;
 class MigrationCreatorTest extends BaseTestCase
 {
     protected $tmpDirectory = 'testing-migrations';
+
     /**
      * @test
      */

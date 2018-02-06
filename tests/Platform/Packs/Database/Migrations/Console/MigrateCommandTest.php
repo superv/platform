@@ -31,4 +31,19 @@ class MigrateCommandTest extends BaseTestCase
 
         $this->runCommand($migrateCommand, ['--scope' => 'test-scope']);
     }
+
+    /**
+     * @test
+     */
+    function migrate_command_get_path_from_registered_scopes()
+    {
+        config(['superv.migrations.scopes' => [
+            'droplets.sample' => 'tests/Platform/__fixtures__/sample-droplet/database/migrations'
+        ]]);
+
+        $this->artisan('migrate', ['--scope' => 'droplets.sample']);
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration']);
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200100_droplet_bar_migration']);
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_droplet_baz_migration']);
+    }
 }

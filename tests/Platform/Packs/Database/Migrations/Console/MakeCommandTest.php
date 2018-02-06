@@ -2,20 +2,22 @@
 
 namespace Tests\SuperV\Platform\Packs\Database\Migrations\Console;
 
+use Mockery as m;
 use SuperV\Platform\Packs\Database\Migrations\Console\MigrateMakeCommand;
 use SuperV\Platform\Packs\Database\Migrations\MigrationCreator;
 use Tests\SuperV\Platform\BaseTestCase;
-use Mockery as m;
 use Tests\SuperV\TestsConsoleCommands;
 
 class MakeCommandTest extends BaseTestCase
 {
     use TestsConsoleCommands;
 
+    protected $tmpDirectory = 'test-migrations';
+
     /**
      * @test
      */
-    function make_command_calls_creator_with_proper_arguments()
+    function calls_creator_with_proper_arguments()
     {
         $command = new MigrateMakeCommand(
             $creator = m::mock(MigrationCreator::class),
@@ -28,4 +30,21 @@ class MakeCommandTest extends BaseTestCase
 
         $this->runCommand($command, ['name' => 'CreateMigrationMake', '--scope' => 'test-scope']);
     }
+
+    /**
+     * @test
+     *
+     * @group filesystem
+     */
+    function sets_path_from_registered_scopes()
+    {
+        config(['superv.migrations.scopes' => [
+            'sample' => 'storage/test-migrations',
+        ]]);
+
+        $this->assertCount(0, \File::files(storage_path('test-migrations')));
+        $this->artisan('make:migration', ['name' => 'CreateMigrationMake', '--scope' => 'sample']);
+        $this->assertCount(1, \File::files(storage_path('test-migrations')));
+    }
+
 }
