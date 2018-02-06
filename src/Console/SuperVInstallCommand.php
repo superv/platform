@@ -12,7 +12,7 @@ class SuperVInstallCommand extends Command
 
     public function handle()
     {
-        $this->call('migrate');
+        $this->call('migrate', ['--scope' => 'platform']);
 
         $this->setEnv();
 
