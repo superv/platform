@@ -35,6 +35,15 @@ class PlatformServiceProvider extends BaseServiceProvider
         DropletInstallCommand::class,
     ];
 
+    public function register()
+    {
+        parent::register();
+
+        config(['superv.migrations.scopes' => [
+            'platform' => Platform::path('database/migrations'),
+        ]]);
+    }
+
     public function boot()
     {
         if (config('superv.installed') === true) {

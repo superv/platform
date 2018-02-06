@@ -31,10 +31,14 @@ class DropletServiceProvider extends BaseServiceProvider
         $this->addViewNamespaces([
             $this->droplet->entry()->slug => base_path($this->droplet->entry()->path.'/resources/views'),
         ]);
+
+        $scopes = config('superv.migrations.scopes');
+        $scopes[$this->droplet->entry()->slug] = $this->droplet->entry()->path.'/database/migrations';
+        config()->set('superv.migrations.scopes', $scopes);
     }
 
     public function boot()
     {
-        app(Router::class)->loadFromPath($this->droplet->entry()->path. '/routes');
+        app(Router::class)->loadFromPath($this->droplet->entry()->path.'/routes');
     }
 }

@@ -18,7 +18,7 @@ class DropletServiceProviderTest extends BaseTestCase
     {
         $droplet = $this->setUpDroplet();
 
-        $routesPath = $droplet->entry()->path.'/routes';
+        $routesPath = $droplet->path('routes');
 
         $router = $this->app->instance(Router::class, Mockery::mock(Router::class));
         $router->shouldReceive('loadFromPath')->with($routesPath)->once();
@@ -37,7 +37,20 @@ class DropletServiceProviderTest extends BaseTestCase
         $this->app->register($provider);
 
         $hints = $this->app['view']->getFinder()->getHints();
-        $this->assertContains(base_path($droplet->entry()->path.'/resources/views'), $hints['droplets.sample']);
+        $this->assertContains(base_path($droplet->resourcePath('views')), $hints['droplets.sample']);
         $this->assertDirectoryExists(reset($hints['droplets.sample']));
+    }
+
+    /**
+     * @test
+     */
+    function registers_migrations_path()
+    {
+        $droplet = $this->setUpDroplet();
+        $provider = $droplet->resolveProvider();
+
+        $this->app->register($provider);
+
+        $this->assertEquals($droplet->path('database/migrations'), config('superv.migrations.scopes')[$droplet->slug()]);
     }
 }
