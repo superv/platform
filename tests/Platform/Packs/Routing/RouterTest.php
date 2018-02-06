@@ -2,6 +2,7 @@
 
 namespace Tests\SuperV\Platform\Packs\Routing;
 
+use Mockery;
 use SuperV\Platform\Packs\Routing\RouteLoader;
 use SuperV\Platform\Packs\Routing\Router;
 use Tests\SuperV\Platform\BaseTestCase;
@@ -18,7 +19,7 @@ class RouterTest extends BaseTestCase
             'foo/baz' => 'FooWebController@baz',
         ];
 
-        $loader = $this->setUpMock(RouteLoader::class);
+        $loader = $this->app->instance(RouteLoader::class, Mockery::mock(RouteLoader::class));
         $loader->shouldReceive('load')->with($_SERVER['test.routes.web.foo'])->once();
 
         app(Router::class)->loadFromFile('tests/Platform/__fixtures__/routes/web/foo.php');
@@ -39,7 +40,8 @@ class RouterTest extends BaseTestCase
             'foo/baz' => 'FooAcpController@baz',
         ];
 
-        $loader = $this->setUpMock(RouteLoader::class);
+        $loader = $this->app->instance(RouteLoader::class, Mockery::mock(RouteLoader::class));
+
         $loader->shouldReceive('load')->with(['foo/baz' => 'FooWebController@baz',], 'web')->once();
         $loader->shouldReceive('load')->with(['bar/baz' => 'BarWebController@baz',], 'web')->once();
         $loader->shouldReceive('load')->with(['foo/baz' => 'FooAcpController@baz'], 'acp')->once();

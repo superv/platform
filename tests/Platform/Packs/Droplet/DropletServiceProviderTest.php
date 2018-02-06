@@ -3,6 +3,7 @@
 namespace Tests\SuperV\Platform\Packs\Droplet;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use SuperV\Platform\Packs\Routing\Router;
 use Tests\SuperV\Platform\BaseTestCase;
 
@@ -19,7 +20,7 @@ class DropletServiceProviderTest extends BaseTestCase
 
         $routesPath = $droplet->entry()->path.'/routes';
 
-        $router = $this->setUpMock(Router::class);
+        $router = $this->app->instance(Router::class, Mockery::mock(Router::class));
         $router->shouldReceive('loadFromPath')->with($routesPath)->once();
 
         $this->app->register($droplet->resolveProvider());
