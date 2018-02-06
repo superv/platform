@@ -14,8 +14,13 @@ class Droplet
         $this->entry = $entry;
     }
 
+    public function slug()
+    {
+        return $this->entry->slug;
+    }
+
     /**
-     * Creates new Droplet Service Provider instance
+     * Create a new Service Provider instance
      *
      * @return \SuperV\Platform\Packs\Droplet\DropletServiceProvider
      */
@@ -26,8 +31,18 @@ class Droplet
         return (new $class(app()))->setDroplet($this);
     }
 
+    public function path($prefix = null)
+    {
+        return rtrim($this->entry()->path.'/'.$prefix, '/');
+    }
+
+    public function resourcePath($prefix = null)
+    {
+        return $this->path('resources/'.$prefix);
+    }
+
     /**
-     * Returns Droplet Entry
+     * Return Droplet Entry
      *
      * @return \SuperV\Platform\Packs\Droplet\DropletModel
      */
@@ -37,7 +52,7 @@ class Droplet
     }
 
     /**
-     * Returns Droplet Services Provider Class
+     * Return Service Provider Class
      *
      * @return string
      */
