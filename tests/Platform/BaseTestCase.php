@@ -59,6 +59,10 @@ class BaseTestCase extends TestCase
                 app('files')->makeDirectory(storage_path($this->tmpDirectory));
             }
         }
+
+        if (method_exists($this, 'refreshDatabase')) {
+            $this->artisan('migrate', ['--scope' => 'platform']);
+        }
     }
 
     protected function tearDown()
