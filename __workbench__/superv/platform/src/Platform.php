@@ -26,7 +26,6 @@ class Platform
         PlatformBootedEvent::dispatch();
     }
 
-
     public function config($key, $default = null)
     {
         return config("superv.{$key}", $default);
