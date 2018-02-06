@@ -19,4 +19,18 @@ class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateComm
         }
         parent::handle();
     }
+
+    protected function getMigrationPaths()
+    {
+        if ($this->option('scope')) {
+            $scopes = config('superv.migrations.scopes');
+
+            if ($path = array_get($scopes, $this->option('scope'))) {
+                $this->migrator->setScope(null);
+                return [base_path($path)];
+            }
+        }
+
+        return parent::getMigrationPaths();
+    }
 }
