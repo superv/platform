@@ -5,8 +5,6 @@ use SuperV\Platform\Packs\Database\Migrations\Migration;
 
 class CreateValuesTable extends Migration
 {
-    protected $scope = 'platform.nucleo';
-
     public function up()
     {
         Schema::create('member_values', function (Blueprint $table) {

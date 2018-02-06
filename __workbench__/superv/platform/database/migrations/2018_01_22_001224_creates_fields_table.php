@@ -5,8 +5,6 @@ use SuperV\Platform\Packs\Database\Migrations\Migration;
 
 class CreatesFieldsTable extends Migration
 {
-    protected $scope = 'platform.nucleo';
-
     /**
      * Run the migrations.
      *

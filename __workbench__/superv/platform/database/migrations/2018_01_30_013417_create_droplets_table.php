@@ -6,8 +6,6 @@ use SuperV\Platform\Packs\Database\Migrations\Migration;
 
 class CreateDropletsTable extends Migration
 {
-    protected $scope = 'platform';
-
     public function up()
     {
         Schema::create('droplets', function (Blueprint $table) {

@@ -5,8 +5,6 @@ use SuperV\Platform\Packs\Database\Migrations\Migration;
 
 class CreatePrototypesTable extends Migration
 {
-    protected $scope = 'platform.nucleo';
-
     public function up()
     {
         Schema::create('prototypes', function (Blueprint $table) {

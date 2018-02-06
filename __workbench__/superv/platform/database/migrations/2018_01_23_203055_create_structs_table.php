@@ -5,8 +5,6 @@ use SuperV\Platform\Packs\Database\Migrations\Migration;
 
 class CreateStructsTable extends Migration
 {
-    protected $scope = 'platform.nucleo';
-
     public function up()
     {
         Schema::create('structs', function (Blueprint $table) {
