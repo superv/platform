@@ -2,7 +2,6 @@
 
 namespace Tests\SuperV\Platform;
 
-use Mockery as m;
 use SuperV\Platform\Packs\Droplet\DropletModel;
 use SuperV\Platform\Packs\Droplet\Installer;
 use Tests\SuperV\TestCase;
@@ -18,26 +17,37 @@ class BaseTestCase extends TestCase
     protected $tmpDirectory;
 
     /**
+     * @param string $slug
+     * @param string $path
+     *
      * @return \SuperV\Platform\Packs\Droplet\Droplet
+     * @throws \SuperV\Platform\Exceptions\PathNotFoundException
      */
-    protected function setUpDroplet()
+    protected function setUpDroplet($slug = 'droplets.sample', $path = 'tests/Platform/__fixtures__/sample-droplet')
     {
-        app(Installer::class)
-            ->slug('droplets.sample')
-            ->path('tests/Platform/__fixtures__/sample-droplet')
-            ->install();
+        $this->app->make(Installer::class)
+                  ->slug($slug)
+                  ->path($path)
+                  ->install();
 
-        $entry = DropletModel::bySlug('droplets.sample');
+        $entry = DropletModel::bySlug($slug);
 
         return $entry->resolveDroplet();
     }
 
-    protected function setUpMock($class)
+    /**
+     * @param      $port
+     * @param      $hostname
+     * @param null $theme
+     */
+    protected function setUpPort($port, $hostname, $theme = null)
     {
-        $mock = m::mock($class);
-        $this->app->singleton($class, function () use ($mock) { return $mock; });
-
-        return $mock;
+        $ports = config('superv.ports', []);
+        $ports[$port] = [
+            'hostname' => $hostname,
+            'theme'    => $theme,
+        ];
+        config(['superv.ports' => $ports]);
     }
 
     protected function setUp()
@@ -66,7 +76,7 @@ class BaseTestCase extends TestCase
             'superv.ports' => [
                 'web' => [
                     'hostname' => 'superv.io',
-                    'theme' => 'themes.starter'
+                    'theme'    => 'themes.starter',
                 ],
                 'acp' => [
                     'hostname' => 'superv.io',

@@ -31,14 +31,7 @@ class ThemeServiceProviderTest extends BaseTestCase
             ->slug('themes.starter')
             ->install();
 
-        config([
-            'superv.ports' => [
-                'web' => [
-                    'hostname' => 'superv.io',
-                    'theme'    => 'themes.starter',
-                ],
-            ],
-        ]);
+        $this->setUpPort('web', 'superv.io', 'themes.starter');
 
         PortDetectedEvent::dispatch('web');
 
@@ -52,13 +45,7 @@ class ThemeServiceProviderTest extends BaseTestCase
      */
     function does_not_add_any_hint_if_port_has_no_theme()
     {
-        config([
-            'superv.ports' => [
-                'web' => [
-                    'hostname' => 'superv.io',
-                ],
-            ],
-        ]);
+        $this->setUpPort('web', 'superv.io', $theme = null);
 
         PortDetectedEvent::dispatch('web');
 
@@ -73,14 +60,7 @@ class ThemeServiceProviderTest extends BaseTestCase
     {
         $this->expectException(DropletNotFoundException::class);
 
-        config([
-            'superv.ports' => [
-                'web' => [
-                    'hostname' => 'superv.io',
-                    'theme'    => 'droplet.that.does.not.exist',
-                ],
-            ],
-        ]);
+        $this->setUpPort('web', 'superv.io', $theme = 'non.existant.theme');
 
         PortDetectedEvent::dispatch('web');
     }
