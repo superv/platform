@@ -11,7 +11,7 @@ class DropletModel extends Model
     protected $guarded = [];
 
     /**
-     * Creates new Droplet instance
+     * Create new Droplet instance
      *
      * @return \SuperV\Platform\Packs\Droplet\Droplet
      */
