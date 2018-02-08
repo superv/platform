@@ -126,17 +126,29 @@ class NucleoTest extends BaseTestCase
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title')->nullable()->rules('required|min:3');
+            $table->string('title')->nullable()->rules('min:3');
+            $table->string('priority')->nullable()->rules('required');
         });
 
         try {
             Task::create([
                 'title' => 'ab',
+                'priority' => 'low'
             ]);
 
             $this->fail('failed to validate field rules');
         } catch (ValidationException $e) {
             $this->assertContains('title', array_keys($e->errors()));
+
+            try {
+                Task::create([
+                    'title' => 'abc',
+                ]);
+
+                $this->fail('failed to validate field rules - required');
+            } catch (ValidationException $e) {
+                $this->assertContains('priority', array_keys($e->errors()));
+            }
         }
     }
 }
