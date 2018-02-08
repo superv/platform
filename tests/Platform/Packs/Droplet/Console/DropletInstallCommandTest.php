@@ -8,9 +8,7 @@ use Tests\SuperV\Platform\BaseTestCase;
 
 class DropletInstallCommandTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     function calls_installer_with_proper_arguments()
     {
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));

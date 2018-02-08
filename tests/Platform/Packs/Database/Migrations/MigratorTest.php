@@ -11,9 +11,7 @@ class MigratorTest extends BaseTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @test
-     */
+    /** @test */
     function extends_original_migrator()
     {
         $migrator = new Migrator(app('migration.repository'), app('db'), app('files'));
@@ -21,9 +19,7 @@ class MigratorTest extends BaseTestCase
         $this->assertInstanceOf(BaseMigrator::class, $migrator);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function saves_migrations_scope_to_database()
     {
         $this->app['migrator']->run(__DIR__.'/migrations');
@@ -32,9 +28,7 @@ class MigratorTest extends BaseTestCase
         $this->assertDatabaseHas('migrations', ['scope' => 'bar']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function rollbacks_migrations_by_scope()
     {
         $this->app['migrator']->run(__DIR__.'/migrations');
@@ -45,9 +39,7 @@ class MigratorTest extends BaseTestCase
         $this->assertDatabaseHas('migrations', ['scope' => 'foo']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function runs_migrations_by_scope()
     {
         $this->app['migrator']->setScope('bar')->run(__DIR__.'/migrations');

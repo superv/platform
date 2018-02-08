@@ -16,9 +16,7 @@ class RefreshCommandTest extends BaseTestCase
 {
     use TestsConsoleCommands;
 
-    /**
-     * @test
-     */
+    /** @test */
     function refresh_command_calls_other_commands_with_proper_arguments_with_step()
     {
         $console = m::mock(ConsoleApplication::class)->makePartial();
@@ -45,9 +43,7 @@ class RefreshCommandTest extends BaseTestCase
         $this->runCommand($command, ['--step' => 2, '--scope' => 'test-scope']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function refresh_command_calls_other_commands_with_proper_arguments_without_step()
     {
         $console = m::mock(ConsoleApplication::class)->makePartial();

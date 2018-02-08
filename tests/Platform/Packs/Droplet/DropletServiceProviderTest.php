@@ -11,9 +11,7 @@ class DropletServiceProviderTest extends BaseTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @test
-     */
+    /** @test */
     function registers_droplets_routes_from_routes_folder()
     {
         $droplet = $this->setUpDroplet();
@@ -26,9 +24,7 @@ class DropletServiceProviderTest extends BaseTestCase
         $this->app->register($droplet->resolveProvider());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function adds_droplets_view_namespaces()
     {
         $droplet = $this->setUpDroplet();
@@ -41,9 +37,7 @@ class DropletServiceProviderTest extends BaseTestCase
         $this->assertDirectoryExists(reset($hints['droplets.sample']));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function registers_migrations_path()
     {
         $droplet = $this->setUpDroplet();

@@ -14,9 +14,7 @@ class MakeCommandTest extends BaseTestCase
 
     protected $tmpDirectory = 'test-migrations';
 
-    /**
-     * @test
-     */
+    /** @test */
     function calls_creator_with_proper_arguments()
     {
         $command = new MigrateMakeCommand(

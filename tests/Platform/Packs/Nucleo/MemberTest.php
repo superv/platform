@@ -11,9 +11,7 @@ class MemberTest extends BaseTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @test
-     */
+    /** @test */
     function delete_values_when_a_member_is_deleted()
     {
         $member = Member::create(

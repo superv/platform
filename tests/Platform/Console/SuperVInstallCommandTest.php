@@ -10,9 +10,7 @@ class SuperVInstallCommandTest extends BaseTestCase
 {
     use TestsConsoleCommands;
 
-    /**
-     * @test
-     */
+    /** @test */
     function sets_env_variable_to_installed()
     {
         $this->app->setBasePath(base_path('tests'));
@@ -23,9 +21,7 @@ class SuperVInstallCommandTest extends BaseTestCase
         $this->assertContains('SUPERV_INSTALLED=true', file_get_contents(base_path('.env')));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function runs_proper_migrations()
     {
         $this->artisan('superv:install');

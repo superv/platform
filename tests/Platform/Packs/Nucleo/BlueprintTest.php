@@ -25,9 +25,7 @@ class BlueprintTest extends BaseTestCase
         return $builder;
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function create_prototype_when_a_table_is_created()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -37,9 +35,7 @@ class BlueprintTest extends BaseTestCase
         $this->assertNotNull(Prototype::byTable('tasks'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function delete_prototype_when_a_table_is_dropped()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -59,9 +55,7 @@ class BlueprintTest extends BaseTestCase
         $this->assertNull(Prototype::byTable('tasks'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function create_field_when_a_column_is_added()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -78,9 +72,7 @@ class BlueprintTest extends BaseTestCase
         $this->assertEquals(2, $prototype->fields()->count());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function save_rules_for_field()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -91,9 +83,7 @@ class BlueprintTest extends BaseTestCase
         $this->assertEquals(['required', 'min:6'], $prototype->field('title')->rules);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function do_not_create_a_field_for_primary_key_column()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -104,9 +94,7 @@ class BlueprintTest extends BaseTestCase
         $this->assertEquals(0, $prototype->fields()->count());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function delete_field_when_a_column_is_dropped()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -124,9 +112,7 @@ class BlueprintTest extends BaseTestCase
         $this->assertNull($prototype->field('title'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function delete_fields_when_a_prototype_is_deleted()
     {
         $prototype = Prototype::create(['table' => 'tasks']);
@@ -139,9 +125,7 @@ class BlueprintTest extends BaseTestCase
         $this->assertEquals(0, Field::where('prototype_id', $prototype->id)->count());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function not_nullable_columns_are_required_fields()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -154,9 +138,7 @@ class BlueprintTest extends BaseTestCase
         $this->assertFalse($field->required);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function save_column_default_value()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {

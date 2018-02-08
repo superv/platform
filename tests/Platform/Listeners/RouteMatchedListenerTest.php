@@ -10,9 +10,7 @@ use Mockery as m;
 
 class RouteMatchedListenerTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     function invokes_port_detector_when_dispatched()
     {
         $detector = m::mock(PortDetector::class);

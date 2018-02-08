@@ -26,9 +26,7 @@ class FieldTest extends BaseTestCase
         return $field;
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function can_add_field_rules()
     {
         $field = $this->setUpField();
@@ -41,9 +39,7 @@ class FieldTest extends BaseTestCase
         $this->assertContains('unique', $field->rules);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function can_set_field_rules()
     {
         $field = $this->setUpField();
@@ -53,9 +49,7 @@ class FieldTest extends BaseTestCase
         $this->assertEquals(['required', 'unique'], $field->rules);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function can_set_field_rules_in_string_format()
     {
         $field = $this->setUpField();

@@ -10,25 +10,19 @@ class MigrationCreatorTest extends BaseTestCase
 {
     protected $tmpDirectory = 'testing-migrations';
 
-    /**
-     * @test
-     */
+    /** @test */
     function extends_framework_creator()
     {
         $this->assertInstanceOf('Illuminate\Database\Migrations\MigrationCreator', $this->creator());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function modifies_stubs_location()
     {
         $this->assertEquals(Platform::fullPath('resources/stubs'), $this->creator()->stubPath());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function adds_scope_data_if_supplied()
     {
         $file = $this->creator()

@@ -7,9 +7,7 @@ use Tests\SuperV\Platform\BaseTestCase;
 
 class RouteLoaderTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     function loads_routes_from_array()
     {
         app(RouteLoader::class)
@@ -36,9 +34,7 @@ class RouteLoaderTest extends BaseTestCase
         $this->assertInstanceOf(\Closure::class, $patchRoutes['web/bar']->getAction('uses'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function loads_routes_for_a_port()
     {
         $this->setUpPorts();

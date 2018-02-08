@@ -24,9 +24,7 @@ class TrackableTest extends BaseTestCase
         return $builder;
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function can_track_value_history_of_a_struct_member()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -45,9 +43,7 @@ class TrackableTest extends BaseTestCase
         ], $task->struct()->member('title')->values()->pluck('value')->toArray());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function can_track_user_who_created_the_member_values()
     {
         $userA = 1;

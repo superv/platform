@@ -14,9 +14,7 @@ class DropletTest extends BaseTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @test
-     */
+    /** @test */
     function creates_droplet_instance()
     {
         $this->setUpDroplet();
@@ -29,9 +27,7 @@ class DropletTest extends BaseTestCase
         $this->assertEquals($entry, $droplet->entry());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function creates_service_provider_instance()
     {
         $this->setUpDroplet();

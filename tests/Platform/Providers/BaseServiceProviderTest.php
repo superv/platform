@@ -10,9 +10,7 @@ use Tests\SuperV\Platform\BaseTestCase;
 
 class BaseServiceProviderTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     function registers_bindings()
     {
         (new TestServiceProvider($this->app))->registerBindings([
@@ -30,9 +28,7 @@ class BaseServiceProviderTest extends BaseTestCase
         $this->assertFalse($bar['shared']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function registers_singletons()
     {
         (new TestServiceProvider($this->app))->registerSingletons([
@@ -55,9 +51,7 @@ class BaseServiceProviderTest extends BaseTestCase
         $this->assertTrue($baz['shared']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function registers_aliases()
     {
         (new TestServiceProvider($this->app))->registerAliases([
@@ -70,9 +64,7 @@ class BaseServiceProviderTest extends BaseTestCase
         $this->assertEquals(Bar::class, $aliases['Bar']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function registers_event_listeners()
     {
         unset($_SERVER['__event.class']);
@@ -90,9 +82,7 @@ class BaseServiceProviderTest extends BaseTestCase
         $this->assertEquals(AnotherEvent::class, $_SERVER['__event.class']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function registers_console_commands()
     {
         (new TestServiceProvider($this->app))->registerCommands(
@@ -109,9 +99,7 @@ class BaseServiceProviderTest extends BaseTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function adds_view_namespaces()
     {
         (new TestServiceProvider($this->app))->addViewNamespaces([

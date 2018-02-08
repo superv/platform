@@ -28,9 +28,7 @@ class NucleoTest extends BaseTestCase
         return $builder;
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function create_struct_when_a_model_is_created()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -44,9 +42,7 @@ class NucleoTest extends BaseTestCase
         $this->assertEquals($task->prototype()->id, Struct::first()->prototype_id);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function delete_struct_when_model_is_deleted()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -62,9 +58,7 @@ class NucleoTest extends BaseTestCase
         $this->assertEquals(0, Struct::count());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function delete_members_when_a_struct_is_deleted()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -87,9 +81,7 @@ class NucleoTest extends BaseTestCase
         $this->assertEquals(0, Member::where('struct_id', $struct->id)->count());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function create_struct_members_and_save_values_when_a_model_is_created()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -108,9 +100,7 @@ class NucleoTest extends BaseTestCase
         $this->assertEquals('high', $task->struct()->member('priority')->getValue());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function update_members_values_when_the_model_is_updated()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
@@ -131,9 +121,7 @@ class NucleoTest extends BaseTestCase
         $this->assertEquals('very low', $task->struct()->member('priority')->getValue());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function validate_field_rules_before_saving_the_model()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {

@@ -12,9 +12,7 @@ class ResetCommandTest extends BaseTestCase
 {
     use TestsConsoleCommands;
 
-    /**
-     * @test
-     */
+    /** @test */
     function reset_command_calls_migrator_with_proper_arguments()
     {
         $command = new ResetCommand(

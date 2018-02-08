@@ -10,17 +10,13 @@ class PlatformServiceProviderTest extends BaseTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @test
-     */
+    /** @test */
     function get_registered_with_platform()
     {
         $this->assertProviderRegistered(PlatformServiceProvider::class);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function boots_platform_if_superv_is_installed()
     {
         config(['superv.installed' => true]);
@@ -29,9 +25,7 @@ class PlatformServiceProviderTest extends BaseTestCase
         (new PlatformServiceProvider($this->app))->boot();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function does_not_boot_platform_if_superv_is_not_installed()
     {
         config(['superv.installed' => false]);

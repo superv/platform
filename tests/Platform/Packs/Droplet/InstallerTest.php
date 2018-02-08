@@ -11,9 +11,7 @@ class InstallerTest extends BaseTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @test
-     */
+    /** @test */
     function installs_a_droplet()
     {
         $this->installer()
@@ -31,9 +29,7 @@ class InstallerTest extends BaseTestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function verifies_droplet_path()
     {
         $this->expectException(PathNotFoundException::class);
@@ -43,9 +39,7 @@ class InstallerTest extends BaseTestCase
              ->install();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function parses_composer_data()
     {
         $installer = $this->installer();

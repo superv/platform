@@ -9,9 +9,7 @@ use Tests\SuperV\Platform\BaseTestCase;
 
 class RouterTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     function registers_route_files()
     {
         $_SERVER['test.routes.web.foo'] = [
@@ -25,9 +23,7 @@ class RouterTest extends BaseTestCase
         app(Router::class)->loadFromFile('tests/Platform/__fixtures__/routes/web/foo.php');
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function registers_port_routes()
     {
         $_SERVER['test.routes.web.foo'] = [

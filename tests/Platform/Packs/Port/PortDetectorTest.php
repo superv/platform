@@ -11,9 +11,7 @@ use Tests\SuperV\Platform\BaseTestCase;
 
 class PortDetectorTest extends BaseTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     function detects_active_port_from_request()
     {
         $this->setUpPorts();
@@ -35,9 +33,7 @@ class PortDetectorTest extends BaseTestCase
         $this->assertEquals('api', $this->setUpDetector()->detectFor('api.superv.io', 'foo/bar'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function dispatches_event_when_active_port_detected()
     {
         $this->setUpPorts();

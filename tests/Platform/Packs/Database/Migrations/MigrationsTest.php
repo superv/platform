@@ -9,9 +9,7 @@ class MigrationsTest extends BaseTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @test
-     */
+    /** @test */
     function adds_column_droplet_to_migrations_table()
     {
         $this->assertDatabaseHas('migrations', ['scope' => null]);

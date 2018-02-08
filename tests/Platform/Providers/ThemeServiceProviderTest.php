@@ -21,9 +21,7 @@ class ThemeServiceProviderTest extends BaseTestCase
         $this->assertProviderRegistered(ThemeServiceProvider::class);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function adds_theme_view_hint_for_the_active_theme_when_port_is_detected()
     {
         app(Installer::class)
@@ -40,9 +38,7 @@ class ThemeServiceProviderTest extends BaseTestCase
         $this->assertDirectoryExists(reset($hints['theme']));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function does_not_add_any_hint_if_port_has_no_theme()
     {
         $this->setUpPort('web', 'superv.io', $theme = null);
@@ -53,9 +49,7 @@ class ThemeServiceProviderTest extends BaseTestCase
         $this->assertFalse(array_key_exists('theme', $hints));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function throws_exception_if_ports_theme_is_not_found()
     {
         $this->expectException(DropletNotFoundException::class);

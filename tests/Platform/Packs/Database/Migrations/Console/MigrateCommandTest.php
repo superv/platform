@@ -14,9 +14,7 @@ class MigrateCommandTest extends BaseTestCase
     use RefreshDatabase;
     use TestsConsoleCommands;
 
-    /**
-     * @test
-     */
+    /** @test */
     function migrate_command_calls_migrator_with_proper_arguments()
     {
         $migrateCommand = new MigrateCommand(
@@ -32,9 +30,7 @@ class MigrateCommandTest extends BaseTestCase
         $this->runCommand($migrateCommand, ['--scope' => 'test-scope']);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     function migrate_command_get_path_from_registered_scopes()
     {
         config(['superv.migrations.scopes' => [
