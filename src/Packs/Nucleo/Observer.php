@@ -6,6 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Observer
 {
+    public function creating(Model $model)
+    {
+        $rules = [];
+        $attributes = [];
+
+        foreach ($model->prototype()->fields as $field) {
+            if ($field->slug === $model->getKeyName()) {
+                continue;
+            }
+
+            if ($field->hasRules()) {
+                $rules[$field->slug] = $field->rules;
+                $attributes[$field->slug] = sprintf('%s.%s', $model->getTable(), $field->slug);
+            }
+        }
+
+        $validator = validator($model->toArray(), $rules, [], $attributes);
+        $validator->validate();
+    }
+
     public function created(Model $model)
     {
         $struct = Struct::create(
