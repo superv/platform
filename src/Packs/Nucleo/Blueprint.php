@@ -9,6 +9,12 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
 {
     public function build(Connection $connection, Grammar $grammar)
     {
+        $scatters = [];
+        foreach ($this->columns as $i => $column) {
+            if ($column->scatter) {
+                $scatters[] = array_pull($this->columns, $i);
+            }
+        }
         parent::build($connection, $grammar);
 
         if ($this->dropping()) {
@@ -23,7 +29,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
             $prototype = Prototype::where('table', $this->table)->first();
         }
 
-        foreach ($this->columns as $column) {
+        foreach (array_merge($this->columns, $scatters) as $column) {
             if ($column->autoIncrement) {
                 continue;
             }
@@ -32,6 +38,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                 'prototype_id'  => $prototype->id,
                 'slug'          => $column->name,
                 'type'          => $column->type,
+                'scatter'       => $column->scatter,
                 'required'      => ! $column->nullable || in_array('required', $rulesArray),
                 'default_value' => $column->default,
                 'rules'         => $column->rules ?? null,

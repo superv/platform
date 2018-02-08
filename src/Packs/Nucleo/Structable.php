@@ -4,6 +4,8 @@ namespace SuperV\Platform\Packs\Nucleo;
 
 trait Structable
 {
+    public $__cache = [];
+
     protected static function boot()
     {
         static::observe(Observer::class);
