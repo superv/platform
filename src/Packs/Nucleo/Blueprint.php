@@ -27,11 +27,12 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
             if ($column->autoIncrement) {
                 continue;
             }
+            $rulesArray = is_array($column->rules) ? $column->rules : explode('|', $column->rules);
             $prototype->fields()->create([
                 'prototype_id'  => $prototype->id,
                 'slug'          => $column->name,
                 'type'          => $column->type,
-                'required'      => ! $column->nullable,
+                'required'      => ! $column->nullable || in_array('required', $rulesArray),
                 'default_value' => $column->default,
                 'rules'         => $column->rules ?? null,
             ]);
