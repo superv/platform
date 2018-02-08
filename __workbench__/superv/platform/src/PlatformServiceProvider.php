@@ -8,6 +8,10 @@ use SuperV\Platform\Exceptions\CorePlatformException;
 use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\Listeners\PortDetectedListener;
 use SuperV\Platform\Listeners\RouteMatchedListener;
+use SuperV\Platform\Packs\Auth\PlatformUser;
+use SuperV\Platform\Packs\Auth\User;
+use SuperV\Platform\Packs\Auth\Users;
+use SuperV\Platform\Packs\Auth\PlatformUsers;
 use SuperV\Platform\Packs\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Packs\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Packs\Port\PortDetectedEvent;
@@ -21,8 +25,12 @@ class PlatformServiceProvider extends BaseServiceProvider
         ThemeServiceProvider::class,
     ];
 
-    protected $aliases = [
-        'Platform' => PlatformFacade::class,
+    protected $bindings = [
+        User::class  => PlatformUser::class,
+    ];
+
+    protected $singletons = [
+        Users::class => PlatformUsers::class
     ];
 
     protected $listeners = [
@@ -33,6 +41,10 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected $commands = [
         SuperVInstallCommand::class,
         DropletInstallCommand::class,
+    ];
+
+    protected $aliases = [
+        'Platform' => PlatformFacade::class,
     ];
 
     public function register()
