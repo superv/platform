@@ -95,6 +95,8 @@ class NucleoTest extends BaseTestCase
             'priority' => 'high',
         ]);
 
+        $task = $task->fresh();
+
         $this->assertEquals(2, $task->struct()->members()->count());
         $this->assertEquals('My important task', $task->struct()->member('title')->getValue());
         $this->assertEquals('high', $task->struct()->member('priority')->getValue());
@@ -122,33 +124,85 @@ class NucleoTest extends BaseTestCase
     }
 
     /** @test */
+    function creates_scattered_members()
+    {
+        $this->builder()->create('tasks', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title');
+            $table->string('priority')->scatter();
+        });
+
+        $task = Task::create([
+            'title'    => 'My important task',
+            'priority' => 'high',
+        ]);
+
+        $task->priority = 'low';
+        $task->save();
+
+        $task = $task->fresh();
+
+        $this->assertDatabaseMissing('tasks', ['priority' => 'high']);
+        $this->assertArrayHasKey('priority', $task->toArray());
+        $this->assertContains('low', $task->toArray());
+    }
+
+    /** @test */
     function validate_field_rules_before_saving_the_model()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title')->nullable()->rules('min:3');
             $table->string('priority')->nullable()->rules('required');
         });
 
         try {
             Task::create([
-                'title' => 'ab',
-                'priority' => 'low'
+            ]);
+
+            $this->fail('failed to validate field rules - required');
+        } catch (ValidationException $e) {
+            $this->assertContains('priority', array_keys($e->errors()));
+        }
+    }
+
+    /** @test */
+    function validate_rules_for_scattered_members_when_creating()
+    {
+        $this->builder()->create('tasks', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('priority')->nullable()->rules('min:3')->scatter();
+        });
+
+        try {
+            Task::create([
+                'priority' => 'lo',
             ]);
 
             $this->fail('failed to validate field rules');
         } catch (ValidationException $e) {
-            $this->assertContains('title', array_keys($e->errors()));
+            $this->assertContains('priority', array_keys($e->errors()));
+        }
+    }
 
-            try {
-                Task::create([
-                    'title' => 'abc',
-                ]);
+    /** @test */
+    function validate_rules_for_scattered_members_when_saving()
+    {
+        $this->builder()->create('tasks', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('priority')->nullable()->rules('min:3')->scatter();
+        });
 
-                $this->fail('failed to validate field rules - required');
-            } catch (ValidationException $e) {
-                $this->assertContains('priority', array_keys($e->errors()));
-            }
+        try {
+            $task = Task::create([
+                'priority' => 'low',
+            ]);
+
+            $task->priority = 'lo';
+            $task->save();
+
+            $this->fail('failed to validate field rules');
+        } catch (ValidationException $e) {
+            $this->assertContains('priority', array_keys($e->errors()));
         }
     }
 }

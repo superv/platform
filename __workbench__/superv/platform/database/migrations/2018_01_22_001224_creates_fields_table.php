@@ -18,6 +18,7 @@ class CreatesFieldsTable extends Migration
             $table->string('slug');
             $table->string('type');
             $table->boolean('required')->default(true);
+            $table->boolean('scatter')->default(false)->nullable();
             $table->string('default_value')->nullable();
             $table->text('rules')->nullable();
             $table->timestamps();

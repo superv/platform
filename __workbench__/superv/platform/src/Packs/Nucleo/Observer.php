@@ -6,10 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Observer
 {
-    public function creating(Model $model)
+    protected $cache = [];
+
+    public function retrieved(Model $model)
+    {
+        foreach ($model->prototype()->fields as $field) {
+            if ($field->slug === $model->getKeyName()) {
+                continue;
+            }
+
+            if ($field->scatter) {
+                $model->offsetSet($field->slug, $model->struct()->member($field->slug)->getValue());
+            }
+        }
+    }
+
+    public function saving(Model $model)
     {
         $rules = [];
         $attributes = [];
+        $data = [];
 
         foreach ($model->prototype()->fields as $field) {
             if ($field->slug === $model->getKeyName()) {
@@ -19,10 +35,16 @@ class Observer
             if ($field->hasRules()) {
                 $rules[$field->slug] = $field->rules;
                 $attributes[$field->slug] = sprintf('%s.%s', $model->getTable(), $field->slug);
+                $data[$field->slug] = $model->getAttribute($field->slug);
+            }
+
+            if ($field->scatter) {
+                $model->__cache[$field->slug] = $model->offsetGet($field->slug);
+                $model->offsetUnset($field->slug);
             }
         }
 
-        $validator = validator($model->toArray(), $rules, [], $attributes);
+        $validator = validator($data, $rules, [], $attributes);
         $validator->validate();
     }
 
@@ -36,11 +58,7 @@ class Observer
         );
 
         $model->fields()->map(function (Field $field) use ($struct, $model) {
-            $struct->members()->create(
-                [
-                    'field_id' => $field->id,
-                ]
-            );
+            $struct->members()->create(['field_id' => $field->id]);
         });
     }
 
@@ -55,34 +73,20 @@ class Observer
         }
     }
 
-    public function saving(Model $model)
-    {
-        $rules = [];
-        $attributes = [];
-
-        foreach ($model->getDirty() as $key => $value) {
-            if ($key === $model->getKeyName()) {
-                continue;
-            }
-            $field = $model->prototype()->field($key);
-
-            if ($field->hasRules()) {
-                $rules[$field->slug] = $field->rules;
-                $attributes[$field->slug] = sprintf('%s.%s', $model->getTable(), $field->slug);
-            }
-        }
-
-        $validator = validator($model->toArray(), $rules, [], $attributes);
-        $validator->validate();
-    }
-
     public function saved(Model $model)
     {
-        foreach ($model->getDirty() as $key => $value) {
-            if ($key === $model->getKeyName()) {
+        foreach ($model->prototype()->fields as $field) {
+            if ($field->slug === $model->getKeyName()) {
                 continue;
             }
-            $member = $model->struct()->member($key);
+
+            if (! $model->isDirty([$field->slug]) && ! $field->scatter) {
+                continue;
+            }
+
+            $member = $model->struct()->member($field->slug);
+
+            $value = $field->scatter ? array_get($model->__cache, $field->slug) : $model->getAttribute($field->slug);
             $member->setValue($value);
         }
     }
