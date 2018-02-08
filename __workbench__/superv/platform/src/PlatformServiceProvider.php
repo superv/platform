@@ -25,9 +25,7 @@ class PlatformServiceProvider extends BaseServiceProvider
         ThemeServiceProvider::class,
     ];
 
-    protected $bindings = [
-        User::class  => PlatformUser::class,
-    ];
+    protected $bindings = [];
 
     protected $singletons = [
         Users::class => PlatformUsers::class
@@ -54,6 +52,8 @@ class PlatformServiceProvider extends BaseServiceProvider
         config(['superv.migrations.scopes' => [
             'platform' => Platform::path('database/migrations'),
         ]]);
+
+        $this->registerBindings([User::class => Platform::config('auth.user.model')]);
     }
 
     public function boot()

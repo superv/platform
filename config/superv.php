@@ -1,5 +1,7 @@
 <?php
 
+use SuperV\Platform\Packs\Auth\PlatformUser;
+
 return [
     'installed' => env('SUPERV_INSTALLED', false),
     'droplets' => [
@@ -22,6 +24,11 @@ return [
             'hostname' => 'api.'.env('SUPERV_HOSTNAME'),
             'prefix'   => 'v1',
         ],
+    ],
+    'auth' => [
+        'user' => [
+            'model' => PlatformUser::class
+        ]
     ],
     'clockwork' => env('SUPERV_CLOCKWORK', false)
 ];
