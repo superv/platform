@@ -2,12 +2,12 @@
 
 namespace SuperV\Platform\Packs\Auth;
 
-class PlatformUsers implements Users
+class WebUsers
 {
     /** @var \Illuminate\Database\Eloquent\Builder */
     protected $query;
 
-    public function __construct(User $user)
+    public function __construct(WebUser $user)
     {
         $this->query = $user->query();
     }
@@ -24,6 +24,12 @@ class PlatformUsers implements Users
 
     public function create(array $attributes = [])
     {
+        $userAttributes = array_pull($attributes, 'user');
+
+        $user = app(Users::class)->create($userAttributes);
+
+        array_set($attributes, 'user_id', $user->id);
+
         return $this->query->create($attributes);
     }
 }
