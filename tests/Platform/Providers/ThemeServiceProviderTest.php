@@ -13,9 +13,7 @@ class ThemeServiceProviderTest extends BaseTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @testÖ
-     */
+    /** @test */
     function get_registered_with_platform()
     {
         $this->assertProviderRegistered(ThemeServiceProvider::class);
