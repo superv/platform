@@ -30,5 +30,8 @@ return [
             'model' => PlatformUser::class
         ]
     ],
+    'twig' => [
+        'enabled' => true,
+    ],
     'clockwork' => env('SUPERV_CLOCKWORK', false)
 ];
