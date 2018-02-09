@@ -4,7 +4,7 @@ namespace SuperV\Platform\Packs\Nucleo;
 
 trait Structable
 {
-    public $__cache = [];
+    public $__cache = []; /** hate */
 
     protected static function boot()
     {

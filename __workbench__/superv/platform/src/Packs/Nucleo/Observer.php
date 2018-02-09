@@ -39,7 +39,7 @@ class Observer
             }
 
             if ($field->scatter) {
-                $model->__cache[$field->slug] = $model->offsetGet($field->slug);
+                $model->__cache[$field->slug] = $model->offsetGet($field->slug);  /** hate */
                 $model->offsetUnset($field->slug);
             }
         }
@@ -86,7 +86,7 @@ class Observer
 
             $member = $model->struct()->member($field->slug);
 
-            $value = $field->scatter ? array_get($model->__cache, $field->slug) : $model->getAttribute($field->slug);
+            $value = $field->scatter ? array_get($model->__cache  /** hate */, $field->slug) : $model->getAttribute($field->slug);
             $member->setValue($value);
         }
     }
