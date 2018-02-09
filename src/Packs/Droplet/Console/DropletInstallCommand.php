@@ -11,8 +11,16 @@ class DropletInstallCommand extends Command
 
     public function handle(Installer $installer)
     {
-        $installer->path($this->option('path'))
-                  ->slug($this->argument('slug'))
-                  ->install();
+        try {
+            $installer->path($this->option('path'))
+                      ->slug($this->argument('slug'))
+                      ->install();
+
+            $this->comment('Droplet installed..!');
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
+
+
     }
 }

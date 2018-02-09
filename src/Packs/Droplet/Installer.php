@@ -12,8 +12,8 @@ class Installer
 
     public function install()
     {
-        if (! file_exists(base_path($this->path))) {
-            throw new PathNotFoundException($this->path);
+        if (! $this->path || ! file_exists(base_path($this->path))) {
+            throw new PathNotFoundException("Path not found for droplet {$this->slug}");
         }
         $droplet = new DropletModel([
             'name'      => $this->name(),
