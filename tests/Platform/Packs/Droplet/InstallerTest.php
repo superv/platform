@@ -30,11 +30,21 @@ class InstallerTest extends BaseTestCase
     }
 
     /** @test */
-    function verifies_droplet_path()
+    function verifies_droplet_path_exists()
     {
         $this->expectException(PathNotFoundException::class);
         $this->installer()
              ->path('path/does/not/exist')
+             ->slug('droplets.sample')
+             ->install();
+    }
+
+    /** @test */
+    function path_cannot_be_null()
+    {
+        $this->expectException(PathNotFoundException::class);
+        $this->installer()
+             ->path(null)
              ->slug('droplets.sample')
              ->install();
     }
