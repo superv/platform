@@ -50,9 +50,9 @@ class Platform
 
     public function path($prefix = null)
     {
-        $path = $this->config('droplets.location') . '/superv/platform';
+        $path = $this->config('droplets.location').'/superv/platform';
 
-        return $path . ($prefix ? '/'.$prefix : '');
+        return $path.($prefix ? '/'.$prefix : '');
     }
 
     public function fullPath($prefix = null)
