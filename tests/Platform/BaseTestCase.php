@@ -2,6 +2,7 @@
 
 namespace Tests\SuperV\Platform;
 
+use Illuminate\Contracts\Console\Kernel;
 use SuperV\Platform\Packs\Droplet\DropletModel;
 use SuperV\Platform\Packs\Droplet\Installer;
 use Tests\SuperV\TestCase;
@@ -96,5 +97,10 @@ class BaseTestCase extends TestCase
     protected function assertProviderRegistered($provider)
     {
         $this->assertContains($provider, array_keys($this->app->getLoadedProviders()));
+    }
+
+    protected function assertProviderNotRegistered($provider)
+    {
+        $this->assertNotContains($provider, array_keys($this->app->getLoadedProviders()));
     }
 }
