@@ -22,6 +22,11 @@ abstract class BaseServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->registerAll();
+    }
+
+    public function registerAll()
+    {
         $this->registerProviders($this->providers);
         $this->registerBindings($this->bindings);
         $this->registerSingletons($this->singletons);
