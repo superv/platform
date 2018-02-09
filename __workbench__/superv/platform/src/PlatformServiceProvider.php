@@ -41,10 +41,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         DropletInstallCommand::class,
     ];
 
-    protected $aliases = [
-        'Platform' => PlatformFacade::class,
-    ];
-
     public function register()
     {
         /**
