@@ -19,10 +19,10 @@
         "spatie/laravel-tail": "^2.0"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.1",
         "barryvdh/laravel-ide-helper": "~2.3",
         "doctrine/dbal": "^2.6",
         "fzaninotto/faker": "~1.4",
-        "itsgoingd/clockwork": "^2.0",
         "laravel/dusk": "^2.0",
         "mockery/mockery": "0.9.*",
         "nunomaduro/collision": "^1.1",
