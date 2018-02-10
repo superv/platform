@@ -22,7 +22,7 @@ class SuperVInstallCommand extends Command
     protected function setEnv()
     {
         $file = base_path('.env');
-        $contents = str_replace('SUPERV_INSTALLED=false', 'SUPERV_INSTALLED=true', file_get_contents($file));
+        $contents = str_replace('SV_INSTALLED=false', 'SV_INSTALLED=true', file_get_contents($file));
         file_put_contents($file, $contents);
     }
 }

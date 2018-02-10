@@ -3,6 +3,8 @@
 namespace Tests\SuperV\Platform\Packs\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Validation\ValidationException;
+use SuperV\Platform\Packs\Auth\User;
 use SuperV\Platform\Packs\Auth\Users;
 use SuperV\Platform\Packs\Auth\WebUsers;
 use SuperV\Platform\Packs\Nucleo\Blueprint;
@@ -28,22 +30,29 @@ class WebUserTest extends BaseTestCase
         $this->assertEquals(app(Users::class)->first(), $webUser->user);
     }
 
-    /** @test */
+
     function webuser_structs()
     {
         $this->builder()->table('users_web', function(Blueprint $table) {
-            $table->string('phone')->nullable()->rules('required|min:3');
+            $table->string('phone')->nullable()->rules('required|min:3')->scatter();
         });
 
-        $webUser = app(WebUsers::class)->create([
-            'first_name' => 'Abou',
-            'last_name'  => 'Yousef',
-            'phone' => '123',
-            'user'       => [
-                'email'    => 'ay@superv.io',
-                'password' => 'secret',
-            ],
-        ]);
+        try {
+            $webUser = app(WebUsers::class)->create([
+                'first_name' => 'Abou',
+                'last_name'  => 'Yousef',
+                'phone'      => '231',
+                'user'       => [
+                    'email'    => 'ay@superv.io',
+                    'password' => 'secret',
+                ],
+            ]);
+        } catch (ValidationException $e) {
+            throw $e;
+            dd($e->errors());
+        }
+
+        dd($webUser->toArray());
 
     }
 
