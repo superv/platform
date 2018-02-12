@@ -11,7 +11,7 @@ use SuperV\Platform\Packs\Auth\UserCreatedEvent;
 use SuperV\Platform\Packs\Auth\Users;
 use Tests\SuperV\Platform\BaseTestCase;
 
-class UserRegistrationTest extends BaseTestCase
+class RegistrationTest extends BaseTestCase
 {
     use RefreshDatabase;
 
