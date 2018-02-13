@@ -1,7 +1,5 @@
 <?php
 
-use SuperV\Platform\Packs\Auth\Domains\User\UserModel;
-
 return [
 
     /*
@@ -69,7 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => UserModel::class,
+            'model' => SuperV\Platform\Packs\Auth\User::class,
             'table' => 'users'
         ],
 

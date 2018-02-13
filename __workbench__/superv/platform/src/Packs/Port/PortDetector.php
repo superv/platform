@@ -15,8 +15,6 @@ class PortDetector
             $request->getHttpHost(),
             $request->getRequestUri()
         )) {
-//            Platform::setActivePort($port);
-
             PortDetectedEvent::dispatch($port);
         }
     }
