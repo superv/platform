@@ -2,12 +2,14 @@
 
 namespace SuperV\Platform;
 
+use Auth;
+use Illuminate\Config\Repository;
 use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Exceptions\CorePlatformException;
-use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\Listeners\PortDetectedListener;
 use SuperV\Platform\Listeners\RouteMatchedListener;
+use SuperV\Platform\Packs\Auth\PlatformUserProvider;
 use SuperV\Platform\Packs\Auth\PlatformUsers;
 use SuperV\Platform\Packs\Auth\User;
 use SuperV\Platform\Packs\Auth\Users;
@@ -76,8 +78,25 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     public function boot()
     {
-        if (config('superv.installed') === true) {
-            Platform::boot();
+        if (config('superv.installed') !== true) {
+            return;
         }
+
+        Platform::boot();
+
+        Auth::provider('platform', function ($app) {
+            return new PlatformUserProvider($app['hash'], config('superv.auth.user.model'));
+        });
+
+        config()->set('auth.defaults.guard', 'platform');
+
+        config()->set('auth.guards.platform', [
+            'driver'   => 'session',
+            'provider' => 'platform',
+        ]);
+
+        config()->set('auth.providers.platform', [
+            'driver' => 'platform',
+        ]);
     }
 }
