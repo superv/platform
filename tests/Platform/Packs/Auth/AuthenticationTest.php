@@ -4,6 +4,7 @@ namespace Tests\SuperV\Platform\Packs\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use SuperV\Platform\Packs\Auth\AuthenticatesUsers;
 use SuperV\Platform\Packs\Auth\PlatformUser;
 use SuperV\Platform\PlatformServiceProvider;
 use Tests\SuperV\Platform\BaseTestCase;
@@ -13,7 +14,7 @@ class AuthenticationTest extends BaseTestCase
     use RefreshDatabase;
 
     /** @test */
-    function authenticates_user_based_on_ports()
+    function authenticates_valid_user_on_an_allowed_port()
     {
 
         config(['superv.installed' => true]);
@@ -44,7 +45,37 @@ class AuthenticationTest extends BaseTestCase
     }
 
     /** @test */
-    function user_is_not_authenticated_on_a_port_that_is_not_allowed()
+       function does_not_authenticate_a_user_with_invalid_credentials()
+       {
+           config(['superv.installed' => true]);
+
+           (new PlatformServiceProvider($this->app))->boot();
+
+           $this->setUpPort('web', env('SV_HOSTNAME'));
+           app('router')->post('login', [
+               'uses' => LoginControllerStub::class.'@login',
+               'port' => 'web',
+           ]);
+
+           factory(PlatformUser::class)->create([
+               'email' => 'user@superv.io',
+               'ports' => ['web'],
+           ]);
+
+           $response = $this->from('/login')->post('/login', [
+               'email'    => 'user@superv.io',
+               'password' => 'not-the-right-password',
+           ]);
+
+           $response->assertStatus(302);
+           $response->assertRedirect('login');
+
+           $this->assertNull(auth()->user());
+           $this->assertFalse(\Auth::check());
+       }
+
+    /** @test */
+    function does_not_authenticate_valid_user_on_a_disallowed_port()
     {
         config(['superv.installed' => true]);
 
@@ -76,24 +107,5 @@ class AuthenticationTest extends BaseTestCase
 
 class LoginControllerStub
 {
-    protected $redirect = 'dashboard';
-
-    public function login(Request $request)
-    {
-        $guard = auth()->guard('platform');
-        if (! $guard->attempt($request->only(['email', 'password']))) {
-            return redirect()->back()
-                             ->withInput(request(['email']))
-                             ->withErrors([
-                                 'email' => 'Invalid credentials',
-                             ]);;
-        }
-
-        return redirect()->to($this->redirectTo());
-    }
-
-    public function redirectTo()
-    {
-        return $this->redirect;
-    }
+    use AuthenticatesUsers;
 }
