@@ -1,0 +1,22 @@
+{
+    "name": "superv/platform",
+    "autoload": {
+        "psr-4": {
+            "SuperV\\Platform\\": "src/"
+        },
+        "files": [
+        ]
+    },
+    "require": {
+        "symfony/twig-bridge": "^3.3",
+        "twig/twig": "~2.4"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SuperV\\Platform\\PlatformServiceProvider"
+            ]
+        }
+    }
+    
+}
