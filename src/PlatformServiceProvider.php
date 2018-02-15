@@ -9,21 +9,20 @@ use SuperV\Platform\Domains\Auth\PlatformUserProvider;
 use SuperV\Platform\Domains\Auth\PlatformUsers;
 use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Auth\Users;
-use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Listeners\PortDetectedListener;
 use SuperV\Platform\Listeners\RouteMatchedListener;
 use SuperV\Platform\Providers\BaseServiceProvider;
-use SuperV\Platform\Providers\ThemeServiceProvider;
 use SuperV\Platform\Providers\TwigServiceProvider;
 
 class PlatformServiceProvider extends BaseServiceProvider
 {
     protected $providers = [
+        'SuperV\Platform\Providers\ThemeServiceProvider',
         'SuperV\Platform\Adapters\AdapterServiceProvider',
-        MigrationServiceProvider::class,
-        ThemeServiceProvider::class,
+        'SuperV\Platform\Domains\Asset\AssetServiceProvider',
+        'SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider',
     ];
 
     protected $bindings = [];
