@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Asset;
+namespace SuperV\Platform\Support;
 
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Filesystem\Filesystem;
