@@ -30,6 +30,19 @@ class InstallerTest extends BaseTestCase
     }
 
     /** @test */
+    function runs_droplets_migrations_when_installed()
+    {
+        $this->installer()
+             ->path('tests/Platform/__fixtures__/sample-droplet')
+             ->slug('droplets.sample')
+             ->install();
+
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration']);
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200100_droplet_bar_migration']);
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_droplet_baz_migration']);
+    }
+
+    /** @test */
     function verifies_droplet_path_exists()
     {
         $this->expectException(PathNotFoundException::class);

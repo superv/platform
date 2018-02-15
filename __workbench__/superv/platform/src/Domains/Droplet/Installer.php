@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Droplet;
 
+use Illuminate\Contracts\Console\Kernel;
 use SuperV\Platform\Exceptions\PathNotFoundException;
 
 class Installer
@@ -9,6 +10,16 @@ class Installer
     protected $slug;
 
     protected $path;
+
+    /**
+     * @var \Illuminate\Contracts\Console\Kernel
+     */
+    protected $console;
+
+    public function __construct(Kernel $console)
+    {
+        $this->console = $console;
+    }
 
     public function install()
     {
@@ -25,6 +36,10 @@ class Installer
         ]);
 
         $droplet->save();
+
+        app()->register($droplet->resolveDroplet()->resolveProvider());
+
+        $this->console->call('migrate', ['--scope' => $droplet->slug]);
     }
 
     public function type()
