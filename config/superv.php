@@ -1,6 +1,6 @@
 <?php
 
-use SuperV\Platform\Domains\Auth\PlatformUser;
+use SuperV\Platform\Domains\Auth\User;
 
 return [
     'installed' => env('SV_INSTALLED', false),
@@ -27,7 +27,7 @@ return [
     ],
     'auth' => [
         'user' => [
-            'model' => PlatformUser::class
+            'model' => User::class
         ]
     ],
     'twig' => [

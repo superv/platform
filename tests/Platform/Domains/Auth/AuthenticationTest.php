@@ -4,7 +4,7 @@ namespace Tests\SuperV\Platform\Domains\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Auth\AuthenticatesUsers;
-use SuperV\Platform\Domains\Auth\PlatformUser;
+use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\PlatformServiceProvider;
 use Tests\SuperV\Platform\BaseTestCase;
 
@@ -25,7 +25,7 @@ class AuthenticationTest extends BaseTestCase
             'uses' => LoginControllerStub::class.'@login',
             'port' => 'web',
         ]);
-        $user = factory(PlatformUser::class)->create([
+        $user = factory(User::class)->create([
             'email' => 'user@superv.io',
             'ports' => ['web'],
         ]);
@@ -56,7 +56,7 @@ class AuthenticationTest extends BaseTestCase
                'port' => 'web',
            ]);
 
-           factory(PlatformUser::class)->create([
+           factory(User::class)->create([
                'email' => 'user@superv.io',
                'ports' => ['web'],
            ]);
@@ -86,7 +86,7 @@ class AuthenticationTest extends BaseTestCase
             'port' => 'web',
         ]);
 
-        factory(PlatformUser::class)->create([
+        factory(User::class)->create([
             'email' => 'user@superv.io',
             'ports' => ['acp'],
         ]);

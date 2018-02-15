@@ -24,7 +24,7 @@ class UserRegistrar
             'password' => 'required|confirmed|min:6',
         ])->validate();
 
-        $user = PlatformUser::create([
+        $user = User::create([
             'email'    => request('email'),
             'password' => bcrypt(request('password')),
         ]);

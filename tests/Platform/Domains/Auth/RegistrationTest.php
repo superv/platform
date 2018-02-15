@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use SuperV\Platform\Domains\Auth\Contracts\Users;
 use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
-use SuperV\Platform\Domains\Auth\PlatformUser;
+use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Auth\RegistersUsers;
 use Tests\SuperV\Platform\BaseTestCase;
 
@@ -101,7 +101,7 @@ class RegistrationTest extends BaseTestCase
         */
        function email_must_be_unique()
        {
-           factory(PlatformUser::class)->create(['email' => 'client@example.com']);
+           factory(User::class)->create(['email' => 'client@example.com']);
 
            app('router')->post('register', ControllerStub::class.'@register');
 
