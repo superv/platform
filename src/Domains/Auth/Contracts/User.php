@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Auth;
+namespace SuperV\Platform\Domains\Auth\Contracts;
 
 interface User
 {

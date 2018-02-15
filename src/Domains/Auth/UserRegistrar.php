@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Auth;
 
 use Illuminate\Validation\Factory;
+use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
 
 class UserRegistrar
 {
