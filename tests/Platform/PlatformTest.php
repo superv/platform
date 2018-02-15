@@ -54,7 +54,6 @@ class PlatformTest extends BaseTestCase
         $this->assertEquals('acp', Platform::activePort());
     }
 
-
     /** @test */
     function returns_platform_relative_path()
     {
