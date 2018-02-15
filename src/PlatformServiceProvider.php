@@ -3,7 +3,6 @@
 namespace SuperV\Platform;
 
 use Auth;
-use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Domains\Auth\PlatformUserProvider;
 use SuperV\Platform\Domains\Auth\PlatformUsers;
@@ -21,6 +20,7 @@ use SuperV\Platform\Providers\TwigServiceProvider;
 class PlatformServiceProvider extends BaseServiceProvider
 {
     protected $providers = [
+        'SuperV\Platform\Adapters\AdapterServiceProvider',
         MigrationServiceProvider::class,
         ThemeServiceProvider::class,
     ];
