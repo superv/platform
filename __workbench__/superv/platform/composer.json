@@ -1,0 +1,22 @@
+{
+    "name": "superv/platform",
+    "autoload": {
+        "psr-4": {
+            "SuperV\\Platform\\": "src/"
+        },
+        "files": [
+        ]
+    },
+    "require": {
+        "kriswallsmith/assetic": "^1.4",
+        "rcrowe/twigbridge": "^0.9.5"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SuperV\\Platform\\PlatformServiceProvider"
+            ]
+        }
+    }
+    
+}
