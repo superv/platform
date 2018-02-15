@@ -18,4 +18,14 @@ class User extends Model implements UserContract, AuthenticatableContract
     protected $casts = [
         'ports' => 'json'
     ];
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+    public function createProfile(array $attributes)
+    {
+        return $this->profile()->create($attributes);
+    }
 }
