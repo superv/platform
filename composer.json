@@ -6,6 +6,7 @@
             "SuperV\\Platform\\": "src/"
         },
         "files": [
+            "src/Support/helpers.php"
         ]
     },
     "require": {
