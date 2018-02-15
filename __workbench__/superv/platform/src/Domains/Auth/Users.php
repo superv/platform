@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Auth;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Auth\Contracts\Users as UsersContract;
 
-class PlatformUsers implements UsersContract
+class Users implements UsersContract
 {
     /** @var \Illuminate\Database\Eloquent\Builder */
     protected $query;

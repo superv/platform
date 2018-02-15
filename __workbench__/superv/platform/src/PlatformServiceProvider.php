@@ -6,13 +6,8 @@ use Auth;
 use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Domains\Auth\Contracts\User;
-use SuperV\Platform\Domains\Auth\Contracts\Users;
 use SuperV\Platform\Domains\Auth\PlatformUserProvider;
-use SuperV\Platform\Domains\Auth\PlatformUsers;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
-use SuperV\Platform\Domains\Port\PortDetectedEvent;
-use SuperV\Platform\Listeners\PortDetectedListener;
-use SuperV\Platform\Listeners\RouteMatchedListener;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use SuperV\Platform\Providers\TwigServiceProvider;
 
@@ -28,12 +23,12 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected $bindings = [];
 
     protected $singletons = [
-        Users::class => PlatformUsers::class,
+        'SuperV\Platform\Domains\Auth\Contracts\Users' => 'SuperV\Platform\Domains\Auth\Users',
     ];
 
     protected $listeners = [
-        'Illuminate\Routing\Events\RouteMatched' => RouteMatchedListener::class,
-        PortDetectedEvent::class                 => PortDetectedListener::class,
+        'Illuminate\Routing\Events\RouteMatched'         => 'SuperV\Platform\Listeners\RouteMatchedListener',
+        'SuperV\Platform\Domains\Port\PortDetectedEvent' => 'SuperV\Platform\Listeners\PortDetectedListener',
     ];
 
     protected $commands = [
