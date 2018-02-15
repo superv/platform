@@ -12,7 +12,6 @@ use SuperV\Platform\Domains\Auth\Users;
 use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
-use SuperV\Platform\Exceptions\CorePlatformException;
 use SuperV\Platform\Listeners\PortDetectedListener;
 use SuperV\Platform\Listeners\RouteMatchedListener;
 use SuperV\Platform\Providers\BaseServiceProvider;
