@@ -14,6 +14,8 @@ class Port
 
     protected $theme = null;
 
+    protected $allowedUserTypes = [];
+
     /**
      * @return mixed
      */
@@ -90,5 +92,19 @@ class Port
         return $port;
     }
 
+    /**
+     * @param array $types
+     */
+    public function setAllowedUserTypes(array $types)
+    {
+        $this->allowedUserTypes = $types;
+    }
 
+    /**
+     * @return array
+     */
+    public function allowedUserTypes()
+    {
+        return $this->allowedUserTypes;
+    }
 }

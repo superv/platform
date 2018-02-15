@@ -37,16 +37,22 @@ class BaseTestCase extends TestCase
     }
 
     /**
-     * @param      $port
-     * @param      $hostname
-     * @param null $theme
+     * @param       $port
+     * @param       $hostname
+     * @param null  $theme
+     *
+     * @param array $allowedUserTypes
+     *
+     * @return void
      */
-    protected function setUpPort($port, $hostname, $theme = null)
+    protected function setUpPort($port, $hostname, $theme = null, $allowedUserTypes = [])
     {
-        $ports = config('superv.ports', []);
-        $ports[$port] = [
-            'hostname' => $hostname,
-            'theme'    => $theme,
+        $ports = [
+            $port => [
+                'hostname'           => $hostname,
+                'theme'              => $theme,
+                'allowed_user_types' => $allowedUserTypes,
+            ],
         ];
         config(['superv.ports' => $ports]);
     }

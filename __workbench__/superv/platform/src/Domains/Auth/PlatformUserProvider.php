@@ -30,15 +30,15 @@ class PlatformUserProvider extends EloquentUserProvider
             }
         }
 
+        if ($port = \Platform::port()) {
+            $query->whereIn('type', $port->allowedUserTypes());
+        }
+
         if (! $user = $query->first()) {
             return null;
         }
 
-        if ($port = \Platform::port()) {
-            if (! in_array($port->slug(), $user->ports)) {
-                return null;
-            }
-        }
+
 
         return $user;
     }
