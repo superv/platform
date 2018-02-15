@@ -2,14 +2,16 @@
 
 namespace SuperV\Platform\Providers;
 
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Support\ServiceProvider;
 use Platform;
-use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
-use SuperV\Platform\Exceptions\DropletNotFoundException;
+use SuperV\Platform\Jobs\ActivateThemeJob;
 
 class ThemeServiceProvider extends ServiceProvider
 {
+    use DispatchesJobs;
+
     public function register()
     {
         $this->app['events']->listen(PortDetectedEvent::class,
@@ -21,11 +23,8 @@ class ThemeServiceProvider extends ServiceProvider
                     return;
                 }
 
-                if (!$theme = DropletModel::bySlug($themeSlug)) {
-                    throw new DropletNotFoundException($themeSlug);
-                }
-
-                $this->app['view']->addNamespace('theme', base_path($theme->path.'/resources/views'));
-            });
+                $this->dispatch(new ActivateThemeJob($themeSlug));
+            }
+        );
     }
 }
