@@ -4,7 +4,6 @@ namespace SuperV\Platform\Domains\Asset;
 
 use Assetic\Asset\FileAsset;
 use Assetic\Asset\GlobAsset;
-use Collective\Html\HtmlBuilder;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
@@ -13,11 +12,6 @@ use SuperV\Platform\Domains\Droplet\DropletModel;
 class Asset
 {
     private $collections = [];
-
-    /**
-     * @var \Collective\Html\HtmlBuilder
-     */
-    private $html;
 
     /**
      * @var \Illuminate\Http\Request
@@ -36,12 +30,11 @@ class Asset
 
     protected $paths = [];
 
-    public function __construct(Filesystem $files, UrlGenerator $url, Request $request, HtmlBuilder $html)
+    public function __construct(Filesystem $files, UrlGenerator $url, Request $request)
     {
         $this->request = $request;
         $this->files = $files;
         $this->url = $url;
-        $this->html = $html;
     }
 
     public function url($collection, array $filters = [], array $parameters = [], $secure = null)
@@ -65,7 +58,7 @@ class Asset
 
         $attributes['src'] = $this->path($collection, $filters);
 
-        return '<script'.$this->html->attributes($attributes).'></script>';
+        return '<script'.html_attributes($attributes).'></script>';
     }
 
     public function style($collection, array $filters = [], array $attributes = [])
@@ -89,7 +82,7 @@ class Asset
 
                 $attributes['href'] = $path;
 
-                return '<link'.$this->html->attributes($attributes).'>';
+                return '<link'.html_attributes($attributes).'>';
             },
             $this->paths($collection, $filters)
         );
