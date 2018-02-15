@@ -14,23 +14,18 @@ class DropletServiceProviderTest extends BaseTestCase
     /** @test */
     function registers_droplets_routes_from_routes_folder()
     {
-        $droplet = $this->setUpDroplet();
-
-        $routesPath = $droplet->path('routes');
-
         $router = $this->app->instance(Router::class, Mockery::mock(Router::class));
-        $router->shouldReceive('loadFromPath')->with($routesPath)->once();
+        $router->shouldReceive('loadFromPath')
+               ->with('tests/Platform/__fixtures__/sample-droplet/routes')
+               ->once();
 
-        $this->app->register($droplet->resolveProvider());
+        $this->setUpDroplet();
     }
 
     /** @test */
     function adds_droplets_view_namespaces()
     {
         $droplet = $this->setUpDroplet();
-        $provider = $droplet->resolveProvider();
-
-        $this->app->register($provider);
 
         $hints = $this->app['view']->getFinder()->getHints();
         $this->assertContains(base_path($droplet->resourcePath('views')), $hints['droplets.sample']);
@@ -41,9 +36,6 @@ class DropletServiceProviderTest extends BaseTestCase
     function registers_migrations_path()
     {
         $droplet = $this->setUpDroplet();
-        $provider = $droplet->resolveProvider();
-
-        $this->app->register($provider);
 
         $this->assertEquals($droplet->path('database/migrations'), config('superv.migrations.scopes')[$droplet->slug()]);
     }
