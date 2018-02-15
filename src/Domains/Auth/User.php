@@ -5,9 +5,9 @@ namespace SuperV\Platform\Domains\Auth;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
-use SuperV\Platform\Domains\Auth\Contracts\User;
+use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
 
-class PlatformUser extends Model implements User, AuthenticatableContract
+class User extends Model implements UserContract, AuthenticatableContract
 {
     use Authenticatable;
 
