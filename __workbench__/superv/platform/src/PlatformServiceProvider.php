@@ -21,6 +21,7 @@ use SuperV\Platform\Providers\TwigServiceProvider;
 class PlatformServiceProvider extends BaseServiceProvider
 {
     protected $providers = [
+        'SuperV\Platform\Adapters\AdapterServiceProvider',
         MigrationServiceProvider::class,
         ThemeServiceProvider::class,
     ];
