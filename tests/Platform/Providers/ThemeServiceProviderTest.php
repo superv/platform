@@ -3,8 +3,10 @@
 namespace Tests\SuperV\Platform\Providers;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
+use SuperV\Platform\Events\ThemeActivatedEvent;
 use SuperV\Platform\Exceptions\DropletNotFoundException;
 use SuperV\Platform\Providers\ThemeServiceProvider;
 use Tests\SuperV\Platform\BaseTestCase;
@@ -45,6 +47,24 @@ class ThemeServiceProviderTest extends BaseTestCase
 
         $hints = $this->app['view']->getFinder()->getHints();
         $this->assertFalse(array_key_exists('theme', $hints));
+    }
+
+    /** @test */
+    function dispatches_event_when_a_theme_is_activated()
+    {
+        app(Installer::class)
+            ->path('tests/Platform/__fixtures__/starter-theme')
+            ->slug('themes.starter')
+            ->install();
+
+        $this->setUpPort('web', 'superv.io', 'themes.starter');
+
+        Event::fake([ThemeActivatedEvent::class]);
+        PortDetectedEvent::dispatch('web');
+
+        Event::assertDispatched(ThemeActivatedEvent::class, function($event) {
+            return $event->theme->slug === 'themes.starter';
+        });
     }
 
     /** @test */

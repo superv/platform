@@ -4,6 +4,7 @@ namespace SuperV\Platform\Jobs;
 
 use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Events\ThemeActivatedEvent;
 use SuperV\Platform\Exceptions\DropletNotFoundException;
 
 class ActivateThemeJob
@@ -22,5 +23,7 @@ class ActivateThemeJob
         }
 
         $view->addNamespace('theme', base_path($theme->path.'/resources/views'));
+
+        ThemeActivatedEvent::dispatch($theme);
     }
 }
