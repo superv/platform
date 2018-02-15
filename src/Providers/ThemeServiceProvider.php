@@ -4,9 +4,9 @@ namespace SuperV\Platform\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Platform;
+use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Exceptions\DropletNotFoundException;
-use SuperV\Platform\Packs\Droplet\DropletModel;
-use SuperV\Platform\Packs\Port\PortDetectedEvent;
 
 class ThemeServiceProvider extends ServiceProvider
 {

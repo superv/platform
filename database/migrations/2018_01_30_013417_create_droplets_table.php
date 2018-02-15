@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use SuperV\Platform\Packs\Database\Migrations\Migration;
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class CreateDropletsTable extends Migration
 {

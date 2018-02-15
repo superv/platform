@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use SuperV\Platform\Packs\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class CreateUsersTable extends Migration
 {

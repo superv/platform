@@ -1,7 +1,7 @@
 <?php
 
-use SuperV\Platform\Packs\Database\Migrations\Migration;
-use SuperV\Platform\Packs\Nucleo\Blueprint;
+use SuperV\Platform\Domains\Database\Migrations\Migration;
+use SuperV\Platform\Domains\Nucleo\Blueprint;
 
 class CreateWebUsersTable extends Migration
 {

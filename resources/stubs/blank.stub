@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use SuperV\Platform\Packs\Database\Migrations\Migration;
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class DummyClass extends Migration
 {

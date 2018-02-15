@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Listeners;
 
-use SuperV\Platform\Packs\Port\PortDetectedEvent;
+use SuperV\Platform\Domains\Port\PortDetectedEvent;
 
 class PortDetectedListener
 {
