@@ -8,6 +8,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
 use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Support\Template;
 
 class Asset
 {
