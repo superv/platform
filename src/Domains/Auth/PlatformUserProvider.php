@@ -34,8 +34,8 @@ class PlatformUserProvider extends EloquentUserProvider
             return null;
         }
 
-        if ($port = \Platform::activePort()) {
-            if (! in_array($port, $user->ports)) {
+        if ($port = \Platform::port()) {
+            if (! in_array($port->slug(), $user->ports)) {
                 return null;
             }
         }

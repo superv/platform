@@ -2,20 +2,23 @@
 
 namespace SuperV\Platform\Domains\Port;
 
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Platform;
 
 class PortDetector
 {
+    use DispatchesJobs;
+
     /**
      * @param \Illuminate\Http\Request $request
      */
     public function detect($request)
     {
-        if ($port = $this->detectFor(
+        if ($portSlug = $this->detectFor(
             $request->getHttpHost(),
             $request->getRequestUri()
         )) {
-            PortDetectedEvent::dispatch($port);
+            PortDetectedEvent::dispatch(Port::fromSlug($portSlug));
         }
     }
 

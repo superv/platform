@@ -8,6 +8,7 @@ class PortDetectedEvent
 {
     use Dispatchable;
 
+    /** @var \SuperV\Platform\Domains\Port\Port */
     public $port;
 
     public function __construct($port)

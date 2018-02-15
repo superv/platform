@@ -17,9 +17,9 @@ class ThemeServiceProvider extends ServiceProvider
         $this->app['events']->listen(PortDetectedEvent::class,
             function (PortDetectedEvent $event) {
 
-                $config = Platform::config('ports.'.$event->port);
+//                $config = Platform::config('ports.'.$event->port);
 
-                if (! $themeSlug = array_get($config, 'theme')) {
+                if (! $themeSlug = $event->port->theme()) {
                     return;
                 }
 
