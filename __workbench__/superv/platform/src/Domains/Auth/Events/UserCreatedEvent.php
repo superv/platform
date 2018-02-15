@@ -1,7 +1,8 @@
 <?php
 
-namespace SuperV\Platform\Domains\Auth;
+namespace SuperV\Platform\Domains\Auth\Events;
 
+use SuperV\Platform\Domains\Auth\Contracts\User;
 
 class UserCreatedEvent
 {
