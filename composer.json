@@ -1,5 +1,6 @@
 {
     "name": "superv/platform",
+    "description": "SuperV Platform Package",
     "autoload": {
         "psr-4": {
             "SuperV\\Platform\\": "src/"
