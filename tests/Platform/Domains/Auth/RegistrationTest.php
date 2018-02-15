@@ -4,10 +4,10 @@ namespace Tests\SuperV\Platform\Domains\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use SuperV\Platform\Domains\Auth\Contracts\Users;
+use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
 use SuperV\Platform\Domains\Auth\PlatformUser;
 use SuperV\Platform\Domains\Auth\RegistersUsers;
-use SuperV\Platform\Domains\Auth\UserCreatedEvent;
-use SuperV\Platform\Domains\Auth\Users;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class RegistrationTest extends BaseTestCase
@@ -31,7 +31,7 @@ class RegistrationTest extends BaseTestCase
         $response->assertStatus(302);
         $response->assertRedirect((new ControllerStub)->getRedirectTo());
 
-        $users = app(Users::class);
+        $users = app(\SuperV\Platform\Domains\Auth\Contracts\Users::class);
 
         $this->assertEquals(1, $users->count());
 
@@ -152,7 +152,7 @@ class RegistrationTest extends BaseTestCase
            $response->assertRedirect('register');
            $response->assertSessionHasErrors(['password']);
 
-           $this->assertEquals(0, app(Users::class)->count());
+           $this->assertEquals(0, app(\SuperV\Platform\Domains\Auth\Contracts\Users::class)->count());
        }
 
        /**
@@ -175,7 +175,7 @@ class RegistrationTest extends BaseTestCase
            $response->assertRedirect('register');
            $response->assertSessionHasErrors(['password']);
 
-           $this->assertEquals(0, app(Users::class)->count());
+           $this->assertEquals(0, app(\SuperV\Platform\Domains\Auth\Contracts\Users::class)->count());
        }
 
     private function validParams($overrides = [])

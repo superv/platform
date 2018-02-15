@@ -2,6 +2,9 @@
 
 namespace SuperV\Platform\Domains\Auth;
 
+use SuperV\Platform\Domains\Auth\Contracts\User;
+use SuperV\Platform\Domains\Auth\Contracts\Users;
+
 class PlatformUsers implements Users
 {
     /** @var \Illuminate\Database\Eloquent\Builder */
