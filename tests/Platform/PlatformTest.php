@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Platform;
 use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Events\PlatformBootedEvent;
 
@@ -49,9 +50,9 @@ class PlatformTest extends BaseTestCase
     /** @test */
     function listens_port_detected_event_and_sets_active_port()
     {
-        PortDetectedEvent::dispatch('acp');
+        PortDetectedEvent::dispatch(Port::fromSlug('acp'));
 
-        $this->assertEquals('acp', Platform::activePort());
+        $this->assertEquals('acp', Platform::port()->slug());
     }
 
     /** @test */

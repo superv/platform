@@ -48,7 +48,7 @@ class PortDetectorTest extends BaseTestCase
         );
 
         Event::assertDispatched(PortDetectedEvent::class, function($event) {
-            return $event->port == 'web';
+            return $event->port->slug() === 'web';
         });
     }
 
@@ -56,7 +56,7 @@ class PortDetectorTest extends BaseTestCase
     /**
      * @return mixed|\SuperV\Platform\Domains\Port\PortDetector
      */
-    public function setUpDetector()
+    protected function setUpDetector()
     {
         return $this->app->make(PortDetector::class);
     }

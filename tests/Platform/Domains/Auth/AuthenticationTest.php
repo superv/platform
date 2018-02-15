@@ -15,10 +15,7 @@ class AuthenticationTest extends BaseTestCase
     /** @test */
     function authenticates_valid_user_on_an_allowed_port()
     {
-
-        config(['superv.installed' => true]);
-
-        (new PlatformServiceProvider($this->app))->boot();
+        $this->withoutExceptionHandling();
 
         $this->setUpPort('web', env('SV_HOSTNAME'));
         app('router')->post('login', [
@@ -46,10 +43,6 @@ class AuthenticationTest extends BaseTestCase
     /** @test */
        function does_not_authenticate_a_user_with_invalid_credentials()
        {
-           config(['superv.installed' => true]);
-
-           (new PlatformServiceProvider($this->app))->boot();
-
            $this->setUpPort('web', env('SV_HOSTNAME'));
            app('router')->post('login', [
                'uses' => LoginControllerStub::class.'@login',
@@ -76,10 +69,6 @@ class AuthenticationTest extends BaseTestCase
     /** @test */
     function does_not_authenticate_valid_user_on_a_disallowed_port()
     {
-        config(['superv.installed' => true]);
-
-        (new PlatformServiceProvider($this->app))->boot();
-
         $this->setUpPort('web', env('SV_HOSTNAME'));
         app('router')->post('login', [
             'uses' => LoginControllerStub::class.'@login',

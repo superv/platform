@@ -5,6 +5,7 @@ namespace Tests\SuperV\Platform\Providers;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use SuperV\Platform\Domains\Droplet\Installer;
+use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Events\ThemeActivatedEvent;
 use SuperV\Platform\Exceptions\DropletNotFoundException;
@@ -31,7 +32,7 @@ class ThemeServiceProviderTest extends BaseTestCase
 
         $this->setUpPort('web', 'superv.io', 'themes.starter');
 
-        PortDetectedEvent::dispatch('web');
+        PortDetectedEvent::dispatch(Port::fromSlug('web'));
 
         $hints = $this->app['view']->getFinder()->getHints();
         $this->assertContains(base_path('tests/Platform/__fixtures__/starter-theme/resources/views'), $hints['theme']);
@@ -43,7 +44,7 @@ class ThemeServiceProviderTest extends BaseTestCase
     {
         $this->setUpPort('web', 'superv.io', $theme = null);
 
-        PortDetectedEvent::dispatch('web');
+        PortDetectedEvent::dispatch(Port::fromSlug('web'));
 
         $hints = $this->app['view']->getFinder()->getHints();
         $this->assertFalse(array_key_exists('theme', $hints));
@@ -60,7 +61,7 @@ class ThemeServiceProviderTest extends BaseTestCase
         $this->setUpPort('web', 'superv.io', 'themes.starter');
 
         Event::fake([ThemeActivatedEvent::class]);
-        PortDetectedEvent::dispatch('web');
+        PortDetectedEvent::dispatch(Port::fromSlug('web'));
 
         Event::assertDispatched(ThemeActivatedEvent::class, function($event) {
             return $event->theme->slug === 'themes.starter';
@@ -74,6 +75,6 @@ class ThemeServiceProviderTest extends BaseTestCase
 
         $this->setUpPort('web', 'superv.io', $theme = 'non.existant.theme');
 
-        PortDetectedEvent::dispatch('web');
+        PortDetectedEvent::dispatch(Port::fromSlug('web'));
     }
 }

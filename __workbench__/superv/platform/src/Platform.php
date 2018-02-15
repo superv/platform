@@ -3,17 +3,24 @@
 namespace SuperV\Platform;
 
 use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Events\PlatformBootedEvent;
 
 class Platform
 {
-    protected $activePort;
+    /**
+     * @var \SuperV\Platform\Domains\Port\Port
+     */
+    protected $port;
 
     /**
      * @var \Illuminate\Events\Dispatcher
      */
     protected $events;
 
+    /**
+     * Boot enable droplets
+     */
     public function boot()
     {
         $entries = DropletModel::where('enabled', true)->get();
@@ -31,19 +38,22 @@ class Platform
         return config("superv.{$key}", $default);
     }
 
-    public function activePort()
+    /**
+     * @return \SuperV\Platform\Domains\Port\Port
+     */
+    public function port()
     {
-        return $this->activePort;
+        return $this->port;
     }
 
     /**
-     * @param mixed $activePort
+     * @param \SuperV\Platform\Domains\Port\Port $port
      *
      * @return Platform
      */
-    public function setActivePort($activePort)
+    public function setPort(Port $port)
     {
-        $this->activePort = $activePort;
+        $this->port = $port;
 
         return $this;
     }

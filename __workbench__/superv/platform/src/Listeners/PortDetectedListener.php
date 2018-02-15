@@ -8,6 +8,6 @@ class PortDetectedListener
 {
     public function handle(PortDetectedEvent $event)
     {
-        \Platform::setActivePort($event->port);
+        \Platform::setPort($event->port);
     }
 }
