@@ -3,13 +3,11 @@
 namespace Tests\SuperV\Platform;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\Event;
 use Platform;
+use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Events\PlatformBootedEvent;
-use SuperV\Platform\Packs\Droplet\DropletModel;
-use SuperV\Platform\Packs\Port\PortDetectedEvent;
 
 class PlatformTest extends BaseTestCase
 {

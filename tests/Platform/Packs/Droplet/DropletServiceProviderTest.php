@@ -4,7 +4,7 @@ namespace Tests\SuperV\Platform\Packs\Droplet;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
-use SuperV\Platform\Packs\Routing\Router;
+use SuperV\Platform\Domains\Routing\Router;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class DropletServiceProviderTest extends BaseTestCase

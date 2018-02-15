@@ -3,7 +3,7 @@
 namespace Tests\SuperV\Platform\Packs\Droplet\Console;
 
 use Mockery;
-use SuperV\Platform\Packs\Droplet\Installer;
+use SuperV\Platform\Domains\Droplet\Installer;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class DropletInstallCommandTest extends BaseTestCase

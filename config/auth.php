@@ -67,7 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => SuperV\Platform\Packs\Auth\User::class,
+            'model' => SuperV\Platform\Domains\Auth\User::class,
             'table' => 'users'
         ],
 

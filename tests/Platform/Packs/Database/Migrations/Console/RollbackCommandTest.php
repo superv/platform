@@ -2,10 +2,10 @@
 
 namespace Tests\SuperV\Platform\Packs\Database\Migrations\Console;
 
-use SuperV\Platform\Packs\Database\Migrations\Console\RollbackCommand;
-use SuperV\Platform\Packs\Database\Migrations\Migrator;
-use Tests\SuperV\Platform\BaseTestCase;
 use Mockery as m;
+use SuperV\Platform\Domains\Database\Migrations\Console\RollbackCommand;
+use SuperV\Platform\Domains\Database\Migrations\Migrator;
+use Tests\SuperV\Platform\BaseTestCase;
 use Tests\SuperV\TestsConsoleCommands;
 
 class RollbackCommandTest extends BaseTestCase

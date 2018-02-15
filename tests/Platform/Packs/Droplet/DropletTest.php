@@ -5,9 +5,9 @@ namespace Tests\SuperV\Platform\Packs\Droplet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Droplets\Sample\SampleDroplet;
 use SuperV\Droplets\Sample\SampleDropletServiceProvider;
-use SuperV\Platform\Packs\Droplet\Droplet;
-use SuperV\Platform\Packs\Droplet\DropletModel;
-use SuperV\Platform\Packs\Droplet\DropletServiceProvider as DropletServiceProvider;
+use SuperV\Platform\Domains\Droplet\Droplet;
+use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Droplet\DropletServiceProvider as DropletServiceProvider;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class DropletTest extends BaseTestCase

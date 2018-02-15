@@ -3,7 +3,7 @@
 namespace Tests\SuperV\Platform\Packs\Nucleo;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Packs\Nucleo\Prototype;
+use SuperV\Platform\Domains\Nucleo\Prototype;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class FieldTest extends BaseTestCase

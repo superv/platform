@@ -5,8 +5,8 @@ namespace Tests\SuperV\Platform\Packs\Port;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\Event;
-use SuperV\Platform\Packs\Port\PortDetectedEvent;
-use SuperV\Platform\Packs\Port\PortDetector;
+use SuperV\Platform\Domains\Port\PortDetectedEvent;
+use SuperV\Platform\Domains\Port\PortDetector;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class PortDetectorTest extends BaseTestCase
@@ -54,7 +54,7 @@ class PortDetectorTest extends BaseTestCase
 
 
     /**
-     * @return mixed|\SuperV\Platform\Packs\Port\PortDetector
+     * @return mixed|\SuperV\Platform\Domains\Port\PortDetector
      */
     public function setUpDetector()
     {

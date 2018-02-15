@@ -87,7 +87,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
     /**
      * @param null $scope
      *
-     * @return \SuperV\Platform\Packs\Database\Migrations\DatabaseMigrationRepository
+     * @return \SuperV\Platform\Domains\Database\Migrations\DatabaseMigrationRepository
      */
     protected function repositoryWithScope($scope = null)
     {

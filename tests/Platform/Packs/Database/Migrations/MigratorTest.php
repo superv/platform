@@ -4,7 +4,7 @@ namespace Tests\SuperV\Platform\Packs\Database\Migrations;
 
 use Illuminate\Database\Migrations\Migrator as BaseMigrator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Packs\Database\Migrations\Migrator;
+use SuperV\Platform\Domains\Database\Migrations\Migrator;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class MigratorTest extends BaseTestCase

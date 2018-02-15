@@ -3,9 +3,9 @@
 namespace Tests\SuperV\Platform\Packs\Nucleo;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Packs\Nucleo\Blueprint;
-use SuperV\Platform\Packs\Nucleo\Field;
-use SuperV\Platform\Packs\Nucleo\Prototype;
+use SuperV\Platform\Domains\Nucleo\Blueprint;
+use SuperV\Platform\Domains\Nucleo\Field;
+use SuperV\Platform\Domains\Nucleo\Prototype;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class BlueprintTest extends BaseTestCase

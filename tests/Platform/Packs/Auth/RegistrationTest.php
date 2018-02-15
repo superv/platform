@@ -4,11 +4,10 @@ namespace Tests\SuperV\Platform\Packs\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use SuperV\Platform\Packs\Auth\PlatformUser;
-use SuperV\Platform\Packs\Auth\RegistersUsers;
-use SuperV\Platform\Packs\Auth\User;
-use SuperV\Platform\Packs\Auth\UserCreatedEvent;
-use SuperV\Platform\Packs\Auth\Users;
+use SuperV\Platform\Domains\Auth\PlatformUser;
+use SuperV\Platform\Domains\Auth\RegistersUsers;
+use SuperV\Platform\Domains\Auth\UserCreatedEvent;
+use SuperV\Platform\Domains\Auth\Users;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class RegistrationTest extends BaseTestCase

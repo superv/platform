@@ -2,7 +2,7 @@
 
 namespace Tests\SuperV\Platform\Console;
 
-use SuperV\Platform\Packs\Droplet\DropletModel;
+use SuperV\Platform\Domains\Droplet\DropletModel;
 use Tests\SuperV\Platform\BaseTestCase;
 use Tests\SuperV\TestsConsoleCommands;
 

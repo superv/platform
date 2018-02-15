@@ -5,10 +5,10 @@ namespace Tests\SuperV\Platform\Packs\Nucleo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
-use SuperV\Platform\Packs\Nucleo\Blueprint;
-use SuperV\Platform\Packs\Nucleo\Member;
-use SuperV\Platform\Packs\Nucleo\Struct;
-use SuperV\Platform\Packs\Nucleo\Structable;
+use SuperV\Platform\Domains\Nucleo\Blueprint;
+use SuperV\Platform\Domains\Nucleo\Member;
+use SuperV\Platform\Domains\Nucleo\Struct;
+use SuperV\Platform\Domains\Nucleo\Structable;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class NucleoTest extends BaseTestCase

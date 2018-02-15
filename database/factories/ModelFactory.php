@@ -13,7 +13,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-$factory->define(SuperV\Platform\Packs\Auth\PlatformUser::class, function (Faker\Generator $faker) {
+$factory->define(SuperV\Platform\Domains\Auth\PlatformUser::class, function (Faker\Generator $faker) {
     static $password;
 
     return [

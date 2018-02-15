@@ -3,9 +3,8 @@
 namespace Tests\SuperV\Platform\Packs\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
-use SuperV\Platform\Packs\Auth\AuthenticatesUsers;
-use SuperV\Platform\Packs\Auth\PlatformUser;
+use SuperV\Platform\Domains\Auth\AuthenticatesUsers;
+use SuperV\Platform\Domains\Auth\PlatformUser;
 use SuperV\Platform\PlatformServiceProvider;
 use Tests\SuperV\Platform\BaseTestCase;
 

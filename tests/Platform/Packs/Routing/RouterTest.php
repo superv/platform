@@ -3,8 +3,8 @@
 namespace Tests\SuperV\Platform\Packs\Routing;
 
 use Mockery;
-use SuperV\Platform\Packs\Routing\RouteLoader;
-use SuperV\Platform\Packs\Routing\Router;
+use SuperV\Platform\Domains\Routing\RouteLoader;
+use SuperV\Platform\Domains\Routing\Router;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class RouterTest extends BaseTestCase

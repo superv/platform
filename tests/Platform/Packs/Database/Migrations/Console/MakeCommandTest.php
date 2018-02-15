@@ -3,8 +3,8 @@
 namespace Tests\SuperV\Platform\Packs\Database\Migrations\Console;
 
 use Mockery as m;
-use SuperV\Platform\Packs\Database\Migrations\Console\MigrateMakeCommand;
-use SuperV\Platform\Packs\Database\Migrations\MigrationCreator;
+use SuperV\Platform\Domains\Database\Migrations\Console\MigrateMakeCommand;
+use SuperV\Platform\Domains\Database\Migrations\MigrationCreator;
 use Tests\SuperV\Platform\BaseTestCase;
 use Tests\SuperV\TestsConsoleCommands;
 

@@ -3,7 +3,7 @@
 namespace Tests\SuperV\Platform\Packs\Database\Migrations;
 
 use Platform;
-use SuperV\Platform\Packs\Database\Migrations\MigrationCreator;
+use SuperV\Platform\Domains\Database\Migrations\MigrationCreator;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class MigrationCreatorTest extends BaseTestCase
@@ -42,7 +42,7 @@ class MigrationCreatorTest extends BaseTestCase
     }
 
     /**
-     * @return \SuperV\Platform\Packs\Database\Migrations\MigrationCreator
+     * @return \SuperV\Platform\Domains\Database\Migrations\MigrationCreator
      */
     protected function creator()
     {

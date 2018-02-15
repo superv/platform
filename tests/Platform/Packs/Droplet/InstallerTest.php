@@ -3,8 +3,8 @@
 namespace Tests\SuperV\Platform\Packs\Droplet;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Exceptions\PathNotFoundException;
-use SuperV\Platform\Packs\Droplet\Installer;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class InstallerTest extends BaseTestCase
@@ -61,7 +61,7 @@ class InstallerTest extends BaseTestCase
     }
 
     /**
-     * @return \SuperV\Platform\Packs\Droplet\Installer
+     * @return \SuperV\Platform\Domains\Droplet\Installer
      */
     protected function installer()
     {

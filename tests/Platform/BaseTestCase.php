@@ -2,9 +2,8 @@
 
 namespace Tests\SuperV\Platform;
 
-use Illuminate\Contracts\Console\Kernel;
-use SuperV\Platform\Packs\Droplet\DropletModel;
-use SuperV\Platform\Packs\Droplet\Installer;
+use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Droplet\Installer;
 use Tests\SuperV\TestCase;
 
 class BaseTestCase extends TestCase
@@ -21,7 +20,7 @@ class BaseTestCase extends TestCase
      * @param string $slug
      * @param string $path
      *
-     * @return \SuperV\Platform\Packs\Droplet\Droplet
+     * @return \SuperV\Platform\Domains\Droplet\Droplet
      * @throws \SuperV\Platform\Exceptions\PathNotFoundException
      */
     protected function setUpDroplet($slug = 'droplets.sample', $path = 'tests/Platform/__fixtures__/sample-droplet')

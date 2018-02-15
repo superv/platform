@@ -2,7 +2,7 @@
 
 namespace Tests\SuperV\Platform\Packs\Routing;
 
-use SuperV\Platform\Packs\Routing\RouteLoader;
+use SuperV\Platform\Domains\Routing\RouteLoader;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class RouteLoaderTest extends BaseTestCase

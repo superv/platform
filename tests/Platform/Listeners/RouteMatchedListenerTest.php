@@ -3,10 +3,10 @@
 namespace Tests\SuperV\Platform\Listeners;
 
 use Illuminate\Routing\Events\RouteMatched;
-use SuperV\Platform\Packs\Port\PortDetector;
+use Mockery as m;
+use SuperV\Platform\Domains\Port\PortDetector;
 use SuperV\Platform\Listeners\RouteMatchedListener;
 use Tests\SuperV\Platform\BaseTestCase;
-use Mockery as m;
 
 class RouteMatchedListenerTest extends BaseTestCase
 {

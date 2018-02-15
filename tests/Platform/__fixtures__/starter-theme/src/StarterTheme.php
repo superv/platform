@@ -2,7 +2,7 @@
 
 namespace SuperV\Themes\Starter;
 
-use SuperV\Platform\Packs\Droplet\Droplet;
+use SuperV\Platform\Domains\Droplet\Droplet;
 
 class StarterTheme extends Droplet
 {

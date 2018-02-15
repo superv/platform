@@ -1,6 +1,6 @@
 <?php
 
-use SuperV\Platform\Packs\Auth\PlatformUser;
+use SuperV\Platform\Domains\Auth\PlatformUser;
 
 return [
     'installed' => env('SV_INSTALLED', false),

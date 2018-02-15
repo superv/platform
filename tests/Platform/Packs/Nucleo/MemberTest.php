@@ -3,8 +3,8 @@
 namespace Tests\SuperV\Platform\Packs\Nucleo;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Packs\Nucleo\Member;
-use SuperV\Platform\Packs\Nucleo\Value;
+use SuperV\Platform\Domains\Nucleo\Member;
+use SuperV\Platform\Domains\Nucleo\Value;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class MemberTest extends BaseTestCase

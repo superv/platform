@@ -2,7 +2,7 @@
 
 namespace SuperV\Themes\Starter;
 
-use SuperV\Platform\Packs\Droplet\DropletServiceProvider;
+use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
 
 class StarterThemeServiceProvider extends DropletServiceProvider
 {

@@ -3,15 +3,15 @@
 namespace Tests\SuperV\Platform\Packs\Database\Migrations;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Packs\Database\Migrations\Console\MigrateCommand;
-use SuperV\Platform\Packs\Database\Migrations\Console\MigrateMakeCommand;
-use SuperV\Platform\Packs\Database\Migrations\Console\RefreshCommand;
-use SuperV\Platform\Packs\Database\Migrations\Console\ResetCommand;
-use SuperV\Platform\Packs\Database\Migrations\Console\RollbackCommand;
-use SuperV\Platform\Packs\Database\Migrations\DatabaseMigrationRepository;
-use SuperV\Platform\Packs\Database\Migrations\MigrationCreator;
-use SuperV\Platform\Packs\Database\Migrations\MigrationServiceProvider;
-use SuperV\Platform\Packs\Database\Migrations\Migrator;
+use SuperV\Platform\Domains\Database\Migrations\Console\MigrateCommand;
+use SuperV\Platform\Domains\Database\Migrations\Console\MigrateMakeCommand;
+use SuperV\Platform\Domains\Database\Migrations\Console\RefreshCommand;
+use SuperV\Platform\Domains\Database\Migrations\Console\ResetCommand;
+use SuperV\Platform\Domains\Database\Migrations\Console\RollbackCommand;
+use SuperV\Platform\Domains\Database\Migrations\DatabaseMigrationRepository;
+use SuperV\Platform\Domains\Database\Migrations\MigrationCreator;
+use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
+use SuperV\Platform\Domains\Database\Migrations\Migrator;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class MigrationServiceProviderTest extends BaseTestCase

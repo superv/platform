@@ -2,8 +2,8 @@
 
 namespace SuperV\Platform;
 
+use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Events\PlatformBootedEvent;
-use SuperV\Platform\Packs\Droplet\DropletModel;
 
 class Platform
 {

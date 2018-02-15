@@ -4,10 +4,9 @@ namespace Tests\SuperV\Platform\Packs\Database\Migrations\Console;
 
 use Illuminate\Database\Console\Migrations\MigrateCommand;
 use Illuminate\Database\Console\Migrations\ResetCommand;
-use Illuminate\Foundation\Application;
 use Mockery as m;
-use SuperV\Platform\Packs\Database\Migrations\Console\RefreshCommand;
-use SuperV\Platform\Packs\Database\Migrations\Console\RollbackCommand;
+use SuperV\Platform\Domains\Database\Migrations\Console\RefreshCommand;
+use SuperV\Platform\Domains\Database\Migrations\Console\RollbackCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Tests\SuperV\Platform\BaseTestCase;
 use Tests\SuperV\TestsConsoleCommands;

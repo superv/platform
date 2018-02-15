@@ -1,6 +1,6 @@
 <?php
 
-use SuperV\Platform\Packs\Database\Migrations\Migration;
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class BarScopeMigration extends Migration
 {

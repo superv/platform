@@ -4,7 +4,7 @@ namespace Tests\SuperV\Platform\Packs\Nucleo;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
-use SuperV\Platform\Packs\Nucleo\Blueprint;
+use SuperV\Platform\Domains\Nucleo\Blueprint;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class TrackableTest extends BaseTestCase
