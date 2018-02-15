@@ -6,8 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use SuperV\Platform\Domains\Auth\Contracts\Users;
 use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
-use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Auth\RegistersUsers;
+use SuperV\Platform\Domains\Auth\User;
 use Tests\SuperV\Platform\BaseTestCase;
 
 class RegistrationTest extends BaseTestCase
@@ -31,11 +31,7 @@ class RegistrationTest extends BaseTestCase
         $response->assertStatus(302);
         $response->assertRedirect((new ControllerStub)->getRedirectTo());
 
-        $users = app(\SuperV\Platform\Domains\Auth\Contracts\Users::class);
-
-        $this->assertEquals(1, $users->count());
-
-        $user = $users->first();
+        $user = app(Users::class)->first();
         $this->assertEquals('user@example.com', $user->email);
         $this->assertTrue(\Hash::check('secret', $user->password));
     }
@@ -58,125 +54,138 @@ class RegistrationTest extends BaseTestCase
             });
     }
 
+    /** @test */
+    function saves_user_profile_with_registration()
+    {
+        $user = factory(User::class)->create();
+
+        UserCreatedEvent::dispatch($user, $request = ['profile' => [
+            'first_name' => 'Fatih',
+            'last_name'  => 'Mehmet',
+        ]]);
+
+        $this->assertEquals('Fatih', $user->profile->first_name);
+        $this->assertEquals('Mehmet', $user->profile->last_name);
+    }
+
     /**
-        * @test
-        */
-       function email_is_required()
-       {
-           app('router')->post('register', ControllerStub::class.'@register');
+     * @test
+     */
+    function email_is_required()
+    {
+        app('router')->post('register', ControllerStub::class.'@register');
 
-           $response = $this->from('register')
-                            ->post(
-                                'register', $this->validParams(['email' => ''])
-                            );
+        $response = $this->from('register')
+                         ->post(
+                             'register', $this->validParams(['email' => ''])
+                         );
 
-           $response->assertStatus(302);
-           $response->assertRedirect('register');
-           $response->assertSessionHasErrors(['email']);
+        $response->assertStatus(302);
+        $response->assertRedirect('register');
+        $response->assertSessionHasErrors(['email']);
 
-           $this->assertEquals(0, app(Users::class)->count());
-       }
+        $this->assertEquals(0, app(Users::class)->count());
+    }
 
-       /**
-        * @test
-        */
-       function email_must_be_a_valid_email_address()
-       {
-           app('router')->post('register', ControllerStub::class.'@register');
+    /**
+     * @test
+     */
+    function email_must_be_a_valid_email_address()
+    {
+        app('router')->post('register', ControllerStub::class.'@register');
 
-           $response = $this->from('register')
-                            ->post(
-                                'register', $this->validParams(['email' => 'not_a_valid_email'])
-                            );
+        $response = $this->from('register')
+                         ->post(
+                             'register', $this->validParams(['email' => 'not_a_valid_email'])
+                         );
 
-           $response->assertStatus(302);
-           $response->assertRedirect('register');
-           $response->assertSessionHasErrors(['email']);
+        $response->assertStatus(302);
+        $response->assertRedirect('register');
+        $response->assertSessionHasErrors(['email']);
 
-           $this->assertEquals(0, app(Users::class)->count());
-       }
+        $this->assertEquals(0, app(Users::class)->count());
+    }
 
-       /**
-        * @test
-        */
-       function email_must_be_unique()
-       {
-           factory(User::class)->create(['email' => 'client@example.com']);
+    /**
+     * @test
+     */
+    function email_must_be_unique()
+    {
+        factory(User::class)->create(['email' => 'client@example.com']);
 
-           app('router')->post('register', ControllerStub::class.'@register');
+        app('router')->post('register', ControllerStub::class.'@register');
 
-           $response = $this->from('register')
-                            ->post(
-                                'register', $this->validParams(['email' => 'client@example.com'])
-                            );
+        $response = $this->from('register')
+                         ->post(
+                             'register', $this->validParams(['email' => 'client@example.com'])
+                         );
 
-           $response->assertStatus(302);
-           $response->assertRedirect('register');
-           $response->assertSessionHasErrors(['email']);
+        $response->assertStatus(302);
+        $response->assertRedirect('register');
+        $response->assertSessionHasErrors(['email']);
 
-           $this->assertEquals(1, app(Users::class)->count());
-       }
+        $this->assertEquals(1, app(Users::class)->count());
+    }
 
-       /**
-        * @test
-        */
-       function password_is_required()
-       {
-           app('router')->post('register', ControllerStub::class.'@register');
+    /**
+     * @test
+     */
+    function password_is_required()
+    {
+        app('router')->post('register', ControllerStub::class.'@register');
 
-           $response = $this->from('register')
-                            ->post(
-                                'register', $this->validParams(['password' => null])
-                            );
+        $response = $this->from('register')
+                         ->post(
+                             'register', $this->validParams(['password' => null])
+                         );
 
-           $response->assertStatus(302);
-           $response->assertRedirect('register');
-           $response->assertSessionHasErrors(['password']);
+        $response->assertStatus(302);
+        $response->assertRedirect('register');
+        $response->assertSessionHasErrors(['password']);
 
-           $this->assertEquals(0, app(Users::class)->count());
-       }
+        $this->assertEquals(0, app(Users::class)->count());
+    }
 
-       /**
-        * @test
-        */
-       function password_must_be_confirmed()
-       {
-           app('router')->post('register', ControllerStub::class.'@register');
+    /**
+     * @test
+     */
+    function password_must_be_confirmed()
+    {
+        app('router')->post('register', ControllerStub::class.'@register');
 
-           $response = $this->from('register')
-                            ->post(
-                                'register', $this->validParams(['password_confirmation' => null])
-                            );
+        $response = $this->from('register')
+                         ->post(
+                             'register', $this->validParams(['password_confirmation' => null])
+                         );
 
-           $response->assertStatus(302);
-           $response->assertRedirect('register');
-           $response->assertSessionHasErrors(['password']);
+        $response->assertStatus(302);
+        $response->assertRedirect('register');
+        $response->assertSessionHasErrors(['password']);
 
-           $this->assertEquals(0, app(\SuperV\Platform\Domains\Auth\Contracts\Users::class)->count());
-       }
+        $this->assertEquals(0, app(Users::class)->count());
+    }
 
-       /**
-        * @test
-        */
-       function password_length_must_be_at_least_6()
-       {
-           app('router')->post('register', ControllerStub::class.'@register');
+    /**
+     * @test
+     */
+    function password_length_must_be_at_least_6()
+    {
+        app('router')->post('register', ControllerStub::class.'@register');
 
-           $response = $this->from('register')
-                            ->post(
-                                'register', $this->validParams(
-                                [
-                                    'password'              => '12345',
-                                    'password_confirmation' => '12345',
-                                ]
-                            ));
+        $response = $this->from('register')
+                         ->post(
+                             'register', $this->validParams([
+                             'password'              => '12345',
+                             'password_confirmation' => '12345',
+                         ])
+                         );
 
-           $response->assertStatus(302);
-           $response->assertRedirect('register');
-           $response->assertSessionHasErrors(['password']);
+        $response->assertStatus(302);
+        $response->assertRedirect('register');
+        $response->assertSessionHasErrors(['password']);
 
-           $this->assertEquals(0, app(\SuperV\Platform\Domains\Auth\Contracts\Users::class)->count());
-       }
+        $this->assertEquals(0, app(Users::class)->count());
+    }
 
     private function validParams($overrides = [])
     {

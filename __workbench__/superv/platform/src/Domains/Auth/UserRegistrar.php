@@ -25,11 +25,11 @@ class UserRegistrar
         ])->validate();
 
         $user = User::create([
-            'email'    => request('email'),
-            'password' => bcrypt(request('password')),
+            'email'    => $request['email'],
+            'password' => bcrypt($request['password']),
         ]);
 
-        event(new UserCreatedEvent($user));
+        event(new UserCreatedEvent($user, $request));
 
         return $user;
     }

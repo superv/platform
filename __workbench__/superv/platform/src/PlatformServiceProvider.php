@@ -16,6 +16,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected $providers = [
         'SuperV\Platform\Providers\ThemeServiceProvider',
         'SuperV\Platform\Adapters\AdapterServiceProvider',
+        'SuperV\Platform\Domains\Auth\AuthServiceProvider',
         'SuperV\Platform\Domains\Asset\AssetServiceProvider',
         'SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider',
     ];
