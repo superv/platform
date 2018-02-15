@@ -4,6 +4,7 @@ namespace Tests\SuperV\Platform;
 
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Droplet\Installer;
+use SuperV\Platform\PlatformServiceProvider;
 use Tests\SuperV\TestCase;
 
 class BaseTestCase extends TestCase
@@ -61,7 +62,10 @@ class BaseTestCase extends TestCase
         }
 
         if (method_exists($this, 'refreshDatabase')) {
-            $this->artisan('migrate', ['--scope' => 'platform']);
+            $this->artisan('superv:install');
+            config(['superv.installed' => true]);
+
+            (new PlatformServiceProvider($this->app))->boot();
         }
     }
 
