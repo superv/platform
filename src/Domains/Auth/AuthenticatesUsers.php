@@ -22,6 +22,6 @@ trait AuthenticatesUsers
 
     public function redirectTo()
     {
-        return $this->redirectTo;
+        return $this->redirectTo ?? '/';
     }
 }
