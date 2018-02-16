@@ -16,6 +16,8 @@ class Port
 
     protected $allowedUserTypes = [];
 
+    protected $model;
+
     /**
      * @return mixed
      */
@@ -106,5 +108,28 @@ class Port
     public function allowedUserTypes()
     {
         return $this->allowedUserTypes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function model()
+    {
+        return $this->model;
+    }
+
+    public function resolveModel()
+    {
+        $class = $this->model();
+
+        return new $class;
+    }
+
+    /**
+     * @param mixed $model
+     */
+    public function setModel($model)
+    {
+        $this->model = $model;
     }
 }
