@@ -25,18 +25,12 @@ class PlatformUserProvider extends EloquentUserProvider
         }
         $port = \Platform::port();
         if ($port->model()) {
-            $model = $port->resolveModel();
-
-            $query = $model->newQuery();
-
-            $query->whereHas('user', function($query) use ($credentials, $port) {
+            $query = $port->resolveModel()->newQuery();
+            $query->whereHas('user', function ($query) use ($credentials, $port) {
                 $this->applyFilters($query, $port, $credentials);
             });
         } else {
-            $model = $this->createModel();
-
-            $query = $model->newQuery();
-
+            $query = $this->createModel()->newQuery();
             $this->applyFilters($query, $port, $credentials);
         }
 
