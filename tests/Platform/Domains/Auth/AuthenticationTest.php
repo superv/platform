@@ -5,6 +5,7 @@ namespace Tests\SuperV\Platform\Domains\Auth;
 use Auth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Auth\AuthenticatesUsers;
+use SuperV\Platform\Domains\Auth\Client;
 use SuperV\Platform\Domains\Auth\User;
 use Tests\SuperV\Platform\BaseTestCase;
 
@@ -19,14 +20,11 @@ class AuthenticationTest extends BaseTestCase
         $this->makeRoute('web');
         $user = $this->makeUser('user@superv.io', 'client');
 
-        $response = $this->post('/login', [
-            'email'    => 'user@superv.io',
-            'password' => 'secret',
-        ]);
+        $response = $this->login('user@superv.io', 'secret');
 
         $response->assertStatus(302);
         $response->assertRedirect((new LoginControllerStub)->redirectTo());
-        $this->assertUserLoggedIn($user);
+        $this->assertAuthenticatedAs($user);
     }
 
     /** @test */
@@ -40,7 +38,23 @@ class AuthenticationTest extends BaseTestCase
 
         $response->assertStatus(302);
         $response->assertRedirect('login');
-        $this->assertNotLoggedIn();
+        $this->assertNotAuthenticated();
+    }
+
+    /** @test */
+    function resolves_port_model_upon_authentication()
+    {
+        $this->setUpPort('web', env('SV_HOSTNAME'), null, ['client'], Client::class);
+        $this->makeRoute('web');
+        $user = $this->makeUser('user@superv.io', 'client');
+
+        Client::create(['user_id' => $user->id]);
+
+        $this->login('user@superv.io', 'secret');
+
+        $this->assertAuthenticated();
+        $this->assertInstanceOf(Client::class, Auth::user());
+        $this->assertEquals($user->id, Auth::user()->user->id);
     }
 
     /** @test */
@@ -54,7 +68,7 @@ class AuthenticationTest extends BaseTestCase
 
         $response->assertStatus(302);
         $response->assertRedirect('login');
-        $this->assertNotLoggedIn();
+        $this->assertNotAuthenticated();
     }
 
     /** @test */
@@ -67,13 +81,13 @@ class AuthenticationTest extends BaseTestCase
 
         $this->login('user@superv.io', 'secret');
 
-        $this->assertUserLoggedIn($user);
+        $this->assertAuthenticatedAs($user);
 
         Auth::logout();
 
         $this->login('admin@superv.io', 'secret');
 
-        $this->assertUserLoggedIn($admin);
+        $this->assertAuthenticatedAs($admin);
     }
 
     protected function login($email, $password)
@@ -84,14 +98,7 @@ class AuthenticationTest extends BaseTestCase
         ]);
     }
 
-    protected function assertUserLoggedIn($user)
-    {
-        $this->assertNotNull(Auth::user());
-        $this->assertTrue(Auth::check());
-        $this->assertTrue(Auth::user()->is($user));
-    }
-
-    protected function assertNotLoggedIn(): void
+    protected function assertNotAuthenticated()
     {
         $this->assertNull(Auth::user());
         $this->assertFalse(Auth::check());

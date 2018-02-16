@@ -1,19 +1,22 @@
 <?php
 
+use SuperV\Platform\Domains\Auth\Client;
 use SuperV\Platform\Domains\Auth\User;
 
 return [
     'installed' => env('SV_INSTALLED', false),
-    'droplets' => [
-        'location' => env('SV_DROPLETS', 'droplets')
+    'droplets'  => [
+        'location' => env('SV_DROPLETS', 'droplets'),
     ],
-    'assets' => [
+    'assets'    => [
         'live' => true,
     ],
-    'ports'  => [
+    'ports'     => [
         'web' => [
-            'hostname' => env('SV_HOSTNAME'),
-            'theme'    => env('SV_WEB_THEME'),
+            'hostname'           => env('SV_HOSTNAME'),
+            'theme'              => env('SV_WEB_THEME'),
+            'allowed_user_types' => ['client'],
+            'model'              => Client::class,
         ],
         'acp' => [
             'hostname' => env('SV_HOSTNAME'),
@@ -25,13 +28,13 @@ return [
             'prefix'   => 'v1',
         ],
     ],
-    'auth' => [
+    'auth'      => [
         'user' => [
-            'model' => User::class
-        ]
+            'model' => User::class,
+        ],
     ],
-    'twig' => [
+    'twig'      => [
         'enabled' => true,
     ],
-    'clockwork' => env('SV_CLOCKWORK', false)
+    'clockwork' => env('SV_CLOCKWORK', false),
 ];

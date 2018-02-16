@@ -45,13 +45,14 @@ class BaseTestCase extends TestCase
      *
      * @return void
      */
-    protected function setUpPort($port, $hostname, $theme = null, $allowedUserTypes = [])
+    protected function setUpPort($port, $hostname, $theme = null, $allowedUserTypes = [], $model = null)
     {
         $ports = [
             $port => [
                 'hostname'           => $hostname,
                 'theme'              => $theme,
                 'allowed_user_types' => $allowedUserTypes,
+                'model'              => $model,
             ],
         ];
         config(['superv.ports' => $ports]);
