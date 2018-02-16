@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Contracts;
 
-use SuperV\Platform\Domains\Feature\ServesFeaturesTrait;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 
 abstract class Command extends \Illuminate\Console\Command
 {
-    use ServesFeaturesTrait;
+    use DispatchesJobs;
 }
