@@ -12,11 +12,12 @@ class SuperVInstallCommand extends Command
 
     public function handle()
     {
+        $this->comment('Installing SuperV');
         $this->call('migrate', ['--scope' => 'platform']);
 
         $this->setEnv();
 
-        $this->comment('SuperV installed..!');
+        $this->comment("SuperV installed..! \n");
     }
 
     protected function setEnv()
