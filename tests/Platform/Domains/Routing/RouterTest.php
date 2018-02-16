@@ -38,9 +38,12 @@ class RouterTest extends BaseTestCase
 
         $loader = $this->app->instance(RouteLoader::class, Mockery::mock(RouteLoader::class));
 
-        $loader->shouldReceive('load')->with(['foo/baz' => 'FooWebController@baz',], 'web')->once();
-        $loader->shouldReceive('load')->with(['bar/baz' => 'BarWebController@baz',], 'web')->once();
-        $loader->shouldReceive('load')->with(['foo/baz' => 'FooAcpController@baz'], 'acp')->once();
+        $loader->shouldReceive('setPort')->with('web')->once();
+        $loader->shouldReceive('load')->with(['foo/baz' => 'FooWebController@baz'])->once();
+        $loader->shouldReceive('load')->with(['bar/baz' => 'BarWebController@baz'])->once();
+
+        $loader->shouldReceive('setPort')->with('acp')->once();
+        $loader->shouldReceive('load')->with(['foo/baz' => 'FooAcpController@baz'])->once();
 
         app(Router::class)->loadFromPath('tests/Platform/__fixtures__/routes');
     }

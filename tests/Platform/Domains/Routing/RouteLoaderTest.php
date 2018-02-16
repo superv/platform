@@ -11,15 +11,15 @@ class RouteLoaderTest extends BaseTestCase
     function loads_routes_from_array()
     {
         app(RouteLoader::class)
-             ->load([
-                 'web/foo'       => 'WebController@foo',
-                 'web/bar'       => [
-                     'uses' => 'WebController@bar',
-                     'as'   => 'web.bar',
-                 ],
-                 'post@web/foo'  => 'WebController@postFoo',
-                 'patch@web/bar' => function () { },
-             ]);
+            ->load([
+                'web/foo'       => 'WebController@foo',
+                'web/bar'       => [
+                    'uses' => 'WebController@bar',
+                    'as'   => 'web.bar',
+                ],
+                'post@web/foo'  => 'WebController@postFoo',
+                'patch@web/bar' => function () { },
+            ]);
 
         $getRoutes = $this->router()->getRoutes()->get('GET');
 
@@ -40,9 +40,9 @@ class RouteLoaderTest extends BaseTestCase
         $this->setUpPorts();
 
         $loader = $this->app->make(RouteLoader::class);
-        $loader->load(['web/foo' => 'WebController@foo'], 'web');
-        $loader->load(['acp/foo' => 'AcpController@foo'], 'acp');
-        $loader->load(['api/foo' => 'ApiController@foo'], 'api');
+        $loader->setPort('web')->load(['web/foo' => 'WebController@foo']);
+        $loader->setPort('acp')->load(['acp/foo' => 'AcpController@foo']);
+        $loader->setPort('api')->load(['api/foo' => 'ApiController@foo']);
 
         $getRoutes = $this->router()->getRoutes()->get('GET');
 
@@ -60,6 +60,24 @@ class RouteLoaderTest extends BaseTestCase
         $this->assertEquals('api', $apiRoute->getAction('port'));
         $this->assertEquals('api.superv.io', $apiRoute->getDomain());
         $this->assertNull($apiRoute->getPrefix());
+    }
+
+    /** @test */
+    function registers_ports_middlewares()
+    {
+        config([
+            'superv.ports' => [
+                'web' => [
+                    'hostname'    => env('SV_HOSTNAME'),
+                    'middlewares' => ['a', 'b', 'c'],
+                ],
+            ],
+        ]);
+
+        $loader = $this->app->make(RouteLoader::class)->setPort('web');
+        $route = $loader->loadRoute('foo', 'WebController@foo');
+
+        $this->assertEquals(['a', 'b', 'c'], $route->getAction('middleware'));
     }
 
     /**

@@ -18,6 +18,8 @@ class Port
 
     protected $model;
 
+    protected $middlewares;
+
     /**
      * @return mixed
      */
@@ -131,5 +133,21 @@ class Port
     public function setModel($model)
     {
         $this->model = $model;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function middlewares()
+    {
+        return $this->middlewares;
+    }
+
+    /**
+     * @param mixed $middlewares
+     */
+    public function setMiddlewares($middlewares)
+    {
+        $this->middlewares = $middlewares;
     }
 }
