@@ -7,19 +7,19 @@ use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
 
 class UserRegistrar
 {
-    /**
-     * @var \Illuminate\Validation\Factory
-     */
+    /**  @var \Illuminate\Validation\Factory */
     protected $factory;
 
     /** @var \SuperV\Platform\Domains\Auth\Contracts\User */
     protected $user;
 
     /** @var array */
+    protected $request;
+
+    /** @var array */
     protected $rules = [
         'email'    => 'required|email|unique:users',
         'password' => 'required|confirmed|min:6',
-        'type'     => 'required',
     ];
 
     public function __construct(Factory $factory)
@@ -47,38 +47,52 @@ class UserRegistrar
         $this->rules = array_merge($this->rules, $rules);
     }
 
-    public function register(array $request)
+    /**
+     * Set the request data
+     *
+     * @param array $request
+     *
+     * @return $this
+     */
+    public function setRequest(array $request)
     {
-        $this->validate($request);
+        $this->request = $request;
 
-        $this->create($request);
+        return $this;
+    }
 
-        event(new UserCreatedEvent($this->user, $request));
+    /**
+     *  Register a system use
+     */
+    public function register()
+    {
+        $this->validate();
+
+        $this->create();
+
+        $this->announce();
     }
 
     /**
      * Validate request
      *
-     * @param array $request
      * @throws \Illuminate\Validation\ValidationException
      */
-    protected function validate(array $request)
+    protected function validate()
     {
-        $this->factory->make($request, $this->rules)->validate();
+        $this->factory->make($this->request, $this->rules)->validate();
     }
 
     /**
      * Create the user
      *
-     * @param array $request
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
-    protected function create(array $request)
+    protected function create()
     {
         $this->user = User::create([
-            'email'    => $request['email'],
-            'password' => bcrypt($request['password']),
-            'type'     => $request['type'],
+            'email'    => $this->request['email'],
+            'password' => bcrypt($this->request['password']),
         ]);
 
         return $this;
@@ -92,5 +106,13 @@ class UserRegistrar
     public function user()
     {
         return $this->user;
+    }
+
+    /**
+     * Dispatch an event upon successfull registration
+     */
+    protected function announce()
+    {
+        event(new UserCreatedEvent($this->user, $this->request));
     }
 }
