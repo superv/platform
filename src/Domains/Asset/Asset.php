@@ -4,9 +4,9 @@ namespace SuperV\Platform\Domains\Asset;
 
 use Assetic\Asset\FileAsset;
 use Assetic\Asset\GlobAsset;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
+use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Support\Template;
 
