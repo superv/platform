@@ -27,7 +27,6 @@ class RegistrationTest extends BaseTestCase
             'email'                 => 'user@example.com',
             'password'              => 'secret',
             'password_confirmation' => 'secret',
-            'type'                  => 'client',
         ]);
         $response->assertStatus(302);
         $response->assertRedirect((new ControllerStub)->getRedirectTo());
@@ -68,25 +67,6 @@ class RegistrationTest extends BaseTestCase
 
         $this->assertEquals('Fatih', $user->profile->first_name);
         $this->assertEquals('Mehmet', $user->profile->last_name);
-    }
-
-    /**
-     * @test
-     */
-    function user_type_is_required()
-    {
-        app('router')->post('register', ControllerStub::class.'@register');
-
-        $response = $this->from('register')
-                         ->post(
-                             'register', $this->validParams(['type' => null])
-                         );
-
-        $response->assertStatus(302);
-        $response->assertRedirect('register');
-        $response->assertSessionHasErrors(['type']);
-
-        $this->assertEquals(0, app(Users::class)->count());
     }
 
     /**
@@ -214,7 +194,6 @@ class RegistrationTest extends BaseTestCase
             'email'                 => 'user@example.com',
             'password'              => 'secret',
             'password_confirmation' => 'secret',
-            'type'                  => 'client',
         ], $overrides);
     }
 }
