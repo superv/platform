@@ -22,11 +22,13 @@ class UserRegistrar
         $this->factory->make($request, [
             'email'    => 'required|email|unique:users',
             'password' => 'required|confirmed|min:6',
+            'type'     => 'required',
         ])->validate();
 
         $user = User::create([
             'email'    => $request['email'],
             'password' => bcrypt($request['password']),
+            'type'     => $request['type'],
         ]);
 
         event(new UserCreatedEvent($user, $request));
