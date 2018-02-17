@@ -205,8 +205,6 @@ class Asset
 
         $debug = \Platform::config('assets.live', true);
 
-        if ($debug) return true;
-
         $live = in_array('live', $this->collectionFilters($collection, $filters));
 
         if ($debug === true && $live) {
