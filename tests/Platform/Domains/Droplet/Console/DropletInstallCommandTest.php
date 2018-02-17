@@ -12,6 +12,7 @@ class DropletInstallCommandTest extends BaseTestCase
     function calls_installer_with_proper_arguments()
     {
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
+        $installer->shouldReceive('setCommand')->once()->andReturnSelf();
         $installer->shouldReceive('path')->with('path/to/droplet')->once()->andReturnSelf();
         $installer->shouldReceive('slug')->with('droplet.slug')->once()->andReturnSelf();
         $installer->shouldReceive('install')->once();
