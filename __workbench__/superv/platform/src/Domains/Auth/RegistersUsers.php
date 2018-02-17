@@ -17,7 +17,7 @@ trait RegistersUsers
 
     public function register(UserRegistrar $registrar)
     {
-        $registrar(request()->all());
+        $registrar->register(request()->all());
 
         return redirect()->to($this->getRedirectTo());
     }
