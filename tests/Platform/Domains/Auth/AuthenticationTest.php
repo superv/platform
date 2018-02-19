@@ -3,9 +3,11 @@
 namespace Tests\SuperV\Platform\Domains\Auth;
 
 use Auth;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Auth\AuthenticatesUsers;
 use SuperV\Platform\Domains\Auth\Client;
+use SuperV\Platform\Domains\Auth\PlatformUserProvider;
 use SuperV\Platform\Domains\Auth\User;
 use Tests\SuperV\Platform\BaseTestCase;
 
@@ -47,14 +49,19 @@ class AuthenticationTest extends BaseTestCase
         $this->setUpPort('web', env('SV_HOSTNAME'), null, ['client'], Client::class);
         $this->makeRoute('web');
         $user = $this->makeUser('user@superv.io', 'client');
-
         Client::create(['user_id' => $user->id]);
 
         $this->login('user@superv.io', 'secret');
 
+        // Reset AuthManager
+        $this->app->instance('auth', $auth = new AuthManager($this->app));
+        $auth->provider('platform', function ($app) {
+            return new PlatformUserProvider($app['hash'], config('superv.auth.user.model'));
+        });
+
         $this->assertAuthenticated();
-        $this->assertInstanceOf(Client::class, Auth::user());
-        $this->assertEquals($user->id, Auth::user()->user->id);
+        $this->assertInstanceOf(Client::class, $auth->user());
+        $this->assertEquals($user->id, $auth->user()->user->id);
     }
 
     /** @test */
@@ -115,6 +122,7 @@ class AuthenticationTest extends BaseTestCase
     protected function makeUser($email, $type = 'client')
     {
         return factory(User::class)->create([
+            'id'    => rand(9, 999),
             'email' => $email,
             'type'  => $type,
         ]);
