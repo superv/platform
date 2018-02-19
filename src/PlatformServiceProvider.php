@@ -78,19 +78,6 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         Platform::boot();
 
-        Auth::provider('platform', function ($app) {
-            return new PlatformUserProvider($app['hash'], config('superv.auth.user.model'));
-        });
 
-        config()->set('auth.defaults.guard', 'platform');
-
-        config()->set('auth.guards.platform', [
-            'driver'   => 'session',
-            'provider' => 'platform',
-        ]);
-
-        config()->set('auth.providers.platform', [
-            'driver' => 'platform',
-        ]);
     }
 }

@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Auth;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Port\Port;
+use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
 
 class PlatformUserProvider extends EloquentUserProvider
 {
@@ -23,21 +23,46 @@ class PlatformUserProvider extends EloquentUserProvider
                 array_key_exists('password', $credentials))) {
             return null;
         }
-        $port = \Platform::port();
-        if ($port->model()) {
-            $query = $port->resolveModel()->newQuery();
-            $query->whereHas('user', function ($query) use ($credentials, $port) {
-                $this->applyFilters($query, $port, $credentials);
+
+        $model = $this->createModel();
+        if (! $model instanceof UserContract) {
+            $query = $model->newQuery();
+            $query->whereHas('user', function ($query) use ($credentials) {
+                $this->applyFilters($query, $credentials);
             });
         } else {
-            $query = $this->createModel()->newQuery();
-            $this->applyFilters($query, $port, $credentials);
+            $query = $model->newQuery();
+            $this->applyFilters($query, $credentials);
         }
 
         return $query->first();
     }
 
-    protected function applyFilters(Builder $query, Port $port, $credentials)
+    /**
+     * Retrieve a user by their unique identifier.
+     *
+     * @param  mixed $identifier
+     *
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
+    public function retrieveById($identifier)
+    {
+        $model = $this->createModel();
+        $query = $model->newQuery();
+        $identifierName = $model->getAuthIdentifierName();
+
+        if (! $model instanceof UserContract) {
+            $query->whereHas('user', function ($query) use ($identifier, $identifierName) {
+                $query->where($identifierName, $identifier);
+            });
+        } else {
+            $query->where($identifierName, $identifier);
+        }
+
+        return $query->first();
+    }
+
+    protected function applyFilters(Builder $query, $credentials)
     {
         foreach ($credentials as $key => $value) {
             if (! Str::contains($key, 'password')) {
@@ -45,7 +70,7 @@ class PlatformUserProvider extends EloquentUserProvider
             }
         }
 
-        if ($port) {
+        if ($port = \Platform::port()) {
             $query->whereIn('type', $port->allowedUserTypes());
         }
     }
