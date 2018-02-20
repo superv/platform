@@ -116,13 +116,6 @@ if (! function_exists('collect')) {
     }
 }
 
-if (! function_exists('decorate')) {
-    function decorate($presentable)
-    {
-        return (new Decorator())->decorate($presentable);
-    }
-}
-
 function uuid()
 {
     $uuid = Ramsey\Uuid\Uuid::uuid4()->toString();
