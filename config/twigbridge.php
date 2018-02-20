@@ -9,6 +9,8 @@
  * file that was distributed with this source code.
  */
 
+use SuperV\Platform\Domains\Asset\Extension;
+
 /**
  * Configuration options for Twig.
  */
@@ -115,6 +117,7 @@ return [
             // 'TwigBridge\Extension\Laravel\Form',
             // 'TwigBridge\Extension\Laravel\Html',
             // 'TwigBridge\Extension\Laravel\Legacy\Facades',
+            Extension::class
         ],
 
         /*
