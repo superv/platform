@@ -13,9 +13,11 @@
         "fideloper/proxy": "~4.0",
         "laravel/framework": "5.6.*",
         "laravel/tinker": "~1.0",
-        "rcrowe/twigbridge": "^0.9.6"
+        "rcrowe/twigbridge": "^0.9.6",
+        "kriswallsmith/assetic": "dev-master"
     },
     "require-dev": {
+        "doctrine/dbal": "^2.6",
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~7.0"
@@ -30,7 +32,10 @@
             "SuperV\\Platform\\": "__workbench__/superv/platform/src/",
             "SuperV\\Droplets\\Supreme\\": "droplets/superv/droplets/supreme/src/",
             "SuperV\\Themes\\Tailwind\\": "droplets/superv/themes/tailwind/src/"
-        }
+        },
+        "files": [
+            "__workbench__/superv/platform/src/Support/helpers.php"
+        ]
     },
     "autoload-dev": {
         "files": [
@@ -61,5 +66,9 @@
     },
     "prefer-stable": true,
     "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:superv/assetic.git"
+        }
     ]
 }
