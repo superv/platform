@@ -7,13 +7,13 @@ use SuperV\Platform\Providers\BaseServiceProvider;
 
 class AssetServiceProvider extends BaseServiceProvider
 {
-    protected $singletons = [
+    protected $_singletons = [
         Asset::class => Asset::class
     ];
 
     public function register()
     {
-        $this->registerSingletons($this->singletons);
+        $this->registerSingletons($this->_singletons);
 
         $this->registerListeners([
             ThemeActivatedEvent::class => function(ThemeActivatedEvent $event) {

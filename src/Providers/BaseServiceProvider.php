@@ -10,9 +10,9 @@ abstract class BaseServiceProvider extends ServiceProvider
 {
     protected $providers = [];
 
-    protected $bindings = [];
+    protected $_bindings = [];
 
-    protected $singletons = [];
+    protected $_singletons = [];
 
     protected $aliases = [];
 
@@ -28,8 +28,8 @@ abstract class BaseServiceProvider extends ServiceProvider
     public function registerAll()
     {
         $this->registerProviders($this->providers);
-        $this->registerBindings($this->bindings);
-        $this->registerSingletons($this->singletons);
+        $this->registerBindings($this->_bindings);
+        $this->registerSingletons($this->_singletons);
         $this->registerAliases($this->aliases);
         $this->registerListeners($this->listeners);
         $this->registerCommands($this->commands);

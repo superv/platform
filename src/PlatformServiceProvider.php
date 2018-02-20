@@ -21,9 +21,9 @@ class PlatformServiceProvider extends BaseServiceProvider
         'SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider',
     ];
 
-    protected $bindings = [];
+    protected $_bindings = [];
 
-    protected $singletons = [
+    protected $_singletons = [
         'SuperV\Platform\Domains\Auth\Contracts\Users' => 'SuperV\Platform\Domains\Auth\Users',
     ];
 
@@ -49,14 +49,14 @@ class PlatformServiceProvider extends BaseServiceProvider
         /**
          * Register User Model
          */
-        $this->bindings[User::class] = Platform::config('auth.user.model');
+        $this->_bindings[User::class] = Platform::config('auth.user.model');
 
         if (Platform::config('twig.enabled')) {
             $this->providers[] = TwigServiceProvider::class;
         }
 
-        $this->registerBindings($this->bindings);
-        $this->registerSingletons($this->singletons);
+        $this->registerBindings($this->_bindings);
+        $this->registerSingletons($this->_singletons);
         $this->registerAliases($this->aliases);
         $this->registerListeners($this->listeners);
         $this->registerCommands($this->commands);
