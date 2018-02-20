@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Database\Migrations\Console;
+namespace Tests\Platform\Domains\Database\Migrations\Console;
 
 use Mockery as m;
 use SuperV\Platform\Domains\Database\Migrations\Console\MigrateMakeCommand;
 use SuperV\Platform\Domains\Database\Migrations\MigrationCreator;
-use Tests\SuperV\Platform\BaseTestCase;
-use Tests\SuperV\TestsConsoleCommands;
+use Tests\Platform\BaseTestCase;
+use Tests\TestsConsoleCommands;
 
 class MakeCommandTest extends BaseTestCase
 {

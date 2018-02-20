@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Auth;
+namespace Tests\Platform\Domains\Auth;
 
 use SuperV\Platform\Domains\Auth\UserRegistrar;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class UserRegistrarTest extends BaseTestCase
 {

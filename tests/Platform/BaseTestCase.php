@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\SuperV\Platform;
+namespace Tests\Platform;
 
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\PlatformServiceProvider;
-use Tests\SuperV\TestCase;
+use Tests\TestCase;
 
 class BaseTestCase extends TestCase
 {

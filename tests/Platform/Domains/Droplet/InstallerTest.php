@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Droplet;
+namespace Tests\Platform\Domains\Droplet;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Exceptions\PathNotFoundException;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class InstallerTest extends BaseTestCase
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\SuperV\Platform\Console;
+namespace Tests\Platform\Console;
 
 use SuperV\Platform\Domains\Droplet\DropletModel;
-use Tests\SuperV\Platform\BaseTestCase;
-use Tests\SuperV\TestsConsoleCommands;
+use Tests\Platform\BaseTestCase;
+use Tests\TestsConsoleCommands;
 
 class SuperVInstallCommandTest extends BaseTestCase
 {

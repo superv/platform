@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Database\Migrations\Console;
+namespace Tests\Platform\Domains\Database\Migrations\Console;
 
 use Illuminate\Database\Console\Migrations\MigrateCommand;
 use Illuminate\Database\Console\Migrations\ResetCommand;
@@ -8,8 +8,8 @@ use Mockery as m;
 use SuperV\Platform\Domains\Database\Migrations\Console\RefreshCommand;
 use SuperV\Platform\Domains\Database\Migrations\Console\RollbackCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
-use Tests\SuperV\Platform\BaseTestCase;
-use Tests\SuperV\TestsConsoleCommands;
+use Tests\Platform\BaseTestCase;
+use Tests\TestsConsoleCommands;
 
 class RefreshCommandTest extends BaseTestCase
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Database\Migrations;
+namespace Tests\Platform\Domains\Database\Migrations;
 
 use Illuminate\Database\Migrations\Migrator as BaseMigrator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Database\Migrations\Migrator;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class MigratorTest extends BaseTestCase
 {

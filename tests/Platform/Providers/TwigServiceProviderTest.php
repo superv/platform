@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\SuperV\Platform\Providers;
+namespace Tests\Platform\Providers;
 
 use SuperV\Platform\Providers\TwigServiceProvider;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 use TwigBridge\ServiceProvider as TwigBridgeServiceProvider;
 
 class TwigServiceProviderTest extends BaseTestCase

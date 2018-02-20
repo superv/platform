@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\SuperV;
+namespace Tests;
 
 use Hash;
 use Illuminate\Contracts\Console\Kernel;

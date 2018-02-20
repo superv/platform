@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Nucleo;
+namespace Tests\Platform\Domains\Nucleo;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Nucleo\Blueprint;
 use SuperV\Platform\Domains\Nucleo\Member;
 use SuperV\Platform\Domains\Nucleo\Struct;
 use SuperV\Platform\Domains\Nucleo\Structable;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class NucleoTest extends BaseTestCase
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Droplet\Console;
+namespace Tests\Platform\Domains\Droplet\Console;
 
 use Mockery;
 use SuperV\Platform\Domains\Droplet\Installer;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class DropletInstallCommandTest extends BaseTestCase
 {

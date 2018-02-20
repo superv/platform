@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Routing;
+namespace Tests\Platform\Domains\Routing;
 
 use Mockery;
 use SuperV\Platform\Domains\Routing\RouteLoader;
 use SuperV\Platform\Domains\Routing\Router;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class RouterTest extends BaseTestCase
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Routing;
+namespace Tests\Platform\Domains\Routing;
 
 use SuperV\Platform\Domains\Routing\RouteLoader;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class RouteLoaderTest extends BaseTestCase
 {

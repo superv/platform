@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\SuperV\Platform\Listeners;
+namespace Tests\Platform\Listeners;
 
 use Illuminate\Routing\Events\RouteMatched;
 use Mockery as m;
 use SuperV\Platform\Domains\Port\PortDetector;
 use SuperV\Platform\Listeners\RouteMatchedListener;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class RouteMatchedListenerTest extends BaseTestCase
 {

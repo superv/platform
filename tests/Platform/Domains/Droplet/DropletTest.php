@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Droplet;
+namespace Tests\Platform\Domains\Droplet;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Droplets\Sample\SampleDroplet;
@@ -8,7 +8,7 @@ use SuperV\Droplets\Sample\SampleDropletServiceProvider;
 use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Droplet\DropletServiceProvider as DropletServiceProvider;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class DropletTest extends BaseTestCase
 {

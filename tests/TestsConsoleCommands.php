@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\SuperV;
+namespace Tests;
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;

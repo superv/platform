@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Database\Migrations;
+namespace Tests\Platform\Domains\Database\Migrations;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Database\Migrations\Console\MigrateCommand;
@@ -12,7 +12,7 @@ use SuperV\Platform\Domains\Database\Migrations\DatabaseMigrationRepository;
 use SuperV\Platform\Domains\Database\Migrations\MigrationCreator;
 use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Domains\Database\Migrations\Migrator;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class MigrationServiceProviderTest extends BaseTestCase
 {

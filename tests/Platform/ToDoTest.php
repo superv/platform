@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\SuperV\Platform;
+namespace Tests\Platform;
 
 /**
  * Class ToDoTest
  *
  * Temporary location for todos
  *
- * @package Tests\SuperV\Platform
+ * @package Tests\Platform
  * @ignore
  */
 class ToDoTest extends BaseTestCase

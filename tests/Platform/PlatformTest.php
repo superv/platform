@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\SuperV\Platform;
+namespace Tests\Platform;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;

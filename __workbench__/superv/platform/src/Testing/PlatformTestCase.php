@@ -9,8 +9,8 @@ use Illuminate\Foundation\Testing\TestResponse;
 use PHPUnit\Framework\Assert;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\PlatformServiceProvider;
-use Tests\SuperV\CreatesApplication;
-use Tests\SuperV\TestCase;
+use Tests\CreatesApplication;
+use Tests\TestCase;
 
 class PlatformTestCase extends TestCase
 {

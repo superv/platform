@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Nucleo;
+namespace Tests\Platform\Domains\Nucleo;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use SuperV\Platform\Domains\Nucleo\Blueprint;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class TrackableTest extends BaseTestCase
 {

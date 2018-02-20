@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Database\Migrations\Console;
+namespace Tests\Platform\Domains\Database\Migrations\Console;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery as m;
 use SuperV\Platform\Domains\Database\Migrations\Console\MigrateCommand;
 use SuperV\Platform\Domains\Database\Migrations\Migrator;
-use Tests\SuperV\Platform\BaseTestCase;
-use Tests\SuperV\TestsConsoleCommands;
+use Tests\Platform\BaseTestCase;
+use Tests\TestsConsoleCommands;
 
 class MigrateCommandTest extends BaseTestCase
 {

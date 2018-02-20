@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Database\Migrations;
+namespace Tests\Platform\Domains\Database\Migrations;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class MigrationsTest extends BaseTestCase
 {

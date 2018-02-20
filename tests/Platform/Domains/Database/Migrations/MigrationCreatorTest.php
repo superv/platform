@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Database\Migrations;
+namespace Tests\Platform\Domains\Database\Migrations;
 
 use Platform;
 use SuperV\Platform\Domains\Database\Migrations\MigrationCreator;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class MigrationCreatorTest extends BaseTestCase
 {

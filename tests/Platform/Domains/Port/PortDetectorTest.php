@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Port;
+namespace Tests\Platform\Domains\Port;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\Event;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Domains\Port\PortDetector;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class PortDetectorTest extends BaseTestCase
 {

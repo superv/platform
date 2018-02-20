@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\SuperV\Platform\Providers;
+namespace Tests\Platform\Providers;
 
 use Illuminate\Console\Application as Artisan;
 use Illuminate\Foundation\AliasLoader;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class BaseServiceProviderTest extends BaseTestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\SuperV\Platform\Domains\Auth;
+namespace Tests\Platform\Domains\Auth;
 
 use Auth;
 use Illuminate\Auth\AuthManager;
@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Auth\AuthenticatesUsers;
 use SuperV\Platform\Domains\Auth\Client;
 use SuperV\Platform\Domains\Auth\PlatformUserProvider;
 use SuperV\Platform\Domains\Auth\User;
-use Tests\SuperV\Platform\BaseTestCase;
+use Tests\Platform\BaseTestCase;
 
 class AuthenticationTest extends BaseTestCase
 {
