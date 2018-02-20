@@ -11,19 +11,18 @@
     "require": {
         "php": ">=7.0.0",
         "fideloper/proxy": "~3.3",
-        "hashids/hashids": "^2.0",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
-        "spatie/laravel-tail": "^2.0"
+        "spatie/laravel-tail": "^2.0",
+        "kriswallsmith/assetic": "^1.4",
+        "rcrowe/twigbridge": "^0.9.6"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.1",
         "barryvdh/laravel-ide-helper": "~2.3",
         "doctrine/dbal": "^2.6",
         "fzaninotto/faker": "~1.4",
-        "laravel/dusk": "^2.0",
         "mockery/mockery": "0.9.*",
-        "nunomaduro/collision": "^1.1",
         "phpunit/phpunit": "~6.0"
     },
     "autoload": {
