@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Droplet;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
+use SuperV\Platform\Domains\Droplet\Contracts\DropletLocator;
 use SuperV\Platform\Exceptions\PathNotFoundException;
 
 class Installer
@@ -21,9 +22,22 @@ class Installer
     /** @var \SuperV\Platform\Domains\Droplet\Droplet */
     protected $droplet;
 
+    /** @var array * */
+    protected $composerJson;
+
+    /** @var DropletLocator */
+    protected $locator;
+
     public function __construct(Kernel $console)
     {
         $this->console = $console;
+    }
+
+    public function setLocator(DropletLocator $locator)
+    {
+        $this->locator = $locator;
+
+        return $this;
     }
 
     /**
@@ -33,6 +47,10 @@ class Installer
      */
     public function install()
     {
+        if ($this->locator) {
+            $this->path = $this->locator->locate($this->slug);
+        }
+
         $this->validate();
 
         $this->make();
@@ -42,6 +60,18 @@ class Installer
         $this->migrate();
 
         $this->installSubDroplets();
+
+        return $this;
+    }
+
+    /**
+     * Return the installed droplet
+     *
+     * @return \SuperV\Platform\Domains\Droplet\Droplet
+     */
+    public function getDroplet()
+    {
+        return $this->droplet;
     }
 
     /**
@@ -51,9 +81,7 @@ class Installer
      */
     public function type()
     {
-        $composer = json_decode(file_get_contents(base_path($this->path.'/composer.json')), true);
-
-        return explode('-', $composer['type'])[1];
+        return explode('-', $this->composer('type'))[1];
     }
 
     /**
@@ -63,9 +91,7 @@ class Installer
      */
     public function namespace()
     {
-        $composer = json_decode(file_get_contents(base_path($this->path.'/composer.json')), true);
-
-        $namespace = array_keys(array_get($composer['autoload'], 'psr-4'))[0];
+        $namespace = array_keys($this->composer('autoload.psr-4'))[0];
 
         return rtrim($namespace, '\\');
     }
@@ -77,9 +103,7 @@ class Installer
      */
     public function name()
     {
-        $composer = json_decode(file_get_contents(base_path($this->path.'/composer.json')), true);
-
-        return studly_case(str_replace('-', '_', explode('/', $composer['name'])[1]));
+        return studly_case(str_replace('-', '_', explode('/', $this->composer('name'))[1]));
     }
 
     /**
@@ -89,7 +113,7 @@ class Installer
      *
      * @return Installer
      */
-    public function slug($slug)
+    public function setSlug($slug)
     {
         $this->slug = $slug;
 
@@ -103,7 +127,7 @@ class Installer
      *
      * @return Installer
      */
-    public function path($path)
+    public function setPath($path)
     {
         $this->path = $path;
 
@@ -127,8 +151,12 @@ class Installer
      */
     protected function validate()
     {
-        if (! $this->path || ! file_exists(base_path($this->path))) {
-            throw new PathNotFoundException("Path not found for droplet {$this->slug}");
+        if (! $this->path) {
+            throw new \InvalidArgumentException("Path can not be empty");
+        }
+
+        if (! file_exists(base_path($this->path))) {
+            throw new PathNotFoundException("Path does not exist: [{$this->path}]");
         }
     }
 
@@ -176,10 +204,25 @@ class Installer
     {
         if ($subDroplets = $this->droplet->installs()) {
             foreach ($subDroplets as $slug => $path) {
-                app(self::class)->slug($slug)
-                                ->path($this->path.'/'.$path)
+                app(self::class)->setSlug($slug)
+                                ->setPath($this->path.'/'.$path)
                                 ->install();
             }
         }
+    }
+
+    /**
+     * Load composer config from droplet path
+     *
+     * @param null $key
+     * @return array|string
+     */
+    protected function composer($key = null)
+    {
+        if (! $this->composerJson) {
+            $this->composerJson = json_decode(file_get_contents(base_path($this->path.'/composer.json')), true);
+        }
+
+        return $key ? array_get($this->composerJson, $key) : $this->composerJson;
     }
 }
