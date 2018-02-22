@@ -36,8 +36,8 @@ class PlatformTestCase extends TestCase
         config(['superv.installed' => true]);
 
         foreach ($this->installs as $droplet => $path) {
-            app(Installer::class)->path($path)
-                                 ->slug($droplet)
+            app(Installer::class)->setPath($path)
+                                 ->setSlug($droplet)
                                  ->install();
         }
 
