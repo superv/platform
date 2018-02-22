@@ -1,0 +1,9 @@
+{
+    "name": "superv/tailwind-theme",
+    "type": "superv-theme",
+    "autoload": {
+        "psr-4": {
+            "SuperV\\Themes\\Tailwind\\": "src/"
+        }
+    }
+}
