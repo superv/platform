@@ -32,6 +32,31 @@ class InstallerTest extends BaseTestCase
     }
 
     /** @test */
+    function droplet_installs_subdroplets()
+    {
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/another-droplet'));
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/another-droplet/droplets/themes/another_sub-droplet'));
+
+        $this->installer()
+             ->path('tests/Platform/__fixtures__/another-droplet')
+             ->slug('droplets.another')
+             ->install();
+
+        $this->assertDatabaseHas('droplets', [
+            'name' => 'AnotherDroplet',
+            'slug' => 'droplets.another',
+        ]);
+        $this->assertDatabaseHas('droplets', [
+            'name'      => 'AnotherSubDroplet',
+            'slug'      => 'themes.another_sub',
+            'type'      => 'droplet',
+            'path'      => 'tests/Platform/__fixtures__/another-droplet/droplets/themes/another_sub-droplet',
+            'enabled'   => true,
+            'namespace' => 'SuperV\\Droplets\\AnotherSub',
+        ]);
+    }
+
+    /** @test */
     function runs_droplets_migrations_when_installed()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-droplet'));
