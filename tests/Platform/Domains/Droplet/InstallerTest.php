@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Droplet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Exceptions\PathNotFoundException;
+use Tests\ComposerLoader;
 use Tests\Platform\BaseTestCase;
 
 class InstallerTest extends BaseTestCase
@@ -14,6 +15,7 @@ class InstallerTest extends BaseTestCase
     /** @test */
     function installs_a_droplet()
     {
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-droplet'));
         $this->installer()
              ->path('tests/Platform/__fixtures__/sample-droplet')
              ->slug('droplets.sample')
@@ -32,6 +34,8 @@ class InstallerTest extends BaseTestCase
     /** @test */
     function runs_droplets_migrations_when_installed()
     {
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-droplet'));
+
         $this->installer()
              ->path('tests/Platform/__fixtures__/sample-droplet')
              ->slug('droplets.sample')

@@ -41,10 +41,7 @@
         "files": [
         ],
         "psr-4": {
-            "Tests\\": "tests/",
-            "SuperV\\Droplets\\Sample\\": "tests/Platform/__fixtures__/sample-droplet/src/",
-            "SuperV\\Droplets\\Another\\": "tests/Platform/__fixtures__/another-droplet/src/",
-            "SuperV\\Themes\\Starter\\": "tests/Platform/__fixtures__/starter-theme/src/"
+            "Tests\\": "tests/"
         }
     },
     "extra": {

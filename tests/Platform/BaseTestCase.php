@@ -5,6 +5,7 @@ namespace Tests\Platform;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\PlatformServiceProvider;
+use Tests\ComposerLoader;
 use Tests\TestCase;
 
 class BaseTestCase extends TestCase
@@ -26,6 +27,7 @@ class BaseTestCase extends TestCase
      */
     protected function setUpDroplet($slug = 'droplets.sample', $path = 'tests/Platform/__fixtures__/sample-droplet')
     {
+        ComposerLoader::load(base_path($path));
         $this->app->make(Installer::class)
                   ->slug($slug)
                   ->path($path)

@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Events\ThemeActivatedEvent;
 use SuperV\Platform\Exceptions\DropletNotFoundException;
 use SuperV\Platform\Providers\ThemeServiceProvider;
+use Tests\ComposerLoader;
 use Tests\Platform\BaseTestCase;
 
 class ThemeServiceProviderTest extends BaseTestCase
@@ -25,6 +26,7 @@ class ThemeServiceProviderTest extends BaseTestCase
     /** @test */
     function adds_theme_view_hint_for_the_active_theme_when_port_is_detected()
     {
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/starter-theme'));
         app(Installer::class)
             ->path('tests/Platform/__fixtures__/starter-theme')
             ->slug('themes.starter')
