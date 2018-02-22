@@ -18,13 +18,6 @@ class ToDoTest extends BaseTestCase
         $this->addToAssertionCount(1);
     }
 
-
-    /** @test */
-    function locator_locates_droplet_from_slug_if_possible()
-    {
-        $this->fail(__FUNCTION__);
-    }
-
     /** @test */
     function platform_detects_active_module_from_route_data()
     {

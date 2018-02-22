@@ -74,6 +74,23 @@ class InstallerTest extends BaseTestCase
     }
 
     /** @test */
+    function locates_droplet_from_slug_if_path_is_not_given()
+    {
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/droplets/another'));
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/droplets/another/droplets/themes/another_sub-droplet'));
+        config()->set('superv.droplets.location', 'tests/Platform/__fixtures__');
+
+        $droplet = $this->installer()
+                        ->setLocator(new Locator())
+                        ->setSlug('superv.droplets.another')
+                        ->install()
+                        ->getDroplet();
+
+        $this->assertEquals('tests/Platform/__fixtures__/superv/droplets/another', (new Locator())->locate('superv.droplets.another'));
+        $this->assertEquals('tests/Platform/__fixtures__/superv/droplets/another', $droplet->path());
+    }
+
+    /** @test */
     function verifies_droplet_path_exists()
     {
         $this->expectException(PathNotFoundException::class);
