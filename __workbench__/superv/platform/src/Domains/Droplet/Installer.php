@@ -18,6 +18,9 @@ class Installer
     /** @var \Illuminate\Console\Command */
     protected $command;
 
+    /** @var \SuperV\Platform\Domains\Droplet\Droplet */
+    protected $droplet;
+
     public function __construct(Kernel $console)
     {
         $this->console = $console;
@@ -30,36 +33,15 @@ class Installer
      */
     public function install()
     {
-        if (! $this->path || ! file_exists(base_path($this->path))) {
-            throw new PathNotFoundException("Path not found for droplet {$this->slug}");
-        }
-        $dropletEntry = new DropletModel([
-            'name'      => $this->name(),
-            'slug'      => $this->slug,
-            'path'      => $this->path,
-            'type'      => $this->type(),
-            'namespace' => $this->namespace(),
-            'enabled'   => true,
-        ]);
+        $this->validate();
 
-        $dropletEntry->save();
+        $this->make();
 
-        $droplet = $dropletEntry->resolveDroplet();
-        app()->register($droplet->resolveProvider());
+        $this->register();
 
-        $this->console->call(
-            'migrate',
-            ['--scope' => $droplet->slug()],
-            $this->command ? $this->command->getOutput() : null
-        );
+        $this->migrate();
 
-        if ($subDroplets = $droplet->installs()) {
-            foreach ($subDroplets as $slug => $path) {
-                app(self::class)->slug($slug)
-                                ->path($this->path . '/' . $path)
-                                ->install();
-            }
-        }
+        $this->installSubDroplets();
     }
 
     /**
@@ -138,5 +120,66 @@ class Installer
         $this->command = $command;
 
         return $this;
+    }
+
+    /**
+     * Validate droplet parameters
+     */
+    protected function validate()
+    {
+        if (! $this->path || ! file_exists(base_path($this->path))) {
+            throw new PathNotFoundException("Path not found for droplet {$this->slug}");
+        }
+    }
+
+    /**
+     * Make droplet entry
+     */
+    protected function make()
+    {
+        $entry = DropletModel::query()->create([
+            'name'      => $this->name(),
+            'slug'      => $this->slug,
+            'path'      => $this->path,
+            'type'      => $this->type(),
+            'namespace' => $this->namespace(),
+            'enabled'   => true,
+        ]);
+
+        $this->droplet = $entry->resolveDroplet();
+    }
+
+    /**
+     * Register droplet service provider
+     */
+    protected function register()
+    {
+        app()->register($this->droplet->resolveProvider());
+    }
+
+    /**
+     * Migrate droplet migrations
+     */
+    protected function migrate()
+    {
+        $this->console->call(
+            'migrate',
+            ['--scope' => $this->droplet->slug()],
+            $this->command ? $this->command->getOutput() : null
+        );
+    }
+
+    /**
+     * Install sub droplets
+     */
+    protected function installSubDroplets()
+    {
+        if ($subDroplets = $this->droplet->installs()) {
+            foreach ($subDroplets as $slug => $path) {
+                app(self::class)->slug($slug)
+                                ->path($this->path.'/'.$path)
+                                ->install();
+            }
+        }
     }
 }
