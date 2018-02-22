@@ -9,6 +9,8 @@ class Droplet
      */
     protected $entry;
 
+    protected $installs;
+
     public function __construct(DropletModel $entry)
     {
         $this->entry = $entry;
@@ -17,6 +19,11 @@ class Droplet
     public function slug()
     {
         return $this->entry->slug;
+    }
+
+    public function installs()
+    {
+        return $this->installs;
     }
 
     /**

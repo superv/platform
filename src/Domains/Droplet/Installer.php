@@ -23,12 +23,17 @@ class Installer
         $this->console = $console;
     }
 
+    /**
+     * Install droplet
+     *
+     * @throws \SuperV\Platform\Exceptions\PathNotFoundException
+     */
     public function install()
     {
         if (! $this->path || ! file_exists(base_path($this->path))) {
             throw new PathNotFoundException("Path not found for droplet {$this->slug}");
         }
-        $droplet = new DropletModel([
+        $dropletEntry = new DropletModel([
             'name'      => $this->name(),
             'slug'      => $this->slug,
             'path'      => $this->path,
@@ -37,17 +42,31 @@ class Installer
             'enabled'   => true,
         ]);
 
-        $droplet->save();
+        $dropletEntry->save();
 
-        app()->register($droplet->resolveDroplet()->resolveProvider());
+        $droplet = $dropletEntry->resolveDroplet();
+        app()->register($droplet->resolveProvider());
 
         $this->console->call(
             'migrate',
-            ['--scope' => $droplet->slug],
+            ['--scope' => $droplet->slug()],
             $this->command ? $this->command->getOutput() : null
         );
+
+        if ($subDroplets = $droplet->installs()) {
+            foreach ($subDroplets as $slug => $path) {
+                app(self::class)->slug($slug)
+                                ->path($this->path . '/' . $path)
+                                ->install();
+            }
+        }
     }
 
+    /**
+     * Parse droplet type from composer config
+     *
+     * @return string
+     */
     public function type()
     {
         $composer = json_decode(file_get_contents(base_path($this->path.'/composer.json')), true);
@@ -55,6 +74,11 @@ class Installer
         return explode('-', $composer['type'])[1];
     }
 
+    /**
+     * Parse PHP Namespace from composer config
+     *
+     * @return string
+     */
     public function namespace()
     {
         $composer = json_decode(file_get_contents(base_path($this->path.'/composer.json')), true);
@@ -64,6 +88,11 @@ class Installer
         return rtrim($namespace, '\\');
     }
 
+    /**
+     * Parse droplet name from composer config
+     *
+     * @return string
+     */
     public function name()
     {
         $composer = json_decode(file_get_contents(base_path($this->path.'/composer.json')), true);
@@ -72,6 +101,8 @@ class Installer
     }
 
     /**
+     * Set droplet slug
+     *
      * @param string $slug
      *
      * @return Installer
@@ -84,6 +115,8 @@ class Installer
     }
 
     /**
+     * Set droplet path
+     *
      * @param string $path
      *
      * @return Installer
@@ -96,6 +129,8 @@ class Installer
     }
 
     /**
+     * Set parent command
+     *
      * @param \Illuminate\Console\Command $command
      */
     public function setCommand(Command $command)
@@ -104,5 +139,4 @@ class Installer
 
         return $this;
     }
-
 }
