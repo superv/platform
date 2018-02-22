@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Droplet;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Droplet\Installer;
+use SuperV\Platform\Domains\Droplet\Locator;
 use SuperV\Platform\Exceptions\PathNotFoundException;
 use Tests\ComposerLoader;
 use Tests\Platform\BaseTestCase;
@@ -16,9 +17,10 @@ class InstallerTest extends BaseTestCase
     function installs_a_droplet()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-droplet'));
+
         $this->installer()
-             ->path('tests/Platform/__fixtures__/sample-droplet')
-             ->slug('droplets.sample')
+             ->setPath('tests/Platform/__fixtures__/sample-droplet')
+             ->setSlug('droplets.sample')
              ->install();
 
         $this->assertDatabaseHas('droplets', [
@@ -34,12 +36,12 @@ class InstallerTest extends BaseTestCase
     /** @test */
     function droplet_installs_subdroplets()
     {
-        ComposerLoader::load(base_path('tests/Platform/__fixtures__/another-droplet'));
-        ComposerLoader::load(base_path('tests/Platform/__fixtures__/another-droplet/droplets/themes/another_sub-droplet'));
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/droplets/another'));
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/droplets/another/droplets/themes/another_sub-droplet'));
 
         $this->installer()
-             ->path('tests/Platform/__fixtures__/another-droplet')
-             ->slug('droplets.another')
+             ->setPath('tests/Platform/__fixtures__/superv/droplets/another')
+             ->setSlug('droplets.another')
              ->install();
 
         $this->assertDatabaseHas('droplets', [
@@ -50,7 +52,7 @@ class InstallerTest extends BaseTestCase
             'name'      => 'AnotherSubDroplet',
             'slug'      => 'themes.another_sub',
             'type'      => 'droplet',
-            'path'      => 'tests/Platform/__fixtures__/another-droplet/droplets/themes/another_sub-droplet',
+            'path'      => 'tests/Platform/__fixtures__/superv/droplets/another/droplets/themes/another_sub-droplet',
             'enabled'   => true,
             'namespace' => 'SuperV\\Droplets\\AnotherSub',
         ]);
@@ -62,8 +64,8 @@ class InstallerTest extends BaseTestCase
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-droplet'));
 
         $this->installer()
-             ->path('tests/Platform/__fixtures__/sample-droplet')
-             ->slug('droplets.sample')
+             ->setPath('tests/Platform/__fixtures__/sample-droplet')
+             ->setSlug('droplets.sample')
              ->install();
 
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration']);
@@ -75,19 +77,10 @@ class InstallerTest extends BaseTestCase
     function verifies_droplet_path_exists()
     {
         $this->expectException(PathNotFoundException::class);
-        $this->installer()
-             ->path('path/does/not/exist')
-             ->slug('droplets.sample')
-             ->install();
-    }
 
-    /** @test */
-    function path_cannot_be_null()
-    {
-        $this->expectException(PathNotFoundException::class);
         $this->installer()
-             ->path(null)
-             ->slug('droplets.sample')
+             ->setPath('path/does/not/exist')
+             ->setSlug('droplets.sample')
              ->install();
     }
 
@@ -95,7 +88,7 @@ class InstallerTest extends BaseTestCase
     function parses_composer_data()
     {
         $installer = $this->installer();
-        $installer->path('tests/Platform/__fixtures__/sample-droplet');
+        $installer->setPath('tests/Platform/__fixtures__/sample-droplet');
 
         $this->assertEquals("SuperV\\Droplets\\Sample", $installer->namespace());
         $this->assertEquals('droplet', $installer->type());

@@ -13,8 +13,8 @@ class DropletInstallCommandTest extends BaseTestCase
     {
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
         $installer->shouldReceive('setCommand')->once()->andReturnSelf();
-        $installer->shouldReceive('path')->with('path/to/droplet')->once()->andReturnSelf();
-        $installer->shouldReceive('slug')->with('droplet.slug')->once()->andReturnSelf();
+        $installer->shouldReceive('setPath')->with('path/to/droplet')->once()->andReturnSelf();
+        $installer->shouldReceive('setSlug')->with('droplet.slug')->once()->andReturnSelf();
         $installer->shouldReceive('install')->once();
 
         $this->artisan('droplet:install', [

@@ -29,8 +29,8 @@ class BaseTestCase extends TestCase
     {
         ComposerLoader::load(base_path($path));
         $this->app->make(Installer::class)
-                  ->slug($slug)
-                  ->path($path)
+                  ->setSlug($slug)
+                  ->setPath($path)
                   ->install();
 
         $entry = DropletModel::bySlug($slug);

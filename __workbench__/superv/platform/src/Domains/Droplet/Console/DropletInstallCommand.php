@@ -14,15 +14,13 @@ class DropletInstallCommand extends Command
         try {
             $this->comment(sprintf('Installing %s', $this->argument('slug')));
             $installer->setCommand($this)
-                      ->path($this->option('path'))
-                      ->slug($this->argument('slug'))
+                      ->setPath($this->option('path'))
+                      ->setSlug($this->argument('slug'))
                       ->install();
 
             $this->comment(sprintf("Droplet %s installed \n", $this->argument('slug')));
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }
-
-
     }
 }

@@ -28,8 +28,8 @@ class ThemeServiceProviderTest extends BaseTestCase
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/starter-theme'));
         app(Installer::class)
-            ->path('tests/Platform/__fixtures__/starter-theme')
-            ->slug('themes.starter')
+            ->setPath('tests/Platform/__fixtures__/starter-theme')
+            ->setSlug('themes.starter')
             ->install();
 
         $this->setUpPort('web', 'superv.io', 'themes.starter');
@@ -55,9 +55,10 @@ class ThemeServiceProviderTest extends BaseTestCase
     /** @test */
     function dispatches_event_when_a_theme_is_activated()
     {
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/starter-theme'));
         app(Installer::class)
-            ->path('tests/Platform/__fixtures__/starter-theme')
-            ->slug('themes.starter')
+            ->setPath('tests/Platform/__fixtures__/starter-theme')
+            ->setSlug('themes.starter')
             ->install();
 
         $this->setUpPort('web', 'superv.io', 'themes.starter');
