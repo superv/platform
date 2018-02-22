@@ -1,6 +1,6 @@
 {
-    "name": "superv/project",
-    "description": "SuperV Project",
+    "name": "superv/mono",
+    "description": "SuperV Project Monolith",
     "authors": [
         {
             "name": "Ali Selcuk",
@@ -30,9 +30,7 @@
         ],
         "psr-4": {
             "App\\": "app/",
-            "SuperV\\Platform\\": "__workbench__/superv/platform/src/",
-            "SuperV\\Droplets\\Supreme\\": "droplets/superv/droplets/supreme/src/",
-            "SuperV\\Themes\\Tailwind\\": "droplets/superv/themes/tailwind/src/"
+            "SuperV\\Platform\\": "__workbench__/superv/platform/src/"
         },
         "files": [
             "__workbench__/superv/platform/src/Support/helpers.php"
