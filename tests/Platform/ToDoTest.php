@@ -37,7 +37,7 @@ class ToDoTest extends BaseTestCase
     }
 
     /** @test */
-    function make_use_of_symfony_finder_while_interacting_with_files()
+    function installer_uninstalls_subdroplets_when_a_droplet_is_uninstalled()
     {
         $this->addToAssertionCount(1);
     }
