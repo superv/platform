@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Droplet;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use SuperV\Platform\Domains\Database\Migrations\Scopes;
 use SuperV\Platform\Domains\Routing\Router;
 use Tests\Platform\BaseTestCase;
 
@@ -37,6 +38,6 @@ class DropletServiceProviderTest extends BaseTestCase
     {
         $droplet = $this->setUpDroplet();
 
-        $this->assertEquals($droplet->path('database/migrations'), config('superv.migrations.scopes')[$droplet->slug()]);
+        $this->assertEquals($droplet->path('database/migrations'), Scopes::path($droplet->slug()));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Droplet;
 
+use SuperV\Platform\Domains\Database\Migrations\Scopes;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Providers\BaseServiceProvider;
 
@@ -29,16 +30,16 @@ class DropletServiceProvider extends BaseServiceProvider
         parent::register();
 
         $this->addViewNamespaces([
-            $this->droplet->entry()->slug => base_path($this->droplet->entry()->path.'/resources/views'),
+            $this->droplet->slug() => base_path($this->droplet->resourcePath('views')),
         ]);
 
-        $scopes = config('superv.migrations.scopes');
-        $scopes[$this->droplet->entry()->slug] = $this->droplet->entry()->path.'/database/migrations';
-        config()->set('superv.migrations.scopes', $scopes);
+        if ($this->app->runningInConsole()) {
+            Scopes::register($this->droplet->slug(), $this->droplet->path('database/migrations'));
+        }
     }
 
     public function boot()
     {
-        app(Router::class)->loadFromPath($this->droplet->entry()->path.'/routes');
+        app(Router::class)->loadFromPath($this->droplet->path('routes'));
     }
 }

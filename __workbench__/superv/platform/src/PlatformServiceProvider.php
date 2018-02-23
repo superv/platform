@@ -2,11 +2,10 @@
 
 namespace SuperV\Platform;
 
-use Auth;
 use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Domains\Auth\Contracts\User;
-use SuperV\Platform\Domains\Auth\PlatformUserProvider;
+use SuperV\Platform\Domains\Database\Migrations\Scopes;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use SuperV\Platform\Providers\TwigServiceProvider;
@@ -39,12 +38,9 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     public function register()
     {
-        /**
-         * Migration Scopes
-         */
-        config(['superv.migrations.scopes' => [
-            'platform' => Platform::path('database/migrations'),
-        ]]);
+        if ($this->app->runningInConsole()) {
+            Scopes::register('platform', Platform::path('database/migrations'));
+        }
 
         /**
          * Register User Model
@@ -77,7 +73,5 @@ class PlatformServiceProvider extends BaseServiceProvider
         }
 
         Platform::boot();
-
-
     }
 }
