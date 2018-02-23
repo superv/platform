@@ -30,23 +30,9 @@ class AuthenticationTest extends BaseTestCase
     }
 
     /** @test */
-    function only_authenticates_allowed_user_types()
-    {
-        $this->setUpPort('acp', env('SV_HOSTNAME'), null, ['admin']);
-        $this->makeRoute('acp');
-        $this->makeUser('user@superv.io', 'secret');
-
-        $response = $this->login('user@superv.io', 'secret');
-
-        $response->assertStatus(302);
-        $response->assertRedirect('login');
-        $this->assertNotAuthenticated();
-    }
-
-    /** @test */
     function resolves_port_model_upon_authentication()
     {
-        $this->setUpPort('web', env('SV_HOSTNAME'), null, ['client'], Client::class);
+        $this->setUpPort('web', 'localhost', null, ['client'], Client::class);
         $this->makeRoute('web');
         $user = $this->makeUser('user@superv.io', 'client');
         Client::create(['user_id' => $user->id]);

@@ -2,11 +2,12 @@
 
 namespace Tests\Platform;
 
+use Orchestra\Testbench\TestCase;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Droplet\Installer;
+use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\PlatformServiceProvider;
 use Tests\ComposerLoader;
-use Tests\TestCase;
 
 class BaseTestCase extends TestCase
 {
@@ -17,6 +18,46 @@ class BaseTestCase extends TestCase
      * @var string
      */
     protected $tmpDirectory;
+
+    protected function getPackageProviders($app)
+    {
+        return [PlatformServiceProvider::class];
+    }
+
+    protected function getPackageAliases($app)
+    {
+        return [
+            'Platform' => PlatformFacade::class
+        ];
+    }
+
+    protected function getEnvironmentSetUp($app)
+    {
+        $app->setBasePath(realpath(__DIR__ . '/../../'));
+    }
+
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->withFactories(__DIR__. '/../database/factories');
+
+        if ($this->tmpDirectory) {
+            $this->tmpDirectory = __DIR__.'/../tmp/'.$this->tmpDirectory;
+            if (! file_exists($this->tmpDirectory)) {
+                app('files')->makeDirectory($this->tmpDirectory, 0755, true);
+            }
+        }
+
+        if (method_exists($this, 'refreshDatabase')) {
+            $this->artisan('superv:install');
+            config(['superv.installed' => true]);
+
+            (new PlatformServiceProvider($this->app))->boot();
+        }
+    }
+
 
     /**
      * @param string $slug
@@ -60,28 +101,10 @@ class BaseTestCase extends TestCase
         config(['superv.ports' => $ports]);
     }
 
-    protected function setUp()
-    {
-        parent::setUp();
-
-        if ($this->tmpDirectory) {
-            if (! file_exists(storage_path($this->tmpDirectory))) {
-                app('files')->makeDirectory(storage_path($this->tmpDirectory));
-            }
-        }
-
-        if (method_exists($this, 'refreshDatabase')) {
-            $this->artisan('superv:install');
-            config(['superv.installed' => true]);
-
-            (new PlatformServiceProvider($this->app))->boot();
-        }
-    }
-
     protected function tearDown()
     {
         if ($this->tmpDirectory) {
-            app('files')->deleteDirectory(storage_path($this->tmpDirectory));
+            app('files')->deleteDirectory(__DIR__.'/../tmp');
         }
 
         parent::tearDown();

@@ -8,7 +8,6 @@ use SuperV\Platform\PlatformServiceProvider;
 
 class PlatformServiceProviderTest extends BaseTestCase
 {
-    use RefreshDatabase;
 
     /** @test */
     function get_registered_with_platform()

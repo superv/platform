@@ -3,9 +3,9 @@
 namespace Tests\Platform\Domains\Database\Migrations;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Platform\BaseTestCase;
 
-class DatabaseMigrationRepositoryTest extends TestCase
+class DatabaseMigrationRepositoryTest extends BaseTestCase
 {
     use RefreshDatabase;
 

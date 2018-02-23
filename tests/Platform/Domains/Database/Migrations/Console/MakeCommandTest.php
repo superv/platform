@@ -37,11 +37,11 @@ class MakeCommandTest extends BaseTestCase
      */
     function sets_path_from_registered_scopes()
     {
-        Scopes::register('sample', 'storage/test-migrations');
+        Scopes::register('sample', $this->tmpDirectory);
 
-        $this->assertCount(0, \File::files(storage_path('test-migrations')));
+        $this->assertCount(0, \File::files($this->tmpDirectory));
         $this->artisan('make:migration', ['name' => 'CreateMigrationMake', '--scope' => 'sample']);
-        $this->assertCount(1, \File::files(storage_path('test-migrations')));
+        $this->assertCount(1, \File::files($this->tmpDirectory));
     }
 
 }

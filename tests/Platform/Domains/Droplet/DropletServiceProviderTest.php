@@ -38,6 +38,6 @@ class DropletServiceProviderTest extends BaseTestCase
     {
         $droplet = $this->setUpDroplet();
 
-        $this->assertEquals($droplet->path('database/migrations'), Scopes::path($droplet->slug()));
+        $this->assertEquals(base_path($droplet->path('database/migrations')), Scopes::path($droplet->slug()));
     }
 }

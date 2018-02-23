@@ -50,22 +50,16 @@ class PlatformTest extends BaseTestCase
     /** @test */
     function listens_port_detected_event_and_sets_active_port()
     {
+        $this->setUpPort('acp', 'hostname.io');
         PortDetectedEvent::dispatch(Port::fromSlug('acp'));
 
         $this->assertEquals('acp', Platform::port()->slug());
     }
 
     /** @test */
-    function returns_platform_relative_path()
-    {
-        $this->assertEquals('__workbench__/superv/platform', Platform::path());
-        $this->assertEquals('__workbench__/superv/platform/resources', Platform::path('resources'));
-    }
-
-    /** @test */
     function returns_platform_full_path()
     {
-        $this->assertEquals(base_path('__workbench__/superv/platform'), Platform::fullPath());
-        $this->assertEquals(base_path('__workbench__/superv/platform/resources'), Platform::fullPath('resources'));
+        $this->assertEquals(base_path('src/superv/platform'), Platform::fullPath());
+        $this->assertEquals(base_path('src/superv/platform/resources'), Platform::fullPath('resources'));
     }
 }

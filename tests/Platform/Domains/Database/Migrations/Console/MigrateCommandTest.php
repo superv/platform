@@ -34,7 +34,7 @@ class MigrateCommandTest extends BaseTestCase
     /** @test */
     function migrate_command_get_path_from_registered_scopes()
     {
-        Scopes::register('droplets.sample', 'tests/Platform/__fixtures__/sample-droplet/database/migrations');
+        Scopes::register('droplets.sample', base_path('tests/Platform/__fixtures__/sample-droplet/database/migrations'));
 
         $this->artisan('migrate', ['--scope' => 'droplets.sample']);
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration']);
