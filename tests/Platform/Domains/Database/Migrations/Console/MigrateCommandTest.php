@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Database\Migrations\Console\MigrateCommand;
 use SuperV\Platform\Domains\Database\Migrations\Migrator;
 use Tests\Platform\BaseTestCase;
 use Tests\TestsConsoleCommands;
+use SuperV\Platform\Domains\Database\Migrations\Scopes;
 
 class MigrateCommandTest extends BaseTestCase
 {
@@ -33,9 +34,7 @@ class MigrateCommandTest extends BaseTestCase
     /** @test */
     function migrate_command_get_path_from_registered_scopes()
     {
-        config(['superv.migrations.scopes' => [
-            'droplets.sample' => 'tests/Platform/__fixtures__/sample-droplet/database/migrations'
-        ]]);
+        Scopes::register('droplets.sample', 'tests/Platform/__fixtures__/sample-droplet/database/migrations');
 
         $this->artisan('migrate', ['--scope' => 'droplets.sample']);
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration']);
