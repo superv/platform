@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Database\Migrations\Console;
 
+use SuperV\Platform\Domains\Database\Migrations\Scopes;
+
 class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateCommand
 {
     protected $signature = 'migrate {--database= : The database connection to use.}
@@ -23,9 +25,8 @@ class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateComm
     protected function getMigrationPaths()
     {
         if ($this->option('scope')) {
-            $scopes = config('superv.migrations.scopes');
 
-            if ($path = array_get($scopes, $this->option('scope'))) {
+            if ($path = Scopes::path($this->option('scope'))) {
                 $this->migrator->setScope(null);
                 return [base_path($path)];
             }

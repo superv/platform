@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Database\Migrations\Console;
 
+use SuperV\Platform\Domains\Database\Migrations\Scopes;
+
 class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\MigrateMakeCommand
 {
     /**
@@ -27,14 +29,13 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
         parent::handle();
     }
 
-
     protected function getMigrationPath()
     {
         if ($this->option('scope')) {
-            $scopes = config('superv.migrations.scopes');
 
-            if ($path = array_get($scopes, $this->option('scope'))) {
+            if ($path = Scopes::path($this->option('scope'))) {
                 $this->creator->setScope(null);
+
                 return base_path($path);
             }
         }
