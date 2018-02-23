@@ -1,9 +1,0 @@
-{
-    "name": "superv/another_sub-droplet",
-    "type": "superv-droplet",
-    "autoload": {
-        "psr-4": {
-            "SuperV\\Droplets\\AnotherSub\\": "src/"
-        }
-    }
-}

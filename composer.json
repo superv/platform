@@ -1,66 +1,24 @@
 {
-    "name": "superv/mono",
-    "description": "SuperV Project Monolith",
-    "authors": [
-        {
-            "name": "Ali Selcuk",
-            "email": "maselcuk@gmail.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-        "php": ">=7.1.3",
-        "fideloper/proxy": "~4.0",
-        "kriswallsmith/assetic": "dev-master",
-        "laravel/framework": "5.6.*",
-        "rcrowe/twigbridge": "^0.9.6",
-        "tymon/jwt-auth": "dev-develop",
-        "wikimedia/composer-merge-plugin": "^1.4"
-    },
-    "require-dev": {
-        "doctrine/dbal": "^2.6",
-        "fzaninotto/faker": "~1.4",
-        "mockery/mockery": "0.9.*",
-        "orchestra/testbench": "~3.0",
-        "phpunit/phpunit": "~7.0",
-        "laravel/tinker": "~1.0"
-    },
+    "name": "superv/platform",
+    "description": "SuperV Platform Package",
     "autoload": {
-        "classmap": [
-        ],
         "psr-4": {
-            "SuperV\\Platform\\": "src/superv/platform/src/"
+            "SuperV\\Platform\\": "src/"
         },
         "files": [
-            "src/superv/platform/src/Support/helpers.php"
+            "src/Support/helpers.php"
         ]
     },
-    "autoload-dev": {
-        "files": [
-        ],
-        "psr-4": {
-            "Tests\\": "tests/"
-        }
+    "require": {
+        "kriswallsmith/assetic": "^1.4",
+        "rcrowe/twigbridge": "^0.9.5"
     },
     "extra": {
-        "merge-plugin": {
-            "include": [
-                "src/*/*/*/composer.json"
-            ],
-            "recurse": true,
-            "replace": false
+        "laravel": {
+            "providers": [
+                "SuperV\\Platform\\PlatformServiceProvider"
+            ]
         }
-    },
-    "config": {
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "optimize-autoloader": true
-    },
-    "prefer-stable": true,
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:superv/assetic.git"
-        }
-    ]
+    }
+    
 }
