@@ -61,13 +61,15 @@ class Platform
     public function path($prefix = null)
     {
         $path = $this->config('droplets.location').'/superv/platform';
+        $path = realpath(__DIR__ . '/../');
 
         return $path.($prefix ? '/'.$prefix : '');
     }
 
     public function fullPath($prefix = null)
     {
-        return base_path($this->path($prefix));
+        return $this->path($prefix);
+//        return base_path($this->path($prefix));
     }
 }
 

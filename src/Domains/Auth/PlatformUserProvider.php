@@ -25,13 +25,13 @@ class PlatformUserProvider extends EloquentUserProvider
         }
 
         $model = $this->createModel();
+        $query = $model->newQuery();
+
         if (! $model instanceof UserContract) {
-            $query = $model->newQuery();
             $query->whereHas('user', function ($query) use ($credentials) {
                 $this->applyFilters($query, $credentials);
             });
         } else {
-            $query = $model->newQuery();
             $this->applyFilters($query, $credentials);
         }
 

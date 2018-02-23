@@ -36,7 +36,7 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
             if ($path = Scopes::path($this->option('scope'))) {
                 $this->creator->setScope(null);
 
-                return base_path($path);
+                return $path;
             }
         }
 

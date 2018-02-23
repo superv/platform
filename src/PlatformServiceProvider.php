@@ -41,6 +41,9 @@ class PlatformServiceProvider extends BaseServiceProvider
         if ($this->app->runningInConsole()) {
             MigrationScopes::register('platform', Platform::path('database/migrations'));
         }
+        $this->mergeConfigFrom(
+                __DIR__.'/../config/superv.php', 'superv'
+            );
 
         /**
          * Register User Model

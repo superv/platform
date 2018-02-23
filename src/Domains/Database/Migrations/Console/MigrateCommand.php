@@ -28,7 +28,7 @@ class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateComm
 
             if ($path = Scopes::path($this->option('scope'))) {
                 $this->migrator->setScope(null);
-                return [base_path($path)];
+                return [$path];
             }
         }
 
