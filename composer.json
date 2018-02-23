@@ -15,6 +15,7 @@
         "laravel/framework": "5.6.*",
         "laravel/tinker": "~1.0",
         "rcrowe/twigbridge": "^0.9.6",
+        "tymon/jwt-auth": "dev-develop",
         "wikimedia/composer-merge-plugin": "^1.4"
     },
     "require-dev": {
