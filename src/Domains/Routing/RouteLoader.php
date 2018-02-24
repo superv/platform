@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Routing;
 
 use Illuminate\Routing\Router;
-use Platform;
 use SuperV\Platform\Domains\Port\Port;
 
 class RouteLoader
@@ -51,7 +50,7 @@ class RouteLoader
             }
 
             if ($middlewares = $this->port->middlewares()) {
-                array_set($action, 'middleware', $middlewares);
+                array_set($action, 'middleware', array_merge($middlewares, $action['middleware'] ?? []));
             }
         }
         return $this->router->{$verb ?? 'get'}($uri, $action);
