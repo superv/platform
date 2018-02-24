@@ -20,6 +20,8 @@ class Port
 
     protected $middlewares;
 
+    protected $guard;
+
     /**
      * @return mixed
      */
@@ -149,5 +151,21 @@ class Port
     public function setMiddlewares($middlewares)
     {
         $this->middlewares = $middlewares;
+    }
+
+    /**
+     * @return string
+     */
+    public function guard()
+    {
+        return $this->guard;
+    }
+
+    /**
+     * @param string $guard
+     */
+    public function setGuard($guard)
+    {
+        $this->guard = $guard;
     }
 }
