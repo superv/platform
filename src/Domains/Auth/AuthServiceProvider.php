@@ -28,6 +28,10 @@ class AuthServiceProvider extends BaseServiceProvider
                 if ($model = $event->port->model()) {
                     config()->set('superv.auth.user.model', $model);
                 }
+
+                if ($guard = $event->port->guard()) {
+                    config()->set('auth.defaults.guard', $guard);
+                }
             },
         ]);
     }
