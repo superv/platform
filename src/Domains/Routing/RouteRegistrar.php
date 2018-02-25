@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Routing;
 use Illuminate\Routing\Router;
 use SuperV\Platform\Domains\Port\Port;
 
-class RouteLoader
+class RouteRegistrar
 {
     /**
      * @var \Illuminate\Routing\Router
@@ -20,20 +20,26 @@ class RouteLoader
         $this->router = $router;
     }
 
-    public function load(array $routes)
+    /**
+     * Register multiple routes
+     *
+     * @param array $routes
+     */
+    public function register(array $routes)
     {
         foreach ($routes as $uri => $action) {
-            $this->loadRoute($uri, $action);
+            $this->registerRoute($uri, $action);
         }
     }
 
     /**
+     * Register a route
+     *
      * @param $uri
      * @param $action
-     *
      * @return \Illuminate\Routing\Route
      */
-    public function loadRoute($uri, $action)
+    public function registerRoute($uri, $action)
     {
         if (! is_array($action)) {
             $action = ['uses' => $action];
@@ -53,18 +59,18 @@ class RouteLoader
                 array_set($action, 'middleware', array_merge($middlewares, $action['middleware'] ?? []));
             }
         }
+
         return $this->router->{$verb ?? 'get'}($uri, $action);
     }
 
     /**
      * @param \SuperV\Platform\Domains\Port\Port|string $port
-     *
-     * @return RouteLoader
+     * @return self
      */
     public function setPort($port)
     {
         $this->port = is_object($port) ? $port : Port::fromSlug($port);
 
         return $this;
-}
+    }
 }

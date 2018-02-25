@@ -5,11 +5,11 @@ namespace SuperV\Platform\Domains\Routing;
 class Router
 {
     /**
-     * @var \SuperV\Platform\Domains\Routing\RouteLoader
+     * @var \SuperV\Platform\Domains\Routing\RouteRegistrar
      */
     protected $loader;
 
-    public function __construct(RouteLoader $loader)
+    public function __construct(RouteRegistrar $loader)
     {
         $this->loader = $loader;
     }
@@ -23,7 +23,7 @@ class Router
                 $files = glob("{$folder}/*.php");
                 foreach($files as $file) {
                     $routes = (array)require $file;
-                    $this->loader->load($routes);
+                    $this->loader->register($routes);
                 }
             }
         }
@@ -32,6 +32,6 @@ class Router
     public function loadFromFile($file)
     {
         $routes = require base_path($file);
-        $this->loader->load($routes);
+        $this->loader->register($routes);
     }
 }
