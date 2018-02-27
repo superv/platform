@@ -14,7 +14,7 @@ class Port
 
     protected $theme = null;
 
-    protected $allowedUserTypes = [];
+    protected $roles = [];
 
     protected $model;
 
@@ -99,19 +99,19 @@ class Port
     }
 
     /**
-     * @param array $types
+     * @param array $roles
      */
-    public function setAllowedUserTypes(array $types)
+    public function setRoles(array $roles)
     {
-        $this->allowedUserTypes = $types;
+        $this->roles = $roles;
     }
 
     /**
      * @return array
      */
-    public function allowedUserTypes()
+    public function roles()
     {
-        return $this->allowedUserTypes;
+        return $this->roles;
     }
 
     /**

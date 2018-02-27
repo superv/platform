@@ -71,8 +71,10 @@ class PlatformUserProvider extends EloquentUserProvider
         }
 
         if ($port = \Platform::port()) {
-            if ($allowedUserTypes = $port->allowedUserTypes()) {
-                $query->whereIn('type', $allowedUserTypes);
+            if ($roles = $port->roles()) {
+                $query->whereHas('roles', function(Builder $query) use ($roles) {
+                    $query->whereIn('slug', $roles);
+                });
             }
         }
     }
