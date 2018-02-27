@@ -5,12 +5,14 @@ namespace SuperV\Platform\Domains\Auth;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
+use SuperV\Platform\Domains\Auth\Concerns\HasRoles;
 use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Model implements UserContract, AuthenticatableContract, JWTSubject
 {
     use Authenticatable;
+    use HasRoles;
 
     protected $table = 'users';
 
@@ -51,4 +53,5 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
     {
         return [];
     }
+
 }
