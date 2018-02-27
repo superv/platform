@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestResponse;
 use PHPUnit\Framework\Assert;
 use SuperV\Platform\Domains\Droplet\Installer;
+use SuperV\Platform\Domains\Droplet\Locator;
 use SuperV\Platform\PlatformServiceProvider;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -35,8 +36,8 @@ class PlatformTestCase extends TestCase
         $this->artisan('superv:install');
         config(['superv.installed' => true]);
 
-        foreach ($this->installs as $droplet => $path) {
-            app(Installer::class)->setPath($path)
+        foreach ($this->installs as $droplet) {
+            app(Installer::class)->setLocator(new Locator())
                                  ->setSlug($droplet)
                                  ->install();
         }
