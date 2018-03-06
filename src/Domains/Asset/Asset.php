@@ -89,7 +89,6 @@ class Asset
         );
     }
 
-
     public function add($collection, $file, array $filters = [])
     {
         if (! isset($this->collections[$collection])) {
@@ -282,7 +281,7 @@ class Asset
                 if (!$droplet = DropletModel::bySlug($slug)) {
                     throw new \Exception("Asset Droplet not found: {$slug}");
                 }
-                $file = $droplet->path.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.$file;
+                $file = $droplet->path.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.$file;
             }
         }
 

@@ -10,6 +10,11 @@ namespace SuperV\Platform\Domains\Auth;
  */
 trait HasUser
 {
+    public function email()
+    {
+        return $this->user->email;
+    }
+
     public function user()
     {
         return $this->belongsTo(\SuperV\Platform\Domains\Auth\User::class);
@@ -54,7 +59,6 @@ trait HasUser
      * Set the token value for the "remember me" session.
      *
      * @param  string $value
-     *
      * @return void
      */
     public function setRememberToken($value)

@@ -17,7 +17,7 @@ class AssetServiceProvider extends BaseServiceProvider
 
         $this->registerListeners([
             ThemeActivatedEvent::class => function(ThemeActivatedEvent $event) {
-                app(Asset::class)->addPath('theme', $event->theme->path. '/resources');
+                app(Asset::class)->addPath('theme', $event->theme->path. '/public');
             }
         ]);
     }
