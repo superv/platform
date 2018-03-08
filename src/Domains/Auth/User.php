@@ -24,6 +24,11 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
         'ports' => 'json',
     ];
 
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
+
     public function profile()
     {
         return $this->hasOne(Profile::class);

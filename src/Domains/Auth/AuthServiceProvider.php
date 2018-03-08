@@ -9,6 +9,10 @@ use SuperV\Platform\Providers\BaseServiceProvider;
 
 class AuthServiceProvider extends BaseServiceProvider
 {
+    protected $_bindings = [
+        'SuperV\Platform\Domains\Auth\Contracts\Account' => Account::class
+    ];
+
     public function register()
     {
         $this->registerListeners([

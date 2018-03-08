@@ -8,5 +8,9 @@ interface Users
 
     public function first();
 
+    /**
+     * @param array $attributes
+     * @return \SuperV\Platform\Domains\Auth\Contracts\User
+     */
     public function create(array $attributes = []);
 }
