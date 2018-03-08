@@ -37,8 +37,8 @@ class LaravelValidator implements Validator
         $errors = $this->baseValidator->errors();
 
         $messages = [];
-        foreach ($errors->all() as $message) {
-            $messages[] = $message;
+        foreach ($errors->messages() as $key => $message) {
+            $messages[$key] = $message;
         }
 
         return $messages;
