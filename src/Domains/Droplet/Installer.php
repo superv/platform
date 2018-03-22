@@ -192,7 +192,7 @@ class Installer
     {
         $this->console->call(
             'migrate',
-            ['--scope' => $this->droplet->slug()],
+            ['--scope' => $this->droplet->slug(), '--force' => true],
             $this->command ? $this->command->getOutput() : null
         );
     }
