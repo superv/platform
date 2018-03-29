@@ -6,7 +6,6 @@ use Twig_SimpleFunction;
 
 class Extension extends \Twig_Extension
 {
-
     /**
      * @var \SuperV\Platform\Domains\Asset\Asset
      */
@@ -21,13 +20,23 @@ class Extension extends \Twig_Extension
     {
         return [
             new Twig_SimpleFunction(
-                    'asset_*',
-                    function ($name) {
-                        $arguments = array_slice(func_get_args(), 1);
+                'app_env',
+                function ($environment = null) {
+                    if (!$environment) {
+                        return app()->environment();
+                    }
 
-                        return call_user_func_array([$this->asset, camel_case($name)], $arguments);
-                    }, ['is_safe' => ['html']]
-                ),
+                    return app()->environment() === $environment;
+                }
+            ),
+            new Twig_SimpleFunction(
+                'asset_*',
+                function ($name) {
+                    $arguments = array_slice(func_get_args(), 1);
+
+                    return call_user_func_array([$this->asset, camel_case($name)], $arguments);
+                }, ['is_safe' => ['html']]
+            ),
         ];
     }
 }
