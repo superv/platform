@@ -17,4 +17,8 @@ class ValidationException extends \Exception
 
         return $this;
     }
+
+    public static function error($key, $message) {
+        return (new  self())->setErrors([$key => $message]);
+    }
 }
