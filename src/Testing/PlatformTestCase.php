@@ -47,6 +47,17 @@ class PlatformTestCase extends TestCase
         $this->setUpMacros();
     }
 
+    /**
+     * @param $abstract
+     * @return \Mockery\MockInterface
+     */
+    protected function bindMock($abstract)
+    {
+        $this->app->instance($abstract, $mockInstance = \Mockery::mock($abstract));
+
+        return $mockInstance;
+    }
+
     protected function setUpMacros()
     {
         TestResponse::macro('data', function ($key) {
