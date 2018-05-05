@@ -15,6 +15,7 @@ class RouteMatchedListener
     {
         $this->detector = $detector;
     }
+
     public function handle($event)
     {
         $this->detector->detect($event->request);

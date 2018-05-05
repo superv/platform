@@ -9,6 +9,9 @@ use SuperV\Platform\Domains\Auth\Concerns\HasRoles;
 use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @property mixed email
+ */
 class User extends Model implements UserContract, AuthenticatableContract, JWTSubject
 {
     use Authenticatable;
