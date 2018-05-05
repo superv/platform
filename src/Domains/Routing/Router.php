@@ -18,12 +18,17 @@ class Router
         if ($folders = glob(base_path("{$path}/*"), GLOB_ONLYDIR)) {
 
             foreach ($folders as $folder) {
-                $this->loader->setPort($port = pathinfo($folder, PATHINFO_BASENAME));
+                try {
+                    $this->loader->setPort($port = pathinfo($folder, PATHINFO_BASENAME));
+                } catch (\Exception $e) {
+                    // a port with the folder name could not be found
+                    continue;
+                }
 
                 $files = glob("{$folder}/*.php");
                 foreach($files as $file) {
                     $routes = (array)require $file;
-                    $this->loader->register($routes);
+                        $this->loader->register($routes);
                 }
             }
         }
