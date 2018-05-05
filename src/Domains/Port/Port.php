@@ -90,6 +90,10 @@ class Port
     {
         $config = \Platform::config('ports.'.$slug);
 
+        if (!$config) {
+            throw new \Exception("Port config not found: [{$slug}]");
+        }
+
         /** @var self $port */
         $port = Inflator::inflate(app(Port::class), $config);
 
