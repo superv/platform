@@ -12,6 +12,16 @@ abstract class AbstractFeature implements Feature
     /** @var \SuperV\Platform\Support\Collection */
     protected $params;
 
+    /**
+     * @var \SuperV\Platform\Domains\Feature\Response
+     */
+    protected $response;
+
+    public function __construct(Response $response)
+    {
+        $this->response = $response;
+    }
+
     public function init()
     {
         $this->params = new Collection;

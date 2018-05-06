@@ -16,14 +16,15 @@ class FeatureBus implements Responsable
     /** @var \SuperV\Platform\Domains\Feature\Response */
     protected $response;
 
-    public function __construct()
+    public function __construct(Response $response)
     {
         $this->request = new Collection(request('payload', request()->all()));
+        $this->response = $response;
     }
 
     public function handle($featureClass)
     {
-        $this->feature = app($featureClass);
+        $this->feature = app()->make($featureClass, ['response' => $this->response]);
         $this->feature->init();
 
         /** @var \SuperV\Platform\Domains\Feature\Request $featureRequest */
@@ -34,11 +35,12 @@ class FeatureBus implements Responsable
             $featureRequest->make();
             $this->feature->setRequest($featureRequest)->run();
 
-            $this->response = Response::ok($this->feature);
+            $this->response->setData($this->feature->getResponseData());
+
         } catch (ValidationException $e) {
-            $this->response = Response::error($e->getErrors(), 422);
+            $this->response->error($e->getErrors(), 422);
         } catch (\Exception $e) {
-            $this->response = Response::error($e->getMessage(), 425);
+            $this->response->error($e->getMessage(), 425);
         }
 
         return $this;
@@ -92,5 +94,10 @@ class FeatureBus implements Responsable
     public function getFeatureResponse()
     {
         return $this->response;
+    }
+
+    public function getResponseData()
+    {
+        return $this->response->toArray();
     }
 }

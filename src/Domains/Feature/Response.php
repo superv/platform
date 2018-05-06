@@ -8,20 +8,15 @@ class Response implements Responsable
 {
     protected $status = 'ok';
 
-    protected $statusCode;
+    protected $statusCode = 200;
 
     protected $data;
 
     protected $error;
 
-    public static function ok(Feature $feature, $statusCode = 200)
+    public function error($error, $statusCode)
     {
-        return ( new Response())->setData($feature->getResponseData())->setStatusCode($statusCode);
-    }
-
-    public static function error($error, $statusCode)
-    {
-        return ( new Response())->setError($error)->setStatusCode($statusCode);
+        return $this->setError($error)->setStatusCode($statusCode);
     }
 
     /**
@@ -30,12 +25,18 @@ class Response implements Responsable
      */
     public function toResponse($request)
     {
-        $jsonArray = ['status' => $this->status];
+        return response()->json($this->toArray(), $this->statusCode);
+    }
 
-        array_set_if($this->data, $jsonArray, 'data', $this->data);
-        array_set_if($this->error, $jsonArray, 'error', $this->error);
+    /** @return array */
+    public function toArray()
+    {
+        $toArray = ['status' => $this->status];
 
-        return response()->json($jsonArray, $this->statusCode);
+        array_set_if($this->data, $toArray, 'data', $this->data);
+        array_set_if($this->error, $toArray, 'error', $this->error);
+
+        return $toArray;
     }
 
     /**
@@ -79,5 +80,10 @@ class Response implements Responsable
     public function getStatus(): string
     {
         return $this->status;
+    }
+
+    public function isSuccess(): bool
+    {
+        return $this->status === 'ok' && ($this->statusCode === 200 || $this->statusCode === 201);
     }
 }

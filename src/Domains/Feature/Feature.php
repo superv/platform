@@ -9,4 +9,6 @@ interface Feature
     public function run();
 
     public function getResponseData();
+
+    public function setParam($key, $value);
 }

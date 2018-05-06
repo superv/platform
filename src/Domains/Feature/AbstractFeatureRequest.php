@@ -4,14 +4,13 @@ namespace SuperV\Platform\Domains\Feature;
 
 use SuperV\Platform\Contracts\Validator;
 use SuperV\Platform\Exceptions\ValidationException;
-use SuperV\Platform\Support\Collection;
 
 abstract class AbstractFeatureRequest implements Request
 {
     /** @var \SuperV\Platform\Contracts\Validator */
     protected $validator;
 
-    /** @var \SuperV\Platform\Support\Collection */
+    /** @var array */
     protected $params;
 
     /**
@@ -28,9 +27,32 @@ abstract class AbstractFeatureRequest implements Request
 
     public function init($params)
     {
-        $this->params = new Collection($params);
+        $this->params = $params;
 
         return $this;
+    }
+
+    public function validatorakekekefdslkdf3($input, $rules)
+    {
+        if(!is_array($input)) {
+            $this->throwValidationError('Invalid input data');
+        }
+        $this->validator->make($input, $rules);
+
+        // return only validated input
+        return collect($input)
+            ->only(
+                collect($rules)->keys()
+                               ->map(function ($rule) {
+                                   return explode('.', $rule)[0];
+                               })
+                               ->unique()->toArray()
+            )->toArray();
+    }
+
+    public function getParam($key, $default = null)
+    {
+        return array_get($this->params, $key, $default);
     }
 
     protected function throwValidationError($message, $key = 0)
@@ -38,22 +60,17 @@ abstract class AbstractFeatureRequest implements Request
         throw (new ValidationException())->setErrors([$key => $message]);
     }
 
-    public function getParam($key, $default = null)
-    {
-        return $this->params->get($key, $default);
-    }
-
     protected function setParam($key, $value)
     {
-        return $this->params->put($key, $value);
+        return array_set($this->params, $key, $value);
     }
 
     public function __call($name, $arguments)
     {
         if (starts_with($name, 'get')) {
             $key = snake_case(str_replace('get', '', $name));
-            if ($this->params->has($key)) {
-                return $this->params->get($key);
+            if (array_has($this->params, $key)) {
+                return array_get($this->params, $key);
             }
         }
 
