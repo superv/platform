@@ -20,6 +20,16 @@ trait HasUser
         return $this->belongsTo(\SuperV\Platform\Domains\Auth\User::class);
     }
 
+    public function getUserId()
+    {
+        return $this->user->id;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
+    }
+
     public function getAuthIdentifierName()
     {
         return $this->getKeyName();
