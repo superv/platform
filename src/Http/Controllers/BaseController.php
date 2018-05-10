@@ -10,6 +10,7 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Routing\Route;
 use Illuminate\Support\MessageBag;
 use Illuminate\View\Factory;
+use SuperV\Platform\Domains\Feature\FeatureBus;
 
 class BaseController extends Controller
 {
@@ -46,5 +47,10 @@ class BaseController extends Controller
     public static function at($method)
     {
         return get_called_class().'@'.$method;
+    }
+
+    protected function bus()
+    {
+        return app(FeatureBus::class);
     }
 }

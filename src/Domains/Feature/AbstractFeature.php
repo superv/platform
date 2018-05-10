@@ -46,11 +46,14 @@ abstract class AbstractFeature implements Feature
             if ($this->params->has($key)) {
                 return $this->params->get($key);
             }
+        } elseif (starts_with($name, 'set')) {
+            $key = snake_case(str_replace('set', '', $name));
+
+            return $this->params->put($key, $arguments[0]);
         }
 
         throw new \InvalidArgumentException('Unknown method '.$name);
     }
-
 
     public function getResponseData()
     {

@@ -8,7 +8,7 @@ use SuperV\Platform\Support\Collection;
 
 class FeatureBus implements Responsable
 {
-    protected $request;
+    protected $request; // TODO: rename to input
 
     /** @var \SuperV\Platform\Domains\Feature\Feature */
     protected $feature;
@@ -18,7 +18,7 @@ class FeatureBus implements Responsable
 
     public function __construct(Response $response)
     {
-        $this->request = new Collection(request('payload', request()->all()));
+        $this->request = new Collection(request()->all());
         $this->response = $response;
     }
 
@@ -40,6 +40,7 @@ class FeatureBus implements Responsable
         } catch (ValidationException $e) {
             $this->response->error($e->getErrors(), 422);
         } catch (\Exception $e) {
+//            throw $e;
             $this->response->error($e->getMessage(), 425);
         }
 

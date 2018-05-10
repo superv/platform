@@ -39,6 +39,15 @@ class Response implements Responsable
         return $toArray;
     }
 
+    public function getData($key = null)
+    {
+        if ($key) {
+            return array_get($this->data, $key);
+        }
+
+        return $this->data;
+    }
+
     /**
      * @param mixed $data
      * @return Response

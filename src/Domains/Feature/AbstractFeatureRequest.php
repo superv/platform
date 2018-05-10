@@ -32,7 +32,7 @@ abstract class AbstractFeatureRequest implements Request
         return $this;
     }
 
-    public function validatorakekekefdslkdf3($input, $rules)
+    public function validate($input, $rules)
     {
         if(!is_array($input)) {
             $this->throwValidationError('Invalid input data');
@@ -46,7 +46,8 @@ abstract class AbstractFeatureRequest implements Request
                                ->map(function ($rule) {
                                    return explode('.', $rule)[0];
                                })
-                               ->unique()->toArray()
+                               ->unique()
+                               ->toArray()
             )->toArray();
     }
 
