@@ -40,6 +40,9 @@ class Asset
 
     public function url($collection, array $filters = [], array $parameters = [], $secure = null)
     {
+        if ($this->request->isSecure()) {
+            $secure = true;
+        }
         if (! isset($this->collections[$collection])) {
             $this->add($collection, $collection, $filters);
         }
@@ -48,7 +51,7 @@ class Asset
             return null;
         }
 
-        return $this->url->asset($this->getPath($collection, $filters), $parameters, $secure);
+        return $this->url->asset($this->getPath($collection, $filters), $secure);
     }
 
     public function script($collection, array $filters = [], array $attributes = [])

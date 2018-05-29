@@ -95,4 +95,12 @@ class Response implements Responsable
     {
         return $this->status === 'ok' && ($this->statusCode === 200 || $this->statusCode === 201);
     }
+
+    /**
+     * @return mixed
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
 }

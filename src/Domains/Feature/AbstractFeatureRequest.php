@@ -34,13 +34,16 @@ abstract class AbstractFeatureRequest implements Request
 
     public function validate($input, $rules)
     {
-        if(!is_array($input)) {
+        if (method_exists($input, 'toArray')) {
+            $input = $input->toArray();
+        }
+        if (! is_array($input)) {
             $this->throwValidationError('Invalid input data');
         }
         $this->validator->make($input, $rules);
 
         // return only validated input
-        return collect($input)
+        $validated = collect($input)
             ->only(
                 collect($rules)->keys()
                                ->map(function ($rule) {
@@ -49,6 +52,10 @@ abstract class AbstractFeatureRequest implements Request
                                ->unique()
                                ->toArray()
             )->toArray();
+
+        $this->feature->setParam('validated', $validated);
+
+        return $validated;
     }
 
     public function getParam($key, $default = null)
@@ -56,7 +63,7 @@ abstract class AbstractFeatureRequest implements Request
         return array_get($this->params, $key, $default);
     }
 
-    protected function throwValidationError($message, $key = 0)
+    public function throwValidationError($message, $key = 0)
     {
         throw (new ValidationException())->setErrors([$key => $message]);
     }
@@ -64,6 +71,11 @@ abstract class AbstractFeatureRequest implements Request
     protected function setParam($key, $value)
     {
         return array_set($this->params, $key, $value);
+    }
+
+    protected function transfer($key, $as = null)
+    {
+        $this->feature->setParam($as ?? $key, $this->getParam($key));
     }
 
     public function __call($name, $arguments)

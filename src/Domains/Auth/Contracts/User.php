@@ -17,4 +17,6 @@ interface User
     public function isNotAn($role);
 
     public function createProfile(array $attributes);
+
+    public function updatePassword($newPassword);
 }

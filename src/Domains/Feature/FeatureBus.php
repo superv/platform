@@ -22,6 +22,11 @@ class FeatureBus implements Responsable
         $this->response = $response;
     }
 
+    public static function make($featureClass, array $input, $request = null)
+    {
+        return app(self::class)->setRequest($input)->handle($featureClass)->getFeature();
+    }
+
     public function handle($featureClass)
     {
         $this->feature = app()->make($featureClass, ['response' => $this->response]);
@@ -39,7 +44,7 @@ class FeatureBus implements Responsable
 
         } catch (ValidationException $e) {
             $this->response->error($e->getErrors(), 422);
-        } catch (\Exception $e) {
+        } catch (FeatureException $e) {
 //            throw $e;
             $this->response->error($e->getMessage(), 425);
         }

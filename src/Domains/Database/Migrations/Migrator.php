@@ -13,6 +13,11 @@ class Migrator extends BaseMigrator
 {
     protected $scope;
 
+    public function getMigrationFiles($paths)
+    {
+        return parent::getMigrationFiles($paths);
+    }
+
     public function setScope($scope)
     {
         $this->repository->setScope($scope);

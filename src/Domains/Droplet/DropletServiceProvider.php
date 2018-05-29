@@ -36,6 +36,8 @@ class DropletServiceProvider extends BaseServiceProvider
         if ($this->app->runningInConsole()) {
             MigrationScopes::register($this->droplet->slug(), base_path($this->droplet->path('database/migrations')));
         }
+
+        $this->droplet->loadConfigFiles();
     }
 
     public function boot()

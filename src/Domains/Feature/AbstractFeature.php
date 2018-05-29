@@ -36,7 +36,13 @@ abstract class AbstractFeature implements Feature
 
     public function setParam($key, $value)
     {
-        return $this->params->put($key, $value);
+        if (method_exists($this, 'set'.studly_case($key))) {
+            call_user_func_array([$this, 'set'.studly_case($key)], [$value]);
+        } elseif (property_exists(get_class($this), camel_case($key))) {
+            $this->{camel_case($key)} = $value;
+        }
+
+        $this->params->put($key, $value);
     }
 
     public function __call($name, $arguments)

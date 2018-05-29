@@ -43,6 +43,11 @@ class Droplet
         return rtrim($this->entry()->path.'/'.$prefix, '/');
     }
 
+    public function realPath($prefix = null)
+    {
+        return base_path($this->path($prefix));
+    }
+
     public function resourcePath($prefix = null)
     {
         return $this->path('resources/'.$prefix);
@@ -66,5 +71,18 @@ class Droplet
     public function providerClass()
     {
         return get_class($this).'ServiceProvider';
+    }
+
+    public function loadConfigFiles()
+    {
+        foreach (glob($this->realPath('config/*')) as $path) {
+            $key = pathinfo($path, PATHINFO_FILENAME);
+            $config = config()->get("superv.{$key}", []);
+
+            $fromModule = require $path;
+            $merged = array_replace_recursive($fromModule, $config);
+
+            config()->set($this->slug().'::'.$key, $merged);
+        }
     }
 }

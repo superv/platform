@@ -49,6 +49,7 @@ class BaseController extends Controller
         return get_called_class().'@'.$method;
     }
 
+    /** @return FeatureBus */
     protected function bus()
     {
         return app(FeatureBus::class);

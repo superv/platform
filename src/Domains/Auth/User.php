@@ -27,6 +27,21 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
         'ports' => 'json',
     ];
 
+    public function updatePassword($newPassword)
+    {
+        $this->update(['password' => bcrypt($newPassword)]);
+    }
+
+    public function verifyPassword($checkPassword) {
+
+        return \Hash::check($checkPassword, $this->password);
+    }
+
+//    public function setPasswordAttribute($password)
+//    {
+//        $this->attributes['password'] = bcrypt($password);
+//    }
+
     public function account()
     {
         return $this->belongsTo(Account::class);
