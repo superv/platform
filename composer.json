@@ -13,7 +13,7 @@
         "files": [
         ],
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\Platform\\": "tests/Platform"
         }
     },
     "require": {
