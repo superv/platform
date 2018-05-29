@@ -1,0 +1,87 @@
+#!/usr/bin/env php
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Register The Auto Loader
+|--------------------------------------------------------------------------
+|
+| Composer provides a convenient, automatically generated class loader
+| for our application. We just need to utilize it! We'll require it
+| into the script here so that we do not have to worry about the
+| loading of any our classes "manually". Feels great to relax.
+|
+*/
+
+use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\Facades\Facade;
+use SuperV\Platform\Facades\PlatformFacade;
+use SuperV\Platform\PlatformServiceProvider;
+
+require __DIR__.'/vendor/autoload.php';
+
+$app = new Illuminate\Foundation\Application(
+    realpath(__DIR__ . '/vendor/orchestra/testbench-core/laravel')
+);
+
+$app->bind(
+    'Illuminate\Foundation\Bootstrap\LoadConfiguration',
+    'Orchestra\Testbench\Bootstrap\LoadConfiguration'
+);
+
+/**
+ * Resolve Application Exception Handler
+ */
+$app->singleton(
+    'Illuminate\Contracts\Debug\ExceptionHandler',
+    'Orchestra\Testbench\Exceptions\Handler'
+);
+
+
+
+/**
+ * Resolve Application Core
+ */
+Facade::clearResolvedInstances();
+Facade::setFacadeApplication($app);
+
+$app->detectEnvironment(function() {});
+
+
+
+/**
+ * Resolve Application Configuration
+ */
+$app->make('Illuminate\Foundation\Bootstrap\LoadConfiguration')->bootstrap($app);
+
+
+
+/**
+ * Resolve Application Console Kernel
+ */
+$app->singleton('Illuminate\Contracts\Console\Kernel', 'Orchestra\Testbench\Console\Kernel');
+
+
+
+/**
+ * Resolve Application Bootstrappers
+ */
+$app->make('Illuminate\Foundation\Bootstrap\HandleExceptions')->bootstrap($app);
+$app->make('Illuminate\Foundation\Bootstrap\RegisterFacades')->bootstrap($app);
+$app->make('Illuminate\Foundation\Bootstrap\SetRequestForConsole')->bootstrap($app);
+$app->make('Illuminate\Foundation\Bootstrap\RegisterProviders')->bootstrap($app);
+
+
+
+$kernel = $app->make('Orchestra\Testbench\Console\Kernel');
+AliasLoader::getInstance(['Platform' => PlatformFacade::class])->register();
+$app->register(PlatformServiceProvider::class);
+
+$status = $kernel->handle(
+    $input = new Symfony\Component\Console\Input\ArgvInput,
+    new Symfony\Component\Console\Output\ConsoleOutput
+);
+
+$kernel->terminate($input, $status);
+
+exit($status);

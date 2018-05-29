@@ -1,0 +1,9 @@
+{
+    "name": "superv/starter-theme",
+    "type": "superv-theme",
+    "autoload": {
+        "psr-4": {
+            "SuperV\\Themes\\Starter\\": "src/"
+        }
+    }
+}
