@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Events\ThemeActivatedEvent;
 use SuperV\Platform\Exceptions\DropletNotFoundException;
 use SuperV\Platform\Providers\ThemeServiceProvider;
-use Tests\ComposerLoader;
+use Tests\Platform\ComposerLoader;
 use Tests\Platform\TestCase;
 
 class ThemeServiceProviderTest extends TestCase

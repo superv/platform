@@ -6,7 +6,7 @@ use Mockery as m;
 use SuperV\Platform\Domains\Database\Migrations\Console\RollbackCommand;
 use SuperV\Platform\Domains\Database\Migrations\Migrator;
 use Tests\Platform\TestCase;
-use Tests\TestsConsoleCommands;
+use Tests\Platform\TestsConsoleCommands;
 
 class RollbackCommandTest extends TestCase
 {

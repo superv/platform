@@ -4,7 +4,7 @@ namespace Tests\Platform\Console;
 
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use Tests\Platform\TestCase;
-use Tests\TestsConsoleCommands;
+use Tests\Platform\TestsConsoleCommands;
 
 class SuperVInstallCommandTest extends TestCase
 {

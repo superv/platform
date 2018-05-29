@@ -6,7 +6,7 @@ use Mockery as m;
 use SuperV\Platform\Domains\Database\Migrations\Console\ResetCommand;
 use SuperV\Platform\Domains\Database\Migrations\Migrator;
 use Tests\Platform\TestCase;
-use Tests\TestsConsoleCommands;
+use Tests\Platform\TestsConsoleCommands;
 
 class ResetCommandTest extends TestCase
 {

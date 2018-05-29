@@ -59,7 +59,7 @@ class PlatformTest extends TestCase
     /** @test */
     function returns_platform_full_path()
     {
-        $this->assertEquals(base_path('src/superv/platform'), Platform::fullPath());
-        $this->assertEquals(base_path('src/superv/platform/resources'), Platform::fullPath('resources'));
+        $this->assertEquals(base_path(), Platform::fullPath());
+        $this->assertEquals(base_path('resources'), Platform::fullPath('resources'));
     }
 }
