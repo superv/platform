@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Platform;
 
 use Composer\Autoload\ClassLoader;
 

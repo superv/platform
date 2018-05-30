@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Domains\Droplet\Locator;
 use SuperV\Platform\Exceptions\PathNotFoundException;
-use Tests\ComposerLoader;
+use Tests\Platform\ComposerLoader;
 use Tests\Platform\TestCase;
 
 class InstallerTest extends TestCase

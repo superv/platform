@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Database\Migrations\Console\MigrateCommand;
 use SuperV\Platform\Domains\Database\Migrations\Migrator;
 use SuperV\Platform\Domains\Database\Migrations\Scopes;
 use Tests\Platform\TestCase;
-use Tests\TestsConsoleCommands;
+use Tests\Platform\TestsConsoleCommands;
 
 class MigrateCommandTest extends TestCase
 {

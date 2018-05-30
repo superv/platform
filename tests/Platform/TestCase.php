@@ -8,7 +8,6 @@ use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\PlatformServiceProvider;
-use Tests\ComposerLoader;
 
 class TestCase extends OrchestraTestCase
 {

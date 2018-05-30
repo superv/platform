@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Database\Migrations\Console\MigrateMakeCommand;
 use SuperV\Platform\Domains\Database\Migrations\MigrationCreator;
 use SuperV\Platform\Domains\Database\Migrations\Scopes;
 use Tests\Platform\TestCase;
-use Tests\TestsConsoleCommands;
+use Tests\Platform\TestsConsoleCommands;
 
 class MakeCommandTest extends TestCase
 {
