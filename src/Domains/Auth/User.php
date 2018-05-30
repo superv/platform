@@ -2,9 +2,13 @@
 
 namespace SuperV\Platform\Domains\Auth;
 
+use App\Notifications\ResetPassword;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use SuperV\Platform\Domains\Auth\Concerns\HasRoles;
 use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -12,10 +16,11 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 /**
  * @property mixed email
  */
-class User extends Model implements UserContract, AuthenticatableContract, JWTSubject
+class User extends Model implements UserContract, AuthenticatableContract, JWTSubject, CanResetPasswordContract
 {
     use Authenticatable;
     use HasRoles;
+    use Notifiable;
 
     protected $table = 'users';
 
@@ -26,6 +31,22 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
     protected $casts = [
         'ports' => 'json',
     ];
+
+    public function getEmailForPasswordReset()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPassword($token));
+    }
 
     public function updatePassword($newPassword)
     {

@@ -35,6 +35,9 @@ class PlatformUserProvider extends EloquentUserProvider
             $this->applyFilters($query, $credentials);
         }
 
+//        $sql = $query->toSql();
+//        $binding = $query->getBindings();
+//        info($sql, $binding);
         return $query->first();
     }
 
