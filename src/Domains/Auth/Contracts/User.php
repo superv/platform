@@ -6,6 +6,8 @@ interface User
 {
     public static function query();
 
+    public function getEmail();
+
     public function assign(string $role);
 
     public function isA($role);
