@@ -98,4 +98,8 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
         return [];
     }
 
+    public function getEmail()
+    {
+        return $this->email;
+    }
 }

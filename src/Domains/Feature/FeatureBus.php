@@ -46,7 +46,21 @@ class FeatureBus implements Responsable
             $this->response->error($e->getErrors(), 422);
         } catch (FeatureException $e) {
 //            throw $e;
+            \Log::error($e->getMessage());
             $this->response->error($e->getMessage(), 425);
+        }
+
+        $data = [
+            'id' => $loggerRequestId = session()->pull('logger_request_id'),
+            'feature' => $featureClass,
+            'request' => $featureRequest->toArray(),
+            'response' => $json = json_encode($this->response->toArray())
+        ];
+
+        \Log::channel('api')->debug($loggerRequestId, $data);
+
+        if ($loggerRequestId) {
+            \DB::table('logger_requests')->where('id', $loggerRequestId)->update(['response' => $json]);
         }
 
         return $this;

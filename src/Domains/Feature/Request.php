@@ -9,4 +9,6 @@ interface Request
     public function make();
 
     public function getParam($key);
+
+    public function toArray();
 }

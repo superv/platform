@@ -89,4 +89,9 @@ abstract class AbstractFeatureRequest implements Request
 
         throw new \InvalidArgumentException('Unknown method '.$name);
     }
+
+    public function toArray()
+    {
+        return $this->params->toArray();
+    }
 }
