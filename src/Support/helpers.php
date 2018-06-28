@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Container\Container;
+use SuperV\Platform\Domains\Feature\FeatureBus;
 use SuperV\Platform\Support\Collection;
 use SuperV\Platform\Support\Decorator;
 
@@ -9,14 +10,27 @@ function platform_path($path = null)
     return 'vendor/superv/platform'.(is_null($path) ? '' : DIRECTORY_SEPARATOR.$path);
 }
 
+/**
+ * @param null $handler
+ * @return FeatureBus
+ */
+function feature($handler = null)
+{
+    if ($handler) {
+        return \Feature::handler($handler);
+    }
+
+    return app(FeatureBus::class);
+}
+
 function reload_env()
 {
     foreach (file(base_path('.env'), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
         // Check for # comments.
         if (! starts_with($line, '#')) {
             if (starts_with($line, 'SUPERV_')) {
-              putenv($line);
-          }
+                putenv($line);
+            }
         }
     }
 }
@@ -82,7 +96,6 @@ if (! function_exists('superv')) {
      *
      * @param  string $abstract
      * @param  array  $parameters
-     *
      * @return mixed|\Illuminate\Foundation\Application
      */
     function superv($abstract = null, array $parameters = [])
@@ -107,7 +120,6 @@ if (! function_exists('collect')) {
      * Create a collection from the given value.
      *
      * @param  mixed $value
-     *
      * @return \SuperV\Platform\Support\Collection
      */
     function collect($value = null)

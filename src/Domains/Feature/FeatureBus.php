@@ -8,7 +8,9 @@ use SuperV\Platform\Support\Collection;
 
 class FeatureBus implements Responsable
 {
-    protected $request; // TODO: rename to input
+    protected $handler;
+
+    protected $input;
 
     /** @var \SuperV\Platform\Domains\Feature\Feature */
     protected $feature;
@@ -18,30 +20,45 @@ class FeatureBus implements Responsable
 
     public function __construct(Response $response)
     {
-        $this->request = new Collection(request()->all());
+        $this->input = new Collection(request()->all());
         $this->response = $response;
     }
 
-    public static function make($featureClass, array $input, $request = null)
+    /**
+     * @param       $featureClass
+     * @param array $input
+     * @return \SuperV\Platform\Domains\Feature\Feature
+     */
+    public static function make($featureClass, array $input)
     {
         return app(self::class)->setRequest($input)->handle($featureClass)->getFeature();
     }
 
-    public function handle($featureClass)
+    /** @return self */
+    public function instance()
     {
-        $this->feature = app()->make($featureClass, ['response' => $this->response]);
+        return $this;
+    }
+
+    /** @return self */
+    public function handle($featureClass = null)
+    {
+        if ($featureClass) {
+            $this->handler($featureClass);
+        }
+
+        $this->resolveHandler();
+
         $this->feature->init();
 
-        /** @var \SuperV\Platform\Domains\Feature\Request $featureRequest */
-        $featureRequest = app()->make($featureClass.'Request', ['feature' => $this->feature]);
-        $featureRequest->init($this->getRequest());
+        $featureRequest = $this->resolveRequest();
+        $featureRequest->init($this->getInput());
 
         try {
             $featureRequest->make();
             $this->feature->setRequest($featureRequest)->run();
 
             $this->response->setData($this->feature->getResponseData());
-
         } catch (ValidationException $e) {
             $this->response->error($e->getErrors(), 422);
         } catch (FeatureException $e) {
@@ -51,10 +68,10 @@ class FeatureBus implements Responsable
         }
 
         $data = [
-            'id' => $loggerRequestId = session()->pull('logger_request_id'),
-            'feature' => $featureClass,
-            'request' => $featureRequest->toArray(),
-            'response' => $json = json_encode($this->response->toArray())
+            'id'       => $loggerRequestId = session()->pull('logger_request_id'),
+            'feature'  => $featureClass,
+            'request'  => $featureRequest->toArray(),
+            'response' => $json = json_encode($this->response->toArray()),
         ];
 
         \Log::channel('api')->debug($loggerRequestId, $data);
@@ -66,25 +83,25 @@ class FeatureBus implements Responsable
         return $this;
     }
 
-    public function mergeRequest(array $request)
+    public function merge(array $request)
     {
-        $this->request = $this->request->merge($request);
+        $this->input = $this->input->merge($request);
 
         return $this;
     }
 
-    protected function getRequest()
+    protected function getInput()
     {
-        return $this->request;
+        return $this->input;
     }
 
     /**
-     * @param mixed $request
+     * @param mixed $input
      * @return FeatureBus
      */
-    public function setRequest($request)
+    public function setRequest($input)
     {
-        $this->request = new Collection($request);
+        $this->input = new Collection($input);
 
         return $this;
     }
@@ -119,5 +136,30 @@ class FeatureBus implements Responsable
     public function getResponseData()
     {
         return $this->response->toArray();
+    }
+
+    /**
+     * @param string $handler
+     * @return FeatureBus
+     */
+    public function handler($handler)
+    {
+        $this->handler = $handler;
+
+        return $this;
+    }
+
+    /** @return \SuperV\Platform\Domains\Feature\FeatureBus */
+    private function resolveHandler()
+    {
+        $this->feature = app()->make($this->handler, ['response' => $this->response]);
+
+        return $this;
+    }
+
+    /** @return \SuperV\Platform\Domains\Feature\Request */
+    private function resolveRequest()
+    {
+        return app()->make($this->handler.'Request', ['feature' => $this->feature]);
     }
 }
