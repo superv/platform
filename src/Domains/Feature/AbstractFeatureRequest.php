@@ -91,6 +91,8 @@ abstract class AbstractFeatureRequest implements Request
             if (array_has($this->params, $key)) {
                 return array_get($this->params, $key);
             }
+
+            throw new \InvalidArgumentException("Input parameter [{$key}] is required");
         }
 
         throw new \InvalidArgumentException('Unknown method '.$name);
