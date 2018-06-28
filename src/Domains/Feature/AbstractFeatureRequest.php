@@ -75,7 +75,13 @@ abstract class AbstractFeatureRequest implements Request
 
     protected function transfer($key, $as = null)
     {
-        $this->feature->setParam($as ?? $key, $this->getParam($key));
+        if (! is_array($key)) {
+            $this->feature->setParam($as ?? $key, $this->getParam($key));
+        } else {
+            foreach($key as $k) {
+                $this->transfer($k);
+            }
+        }
     }
 
     public function __call($name, $arguments)
