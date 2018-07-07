@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Auth;
 
+use Illuminate\Database\Eloquent\Builder;
 use SuperV\Platform\Domains\Table\TableBuilder;
 
 class UserTableBuilder extends TableBuilder
@@ -18,4 +19,9 @@ class UserTableBuilder extends TableBuilder
             'heading' => 'Email',
         ],
     ];
+
+    public function onQuerying(Builder $query)
+    {
+        $query->whereHas('account');
+    }
 }

@@ -15,8 +15,10 @@ class Router
     }
 
     public function loadFromPath($path) {
-        if ($folders = glob(base_path("{$path}/*"), GLOB_ONLYDIR)) {
-
+        if (!starts_with($path, '/')) {
+            $path = base_path($path);
+        }
+        if ($folders = glob("{$path}/*", GLOB_ONLYDIR)) {
             foreach ($folders as $folder) {
                 try {
                     $this->loader->setPort($port = pathinfo($folder, PATHINFO_BASENAME));
@@ -31,7 +33,9 @@ class Router
                         $this->loader->register($routes);
                 }
             }
+        } elseif($files = glob(base_path("{$path}/*.php"))) {
         }
+
     }
 
     public function loadFromFile($file)

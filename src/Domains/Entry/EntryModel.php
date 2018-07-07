@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Entry;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid;
+use SuperV\Platform\Domains\Table\TableBuilder;
 
 class EntryModel extends Model
 {
@@ -91,5 +92,17 @@ class EntryModel extends Model
     {
         return $this->onCreate;
     }
+
+    public function compose()
+    {
+        return $this->toArray();
+    }
+
+    public static function getTableBuilder()
+    {
+        return app(TableBuilder::class)->setModel(get_called_class());
+    }
+
+
 
 }

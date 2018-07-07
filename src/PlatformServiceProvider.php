@@ -8,6 +8,8 @@ use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Feature\FeatureFacade;
+use SuperV\Platform\Domains\Routing\Router;
+use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use SuperV\Platform\Providers\TwigServiceProvider;
 
@@ -24,7 +26,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected $_bindings = [];
 
     protected $aliases = [
-        'Feature' => FeatureFacade::class
+        'Feature' => FeatureFacade::class,
     ];
 
     protected $_singletons = [
@@ -47,8 +49,8 @@ class PlatformServiceProvider extends BaseServiceProvider
             MigrationScopes::register('platform', Platform::path('database/migrations'));
         }
         $this->mergeConfigFrom(
-                __DIR__.'/../config/superv.php', 'superv'
-            );
+            __DIR__.'/../config/superv.php', 'superv'
+        );
 
         /**
          * Register User Model
@@ -79,6 +81,23 @@ class PlatformServiceProvider extends BaseServiceProvider
         if (config('superv.installed') !== true) {
             return;
         }
+
+//        app(Router::class)->loadFromPath(Platform::path('routes'));
+
+//        $router = app('router');
+//        $files = glob(Platform::path('routes')."/*.php");
+//        foreach ($files as $file) {
+//            $routes = (array)require $file;
+//            foreach ($routes as $uri => $action) {
+//                if (! is_array($action)) {
+//                    $action = ['uses' => $action];
+//                }
+//                if (str_contains($uri, '@')) {
+//                    list($verb, $uri) = explode('@', $uri);
+//                }
+//                $router->{$verb ?? 'get'}($uri, $action);
+//            }
+//        }
 
         Platform::boot();
     }
