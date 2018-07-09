@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Auth;
 
 use Auth;
+use SuperV\Platform\Domains\Auth\Console\CreateUserCommand;
 use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Providers\BaseServiceProvider;
@@ -13,8 +14,14 @@ class AuthServiceProvider extends BaseServiceProvider
         'SuperV\Platform\Domains\Auth\Contracts\Account' => Account::class
     ];
 
+    protected $commands = [
+        CreateUserCommand::class
+    ];
+
     public function register()
     {
+        parent::register();
+
         $this->registerListeners([
             UserCreatedEvent::class  => function (UserCreatedEvent $event) {
                 $user = $event->user;
