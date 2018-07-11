@@ -38,7 +38,7 @@ class SetTableEntries
         $total = $countQuery->getQuery()->count();
         $table->setOption('total_results', $total);
 
-        $limit = 15;
+        $limit = 200;
         $page = (int)app('request')->get('page', 1);
         $offset = $limit * (($page ?: 1) - 1);
         if ($total < $offset && $page > 1) {
