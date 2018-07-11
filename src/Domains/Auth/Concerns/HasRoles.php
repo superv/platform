@@ -26,7 +26,7 @@ trait HasRoles
             $roleEntry = Role::create(['slug' => $role]);
         }
 
-        $this->roles()->attach($roleEntry);
+        $this->roles()->syncWithoutDetaching([$roleEntry->id]);
 
         return $this;
     }

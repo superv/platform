@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Auth;
 
 use Auth;
+use SuperV\Platform\Domains\Auth\Console\AssignRoleCommand;
 use SuperV\Platform\Domains\Auth\Console\CreateUserCommand;
 use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
@@ -15,7 +16,8 @@ class AuthServiceProvider extends BaseServiceProvider
     ];
 
     protected $commands = [
-        CreateUserCommand::class
+        CreateUserCommand::class,
+        AssignRoleCommand::class
     ];
 
     public function register()
