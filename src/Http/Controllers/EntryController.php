@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Http\Controllers;
 
+use Lakcom\Modules\Core\Domains\Shipment\Model\Shipment;
 use Lakcom\Modules\Core\Domains\Warehouse\Location;
 
 class EntryController extends BaseController
@@ -14,6 +15,8 @@ class EntryController extends BaseController
 
         if ($this->request->get('m') === 'locations') {
             $this->model = Location::class;
+        } elseif ($this->request->get('m') === 'shipments') {
+            $this->model = Shipment::class;
         } else {
             throw new \Exception('Model needed here...');
         }
