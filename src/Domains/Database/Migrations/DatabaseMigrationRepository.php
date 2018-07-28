@@ -34,6 +34,7 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
 
     public function getLast()
     {
+        $lb = $this->getLastBatchNumber();
         $query = $this->table()->where('batch', $this->getLastBatchNumber());
 
         return $this->filterScope($query)->orderBy('migration', 'desc')->get()->all();

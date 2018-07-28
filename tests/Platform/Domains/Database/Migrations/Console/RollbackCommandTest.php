@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Database\Migrations\Console;
 use Mockery as m;
 use SuperV\Platform\Domains\Database\Migrations\Console\RollbackCommand;
 use SuperV\Platform\Domains\Database\Migrations\Migrator;
+use SuperV\Platform\Domains\Database\Migrations\Scopes;
 use Tests\Platform\TestCase;
 use Tests\Platform\TestsConsoleCommands;
 
@@ -26,5 +27,18 @@ class RollbackCommandTest extends TestCase
         $migrator->shouldReceive('getNotes')->andReturn([]);
 
         $this->runCommand($command, ['--scope' => 'test-scope']);
+    }
+
+    /** @test */
+    function rollback_with_steps_and_scope()
+    {
+        Scopes::register('foo', __DIR__.'/../migrations/foo');
+        Scopes::register('baz', __DIR__.'/../migrations/baz');
+
+        $this->artisan('migrate', ['--scope' => 'foo']);
+        $this->assertDatabaseHas('migrations', ['scope' => 'foo']);
+
+        $this->artisan('migrate:rollback', ['--scope' => 'foo']);
+        $this->assertDatabaseMissing('migrations', ['scope' => 'foo']);
     }
 }

@@ -14,6 +14,16 @@ class Migrator extends BaseMigrator
 {
     protected $scope;
 
+    public function paths()
+    {
+        $paths = parent::paths();
+        if ($this->scope && $path = Scopes::path($this->scope)) {
+            $paths[] = $path;
+        }
+
+        return $paths;
+    }
+
     public function getMigrationFiles($paths)
     {
         return parent::getMigrationFiles($paths);
