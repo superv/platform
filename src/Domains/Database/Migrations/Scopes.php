@@ -8,12 +8,18 @@ class Scopes
 
     public static function register($key, $path)
     {
-        array_set(static::$scopes, $key, $path);
+//        array_set(static::$scopes, $key, $path);
+        static::$scopes[$key] = $path;
     }
 
     public static function scopes()
     {
         return static::$scopes;
+    }
+
+    public static function key($path)
+    {
+        return array_get(array_flip(static::$scopes), $path);
     }
 
     public static function path($key)

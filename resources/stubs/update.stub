@@ -6,13 +6,6 @@ use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class DummyClass extends Migration
 {
-    {scope}
-
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::table('DummyTable', function (Blueprint $table) {
@@ -20,11 +13,6 @@ class DummyClass extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::table('DummyTable', function (Blueprint $table) {

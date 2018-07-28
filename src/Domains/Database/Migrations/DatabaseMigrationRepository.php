@@ -8,12 +8,18 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
 
     protected $scope;
 
+    public function getAll()
+    {
+        return $this->table()->get();
+    }
+
     public function getRan()
     {
         return $this->filterScope($this->table())
                     ->orderBy('batch', 'asc')
                     ->orderBy('migration', 'asc')
-                    ->pluck('migration')->all();
+                    ->pluck('migration')
+                    ->all();
     }
 
     public function getMigrations($steps)
@@ -52,7 +58,8 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
 
         if ($this->migration) {
             if ($this->migration instanceof Migration) {
-                array_set($record, 'scope', $this->migration->scope());
+                $scope = $this->migration->scope() ?: $this->scope;
+                array_set($record, 'scope', $scope);
             }
         }
 

@@ -6,6 +6,7 @@ use Illuminate\Database\Migrations\Migrator as BaseMigrator;
 
 /**
  * Class Migrator
+ *
  * @package SuperV\Platform\Packs\Database\Migrations
  * @property \SuperV\Platform\Domains\Database\Migrations\DatabaseMigrationRepository $repository
  */
@@ -35,8 +36,8 @@ class Migrator extends BaseMigrator
     /**
      * Run an array of migrations.
      *
-     * @param  array  $migrations
-     * @param  array  $options
+     * @param  array $migrations
+     * @param  array $options
      * @return void
      */
     public function runPending(array $migrations, array $options = [])
@@ -65,7 +66,7 @@ class Migrator extends BaseMigrator
         foreach ($migrations as $file) {
             $migration = $this->resolve($name = $this->getMigrationName($file));
             if ($this->scope) {
-                if (!$migration instanceof Migration || $migration->scope() !== $this->scope) {
+                if (! $migration instanceof Migration || ($migration->scope() && $migration->scope() !== $this->scope)) {
                     continue;
                 }
             }
@@ -77,9 +78,11 @@ class Migrator extends BaseMigrator
         }
     }
 
-
     protected function runUp($file, $batch, $pretend)
     {
+        if ($scope = Scopes::key(pathinfo($file, PATHINFO_DIRNAME))) {
+            $this->setScope($scope);
+        }
         $this->repository->setMigration($this->resolve(
             $name = $this->getMigrationName($file)
         ));

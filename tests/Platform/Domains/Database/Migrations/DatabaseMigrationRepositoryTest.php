@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\Database\Migrations;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use SuperV\Platform\Domains\Database\Migrations\Scopes;
 use Tests\Platform\TestCase;
 
 class DatabaseMigrationRepositoryTest extends TestCase
@@ -70,6 +71,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
     /** @test */
     function applies_scope_filter_on_ran_migrations()
     {
+        Scopes::register('bar', __DIR__.'/migrations');
         $this->app['migrator']->run(__DIR__.'/migrations');
 
         $this->assertCount(2, $this->repositoryWithScope('bar')->getRan());
@@ -80,8 +82,6 @@ class DatabaseMigrationRepositoryTest extends TestCase
             ],
             $this->repositoryWithScope('bar')->getRan()
         );
-
-        $this->assertCount(1, $this->repositoryWithScope('foo')->getRan());
     }
 
     /**

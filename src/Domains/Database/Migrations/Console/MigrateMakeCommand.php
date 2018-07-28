@@ -23,9 +23,9 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
 
     public function handle()
     {
-        if ($this->option('scope')) {
-            $this->creator->setScope($this->option('scope'));
-        }
+//        if ($this->option('scope')) {
+//            $this->creator->setScope($this->option('scope'));
+//        }
         parent::handle();
     }
 
@@ -34,7 +34,7 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
         if ($this->option('scope')) {
 
             if ($path = Scopes::path($this->option('scope'))) {
-                $this->creator->setScope(null);
+//                $this->creator->setScope(null);
 
                 return $path;
             }

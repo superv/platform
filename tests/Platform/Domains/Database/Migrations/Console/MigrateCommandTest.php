@@ -24,7 +24,7 @@ class MigrateCommandTest extends TestCase
         $migrateCommand->setLaravel($this->app);
 
         $migrator->shouldReceive('repositoryExists')->once()->andReturn(true);
-        $migrator->shouldReceive('paths')->once()->andReturn([]);
+        $migrator->shouldReceive('paths')->twice()->andReturn([]);
         $migrator->shouldReceive('getNotes')->once()->andReturn([]);
         $migrator->shouldReceive('setScope')->with('test-scope')->once();
 
@@ -37,8 +37,11 @@ class MigrateCommandTest extends TestCase
         Scopes::register('droplets.sample', base_path('tests/Platform/__fixtures__/sample-droplet/database/migrations'));
 
         $this->artisan('migrate', ['--scope' => 'droplets.sample']);
-        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration']);
-        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200100_droplet_bar_migration']);
-        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_droplet_baz_migration']);
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration',
+                                                'scope'     => 'droplets.sample']);
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200100_droplet_bar_migration',
+                                                'scope'     => 'droplets.sample']);
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_droplet_baz_migration',
+                                                'scope'     => 'droplets.sample']);
     }
 }
