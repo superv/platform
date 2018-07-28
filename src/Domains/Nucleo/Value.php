@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Value extends Model
 {
-    protected $table = 'member_values';
+    protected $table = 'nucleo_member_values';
 
     protected $guarded = [];
 

@@ -7,7 +7,7 @@ class CreateStructsTable extends Migration
 {
     public function up()
     {
-        Schema::create('structs', function (Blueprint $table) {
+        Schema::create('nucleo_structs', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('prototype_id');
             $table->unsignedInteger('related_id');
@@ -17,6 +17,6 @@ class CreateStructsTable extends Migration
 
     public function down()
     {
-        Schema::drop('structs');
+        Schema::drop('nucleo_structs');
     }
 }

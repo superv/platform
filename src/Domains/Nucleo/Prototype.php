@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Prototype extends Model
 {
+    protected $table = 'nucleo_prototypes';
+
     protected static function boot()
     {
         static::deleted(function(Prototype $prototype) {

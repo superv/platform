@@ -8,6 +8,8 @@ class Struct extends Model
 {
     protected $guarded = [];
 
+    protected $table = 'nucleo_structs';
+
     protected static function boot()
     {
         static::deleted(function(Struct $prototype) {

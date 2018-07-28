@@ -8,6 +8,8 @@ class Member extends Model
 {
     protected $guarded = [];
 
+    protected $table = 'nucleo_members';
+
     protected static function boot()
     {
         static::deleted(function (Member $member) {

@@ -29,10 +29,12 @@ class BlueprintTest extends TestCase
     function create_prototype_when_a_table_is_created()
     {
         $this->builder()->create('tasks', function (Blueprint $table) {
+//            $table->model(Task::class);
             $table->increments('id');
         });
 
         $this->assertNotNull(Prototype::byTable('tasks'));
+        $this->assertDatabaseHas('nucleo_prototypes', ['table' => 'tasks']);
     }
 
     /** @test */

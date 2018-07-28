@@ -8,6 +8,8 @@ class Field extends Model
 {
     protected $guarded = [];
 
+    protected $table = 'nucleo_fields';
+
     public $timestamps = false;
 
     protected $casts = [

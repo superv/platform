@@ -7,7 +7,7 @@ class CreateMembersTable extends Migration
 {
     public function up()
     {
-        Schema::create('members', function (Blueprint $table) {
+        Schema::create('nucleo_members', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('struct_id');
             $table->unsignedInteger('field_id');
@@ -18,6 +18,6 @@ class CreateMembersTable extends Migration
 
     public function down()
     {
-        Schema::drop('members');
+        Schema::drop('nucleo_members');
     }
 }

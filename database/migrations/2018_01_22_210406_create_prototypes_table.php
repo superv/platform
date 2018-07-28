@@ -7,7 +7,7 @@ class CreatePrototypesTable extends Migration
 {
     public function up()
     {
-        Schema::create('prototypes', function (Blueprint $table) {
+        Schema::create('nucleo_prototypes', function (Blueprint $table) {
             $table->increments('id');
 
             $table->string('table');
@@ -15,13 +15,8 @@ class CreatePrototypesTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::drop('prototypes');
+        Schema::drop('nucleo_prototypes');
     }
 }
