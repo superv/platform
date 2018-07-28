@@ -13,21 +13,16 @@ trait Structable
         parent::boot();
     }
 
-    public function prototype()
-    {
-        return Prototype::where('table', $this->getTable())->first();
-    }
-
     public function fields()
     {
-        $prototype = Prototype::where('table', $this->getTable())->first();
+        $prototype = Prototype::where('slug', $this->getTable())->first();
 
         return $prototype->fields;
     }
 
     public function struct()
     {
-        $prototype = Prototype::where('table', $this->getTable())->first();
+        $prototype = Prototype::where('slug', $this->getTable())->first();
 
         return Struct::where('prototype_id', $prototype->id)
                      ->where('related_id', $this->id)

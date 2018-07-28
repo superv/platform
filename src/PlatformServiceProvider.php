@@ -8,8 +8,6 @@ use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Feature\FeatureFacade;
-use SuperV\Platform\Domains\Routing\Router;
-use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use SuperV\Platform\Providers\TwigServiceProvider;
 

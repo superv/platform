@@ -38,12 +38,16 @@ class Prototype extends Model
     }
 
     /**
-     * @param $table
-     *
+     * @param $slug
      * @return self
      */
-    public static function byTable($table)
+    public static function bySlug($slug)
     {
-        return static::where('table', $table)->first();
+        return static::where('slug', $slug)->first();
+    }
+
+    public function model()
+    {
+        return Nucleo::modelOfTable($this->slug);
     }
 }

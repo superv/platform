@@ -18,15 +18,15 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         parent::build($connection, $grammar);
 
         if ($this->dropping()) {
-            Prototype::where('table', $this->table)->delete();
+            Prototype::where('slug', $this->table)->delete();
 
             return;
         }
 
         if ($this->creating()) {
-            $prototype = Prototype::create(['table' => $this->table]);
+            $prototype = Prototype::create(['slug' => $this->table]);
         } else {
-            $prototype = Prototype::where('table', $this->table)->first();
+            $prototype = Prototype::where('slug', $this->table)->first();
         }
 
         foreach (array_merge($this->columns, $scatters) as $column) {

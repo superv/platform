@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Nucleo;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Nucleo\Blueprint;
 use SuperV\Platform\Domains\Nucleo\Field;
+use SuperV\Platform\Domains\Nucleo\Nucleo;
 use SuperV\Platform\Domains\Nucleo\Prototype;
 use Tests\Platform\TestCase;
 
@@ -33,8 +34,25 @@ class BlueprintTest extends TestCase
             $table->increments('id');
         });
 
-        $this->assertNotNull(Prototype::byTable('tasks'));
-        $this->assertDatabaseHas('nucleo_prototypes', ['table' => 'tasks']);
+        $this->assertNotNull(Prototype::bySlug('tasks'));
+        $this->assertDatabaseHas('nucleo_prototypes', ['slug' => 'tasks']);
+    }
+
+    /** @test */
+    function get_model_from_prototype()
+    {
+        Nucleo::modelMap([
+            'tasks' => Task::class,
+        ]);
+
+        $this->builder()->create('tasks', function (Blueprint $table) {
+            $table->increments('id');
+        });
+
+        $prototype = Prototype::bySlug('tasks');
+        $this->assertEquals(Task::class, $prototype->model());
+
+        $this->assertEquals($prototype, (new Task())->prototype());
     }
 
     /** @test */
@@ -43,18 +61,18 @@ class BlueprintTest extends TestCase
         $this->builder()->create('tasks', function (Blueprint $table) {
             $table->increments('id');
         });
-        $this->assertNotNull(Prototype::byTable('tasks'));
+        $this->assertNotNull(Prototype::bySlug('tasks'));
 
         $this->builder()->drop('tasks');
-        $this->assertNull(Prototype::byTable('tasks'));
+        $this->assertNull(Prototype::bySlug('tasks'));
 
         $this->builder()->create('tasks', function (Blueprint $table) {
             $table->increments('id');
         });
-        $this->assertNotNull(Prototype::byTable('tasks'));
+        $this->assertNotNull(Prototype::bySlug('tasks'));
 
         $this->builder()->dropIfExists('tasks');
-        $this->assertNull(Prototype::byTable('tasks'));
+        $this->assertNull(Prototype::bySlug('tasks'));
     }
 
     /** @test */
@@ -64,7 +82,7 @@ class BlueprintTest extends TestCase
             $table->string('title');
         });
 
-        $prototype = Prototype::byTable('tasks');
+        $prototype = Prototype::bySlug('tasks');
         $this->assertEquals(1, $prototype->fields()->count());
 
         $this->builder()->table('tasks', function (Blueprint $table) {
@@ -81,7 +99,7 @@ class BlueprintTest extends TestCase
             $table->string('title')->rules(['required', 'min:6']);
         });
 
-        $prototype = Prototype::byTable('tasks');
+        $prototype = Prototype::bySlug('tasks');
         $this->assertEquals(['required', 'min:6'], $prototype->field('title')->rules);
     }
 
@@ -92,7 +110,7 @@ class BlueprintTest extends TestCase
             $table->increments('id');
         });
 
-        $prototype = Prototype::byTable('tasks');
+        $prototype = Prototype::bySlug('tasks');
         $this->assertEquals(0, $prototype->fields()->count());
     }
 
@@ -104,7 +122,7 @@ class BlueprintTest extends TestCase
             $table->string('title');
         });
 
-        $prototype = Prototype::byTable('tasks');
+        $prototype = Prototype::bySlug('tasks');
         $this->assertNotNull($prototype->field('title'));
 
         $this->builder()->table('tasks', function (Blueprint $table) {
@@ -117,7 +135,7 @@ class BlueprintTest extends TestCase
     /** @test */
     function delete_fields_when_a_prototype_is_deleted()
     {
-        $prototype = Prototype::create(['table' => 'tasks']);
+        $prototype = Prototype::create(['slug' => 'tasks']);
         $prototype->fields()->create(['slug' => 'title', 'type' => 'string']);
 
         $this->assertEquals(1, Field::where('prototype_id', $prototype->id)->count());

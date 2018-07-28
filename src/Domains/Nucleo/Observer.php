@@ -64,7 +64,7 @@ class Observer
 
     public function deleted(Model $model)
     {
-        $prototype = Prototype::where('table', $model->getTable())->first();
+        $prototype = Prototype::where('slug', $model->getTable())->first();
 
         $struct = $prototype->structs()->where('related_id', $model->id)->first();
 

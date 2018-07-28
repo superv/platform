@@ -10,7 +10,7 @@ class CreatePrototypesTable extends Migration
         Schema::create('nucleo_prototypes', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->string('table');
+            $table->string('slug');
             $table->timestamps();
         });
     }

@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use SuperV\Platform\Domains\Nucleo\Blueprint;
 use SuperV\Platform\Domains\Nucleo\Member;
+use SuperV\Platform\Domains\Nucleo\Prototypeable;
 use SuperV\Platform\Domains\Nucleo\Struct;
 use SuperV\Platform\Domains\Nucleo\Structable;
 use Tests\Platform\TestCase;
@@ -210,6 +211,7 @@ class NucleoTest extends TestCase
 class Task extends Model
 {
     use Structable;
+    use Prototypeable;
 
     protected $guarded = [];
 

@@ -15,7 +15,7 @@ class FieldTest extends TestCase
      */
     protected function setUpField()
     {
-        $prototype = Prototype::create(['table' => 'tasks']);
+        $prototype = Prototype::create(['slug' => 'tasks']);
         $field = $prototype->fields()->create(
             [
                 'slug' => 'title',
