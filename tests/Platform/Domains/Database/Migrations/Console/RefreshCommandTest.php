@@ -33,10 +33,10 @@ class RefreshCommandTest extends TestCase
         );
 
         $rollbackCommand->shouldReceive('run')->with(
-            $this->makeInputMatcher("--database --path --step=2 --force --scope=test-scope 'migrate:rollback'"), m::any()
+            $this->makeInputMatcher("--database --path --realpath --step=2 --force --scope=test-scope 'migrate:rollback'"), m::any()
         );
         $migrateCommand->shouldReceive('run')->with(
-            $this->makeInputMatcher('--database --path --force --scope=test-scope migrate'), m::any()
+            $this->makeInputMatcher('--database --path --realpath --force --scope=test-scope migrate'), m::any()
         );
 
         $this->runCommand($command, ['--step' => 2, '--scope' => 'test-scope']);
@@ -58,10 +58,10 @@ class RefreshCommandTest extends TestCase
                 ->andReturn($migrateCommand = m::mock(MigrateCommand::class));
 
         $resetCommand->shouldReceive('run')->with(
-            $this->makeInputMatcher("--database --path --force --scope=test-scope 'migrate:reset'"), m::any()
+            $this->makeInputMatcher("--database --path --realpath --force --scope=test-scope 'migrate:reset'"), m::any()
         );
         $migrateCommand->shouldReceive('run')->with(
-            $this->makeInputMatcher('--database --path --force --scope=test-scope migrate'), m::any()
+            $this->makeInputMatcher('--database --path --realpath --force --scope=test-scope migrate'), m::any()
         );
 
         $this->runCommand($command, ['--scope' => 'test-scope']);
