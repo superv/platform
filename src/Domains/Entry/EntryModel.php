@@ -75,7 +75,6 @@ class EntryModel extends Model
 
     /**
      * @param Closure $callback
-     *
      * @return EntryModel
      */
     public function onCreate(Closure $callback)
@@ -100,9 +99,22 @@ class EntryModel extends Model
 
     public static function getTableBuilder()
     {
-        return app(TableBuilder::class)->setModel(get_called_class());
+        $tableBuilderClass = str_replace_last('Model', '', get_called_class()).'TableBuilder';
+        if (! class_exists($tableBuilderClass)) {
+            $tableBuilderClass = TableBuilder::class;
+        }
+
+        return app($tableBuilderClass)->setModel(get_called_class());
     }
 
 
+    public static function getEditor()
+    {
+        $editorClass = str_replace_last('Model', '', get_called_class()).'Editor';
+        if (! class_exists($editorClass)) {
+            return null;
+        }
 
+        return app($editorClass);
+    }
 }

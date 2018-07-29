@@ -62,7 +62,6 @@ class FeatureBus implements Responsable
         } catch (ValidationException $e) {
             $this->response->error($e->getErrors(), 422);
         } catch (FeatureException $e) {
-//            throw $e;
             \Log::error($e->getMessage());
             $this->response->error($e->getMessage(), 425);
         }
