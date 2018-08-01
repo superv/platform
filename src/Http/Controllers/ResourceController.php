@@ -11,52 +11,52 @@ use SuperV\Platform\Domains\Nucleo\Nucleo;
  */
 class ResourceController extends BaseController
 {
-    /** @var string|\SuperV\Platform\Domains\Entry\EntryModel */
-    protected $model;
+    /** @var \SuperV\Platform\Domains\Nucleo\Resource\Resource */
+    protected $resource;
 
-    protected function model()
+    protected function resource()
     {
-        if (! $this->model = Nucleo::modelOfTable($this->request->get('m'))) {
-            throw new \Exception('Model needed here...');
+        $slug = $this->route->parameter('resource');
+        if (! $this->resource = Nucleo::resourceBySlug($slug)) {
+            throw new \Exception('Resource needed here...');
         }
 
-        return $this->model;
+        return app($this->resource)->build();
     }
 
     public function index()
     {
-        return $this->model()::getTableBuilder()->response();
+        return $this->resource()->getIndex()->render();
     }
 
     public function editor()
     {
-        return $this->model()::getEditor()->response();
+        return $this->resource()->getEditor()->render();
     }
 
-    public function show($id)
+    public function show($resource, $id)
     {
-        $entry = $this->model()::query()->findOrFail($id);
+        $entry = $this->resource()->load($id)->entry();
 
         return ['data' => ['state' => $entry->compose()]];
     }
 
     public function store()
     {
-        $entry = $this->model()::query()->create(request('state'));
+        $entry =  $this->resource()->create()->entry();
 
         return ['data' => ['state' => $entry->compose()]];
     }
 
-    public function update($id)
+    public function update($resource, $id)
     {
-        $entry = $this->model()::query()->findOrFail($id);
-        $entry->update(request('state'));
+        $entry = $this->resource()->load($id)->update()->entry();
 
         return ['data' => ['state' => $entry->compose()]];
     }
 
-    public function delete($id)
+    public function delete($resource, $id)
     {
-        $this->model()::query()->findOrFail($id)->delete();
+        $this->resource()->load($id)->delete();
     }
 }

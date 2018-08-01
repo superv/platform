@@ -99,7 +99,7 @@ class EntryModel extends Model
 
     public static function getTableBuilder()
     {
-        $tableBuilderClass = str_replace_last('Model', '', get_called_class()).'TableBuilder';
+        $tableBuilderClass = get_called_class().'TableBuilder';
         if (! class_exists($tableBuilderClass)) {
             $tableBuilderClass = TableBuilder::class;
         }
@@ -107,14 +107,13 @@ class EntryModel extends Model
         return app($tableBuilderClass)->setModel(get_called_class());
     }
 
-
     public static function getEditor()
     {
-        $editorClass = str_replace_last('Model', '', get_called_class()).'Editor';
+        $editorClass = get_called_class().'Editor';
         if (! class_exists($editorClass)) {
-            return null;
+            throw new \Exception('Editor not found for :'.get_called_class());
         }
 
-        return app($editorClass);
+        return app($editorClass, ['model' => get_called_class()]);
     }
 }

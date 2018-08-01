@@ -40,12 +40,13 @@ class TableBuilder implements Responsable
         $this->dispatch(new SetTableModel($this));
 
         $this->dispatch(new SetTableEntries($this));
+
         $this->dispatch(new LoadPagination($this));
 
         return $this;
     }
 
-    public function response()
+    public function render()
     {
         $this->response = array_has($this->getHttpRequest(), 'config') ? $this->getConfig() : $this->build()->getData();
 

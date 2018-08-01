@@ -15,6 +15,7 @@ class Field extends Model
     protected $casts = [
         'required' => 'boolean',
         'rules'    => 'array',
+        'config'   => 'json',
     ];
 
     public function addRule($rule)
@@ -41,8 +42,18 @@ class Field extends Model
         return $this;
     }
 
+    public function getRules()
+    {
+        return array_filter(array_merge($this->rules, $this->required ? ['required'] : []));
+    }
+
     public function hasRules()
     {
-        return is_array($this->rules) && ! empty($this->rules);
+        return ! empty($this->getRules());
+    }
+
+    public function label()
+    {
+        return ucwords(str_replace('_', ' ', $this->slug));
     }
 }

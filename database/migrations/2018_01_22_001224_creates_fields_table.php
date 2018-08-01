@@ -16,6 +16,7 @@ class CreatesFieldsTable extends Migration
             $table->boolean('scatter')->default(false)->nullable();
             $table->string('default_value')->nullable();
             $table->text('rules')->nullable();
+            $table->text('config')->nullable();
             $table->timestamps();
         });
     }

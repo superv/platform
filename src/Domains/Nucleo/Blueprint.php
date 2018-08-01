@@ -42,6 +42,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                 'required'      => ! $column->nullable || in_array('required', $rulesArray),
                 'default_value' => $column->default,
                 'rules'         => $column->rules ?? null,
+                'config'         => $column->config ?? null,
             ]);
         }
 
