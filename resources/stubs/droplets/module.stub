@@ -1,0 +1,7 @@
+<?php namespace {model.namespace};
+
+use SuperV\Platform\Domains\Droplet\Module\Module;
+
+class {class} extends Module
+{
+}

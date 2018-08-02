@@ -1,0 +1,7 @@
+<?php namespace {model.namespace};
+
+use SuperV\Platform\Domains\Droplet\Droplet;
+
+class {class} extends Droplet
+{
+}

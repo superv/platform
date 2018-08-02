@@ -1,0 +1,10 @@
+<?php namespace {model.namespace};
+
+use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
+
+class {class} extends DropletServiceProvider
+{
+    protected $routes = [];
+
+    protected $features = [];
+}

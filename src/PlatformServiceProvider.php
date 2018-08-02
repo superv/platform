@@ -7,6 +7,7 @@ use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
+use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Feature\FeatureFacade;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use SuperV\Platform\Providers\TwigServiceProvider;
@@ -39,6 +40,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected $commands = [
         SuperVInstallCommand::class,
         DropletInstallCommand::class,
+        MakeDropletCommand::class
     ];
 
     public function register()
