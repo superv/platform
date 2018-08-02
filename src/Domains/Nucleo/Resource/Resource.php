@@ -138,7 +138,8 @@ class Resource
             if ($field['type'] === 'file' && $request->hasFile($key)) {
                 $disk = array_pull($field, 'disk', 'local');
                 $visibility = array_pull($field, 'visibility', 'private');
-                $this->entry->mediaBag($key)->addFromUploadedFile($request->file($key), $disk, $visibility);
+                $folder = array_pull($field, 'folder');
+                $this->entry->mediaBag($key)->addFromUploadedFile($request->file($key), $disk, $visibility, $folder);
             }
         }
     }
