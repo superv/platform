@@ -2,9 +2,6 @@
 
 namespace SuperV\Platform\Domains\Nucleo\Resource;
 
-use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Entry\EntryModel;
-
 class ResourceEditor
 {
     protected $cols = 1;
