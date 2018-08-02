@@ -25,6 +25,6 @@ class Nucleo
 
     public static function resourceBySlug($slug)
     {
-        return static::$resourceMap[$slug];
+        return static::$resourceMap[str_replace('-', '_', $slug)];
     }
 }
