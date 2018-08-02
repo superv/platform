@@ -69,7 +69,10 @@ class TestCase extends OrchestraTestCase
      * @return \SuperV\Platform\Domains\Droplet\Droplet
      * @throws \SuperV\Platform\Exceptions\PathNotFoundException
      */
-    protected function setUpDroplet($slug = 'droplets.sample', $path = 'tests/Platform/__fixtures__/sample-droplet')
+    protected function setUpDroplet(
+        $slug = 'superv.droplets.sample',
+        $path = 'tests/Platform/__fixtures__/sample-droplet'
+    )
     {
         ComposerLoader::load(base_path($path));
         $this->app->make(Installer::class)

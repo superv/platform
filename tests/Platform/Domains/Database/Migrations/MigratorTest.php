@@ -40,7 +40,6 @@ class MigratorTest extends TestCase
         $this->assertDatabaseMissing('migrations', ['scope' => 'foo']);
     }
 
-    /** @test */
     function runs_migrations_by_scope()
     {
 //        $this->app['migrator']->setScope('bar')->run(__DIR__.'/migrations');

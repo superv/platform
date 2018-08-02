@@ -19,7 +19,7 @@ class PlatformTest extends TestCase
     {
         $this->setUpDroplet();
 
-        $entry = DropletModel::bySlug('droplets.sample');
+        $entry = DropletModel::bySlug('superv.droplets.sample');
 
         Platform::boot();
 

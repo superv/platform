@@ -11,6 +11,7 @@ class CreateDropletsTable extends Migration
         Schema::create('droplets', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('vendor');
             $table->string('slug');
             $table->string('path');
             $table->string('namespace');
@@ -20,11 +21,6 @@ class CreateDropletsTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('droplets');

@@ -29,10 +29,10 @@ class ThemeServiceProviderTest extends TestCase
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/starter-theme'));
         app(Installer::class)
             ->setPath('tests/Platform/__fixtures__/starter-theme')
-            ->setSlug('themes.starter')
+            ->setSlug('superv.themes.starter')
             ->install();
 
-        $this->setUpPort('web', 'superv.io', 'themes.starter');
+        $this->setUpPort('web', 'superv.io', 'superv.themes.starter');
 
         PortDetectedEvent::dispatch(Port::fromSlug('web'));
 
@@ -58,16 +58,16 @@ class ThemeServiceProviderTest extends TestCase
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/starter-theme'));
         app(Installer::class)
             ->setPath('tests/Platform/__fixtures__/starter-theme')
-            ->setSlug('themes.starter')
+            ->setSlug('superv.themes.starter')
             ->install();
 
-        $this->setUpPort('web', 'superv.io', 'themes.starter');
+        $this->setUpPort('web', 'superv.io', 'superv.themes.starter');
 
         Event::fake([ThemeActivatedEvent::class]);
         PortDetectedEvent::dispatch(Port::fromSlug('web'));
 
         Event::assertDispatched(ThemeActivatedEvent::class, function ($event) {
-            return $event->theme->slug === 'themes.starter';
+            return $event->theme->slug === 'superv.themes.starter';
         });
     }
 

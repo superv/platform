@@ -84,6 +84,13 @@ class Installer
         return explode('-', $this->composer('type'))[1];
     }
 
+    public function vendor()
+    {
+        list($vendor, ,) = explode('.', $this->slug);
+
+        return $vendor;
+    }
+
     /**
      * Parse PHP Namespace from composer config
      *
@@ -110,7 +117,6 @@ class Installer
      * Set droplet slug
      *
      * @param string $slug
-     *
      * @return Installer
      */
     public function setSlug($slug)
@@ -124,7 +130,6 @@ class Installer
      * Set droplet path
      *
      * @param string $path
-     *
      * @return Installer
      */
     public function setPath($path)
@@ -151,6 +156,10 @@ class Installer
      */
     protected function validate()
     {
+        if (! str_is('*.*.*', $this->slug)) {
+            throw new \Exception('Slug should be snake case and formatted like: {vendor}.{type}.{name}');
+        }
+
         if (! $this->path) {
             throw new \InvalidArgumentException("Path can not be empty");
         }
@@ -167,6 +176,7 @@ class Installer
     {
         $entry = DropletModel::query()->create([
             'name'      => $this->name(),
+            'vendor'    => $this->vendor(),
             'slug'      => $this->slug,
             'path'      => $this->path,
             'type'      => $this->type(),

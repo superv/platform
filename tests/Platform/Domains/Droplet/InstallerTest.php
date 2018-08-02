@@ -20,12 +20,13 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('tests/Platform/__fixtures__/sample-droplet')
-             ->setSlug('droplets.sample')
+             ->setSlug('superv.droplets.sample')
              ->install();
 
         $this->assertDatabaseHas('droplets', [
             'name'      => 'SampleDroplet',
-            'slug'      => 'droplets.sample',
+            'vendor'    => 'superv',
+            'slug'      => 'superv.droplets.sample',
             'type'      => 'droplet',
             'path'      => 'tests/Platform/__fixtures__/sample-droplet',
             'enabled'   => true,
@@ -41,16 +42,16 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('tests/Platform/__fixtures__/superv/droplets/another')
-             ->setSlug('droplets.another')
+             ->setSlug('superv.droplets.another')
              ->install();
 
         $this->assertDatabaseHas('droplets', [
             'name' => 'AnotherDroplet',
-            'slug' => 'droplets.another',
+            'slug' => 'superv.droplets.another',
         ]);
         $this->assertDatabaseHas('droplets', [
             'name'      => 'AnotherSubDroplet',
-            'slug'      => 'themes.another_sub',
+            'slug'      => 'superv.themes.another_sub',
             'type'      => 'droplet',
             'path'      => 'tests/Platform/__fixtures__/superv/droplets/another/droplets/themes/another_sub-droplet',
             'enabled'   => true,
@@ -65,7 +66,7 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('tests/Platform/__fixtures__/sample-droplet')
-             ->setSlug('droplets.sample')
+             ->setSlug('superv.droplets.sample')
              ->install();
 
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration']);
@@ -97,7 +98,7 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('path/does/not/exist')
-             ->setSlug('droplets.sample')
+             ->setSlug('superv.droplets.sample')
              ->install();
     }
 

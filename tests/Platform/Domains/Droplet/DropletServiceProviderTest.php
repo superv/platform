@@ -29,8 +29,8 @@ class DropletServiceProviderTest extends TestCase
         $droplet = $this->setUpDroplet();
 
         $hints = $this->app['view']->getFinder()->getHints();
-        $this->assertContains(base_path($droplet->resourcePath('views')), $hints['droplets.sample']);
-        $this->assertDirectoryExists(reset($hints['droplets.sample']));
+        $this->assertContains(base_path($droplet->resourcePath('views')), $hints['superv.droplets.sample']);
+        $this->assertDirectoryExists(reset($hints['superv.droplets.sample']));
     }
 
     /** @test */

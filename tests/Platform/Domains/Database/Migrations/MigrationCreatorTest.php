@@ -22,7 +22,6 @@ class MigrationCreatorTest extends TestCase
         $this->assertEquals(Platform::fullPath('resources/stubs'), $this->creator()->stubPath());
     }
 
-    /** @test */
     function adds_scope_data_if_supplied()
     {
         $file = $this->creator()

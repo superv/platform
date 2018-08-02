@@ -19,7 +19,7 @@ class DropletTest extends TestCase
     {
         $this->setUpDroplet();
 
-        $entry = DropletModel::bySlug('droplets.sample');
+        $entry = DropletModel::bySlug('superv.droplets.sample');
         $droplet = $entry->resolveDroplet();
 
         $this->assertInstanceOf(Droplet::class, $droplet);
@@ -32,7 +32,7 @@ class DropletTest extends TestCase
     {
         $this->setUpDroplet();
 
-        $entry = DropletModel::bySlug('droplets.sample');
+        $entry = DropletModel::bySlug('superv.droplets.sample');
         $droplet = $entry->resolveDroplet();
         $provider = $droplet->resolveProvider();
 

@@ -18,15 +18,15 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         parent::build($connection, $grammar);
 
         if ($this->dropping()) {
-            Prototype::where('slug', $this->table)->delete();
+            Prototype::where('slug', $this->getTable())->delete();
 
             return;
         }
 
         if ($this->creating()) {
-            $prototype = Prototype::create(['slug' => $this->table]);
+            $prototype = Prototype::create(['slug' => $this->getTable()]);
         } else {
-            $prototype = Prototype::where('slug', $this->table)->first();
+            $prototype = Prototype::where('slug', $this->getTable())->first();
         }
 
         foreach (array_merge($this->columns, $scatters) as $column) {
@@ -51,6 +51,11 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                 $prototype->fields()->whereIn('slug', $command->columns)->delete();
             }
         }
+    }
+
+    protected function getSlug()
+    {
+        return $this->table;
     }
 
     /**
