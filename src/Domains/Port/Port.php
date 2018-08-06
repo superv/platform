@@ -22,6 +22,8 @@ class Port
 
     protected $guard;
 
+    protected $composers;
+
     /**
      * @return mixed
      */
@@ -171,5 +173,21 @@ class Port
     public function setGuard($guard)
     {
         $this->guard = $guard;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getComposers()
+    {
+        return $this->composers;
+    }
+
+    /**
+     * @param mixed $composers
+     */
+    public function setComposers($composers): void
+    {
+        $this->composers = $composers;
     }
 }

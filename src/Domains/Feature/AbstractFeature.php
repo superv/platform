@@ -17,6 +17,12 @@ abstract class AbstractFeature implements Feature
      */
     protected $response;
 
+    /**
+     * Validated feature request
+     * @var array
+     */
+    protected $validated;
+
     public function __construct(Response $response)
     {
         $this->response = $response;
@@ -66,14 +72,14 @@ abstract class AbstractFeature implements Feature
         return [];
     }
 
-    /**
-     * @param \SuperV\Platform\Domains\Feature\Request $request
-     * @return AbstractFeature
-     */
-    public function setRequest(Request $request)
-    {
-        $this->request = $request;
-
-        return $this;
-    }
+//    /**
+//     * @param \SuperV\Platform\Domains\Feature\Request $request
+//     * @return AbstractFeature
+//     */
+//    public function setRequest(Request $request)
+//    {
+//        $this->request = $request;
+//
+//        return $this;
+//    }
 }

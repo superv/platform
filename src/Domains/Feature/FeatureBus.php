@@ -5,11 +5,13 @@ namespace SuperV\Platform\Domains\Feature;
 use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Exceptions\ValidationException;
 use SuperV\Platform\Support\Collection;
+use SuperV\Platform\Support\Composer\Composer;
 
 class FeatureBus implements Responsable
 {
     protected $handler;
 
+    /** @var \SuperV\Platform\Support\Collection  */
     protected $input;
 
     /** @var \SuperV\Platform\Domains\Feature\Feature */
@@ -51,14 +53,20 @@ class FeatureBus implements Responsable
 
         $this->feature->init();
 
-        $featureRequest = $this->resolveRequest();
-        $featureRequest->init($this->getInput());
-
         try {
-            $featureRequest->make();
-            $this->feature->setRequest($featureRequest)->run();
+            if ($featureRequest = $this->resolveRequest()) {
+                $featureRequest->init($this->getInput());
+                $featureRequest->make();
+//                $this->feature->setRequest($featureRequest);
+            } else {
+                $this->input->each(function ($value, $key) {
+                    $this->feature->setParam($key, $value);
+                });
+            }
 
-            $this->response->setData($this->feature->getResponseData());
+            $this->feature->run();
+
+            $this->setResponseData();
         } catch (ValidationException $e) {
             $this->response->error($e->getErrors(), 422);
         } catch (FeatureException $e) {
@@ -69,7 +77,7 @@ class FeatureBus implements Responsable
         $data = [
             'id'       => $loggerRequestId = session()->pull('logger_request_id'),
             'feature'  => $featureClass,
-            'request'  => $featureRequest->toArray(),
+            'request'  => isset($featureRequest) ? $featureRequest->toArray() : request()->all(),
             'response' => $json = json_encode($this->response->toArray()),
         ];
 
@@ -156,9 +164,21 @@ class FeatureBus implements Responsable
         return $this;
     }
 
-    /** @return \SuperV\Platform\Domains\Feature\Request */
+    /** @return \SuperV\Platform\Domains\Feature\Request|null */
     private function resolveRequest()
     {
-        return app()->make($this->handler.'Request', ['feature' => $this->feature]);
+        $class = $this->handler.'Request';
+        if (! class_exists($class)) {
+            return null;
+        }
+
+        return app()->make($class, ['feature' => $this->feature]);
+    }
+
+    protected function setResponseData(): void
+    {
+        $composed = (new Composer())->compose($this->feature->getResponseData());
+
+        $this->response->setData($composed);
     }
 }
