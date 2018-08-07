@@ -74,12 +74,12 @@ class Migrator extends BaseMigrator
         // migrations "up" so the changes are made to the databases. We'll then log
         // that the migration was run so we don't repeat it next time we execute.
         foreach ($migrations as $file) {
-            $migration = $this->resolve($name = $this->getMigrationName($file));
-            if ($this->scope) {
-                if (! $migration instanceof Migration || ($migration->scope() && $migration->scope() !== $this->scope)) {
-                    continue;
-                }
-            }
+//            $migration = $this->resolve($name = $this->getMigrationName($file));
+//            if ($this->scope) {
+//                if (! $migration instanceof Migration || ($migration->scope() && $migration->scope() !== $this->scope)) {
+//                    continue;
+//                }
+//            }
             $this->runUp($file, $batch, $pretend);
 
             if ($step) {
