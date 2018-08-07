@@ -156,6 +156,9 @@ class Installer
      */
     protected function validate()
     {
+        if (!$this->composer('type')) {
+            throw new \Exception('Composer type not provided in composer.json');
+        }
         if (! str_is('*.*.*', $this->slug)) {
             throw new \Exception('Slug should be snake case and formatted like: {vendor}.{type}.{name}');
         }
