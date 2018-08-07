@@ -2,10 +2,13 @@
 
 namespace SuperV\Platform\Domains\Feature;
 
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Support\Collection;
 
 abstract class AbstractFeature implements Feature
 {
+    use DispatchesJobs;
+
     /** @var \SuperV\Platform\Domains\Feature\Request */
     protected $request;
 
