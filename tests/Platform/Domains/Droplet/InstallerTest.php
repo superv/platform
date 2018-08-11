@@ -3,6 +3,8 @@
 namespace Tests\Platform\Domains\Droplet;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
+use SuperV\Platform\Domains\Droplet\Events\DropletInstalledEvent;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Domains\Droplet\Locator;
 use SuperV\Platform\Exceptions\PathNotFoundException;
@@ -18,10 +20,12 @@ class InstallerTest extends TestCase
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-droplet'));
 
-        $this->installer()
-             ->setPath('tests/Platform/__fixtures__/sample-droplet')
-             ->setSlug('superv.droplets.sample')
-             ->install();
+        Event::fake([DropletInstalledEvent::class]);
+
+        $installer = $this->installer();
+        $installer->setPath('tests/Platform/__fixtures__/sample-droplet')
+                  ->setSlug('superv.droplets.sample')
+                  ->install();
 
         $this->assertDatabaseHas('droplets', [
             'name'      => 'SampleDroplet',
@@ -32,6 +36,10 @@ class InstallerTest extends TestCase
             'enabled'   => true,
             'namespace' => 'SuperV\\Droplets\\Sample',
         ]);
+
+        Event::assertDispatched(DropletInstalledEvent::class, function (DropletInstalledEvent $event) use ($installer) {
+            return $event->droplet === $installer->getDroplet();
+        });
     }
 
     /** @test */

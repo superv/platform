@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Droplet;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
 use SuperV\Platform\Domains\Droplet\Contracts\DropletLocator;
+use SuperV\Platform\Domains\Droplet\Events\DropletInstalledEvent;
 use SuperV\Platform\Exceptions\PathNotFoundException;
 
 class Installer
@@ -60,6 +61,8 @@ class Installer
         $this->migrate();
 
         $this->installSubDroplets();
+
+        DropletInstalledEvent::dispatch($this->droplet);
 
         return $this;
     }
@@ -156,13 +159,6 @@ class Installer
      */
     protected function validate()
     {
-        if (!$this->composer('type')) {
-            throw new \Exception('Composer type not provided in composer.json');
-        }
-        if (! str_is('*.*.*', $this->slug)) {
-            throw new \Exception('Slug should be snake case and formatted like: {vendor}.{type}.{name}');
-        }
-
         if (! $this->path) {
             throw new \InvalidArgumentException("Path can not be empty");
         }
@@ -170,6 +166,16 @@ class Installer
         if (! file_exists(base_path($this->path))) {
             throw new PathNotFoundException("Path does not exist: [{$this->path}]");
         }
+
+        if (!$this->composer('type')) {
+            throw new \Exception('Composer type not provided in composer.json');
+        }
+
+        if (! str_is('*.*.*', $this->slug)) {
+            throw new \Exception('Slug should be snake case and formatted like: {vendor}.{type}.{name}');
+        }
+
+
     }
 
     /**
@@ -233,7 +239,11 @@ class Installer
     protected function composer($key = null)
     {
         if (! $this->composerJson) {
-            $this->composerJson = json_decode(file_get_contents(base_path($this->path.'/composer.json')), true);
+            $composerFile = base_path($this->path.'/composer.json');
+            if (! file_exists($composerFile)) {
+                return null;
+            }
+            $this->composerJson = json_decode(file_get_contents($composerFile), true);
         }
 
         return $key ? array_get($this->composerJson, $key) : $this->composerJson;

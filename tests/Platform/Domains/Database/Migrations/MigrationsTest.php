@@ -12,6 +12,6 @@ class MigrationsTest extends TestCase
     /** @test */
     function adds_column_droplet_to_migrations_table()
     {
-        $this->assertDatabaseHas('migrations', ['scope' => null]);
+        $this->assertDatabaseHas('migrations', ['scope' => 'platform']);
     }
 }
