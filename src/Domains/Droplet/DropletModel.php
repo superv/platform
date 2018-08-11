@@ -39,4 +39,9 @@ class DropletModel extends Model
     {
         return $this->namespace.'\\'.$this->name;
     }
+
+
+    public function scopeEnabled($query) {
+        $query->where('enabled', true);
+    }
 }
