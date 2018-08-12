@@ -40,7 +40,7 @@ class Droplet
 
     public function path($prefix = null)
     {
-        return rtrim($this->entry()->path.'/'.$prefix, '/');
+        return rtrim($this->entry()->path.'/'.ltrim($prefix, '/'), '/');
     }
 
     public function realPath($prefix = null)
