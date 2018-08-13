@@ -11,6 +11,8 @@ class StartResetPassword extends AbstractFeature
     /** @var \SuperV\Platform\Domains\Auth\Contracts\User * */
     protected $user;
 
+    protected $queue;
+
     public function run()
     {
         $table = \DB::table('password_resets');
@@ -25,6 +27,10 @@ class StartResetPassword extends AbstractFeature
             'created_at' => mysql_now(),
         ]);
 
-        $this->user->notify(new ResetPassword($token));
+        $notification = new ResetPassword($token);
+        if ($this->queue) {
+            $notification->onQueue($this->queue);
+        }
+        $this->user->notify($notification);
     }
 }

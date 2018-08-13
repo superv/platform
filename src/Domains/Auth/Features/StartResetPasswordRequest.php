@@ -16,5 +16,6 @@ class StartResetPasswordRequest extends AbstractFeatureRequest
         }
 
         $this->feature->setParam('user', $user);
+        $this->transfer('queue');
     }
 }
