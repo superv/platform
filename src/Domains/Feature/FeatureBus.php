@@ -11,7 +11,7 @@ class FeatureBus implements Responsable
 {
     protected $handler;
 
-    /** @var \SuperV\Platform\Support\Collection  */
+    /** @var \SuperV\Platform\Support\Collection */
     protected $input;
 
     /** @var \SuperV\Platform\Domains\Feature\Feature */
@@ -92,7 +92,9 @@ class FeatureBus implements Responsable
 
     public function merge(array $request)
     {
-        $this->input = $this->input->merge($request);
+        if (! empty($request)) {
+            $this->input = $this->input->merge($request);
+        }
 
         return $this;
     }

@@ -11,13 +11,14 @@ function platform_path($path = null)
 }
 
 /**
- * @param null $handler
+ * @param null  $handler
+ * @param array $input
  * @return FeatureBus
  */
-function feature($handler = null)
+function feature($handler = null, array $input = [])
 {
     if ($handler) {
-        return \Feature::handler($handler);
+        return  \Feature::handler($handler)->merge($input);
     }
 
     return app(FeatureBus::class);
