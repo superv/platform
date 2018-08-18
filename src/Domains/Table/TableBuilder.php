@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Table;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use SuperV\Modules\Nucleo\Resource\ResourceIndex;
 use SuperV\Platform\Domains\Table\Jobs\LoadPagination;
 use SuperV\Platform\Domains\Table\Jobs\SetTableEntries;
 use SuperV\Platform\Domains\Table\Jobs\SetTableModel;
@@ -19,6 +20,9 @@ class TableBuilder implements Responsable
      * @var \SuperV\Platform\Domains\Table\Table
      */
     protected $table;
+
+    /** @var \SuperV\Modules\Nucleo\Resource\ResourceIndex */
+    protected $resourceIndex;
 
     protected $model;
 
@@ -53,6 +57,11 @@ class TableBuilder implements Responsable
         return $this;
     }
 
+    public function onQuerying(Builder $query)
+    {
+        $this->resourceIndex->fire('querying', compact('query'));
+    }
+
     public function getHttpRequest()
     {
         return $this->httpRequest ?: request()->all();
@@ -60,12 +69,12 @@ class TableBuilder implements Responsable
 
     public function getData()
     {
+        $results = array_get($this->table->getData(), 'results', []);
+        $rows = array_pull($results, 'data');
+
         return [
-            'total'      => [
-                'results' => $this->table->getOption('total_results'),
-            ],
-            'rows'       => $this->table->getEntries(),
-            'pagination' => $this->table->getData(),
+            'rows'       => $rows,
+            'pagination' => $results,
         ];
     }
 
@@ -161,5 +170,27 @@ class TableBuilder implements Responsable
     public function toResponse($request)
     {
         return response()->json(['data' => $this->response]);
+    }
+
+    /**
+     * @param array $filters
+     * @return TableBuilder
+     */
+    public function setFilters(array $filters): TableBuilder
+    {
+        $this->filters = $filters;
+
+        return $this;
+    }
+
+    /**
+     * @param \SuperV\Modules\Nucleo\Resource\ResourceIndex $resourceIndex
+     * @return TableBuilder
+     */
+    public function setResourceIndex(ResourceIndex $resourceIndex): TableBuilder
+    {
+        $this->resourceIndex = $resourceIndex;
+
+        return $this;
     }
 }

@@ -22,7 +22,7 @@ class LoadPagination
         $table = $this->builder->getTable();
 
         $pageName = $table->getOption('prefix').'page';
-        $perPage = $table->getOption('limit') ?: 10;
+        $perPage = $table->getOption('limit') ?: 8;
         $page = app('request')->get($pageName);
 
         $path = '/'.app('request')->path();
@@ -37,6 +37,6 @@ class LoadPagination
         $pagination = $paginator->toArray();
         $pagination['links'] = $paginator->appends(app('request')->all())->render();
 
-        $table->setData('pagination', $pagination);
+        $table->setData('results', $pagination);
     }
 }

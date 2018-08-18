@@ -31,18 +31,18 @@ class SetTableEntries
         $this->builder->applyFilters($query);
 
         // Allow others to modify query before proceeding
-        $this->builder->fire('querying', compact('builder', 'query'));
+        $this->builder->fire('querying', compact('query'));
 
         // Count total entries
         $countQuery = clone $query;
         $total = $countQuery->getQuery()->count();
         $table->setOption('total_results', $total);
 
-        $limit = 200;
+        $limit = 8;
         $page = (int)app('request')->get('page', 1);
         $offset = $limit * (($page ?: 1) - 1);
         if ($total < $offset && $page > 1) {
-            throw new \Exception('nedir');
+//            throw new \Exception('nedir');
         }
         $query = $query->take($limit)->offset($offset);
 

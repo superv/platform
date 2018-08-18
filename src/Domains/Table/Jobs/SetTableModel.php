@@ -46,9 +46,6 @@ class SetTableModel
             throw new \Exception('Model does not exist: '. $model);
         }
 
-        /*
-         * Set the model on the table!
-         */
         $table->setModel(app($model));
     }
 }
