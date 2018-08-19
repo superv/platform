@@ -9,6 +9,13 @@
             "src/Support/helpers.php"
         ]
     },
+    "autoload-dev": {
+        "files": [
+        ],
+        "psr-4": {
+            "Tests\\Platform\\": "tests/Platform"
+        }
+    },
     "require": {
         "php": ">=7.1.3",
         "fideloper/proxy": "~4.0",
