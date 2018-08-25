@@ -3,10 +3,11 @@
 namespace SuperV\Platform\Domains\UI\Table;
 
 use SuperV\Platform\Domains\Setting\JSON;
-use SuperV\Platform\Facades\Inflator;
+use SuperV\Platform\Support\Concerns\Hydratable;
 
 class TableFactory
 {
+
     /**
      * @var Table
      */
@@ -24,7 +25,7 @@ class TableFactory
 
         $builder = app(TableBuilder::class);
 
-        Inflator::inflate($builder, $data);
+        $builder->hydrate($data);
 
         return $builder;
     }

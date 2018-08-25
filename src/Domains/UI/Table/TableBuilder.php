@@ -8,11 +8,13 @@ use Illuminate\View\Factory;
 use SuperV\Platform\Domains\Entry\EntryModel;
 use SuperV\Platform\Domains\UI\Table\Features\BuildTable;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
+use SuperV\Platform\Support\Concerns\Hydratable;
 
 class TableBuilder implements Responsable
 {
     use DispatchesJobs;
     use FiresCallbacks;
+    use Hydratable;
 
     /** @var Table */
     protected $table;

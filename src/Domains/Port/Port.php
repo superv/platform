@@ -2,10 +2,13 @@
 
 namespace SuperV\Platform\Domains\Port;
 
+use SuperV\Platform\Support\Concerns\Hydratable;
 use SuperV\Platform\Support\Inflator;
 
 class Port
 {
+    use Hydratable;
+
     protected $slug;
 
     protected $hostname;
@@ -97,7 +100,7 @@ class Port
         }
 
         /** @var self $port */
-        $port = Inflator::inflate(app(Port::class), $config);
+        $port = app(Port::class)->hydrate($config);
 
         $port->setSlug($slug);
 
