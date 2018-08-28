@@ -2,8 +2,10 @@
 
 namespace SuperV\Platform\Domains\UI;
 
-class Block implements \JsonSerializable
+class SvBlock implements \JsonSerializable
 {
+    protected $id;
+
     protected $component;
 
     /** @var array */
@@ -13,6 +15,7 @@ class Block implements \JsonSerializable
     {
         $block = new static;
         $block->component = $component;
+        $block->id = md5(uniqid());
 
         return $block;
     }
@@ -27,8 +30,9 @@ class Block implements \JsonSerializable
     public function toArray()
     {
         return [
+            'id'        => $this->id,
             'component' => $this->component,
-            'props'     => $this->props,
+            'props'     => array_merge($this->props, ['block-id' => $this->id]),
         ];
     }
 
