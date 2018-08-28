@@ -97,23 +97,4 @@ class EntryModel extends Model
         return $this->toArray();
     }
 
-    public static function getTableBuilder()
-    {
-        $tableBuilderClass = get_called_class().'TableBuilder';
-        if (! class_exists($tableBuilderClass)) {
-            $tableBuilderClass = TableBuilder::class;
-        }
-
-        return app($tableBuilderClass)->setModel(get_called_class());
-    }
-
-    public static function getEditor()
-    {
-        $editorClass = get_called_class().'Editor';
-        if (! class_exists($editorClass)) {
-            throw new \Exception('Editor not found for :'.get_called_class());
-        }
-
-        return app($editorClass, ['model' => get_called_class()]);
-    }
 }
