@@ -6,7 +6,7 @@ class EntryComposer
     /** @var  \Illuminate\Database\Eloquent\Model */
     protected $object;
 
-    protected $fields = [];
+    protected $fields;
 
     public function __construct($object)
     {
@@ -25,6 +25,9 @@ class EntryComposer
 
     public function compose($params)
     {
+        if ($this->fields) {
+            return array_intersect_key($this->object->toArray(), array_flip($this->fields));
+        }
         return $this->object->toArray();
     }
 
