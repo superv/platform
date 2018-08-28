@@ -59,6 +59,7 @@ abstract class BaseServiceProvider extends ServiceProvider
                     $this->app->singleton($concrete, $concrete);
                 } elseif (! preg_match('/[^A-Za-z._\-]/', $abstract)) {
                     $this->app->singleton("superv.{$abstract}", $concrete);
+                    $this->app->singleton($concrete, $concrete);
                 } else {
                     $this->app->singleton($abstract, $concrete);
                 }
