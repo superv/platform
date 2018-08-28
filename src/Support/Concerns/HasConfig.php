@@ -12,6 +12,10 @@ trait HasConfig
             return $this->getConfig();
         }
 
+        if (is_array($key)) {
+            return $this->setConfig($key);
+        }
+
         return $this->getConfigValue($key, $default);
     }
 
