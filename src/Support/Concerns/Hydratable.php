@@ -11,6 +11,10 @@ trait Hydratable
 
             if (method_exists($this, $method)) {
                 $this->{$method}($value);
+            } else {
+                if (property_exists($this, $parameter)) {
+                    $this->$parameter = $value;
+                }
             }
         }
 
