@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Entry;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid;
-use SuperV\Platform\Domains\Table\TableBuilder;
 
 class EntryModel extends Model
 {
