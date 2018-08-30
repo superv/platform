@@ -25,6 +25,11 @@ class Users implements UsersContract
         return $this->query->first();
     }
 
+    public function find($id, $columns = ['*'])
+    {
+        return $this->query->find($id, $columns);
+    }
+
     public function create(array $attributes = [])
     {
         return $this->query->create($attributes);

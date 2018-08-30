@@ -11,7 +11,6 @@ use SuperV\Platform\Domains\Droplet\Console\DropletMakeMigrationCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletRunMigrationCommand;
 use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Droplet\DropletCollection;
-use SuperV\Platform\Domains\Feature\FeatureFacade;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use SuperV\Platform\Providers\TwigServiceProvider;
 
@@ -28,7 +27,8 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected $_bindings = [];
 
     protected $aliases = [
-        'Feature' => FeatureFacade::class,
+        'Feature' => 'SuperV\Platform\Domains\Feature\FeatureFacade',
+        'Current' => 'SuperV\Platform\Facades\CurrentFacade',
     ];
 
     protected $_singletons = [

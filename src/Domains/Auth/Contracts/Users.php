@@ -8,6 +8,8 @@ interface Users
 
     public function first();
 
+    public function find($id, $columns = ['*']);
+
     /**
      * @param array $attributes
      * @return \SuperV\Platform\Domains\Auth\Contracts\User
