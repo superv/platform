@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\UI;
 
 class SvColumn implements \JsonSerializable
 {
-    protected $component = 'SvColumn';
+    protected $component = 'sv-column';
 
     protected $blocks = [];
 
@@ -14,7 +14,7 @@ class SvColumn implements \JsonSerializable
      * @param string $slug
      * @return static
      */
-    public static function make(string $slug)
+    public static function make(string $slug = null)
     {
         $self = new static;
         $self->slug = $slug;

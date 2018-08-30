@@ -9,13 +9,15 @@ class SvBlock implements \JsonSerializable
     protected $component;
 
     /** @var array */
-    protected $props;
+    protected $props = [];
+
+    protected $classList = [];
 
     public static function make(string $component)
     {
         $block = new static;
         $block->component = $component;
-        $block->id = md5(uniqid());
+        $block->id = substr(md5(uniqid()), 0, 12);
 
         return $block;
     }
@@ -33,7 +35,15 @@ class SvBlock implements \JsonSerializable
             'id'        => $this->id,
             'component' => $this->component,
             'props'     => array_merge($this->props, ['block-id' => $this->id]),
+            'class'     => implode(' ', $this->classList),
         ];
+    }
+
+    public function class($class)
+    {
+        $this->classList[] = $class;
+
+        return $this;
     }
 
     /**
