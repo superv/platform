@@ -27,7 +27,10 @@ class Platform
 
         /** @var DropletModel $entry */
         foreach ($entries as $entry) {
-            app()->register($entry->resolveDroplet()->resolveProvider());
+            $droplet = $entry->resolveDroplet();
+            app()->register($droplet->resolveProvider());
+
+            superv('droplets')->put($droplet->slug(), $droplet);
         }
 
         PlatformBootedEvent::dispatch();

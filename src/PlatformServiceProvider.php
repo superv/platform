@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletMakeMigrationCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletRunMigrationCommand;
 use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
+use SuperV\Platform\Domains\Droplet\DropletCollection;
 use SuperV\Platform\Domains\Feature\FeatureFacade;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use SuperV\Platform\Providers\TwigServiceProvider;
@@ -32,6 +33,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     protected $_singletons = [
         'SuperV\Platform\Domains\Auth\Contracts\Users' => 'SuperV\Platform\Domains\Auth\Users',
+        'droplets'                                     => DropletCollection::class,
     ];
 
     protected $listeners = [
@@ -44,7 +46,7 @@ class PlatformServiceProvider extends BaseServiceProvider
         DropletInstallCommand::class,
         MakeDropletCommand::class,
         DropletMakeMigrationCommand::class,
-        DropletRunMigrationCommand::class
+        DropletRunMigrationCommand::class,
     ];
 
     public function register()
@@ -85,23 +87,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         if (config('superv.installed') !== true) {
             return;
         }
-
-//        app(Router::class)->loadFromPath(Platform::path('routes'));
-
-//        $router = app('router');
-//        $files = glob(Platform::path('routes')."/*.php");
-//        foreach ($files as $file) {
-//            $routes = (array)require $file;
-//            foreach ($routes as $uri => $action) {
-//                if (! is_array($action)) {
-//                    $action = ['uses' => $action];
-//                }
-//                if (str_contains($uri, '@')) {
-//                    list($verb, $uri) = explode('@', $uri);
-//                }
-//                $router->{$verb ?? 'get'}($uri, $action);
-//            }
-//        }
 
         Platform::boot();
     }
