@@ -3,7 +3,7 @@
 use SuperV\Platform\Domains\Navigation\Section;
 
 return [
-    'acp_main' => [
+    'acp' => [
         [
             'title' => 'Dashboard',
             'icon'  => 'tachometer',

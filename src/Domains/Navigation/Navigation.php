@@ -3,10 +3,10 @@
 namespace SuperV\Platform\Domains\Navigation;
 
 use Closure;
-use Illuminate\Support\Collection;
+use Illuminate\Events\Dispatcher;
 use SuperV\Platform\Domains\Authorization\Haydar;
 
-class Navigation
+class Navigation implements SectionBag
 {
     /**
      * @var \SuperV\Platform\Domains\Droplet\DropletCollection
@@ -33,10 +33,19 @@ class Navigation
      */
     protected $haydar;
 
-    public function __construct(Collector $collector, Haydar $haydar)
+    /**
+     * @var \Illuminate\Events\Dispatcher
+     */
+    protected $events;
+
+    /** @var \Illuminate\Support\Collection */
+    protected $sections;
+
+    public function __construct(Collector $collector, Haydar $haydar, Dispatcher $events)
     {
         $this->collector = $collector;
         $this->haydar = $haydar;
+        $this->events = $events;
     }
 
     public function slug($slug)
@@ -46,27 +55,45 @@ class Navigation
         return $this;
     }
 
+    public function add($section)
+    {
+        $this->sections->put('aaaa', collect([$section]));
+
+        return $this;
+    }
+
+    protected function make()
+    {
+        $this->sections = $this->collector->collect($this->slug);
+
+        return $this;
+    }
+
     protected function build()
     {
+        $this->make();
+
+        $event = 'navigation.'.$this->slug.':building';
+        $this->events->dispatch($event, $this);
+
+        $sections = $this->sections->map(Closure::fromCallable([$this, 'buildSections']))
+                                   ->values()
+                                   ->flatten(1);
+
         $this->navigation = [
             'slug'     => $this->slug,
-            'sections' => $this->collector->collect($this->slug)
-                                          ->map(Closure::fromCallable([$this, 'buildSections']))
-                                          ->values()
-                                          ->flatten(1)
-                                          ->all(),
+            'sections' => $sections->sortByDesc('priority')->values()->all(),
         ];
     }
 
-    protected function buildSections(Collection $sections)
+    protected function buildSections($sections)
     {
-        return $sections->map(function ($section) {
-            /** @not-test-block */
+        return collect($sections)->map(function ($section) {
             if (is_array($section)) {
                 $section = Section::make($section);
             }
 
-            return $section->build();
+            return $section->parent($this->slug)->build();
         })->filter()->all();
     }
 

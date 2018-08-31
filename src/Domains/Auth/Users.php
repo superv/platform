@@ -10,11 +10,17 @@ class Users implements UsersContract
     /** @var \Illuminate\Database\Eloquent\Builder */
     protected $query;
 
+    protected $model;
+
     public function __construct(User $user)
     {
         $this->query = $user->query();
     }
 
+    public function query()
+    {
+        return $this->query;
+    }
     public function count()
     {
         return $this->query->count();
@@ -33,5 +39,17 @@ class Users implements UsersContract
     public function create(array $attributes = [])
     {
         return $this->query->create($attributes);
+    }
+
+    public static function __callStatic($name, $arguments)
+    {
+        if (starts_with($name, 'with')) {
+            $key = snake_case(str_replace('with', '', $name));
+            if ($key) {
+                return app(static::class)->query()->where($key, $arguments[0])->first();
+            }
+        }
+
+        throw new \InvalidArgumentException('Unknown method '.$name);
     }
 }

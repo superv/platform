@@ -4,10 +4,7 @@ namespace Tests\Platform\Domains\Navigation;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
-use Silber\Bouncer\BouncerServiceProvider;
-use SuperV\Platform\Domains\Auth\Account;
 use SuperV\Platform\Domains\Auth\User;
-use SuperV\Platform\Domains\Auth\Users;
 use SuperV\Platform\Domains\Authorization\Haydar;
 use SuperV\Platform\Domains\Authorization\HaydarBouncer;
 use SuperV\Platform\Domains\Droplet\Installer;
@@ -38,35 +35,55 @@ class NavigationTest extends TestCase
 
         \Platform::boot();
 
-        $nav = app(Navigation::class)->slug('acp_main')->get();
+        $nav = app(Navigation::class)->slug('acp')->get();
         $this->assertNotNull($nav);
 
         $this->assertEquals([
-            'slug'     => 'acp_main',
+            'slug'     => 'acp',
             'sections' => [
                 [
                     'title' => 'Dashboard',
+                    'slug'  => 'dashboard',
                     'icon'  => 'tachometer',
                     'url'   => 'platform/dashboard',
                 ],
                 [
                     'title'    => 'Platform',
+                    'slug'     => 'platform',
                     'icon'     => 'cog',
                     'url'      => 'platform',
                     'sections' => [
                         [
                             'title'    => 'User Management',
+                            'slug'     => 'user_management',
                             'sections' => [
-                                ['title' => 'Users', 'url' => 'platform/users'],
-                                ['title' => 'Roles', 'url' => 'platform/roles'],
+                                [
+                                    'title' => 'Users',
+                                    'slug'  => 'users',
+                                    'url'   => 'platform/users',
+                                ],
+                                [
+                                    'title' => 'Roles',
+                                    'slug'  => 'roles',
+                                    'url'   => 'platform/roles',
+                                ],
                             ],
                         ],
                         [
                             'title'    => 'Settings',
                             'icon'     => 'cog',
+                            'slug'     => 'settings',
                             'sections' => [
-                                ['title' => 'Localization', 'url' => 'platform/localization'],
-                                ['title' => 'Droplets', 'url' => 'platform/droplets'],
+                                [
+                                    'title' => 'Localization',
+                                    'slug'  => 'localization',
+                                    'url'   => 'platform/localization',
+                                ],
+                                [
+                                    'title' => 'Droplets',
+                                    'slug'  => 'droplets',
+                                    'url'   => 'platform/droplets',
+                                ],
                             ],
                         ],
                     ],
@@ -97,46 +114,49 @@ class NavigationTest extends TestCase
 
         FakeCollector::$sections = function () {
             return [
-                Section::make('Manage.Platform')->ability('manage.platform'),
-                Section::make('Manage.Users')->ability('manage.users'),
-                Section::make('Operations')->ability('view.operations'),
-                Section::make('Dashboard')->ability('view.dashboard'),
+                Section::make('manage_platform')->ability('manage.platform'),
+                Section::make('manage_users')->ability('manage.users'),
+                Section::make('operations')->ability('view.operations'),
+                Section::make('dashboard')->ability('view.dashboard'),
             ];
         };
 
         $this->be($user = factory(User::class)->create());
         $bouncer->assign('user')->to($user);
-        $this->assertEquals([['title' => 'Dashboard']], $this->getSectionsForAbility());
+        $this->assertEquals([[
+            'title' => 'Dashboard',
+            'slug'  => 'dashboard',
+        ]], $this->getSectionsForAbility());
 
         $this->be($admin = factory(User::class)->create());
         $bouncer->assign('admin')->to($admin);
         $this->assertEquals([
-            ['title' => 'Manage.Users'],
-            ['title' => 'Operations'],
-            ['title' => 'Dashboard'],
+            ['title' => 'Manage Users', 'slug' => 'manage_users'],
+            ['title' => 'Operations', 'slug' => 'operations'],
+            ['title' => 'Dashboard', 'slug' => 'dashboard'],
         ], $this->getSectionsForAbility());
 
         $this->be($operations = factory(User::class)->create());
         $bouncer->assign('operations')->to($operations);
         $bouncer->assign('user')->to($operations);
         $this->assertEquals([
-            ['title' => 'Operations'],
-            ['title' => 'Dashboard'],
+            ['title' => 'Operations', 'slug' => 'operations'],
+            ['title' => 'Dashboard', 'slug' => 'dashboard'],
         ], $this->getSectionsForAbility());
 
         $this->be($root = factory(User::class)->create());
         $bouncer->assign('root')->to($root);
         $this->assertEquals([
-            ['title' => 'Manage.Platform'],
-            ['title' => 'Manage.Users'],
-            ['title' => 'Operations'],
-            ['title' => 'Dashboard'],
+            ['title' => 'Manage Platform', 'slug' => 'manage_platform'],
+            ['title' => 'Manage Users', 'slug' => 'manage_users'],
+            ['title' => 'Operations', 'slug' => 'operations'],
+            ['title' => 'Dashboard', 'slug' => 'dashboard'],
         ], $this->getSectionsForAbility());
     }
 
     protected function getSectionsForAbility()
     {
-        $nav = app(Navigation::class)->slug('acp_main')->get();
+        $nav = app(Navigation::class)->slug('acp')->get();
 
         return $nav['sections'];
     }
