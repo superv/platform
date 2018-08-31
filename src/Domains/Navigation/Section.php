@@ -40,9 +40,15 @@ class Section
 
     protected $ability;
 
-    public function __construct(Haydar $haydar)
+    /**
+     * @var \SuperV\Platform\Contracts\Dispatcher
+     */
+    protected $events;
+
+    public function __construct(Haydar $haydar, \SuperV\Platform\Contracts\Dispatcher $events)
     {
         $this->haydar = $haydar;
+        $this->events = $events;
     }
 
     public static function make($slug)
@@ -65,10 +71,11 @@ class Section
 
     public function build()
     {
-
         if (! $this->guard()) {
             return [];
         }
+
+        $this->events->dispatch('nav.acp_main.'.$this->slug.':building', $this);
 
         return array_filter([
             'title'    => $this->title ?: ucwords(str_replace('_', ' ', $this->slug)),
@@ -78,6 +85,13 @@ class Section
                 ->map(Closure::fromCallable([$this, 'buildOne']))
                 ->all(),
         ]);
+    }
+
+    public function add($section)
+    {
+        $this->sections[] = $section;
+
+        return $this;
     }
 
     protected function buildOne($section)

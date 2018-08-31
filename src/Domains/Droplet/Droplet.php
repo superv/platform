@@ -63,6 +63,11 @@ class Droplet
         return $this->entry;
     }
 
+    public function namespace()
+    {
+        return $this->entry->namespace;
+    }
+
     /**
      * Return Service Provider Class
      *

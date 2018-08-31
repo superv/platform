@@ -7,9 +7,12 @@ use Illuminate\Contracts\Console\Kernel;
 use SuperV\Platform\Domains\Droplet\Contracts\DropletLocator;
 use SuperV\Platform\Domains\Droplet\Events\DropletInstalledEvent;
 use SuperV\Platform\Exceptions\PathNotFoundException;
+use SuperV\Platform\Support\Concerns\HasPath;
 
 class Installer
 {
+    use HasPath;
+
     protected $slug;
 
     protected $path;
@@ -249,16 +252,4 @@ class Installer
         return $key ? array_get($this->composerJson, $key) : $this->composerJson;
     }
 
-    /**
-     * @return string
-     */
-    protected function relativePath(): string
-    {
-        return ltrim(str_replace(base_path(), '', $this->path), '/');
-    }
-
-    protected function realPath()
-    {
-        return starts_with($this->path, '/') ? $this->path : base_path($this->path);
-    }
 }
