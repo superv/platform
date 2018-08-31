@@ -40,6 +40,10 @@ class DropletModel extends Model
         return $this->namespace.'\\'.$this->name;
     }
 
+    public function shortSlug()
+    {
+        return explode('.', $this->slug)[2];
+    }
 
     public function scopeEnabled($query) {
         $query->where('enabled', true);
