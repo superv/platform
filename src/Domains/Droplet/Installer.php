@@ -159,23 +159,23 @@ class Installer
      */
     protected function validate()
     {
-        if (! $this->path) {
+        $realPath = $this->realPath();
+
+        if (! $realPath) {
             throw new \InvalidArgumentException("Path can not be empty");
         }
 
-        if (! file_exists(base_path($this->path))) {
-            throw new PathNotFoundException("Path does not exist: [{$this->path}]");
+        if (! file_exists($realPath)) {
+            throw new PathNotFoundException("Path does not exist: [{$realPath}]");
         }
 
-        if (!$this->composer('type')) {
+        if (! $this->composer('type')) {
             throw new \Exception('Composer type not provided in composer.json');
         }
 
         if (! str_is('*.*.*', $this->slug)) {
             throw new \Exception('Slug should be snake case and formatted like: {vendor}.{type}.{name}');
         }
-
-
     }
 
     /**
@@ -187,7 +187,7 @@ class Installer
             'name'      => $this->name(),
             'vendor'    => $this->vendor(),
             'slug'      => $this->slug,
-            'path'      => $this->path,
+            'path'      => $this->relativePath(),
             'type'      => $this->type(),
             'namespace' => $this->namespace(),
             'enabled'   => true,
@@ -239,7 +239,7 @@ class Installer
     protected function composer($key = null)
     {
         if (! $this->composerJson) {
-            $composerFile = base_path($this->path.'/composer.json');
+            $composerFile = $this->realPath().'/composer.json';
             if (! file_exists($composerFile)) {
                 return null;
             }
@@ -247,5 +247,18 @@ class Installer
         }
 
         return $key ? array_get($this->composerJson, $key) : $this->composerJson;
+    }
+
+    /**
+     * @return string
+     */
+    protected function relativePath(): string
+    {
+        return ltrim(str_replace(base_path(), '', $this->path), '/');
+    }
+
+    protected function realPath()
+    {
+        return starts_with($this->path, '/') ? $this->path : base_path($this->path);
     }
 }
