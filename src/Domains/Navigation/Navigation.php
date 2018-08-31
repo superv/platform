@@ -2,9 +2,8 @@
 
 namespace SuperV\Platform\Domains\Navigation;
 
-use SuperV\Platform\Domains\Droplet\Droplet;
-use SuperV\Platform\Domains\Droplet\DropletCollection;
-use SuperV\Platform\Support\Collection;
+use Closure;
+use Illuminate\Support\Collection;
 
 class Navigation
 {
@@ -19,19 +18,18 @@ class Navigation
     protected $slug;
 
     /**
-     * @var \SuperV\Platform\Support\Collection
-     */
-    protected $sections;
-
-    /**
      * @var array
      */
     protected $navigation;
 
-    public function __construct(DropletCollection $droplets, Collection $sections)
+    /**
+     * @var \SuperV\Platform\Domains\Navigation\Collector
+     */
+    protected $collector;
+
+    public function __construct(Collector $collector)
     {
-        $this->droplets = $droplets;
-        $this->sections = $sections;
+        $this->collector = $collector;
     }
 
     public function slug($slug)
@@ -41,30 +39,28 @@ class Navigation
         return $this;
     }
 
-    protected function compose()
-    {
-        $this->droplets->map(function (Droplet $droplet) {
-            $menu = config($droplet->slug().'::navigation.'.$this->slug);
-            $this->sections->put($droplet->slug(), collect($menu));
-        });
-    }
-
     protected function build()
     {
+
         $this->navigation = [
             'slug'     => $this->slug,
-            'sections' => $this->sections->map(
-                function ($dropletMenus) {
-                    return $dropletMenus->map(function ($menu) {
-                        return $menu instanceof Section ? $menu->build() : $menu;
-                    })->all();
-                })->values()->flatten(1)->all(),
+            'sections' => $this->collector->collect($this->slug)
+                                          ->map(Closure::fromCallable([$this, 'buildMenus']))
+                                          ->values()
+                                          ->flatten(1)
+                                          ->all(),
         ];
+    }
+
+    protected function buildMenus(Collection $menuList)
+    {
+        return $menuList->map(function ($menu) {
+            return $menu instanceof Section ? $menu->build() : $menu;
+        })->all();
     }
 
     public function get()
     {
-        $this->compose();
         $this->build();
 
         return $this->navigation;

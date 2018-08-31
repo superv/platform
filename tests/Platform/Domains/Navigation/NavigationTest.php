@@ -4,6 +4,8 @@ namespace Tests\Platform\Domains\Navigation;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Droplet\Installer;
+use SuperV\Platform\Domains\Navigation\Collector;
+use SuperV\Platform\Domains\Navigation\DropletNavigationCollector;
 use SuperV\Platform\Domains\Navigation\Navigation;
 use Tests\Platform\ComposerLoader;
 use Tests\Platform\TestCase;

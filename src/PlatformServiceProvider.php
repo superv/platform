@@ -11,6 +11,8 @@ use SuperV\Platform\Domains\Droplet\Console\DropletMakeMigrationCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletRunMigrationCommand;
 use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Droplet\DropletCollection;
+use SuperV\Platform\Domains\Navigation\Collector;
+use SuperV\Platform\Domains\Navigation\DropletNavigationCollector;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use SuperV\Platform\Providers\TwigServiceProvider;
 
@@ -24,7 +26,9 @@ class PlatformServiceProvider extends BaseServiceProvider
         'SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider',
     ];
 
-    protected $_bindings = [];
+    protected $_bindings = [
+        Collector::class => DropletNavigationCollector::class,
+    ];
 
     protected $aliases = [
         'Feature' => 'SuperV\Platform\Domains\Feature\FeatureFacade',
