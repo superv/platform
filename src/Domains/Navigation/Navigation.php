@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Navigation;
 
 use Closure;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Authorization\Haydar;
 
 class Navigation
 {
@@ -27,9 +28,15 @@ class Navigation
      */
     protected $collector;
 
-    public function __construct(Collector $collector)
+    /**
+     * @var \SuperV\Platform\Domains\Authorization\Haydar
+     */
+    protected $haydar;
+
+    public function __construct(Collector $collector, Haydar $haydar)
     {
         $this->collector = $collector;
+        $this->haydar = $haydar;
     }
 
     public function slug($slug)
@@ -41,22 +48,26 @@ class Navigation
 
     protected function build()
     {
-
         $this->navigation = [
             'slug'     => $this->slug,
             'sections' => $this->collector->collect($this->slug)
-                                          ->map(Closure::fromCallable([$this, 'buildMenus']))
+                                          ->map(Closure::fromCallable([$this, 'buildSections']))
                                           ->values()
                                           ->flatten(1)
                                           ->all(),
         ];
     }
 
-    protected function buildMenus(Collection $menuList)
+    protected function buildSections(Collection $sections)
     {
-        return $menuList->map(function ($menu) {
-            return $menu instanceof Section ? $menu->build() : $menu;
-        })->all();
+        return $sections->map(function ($section) {
+            /** @not-test-block */
+            if (is_array($section)) {
+                $section = Section::make($section);
+            }
+
+            return $section->build();
+        })->filter()->all();
     }
 
     public function get()
@@ -64,6 +75,5 @@ class Navigation
         $this->build();
 
         return $this->navigation;
-//        dd($this->sections);
     }
 }

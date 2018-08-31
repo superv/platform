@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Navigation;
 
+use Closure;
+use SuperV\Platform\Domains\Authorization\Haydar;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class Section
@@ -33,31 +35,58 @@ class Section
      */
     protected $sections;
 
-    public function __construct(string $slug = null, string $title = null)
+    /** @var Haydar */
+    protected $haydar;
+
+    protected $ability;
+
+    public function __construct(Haydar $haydar)
     {
-        $this->slug = $slug;
-        $this->title = $title;
+        $this->haydar = $haydar;
     }
 
     public static function make($slug)
     {
-        return new static($slug);
+        $section = app(static::class);
+
+        if (is_array($slug)) {
+            $section->hydrate($slug);
+        } else {
+            $section->slug = $slug;
+        }
+
+        return $section;
+    }
+
+    protected function guard()
+    {
+        return $this->haydar->can($this->ability);
     }
 
     public function build()
     {
+
+        if (! $this->guard()) {
+            return [];
+        }
+
         return array_filter([
             'title'    => $this->title ?: ucwords(str_replace('_', ' ', $this->slug)),
             'icon'     => $this->icon,
             'url'      => $this->url,
-            'sections' => collect($this->sections)->map(function ($item) {
-                if ($item instanceof Section) {
-                    return $item->build();
-                }
-
-                return (new Section())->hydrate($item)->build();
-            })->all(),
+            'sections' => collect($this->sections)
+                ->map(Closure::fromCallable([$this, 'buildOne']))
+                ->all(),
         ]);
+    }
+
+    protected function buildOne($section)
+    {
+        if (is_array($section)) {
+            $section = static::make($section);
+        }
+
+        return $section->build();
     }
 
     public function sections(array $sections)
@@ -85,6 +114,16 @@ class Section
     public function url(string $url)
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * @return Section
+     */
+    public function ability($ability)
+    {
+        $this->ability = $ability;
 
         return $this;
     }

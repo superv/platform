@@ -2,9 +2,13 @@
 
 namespace SuperV\Platform;
 
+use Bouncer;
 use Platform;
+use Silber\Bouncer\BouncerServiceProvider;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Domains\Auth\Contracts\User;
+use SuperV\Platform\Domains\Authorization\Haydar;
+use SuperV\Platform\Domains\Authorization\HaydarBouncer;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletMakeMigrationCommand;
@@ -24,15 +28,18 @@ class PlatformServiceProvider extends BaseServiceProvider
         'SuperV\Platform\Domains\Auth\AuthServiceProvider',
         'SuperV\Platform\Domains\Asset\AssetServiceProvider',
         'SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider',
+        BouncerServiceProvider::class,
     ];
 
     protected $_bindings = [
         Collector::class => DropletNavigationCollector::class,
+        Haydar::class    => HaydarBouncer::class,
     ];
 
     protected $aliases = [
         'Feature' => 'SuperV\Platform\Domains\Feature\FeatureFacade',
         'Current' => 'SuperV\Platform\Facades\CurrentFacade',
+        'Bouncer' => \Silber\Bouncer\BouncerFacade::class,
     ];
 
     protected $_singletons = [
@@ -93,5 +100,11 @@ class PlatformServiceProvider extends BaseServiceProvider
         }
 
         Platform::boot();
+        Bouncer::tables([
+            'permissions'    => 'bouncer_permissions',
+            'assigned_roles' => 'bouncer_assigned_roles',
+            'roles'          => 'bouncer_roles',
+            'abilities'      => 'bouncer_abilities',
+        ]);
     }
 }

@@ -5,6 +5,7 @@ namespace Tests\Platform;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Droplet\Installer;
+use SuperV\Platform\Domains\Droplet\Locator;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\PlatformServiceProvider;
@@ -23,9 +24,11 @@ class TestCase extends OrchestraTestCase
 
     protected $appConfig = [];
 
+    protected $installs = [];
+
     protected function getPackageProviders($app)
     {
-        return array_flatten(array_merge($this->packageProviders, [PlatformServiceProvider::class]));
+        return array_flatten(array_merge([PlatformServiceProvider::class], $this->packageProviders));
     }
 
     protected function getPackageAliases($app)
@@ -58,6 +61,12 @@ class TestCase extends OrchestraTestCase
         if (method_exists($this, 'refreshDatabase')) {
             $this->artisan('superv:install');
             config(['superv.installed' => true]);
+            foreach ($this->installs as $droplet) {
+                app(Installer::class)
+                    ->setLocator(new Locator(realpath(__DIR__.'/../../../../')))
+                    ->setSlug($droplet)
+                    ->install();
+            }
 
             (new PlatformServiceProvider($this->app))->boot();
         }
@@ -72,8 +81,7 @@ class TestCase extends OrchestraTestCase
     protected function setUpDroplet(
         $slug = 'superv.droplets.sample',
         $path = 'tests/Platform/__fixtures__/sample-droplet'
-    )
-    {
+    ) {
         ComposerLoader::load(base_path($path));
         $this->app->make(Installer::class)
                   ->setSlug($slug)
@@ -118,6 +126,17 @@ class TestCase extends OrchestraTestCase
         }
 
         parent::tearDown();
+    }
+
+    /**
+     * @param $abstract
+     * @return \Mockery\Mock|\Mockery\MockInterface
+     */
+    protected function bindMock($abstract)
+    {
+        $this->app->instance($abstract, $mockInstance = \Mockery::mock($abstract));
+
+        return $mockInstance;
     }
 
     protected function setUpPorts()

@@ -55,6 +55,11 @@ class AuthServiceProvider extends BaseServiceProvider
             return new PlatformUserProvider($app['hash'], config('superv.auth.user.model'));
         });
 
+        config()->set('auth.providers.platform', [
+            'driver' => 'platform',
+            'model'  => config('superv.auth.user.model'),
+        ]);
+
         config()->set('auth.defaults.guard', 'platform');
 
         config()->set('auth.guards.platform', [
@@ -65,10 +70,6 @@ class AuthServiceProvider extends BaseServiceProvider
         config()->set('auth.guards.superv-api', [
             'driver'   => 'jwt',
             'provider' => 'platform',
-        ]);
-
-        config()->set('auth.providers.platform', [
-            'driver' => 'platform',
         ]);
     }
 }
