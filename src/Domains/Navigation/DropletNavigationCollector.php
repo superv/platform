@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Navigation;
 
+use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Droplet\DropletCollection;
-use SuperV\Platform\Support\Collection;
 
 class DropletNavigationCollector implements Collector
 {
@@ -19,7 +19,7 @@ class DropletNavigationCollector implements Collector
     protected $slug;
 
     /**
-     * @var \SuperV\Platform\Support\Collection
+     * @var \Illuminate\Support\Collection
      */
     protected $sections;
 

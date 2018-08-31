@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Navigation;
 
-use SuperV\Platform\Support\Collection;
+use Illuminate\Support\Collection;
 
 interface Collector
 {
