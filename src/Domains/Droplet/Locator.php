@@ -6,6 +6,16 @@ use SuperV\Platform\Domains\Droplet\Contracts\DropletLocator;
 
 class Locator implements DropletLocator
 {
+    /**
+     * @var string
+     */
+    protected $dropletsPath;
+
+    public function __construct(string $dropletsPath = null)
+    {
+        $this->dropletsPath = $dropletsPath;
+    }
+
     public function locate(string $slug)
     {
         if (! str_is('*.*.*', $slug)) {
@@ -19,6 +29,11 @@ class Locator implements DropletLocator
             explode('.', $slug)
         );
 
-        return \Platform::config('droplets.location')."/{$vendor}/{$type}/{$name}";
+        return $this->dropletsPath()."/{$vendor}/{$type}/{$name}";
+    }
+
+    protected function dropletsPath()
+    {
+        return $this->dropletsPath ?: \Platform::config('droplets.location');
     }
 }
