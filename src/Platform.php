@@ -2,11 +2,12 @@
 
 namespace SuperV\Platform;
 
+use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Events\PlatformBootedEvent;
 
-class Platform
+class Platform extends Droplet
 {
     /**
      * @var \SuperV\Platform\Domains\Port\Port
@@ -51,7 +52,6 @@ class Platform
 
     /**
      * @param \SuperV\Platform\Domains\Port\Port $port
-     *
      * @return Platform
      */
     public function setPort(Port $port)
@@ -63,8 +63,7 @@ class Platform
 
     public function path($prefix = null)
     {
-        $path = $this->config('droplets.location').'/superv/platform';
-        $path = realpath(__DIR__ . '/../');
+        $path = realpath(__DIR__.'/../');
 
         return $path.($prefix ? '/'.$prefix : '');
     }
@@ -72,7 +71,26 @@ class Platform
     public function fullPath($prefix = null)
     {
         return $this->path($prefix);
-//        return base_path($this->path($prefix));
+    }
+
+    public function realPath($prefix = null)
+    {
+        return $this->path($prefix);
+    }
+
+    public function instance()
+    {
+        return $this;
+    }
+
+    public function slug()
+    {
+        return 'platform';
+    }
+
+    public function namespace()
+    {
+        return "SuperV\\Platform";
     }
 }
 

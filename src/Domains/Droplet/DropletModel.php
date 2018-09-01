@@ -32,6 +32,12 @@ class DropletModel extends Model
         return static::query()->where('slug', $slug)->first();
     }
 
+    public static function allKeyBySlug()
+    {
+
+        return static::query()->enabled()->get()->keyBy('slug');
+    }
+
     /**
      * @return string
      */

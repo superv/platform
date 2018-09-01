@@ -21,6 +21,7 @@ class Users implements UsersContract
     {
         return $this->query;
     }
+
     public function count()
     {
         return $this->query->count();

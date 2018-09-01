@@ -63,6 +63,11 @@ class Droplet
         return $this->entry;
     }
 
+    public function shortSlug()
+    {
+        return $this->entry->shortSlug();
+    }
+
     public function namespace()
     {
         return $this->entry->namespace;

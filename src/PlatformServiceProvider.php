@@ -90,6 +90,7 @@ class PlatformServiceProvider extends BaseServiceProvider
             },
         ]);
 
+        superv('droplets')->put('superv.platform', Platform::instance());
         event('platform.registered');
     }
 
