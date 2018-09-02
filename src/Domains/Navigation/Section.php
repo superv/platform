@@ -6,12 +6,10 @@ use Closure;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Authorization\Haydar;
 use SuperV\Platform\Support\Concerns\Hydratable;
-use SuperV\Platform\Support\Concerns\Whenable;
 
 class Section implements SectionBag
 {
     use Hydratable;
-    use Whenable;
 
     /**
      * @var string
@@ -53,7 +51,7 @@ class Section implements SectionBag
      */
     protected $events;
 
-    protected $priority = 100;
+    protected $priority = 10;
 
     public function __construct(Haydar $haydar, Dispatcher $events)
     {
