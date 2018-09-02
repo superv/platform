@@ -76,9 +76,10 @@ class Navigation implements SectionBag
         $event = 'navigation.'.$this->slug.':building';
         $this->events->dispatch($event, $this);
 
-        $sections = $this->sections->map(Closure::fromCallable([$this, 'buildSections']))
-                                   ->values()
-                                   ->flatten(1);
+        $sections = $this->sections
+            ->map(Closure::fromCallable([$this, 'buildSections']))
+            ->values()
+            ->flatten(1);
 
         $this->navigation = [
             'slug'     => $this->slug,
@@ -91,6 +92,8 @@ class Navigation implements SectionBag
         return collect($sections)->map(function ($section) {
             if (is_array($section)) {
                 $section = Section::make($section);
+            } elseif ($section instanceof HasSection) {
+                $section = $section::getSection();
             }
 
             return $section->parent($this->slug)->build();

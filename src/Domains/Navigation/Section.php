@@ -6,10 +6,12 @@ use Closure;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Authorization\Haydar;
 use SuperV\Platform\Support\Concerns\Hydratable;
+use SuperV\Platform\Support\Concerns\Whenable;
 
 class Section implements SectionBag
 {
     use Hydratable;
+    use Whenable;
 
     /**
      * @var string
@@ -115,6 +117,8 @@ class Section implements SectionBag
     {
         if (is_array($section)) {
             $section = static::make($section);
+        } elseif (is_string($section) && class_implements($section, HasSection::class)) {
+            $section = $section::getSection();
         }
 
         return $section->parent($this)->build();
@@ -185,5 +189,13 @@ class Section implements SectionBag
         $this->priority = $priority;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAbility()
+    {
+        return $this->ability;
     }
 }

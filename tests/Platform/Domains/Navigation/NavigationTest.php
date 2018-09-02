@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Authorization\Haydar;
 use SuperV\Platform\Domains\Authorization\HaydarBouncer;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Domains\Navigation\Collector;
+use SuperV\Platform\Domains\Navigation\HasSection;
 use SuperV\Platform\Domains\Navigation\Navigation;
 use SuperV\Platform\Domains\Navigation\Section;
 use Tests\Platform\ComposerLoader;
@@ -38,7 +39,7 @@ class NavigationTest extends TestCase
         $nav = app(Navigation::class)->slug('acp')->get();
         $this->assertNotNull($nav);
 
-        $this->assertEquals([
+        $this->assertArraySubset([
             'slug'     => 'acp',
             'sections' => [
                 [
@@ -93,11 +94,33 @@ class NavigationTest extends TestCase
     }
 
     /** @test */
+    function section_parses_url_from_resource()
+    {
+        $fake = new class implements HasSection
+        {
+            public static function getSection(): Section
+            {
+                return Section::make('resource-section');
+            }
+        };
+
+        $this->app->bind(Collector::class, FakeCollector::class);
+        FakeCollector::$sections = function () use ($fake) {
+            return [
+                $fake,
+            ];
+        };
+
+        $nav = app(Navigation::class)->slug('acp')->get();
+
+        $this->assertEquals(1, count($nav['sections']));
+        $this->assertArraySubset($fake::getSection()->build(), $nav['sections'][0]);
+    }
+
+    /** @test */
     function filter_by_authorization()
     {
-        $this->app->bind(Collector::class, FakeCollector::class);
         $this->app->bind(Haydar::class, HaydarBouncer::class);
-
         $bouncer = app(\Silber\Bouncer\Bouncer::class);
         $bouncer->tables([
             'permissions'    => 'bouncer_permissions',
@@ -105,13 +128,13 @@ class NavigationTest extends TestCase
             'roles'          => 'bouncer_roles',
             'abilities'      => 'bouncer_abilities',
         ]);
-
         $bouncer->allow('root')->everything();
         $bouncer->allow('admin')->everything();
         $bouncer->forbid('admin')->to('manage.platform');
         $bouncer->allow('operations')->to('view.operations');
         $bouncer->allow('user')->to('view.dashboard');
 
+        $this->app->bind(Collector::class, FakeCollector::class);
         FakeCollector::$sections = function () {
             return [
                 Section::make('manage_platform')->ability('manage.platform'),
@@ -123,14 +146,15 @@ class NavigationTest extends TestCase
 
         $this->be($user = factory(User::class)->create());
         $bouncer->assign('user')->to($user);
-        $this->assertEquals([[
-            'title' => 'Dashboard',
-            'slug'  => 'dashboard',
-        ]], $this->getSectionsForAbility());
+        $this->assertArraySubset([
+            [
+                'title' => 'Dashboard',
+                'slug'  => 'dashboard',
+            ]], $this->getSectionsForAbility());
 
         $this->be($admin = factory(User::class)->create());
         $bouncer->assign('admin')->to($admin);
-        $this->assertEquals([
+        $this->assertArraySubset([
             ['title' => 'Manage Users', 'slug' => 'manage_users'],
             ['title' => 'Operations', 'slug' => 'operations'],
             ['title' => 'Dashboard', 'slug' => 'dashboard'],
@@ -139,14 +163,14 @@ class NavigationTest extends TestCase
         $this->be($operations = factory(User::class)->create());
         $bouncer->assign('operations')->to($operations);
         $bouncer->assign('user')->to($operations);
-        $this->assertEquals([
+        $this->assertArraySubset([
             ['title' => 'Operations', 'slug' => 'operations'],
             ['title' => 'Dashboard', 'slug' => 'dashboard'],
         ], $this->getSectionsForAbility());
 
         $this->be($root = factory(User::class)->create());
         $bouncer->assign('root')->to($root);
-        $this->assertEquals([
+        $this->assertArraySubset([
             ['title' => 'Manage Platform', 'slug' => 'manage_platform'],
             ['title' => 'Manage Users', 'slug' => 'manage_users'],
             ['title' => 'Operations', 'slug' => 'operations'],
