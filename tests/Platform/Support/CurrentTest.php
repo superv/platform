@@ -2,9 +2,11 @@
 
 namespace Tests\Platform\Support;
 
+use Current;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Auth\User;
-use Current;
+use SuperV\Platform\Domains\Port\Port;
+use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use Tests\Platform\TestCase;
 
 class CurrentTest extends TestCase
@@ -23,5 +25,14 @@ class CurrentTest extends TestCase
         $this->be($user);
 
         $this->assertEquals($user->fresh(), Current::user());
+    }
+
+    /** @test */
+    function returns_current_platform_port()
+    {
+        $this->setUpPort('acp', 'hostname.io');
+        PortDetectedEvent::dispatch($port = Port::fromSlug('acp'));
+
+        $this->assertEquals($port, Current::port());
     }
 }

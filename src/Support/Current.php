@@ -32,4 +32,14 @@ class Current
     {
         return $this->users->find($this->guard->id());
     }
+
+    /**
+     * Returns the current platform port
+     *
+     * @return \SuperV\Platform\Domains\Port\Port
+     */
+    public function port()
+    {
+        return \Platform::port();
+    }
 }

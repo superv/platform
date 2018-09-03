@@ -99,8 +99,8 @@ class RouteRegistrarTest extends TestCase
         ]);
 
         $registrar = $this->app->make(RouteRegistrar::class);
-        $registrar->setPort('all')->register(['bar/foo' => 'BarController@foo']);
-        $registrar->setPort('all')->register(['foo/bar' => 'FooController@bar']);
+        $registrar->globally()->register(['bar/foo' => 'BarController@foo']);
+        $registrar->globally()->register(['foo/bar' => 'FooController@bar']);
 
         $routes = $this->router()->getRoutes()->get('GET');
         $this->assertNotNull($routes['superv.iobar/foo']);

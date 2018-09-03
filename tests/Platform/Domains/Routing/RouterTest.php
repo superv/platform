@@ -57,12 +57,15 @@ class RouterTest extends TestCase
         $loader = $this->bindMock(RouteRegistrar::class);
 
         $loader->shouldReceive('setPort')->with(equalTo($this->getPort('acp')))->once();
+        $loader->shouldReceive('globally')->with(false)->once();
         $loader->shouldReceive('register')->with(['foo/baz' => 'FooAcpController@baz'])->once();
 
         $loader->shouldReceive('setPort')->with(equalTo($this->getPort('api')))->once();
+        $loader->shouldReceive('globally')->with(false)->once();
         $loader->shouldReceive('register')->with(['bom/bor' => 'BomAcpController@bor'])->once();
 
         $loader->shouldReceive('setPort')->with(equalTo($this->getPort('web')))->once();
+        $loader->shouldReceive('globally')->with(false)->once();
         $loader->shouldReceive('register')->with(['foo/baz' => 'FooWebController@baz'])->once();
         $loader->shouldReceive('register')->with(['bar/baz' => 'BarWebController@baz'])->once();
 

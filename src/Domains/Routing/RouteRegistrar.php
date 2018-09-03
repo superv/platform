@@ -13,7 +13,9 @@ class RouteRegistrar
      */
     protected $router;
 
-    /** @var \SuperV\Platform\Domains\Port\Port */
+    /**
+     * @var \SuperV\Platform\Domains\Port\Port
+     */
     protected $port;
 
     /**
@@ -23,7 +25,12 @@ class RouteRegistrar
      */
     protected $routes;
 
-    protected $wildcard = 'all';
+    /**
+     * Flag for registering routes for every port available
+     *
+     * @var boolean
+     */
+    protected $globally;
 
     public function __construct(Router $router, Collection $routes)
     {
@@ -53,7 +60,7 @@ class RouteRegistrar
     public function registerRoute($uri, $action)
     {
         /** Register this route for every port available */
-        if ($this->port === $this->wildcard) {
+        if ($this->globally) {
             $ports = Port::all();
         } else {
             $ports = collect([$this->port]);
@@ -77,13 +84,18 @@ class RouteRegistrar
      */
     public function setPort($port)
     {
-        /** For every port */
-        if ($port === $this->wildcard) {
-            $this->port = $this->wildcard;
-        } else {
-            $this->port = $port;
-//            $this->port = is_object($port) ? $port : Port::fromSlug($port);
-        }
+        $this->port = $port;
+
+        return $this;
+    }
+
+    /**
+     * @param $global
+     * @return RouteRegistrar
+     */
+    public function globally($global = true)
+    {
+        $this->globally = $global;
 
         return $this;
     }

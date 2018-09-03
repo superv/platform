@@ -14,6 +14,13 @@ class Router
     /** @var */
     protected $files;
 
+    /**
+     * File name for catch-all port
+     *
+     * @var string
+     */
+    protected $wildcard = 'all-ports';
+
     public function __construct(RouteRegistrar $loader)
     {
         $this->registrar = $loader;
@@ -42,10 +49,13 @@ class Router
 
     public function loadFromPath($path)
     {
-
         foreach ($this->portFilesIn($path) as $port => $files) {
-            if (! $port = Port::fromSlug($port)) {
+            if ($port === $this->wildcard) {
+                $this->registrar->globally(true);
+            } elseif (! $port = Port::fromSlug($port)) {
                 continue;
+            } else {
+                $this->registrar->globally(false);
             }
             $this->registrar->setPort($port);
             foreach ($files as $file) {
