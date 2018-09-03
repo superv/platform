@@ -2,8 +2,8 @@
 
 namespace SuperV\Platform\Domains\Port;
 
+use Platform;
 use SuperV\Platform\Support\Concerns\Hydratable;
-use SuperV\Platform\Support\Inflator;
 
 class Port
 {
@@ -95,7 +95,7 @@ class Port
     {
         $config = \Platform::config('ports.'.$slug);
 
-        if (!$config) {
+        if (! $config) {
             throw new \Exception("Port config not found: [{$slug}]");
         }
 
@@ -105,6 +105,13 @@ class Port
         $port->setSlug($slug);
 
         return $port;
+    }
+
+    public static function all()
+    {
+        return collect(Platform::config('ports'))->keys()->map(function ($slug) {
+            return Port::fromSlug($slug);
+        });
     }
 
     /**

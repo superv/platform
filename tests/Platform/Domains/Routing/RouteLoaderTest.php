@@ -98,26 +98,20 @@ class RouteLoaderTest extends TestCase
         ]);
 
         $registrar = $this->app->make(RouteRegistrar::class);
-        $registrar->setPort('web')->register(['web/foo' => 'WebController@foo']);
-        $registrar->setPort('acp')->register(['acp/foo' => 'AcpController@foo']);
-        $registrar->setPort('api')->register(['api/foo' => 'ApiController@foo']);
+        $registrar->setPort('*')->register(['bar/foo' => 'BarController@foo']);
+        $registrar->setPort('*')->register(['foo/bar' => 'FooController@bar']);
 
-        $getRoutes = $this->router()->getRoutes()->get('GET');
+        $routes = $this->router()->getRoutes()->get('GET');
+        $this->assertNotNull($routes['superv.iobar/foo']);
+        $this->assertNotNull($routes['superv.iofoo/bar']);
 
-        $webRoute = $getRoutes['superv.ioweb/foo'];
-        $this->assertEquals('web', $webRoute->getAction('port'));
-        $this->assertEquals('superv.io', $webRoute->getDomain());
-        $this->assertNull($webRoute->getPrefix());
+        $routes = $this->router()->getRoutes()->get('GET');
+        $this->assertNotNull($routes['superv.ioacp/bar/foo']);
+        $this->assertNotNull($routes['superv.ioacp/foo/bar']);
 
-        $acpRoute = $getRoutes['superv.ioacp/acp/foo'];
-        $this->assertEquals('acp', $acpRoute->getAction('port'));
-        $this->assertEquals('superv.io', $acpRoute->getDomain());
-        $this->assertEquals('acp', $acpRoute->getPrefix());
-
-        $apiRoute = $getRoutes['api.superv.ioapi/foo'];
-        $this->assertEquals('api', $apiRoute->getAction('port'));
-        $this->assertEquals('api.superv.io', $apiRoute->getDomain());
-        $this->assertNull($apiRoute->getPrefix());
+        $routes = $this->router()->getRoutes()->get('GET');
+        $this->assertNotNull($routes['api.superv.iobar/foo']);
+        $this->assertNotNull($routes['api.superv.iofoo/bar']);
     }
 
     /** @test */
@@ -133,9 +127,9 @@ class RouteLoaderTest extends TestCase
         ]);
 
         $registrar = $this->app->make(RouteRegistrar::class)->setPort('web');
-        $route = $registrar->registerRoute('foo', 'WebController@foo');
+        $routes = $registrar->registerRoute('foo', 'WebController@foo');
 
-        $this->assertEquals(['a', 'b', 'c'], $route->getAction('middleware'));
+        $this->assertEquals(['a', 'b', 'c'], $routes->first()->getAction('middleware'));
     }
 
     /**

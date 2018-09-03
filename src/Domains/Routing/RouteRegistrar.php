@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Routing;
 
 use Illuminate\Routing\Router;
+use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Port\Port;
 
 class RouteRegistrar
@@ -15,9 +16,17 @@ class RouteRegistrar
     /** @var \SuperV\Platform\Domains\Port\Port */
     protected $port;
 
-    public function __construct(Router $router)
+    /**
+     * Registered Routes
+     *
+     * @var \Illuminate\Support\Collection
+     */
+    protected $routes;
+
+    public function __construct(Router $router, Collection $routes)
     {
         $this->router = $router;
+        $this->routes = $routes;
     }
 
     /**
@@ -37,14 +46,27 @@ class RouteRegistrar
      *
      * @param $uri
      * @param $action
-     * @return \Illuminate\Routing\Route
+     * @return \Illuminate\Support\Collection
      */
     public function registerRoute($uri, $action)
     {
-        return Action::make($uri, $action)
-                     ->port($this->port)
-                     ->build()
-                     ->register($this->router);
+        /** Register this route for every port available */
+        if ($this->port === '*') {
+            $ports = Port::all();
+        } else {
+            $ports = collect([$this->port]);
+        }
+
+        $ports->map(function (Port $port) use ($action, $uri) {
+            $this->routes->push(
+                Action::make($uri, $action)
+                      ->port($port)
+                      ->build()
+                      ->register($this->router)
+            );
+        });
+
+        return $this->routes;
     }
 
     /**
@@ -53,7 +75,12 @@ class RouteRegistrar
      */
     public function setPort($port)
     {
-        $this->port = is_object($port) ? $port : Port::fromSlug($port);
+        /** For every port */
+        if ($port === '*') {
+            $this->port = '*';
+        } else {
+            $this->port = is_object($port) ? $port : Port::fromSlug($port);
+        }
 
         return $this;
     }
