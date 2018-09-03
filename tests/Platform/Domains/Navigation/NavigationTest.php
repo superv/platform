@@ -98,23 +98,30 @@ class NavigationTest extends TestCase
     {
         $fake = new class implements HasSection
         {
-            public static function getSection(): Section
+            public static function getSection(): ?array
             {
-                return Section::make('resource-section');
+                return [
+                    'parent'   => 'acp',
+                    'resolver' => function () {
+                        return
+                            Section::make('resource-section')->parent('acp');
+                    },
+                ];
             }
         };
 
         $this->app->bind(Collector::class, FakeCollector::class);
         FakeCollector::$sections = function () use ($fake) {
             return [
-                $fake,
+                $fake::getSection()['resolver'](),
             ];
         };
 
         $nav = app(Navigation::class)->slug('acp')->get();
 
         $this->assertEquals(1, count($nav['sections']));
-        $this->assertArraySubset($fake::getSection()->build(), $nav['sections'][0]);
+        $fakeNav = $fake::getSection()['resolver']()->build();
+        $this->assertArraySubset($fakeNav, $nav['sections'][0]);
     }
 
     /** @test */
