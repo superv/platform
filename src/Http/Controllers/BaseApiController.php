@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Http\Controllers;
 
 use SuperV\Platform\Domains\Auth\Users;
-use SuperV\Platform\Domains\Navigation\Section;
 
 class BaseApiController extends BaseController
 {

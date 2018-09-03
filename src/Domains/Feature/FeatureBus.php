@@ -90,6 +90,11 @@ class FeatureBus implements Responsable
         return $this;
     }
 
+    public function get($key = null)
+    {
+        return $this->handle()->getFeatureResponse()->getData($key);
+    }
+
     public function merge(array $request)
     {
         if (! empty($request)) {
