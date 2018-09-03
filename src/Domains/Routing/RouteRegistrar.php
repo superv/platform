@@ -41,26 +41,10 @@ class RouteRegistrar
      */
     public function registerRoute($uri, $action)
     {
-        if (! is_array($action)) {
-            $action = ['uses' => $action];
-        }
-        if (str_contains($uri, '@')) {
-            list($verb, $uri) = explode('@', $uri);
-        }
-        if ($this->port) {
-            array_set($action, 'port', $this->port->slug());
-            array_set($action, 'domain', $this->port->hostname());
-
-            if ($prefix = $this->port->prefix()) {
-                array_set($action, 'prefix', $prefix);
-            }
-
-            if ($middlewares = $this->port->middlewares()) {
-                array_set($action, 'middleware', array_merge($middlewares, $action['middleware'] ?? []));
-            }
-        }
-
-        return $this->router->{$verb ?? 'get'}($uri, $action);
+        return Action::make($uri, $action)
+                     ->port($this->port)
+                     ->build()
+                     ->register($this->router);
     }
 
     /**

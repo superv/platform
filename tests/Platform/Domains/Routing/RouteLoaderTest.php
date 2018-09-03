@@ -37,12 +37,70 @@ class RouteLoaderTest extends TestCase
     /** @test */
     function loads_routes_for_a_port()
     {
-        $this->setUpPorts();
+        /** Setup Ports */
+        config([
+            'superv.ports' => [
+                'web' => [
+                    'hostname' => 'superv.io',
+                    'theme'    => 'themes.starter',
+                ],
+                'acp' => [
+                    'hostname' => 'superv.io',
+                    'prefix'   => 'acp',
+                ],
+                'api' => [
+                    'hostname' => 'api.superv.io',
+                ],
+            ],
+        ]);
 
-        $loader = $this->app->make(RouteRegistrar::class);
-        $loader->setPort('web')->register(['web/foo' => 'WebController@foo']);
-        $loader->setPort('acp')->register(['acp/foo' => 'AcpController@foo']);
-        $loader->setPort('api')->register(['api/foo' => 'ApiController@foo']);
+        $registrar = $this->app->make(RouteRegistrar::class);
+        $registrar->setPort('web')->register(['web/foo' => 'WebController@foo']);
+        $registrar->setPort('acp')->register(['acp/foo' => 'AcpController@foo']);
+        $registrar->setPort('api')->register(['api/foo' => 'ApiController@foo']);
+
+        $getRoutes = $this->router()->getRoutes()->get('GET');
+
+        $webRoute = $getRoutes['superv.ioweb/foo'];
+        $this->assertEquals('web', $webRoute->getAction('port'));
+        $this->assertEquals('superv.io', $webRoute->getDomain());
+        $this->assertNull($webRoute->getPrefix());
+
+        $acpRoute = $getRoutes['superv.ioacp/acp/foo'];
+        $this->assertEquals('acp', $acpRoute->getAction('port'));
+        $this->assertEquals('superv.io', $acpRoute->getDomain());
+        $this->assertEquals('acp', $acpRoute->getPrefix());
+
+        $apiRoute = $getRoutes['api.superv.ioapi/foo'];
+        $this->assertEquals('api', $apiRoute->getAction('port'));
+        $this->assertEquals('api.superv.io', $apiRoute->getDomain());
+        $this->assertNull($apiRoute->getPrefix());
+    }
+
+    /** @test */
+    function loads_routes_for_every_port()
+    {
+        /** Setup Ports */
+        config([
+            'superv.ports' => [
+                'web' => [
+                    'hostname' => 'superv.io',
+                    'theme'    => 'themes.starter',
+                ],
+                'acp' => [
+                    'hostname' => 'superv.io',
+                    'prefix'   => 'acp',
+                ],
+                'api' => [
+                    'hostname' => 'api.superv.io',
+                ],
+            ],
+        ]);
+
+        $registrar = $this->app->make(RouteRegistrar::class);
+        $registrar->setPort('web')->register(['web/foo' => 'WebController@foo']);
+        $registrar->setPort('acp')->register(['acp/foo' => 'AcpController@foo']);
+        $registrar->setPort('api')->register(['api/foo' => 'ApiController@foo']);
 
         $getRoutes = $this->router()->getRoutes()->get('GET');
 
@@ -74,8 +132,8 @@ class RouteLoaderTest extends TestCase
             ],
         ]);
 
-        $loader = $this->app->make(RouteRegistrar::class)->setPort('web');
-        $route = $loader->registerRoute('foo', 'WebController@foo');
+        $registrar = $this->app->make(RouteRegistrar::class)->setPort('web');
+        $route = $registrar->registerRoute('foo', 'WebController@foo');
 
         $this->assertEquals(['a', 'b', 'c'], $route->getAction('middleware'));
     }

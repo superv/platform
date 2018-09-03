@@ -17,7 +17,7 @@ class RouterTest extends TestCase
             'foo/baz' => 'FooWebController@baz',
         ];
 
-        $loader = $this->app->instance(RouteRegistrar::class, Mockery::mock(RouteRegistrar::class));
+        $loader = $this->bindMock(RouteRegistrar::class);
         $loader->shouldReceive('register')->with($_SERVER['test.routes.web.foo'])->once();
 
         app(Router::class)->loadFromFile('tests/Platform/__fixtures__/routes/web/foo.php');
@@ -36,7 +36,7 @@ class RouterTest extends TestCase
             'foo/baz' => 'FooAcpController@baz',
         ];
 
-        $loader = $this->app->instance(RouteRegistrar::class, Mockery::mock(RouteRegistrar::class));
+        $loader = $this->bindMock(RouteRegistrar::class);
 
         $loader->shouldReceive('setPort')->with('web')->once();
         $loader->shouldReceive('register')->with(['foo/baz' => 'FooWebController@baz'])->once();
