@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Routing;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use Tests\Platform\TestCase;
 
-class RouteLoaderTest extends TestCase
+class RouteRegistrarTest extends TestCase
 {
     /** @test */
     function loads_routes_from_array()
