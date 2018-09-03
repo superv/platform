@@ -6,6 +6,7 @@ use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Domains\Droplet\Locator;
+use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\PlatformServiceProvider;
@@ -116,6 +117,7 @@ class TestCase extends OrchestraTestCase
 
     protected function route($uri, $action, $port)
     {
+        $port = Port::fromSlug($port);
         app(RouteRegistrar::class)->setPort($port)->registerRoute($uri, $action);
     }
 

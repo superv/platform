@@ -52,27 +52,11 @@ class Port
     }
 
     /**
-     * @param mixed $hostname
-     */
-    public function setHostname($hostname)
-    {
-        $this->hostname = $hostname;
-    }
-
-    /**
      * @return null
      */
     public function prefix()
     {
         return $this->prefix;
-    }
-
-    /**
-     * @param null $prefix
-     */
-    public function setPrefix($prefix)
-    {
-        $this->prefix = $prefix;
     }
 
     /**
@@ -83,20 +67,13 @@ class Port
         return $this->theme;
     }
 
-    /**
-     * @param null $theme
-     */
-    public function setTheme($theme)
-    {
-        $this->theme = $theme;
-    }
-
     public static function fromSlug($slug)
     {
         $config = \Platform::config('ports.'.$slug);
 
         if (! $config) {
-            throw new \Exception("Port config not found: [{$slug}]");
+            return null;
+//            throw new \Exception("Port config not found: [{$slug}]");
         }
 
         /** @var self $port */
@@ -107,19 +84,16 @@ class Port
         return $port;
     }
 
+    public static function isRegistered($slug)
+    {
+
+    }
+
     public static function all()
     {
         return collect(Platform::config('ports'))->keys()->map(function ($slug) {
             return Port::fromSlug($slug);
         });
-    }
-
-    /**
-     * @param array $roles
-     */
-    public function setRoles(array $roles)
-    {
-        $this->roles = $roles;
     }
 
     /**
@@ -146,27 +120,11 @@ class Port
     }
 
     /**
-     * @param mixed $model
-     */
-    public function setModel($model)
-    {
-        $this->model = $model;
-    }
-
-    /**
      * @return mixed
      */
     public function middlewares()
     {
         return $this->middlewares;
-    }
-
-    /**
-     * @param mixed $middlewares
-     */
-    public function setMiddlewares($middlewares)
-    {
-        $this->middlewares = $middlewares;
     }
 
     /**
@@ -178,26 +136,10 @@ class Port
     }
 
     /**
-     * @param string $guard
-     */
-    public function setGuard($guard)
-    {
-        $this->guard = $guard;
-    }
-
-    /**
      * @return mixed
      */
     public function getComposers()
     {
         return $this->composers;
-    }
-
-    /**
-     * @param mixed $composers
-     */
-    public function setComposers($composers): void
-    {
-        $this->composers = $composers;
     }
 }

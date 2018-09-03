@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Routing;
 
+use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use Tests\Platform\TestCase;
 
@@ -55,9 +56,9 @@ class RouteRegistrarTest extends TestCase
         ]);
 
         $registrar = $this->app->make(RouteRegistrar::class);
-        $registrar->setPort('web')->register(['web/foo' => 'WebController@foo']);
-        $registrar->setPort('acp')->register(['acp/foo' => 'AcpController@foo']);
-        $registrar->setPort('api')->register(['api/foo' => 'ApiController@foo']);
+        $registrar->setPort($this->getPort('web'))->register(['web/foo' => 'WebController@foo']);
+        $registrar->setPort($this->getPort('acp'))->register(['acp/foo' => 'AcpController@foo']);
+        $registrar->setPort($this->getPort('api'))->register(['api/foo' => 'ApiController@foo']);
 
         $getRoutes = $this->router()->getRoutes()->get('GET');
 
@@ -98,8 +99,8 @@ class RouteRegistrarTest extends TestCase
         ]);
 
         $registrar = $this->app->make(RouteRegistrar::class);
-        $registrar->setPort('*')->register(['bar/foo' => 'BarController@foo']);
-        $registrar->setPort('*')->register(['foo/bar' => 'FooController@bar']);
+        $registrar->setPort('all')->register(['bar/foo' => 'BarController@foo']);
+        $registrar->setPort('all')->register(['foo/bar' => 'FooController@bar']);
 
         $routes = $this->router()->getRoutes()->get('GET');
         $this->assertNotNull($routes['superv.iobar/foo']);
@@ -126,7 +127,7 @@ class RouteRegistrarTest extends TestCase
             ],
         ]);
 
-        $registrar = $this->app->make(RouteRegistrar::class)->setPort('web');
+        $registrar = $this->app->make(RouteRegistrar::class)->setPort($this->getPort('web'));
         $routes = $registrar->registerRoute('foo', 'WebController@foo');
 
         $this->assertEquals(['a', 'b', 'c'], $routes->first()->getAction('middleware'));
@@ -138,5 +139,10 @@ class RouteRegistrarTest extends TestCase
     protected function router()
     {
         return $this->app['router'];
+    }
+
+    protected function getPort($slug)
+    {
+        return Port::fromSlug($slug);
     }
 }

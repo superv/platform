@@ -19,6 +19,7 @@ class PlatformServiceProviderTest extends TestCase
         config(['superv.installed' => true]);
 
         Platform::shouldReceive('boot')->once();
+        Platform::makePartial();
         (new PlatformServiceProvider($this->app))->boot();
     }
 

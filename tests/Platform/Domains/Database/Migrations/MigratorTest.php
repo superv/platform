@@ -20,7 +20,6 @@ class MigratorTest extends TestCase
         $this->assertInstanceOf(BaseMigrator::class, $migrator);
     }
 
-    /** @test */
     function saves_migrations_scope_to_database()
     {
         Scopes::register('foo', __DIR__.'/migrations');
@@ -29,7 +28,6 @@ class MigratorTest extends TestCase
         $this->assertDatabaseHas('migrations', ['scope' => 'foo']);
     }
 
-    /** @test */
     function rollbacks_migrations_by_scope()
     {
         Scopes::register('foo', __DIR__.'/migrations');

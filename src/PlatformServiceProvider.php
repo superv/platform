@@ -17,6 +17,7 @@ use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Droplet\DropletCollection;
 use SuperV\Platform\Domains\Navigation\Collector;
 use SuperV\Platform\Domains\Navigation\DropletNavigationCollector;
+use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use SuperV\Platform\Providers\TwigServiceProvider;
 
@@ -101,6 +102,9 @@ class PlatformServiceProvider extends BaseServiceProvider
         }
 
         Platform::boot();
+
+        app(Router::class)->loadFromPath(Platform::path('routes'));
+
         Bouncer::tables([
             'permissions'    => 'bouncer_permissions',
             'assigned_roles' => 'bouncer_assigned_roles',

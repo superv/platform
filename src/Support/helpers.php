@@ -70,18 +70,10 @@ function html_attributes($attributes)
 
 function html_attribute_element($key, $value)
 {
-    /*
-     * For numeric keys we will assume that the value is a boolean attribute
-     * where the presence of the attribute represents a true value and the
-     * absence represents a false value.
-     * This will convert HTML attributes such as "required" to a correct
-     * form instead of using incorrect numerics.
-     */
     if (is_numeric($key)) {
         return $value;
     }
 
-    // Treat boolean attributes as HTML properties
     if (is_bool($value) && $key != 'value') {
         return $value ? $key : '';
     }
@@ -116,17 +108,45 @@ if (! function_exists('superv')) {
     }
 }
 
-if (! function_exists('collect')) {
-    /**
-     * Create a collection from the given value.
-     *
-     * @param  mixed $value
-     * @return \SuperV\Platform\Support\Collection
-     */
-    function collect($value = null)
-    {
-        return new Collection($value);
-    }
+/**
+ * Create a collection from the given value.
+ *
+ * @param  mixed $value
+ * @return \SuperV\Platform\Support\Collection
+ */
+function sv_collect($value = null)
+{
+    return new Collection($value);
+}
+
+/**
+ * Ensure the given path is real
+ *
+ * @param $path
+ */
+function sv_real_path($path)
+{
+    return starts_with($path, '/') ? $path : base_path($path);
+}
+
+/**
+ * Ensure the given path is real
+ *
+ * @param $path
+ */
+function sv_relative_path($path)
+{
+    return ltrim(str_replace(base_path(), '', $path), '/');
+}
+
+function sv_basename($path)
+{
+    return pathinfo($path, PATHINFO_BASENAME);
+}
+
+function sv_filename($path)
+{
+    return pathinfo($path, PATHINFO_FILENAME);
 }
 
 function uuid()

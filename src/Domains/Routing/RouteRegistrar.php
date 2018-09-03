@@ -23,6 +23,8 @@ class RouteRegistrar
      */
     protected $routes;
 
+    protected $wildcard = 'all';
+
     public function __construct(Router $router, Collection $routes)
     {
         $this->router = $router;
@@ -51,13 +53,13 @@ class RouteRegistrar
     public function registerRoute($uri, $action)
     {
         /** Register this route for every port available */
-        if ($this->port === '*') {
+        if ($this->port === $this->wildcard) {
             $ports = Port::all();
         } else {
             $ports = collect([$this->port]);
         }
 
-        $ports->map(function (Port $port) use ($action, $uri) {
+        $ports->map(function ($port) use ($action, $uri) {
             $this->routes->push(
                 Action::make($uri, $action)
                       ->port($port)
@@ -76,10 +78,11 @@ class RouteRegistrar
     public function setPort($port)
     {
         /** For every port */
-        if ($port === '*') {
-            $this->port = '*';
+        if ($port === $this->wildcard) {
+            $this->port = $this->wildcard;
         } else {
-            $this->port = is_object($port) ? $port : Port::fromSlug($port);
+            $this->port = $port;
+//            $this->port = is_object($port) ? $port : Port::fromSlug($port);
         }
 
         return $this;

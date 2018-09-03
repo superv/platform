@@ -2,45 +2,64 @@
 
 namespace SuperV\Platform\Domains\Routing;
 
+use SuperV\Platform\Domains\Port\Port;
+
 class Router
 {
     /**
      * @var \SuperV\Platform\Domains\Routing\RouteRegistrar
      */
-    protected $loader;
+    protected $registrar;
+
+    /** @var */
+    protected $files;
 
     public function __construct(RouteRegistrar $loader)
     {
-        $this->loader = $loader;
+        $this->registrar = $loader;
     }
 
-    public function loadFromPath($path) {
-        if (!starts_with($path, '/')) {
-            $path = base_path($path);
-        }
-        if ($folders = glob("{$path}/*", GLOB_ONLYDIR)) {
-            foreach ($folders as $folder) {
-                try {
-                    $this->loader->setPort($port = pathinfo($folder, PATHINFO_BASENAME));
-                } catch (\Exception $e) {
-                    // a port with the folder name could not be found
-                    continue;
-                }
+    public function portFilesIn($path, $port = null)
+    {
+        $path = sv_real_path($path);
 
-                $files = glob("{$folder}/*.php");
-                foreach($files as $file) {
-                    $routes = (array)require $file;
-                        $this->loader->register($routes);
+        $portFiles = [];
+
+        /** file based routes */
+        foreach (glob($path.'/*.php') as $file) {
+            $portFiles[sv_filename($file)][] = $file;
+        }
+
+        foreach (glob($path.'/*', GLOB_ONLYDIR) as $dir) {
+            $port = sv_basename($dir);
+            foreach (glob($dir.'/*.php') as $file) {
+                $portFiles[$port][] = $file;
+            }
+        }
+
+        return $portFiles;
+    }
+
+    public function loadFromPath($path)
+    {
+
+        foreach ($this->portFilesIn($path) as $port => $files) {
+            if (! $port = Port::fromSlug($port)) {
+                continue;
+            }
+            $this->registrar->setPort($port);
+            foreach ($files as $file) {
+                $routes = (array)require $file;
+                if (! empty($routes)) {
+                    $this->registrar->register($routes);
                 }
             }
-        } elseif($files = glob(base_path("{$path}/*.php"))) {
         }
-
     }
 
     public function loadFromFile($file)
     {
         $routes = require base_path($file);
-        $this->loader->register($routes);
+        $this->registrar->register($routes);
     }
 }
