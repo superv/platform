@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Container\Container;
+use SuperV\Modules\Nucleo\Domains\UI\SvTab;
+use SuperV\Modules\Nucleo\Domains\UI\SvTabs;
+use SuperV\Platform\Domains\Authorization\Guardable;
+use SuperV\Platform\Domains\Authorization\Haydar;
 use SuperV\Platform\Domains\Feature\FeatureBus;
 use SuperV\Platform\Support\Collection;
 use SuperV\Platform\Support\Decorator;
@@ -18,7 +22,7 @@ function platform_path($path = null)
 function feature($handler = null, array $input = [])
 {
     if ($handler) {
-        return  \Feature::handler($handler)->merge($input);
+        return \Feature::handler($handler)->merge($input);
     }
 
     return app(FeatureBus::class);
@@ -108,6 +112,16 @@ if (! function_exists('superv')) {
     }
 }
 
+/** @return Collection */
+function sv_guard($guardable)
+{
+    if (! $guardable instanceof Guardable && ! is_array($guardable) && ! $guardable instanceof \Illuminate\Support\Collection) {
+        return $guardable;
+    }
+
+    return app(Haydar::class)->guard($guardable);
+}
+
 /**
  * Create a collection from the given value.
  *
@@ -154,4 +168,20 @@ function uuid()
     $uuid = Ramsey\Uuid\Uuid::uuid4()->toString();
 
     return str_replace('-', '', $uuid);
+}
+
+/** @return SvTabs */
+function sv_tabs()
+{
+    return SvTabs::make();
+}
+
+/**
+ * @param $title
+ * @param $block
+ * @return SvTab
+ */
+function sv_tab($title, $block)
+{
+    return (new SvTab)->title($title)->content($block);
 }

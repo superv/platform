@@ -84,7 +84,7 @@ class Section implements SectionBag
         }
 
         if (! $this->slug) {
-            $this->slug = str_slug(strtolower($this->title));
+            $this->slug = str_slug(strtolower($this->title), '_');
         }
 
         $event = 'navigation.'.$this->namespace().':building';
