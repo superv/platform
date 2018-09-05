@@ -4,5 +4,5 @@ namespace SuperV\Platform\Domains\Authorization;
 
 interface Guardable
 {
-    public function ability();
+    public function getRequiredAbility();
 }

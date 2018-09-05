@@ -2,9 +2,8 @@
 
 namespace SuperV\Platform\Domains\Authorization;
 
-use Illuminate\Support\Collection;
 use Silber\Bouncer\Bouncer;
-use function sv_guard;
+use SuperV\Platform\Support\Collection;
 
 class HaydarBouncer implements Haydar
 {
@@ -25,30 +24,44 @@ class HaydarBouncer implements Haydar
 
     public function guard($guardable)
     {
-        return sv_collect($guardable)
-            ->filter(function ($item) {
-                if ($item instanceof Guardable && ! $this->can($item->ability())) {
+        return $this->guardItems(sv_collect($guardable))->map(function ($item) {
+            if (is_array($item) || $item instanceof Collection) {
+                return sv_guard($item);
+            }
+            $this->scanGuardableChildrenOf($item);
 
-                    return false;
-                }
+            return $item;
+        });
+    }
 
-                return true;
-            })
-            ->map(function ($item) {
-                if (is_array($item) || $item instanceof Collection) {
-                    return sv_guard($item);
-                }
+    public function authorize($item)
+    {
+        /** Allow non-guardable items */
+        if (! $item instanceof Guardable) {
+            return true;
+        }
 
-                if ($item instanceof HasGuardableItems) {
-                    $scannedItems = sv_guard($item->getGuardableItems());
-                    $item->setGuardableItems($scannedItems->all());
+        if ($this->can($item->getRequiredAbility())) {
+            return true;
+        }
 
-                    return $item;
-                }
+        return false;
+    }
 
-//                dump($item);
+    public function guardItems(Collection $items)
+    {
+        return $items->filter(function ($item) {
+            return $this->authorize($item);
+        });
+    }
 
-                return $item;
-            });
+    public function scanGuardableChildrenOf($item)
+    {
+        if (! $item instanceof HasGuardableItems) {
+            return;
+        }
+
+        $scannedItems = sv_guard($item->getGuardableItems());
+        $item->setGuardableItems($scannedItems->all());
     }
 }
