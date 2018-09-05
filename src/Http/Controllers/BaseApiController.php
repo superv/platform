@@ -10,11 +10,9 @@ class BaseApiController extends BaseController
     {
         parent::__construct();
 
-        if (app()->environment() === 'local') {
-            $user = $this->request->get('user');
-            if ($user = 'root') {
-                auth()->onceUsingId(Users::withEmail("{$user}@superv.io")->id);
-            }
+        if (app()->environment() === 'local' && ! $this->request->hasHeader('authorization')) {
+            $user = $this->request->get('user', 'root');
+            auth()->onceUsingId(Users::withEmail("{$user}@superv.io")->id);
         }
 
         $this->middleware('auth:superv-api');

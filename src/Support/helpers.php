@@ -112,7 +112,10 @@ if (! function_exists('superv')) {
     }
 }
 
-/** @return Collection */
+/**
+ * @param $guardable
+ * @return Collection
+ */
 function sv_guard($guardable)
 {
     if (! $guardable instanceof Guardable && ! is_array($guardable) && ! $guardable instanceof \Illuminate\Support\Collection) {
