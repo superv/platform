@@ -35,8 +35,9 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $aliases = [
-        'Feature' => 'SuperV\Platform\Domains\Feature\FeatureFacade',
-        'Current' => 'SuperV\Platform\Facades\CurrentFacade',
+        'Platform' => 'SuperV\Platform\Facades\PlatformFacade',
+        'Feature'  => 'SuperV\Platform\Domains\Feature\FeatureFacade',
+        'Current'  => 'SuperV\Platform\Facades\CurrentFacade',
 
     ];
 
@@ -60,21 +61,11 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     public function register()
     {
-        if ($this->app->runningInConsole()) {
-            MigrationScopes::register('platform', realpath(__DIR__.'/../database/migrations'));
-        }
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/superv.php', 'superv'
-        );
+        $this->mergeConfigFrom(__DIR__.'/../config/superv.php', 'superv');
 
-        /**
-         * Register User Model
-         */
-        $this->_bindings[User::class] = sv_config('auth.user.model');
+        $this->bindUserModel();
 
-        if (sv_config('twig.enabled')) {
-            $this->providers[] = TwigServiceProvider::class;
-        }
+        $this->enableTwig();
 
         $this->registerBindings($this->_bindings);
         $this->registerSingletons($this->_singletons);
@@ -93,6 +84,11 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     public function boot()
     {
+        if ($this->app->runningInConsole()) {
+            $this->registerMigrationScope();
+            $this->publishConfig();
+        }
+
         if (config('superv.installed') !== true) {
             return;
         }
@@ -101,6 +97,37 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         Platform::boot();
 
+        $this->registerPlatformRoutes();
+    }
+
+    protected function publishConfig(): void
+    {
+        $stub = __DIR__.'/../config/superv.php';
+
+        $target = $this->app->basePath().'/config/superv.php';
+
+        $this->publishes([$stub => $target], 'superv.config');
+    }
+
+    protected function registerMigrationScope(): void
+    {
+        MigrationScopes::register('platform', realpath(__DIR__.'/../database/migrations'));
+    }
+
+    protected function registerPlatformRoutes(): void
+    {
         app(Router::class)->loadFromPath(Platform::path('routes'));
+    }
+
+    protected function bindUserModel(): void
+    {
+        $this->_bindings[User::class] = sv_config('auth.user.model');
+    }
+
+    protected function enableTwig(): void
+    {
+        if (sv_config('twig.enabled')) {
+            $this->providers[] = TwigServiceProvider::class;
+        }
     }
 }

@@ -34,7 +34,7 @@ class TestCase extends OrchestraTestCase
 
     protected function getPackageAliases($app)
     {
-        return ['Platform' => PlatformFacade::class];
+//        return ['Platform' => PlatformFacade::class];
     }
 
     protected function getEnvironmentSetUp($app)
