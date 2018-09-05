@@ -61,7 +61,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     public function register()
     {
         if ($this->app->runningInConsole()) {
-            MigrationScopes::register('platform', __DIR__.'/../database/migrations');
+            MigrationScopes::register('platform', realpath(__DIR__.'/../database/migrations'));
         }
         $this->mergeConfigFrom(
             __DIR__.'/../config/superv.php', 'superv'

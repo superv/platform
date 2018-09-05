@@ -8,7 +8,6 @@ class Scopes
 
     public static function register($key, $path)
     {
-//        array_set(static::$scopes, $key, $path);
         static::$scopes[$key] = $path;
     }
 
@@ -26,5 +25,4 @@ class Scopes
     {
         return array_get(static::$scopes, $key);
     }
-
 }
