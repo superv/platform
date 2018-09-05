@@ -75,4 +75,11 @@ class SuperVInstallCommandTest extends TestCase
             'DB_HOST=127.0.0.1'."\r\n",
         ];
     }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        file_put_contents(base_path('.env'), '');
+    }
 }
