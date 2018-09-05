@@ -35,13 +35,14 @@ class MakeDropletModel
 
         // single point of truth
         $type = str_plural($type);
+        $dropletsDirectory = sv_config('droplets.location');
 
         return new DropletModel([
             'vendor'    => $vendor,
             'slug'      => $this->slug,
             'type'      => str_singular($type),
             'name'      => $name,
-            'path'      => $this->path ?: "_workbench/{$vendor}/{$type}/{$name}",
+            'path'      => $this->path ?: "{$dropletsDirectory}/{$vendor}/{$type}/{$name}",
             'namespace' => ucfirst(camel_case(($vendor == 'superv' ? 'super_v' : $vendor))).'\\'.ucfirst(camel_case($type)).'\\'.ucfirst(camel_case($name)),
         ]);
     }
