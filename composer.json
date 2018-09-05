@@ -23,6 +23,8 @@
         "laravel/framework": "5.6.*",
         "rcrowe/twigbridge": "^0.9.6",
         "tymon/jwt-auth": "dev-develop",
+        "superv/composer-plugin": "~0.1.0",
+        "nicmart/string-template": "~0.1",
         "wikimedia/composer-merge-plugin": "^1.4"
     },
     "require-dev": {
