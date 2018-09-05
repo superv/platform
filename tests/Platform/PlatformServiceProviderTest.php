@@ -2,7 +2,9 @@
 
 namespace Tests\Platform;
 
+use Illuminate\Foundation\AliasLoader;
 use Platform;
+use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\PlatformServiceProvider;
 
 class PlatformServiceProviderTest extends TestCase
@@ -11,6 +13,16 @@ class PlatformServiceProviderTest extends TestCase
     function get_registered_with_platform()
     {
         $this->assertProviderRegistered(PlatformServiceProvider::class);
+    }
+
+    /** @test */
+    function registers_required_aliases_if_installed()
+    {
+        config(['superv.installed' => true]);
+        (new PlatformServiceProvider($this->app))->register();
+
+        $aliases = AliasLoader::getInstance()->getAliases();
+        $this->assertEquals(PlatformFacade::class, $aliases['Platform']);
     }
 
     /** @test */

@@ -2,9 +2,7 @@
 
 namespace SuperV\Platform;
 
-use Bouncer;
 use Platform;
-use Silber\Bouncer\BouncerServiceProvider;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Authorization\Haydar;
@@ -29,7 +27,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         'SuperV\Platform\Domains\Auth\AuthServiceProvider',
         'SuperV\Platform\Domains\Asset\AssetServiceProvider',
         'SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider',
-        BouncerServiceProvider::class,
     ];
 
     protected $_bindings = [
@@ -40,7 +37,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected $aliases = [
         'Feature' => 'SuperV\Platform\Domains\Feature\FeatureFacade',
         'Current' => 'SuperV\Platform\Facades\CurrentFacade',
-        'Bouncer' => \Silber\Bouncer\BouncerFacade::class,
+
     ];
 
     protected $_singletons = [
@@ -64,7 +61,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     public function register()
     {
         if ($this->app->runningInConsole()) {
-            MigrationScopes::register('platform', Platform::path('database/migrations'));
+            MigrationScopes::register('platform', __DIR__.'/../database/migrations');
         }
         $this->mergeConfigFrom(
             __DIR__.'/../config/superv.php', 'superv'
@@ -73,9 +70,9 @@ class PlatformServiceProvider extends BaseServiceProvider
         /**
          * Register User Model
          */
-        $this->_bindings[User::class] = Platform::config('auth.user.model');
+        $this->_bindings[User::class] = sv_config('auth.user.model');
 
-        if (Platform::config('twig.enabled')) {
+        if (sv_config('twig.enabled')) {
             $this->providers[] = TwigServiceProvider::class;
         }
 
@@ -91,7 +88,6 @@ class PlatformServiceProvider extends BaseServiceProvider
             },
         ]);
 
-        superv('droplets')->put('superv.platform', Platform::instance());
         event('platform.registered');
     }
 
@@ -101,15 +97,10 @@ class PlatformServiceProvider extends BaseServiceProvider
             return;
         }
 
+        superv('droplets')->put('superv.platform', Platform::instance());
+
         Platform::boot();
 
         app(Router::class)->loadFromPath(Platform::path('routes'));
-
-        Bouncer::tables([
-            'permissions'    => 'bouncer_permissions',
-            'assigned_roles' => 'bouncer_assigned_roles',
-            'roles'          => 'bouncer_roles',
-            'abilities'      => 'bouncer_abilities',
-        ]);
     }
 }

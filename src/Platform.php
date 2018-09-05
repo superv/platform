@@ -24,7 +24,7 @@ class Platform extends Droplet
      */
     public function boot()
     {
-        $entries = DropletModel::where('enabled', true)->get();
+        $entries = DropletModel::enabled()->get();
 
         /** @var DropletModel $entry */
         foreach ($entries as $entry) {

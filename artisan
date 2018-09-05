@@ -74,8 +74,6 @@ $app->make('Illuminate\Foundation\Bootstrap\RegisterProviders')->bootstrap($app)
 
 
 $kernel = $app->make('Orchestra\Testbench\Console\Kernel');
-AliasLoader::getInstance(['Platform' => PlatformFacade::class])->register();
-$app->register(PlatformServiceProvider::class);
 
 $status = $kernel->handle(
     $input = new Symfony\Component\Console\Input\ArgvInput,

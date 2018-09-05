@@ -113,6 +113,16 @@ if (! function_exists('superv')) {
 }
 
 /**
+ * @param      $key
+ * @param null $default
+ * @return \Illuminate\Config\Repository|mixed
+ */
+function sv_config($key, $default = null)
+{
+    return config("superv.{$key}", $default);
+}
+
+/**
  * @param $guardable
  * @return Collection
  */
