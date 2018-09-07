@@ -8,7 +8,10 @@ class Scopes
 
     public static function register($key, $path)
     {
-        static::$scopes[$key] = realpath($path);
+        if (! $_path = realpath($path)) {
+            return;
+        }
+        static::$scopes[$key] = realpath($_path);
     }
 
     public static function scopes()

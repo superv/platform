@@ -17,6 +17,11 @@ class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateComm
     public function handle()
     {
         if ($this->option('scope')) {
+            if (! $path = Scopes::path($this->option('scope'))) {
+                $this->error('Scope not registed');
+
+                return;
+            }
             $this->migrator->setScope($this->option('scope'));
         }
         parent::handle();
