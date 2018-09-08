@@ -48,7 +48,9 @@ class DropletModel extends Model
 
     public function shortSlug()
     {
-        return explode('.', $this->slug)[2];
+        $parts = explode('.', $this->slug);
+
+        return $parts[count($parts) - 1];
     }
 
     public function scopeEnabled($query) {
