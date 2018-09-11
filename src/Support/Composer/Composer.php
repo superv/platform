@@ -1,5 +1,7 @@
 <?php namespace SuperV\Platform\Support\Composer;
 
+use SuperV\Platform\Support\Collection;
+
 class Composer
 {
     /**
@@ -29,12 +31,18 @@ class Composer
             return $data;
         }
 
-        if (is_object($data)) {
+        if ($data instanceof Collection) {
+            $data->transform(function ($item) {
+                return $this->compose($item);
+            });
 
+            return $data;
+        }
+
+        if (is_object($data)) {
             /**
              * Search  nearby composers of the Class
              */
-
             if (class_exists($class = get_class($data).'Composer')) {
                 return $this->compose((new $class($data))->compose($this->params));
             }
