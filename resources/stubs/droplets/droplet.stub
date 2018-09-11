@@ -2,6 +2,6 @@
 
 use SuperV\Platform\Domains\Droplet\Droplet;
 
-class {class} extends Droplet
+class {droplet.class_name} extends Droplet
 {
 }

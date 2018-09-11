@@ -2,7 +2,7 @@
 
 use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
 
-class {class} extends DropletServiceProvider
+class {provider.class_name} extends DropletServiceProvider
 {
 
 }

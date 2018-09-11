@@ -1,0 +1,12 @@
+<?php
+
+namespace Tests\{droplet.short_name};
+
+class {droplet.short_name}Test extends TestCase
+{
+    /** @test */
+    function module_is_installed()
+    {
+        $this->assertNotNull(superv('droplets')->get('{droplet.slug}'));
+    }
+}

@@ -19,6 +19,10 @@ class CreateDropletPaths
     {
         $path = base_path($this->model->path);
 
+        if ($filesystem->exists($path)) {
+            throw new \Exception("Path already exists [{$path}]");
+        }
+
         $filesystem->makeDirectory($path, 0755, true, true);
         $filesystem->makeDirectory("{$path}/src", 0755, true, true);
         $filesystem->makeDirectory("{$path}/src/Domains", 0755, true, true);
@@ -28,5 +32,8 @@ class CreateDropletPaths
         $filesystem->makeDirectory("{$path}/routes", 0755, true, true);
         $filesystem->makeDirectory("{$path}/config", 0755, true, true);
         $filesystem->makeDirectory("{$path}/database/migrations", 0755, true, true);
+
+        $filesystem->makeDirectory("{$path}/tests", 0755, true, true);
+        $filesystem->makeDirectory("{$path}/tests/".$this->model->shortName(), 0755, true, true);
     }
 }

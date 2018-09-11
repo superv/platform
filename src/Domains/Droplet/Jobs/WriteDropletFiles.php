@@ -2,52 +2,73 @@
 
 namespace SuperV\Platform\Domains\Droplet\Jobs;
 
+use Platform;
+use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Support\Parser;
-use SuperV\Platform\Contracts\Filesystem;
 
 class WriteDropletFiles
 {
     /** @var \SuperV\Platform\Domains\Droplet\DropletModel */
     private $model;
 
+    /** @var Filesystem */
+    protected $filesystem;
+
     public function __construct(DropletModel $model)
     {
         $this->model = $model;
     }
 
-    public function handle(Filesystem $filesystem, Parser $parser)
+    public function handle(Filesystem $filesystem)
     {
+        $this->filesystem = $filesystem;
+
         $name = ucfirst(camel_case($this->model->name));
         $type = ucfirst(camel_case($this->model->type));
 
-        $path = base_path($this->model->path);
+        $tokens = [
+            'provider'    => [
+                'class_name' => $providerClass = "{$name}{$type}ServiceProvider",
+            ],
+            'droplet'     => [
+                'class_name' => $dropletClass = "{$name}{$type}",
+                'extends'    => ucwords($type),
+                'short_name' => $shortName = $this->model->shortName(),
+                'slug'       => $this->model->fullSlug(),
+            ],
+            'model'       => $this->model->toArray(),
+            'psr4_prefix' => str_replace('\\', '\\\\', $this->model->namespace),
+        ];
 
-        // Droplet Class
-        $dropletClass = "{$name}{$type}";
-        $content = $parser->parse($filesystem->get(base_path('vendor/superv/platform/resources/stubs/droplets/'.strtolower($type).'.stub')),
-            [
-                'class'   => $dropletClass,
-                'extends' => ucwords($type),
-                'model'   => $this->model->toArray(),
-            ]);
-        $filesystem->put("{$path}/src/{$dropletClass}.php", $content);
+        $this->makeStub('droplets/'.strtolower($type).'.stub', $tokens, "src/{$dropletClass}.php");
+        $this->makeStub('droplets/provider.stub', $tokens, "src/{$providerClass}.php");
+        $this->makeStub('droplets/composer.stub', $tokens, 'composer.json');
 
-        // Service Provider
-        $providerClass = "{$name}{$type}ServiceProvider";
-        $content = $parser->parse($filesystem->get(base_path('vendor/superv/platform/resources/stubs/droplets/provider.stub')),
-            [
-                'class' => $providerClass,
-                'model' => $this->model->toArray(),
-            ]);
-        $filesystem->put("{$path}/src/{$providerClass}.php", $content);
+        /**
+         * test files
+         */
+        $this->makeStub('droplets/testing/phpunit.xml', [], 'phpunit.xml');
+        $this->makeStub('droplets/testing/TestCase.stub', $tokens, "tests/{$shortName}/TestCase.php");
+        $this->makeStub('droplets/testing/DropletTest.stub', $tokens, "tests/{$shortName}/{$shortName}Test.php");
+    }
 
-        // composer.json
-        $content = $parser->parse($filesystem->get(base_path('vendor/superv/platform/resources/stubs/droplets/composer.stub')),
-            [
-                'model'  => $this->model->toArray(),
-                'prefix' => str_replace('\\', '\\\\', $this->model->namespace),
-            ]);
-        $filesystem->put("{$path}/composer.json", $content);
+    protected function makeStub($stub, $tokens, $target)
+    {
+        $stubbed = app(Parser::class)->parse($this->stubContent($stub), $tokens);
+
+        $this->filesystem->put(base_path($this->model->path.'/'.$target), $stubbed);
+
+        return $stubbed;
+    }
+
+    protected function stubContent($path)
+    {
+        return $this->filesystem->get($this->stubPath($path));
+    }
+
+    protected function stubPath($path)
+    {
+        return Platform::resourcePath("stubs/{$path}");
     }
 }

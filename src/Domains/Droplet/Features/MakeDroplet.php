@@ -38,5 +38,7 @@ class MakeDroplet
         $this->dispatch(new CreateDropletPaths($model));
 
         $this->dispatch(new WriteDropletFiles($model));
+
+        exec("composer install  -d ".base_path());
     }
 }

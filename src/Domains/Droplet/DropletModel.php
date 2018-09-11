@@ -46,11 +46,21 @@ class DropletModel extends Model
         return $this->namespace.'\\'.$this->name;
     }
 
+    public function fullSlug()
+    {
+        return $this->slug;
+    }
+
     public function shortSlug()
     {
         $parts = explode('.', $this->slug);
 
         return $parts[count($parts) - 1];
+    }
+
+    public function shortName()
+    {
+        return ucfirst($this->shortSlug());
     }
 
     public function scopeEnabled($query) {

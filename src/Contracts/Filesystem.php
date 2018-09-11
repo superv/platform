@@ -16,5 +16,13 @@ interface Filesystem
 
     public function getRequire($path);
 
+    public function delete($paths);
+
+    public function copy($from, $to);
+
+    public function move($from, $to);
+
+    public function size($path);
+
     public function allFiles($directory, $hidden = false);
 }
