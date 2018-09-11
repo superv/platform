@@ -14,7 +14,7 @@ class HaydarBouncer implements Haydar
         {
             public function can($ability)
             {
-                return false;
+                return true;
             }
         };
     }
