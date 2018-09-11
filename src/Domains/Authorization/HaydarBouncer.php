@@ -2,19 +2,21 @@
 
 namespace SuperV\Platform\Domains\Authorization;
 
-use Silber\Bouncer\Bouncer;
 use SuperV\Platform\Support\Collection;
 
 class HaydarBouncer implements Haydar
 {
-    /**
-     * @var \Silber\Bouncer\Bouncer
-     */
     protected $bouncer;
 
-    public function __construct(Bouncer $bouncer)
+    public function __construct()
     {
-        $this->bouncer = $bouncer;
+        $this->bouncer = new class
+        {
+            public function can($ability)
+            {
+                return false;
+            }
+        };
     }
 
     public function can($ability): bool

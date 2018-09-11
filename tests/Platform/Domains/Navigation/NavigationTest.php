@@ -128,18 +128,18 @@ class NavigationTest extends TestCase
     function filter_by_authorization()
     {
         $this->app->bind(Haydar::class, HaydarBouncer::class);
-        $bouncer = app(\Silber\Bouncer\Bouncer::class);
-        $bouncer->tables([
-            'permissions'    => 'bouncer_permissions',
-            'assigned_roles' => 'bouncer_assigned_roles',
-            'roles'          => 'bouncer_roles',
-            'abilities'      => 'bouncer_abilities',
-        ]);
-        $bouncer->allow('root')->everything();
-        $bouncer->allow('admin')->everything();
-        $bouncer->forbid('admin')->to('manage.platform');
-        $bouncer->allow('operations')->to('view.operations');
-        $bouncer->allow('user')->to('view.dashboard');
+//        $bouncer = app(\Silber\Bouncer\Bouncer::class);
+//        $bouncer->tables([
+//            'permissions'    => 'bouncer_permissions',
+//            'assigned_roles' => 'bouncer_assigned_roles',
+//            'roles'          => 'bouncer_roles',
+//            'abilities'      => 'bouncer_abilities',
+//        ]);
+//        $bouncer->allow('root')->everything();
+//        $bouncer->allow('admin')->everything();
+//        $bouncer->forbid('admin')->to('manage.platform');
+//        $bouncer->allow('operations')->to('view.operations');
+//        $bouncer->allow('user')->to('view.dashboard');
 
         $this->app->bind(Collector::class, FakeCollector::class);
         FakeCollector::$sections = function () {
