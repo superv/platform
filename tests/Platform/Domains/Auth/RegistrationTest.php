@@ -6,7 +6,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use SuperV\Platform\Domains\Auth\Contracts\Users;
 use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
-use SuperV\Platform\Domains\Auth\RegistersUsers;
 use SuperV\Platform\Domains\Auth\User;
 use Tests\Platform\TestCase;
 
@@ -199,5 +198,5 @@ class RegistrationTest extends TestCase
 
 class ControllerStub
 {
-    use RegistersUsers;
+    use \SuperV\Platform\Domains\Auth\Concerns\RegistersUsers;
 }

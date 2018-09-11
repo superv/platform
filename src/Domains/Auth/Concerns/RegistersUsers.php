@@ -1,8 +1,9 @@
 <?php
 
-namespace SuperV\Platform\Domains\Auth;
+namespace SuperV\Platform\Domains\Auth\Concerns;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use SuperV\Platform\Domains\Auth\UserRegistrar;
 
 trait RegistersUsers
 {

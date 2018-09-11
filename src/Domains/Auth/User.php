@@ -8,7 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-use SuperV\Platform\Domains\Auth\Concerns\HasRoles;
+use SuperV\Modules\Guard\Concerns\HasRoles;
 use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 

@@ -5,8 +5,8 @@ namespace Tests\Platform\Domains\Auth;
 use Auth;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Domains\Auth\AuthenticatesUsers;
 use SuperV\Platform\Domains\Auth\Client;
+use SuperV\Platform\Domains\Auth\Concerns\AuthenticatesUsers;
 use SuperV\Platform\Domains\Auth\PlatformUserProvider;
 use SuperV\Platform\Domains\Auth\User;
 use Tests\Platform\TestCase;
@@ -14,6 +14,13 @@ use Tests\Platform\TestCase;
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected $installs = ['superv.modules.guard'];
+
+    protected function setUp()
+    {
+        parent::setUp();
+    }
 
     /** @test */
     function authenticates_valid_user_successfully()
