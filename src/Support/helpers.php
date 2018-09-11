@@ -7,7 +7,9 @@ use SuperV\Platform\Domains\Authorization\Guardable;
 use SuperV\Platform\Domains\Authorization\Haydar;
 use SuperV\Platform\Domains\Feature\FeatureBus;
 use SuperV\Platform\Support\Collection;
+use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Decorator;
+use SuperV\Platform\Support\RelativePath;
 
 function platform_path($path = null)
 {
@@ -163,7 +165,14 @@ function sv_real_path($path)
  */
 function sv_relative_path($path)
 {
+    return (new RelativePath(base_path()))->get($path);
+    dd($path, base_path());
     return ltrim(str_replace(base_path(), '', $path), '/');
+}
+
+function sv_compose($data)
+{
+    return (new Composer())->compose($data);
 }
 
 function sv_basename($path)
