@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Container\Container;
+use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
 use SuperV\Modules\Nucleo\Domains\UI\SvTab;
 use SuperV\Modules\Nucleo\Domains\UI\SvTabs;
 use SuperV\Platform\Domains\Authorization\Guardable;
@@ -166,8 +167,6 @@ function sv_real_path($path)
 function sv_relative_path($path)
 {
     return (new RelativePath(base_path()))->get($path);
-    dd($path, base_path());
-    return ltrim(str_replace(base_path(), '', $path), '/');
 }
 
 function sv_compose($data)
@@ -206,4 +205,9 @@ function sv_tabs()
 function sv_tab($title, $block)
 {
     return (new SvTab)->title($title)->content($block);
+}
+
+function sv_block($url = null)
+{
+    return SvBlock::make()->url($url);
 }
