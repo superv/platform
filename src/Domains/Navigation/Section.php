@@ -87,20 +87,15 @@ class Section implements SectionBag
             $this->slug = str_slug(strtolower($this->title), '_');
         }
 
-        $event = 'navigation.'.$this->namespace().':building';
-        $this->events->dispatch($event, $this);
+        $this->dispatchEvent();
 
         return array_filter([
-            'title'    => $this->title ?: ucwords(str_replace('_', ' ', $this->slug)),
+            'title'    => $this->getTitle(),
             'slug'     => $this->slug,
             'icon'     => $this->icon,
             'url'      => $this->url,
             'priority' => $this->priority,
-            'sections' => collect($this->sections)
-                ->map(Closure::fromCallable([$this, 'buildOne']))
-                ->sortByDesc('priority')
-                ->values()
-                ->all(),
+            'sections' => $this->makeSections(),
         ]);
     }
 
@@ -195,5 +190,42 @@ class Section implements SectionBag
     public function getAbility()
     {
         return $this->ability;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTitle(): string
+    {
+        return $this->title ?: ucwords(str_replace(['_', '.'], ' ', $this->slug));
+    }
+
+    protected function dispatchEvent(): void
+    {
+        $event = 'navigation.'.$this->namespace().':building';
+        $this->events->dispatch($event, $this);
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function makeSections()
+    {
+        return collect($this->sections)
+            ->map(Closure::fromCallable([$this, 'buildOne']))
+            ->sortByDesc('priority')
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param string $title
+     * @return Section
+     */
+    public function setTitle(string $title)
+    {
+        $this->title = $title;
+
+        return $this;
     }
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Container\Container;
 use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
+use SuperV\Modules\Nucleo\Domains\UI\SvComponent;
 use SuperV\Modules\Nucleo\Domains\UI\SvTab;
 use SuperV\Modules\Nucleo\Domains\UI\SvTabs;
 use SuperV\Platform\Domains\Authorization\Guardable;
@@ -209,5 +210,9 @@ function sv_tab($title, $block)
 
 function sv_block($url = null)
 {
+    if ($url instanceof SvComponent) {
+        return SvBlock::make()->block($url);
+    }
+
     return SvBlock::make()->url($url);
 }
