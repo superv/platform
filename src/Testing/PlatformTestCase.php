@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Testing;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Factory as ModelFactory;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestResponse;
@@ -117,5 +118,32 @@ class PlatformTestCase extends TestCase
         if ($this->platformInstalled) {
             call_user_func($callback);
         }
+    }
+
+    /**
+     * Load model factories from path.
+     *
+     * @param  string  $path
+     *
+     * @return $this
+     */
+    protected function withFactories(string $path)
+    {
+        return $this->loadFactoriesUsing($this->app, $path);
+    }
+
+    /**
+     * Load model factories from path using Application.
+     *
+     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @param  string  $path
+     *
+     * @return $this
+     */
+    protected function loadFactoriesUsing($app, string $path)
+    {
+        $app->make(ModelFactory::class)->load($path);
+
+        return $this;
     }
 }
