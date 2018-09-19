@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Auth;
 
 use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Auth\Contracts\Account as AccountContract;
+use SuperV\Platform\Domains\Auth\Contracts\User;
 
 class Account extends Model implements AccountContract
 {
@@ -11,6 +12,7 @@ class Account extends Model implements AccountContract
 
     public function users()
     {
-        return $this->hasMany(User::class);
+        $user = app(User::class);
+        return $this->hasMany(get_class($user));
     }
 }
