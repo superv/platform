@@ -132,6 +132,15 @@ function sv_config($key, $default = null)
  */
 function sv_guard($guardable)
 {
+   return (new SuperV\Modules\Guard\Domains\Guard\Guard(Current::user()))->filter($guardable);
+}
+
+/**
+ * @param $guardable
+ * @return Collection
+ */
+function sv_guard_old($guardable)
+{
     if (! $guardable instanceof Guardable && ! is_array($guardable) && ! $guardable instanceof \Illuminate\Support\Collection) {
         return $guardable;
     }

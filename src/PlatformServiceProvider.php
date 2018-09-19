@@ -5,8 +5,6 @@ namespace SuperV\Platform;
 use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Domains\Auth\Contracts\User;
-use SuperV\Platform\Domains\Authorization\Haydar;
-use SuperV\Platform\Domains\Authorization\HaydarBouncer;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
 use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletMakeMigrationCommand;
@@ -30,8 +28,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $_bindings = [
-        Collector::class => DropletNavigationCollector::class,
-        Haydar::class    => HaydarBouncer::class,
+        Collector::class => DropletNavigationCollector::class
     ];
 
     protected $aliases = [

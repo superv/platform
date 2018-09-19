@@ -4,9 +4,9 @@ namespace SuperV\Platform\Domains\Navigation;
 
 use Closure;
 use Illuminate\Events\Dispatcher;
-use SuperV\Platform\Domains\Authorization\Haydar;
+use SuperV\Modules\Guard\Domains\Guard\HasGuardableItems;
 
-class Navigation implements SectionBag
+class Navigation implements SectionBag, HasGuardableItems
 {
     /**
      * @var \SuperV\Platform\Domains\Droplet\DropletCollection
@@ -29,11 +29,6 @@ class Navigation implements SectionBag
     protected $collector;
 
     /**
-     * @var \SuperV\Platform\Domains\Authorization\Haydar
-     */
-    protected $haydar;
-
-    /**
      * @var \Illuminate\Events\Dispatcher
      */
     protected $events;
@@ -41,10 +36,9 @@ class Navigation implements SectionBag
     /** @var \Illuminate\Support\Collection */
     protected $sections;
 
-    public function __construct(Collector $collector, Haydar $haydar, Dispatcher $events)
+    public function __construct(Collector $collector, Dispatcher $events)
     {
         $this->collector = $collector;
-        $this->haydar = $haydar;
         $this->events = $events;
     }
 
@@ -83,21 +77,30 @@ class Navigation implements SectionBag
 
         $this->navigation = [
             'slug'     => $this->slug,
-            'sections' => $sections->sortByDesc('priority')->values()->all(),
+            'sections' => $sections->sortByDesc('priority')->values(),
         ];
     }
 
     protected function buildSections($sections)
     {
-        return collect($sections)->map(function ($section) {
-            if (is_array($section)) {
-                $section = Section::make($section);
-            } elseif ($section instanceof HasSection) {
-                $section = $section::getSection();
-            }
+        return collect($sections)
+            ->map(
+                function ($section) {
+                    if (is_array($section)) {
+                        $section = Section::make($section);
+                    } elseif ($section instanceof HasSection) {
+                        $section = $section::getSection();
+                    }
+                    $section->parent($this->slug);
 
-            return $section->parent($this->slug)->build();
-        })->filter()->all();
+                    return $section;
+                })
+            ->guard()
+            ->filter()
+            ->map(function(Section $section) {
+                return $section->build();
+            })
+            ->all();
     }
 
     public function get()
@@ -105,5 +108,15 @@ class Navigation implements SectionBag
         $this->build();
 
         return $this->navigation;
+    }
+
+    public function getGuardableItems()
+    {
+        return $this->navigation['sections'];
+    }
+
+    public function setGuardableItems($items)
+    {
+        $this->navigation['sections'] = $items;
     }
 }

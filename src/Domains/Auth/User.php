@@ -8,7 +8,6 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-use SuperV\Modules\Guard\Concerns\HasRoles;
 use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -18,7 +17,6 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Model implements UserContract, AuthenticatableContract, JWTSubject, CanResetPasswordContract
 {
     use Authenticatable;
-    use HasRoles;
     use Notifiable;
 
     protected $table = 'users';

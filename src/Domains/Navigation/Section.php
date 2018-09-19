@@ -2,12 +2,11 @@
 
 namespace SuperV\Platform\Domains\Navigation;
 
-use Closure;
+use SuperV\Modules\Guard\Domains\Guard\Guardable;
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Domains\Authorization\Haydar;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-class Section implements SectionBag
+class Section implements SectionBag, Guardable
 {
     use Hydratable;
 
@@ -41,21 +40,17 @@ class Section implements SectionBag
      */
     protected $sections;
 
-    /** @var Haydar */
-    protected $haydar;
-
-    protected $ability;
-
     /**
      * @var \SuperV\Platform\Contracts\Dispatcher
      */
     protected $events;
 
+    protected $guardKey;
+
     protected $priority = 10;
 
-    public function __construct(Haydar $haydar, Dispatcher $events)
+    public function __construct(Dispatcher $events)
     {
-        $this->haydar = $haydar;
         $this->events = $events;
     }
 
@@ -72,150 +67,58 @@ class Section implements SectionBag
         return $section;
     }
 
-    protected function guard()
+    public function building()
     {
-        return $this->haydar->can($this->ability);
+        $this->dispatchEvent();
+
+        return $this;
     }
 
     public function build()
     {
-        if (! $this->guard()) {
-            return [];
-        }
-
-        if (! $this->slug) {
-            $this->slug = str_slug(strtolower($this->title), '_');
-        }
-
-        $this->dispatchEvent();
-
         return array_filter([
             'title'    => $this->getTitle(),
-            'slug'     => $this->slug,
+            'slug'     => $this->getSlug(),
             'icon'     => $this->icon,
             'url'      => $this->url,
             'priority' => $this->priority,
-            'sections' => $this->makeSections(),
+            'sections' => $this->buildSections($this->sections),
         ]);
     }
 
-    public function add($section)
+    protected function buildSections($sections)
     {
-        $this->sections[] = $section;
+        return collect($sections)
+            ->map(
+                function ($section) {
+                    if (is_array($section)) {
+                        $section = Section::make($section);
+                    } elseif ($section instanceof HasSection) {
+                        $section = $section::getSection();
+                    }
+                    $section->parent($this);
 
-        return $this;
+                    $section->building();
+
+                    return $section;
+                })
+            ->guard()
+            ->filter()
+            ->map(function (Section $section) {
+                return $section->build();
+            })
+            ->all();
     }
 
-    protected function buildOne($section)
-    {
-        if (is_array($section)) {
-            $section = static::make($section);
-        } elseif (is_string($section) && class_implements($section, HasSection::class)) {
-            $section = $section::getSection();
-        }
-
-        return $section->parent($this)->build();
-    }
-
-    public function sections(array $sections)
-    {
-        $this->sections = $sections;
-
-        return $this;
-    }
-
-    /**
-     * @param string $icon
-     * @return Section
-     */
-    public function icon(string $icon)
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
-    /**
-     * @param string $url
-     * @return Section
-     */
-    public function url(string $url)
-    {
-        $this->url = $url;
-
-        return $this;
-    }
-
-    /**
-     * @param $ability
-     * @return Section
-     */
-    public function ability($ability)
-    {
-        $this->ability = $ability;
-
-        return $this;
-    }
-
-    /**
-     * @param string $parent
-     * @return Section
-     */
-    public function parent($parent)
-    {
-        $this->parent = $parent;
-
-        return $this;
-    }
-
-    public function namespace()
-    {
-        return ($this->parent instanceof Section ? $this->parent->namespace() : $this->parent).'.'.$this->slug;
-    }
-
-    /**
-     * @param int $priority
-     * @return Section
-     */
-    public function priority(int $priority)
-    {
-        $this->priority = $priority;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAbility()
-    {
-        return $this->ability;
-    }
-
-    /**
-     * @return string
-     */
     protected function getTitle(): string
     {
         return $this->title ?: ucwords(str_replace(['_', '.'], ' ', $this->slug));
     }
 
-    protected function dispatchEvent(): void
+    protected function dispatchEvent()
     {
         $event = 'navigation.'.$this->namespace().':building';
         $this->events->dispatch($event, $this);
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function makeSections()
-    {
-        return collect($this->sections)
-            ->map(Closure::fromCallable([$this, 'buildOne']))
-            ->sortByDesc('priority')
-            ->values()
-            ->all();
     }
 
     /**
@@ -225,6 +128,84 @@ class Section implements SectionBag
     public function setTitle(string $title)
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function guardKey(): ?string
+    {
+        if ($this->guardKey) {
+            return $this->guardKey;
+        }
+
+        if ( $this->parent instanceof Section) {
+            $guardKey = $this->parent->guardKey() . '.'.$this->getSlug();
+        }
+
+        return $guardKey ?? null;
+    }
+
+    public function setGuardKey($key)
+    {
+        $this->guardKey = $key;
+
+        return $this;
+    }
+
+    protected function getSlug()
+    {
+        if (! $this->slug) {
+            $this->slug = str_slug(strtolower($this->title), '_');
+        }
+
+        return $this->slug;
+    }
+
+    public function add($section)
+    {
+        $this->sections[] = $section->parent($this);
+
+        return $this;
+    }
+
+    public function sections(array $sections)
+    {
+        $this->sections = $sections;
+
+        return $this;
+    }
+
+    public function icon(string $icon)
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function url(string $url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function parent($parent)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    public function namespace()
+    {
+        $parent = $this->parent instanceof Section ? $this->parent->namespace() : $this->parent;
+
+        return ($parent ? $parent.'.' : '').$this->getSlug();
+    }
+
+    public function priority(int $priority)
+    {
+        $this->priority = $priority;
 
         return $this;
     }
