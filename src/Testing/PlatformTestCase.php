@@ -123,8 +123,7 @@ class PlatformTestCase extends TestCase
     /**
      * Load model factories from path.
      *
-     * @param  string  $path
-     *
+     * @param  string $path
      * @return $this
      */
     protected function withFactories(string $path)
@@ -135,9 +134,8 @@ class PlatformTestCase extends TestCase
     /**
      * Load model factories from path using Application.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @param  string  $path
-     *
+     * @param  \Illuminate\Contracts\Foundation\Application $app
+     * @param  string                                       $path
      * @return $this
      */
     protected function loadFactoriesUsing($app, string $path)
@@ -145,5 +143,10 @@ class PlatformTestCase extends TestCase
         $app->make(ModelFactory::class)->load($path);
 
         return $this;
+    }
+
+    protected function assertArrayContains(array $haystack, array $needle)
+    {
+        $this->assertEquals($needle, array_intersect($needle, $haystack));
     }
 }
