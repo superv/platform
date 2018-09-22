@@ -49,11 +49,6 @@ class Section implements SectionBag, Guardable
 
     protected $priority = 10;
 
-    public function __construct(Dispatcher $events)
-    {
-        $this->events = $events;
-    }
-
     public static function make($slug)
     {
         $section = app(static::class);
@@ -88,7 +83,8 @@ class Section implements SectionBag, Guardable
 
     protected function buildSections($sections)
     {
-        return collect($sections)
+        $event = 'building.'.$this->slug;
+        $ret = collect($sections)
             ->map(
                 function ($section) {
                     if (is_array($section)) {
@@ -108,9 +104,10 @@ class Section implements SectionBag, Guardable
                 return $section->build();
             })
             ->all();
+        return $ret;
     }
 
-    protected function getTitle(): string
+    public function getTitle(): string
     {
         return $this->title ?: ucwords(str_replace(['_', '.'], ' ', $this->slug));
     }
@@ -118,7 +115,7 @@ class Section implements SectionBag, Guardable
     protected function dispatchEvent()
     {
         $event = 'navigation.'.$this->namespace().':building';
-        $this->events->dispatch($event, $this);
+        app('events')->dispatch($event, $this);
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Navigation;
 
 use Closure;
-use Illuminate\Events\Dispatcher;
 use SuperV\Modules\Guard\Domains\Guard\HasGuardableItems;
 
 class Navigation implements SectionBag, HasGuardableItems
@@ -28,30 +27,17 @@ class Navigation implements SectionBag, HasGuardableItems
      */
     protected $collector;
 
-    /**
-     * @var \Illuminate\Events\Dispatcher
-     */
-    protected $events;
-
     /** @var \Illuminate\Support\Collection */
     protected $sections;
 
-    public function __construct(Collector $collector, Dispatcher $events)
+    public function __construct(Collector $collector)
     {
         $this->collector = $collector;
-        $this->events = $events;
     }
 
     public function slug($slug)
     {
         $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function add($section)
-    {
-        $this->sections->put('aaaa', collect([$section]));
 
         return $this;
     }
@@ -68,7 +54,7 @@ class Navigation implements SectionBag, HasGuardableItems
         $this->make();
 
         $event = 'navigation.'.$this->slug.':building';
-        $this->events->dispatch($event, $this);
+        app('events')->dispatch($event, $this);
 
         $sections = $this->sections
             ->map(Closure::fromCallable([$this, 'buildSections']))
@@ -118,5 +104,9 @@ class Navigation implements SectionBag, HasGuardableItems
     public function setGuardableItems($items)
     {
         $this->navigation['sections'] = $items;
+    }
+
+    public function add($section)
+    {
     }
 }
