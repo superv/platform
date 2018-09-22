@@ -17,7 +17,7 @@ trait HasUser
 
     public function user()
     {
-        return $this->belongsTo(\SuperV\Platform\Domains\Auth\User::class);
+        return $this->belongsTo(config('superv.auth.user.model'));
     }
 
     public function getUserId()
