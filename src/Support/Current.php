@@ -17,6 +17,8 @@ class Current
      */
     protected $guard;
 
+    protected $user;
+
     public function __construct(Users $users, Guard $guard)
     {
         $this->users = $users;
@@ -30,7 +32,11 @@ class Current
      */
     public function user()
     {
-        return $this->users->find($this->guard->id());
+        if (! $this->user) {
+            $this->user = $this->users->find($this->guard->id());
+        }
+
+        return $this->user;
     }
 
     /**
