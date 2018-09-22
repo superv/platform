@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Auth;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use SuperV\Modules\Guard\Domains\Role;
 use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
 
 class PlatformUserProvider extends EloquentUserProvider
@@ -75,8 +76,9 @@ class PlatformUserProvider extends EloquentUserProvider
 
         if ($port = \Platform::port()) {
             if ($roles = $port->roles()) {
+                $roles = Role::query()->whereIn('slug', $roles)->pluck('id')->all();
                 $query->whereHas('roles', function(Builder $query) use ($roles) {
-                    $query->whereIn('slug', $roles);
+                    $query->whereIn('role_id', $roles);
                 });
             }
         }
