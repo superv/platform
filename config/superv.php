@@ -1,6 +1,5 @@
 <?php
 
-use SuperV\Platform\Domains\Auth\Client;
 use SuperV\Platform\Domains\Auth\User;
 
 return [
