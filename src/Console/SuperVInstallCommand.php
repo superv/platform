@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Console;
 
 use Illuminate\Console\Command;
+use SuperV\Platform\Domains\Auth\Account;
 
 class SuperVInstallCommand extends Command
 {
@@ -14,6 +15,9 @@ class SuperVInstallCommand extends Command
     {
         $this->comment('Installing SuperV');
         $this->call('migrate', ['--scope' => 'platform', '--force' => true]);
+
+        // Create default account
+        Account::query()->create(['name' => 'default']);
 
         $this->setEnv('SV_INSTALLED=true');
 
