@@ -11,6 +11,8 @@ use SuperV\Platform\Domains\Droplet\Console\DropletMakeMigrationCommand;
 use SuperV\Platform\Domains\Droplet\Console\DropletRunMigrationCommand;
 use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
 use SuperV\Platform\Domains\Droplet\DropletCollection;
+use SuperV\Platform\Domains\Droplet\Events\DropletInstalledEvent;
+use SuperV\Platform\Domains\Droplet\Listeners\DropletInstalledListener;
 use SuperV\Platform\Domains\Navigation\Collector;
 use SuperV\Platform\Domains\Navigation\DropletNavigationCollector;
 use SuperV\Platform\Domains\Routing\Router;
@@ -28,7 +30,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $_bindings = [
-        Collector::class => DropletNavigationCollector::class
+        Collector::class => DropletNavigationCollector::class,
     ];
 
     protected $aliases = [
@@ -46,6 +48,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected $listeners = [
         'Illuminate\Routing\Events\RouteMatched'         => 'SuperV\Platform\Listeners\RouteMatchedListener',
         'SuperV\Platform\Domains\Port\PortDetectedEvent' => 'SuperV\Platform\Listeners\PortDetectedListener',
+        DropletInstalledEvent::class                     => DropletInstalledListener::class,
     ];
 
     protected $commands = [
