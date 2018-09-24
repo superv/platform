@@ -61,6 +61,7 @@ class MailSender
 
         return $view;
     }
+
     public function setAction($text, $url)
     {
         $this->action = compact('text', 'url');

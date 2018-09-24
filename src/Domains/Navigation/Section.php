@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Navigation;
 
 use SuperV\Modules\Guard\Domains\Guard\Guardable;
-use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class Section implements SectionBag, Guardable
@@ -83,7 +82,6 @@ class Section implements SectionBag, Guardable
 
     protected function buildSections($sections)
     {
-        $event = 'building.'.$this->slug;
         $ret = collect($sections)
             ->map(
                 function ($section) {
@@ -104,6 +102,7 @@ class Section implements SectionBag, Guardable
                 return $section->build();
             })
             ->all();
+
         return $ret;
     }
 
@@ -135,8 +134,8 @@ class Section implements SectionBag, Guardable
             return $this->guardKey;
         }
 
-        if ( $this->parent instanceof Section) {
-            $guardKey = $this->parent->guardKey() . '.'.$this->getSlug();
+        if ($this->parent instanceof Section) {
+            $guardKey = $this->parent->guardKey().'.'.$this->getSlug();
         }
 
         return $guardKey ?? null;
