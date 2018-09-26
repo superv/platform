@@ -90,6 +90,12 @@ class FeatureBus implements Responsable
         return $this;
     }
 
+    /**
+     * Handle feature, get response data.
+     *
+     * @param null $key
+     * @return mixed
+     */
     public function get($key = null)
     {
         return $this->handle()->getFeatureResponse()->getData($key);
