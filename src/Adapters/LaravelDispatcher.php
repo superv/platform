@@ -11,7 +11,7 @@ class LaravelDispatcher implements Dispatcher
      */
     protected $dispatcher;
 
-    public function __construct(\Illuminate\Events\Dispatcher $dispatcher)
+    public function __construct(\Illuminate\Contracts\Events\Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }
