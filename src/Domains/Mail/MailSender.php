@@ -44,13 +44,6 @@ class MailSender
         );
     }
 
-    protected function buildViewData()
-    {
-        return [
-            'body' => $this->body,
-        ];
-    }
-
     public function render($view, $inliner = null)
     {
         $contents = $this->view->make($view, $this->buildViewData())->render();
@@ -100,6 +93,14 @@ class MailSender
         return [
             'html' => $this->render($this->layout),
         ];
+    }
+
+    protected function buildViewData()
+    {
+        return array_filter([
+            'body' => $this->body,
+            'button' => $this->action
+        ]);
     }
 
     protected function buildMessage(): \Closure
