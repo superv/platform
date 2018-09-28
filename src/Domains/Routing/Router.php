@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Routing;
 
+use Hub;
 use SuperV\Platform\Domains\Port\Port;
 
 class Router
@@ -49,10 +50,10 @@ class Router
 
     public function loadFromPath($path)
     {
-        foreach ($this->portFilesIn($path) as $port => $files) {
+       foreach ($this->portFilesIn($path) as $port => $files) {
             if ($port === $this->wildcard) {
                 $this->registrar->globally(true);
-            } elseif (! $port = Port::fromSlug($port)) {
+            } elseif (! $port = Hub::get($port)) {
                 continue;
             } else {
                 $this->registrar->globally(false);

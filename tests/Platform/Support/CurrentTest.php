@@ -31,7 +31,7 @@ class CurrentTest extends TestCase
     function returns_current_platform_port()
     {
         $this->setUpPort('acp', 'hostname.io');
-        PortDetectedEvent::dispatch($port = Port::fromSlug('acp'));
+        PortDetectedEvent::dispatch($port = \Hub::get('acp'));
 
         $this->assertEquals($port, Current::port());
     }

@@ -67,7 +67,7 @@ class Port
         return $this->theme;
     }
 
-    public static function fromSlug($slug)
+    public static function fromSlug______old($slug)
     {
         $config = \Platform::config('ports.'.$slug);
 
@@ -84,15 +84,10 @@ class Port
         return $port;
     }
 
-    public static function isRegistered($slug)
-    {
-
-    }
-
-    public static function all()
+    public static function all_____x()
     {
         return collect(Platform::config('ports'))->keys()->map(function ($slug) {
-            return Port::fromSlug($slug);
+            return \Hub::get($slug);
         });
     }
 

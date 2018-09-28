@@ -51,7 +51,7 @@ class PlatformTest extends TestCase
     function listens_port_detected_event_and_sets_active_port()
     {
         $this->setUpPort('acp', 'hostname.io');
-        PortDetectedEvent::dispatch(Port::fromSlug('acp'));
+        PortDetectedEvent::dispatch(\Hub::get('acp'));
 
         $this->assertEquals('acp', Platform::port()->slug());
     }

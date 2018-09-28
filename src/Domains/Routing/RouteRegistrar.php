@@ -4,7 +4,8 @@ namespace SuperV\Platform\Domains\Routing;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Port\Port;
+use Hub;
+
 
 class RouteRegistrar
 {
@@ -61,7 +62,7 @@ class RouteRegistrar
     {
         /** Register this route for every port available */
         if ($this->globally) {
-            $ports = Port::all();
+            $ports = Hub::ports();
         } else {
             $ports = collect([$this->port]);
         }

@@ -34,7 +34,7 @@ class ThemeServiceProviderTest extends TestCase
 
         $this->setUpPort('web', 'superv.io', 'superv.themes.starter');
 
-        PortDetectedEvent::dispatch(Port::fromSlug('web'));
+        PortDetectedEvent::dispatch(\Hub::get('web'));
 
         $hints = $this->app['view']->getFinder()->getHints();
         $this->assertContains(base_path('tests/Platform/__fixtures__/starter-theme/resources/views'), $hints['theme']);
@@ -46,7 +46,7 @@ class ThemeServiceProviderTest extends TestCase
     {
         $this->setUpPort('web', 'superv.io', $theme = null);
 
-        PortDetectedEvent::dispatch(Port::fromSlug('web'));
+        PortDetectedEvent::dispatch(\Hub::get('web'));
 
         $hints = $this->app['view']->getFinder()->getHints();
         $this->assertFalse(array_key_exists('theme', $hints));
@@ -64,7 +64,7 @@ class ThemeServiceProviderTest extends TestCase
         $this->setUpPort('web', 'superv.io', 'superv.themes.starter');
 
         Event::fake([ThemeActivatedEvent::class]);
-        PortDetectedEvent::dispatch(Port::fromSlug('web'));
+        PortDetectedEvent::dispatch(\Hub::get('web'));
 
         Event::assertDispatched(ThemeActivatedEvent::class, function ($event) {
             return $event->theme->slug === 'superv.themes.starter';
@@ -78,6 +78,6 @@ class ThemeServiceProviderTest extends TestCase
 
         $this->setUpPort('web', 'superv.io', $theme = 'non.existant.theme');
 
-        PortDetectedEvent::dispatch(Port::fromSlug('web'));
+        PortDetectedEvent::dispatch(\Hub::get('web'));
     }
 }

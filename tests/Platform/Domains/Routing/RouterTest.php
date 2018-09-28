@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Routing;
 
+use Hub;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
@@ -56,15 +57,16 @@ class RouterTest extends TestCase
 
         $loader = $this->bindMock(RouteRegistrar::class);
 
-        $loader->shouldReceive('setPort')->with(equalTo($this->getPort('acp')))->once();
+
+        $loader->shouldReceive('setPort')->with(Hub::get('acp'))->once();
         $loader->shouldReceive('globally')->with(false)->once();
         $loader->shouldReceive('register')->with(['foo/baz' => 'FooAcpController@baz'])->once();
 
-        $loader->shouldReceive('setPort')->with(equalTo($this->getPort('api')))->once();
+        $loader->shouldReceive('setPort')->with(Hub::get('api'))->once();
         $loader->shouldReceive('globally')->with(false)->once();
         $loader->shouldReceive('register')->with(['bom/bor' => 'BomAcpController@bor'])->once();
 
-        $loader->shouldReceive('setPort')->with(equalTo($this->getPort('web')))->once();
+        $loader->shouldReceive('setPort')->with(Hub::get('web'))->once();
         $loader->shouldReceive('globally')->with(false)->once();
         $loader->shouldReceive('register')->with(['foo/baz' => 'FooWebController@baz'])->once();
         $loader->shouldReceive('register')->with(['bar/baz' => 'BarWebController@baz'])->once();
@@ -74,6 +76,6 @@ class RouterTest extends TestCase
 
     protected function getPort($slug)
     {
-        return Port::fromSlug($slug);
+        return \Hub::get($slug);
     }
 }

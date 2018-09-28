@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Routing;
 
+use Hub;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use Tests\Platform\TestCase;
@@ -38,22 +39,7 @@ class RouteRegistrarTest extends TestCase
     /** @test */
     function loads_routes_for_a_port()
     {
-        /** Setup Ports */
-        config([
-            'superv.ports' => [
-                'web' => [
-                    'hostname' => 'superv.io',
-                    'theme'    => 'themes.starter',
-                ],
-                'acp' => [
-                    'hostname' => 'superv.io',
-                    'prefix'   => 'acp',
-                ],
-                'api' => [
-                    'hostname' => 'api.superv.io',
-                ],
-            ],
-        ]);
+        $this->setUpPorts();
 
         $registrar = $this->app->make(RouteRegistrar::class);
         $registrar->setPort($this->getPort('web'))->register(['web/foo' => 'WebController@foo']);
@@ -81,22 +67,7 @@ class RouteRegistrarTest extends TestCase
     /** @test */
     function loads_routes_for_every_port()
     {
-        /** Setup Ports */
-        config([
-            'superv.ports' => [
-                'web' => [
-                    'hostname' => 'superv.io',
-                    'theme'    => 'themes.starter',
-                ],
-                'acp' => [
-                    'hostname' => 'superv.io',
-                    'prefix'   => 'acp',
-                ],
-                'api' => [
-                    'hostname' => 'api.superv.io',
-                ],
-            ],
-        ]);
+        $this->setUpPorts();
 
         $registrar = $this->app->make(RouteRegistrar::class);
         $registrar->globally()->register(['bar/foo' => 'BarController@foo']);
@@ -118,14 +89,11 @@ class RouteRegistrarTest extends TestCase
     /** @test */
     function registers_ports_middlewares()
     {
-        config([
-            'superv.ports' => [
-                'web' => [
-                    'hostname'    => 'localhost',
-                    'middlewares' => ['a', 'b', 'c'],
-                ],
-            ],
-        ]);
+        Hub::register((new Port)->hydrate([
+            'slug'        => 'web',
+            'hostname'    => 'localhost',
+            'middlewares' => ['a', 'b', 'c'],
+        ]));
 
         $registrar = $this->app->make(RouteRegistrar::class)->setPort($this->getPort('web'));
         $routes = $registrar->registerRoute('foo', 'WebController@foo');
@@ -143,6 +111,6 @@ class RouteRegistrarTest extends TestCase
 
     protected function getPort($slug)
     {
-        return Port::fromSlug($slug);
+        return \Hub::get($slug);
     }
 }

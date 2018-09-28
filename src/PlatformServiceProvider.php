@@ -37,6 +37,7 @@ class PlatformServiceProvider extends BaseServiceProvider
         'Platform' => 'SuperV\Platform\Facades\PlatformFacade',
         'Feature'  => 'SuperV\Platform\Domains\Feature\FeatureFacade',
         'Current'  => 'SuperV\Platform\Facades\CurrentFacade',
+        'Hub'      => 'SuperV\Platform\Facades\HubFacade',
 
     ];
 

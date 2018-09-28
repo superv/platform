@@ -2,13 +2,13 @@
 
 namespace Tests\Platform;
 
+use Hub;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Domains\Droplet\Locator;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
-use SuperV\Platform\Facades\PlatformFacade;
 use SuperV\Platform\PlatformServiceProvider;
 
 class TestCase extends OrchestraTestCase
@@ -104,20 +104,27 @@ class TestCase extends OrchestraTestCase
      */
     protected function setUpPort($port, $hostname, $theme = null, $roles = [], $model = null)
     {
-        $ports = [
-            $port => [
-                'hostname' => $hostname,
-                'theme'    => $theme,
-                'roles'    => $roles,
-                'model'    => $model,
-            ],
-        ];
-        config(['superv.ports' => $ports]);
+        Hub::register((new Port)->hydrate([
+            'slug'     => $port,
+            'hostname' => $hostname,
+            'theme'    => $theme,
+            'roles'    => $roles,
+            'model'    => $model,
+        ]));
+//        $ports = [
+//            $port => [
+//                'hostname' => $hostname,
+//                'theme'    => $theme,
+//                'roles'    => $roles,
+//                'model'    => $model,
+//            ],
+//        ];
+//        config(['superv.ports' => $ports]);
     }
 
     protected function route($uri, $action, $port)
     {
-        $port = Port::fromSlug($port);
+        $port = \Hub::get($port);
         app(RouteRegistrar::class)->setPort($port)->registerRoute($uri, $action);
     }
 
@@ -143,21 +150,30 @@ class TestCase extends OrchestraTestCase
 
     protected function setUpPorts()
     {
-        return config([
-            'superv.ports' => [
-                'web' => [
-                    'hostname' => 'superv.io',
-                    'theme'    => 'themes.starter',
-                ],
-                'acp' => [
-                    'hostname' => 'superv.io',
-                    'prefix'   => 'acp',
-                ],
-                'api' => [
-                    'hostname' => 'api.superv.io',
-                ],
-            ],
-        ]);
+        Hub::register(new class extends Port
+        {
+            protected $slug = 'web';
+
+            protected $hostname = 'superv.io';
+
+            protected $theme = 'themes.starter';
+        });
+
+        Hub::register(new class extends Port
+        {
+            protected $slug = 'acp';
+
+            protected $hostname = 'superv.io';
+
+            protected $prefix = 'acp';
+        });
+
+        Hub::register(new class extends Port
+        {
+            protected $slug = 'api';
+
+            protected $hostname = 'api.superv.io';
+        });
     }
 
     protected function assertProviderRegistered($provider)

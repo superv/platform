@@ -83,33 +83,33 @@ class PlatformTestCase extends TestCase
         });
     }
 
-    protected function setUpPort()
-    {
-        if (! $this->port) {
-            return null;
-        }
+//    protected function setUpPort()
+//    {
+//        if (! $this->port) {
+//            return null;
+//        }
+//
+//        /** @var Port $port */
+//        $port = superv('droplets')->bySlug($this->port);
+//        $this->dispatch(new ActivatePort($port));
+//
+//        $routes = superv('routes')->byPort($port->getSlug());
+//        $port->registerRoutes($routes);
+//
+//        return $port;
+//    }
 
-        /** @var Port $port */
-        $port = superv('droplets')->bySlug($this->port);
-        $this->dispatch(new ActivatePort($port));
-
-        $routes = superv('routes')->byPort($port->getSlug());
-        $port->registerRoutes($routes);
-
-        return $port;
-    }
-
-    protected function setUpTheme()
-    {
-        if (! $this->theme) {
-            return;
-        }
-        $theme = superv('droplets')->bySlug($this->theme);
-        if (! $theme) {
-            throw new \Exception("Theme not found: {$this->theme}");
-        }
-        superv('assets')->addPath('theme', $theme->getPath('resources'));
-    }
+//    protected function setUpTheme()
+//    {
+//        if (! $this->theme) {
+//            return;
+//        }
+//        $theme = superv('droplets')->bySlug($this->theme);
+//        if (! $theme) {
+//            throw new \Exception("Theme not found: {$this->theme}");
+//        }
+//        superv('assets')->addPath('theme', $theme->getPath('resources'));
+//    }
 
     public function afterPlatformInstalled(callable $callback)
     {
