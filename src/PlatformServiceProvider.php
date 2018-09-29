@@ -99,6 +99,8 @@ class PlatformServiceProvider extends BaseServiceProvider
         Platform::boot();
 
         $this->registerPlatformRoutes();
+
+        \Route::pattern('id', '[0-9]+');
     }
 
     protected function publishConfig(): void
