@@ -37,6 +37,12 @@ class PlatformTestCase extends TestCase
         $this->artisan('superv:install');
         config(['superv.installed' => true]);
 
+        if (!empty($this->afterPlatformInstalledCallbacks)) {
+            foreach($this->afterPlatformInstalledCallbacks as $callback) {
+                $callback();
+            }
+        }
+
         foreach ($this->installs as $droplet) {
             app(Installer::class)->setLocator(new Locator())
                                  ->setSlug($droplet)
