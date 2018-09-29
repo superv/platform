@@ -68,8 +68,25 @@ class AuthServiceProvider extends BaseServiceProvider
         ]);
 
         config()->set('auth.guards.superv-api', [
-            'driver'   => 'jwt',
+            'driver'   => 'superv-jwt',
             'provider' => 'platform',
         ]);
+
+        $this->extendAuthGuard();
+    }
+
+    protected function extendAuthGuard()
+    {
+        $this->app['auth']->extend('superv-jwt', function ($app, $name, array $config) {
+            $guard = new JWTGuard(
+                $app['tymon.jwt'],
+                $app['auth']->createUserProvider($config['provider']),
+                $app['request']
+            );
+
+            $app->refresh('request', $guard, 'setRequest');
+
+            return $guard;
+        });
     }
 }

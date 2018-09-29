@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Auth;
 
 use App\Notifications\ResetPassword;
+use Current;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
@@ -87,7 +88,7 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return ['port' => Current::port()->slug()];
     }
 
     public function getEmail()
