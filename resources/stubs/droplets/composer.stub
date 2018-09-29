@@ -20,7 +20,6 @@
     "require-dev": {
         "doctrine/dbal": "^2.6",
         "fzaninotto/faker": "~1.4",
-        "mockery/mockery": "0.9.*",
         "orchestra/testbench": "~3.0",
         "phpunit/phpunit": "~7.0"
     },
