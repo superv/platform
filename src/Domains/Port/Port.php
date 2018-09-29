@@ -27,6 +27,8 @@ class Port
 
     protected $composers;
 
+    protected $navigationSlug;
+
     /**
      * @return mixed
      */
@@ -136,5 +138,13 @@ class Port
     public function getComposers()
     {
         return $this->composers;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNavigationSlug()
+    {
+        return $this->navigationSlug;
     }
 }
