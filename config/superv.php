@@ -1,6 +1,6 @@
 <?php
 
-use SuperV\Platform\Domains\Auth\User;
+use SuperV\Modules\Guard\Domains\User;
 
 return [
     /*
@@ -35,32 +35,6 @@ return [
 
     'assets' => [
         'live' => true,
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Ports Configuration
-    |--------------------------------------------------------------------------
-    |
-    |
-    */
-
-    'ports' => [
-//        'web' => [
-//            'hostname'           => env('SV_HOSTNAME'),
-//            'theme'              => env('SV_WEB_THEME'),
-//            'allowed_user_types' => ['client'],
-//            'model'              => Client::class,
-//        ],
-//        'acp' => [
-//            'hostname' => env('SV_HOSTNAME'),
-//            'prefix'   => 'acp',
-//            'theme'    => env('SV_ACP_THEME'),
-//        ],
-//        'api' => [
-//            'hostname' => 'api.'.env('SV_HOSTNAME'),
-//            'prefix'   => 'v1',
-//        ],
     ],
 
     /*

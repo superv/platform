@@ -21,6 +21,10 @@ class SuperVInstallCommand extends Command
 
         $this->setEnv('SV_INSTALLED=true');
 
+        $this->call('vendor:publish', ['--tag' => 'superv.config']);
+
+        $this->call('jwt:secret', ['--force' => true]);
+
         $this->comment("SuperV installed..! \n");
     }
 
