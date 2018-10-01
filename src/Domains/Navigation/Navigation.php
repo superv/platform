@@ -76,6 +76,8 @@ class Navigation implements SectionBag, HasGuardableItems
                         $section = Section::make($section);
                     } elseif ($section instanceof HasSection) {
                         $section = $section::getSection();
+                    } elseif (!$section instanceof Section) {
+                        return null; // invalid section
                     }
                     $section->parent($this->slug);
 
