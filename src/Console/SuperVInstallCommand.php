@@ -14,6 +14,7 @@ class SuperVInstallCommand extends Command
     public function handle()
     {
         $this->comment('Installing SuperV');
+        $this->call('migrate', ['--force' => true]);
         $this->call('migrate', ['--scope' => 'platform', '--force' => true]);
 
         // Create default account
