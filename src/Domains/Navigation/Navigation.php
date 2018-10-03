@@ -81,6 +81,8 @@ class Navigation implements SectionBag, HasGuardableItems
                     }
                     $section->parent($this->slug);
 
+                    $section->building();
+
                     return $section;
                 })
             ->guard()
