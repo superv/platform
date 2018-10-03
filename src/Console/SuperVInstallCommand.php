@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Console;
 
 use Illuminate\Console\Command;
-use SuperV\Platform\Domains\Auth\Account;
 
 class SuperVInstallCommand extends Command
 {
@@ -17,8 +16,6 @@ class SuperVInstallCommand extends Command
         $this->call('migrate', ['--force' => true]);
         $this->call('migrate', ['--scope' => 'platform', '--force' => true]);
 
-        // Create default account
-        Account::query()->create(['name' => 'default']);
 
         $this->setEnv('SV_INSTALLED=true');
 
@@ -27,6 +24,9 @@ class SuperVInstallCommand extends Command
         $this->call('jwt:secret', ['--force' => true]);
 
         $this->comment("SuperV installed..! \n");
+
+        $this->call('droplet:install', ['slug' => 'superv.modules.nucleo']);
+        $this->call('droplet:install', ['slug' => 'superv.modules.guard']);
     }
 
     public function setEnv($line)
