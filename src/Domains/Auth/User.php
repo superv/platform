@@ -88,6 +88,7 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
      */
     public function getJWTCustomClaims()
     {
+        return [];
         return ['port' => optional(Current::port())->slug()];
     }
 
