@@ -85,8 +85,8 @@ class Navigation implements SectionBag, HasGuardableItems
 
                     return $section;
                 })
-            ->guard()
             ->filter()
+            ->guard()
             ->map(function(Section $section) {
                 return $section->build();
             })

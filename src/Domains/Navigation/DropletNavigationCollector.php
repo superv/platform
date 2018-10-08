@@ -33,7 +33,7 @@ class DropletNavigationCollector implements Collector
     {
         $this->droplets->map(function (Droplet $droplet) use ($slug) {
             $menu = config($droplet->slug().'::navigation.'.$slug);
-            if ($menu) {
+            if ($menu && !empty($menu)) {
                 $this->sections->put($droplet->slug(), collect($menu));
             }
         });
