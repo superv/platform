@@ -20,7 +20,7 @@ class Platform extends Droplet
     protected $events;
 
     /**
-     * Boot enable droplets
+     * Boot enabled droplets
      */
     public function boot()
     {
