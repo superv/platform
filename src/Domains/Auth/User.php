@@ -24,7 +24,7 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
 
     protected $guarded = [];
 
-    protected $visible = ['id', 'email', 'type'];
+    protected $visible = ['id', 'email', 'name'];
 
     protected $casts = [
         'ports' => 'json',
