@@ -32,15 +32,8 @@ class TestCase extends OrchestraTestCase
         return array_flatten(array_merge([PlatformServiceProvider::class], $this->packageProviders));
     }
 
-    protected function getPackageAliases($app)
-    {
-//        return ['Platform' => PlatformFacade::class];
-    }
-
     protected function getEnvironmentSetUp($app)
     {
-        $app->setBasePath(realpath(__DIR__.'/../../'));
-
         if (! empty($this->appConfig)) {
             $app['config']->set($this->appConfig);
         }
@@ -50,16 +43,13 @@ class TestCase extends OrchestraTestCase
     {
         parent::setUp();
 
+        $this->loadLaravelMigrations();
         $this->withFactories(__DIR__.'/../database/factories');
+        $this->makeTmpDirectory();
 
-        if ($this->tmpDirectory) {
-            $this->tmpDirectory = __DIR__.'/../tmp/'.$this->tmpDirectory;
-            if (! file_exists($this->tmpDirectory)) {
-                app('files')->makeDirectory($this->tmpDirectory, 0755, true);
-            }
-        }
-
+        $this->app->setBasePath(realpath(__DIR__.'/../../'));
         if (method_exists($this, 'refreshDatabase')) {
+
             $this->artisan('superv:install');
             config(['superv.installed' => true]);
             foreach ($this->installs as $droplet) {
@@ -184,5 +174,15 @@ class TestCase extends OrchestraTestCase
     protected function assertProviderNotRegistered($provider)
     {
         $this->assertNotContains($provider, array_keys($this->app->getLoadedProviders()));
+    }
+
+    protected function makeTmpDirectory(): void
+    {
+        if ($this->tmpDirectory) {
+            $this->tmpDirectory = __DIR__.'/../tmp/'.$this->tmpDirectory;
+            if (! file_exists($this->tmpDirectory)) {
+                app('files')->makeDirectory($this->tmpDirectory, 0755, true);
+            }
+        }
     }
 }

@@ -6,7 +6,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Platform;
 use SuperV\Platform\Domains\Droplet\DropletModel;
-use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Events\PlatformBootedEvent;
 
