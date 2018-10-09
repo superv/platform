@@ -28,6 +28,8 @@ class LaravelValidator implements Validator
         if ($this->baseValidator->fails()) {
             $exception = new ValidationException();
             $exception->setErrors($this->errors());
+            $exception->setData($data);
+            $exception->setRules($rules);
             throw $exception;
         }
     }
