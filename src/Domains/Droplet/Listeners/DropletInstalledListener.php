@@ -8,8 +8,11 @@ class DropletInstalledListener
 {
     public function handle(DropletInstalledEvent $event)
     {
-        if (method_exists($event->droplet, 'postInstall')) {
-            $event->droplet->postInstall();
+        $droplet = $event->droplet;
+
+        superv('droplets')->put($droplet->slug(), $droplet);
+        if (method_exists($droplet, 'postInstall')) {
+            $droplet->postInstall();
         }
     }
 }

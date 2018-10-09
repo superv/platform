@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\Droplet;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use SuperV\Droplets\Sample\SampleDroplet;
 use SuperV\Platform\Domains\Droplet\Events\DropletInstalledEvent;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Domains\Droplet\Locator;
@@ -42,6 +43,21 @@ class InstallerTest extends TestCase
             'enabled'   => true,
             'namespace' => 'SuperV\\Droplets\\Sample',
         ]);
+    }
+
+    /** @test */
+    function ensures_droplet_is_available_in_droplets_collection_right_after_it_is_installed()
+    {
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-droplet'));
+
+        $this->installer()->setPath('tests/Platform/__fixtures__/sample-droplet')
+                  ->setSlug('superv.droplets.sample')
+                  ->install();
+
+        $droplet = superv('droplets')->get('superv.droplets.sample');
+        $this->assertNotNull($droplet);
+        $this->assertInstanceOf(SampleDroplet::class, $droplet);
+
     }
 
     /** @test */
