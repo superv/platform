@@ -19,7 +19,7 @@ class MailSender
 
     protected $to;
 
-    protected $action;
+    protected $actions = [];
 
     protected $subject;
 
@@ -57,7 +57,12 @@ class MailSender
 
     public function setAction($text, $url)
     {
-        $this->action = compact('text', 'url');
+        return $this->addAction($text, $url);
+    }
+
+    public function addAction($text, $url, $color = 'blue')
+    {
+        $this->actions[] = compact('text', 'url', 'color');
 
         return $this;
     }
@@ -99,7 +104,7 @@ class MailSender
     {
         return array_filter([
             'body' => $this->body,
-            'button' => $this->action
+            'actions' => $this->actions
         ]);
     }
 
