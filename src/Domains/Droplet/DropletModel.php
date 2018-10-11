@@ -66,4 +66,14 @@ class DropletModel extends Model
     public function scopeEnabled($query) {
         $query->where('enabled', true);
     }
+
+    public function getRelativePath()
+    {
+        return $this->path;
+    }
+
+    public function getRealPath()
+    {
+        return base_path($this->getRelativePath());
+    }
 }
