@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Droplet\Features;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use SuperV\Platform\Domains\Droplet\Events\MakingDropletEvent;
 use SuperV\Platform\Domains\Droplet\Jobs\CreateDropletPaths;
 use SuperV\Platform\Domains\Droplet\Jobs\MakeDropletModel;
 use SuperV\Platform\Domains\Droplet\Jobs\WriteDropletFiles;
@@ -38,6 +39,8 @@ class MakeDroplet
         $this->dispatch(new CreateDropletPaths($model));
 
         $this->dispatch(new WriteDropletFiles($model));
+
+        MakingDropletEvent::dispatch($model);
 
         exec("composer install  -d ".base_path());
     }
