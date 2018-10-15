@@ -19,6 +19,8 @@ class MailSender
 
     protected $to;
 
+    protected $bcc;
+
     protected $actions = [];
 
     protected $subject;
@@ -55,6 +57,38 @@ class MailSender
         return $view;
     }
 
+    public static function make()
+    {
+        return resolve(self::class);
+    }
+
+    protected function buildView(): array
+    {
+        return [
+            'html' => $this->render($this->layout),
+        ];
+    }
+
+    protected function buildViewData()
+    {
+        return array_filter([
+            'body'    => $this->body,
+            'actions' => $this->actions,
+        ]);
+    }
+
+    protected function buildMessage(): \Closure
+    {
+        return function (Message $mailMessage) {
+            $mailMessage->to($this->to);
+            $mailMessage->subject($this->subject);
+
+            if ($this->bcc) {
+                $mailMessage->bcc($this->bcc);
+            }
+        };
+    }
+
     public function setAction($text, $url)
     {
         return $this->addAction($text, $url);
@@ -81,11 +115,6 @@ class MailSender
         return $this;
     }
 
-    public static function make()
-    {
-        return resolve(self::class);
-    }
-
     public function setTo($to)
     {
         $this->to = $to;
@@ -93,26 +122,14 @@ class MailSender
         return $this;
     }
 
-    protected function buildView(): array
+    /**
+     * @param mixed $bcc
+     * @return MailSender
+     */
+    public function setBcc($bcc)
     {
-        return [
-            'html' => $this->render($this->layout),
-        ];
-    }
+        $this->bcc = $bcc;
 
-    protected function buildViewData()
-    {
-        return array_filter([
-            'body' => $this->body,
-            'actions' => $this->actions
-        ]);
-    }
-
-    protected function buildMessage(): \Closure
-    {
-        return function (Message $mailMessage) {
-            $mailMessage->to($this->to);
-            $mailMessage->subject($this->subject);
-        };
+        return $this;
     }
 }

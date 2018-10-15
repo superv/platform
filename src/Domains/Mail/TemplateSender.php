@@ -10,6 +10,8 @@ class TemplateSender
 
     protected $to;
 
+    protected $bcc;
+
     /**
      * @var \SuperV\Modules\Manage\Domains\Email\MailTemplate
      */
@@ -66,8 +68,41 @@ class TemplateSender
     public function sender()
     {
         return MailSender::make()
-                         ->setTo($this->to)
+                         ->setTo($this->getTo())
+                         ->setBcc($this->getBcc())
                          ->setSubject($this->template->parseSubject())
                          ->setBody($this->template->parseBody());
+    }
+
+    protected function getTo()
+    {
+        if ($this->to) {
+            return $this->to;
+        }
+
+        if ($this->template->to) {
+            return $this->template->to;
+        }
+
+        throw new \Exception('Mail recipient not sent');
+    }
+
+    /**
+     * @param mixed $bcc
+     * @return TemplateSender
+     */
+    public function bcc($bcc)
+    {
+        $this->bcc = $bcc;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBcc()
+    {
+        return $this->bcc ?: $this->template->bcc;
     }
 }
