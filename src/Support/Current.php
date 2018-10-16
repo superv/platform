@@ -53,7 +53,7 @@ class Current
     }
 
     /**
-     * Return true if we are on local
+     * Return true if we are on local environment
      *
      * @return bool
      */
@@ -63,7 +63,17 @@ class Current
     }
 
     /**
-     * Return true if we are on production
+     * Return true if we are on testing environment
+     *
+     * @return bool
+     */
+    public function envIsTesting()
+    {
+        return $this->env() === 'testing';
+    }
+
+    /**
+     * Return true if we are on production environment
      *
      * @return bool
      */
