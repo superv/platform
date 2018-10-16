@@ -22,14 +22,11 @@ class PortDetector
 
     public function detectFor($httpHost, $requestUri)
     {
-        info("$httpHost $requestUri");
-//        $ports = Platform::config('ports');
         $ports = Hub::ports();
         $requestUri = ltrim($requestUri, '/');
 
         /** @var \SuperV\Platform\Domains\Port\Port $port */
         foreach ($ports as $port) {
-            info('port', ['port' => $port, 'hostname' => $port->hostname()]);
             if ($port->hostname() !== $httpHost) {
                 continue;
             }
