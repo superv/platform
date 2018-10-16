@@ -1,7 +1,7 @@
 <?php namespace SuperV\Platform\Support\Composer;
 
 
-class EntryComposer
+abstract class EntryComposer
 {
     /** @var  \Illuminate\Database\Eloquent\Model */
     protected $object;
