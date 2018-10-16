@@ -81,4 +81,14 @@ class Current
     {
         return $this->env() === 'production';
     }
+
+    /**
+     * Return true if we are on console
+     *
+     * @return bool
+     */
+    public function isConsole()
+    {
+        return app()->runningInConsole();
+    }
 }
