@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform;
 
+use Illuminate\Support\Collection;
 use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Domains\Auth\Contracts\User;
@@ -80,6 +81,8 @@ class PlatformServiceProvider extends BaseServiceProvider
             },
         ]);
 
+        $this->registerCollectionMacros();
+
         event('platform.registered');
     }
 
@@ -132,5 +135,16 @@ class PlatformServiceProvider extends BaseServiceProvider
         if (sv_config('twig.enabled')) {
             $this->providers[] = TwigServiceProvider::class;
         }
+    }
+
+    protected function registerCollectionMacros() {
+
+        Collection::macro('toAssoc', function () {
+            return $this->reduce(function ($assoc, $keyValuePair) {
+                list($key, $value) = $keyValuePair;
+                $assoc[$key] = $value;
+                return $assoc;
+            }, new static);
+        });
     }
 }
