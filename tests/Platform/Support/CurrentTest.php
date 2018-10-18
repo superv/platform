@@ -4,8 +4,7 @@ namespace Tests\Platform\Support;
 
 use Current;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Domains\Auth\User;
-use SuperV\Platform\Domains\Port\Port;
+use SuperV\Modules\Guard\Domains\User;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use Tests\Platform\TestCase;
 
@@ -16,10 +15,11 @@ class CurrentTest extends TestCase
     /** @test */
     function returns_current_logged_in_user()
     {
-        $user = factory(User::class)->create([
+        $user = User::query()->create([
             'account_id' => 1,
             'id'         => rand(9, 999),
             'email'      => 'user@superv.io',
+            'password' => '123'
         ]);
 
         $this->be($user);

@@ -23,8 +23,10 @@ class MigrateCommandTest extends TestCase
         );
         $migrateCommand->setLaravel($this->app);
 
+
+        Scopes::register('test-scope', __DIR__ . '/../migrations/baz');
+
         $migrator->shouldReceive('repositoryExists')->once()->andReturn(true);
-        $migrator->shouldReceive('paths')->once()->andReturn([]);
         $migrator->shouldReceive('getNotes')->once()->andReturn([]);
         $migrator->shouldReceive('setScope')->with('test-scope')->once();
 
