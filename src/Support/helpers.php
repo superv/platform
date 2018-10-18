@@ -5,18 +5,10 @@ use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
 use SuperV\Modules\Nucleo\Domains\UI\SvComponent;
 use SuperV\Modules\Nucleo\Domains\UI\SvTab;
 use SuperV\Modules\Nucleo\Domains\UI\SvTabs;
-use SuperV\Platform\Domains\Authorization\Guardable;
-use SuperV\Platform\Domains\Authorization\Haydar;
 use SuperV\Platform\Domains\Feature\FeatureBus;
 use SuperV\Platform\Support\Collection;
 use SuperV\Platform\Support\Composer\Composer;
-use SuperV\Platform\Support\Decorator;
 use SuperV\Platform\Support\RelativePath;
-
-function platform_path($path = null)
-{
-    return 'vendor/superv/platform'.(is_null($path) ? '' : DIRECTORY_SEPARATOR.$path);
-}
 
 /**
  * @param null  $handler
@@ -133,19 +125,6 @@ function sv_config($key, $default = null)
 function sv_guard($guardable)
 {
    return (new SuperV\Modules\Guard\Domains\Guard\Guard(Current::user()))->filter($guardable);
-}
-
-/**
- * @param $guardable
- * @return Collection
- */
-function sv_guard_old($guardable)
-{
-    if (! $guardable instanceof Guardable && ! is_array($guardable) && ! $guardable instanceof \Illuminate\Support\Collection) {
-        return $guardable;
-    }
-
-    return app(Haydar::class)->guard($guardable);
 }
 
 /**
