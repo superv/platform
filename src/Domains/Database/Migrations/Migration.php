@@ -2,12 +2,17 @@
 
 namespace SuperV\Platform\Domains\Database\Migrations;
 
-class Migration extends \Illuminate\Database\Migrations\Migration
+class Migration extends \Illuminate\Database\Migrations\Migration implements InScope
 {
     protected $scope;
 
-    public function scope()
+    public function getScope()
     {
         return $this->scope;
+    }
+
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
     }
 }

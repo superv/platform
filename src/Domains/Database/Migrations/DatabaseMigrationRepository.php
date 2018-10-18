@@ -58,10 +58,6 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
         ];
 
         if ($this->migration) {
-//            if ($this->migration instanceof Migration) {
-//                $scope = $this->migration->scope() ?: $this->scope;
-//                array_set($record, 'scope', $scope);
-//            }
             if ($this->scope) {
                 array_set($record, 'scope', $this->scope);
             }
