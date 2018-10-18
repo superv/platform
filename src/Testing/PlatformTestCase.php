@@ -37,8 +37,8 @@ class PlatformTestCase extends TestCase
         $this->artisan('superv:install');
         config(['superv.installed' => true]);
 
-        if (!empty($this->afterPlatformInstalledCallbacks)) {
-            foreach($this->afterPlatformInstalledCallbacks as $callback) {
+        if (! empty($this->afterPlatformInstalledCallbacks)) {
+            foreach ($this->afterPlatformInstalledCallbacks as $callback) {
                 $callback();
             }
         }
@@ -151,8 +151,18 @@ class PlatformTestCase extends TestCase
         return $this;
     }
 
-    protected function assertArrayContains(array $haystack, array $needle)
+    protected function assertArrayContains(array $needle, array $haystack)
     {
         $this->assertEquals($needle, array_intersect($needle, $haystack));
+    }
+
+    protected function assertDatabaseHasTable($table)
+    {
+        $this->assertTrue(\Schema::hasTable($table));
+    }
+
+    protected function assertDatabaseHasNotTable($table)
+    {
+        $this->assertFalse(\Schema::hasTable($table));
     }
 }
