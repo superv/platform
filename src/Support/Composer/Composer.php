@@ -31,7 +31,7 @@ class Composer
             return $data;
         }
 
-        if ($data instanceof Collection) {
+        if ($data instanceof Collection || $data instanceof \Illuminate\Support\Collection) {
             $data->transform(function ($item) {
                 return $this->compose($item);
             });

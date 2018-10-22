@@ -146,5 +146,11 @@ class PlatformServiceProvider extends BaseServiceProvider
                 return $assoc;
             }, new static);
         });
+
+        Collection::macro('compose', function () {
+            return $this->map(function ($item) {
+                return sv_compose($item);
+            });
+        });
     }
 }
