@@ -34,6 +34,7 @@ class EntryModel extends Model
 
     protected static function boot()
     {
+        parent::boot();
         $instance = new static;
 
         $class = get_class($instance);
@@ -59,8 +60,6 @@ class EntryModel extends Model
                 }
             });
         }
-
-        parent::boot();
     }
 
     public function getId()
