@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform;
 
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
 use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
@@ -17,6 +18,7 @@ use SuperV\Platform\Domains\Droplet\Listeners\DropletInstalledListener;
 use SuperV\Platform\Domains\Navigation\Collector;
 use SuperV\Platform\Domains\Navigation\DropletNavigationCollector;
 use SuperV\Platform\Domains\Routing\Router;
+use SuperV\Platform\Exceptions\PlatformExceptionHandler;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use SuperV\Platform\Providers\TwigServiceProvider;
 
@@ -31,7 +33,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $_bindings = [
-        Collector::class => DropletNavigationCollector::class,
+        Collector::class        => DropletNavigationCollector::class,
     ];
 
     protected $aliases = [
@@ -45,6 +47,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected $_singletons = [
         'SuperV\Platform\Domains\Auth\Contracts\Users' => 'SuperV\Platform\Domains\Auth\Users',
         'droplets'                                     => DropletCollection::class,
+        ExceptionHandler::class                        => PlatformExceptionHandler::class,
     ];
 
     protected $listeners = [
@@ -137,12 +140,13 @@ class PlatformServiceProvider extends BaseServiceProvider
         }
     }
 
-    protected function registerCollectionMacros() {
-
+    protected function registerCollectionMacros()
+    {
         Collection::macro('toAssoc', function () {
             return $this->reduce(function ($assoc, $keyValuePair) {
                 list($key, $value) = $keyValuePair;
                 $assoc[$key] = $value;
+
                 return $assoc;
             }, new static);
         });

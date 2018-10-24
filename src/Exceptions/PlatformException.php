@@ -2,6 +2,6 @@
 
 namespace SuperV\Platform\Exceptions;
 
-abstract class PlatformException extends \Exception
+class PlatformException extends \Exception
 {
 }
