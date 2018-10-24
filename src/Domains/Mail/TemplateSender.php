@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Mail;
 
-use SuperV\Modules\Manage\Domains\Email\MailTemplate;
 
 class TemplateSender
 {
@@ -12,9 +11,7 @@ class TemplateSender
 
     protected $bcc;
 
-    /**
-     * @var \SuperV\Modules\Manage\Domains\Email\MailTemplate
-     */
+    /** @var \SuperV\Platform\Domains\Mail\MailTemplate */
     protected $template;
 
     public function __construct(MailTemplate $template)
