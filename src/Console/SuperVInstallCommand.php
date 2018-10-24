@@ -21,7 +21,7 @@ class SuperVInstallCommand extends Command
 
         $this->call('vendor:publish', ['--tag' => 'superv.config']);
 
-//        $this->call('jwt:secret', ['--force' => true]);
+        $this->call('jwt:secret', ['--force' => true]);
 
         $this->comment("SuperV installed..! \n");
 
@@ -59,7 +59,6 @@ class SuperVInstallCommand extends Command
                 $value = substr($line, $operator + 1);
 
                 $data[$key] = $value;
-//                $data[$key] = trim($value);
             }
         }
 
@@ -81,27 +80,5 @@ class SuperVInstallCommand extends Command
         $file = base_path('.env');
 
         file_put_contents($file, $contents);
-    }
-
-    protected function setEnvOld()
-    {
-        $file = base_path('.env');
-        $lines = file_exists($file) ? file($file) : [];
-
-        $envParam = 'SV_INSTALLED';
-        $done = false;
-        foreach ($lines as &$line) {
-//            $line = trim($line);
-            if (starts_with($line, $envParam)) {
-                $done = (bool)($line = "{$envParam}=true");
-                break;
-            }
-        }
-
-        if (! $done) {
-            array_push($lines, "\r\n"."{$envParam}=true");
-        }
-
-        file_put_contents($file, implode($lines));
     }
 }
