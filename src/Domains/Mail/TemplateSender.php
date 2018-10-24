@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Mail;
 
-
 class TemplateSender
 {
     protected $params;
@@ -30,7 +29,7 @@ class TemplateSender
      */
     public static function template($slug)
     {
-        if (! $template = MailTemplate::withSlug($slug)) {
+        if (! $template = app(MailTemplate::class)->query()->where('slug', $slug)->first()) {
             throw new \Exception("Template with slug [{$slug}] could not be found");
         }
 
