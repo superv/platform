@@ -10,9 +10,12 @@ use SuperV\Platform\Domains\Droplet\Locator;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use SuperV\Platform\PlatformServiceProvider;
+use SuperV\Platform\Testing\TestHelpers;
 
 class TestCase extends OrchestraTestCase
 {
+    use TestHelpers;
+
     /**
      * Temporary directory to be created and
      * afterwards deleted in storage folder
@@ -52,6 +55,9 @@ class TestCase extends OrchestraTestCase
 
             $this->artisan('superv:install');
             config(['superv.installed' => true]);
+
+            $this->handlePostInstallCallbacks();
+
             foreach ($this->installs as $droplet) {
                 app(Installer::class)
                     ->setLocator(new Locator(realpath(__DIR__.'/../../../../')))
@@ -127,17 +133,6 @@ class TestCase extends OrchestraTestCase
         parent::tearDown();
     }
 
-    /**
-     * @param $abstract
-     * @return \Mockery\Mock|\Mockery\MockInterface
-     */
-    protected function bindMock($abstract)
-    {
-        $this->app->instance($abstract, $mockInstance = \Mockery::mock($abstract));
-
-        return $mockInstance;
-    }
-
     protected function setUpPorts()
     {
         Hub::register(new class extends Port
@@ -164,16 +159,6 @@ class TestCase extends OrchestraTestCase
 
             protected $hostname = 'api.superv.io';
         });
-    }
-
-    protected function assertProviderRegistered($provider)
-    {
-        $this->assertContains($provider, array_keys($this->app->getLoadedProviders()));
-    }
-
-    protected function assertProviderNotRegistered($provider)
-    {
-        $this->assertNotContains($provider, array_keys($this->app->getLoadedProviders()));
     }
 
     protected function makeTmpDirectory(): void

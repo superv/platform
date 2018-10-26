@@ -124,7 +124,7 @@ function sv_config($key, $default = null)
  */
 function sv_guard($guardable)
 {
-   return (new SuperV\Modules\Guard\Domains\Guard\Guard(Current::user()))->filter($guardable);
+   return (new SuperV\Platform\Domains\Auth\Access\Guard\Guard(Current::user()))->filter($guardable);
 }
 
 /**

@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Navigation;
 
 use Closure;
-use SuperV\Modules\Guard\Domains\Guard\HasGuardableItems;
+use SuperV\Platform\Domains\Auth\Access\Guard\HasGuardableItems;
 
 class Navigation implements SectionBag, HasGuardableItems
 {

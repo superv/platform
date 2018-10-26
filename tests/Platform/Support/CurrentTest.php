@@ -4,7 +4,7 @@ namespace Tests\Platform\Support;
 
 use Current;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Modules\Guard\Domains\User;
+use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use Tests\Platform\TestCase;
 

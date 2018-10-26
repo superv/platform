@@ -1,7 +1,5 @@
 <?php
 
-use SuperV\Modules\Guard\Domains\User;
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -57,7 +55,7 @@ return [
 
     'auth' => [
         'user' => [
-            'model' => User::class,
+            'model' => 'SuperV\Platform\Domains\Auth\User',
         ],
     ],
 

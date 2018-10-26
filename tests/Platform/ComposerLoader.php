@@ -13,7 +13,7 @@ class ComposerLoader
     public function __construct()
     {
         foreach (spl_autoload_functions() as $loader) {
-            if ($loader[0] instanceof ClassLoader) {
+            if (is_array($loader) && $loader[0] instanceof ClassLoader) {
                 $this->loader = $loader[0];
             }
         }

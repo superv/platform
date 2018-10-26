@@ -3,11 +3,13 @@
 namespace SuperV\Platform\Domains\Auth;
 
 use Auth;
+use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Auth\Console\AssignRoleCommand;
 use SuperV\Platform\Domains\Auth\Console\CreateUserCommand;
 use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Providers\BaseServiceProvider;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AuthServiceProvider extends BaseServiceProvider
 {
@@ -69,6 +71,16 @@ class AuthServiceProvider extends BaseServiceProvider
         ]);
 
         $this->extendAuthGuard();
+
+        Collection::macro('guard', function () {
+            $this->items = sv_guard($this->items);
+
+            return $this;
+        });
+
+        Relation::morphMap([
+           'SuperV\Platform\Domains\Auth\User'
+        ]);
     }
 
     protected function extendAuthGuard()

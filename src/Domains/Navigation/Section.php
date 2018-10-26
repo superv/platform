@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Navigation;
 
-use SuperV\Modules\Guard\Domains\Guard\Guardable;
+use SuperV\Platform\Domains\Auth\Access\Guard\Guardable;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class Section implements SectionBag, Guardable

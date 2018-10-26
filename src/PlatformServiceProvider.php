@@ -130,7 +130,8 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     protected function bindUserModel(): void
     {
-        $this->_bindings[User::class] = sv_config('auth.user.model');
+        $userModel = sv_config('auth.user.model');
+        $this->_bindings[User::class] = $userModel;
     }
 
     protected function enableTwig(): void

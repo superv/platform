@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Auth;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use SuperV\Modules\Guard\Domains\Role;
+use SuperV\Platform\Domains\Auth\Access\Role;
 use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
 
 class PlatformUserProvider extends EloquentUserProvider
@@ -36,9 +36,6 @@ class PlatformUserProvider extends EloquentUserProvider
             $this->applyFilters($query, $credentials);
         }
 
-//        $sql = $query->toSql();
-//        $binding = $query->getBindings();
-//        info($sql, $binding);
         return $query->first();
     }
 

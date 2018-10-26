@@ -19,14 +19,14 @@ class SuperVInstallCommand extends Command
 
         $this->setEnv('SV_INSTALLED=true');
 
-        $this->call('vendor:publish', ['--tag' => 'superv.config']);
+//        $this->call('vendor:publish', ['--tag' => 'superv.config']);
 
-        $this->call('jwt:secret', ['--force' => true]);
+//        $this->call('jwt:secret', ['--force' => true]);
 
         $this->comment("SuperV installed..! \n");
 
         $this->call('droplet:install', ['slug' => 'superv.modules.nucleo']);
-        $this->call('droplet:install', ['slug' => 'superv.modules.guard']);
+//        $this->call('droplet:install', ['slug' => 'superv.modules.guard']);
     }
 
     public function setEnv($line)

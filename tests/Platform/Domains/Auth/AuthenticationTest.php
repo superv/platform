@@ -4,9 +4,11 @@ namespace Tests\Platform\Domains\Auth;
 
 use Auth;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Modules\Guard\Domains\User;
-use SuperV\Platform\Domains\Auth\Client;
+use Schema;
+use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Auth\Concerns\AuthenticatesUsers;
 use SuperV\Platform\Domains\Auth\PlatformUserProvider;
 use Tests\Platform\TestCase;
@@ -15,7 +17,7 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $installs = ['superv.modules.guard'];
+//    protected $installs = ['superv.modules.guard'];
 
     protected function setUp()
     {
@@ -27,7 +29,8 @@ class AuthenticationTest extends TestCase
     {
         $this->setUpPort('web', 'localhost', null, ['client']);
         $this->makeRoute('web');
-        $user = $this->makeUser('user@superv.io')->assign('client');
+        $user = $this->makeUser('user@superv.io');
+        $user->assign('client');
 
         $response = $this->login('user@superv.io', 'secret');
 
@@ -50,15 +53,21 @@ class AuthenticationTest extends TestCase
         $this->assertNotAuthenticated();
     }
 
-    /** @test */
+
     function resolves_port_model_upon_authentication()
     {
+        Schema::create('test_clients', function(Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+        });
         $this->setUpPort('web', 'localhost', null, ['client'], Client::class);
         $this->makeRoute('web');
-        $user = $this->makeUser('user@superv.io')->assign('client');
+
+        $user = $this->makeUser('user@superv.io');
+        $user->assign('client');
         Client::create(['user_id' => $user->id]);
 
-        $this->login('user@superv.io', 'secret');
+        $response = $this->login('user@superv.io', 'secret');
 
         // Reset AuthManager
         $this->app->instance('auth', $auth = new AuthManager($this->app));
@@ -90,8 +99,11 @@ class AuthenticationTest extends TestCase
     {
         $this->setUpPort('api', 'localhost', null, ['client', 'admin']);
         $this->makeRoute('api');
-        $user = $this->makeUser('user@superv.io')->assign('client');
-        $admin = $this->makeUser('admin@superv.io')->assign('admin');
+        $user = $this->makeUser('user@superv.io');
+        $user->assign('client');
+
+        $admin = $this->makeUser('admin@superv.io');
+        $admin->assign('admin');
 
         $this->login('user@superv.io', 'secret');
 
@@ -134,6 +146,12 @@ class AuthenticationTest extends TestCase
             'email' => $email,
         ]);
     }
+}
+
+class Client extends Model {
+    protected $table = 'test_clients';
+    public $timestamps = false;
+    protected $guarded = [];
 }
 
 class LoginControllerStub

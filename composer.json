@@ -20,8 +20,6 @@
         "php": "^7.1.3",
         "fideloper/proxy": "^4.0",
         "superv/assetic": "dev-master",
-        "superv/guard-module": "^0.4.0",
-        "superv/nucleo-module": "^0.4.0",
         "superv/composer-plugin": "~0.1.0",
         "laravel/framework": "5.7.*",
         "rcrowe/twigbridge": "^0.9.6",

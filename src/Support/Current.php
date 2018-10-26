@@ -13,10 +13,10 @@ class Current
 
     protected $user;
 
-    public function __construct(Users $users)
-    {
-        $this->users = $users;
-    }
+//    public function __construct(Users $users)
+//    {
+//        $this->users = $users;
+//    }
 
     /**
      * Return the current logged in user
@@ -26,7 +26,7 @@ class Current
     public function user()
     {
         if (! $this->user) {
-            $this->user = $this->users->find(auth()->guard()->id());
+            $this->user = app(Users::class)->find(auth()->guard()->id());
         }
 
         return $this->user;
