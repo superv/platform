@@ -23,6 +23,7 @@ class RollbackCommandTest extends TestCase
 
         $migrator->shouldReceive('setScope')->with('test-scope')->once();
         $migrator->shouldReceive('paths')->once()->andReturn([__DIR__.'/migrations']);
+        $migrator->shouldReceive('setOutput')->once()->andReturnSelf();
         $migrator->shouldReceive('rollback')->once();
         $migrator->shouldReceive('getNotes')->andReturn([]);
 
