@@ -8,11 +8,11 @@ class ColumnDroppedEvent extends BaseEvent
 {
     public $table;
 
-    public $column;
+    public $columnName;
 
-    public function __construct($table, $column)
+    public function __construct($table, $columnName)
     {
         $this->table = $table;
-        $this->column = $column;
+        $this->columnName = $columnName;
     }
 }

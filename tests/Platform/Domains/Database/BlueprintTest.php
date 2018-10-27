@@ -137,10 +137,10 @@ class BlueprintTest extends TestCase
         });
 
         Event::assertDispatched(ColumnDroppedEvent::class, function (ColumnDroppedEvent $event) {
-            return $event->table === 'tasks' && $event->column === 'title';
+            return $event->table === 'tasks' && $event->columnName === 'title';
         });
         Event::assertDispatched(ColumnDroppedEvent::class, function (ColumnDroppedEvent $event) {
-            return $event->table === 'tasks' && $event->column === 'priority';
+            return $event->table === 'tasks' && $event->columnName === 'priority';
         });
     }
 }
