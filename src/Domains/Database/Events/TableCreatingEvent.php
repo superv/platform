@@ -16,9 +16,18 @@ class TableCreatingEvent extends BaseEvent
      */
     public $columns;
 
-    public function __construct($table, array $columns = [])
+    /**
+     * @var string
+     */
+    public $scope;
+
+    public $model;
+
+    public function __construct($table, array $columns = [], $model, $scope)
     {
         $this->table = $table;
         $this->columns = $columns;
+        $this->scope = $scope;
+        $this->model = $model;
     }
 }

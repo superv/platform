@@ -17,9 +17,15 @@ class ColumnCreatedEvent extends BaseEvent
      */
     public $column;
 
-    public function __construct(string $table, Fluent $column)
+    /**
+     * @var string
+     */
+    public $model;
+
+    public function __construct(string $table, Fluent $column, $model)
     {
         $this->table = $table;
         $this->column = $column;
+        $this->model = $model;
     }
 }

@@ -10,6 +10,13 @@ namespace SuperV\Platform\Domains\Database;
  */
 class Schema
 {
+    /**
+     * Model of the table
+     *
+     * @var string
+     */
+    protected $model;
+
     protected $translatable = false;
 
     /** @var \Illuminate\Database\Schema\Builder */
@@ -84,5 +91,21 @@ class Schema
     public function builder()
     {
         return $this->builder;
+    }
+
+    /**
+     * @param string $model
+     */
+    public function setModel(string $model): void
+    {
+        $this->model = $model;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModel()
+    {
+        return $this->model;
     }
 }

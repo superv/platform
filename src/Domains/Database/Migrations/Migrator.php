@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database\Migrations;
 
+use Current;
 use Illuminate\Database\Migrations\Migrator as BaseMigrator;
 
 /**
@@ -52,6 +53,10 @@ class Migrator extends BaseMigrator
         $this->repository->setMigration($migration);
         if ($migration instanceof InScope) {
             $migration->setScope($this->scope);
+
+            Current::setMigrationScope($this->scope);
+        } else {
+            Current::setMigrationScope(null);
         }
         parent::runMigration($migration, $method);
     }

@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Database;
 
 use Closure;
+use Current;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Support\Fluent;
@@ -25,6 +26,11 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         parent::__construct($table, $callback);
 
         $this->builder = $builder;
+    }
+
+    public function model($model)
+    {
+        $this->builder->setModel($model);
     }
 
     public function select($name)
@@ -119,7 +125,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         }
 
         if ($this->creating()) {
-            TableCreatingEvent::dispatch($this->tableName(), $this->columns);
+            TableCreatingEvent::dispatch($this->tableName(),  $this->columns, $this->builder->getModel(), Current::migrationScope());
         } else {
             // Dropping Columns
             foreach ($this->commands as $command) {
@@ -136,7 +142,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         });
 
         sv_collect($this->getAddedColumns())->map(function ($column) {
-            ColumnCreatedEvent::dispatch($this->tableName(), $column);
+            ColumnCreatedEvent::dispatch($this->tableName(), $column, $this->builder->getModel());
         });
 
         $this->columns = array_filter($this->columns, function ($column) {

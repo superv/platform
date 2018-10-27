@@ -18,6 +18,8 @@ class BlueprintTest extends TestCase
     /** @test */
     function dispatch_event_when_a_table_is_created()
     {
+        $this->app['migrator']->run(__DIR__.'/migrations');
+
         $dispatchedEvents = new class
         {
             public $tableCreating = false;
@@ -28,6 +30,7 @@ class BlueprintTest extends TestCase
         $this->app['events']->listen(
             TableCreatingEvent::class,
             function (TableCreatingEvent $event) use ($dispatchedEvents) {
+                $this->assertEquals('superv.platform', $event->scope);
                 $this->assertEquals('tasks', $event->table);
                 $this->assertArrayContains(['id', 'title'], sv_collect($event->columns)->pluck('name')->all());
                 $this->assertFalse(\Schema::hasTable('tasks'));
@@ -45,10 +48,7 @@ class BlueprintTest extends TestCase
             $dispatchedEvents->tableCreated = true;
         });
 
-        Schema::create('tasks', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-        });
+        $this->app['migrator']->run(__DIR__.'/__fixtures__/migrations');
 
         $this->assertTrue($dispatchedEvents->tableCreating);
         $this->assertTrue($dispatchedEvents->tableCreated);

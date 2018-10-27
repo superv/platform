@@ -13,10 +13,7 @@ class Current
 
     protected $user;
 
-//    public function __construct(Users $users)
-//    {
-//        $this->users = $users;
-//    }
+    protected $migrationScope;
 
     /**
      * Return the current logged in user
@@ -90,5 +87,15 @@ class Current
     public function isConsole()
     {
         return app()->runningInConsole();
+    }
+
+    public function setMigrationScope($scope)
+    {
+        $this->migrationScope = $scope;
+    }
+
+    public function migrationScope()
+    {
+        return $this->migrationScope;
     }
 }
