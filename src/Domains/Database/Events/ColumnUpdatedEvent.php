@@ -13,7 +13,7 @@ class ColumnUpdatedEvent extends BaseEvent
     public $table;
 
     /**
-     * @var \Illuminate\Support\Fluent
+     * @var \Illuminate\Database\Schema\ColumnDefinition
      */
     public $column;
 
