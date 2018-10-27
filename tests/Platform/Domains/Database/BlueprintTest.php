@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Database;
 use Event;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
+use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
@@ -118,6 +119,28 @@ class BlueprintTest extends TestCase
             $this->assertEquals('tasks', $event->table);
 
             return $columns->has($event->column->name);
+        });
+    }
+
+    /** @test */
+    function dispatch_event_when_a_column_is_dropped()
+    {
+        Event::fake(ColumnDroppedEvent::class);
+        Schema::create('tasks', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title');
+            $table->string('priority');
+        });
+
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->dropColumn(['title', 'priority']);
+        });
+
+        Event::assertDispatched(ColumnDroppedEvent::class, function (ColumnDroppedEvent $event) {
+            return $event->table === 'tasks' && $event->column === 'title';
+        });
+        Event::assertDispatched(ColumnDroppedEvent::class, function (ColumnDroppedEvent $event) {
+            return $event->table === 'tasks' && $event->column === 'priority';
         });
     }
 }
