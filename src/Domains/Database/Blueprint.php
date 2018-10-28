@@ -43,7 +43,6 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         return $this->string($name)->fieldType('email');
     }
 
-
     public function hasMany($related, $relation, $foreignKey = null, $localKey = null)
     {
         return $this->addColumn(null, $relation)
@@ -67,12 +66,10 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                     ]);
     }
 
-
     public function nullableBelongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
     {
         return $this->belongsTo($related, $relation, $foreignKey, $ownerKey)->nullable();
     }
-
 
     public function belongsToMany(
         $related,

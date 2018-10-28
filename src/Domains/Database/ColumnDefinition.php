@@ -39,7 +39,20 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this->config ?? [];
     }
 
-    public function relation(array $relation):self
+    public function getRules()
+    {
+        if (! $this->rules) {
+            return [];
+        }
+
+        if (is_string($this->rules)) {
+            return explode('|', $this->rules);
+        }
+
+        return $this->rules;
+    }
+
+    public function relation(array $relation): self
     {
         $this->fieldType = 'relation';
         $this->relation = $relation;
