@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database\Events;
 
-use Illuminate\Support\Fluent;
+use SuperV\Platform\Domains\Database\ColumnDefinition;
 use SuperV\Platform\Events\BaseEvent;
 
 class ColumnUpdatedEvent extends BaseEvent
@@ -13,11 +13,11 @@ class ColumnUpdatedEvent extends BaseEvent
     public $table;
 
     /**
-     * @var \Illuminate\Database\Schema\ColumnDefinition
+     * @var \SuperV\Platform\Domains\Database\ColumnDefinition
      */
     public $column;
 
-    public function __construct(string $table, Fluent $column)
+    public function __construct(string $table, ColumnDefinition $column)
     {
         $this->table = $table;
         $this->column = $column;

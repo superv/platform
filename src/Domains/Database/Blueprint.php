@@ -33,7 +33,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         $this->builder->setModel($model);
     }
 
-    public function select($name)
+    public function select($name): ColumnDefinition
     {
         return $this->string($name)->fieldType('select');
     }
@@ -43,14 +43,22 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         return $this->string($name)->fieldType('email');
     }
 
-    public function nullableBelongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
+
+    public function hasMany($related, $relation, $foreignKey = null, $localKey = null)
     {
-        return $this->belongsTo($related, $relation, $foreignKey, $ownerKey)->nullable();
+        return $this->addColumn(null, $relation)
+                    ->nullable()
+                    ->relation([
+                        'type'        => 'has_many',
+                        'related'     => $related,
+                        'foreign_key' => $foreignKey,
+                        'local_key'   => $localKey,
+                    ]);
     }
 
     public function belongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
     {
-        return $this->addColumn('relation', str_replace_last('_id', '', $relation))
+        return $this->addColumn(null, str_replace_last('_id', '', $relation))
                     ->relation([
                         'type'        => 'belongs_to',
                         'related'     => $related,
@@ -58,6 +66,13 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                         'owner_key'   => $ownerKey,
                     ]);
     }
+
+
+    public function nullableBelongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
+    {
+        return $this->belongsTo($related, $relation, $foreignKey, $ownerKey)->nullable();
+    }
+
 
     public function belongsToMany(
         $related,
@@ -67,7 +82,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         $pivotRelatedKey = null,
         Closure $pivotColumns = null
     ) {
-        return $this->addColumn('relation', $relation)
+        return $this->addColumn(null, $relation)
                     ->nullable()
                     ->relation([
                         'type'              => 'belongs_to_many',
@@ -87,7 +102,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         $pivotRelatedKey = null,
         Closure $pivotColumns = null
     ) {
-        return $this->addColumn('relation', $relation)
+        return $this->addColumn(null, $relation)
                     ->nullable()
                     ->relation([
                         'type'              => 'morph_to_many',
@@ -97,18 +112,6 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                         'pivot_related_key' => $pivotRelatedKey,
                         'pivot_columns'     => $pivotColumns,
                         'morph_name'        => $morphName,
-                    ]);
-    }
-
-    public function hasMany($related, $relation, $foreignKey = null, $localKey = null)
-    {
-        return $this->addColumn('relation', $relation)
-                    ->nullable()
-                    ->relation([
-                        'type'        => 'has_many',
-                        'related'     => $related,
-                        'foreign_key' => $foreignKey,
-                        'local_key'   => $localKey,
                     ]);
     }
 
@@ -166,6 +169,23 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
     protected function tableName()
     {
         return $this->table;
+    }
+
+    /**
+     * Add a new column to the blueprint.
+     *
+     * @param  string  $type
+     * @param  string  $name
+     * @param  array  $parameters
+     * @return \SuperV\Platform\Domains\Database\ColumnDefinition
+     */
+    public function addColumn($type, $name, array $parameters = [])
+    {
+        $this->columns[] = $column = new ColumnDefinition(
+            array_merge(compact('type', 'name'), $parameters)
+        );
+
+        return $column;
     }
 
     /**
