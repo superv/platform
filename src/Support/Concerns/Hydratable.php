@@ -15,9 +15,11 @@ trait Hydratable
         }
 
         foreach ($parameters as $parameter => $value) {
-            $method = camel_case('set_'.$parameter);
+            if (is_null($value)) {
+                continue;
+            }
 
-            if (method_exists($this, $method)) {
+            if (method_exists($this, $method = camel_case('set_'.$parameter))) {
                 $this->{$method}($value);
             } else {
                 if (property_exists($this, $parameter)) {
