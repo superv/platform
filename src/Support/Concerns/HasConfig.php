@@ -24,16 +24,17 @@ trait HasConfig
         return array_get($this->config, $key, $default);
     }
 
-    public function setConfigValue($key, $value)
+    public function setConfigValue($key, $value = null)
     {
-        array_set($this->config, $key, $value);
+        if (! is_null($value)) {
+            array_set($this->config, $key, $value);
+        }
 
         return $this;
     }
 
     /**
      * @param $key
-     *
      * @return bool
      */
     public function hasConfigValue($key)
