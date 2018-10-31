@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Support;
 
 use SuperV\Platform\Domains\Auth\Contracts\Users;
+use SuperV\Platform\Domains\Port\Port;
 
 class Current
 {
@@ -31,12 +32,18 @@ class Current
 
     /**
      * Return the current platform port
-     *
-     * @return \SuperV\Platform\Domains\Port\Port
      */
-    public function port()
+    public function port(): ?Port
     {
         return \Platform::port();
+    }
+
+    /**
+     * Return the current url of the active port
+     */
+    public function url(string $path = null): string
+    {
+        return $path ? url($path) : url()->current();
     }
 
     /**

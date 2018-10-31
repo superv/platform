@@ -61,36 +61,17 @@ class Port
         return $this->prefix;
     }
 
+    public function root()
+    {
+        return $this->hostname() . ($this->prefix ? '/'.$this->prefix : '');
+    }
+
     /**
      * @return null
      */
     public function theme()
     {
         return $this->theme;
-    }
-
-    public static function fromSlug______old($slug)
-    {
-        $config = \Platform::config('ports.'.$slug);
-
-        if (! $config) {
-            return null;
-//            throw new \Exception("Port config not found: [{$slug}]");
-        }
-
-        /** @var self $port */
-        $port = app(Port::class)->hydrate($config);
-
-        $port->setSlug($slug);
-
-        return $port;
-    }
-
-    public static function all_____x()
-    {
-        return collect(Platform::config('ports'))->keys()->map(function ($slug) {
-            return \Hub::get($slug);
-        });
     }
 
     /**

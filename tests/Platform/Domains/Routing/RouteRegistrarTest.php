@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\Routing;
 
 use Hub;
+use Route;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use Tests\Platform\TestCase;
@@ -10,7 +11,7 @@ use Tests\Platform\TestCase;
 class RouteRegistrarTest extends TestCase
 {
     /** @test */
-    function loads_routes_from_array()
+    function registers_routes_from_array()
     {
         app(RouteRegistrar::class)
             ->register([
@@ -37,7 +38,7 @@ class RouteRegistrarTest extends TestCase
     }
 
     /** @test */
-    function loads_routes_for_a_port()
+    function registers_routes_for_a_port()
     {
         $this->setUpPorts();
 
@@ -65,26 +66,31 @@ class RouteRegistrarTest extends TestCase
     }
 
     /** @test */
-    function loads_routes_for_every_port()
+    function registers_global_routes()
     {
         $this->setUpPorts();
+
+        Route::get('key/kol', function() { return 'ok'; });
 
         $registrar = $this->app->make(RouteRegistrar::class);
         $registrar->globally()->register(['bar/foo' => 'BarController@foo']);
         $registrar->globally()->register(['foo/bar' => 'FooController@bar']);
 
         $routes = $this->router()->getRoutes()->get('GET');
+
+        $this->assertNotNull($routes['bar/foo']);
+        $this->assertNotNull($routes['foo/bar']);
+
         $this->assertNotNull($routes['superv.iobar/foo']);
         $this->assertNotNull($routes['superv.iofoo/bar']);
 
-        $routes = $this->router()->getRoutes()->get('GET');
         $this->assertNotNull($routes['superv.ioacp/bar/foo']);
         $this->assertNotNull($routes['superv.ioacp/foo/bar']);
 
-        $routes = $this->router()->getRoutes()->get('GET');
         $this->assertNotNull($routes['api.superv.iobar/foo']);
         $this->assertNotNull($routes['api.superv.iofoo/bar']);
     }
+
 
     /** @test */
     function registers_ports_middlewares()

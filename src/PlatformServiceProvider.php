@@ -3,6 +3,7 @@
 namespace SuperV\Platform;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Support\Collection;
 use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
@@ -33,7 +34,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $_bindings = [
-        Collector::class        => DropletNavigationCollector::class,
+        Collector::class    => DropletNavigationCollector::class,
     ];
 
     protected $aliases = [
@@ -41,7 +42,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         'Feature'  => 'SuperV\Platform\Domains\Feature\FeatureFacade',
         'Current'  => 'SuperV\Platform\Facades\CurrentFacade',
         'Hub'      => 'SuperV\Platform\Facades\HubFacade',
-
     ];
 
     protected $_singletons = [
@@ -86,46 +86,9 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->registerCollectionMacros();
 
+        $this->app->extend('url', function() { return app(Domains\Routing\UrlGenerator::class); });
+
         event('platform.registered');
-    }
-
-    public function boot()
-    {
-        if ($this->app->runningInConsole()) {
-            $this->registerMigrationScope();
-            $this->publishConfig();
-        }
-
-        if (config('superv.installed') !== true) {
-            return;
-        }
-
-        superv('droplets')->put('superv.platform', Platform::instance());
-
-        Platform::boot();
-
-        $this->registerPlatformRoutes();
-
-        \Route::pattern('id', '[0-9]+');
-    }
-
-    protected function publishConfig(): void
-    {
-        $stub = __DIR__.'/../config/superv.php';
-
-        $target = $this->app->basePath().'/config/superv.php';
-
-        $this->publishes([$stub => $target], 'superv.config');
-    }
-
-    protected function registerMigrationScope(): void
-    {
-        MigrationScopes::register('platform', realpath(__DIR__.'/../database/migrations'));
-    }
-
-    protected function registerPlatformRoutes(): void
-    {
-        app(Router::class)->loadFromPath(Platform::path('routes'));
     }
 
     protected function bindUserModel(): void
@@ -157,5 +120,44 @@ class PlatformServiceProvider extends BaseServiceProvider
                 return sv_compose($item);
             });
         });
+    }
+
+    public function boot()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->registerMigrationScope();
+            $this->publishConfig();
+        }
+
+        if (config('superv.installed') !== true) {
+            return;
+        }
+
+        superv('droplets')->put('superv.platform', Platform::instance());
+
+        Platform::boot();
+
+        $this->registerPlatformRoutes();
+
+        \Route::pattern('id', '[0-9]+');
+    }
+
+    protected function registerMigrationScope(): void
+    {
+        MigrationScopes::register('platform', realpath(__DIR__.'/../database/migrations'));
+    }
+
+    protected function publishConfig(): void
+    {
+        $stub = __DIR__.'/../config/superv.php';
+
+        $target = $this->app->basePath().'/config/superv.php';
+
+        $this->publishes([$stub => $target], 'superv.config');
+    }
+
+    protected function registerPlatformRoutes(): void
+    {
+        app(Router::class)->loadFromPath(Platform::path('routes'));
     }
 }

@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Routing;
 
 use Hub;
-use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use Tests\Platform\TestCase;
