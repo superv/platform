@@ -8,7 +8,6 @@ use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Droplet\Installer;
 use SuperV\Platform\Domains\Droplet\Locator;
 use SuperV\Platform\Domains\Port\Port;
-use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use SuperV\Platform\PlatformServiceProvider;
 use SuperV\Platform\Testing\TestHelpers;
 
@@ -52,7 +51,6 @@ class TestCase extends OrchestraTestCase
 
         $this->app->setBasePath(realpath(__DIR__.'/../../'));
         if (method_exists($this, 'refreshDatabase')) {
-
             $this->artisan('superv:install');
             config(['superv.installed' => true]);
 
@@ -66,6 +64,16 @@ class TestCase extends OrchestraTestCase
             }
 
             (new PlatformServiceProvider($this->app))->boot();
+        }
+    }
+
+    protected function makeTmpDirectory(): void
+    {
+        if ($this->tmpDirectory) {
+            $this->tmpDirectory = __DIR__.'/../tmp/'.$this->tmpDirectory;
+            if (! file_exists($this->tmpDirectory)) {
+                app('files')->makeDirectory($this->tmpDirectory, 0755, true);
+            }
         }
     }
 
@@ -88,40 +96,6 @@ class TestCase extends OrchestraTestCase
         $entry = DropletModel::bySlug($slug);
 
         return $entry->resolveDroplet();
-    }
-
-    /**
-     * @param       $port
-     * @param       $hostname
-     * @param null  $theme
-     * @param array $roles
-     * @param null  $model
-     * @return void
-     */
-    protected function setUpPort($port, $hostname, $theme = null, $roles = [], $model = null)
-    {
-        Hub::register((new Port)->hydrate([
-            'slug'     => $port,
-            'hostname' => $hostname,
-            'theme'    => $theme,
-            'roles'    => $roles,
-            'model'    => $model,
-        ]));
-//        $ports = [
-//            $port => [
-//                'hostname' => $hostname,
-//                'theme'    => $theme,
-//                'roles'    => $roles,
-//                'model'    => $model,
-//            ],
-//        ];
-//        config(['superv.ports' => $ports]);
-    }
-
-    protected function route($uri, $action, $port)
-    {
-        $port = \Hub::get($port);
-        app(RouteRegistrar::class)->setPort($port)->registerRoute($uri, $action);
     }
 
     protected function tearDown()
@@ -161,13 +135,4 @@ class TestCase extends OrchestraTestCase
         });
     }
 
-    protected function makeTmpDirectory(): void
-    {
-        if ($this->tmpDirectory) {
-            $this->tmpDirectory = __DIR__.'/../tmp/'.$this->tmpDirectory;
-            if (! file_exists($this->tmpDirectory)) {
-                app('files')->makeDirectory($this->tmpDirectory, 0755, true);
-            }
-        }
-    }
 }

@@ -1,10 +1,13 @@
 <?php
 
 namespace SuperV\Platform\Testing;
-
+use Illuminate\Database\Eloquent\Factory as ModelFactory;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Foundation\Testing\TestResponse;
 use PHPUnit\Framework\Assert;
+use SuperV\Platform\Domains\Auth\User;
+use SuperV\Platform\Domains\Port\Port;
+use SuperV\Platform\Domains\Routing\RouteRegistrar;
 
 trait TestHelpers
 {
@@ -12,7 +15,36 @@ trait TestHelpers
 
     protected $postInstallCallbacks = [];
 
-    public function afterPlatformInstalled(callable $callback)
+    /** @var \SuperV\Platform\Domains\Auth\User */
+    protected $testUser;
+
+
+    /**
+     * Load model factories from path.
+     *
+     * @param  string $path
+     * @return $this
+     */
+    protected function withFactories(string $path)
+    {
+        return $this->loadFactoriesUsing($this->app, $path);
+    }
+
+    /**
+     * Load model factories from path using Application.
+     *
+     * @param  \Illuminate\Contracts\Foundation\Application $app
+     * @param  string                                       $path
+     * @return $this
+     */
+    protected function loadFactoriesUsing($app, string $path)
+    {
+        $app->make(ModelFactory::class)->load($path);
+
+        return $this;
+    }
+
+    protected function afterPlatformInstalled(callable $callback)
     {
         $this->postInstallCallbacks[] = $callback;
 
@@ -66,6 +98,33 @@ trait TestHelpers
         return $mockInstance;
     }
 
+    /**
+     * @param       $port
+     * @param       $hostname
+     * @param null  $theme
+     * @param array $roles
+     * @param null  $model
+     */
+    protected function setUpPort($port, $hostname = null, $theme = null, $roles = [], $model = null): Port
+    {
+        $concentrate = is_array($port) ? $port : [
+            'slug'     => $port,
+            'hostname' => $hostname,
+            'theme'    => $theme,
+            'roles'    => $roles,
+            'model'    => $model,
+        ];
+        Hub::register($port = (new Port)->hydrate($concentrate));
+
+        return $port;
+    }
+
+    protected function route($uri, $action, $port)
+    {
+        $port = \Hub::get($port);
+        app(RouteRegistrar::class)->setPort($port)->registerRoute($uri, $action);
+    }
+
     protected function setUpMacros()
     {
         TestResponse::macro('data', function ($key) {
@@ -88,5 +147,27 @@ trait TestHelpers
                 Assert::assertTrue($a->is($b));
             });
         });
+    }
+
+    /**
+     * @param array $overrides
+     * @return \SuperV\Platform\Domains\Auth\User $user
+     */
+    protected function newUser(array $overrides = [])
+    {
+        $this->testUser = factory(User::class)->create($overrides);
+        $this->testUser->assign('user');
+
+        return $this->testUser->fresh();
+    }
+
+    protected function getAccessToken(User $user)
+    {
+        return \JWTAuth::fromUser($user);
+    }
+
+    protected function getHeaderWithAccessToken($user = null)
+    {
+        return ['HTTP_Authorization' => 'Bearer '.$this->getAccessToken($user ?? $this->testUser)];
     }
 }

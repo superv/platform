@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Testing;
 
-use Illuminate\Database\Eloquent\Factory as ModelFactory;
+
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Droplet\Installer;
@@ -42,30 +42,7 @@ class PlatformTestCase extends TestCase
         (new PlatformServiceProvider($this->app))->boot();
 
         $this->setUpMacros();
-    }
 
-    /**
-     * Load model factories from path.
-     *
-     * @param  string $path
-     * @return $this
-     */
-    protected function withFactories(string $path)
-    {
-        return $this->loadFactoriesUsing($this->app, $path);
-    }
-
-    /**
-     * Load model factories from path using Application.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application $app
-     * @param  string                                       $path
-     * @return $this
-     */
-    protected function loadFactoriesUsing($app, string $path)
-    {
-        $app->make(ModelFactory::class)->load($path);
-
-        return $this;
+        $this->loadFactoriesUsing($this->app, __DIR__ .'/../../tests/database/factories');
     }
 }
