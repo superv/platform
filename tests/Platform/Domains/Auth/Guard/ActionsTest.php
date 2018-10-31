@@ -112,18 +112,6 @@ class ActionsTest extends TestCase
             $query->whereIn('role_id', $roles);
         })->exists());
     }
-
-    /**
-     * @param array $overrides
-     * @return \SuperV\Platform\Domains\Auth\User $user
-     */
-    protected function newUser(array $overrides = [])
-    {
-        $user = factory(User::class)->create($overrides);
-        $user->assign('user');
-
-        return $user->fresh();
-    }
 }
 
 
