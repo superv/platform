@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Database;
 
+use Current;
 use Event;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
@@ -48,7 +49,9 @@ class BlueprintTest extends TestCase
             $dispatchedEvents->tableCreated = true;
         });
 
-        $this->app['migrator']->run(__DIR__.'/__fixtures__/migrations');
+        $migrator = $this->app['migrator'];
+        $migrator->setScope('superv.platform');
+        $migrator->run(__DIR__.'/__fixtures__/migrations');
 
         $this->assertTrue($dispatchedEvents->tableCreating);
         $this->assertTrue($dispatchedEvents->tableCreated);
