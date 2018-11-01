@@ -17,7 +17,6 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-//    protected $installs = ['superv.modules.guard'];
 
     protected function setUp()
     {

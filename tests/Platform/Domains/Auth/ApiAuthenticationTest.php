@@ -3,34 +3,18 @@
 namespace Tests\Platform\Domains\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Routing\Controller;
-use Orchestra\Testbench\Http\Middleware\Authenticate;
+use Route;
 use SuperV\Platform\Domains\Auth\Account;
 use SuperV\Platform\Domains\Auth\User;
+use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use Tests\Platform\TestCase;
-use Tymon\JWTAuth\Providers\LaravelServiceProvider;
 
 class ApiAuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $packageProviders = [LaravelServiceProvider::class];
-
-    protected $appConfig = [
-        'auth.guards.superv-api' => [
-            'driver'   => 'jwt',
-            'provider' => 'platform',
-        ],
-        'jwt.secret'             => 'jwt-secret',
-
-        'superv.ports' => [
-            'api' => [
-                'hostname'    => 'localhost',
-                'guard'       => 'superv-api',
-                'middlewares' => ['api'],
-            ],
-        ],
-    ];
+    /** @var \SuperV\Platform\Domains\Port\Port */
+    protected $port;
 
     protected $user;
 
@@ -40,7 +24,12 @@ class ApiAuthenticationTest extends TestCase
     {
         parent::setUp();
 
-        $this->route('post@login', ApiAuthControllerStub::class.'@login', 'api');
+        $this->port = $this->setUpPort([
+            'slug'        => 'api',
+            'hostname'    => 'localhost',
+            'guard'       => 'superv-api',
+            'middlewares' => ['auth:superv-api'],
+        ]);
 
         $this->account = Account::create(
             ['name' => 'Test Account']
@@ -48,39 +37,40 @@ class ApiAuthenticationTest extends TestCase
 
         $this->user = factory(User::class)->create([
             'account_id' => $this->account->id,
-            'id'    => rand(9, 999),
-            'email' => 'user@superv.io',
+            'id'         => rand(9, 999),
+            'email'      => 'user@superv.io',
+            'password'   => bcrypt('secret'),
         ]);
+
+        Route::get('login', ['as' => 'login', 'uses' => function() { return 'login'; }]);
     }
 
     /** @test */
     function returns_proper_token_response()
     {
+        $this->withoutExceptionHandling();
         $response = $this->json('post', 'login', [
             'account_id' => $this->account->id,
-            'email'    => 'user@superv.io',
-            'password' => 'secret',
+            'email'      => 'user@superv.io',
+            'password'   => 'secret',
         ]);
 
-        $this->assertEquals(['access_token', 'token_type', 'expires_in'], array_keys($response->decodeResponseJson()));
+        $this->assertEquals([
+            'access_token',
+            'token_type',
+            'expires_in',
+        ], array_keys($response->decodeResponseJson('data')));
     }
 
     /** @test */
     function authenticates_with_the_valid_access_token()
     {
-        $this->withoutExceptionHandling();
+        $token = app('tymon.jwt')->fromUser($this->user);
 
-        $token = $this->json('post', 'login', [
-            'email'    => 'user@superv.io',
-            'password' => 'secret',
-        ])->decodeResponseJson('access_token');
-
-        $this->route('me', [
-            'uses'       => function () {
-                return response()->json(['me' => auth()->user()]);
-            },
-            'middleware' => ['auth:superv-api'],
-        ], 'api');
+        app(RouteRegistrar::class)->setPort($this->port)
+                                  ->registerRoute('me', function () {
+                                      return response()->json(['me' => auth()->user()]);
+                                  });
 
         $response = $this->json('get', 'me', [],
             ['HTTP_Authorization' => 'Bearer '.$token]
@@ -108,45 +98,11 @@ class ApiAuthenticationTest extends TestCase
     /** @test */
     function unauthenticated_users_handled_properly()
     {
-        $this->withoutExceptionHandling();
-//        $this->route('me', ApiAuthControllerStub::class. '@me', 'api');
-        $this->route('me', [
-            'uses'       => function () {
-                return response()->json(['me' => auth()->user()]);
-            },
-            'middlewares' => ['auth:superv-api'],
-        ], 'api');
+        $this->route('me', function () {
+            return response()->json(['me' => auth()->user()]);
+        }, 'api');
 
         $response = $this->json('get', 'me');
         $response->assertStatus(401);
-    }
-}
-
-class ApiAuthControllerStub extends Controller
-{
-    public function login()
-    {
-        $credentials = request(['email', 'password']);
-
-        $guard = $this->guard();
-        if (! $token = $guard->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
-        return $this->respondWithToken($token);
-    }
-
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type'   => 'bearer',
-            'expires_in'   => $this->guard()->factory()->getTTL() * 60,
-        ]);
-    }
-
-    protected function guard()
-    {
-        return auth()->guard();
     }
 }

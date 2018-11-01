@@ -2,8 +2,8 @@
 
 namespace Tests\Platform\Domains\Database;
 
-use Current;
 use Event;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
@@ -16,6 +16,8 @@ use Tests\Platform\TestCase;
 
 class BlueprintTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @test */
     function dispatch_event_when_a_table_is_created()
     {
