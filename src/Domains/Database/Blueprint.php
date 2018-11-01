@@ -55,20 +55,37 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                     ]);
     }
 
-    public function belongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
+    /**
+     * Add a new column to the blueprint.
+     *
+     * @param  string $type
+     * @param  string $name
+     * @param  array  $parameters
+     * @return \SuperV\Platform\Domains\Database\ColumnDefinition
+     */
+    public function addColumn($type, $name, array $parameters = [])
     {
-        return $this->addColumn(null, str_replace_last('_id', '', $relation))
-                    ->relation([
-                        'type'        => 'belongs_to',
-                        'related'     => $related,
-                        'foreign_key' => $foreignKey,
-                        'owner_key'   => $ownerKey,
-                    ]);
+        $this->columns[] = $column = new ColumnDefinition(
+            array_merge(compact('type', 'name'), $parameters)
+        );
+
+        return $column;
     }
 
     public function nullableBelongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
     {
         return $this->belongsTo($related, $relation, $foreignKey, $ownerKey)->nullable();
+    }
+
+    public function belongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
+    {
+        return $this->addColumn(null, $relation.'_id')//str_replace_last('_id', '', $relation)
+                    ->relation([
+            'type'        => 'belongs_to',
+            'related'     => $related,
+            'foreign_key' => $foreignKey,
+            'owner_key'   => $ownerKey,
+        ]);
     }
 
     public function belongsToMany(
@@ -125,7 +142,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         }
 
         if ($this->creating()) {
-            TableCreatingEvent::dispatch($this->tableName(),  $this->columns, $this->builder->getModel(), Current::migrationScope());
+            TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->builder->getModel(), Current::migrationScope());
         } else {
             // Dropping Columns
             foreach ($this->commands as $command) {
@@ -158,33 +175,6 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         }
     }
 
-    public function getColumnNames(): array
-    {
-        return sv_collect($this->getColumns())->pluck('name')->all();
-    }
-
-    protected function tableName()
-    {
-        return $this->table;
-    }
-
-    /**
-     * Add a new column to the blueprint.
-     *
-     * @param  string  $type
-     * @param  string  $name
-     * @param  array  $parameters
-     * @return \SuperV\Platform\Domains\Database\ColumnDefinition
-     */
-    public function addColumn($type, $name, array $parameters = [])
-    {
-        $this->columns[] = $column = new ColumnDefinition(
-            array_merge(compact('type', 'name'), $parameters)
-        );
-
-        return $column;
-    }
-
     /**
      * Determine if the blueprint has a drop or dropIfExists command.
      *
@@ -195,5 +185,15 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         return collect($this->commands)->contains(function ($command) {
             return $command->name == 'drop' || $command->name == 'dropIfExists';
         });
+    }
+
+    protected function tableName()
+    {
+        return $this->table;
+    }
+
+    public function getColumnNames(): array
+    {
+        return sv_collect($this->getColumns())->pluck('name')->all();
     }
 }

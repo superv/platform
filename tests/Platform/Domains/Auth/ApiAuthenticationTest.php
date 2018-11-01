@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Controller;
+use Orchestra\Testbench\Http\Middleware\Authenticate;
 use SuperV\Platform\Domains\Auth\Account;
 use SuperV\Platform\Domains\Auth\User;
 use Tests\Platform\TestCase;
@@ -107,12 +108,13 @@ class ApiAuthenticationTest extends TestCase
     /** @test */
     function unauthenticated_users_handled_properly()
     {
+        $this->withoutExceptionHandling();
 //        $this->route('me', ApiAuthControllerStub::class. '@me', 'api');
         $this->route('me', [
             'uses'       => function () {
                 return response()->json(['me' => auth()->user()]);
             },
-            'middleware' => ['auth:superv-api'],
+            'middlewares' => ['auth:superv-api'],
         ], 'api');
 
         $response = $this->json('get', 'me');

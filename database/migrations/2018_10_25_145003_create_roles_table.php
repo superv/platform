@@ -1,7 +1,6 @@
 <?php
 
 use SuperV\Platform\Domains\Database\Migrations\Migration;
-use SuperV\Platform\Domains\Auth\Access\Action;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
 

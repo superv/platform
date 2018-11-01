@@ -52,7 +52,10 @@ class TestCase extends OrchestraTestCase
         $this->app->setBasePath(realpath(__DIR__.'/../../'));
         if (method_exists($this, 'refreshDatabase')) {
             $this->artisan('superv:install');
-            config(['superv.installed' => true]);
+            config([
+                'superv.installed' => true,
+                'jwt.secret' => 'skdjfslkdfj'
+            ]);
 
             $this->handlePostInstallCallbacks();
 

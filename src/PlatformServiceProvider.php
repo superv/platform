@@ -3,7 +3,6 @@
 namespace SuperV\Platform;
 
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Support\Collection;
 use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
@@ -34,7 +33,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $_bindings = [
-        Collector::class    => DropletNavigationCollector::class,
+        Collector::class => DropletNavigationCollector::class,
     ];
 
     protected $aliases = [
@@ -51,9 +50,13 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $listeners = [
-        'Illuminate\Routing\Events\RouteMatched'         => 'SuperV\Platform\Listeners\RouteMatchedListener',
-        'SuperV\Platform\Domains\Port\PortDetectedEvent' => 'SuperV\Platform\Listeners\PortDetectedListener',
-        DropletInstalledEvent::class                     => DropletInstalledListener::class,
+        'Illuminate\Routing\Events\RouteMatched'          => 'SuperV\Platform\Listeners\RouteMatchedListener',
+        'SuperV\Platform\Domains\Port\PortDetectedEvent'  => 'SuperV\Platform\Listeners\PortDetectedListener',
+        DropletInstalledEvent::class                      => DropletInstalledListener::class,
+        Domains\Database\Events\ColumnCreatedEvent::class => Domains\Resource\Listeners\CreateField::class,
+        Domains\Database\Events\ColumnUpdatedEvent::class => Domains\Resource\Listeners\UpdateField::class,
+        Domains\Database\Events\ColumnDroppedEvent::class => Domains\Resource\Listeners\DeleteField::class,
+        Domains\Database\Events\TableCreatingEvent::class => Domains\Resource\Listeners\CreateResource::class,
     ];
 
     protected $commands = [
@@ -86,7 +89,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->registerCollectionMacros();
 
-        $this->app->extend('url', function() { return app(Domains\Routing\UrlGenerator::class); });
+        $this->app->extend('url', function () { return app(Domains\Routing\UrlGenerator::class); });
 
         event('platform.registered');
     }

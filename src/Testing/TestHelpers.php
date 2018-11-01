@@ -1,8 +1,10 @@
 <?php
 
 namespace SuperV\Platform\Testing;
-use Illuminate\Database\Eloquent\Factory as ModelFactory;
+
+use Hub;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Factory as ModelFactory;
 use Illuminate\Foundation\Testing\TestResponse;
 use PHPUnit\Framework\Assert;
 use SuperV\Platform\Domains\Auth\User;
@@ -17,7 +19,6 @@ trait TestHelpers
 
     /** @var \SuperV\Platform\Domains\Auth\User */
     protected $testUser;
-
 
     /**
      * Load model factories from path.
@@ -87,11 +88,7 @@ trait TestHelpers
         $this->assertNotContains($provider, array_keys($this->app->getLoadedProviders()));
     }
 
-    /**
-     * @param $abstract
-     * @return \Mockery\MockInterface
-     */
-    protected function bindMock($abstract)
+    protected function bindMock($abstract): \Mockery\MockInterface
     {
         $this->app->instance($abstract, $mockInstance = \Mockery::mock($abstract));
 
@@ -161,13 +158,13 @@ trait TestHelpers
         return $this->testUser->fresh();
     }
 
-    protected function getAccessToken(User $user)
-    {
-        return \JWTAuth::fromUser($user);
-    }
-
     protected function getHeaderWithAccessToken($user = null)
     {
         return ['HTTP_Authorization' => 'Bearer '.$this->getAccessToken($user ?? $this->testUser)];
+    }
+
+    protected function getAccessToken(User $user)
+    {
+        return app('tymon.jwt')->fromUser($user);
     }
 }

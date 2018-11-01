@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Tymon\JWTAuth\Providers\LaravelServiceProvider;
 
 class AuthServiceProvider extends BaseServiceProvider
 {
@@ -21,6 +22,8 @@ class AuthServiceProvider extends BaseServiceProvider
     public function register()
     {
         parent::register();
+
+        $this->app->register(LaravelServiceProvider::class);
 
         $this->registerListeners([
             UserCreatedEvent::class  => function (UserCreatedEvent $event) {
