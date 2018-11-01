@@ -28,13 +28,28 @@ class ResourceController extends BaseController
         $form = new Form();
 
         $form->addResource($this->resource);
-        $form->build();
+        $formData = $form->build()->compose();
 
-        $data = $form->compose();
+        $page = SvPage::make('')->addBlock(
+            SvBlock::make('sv-form-v2')->setProps($formData->toArray())
+        );
 
-        $form = SvBlock::make('sv-form-v2')->setProps($data->toArray());
+        $page->build();
 
-        $page = SvPage::make('')->addBlock($form);
+        return sv_compose($page);
+    }
+
+    public function edit()
+    {
+        $this->resource()->build();
+        $form = new Form();
+
+        $form->addResource($this->resource);
+        $formData = $form->build()->compose();
+
+        $page = SvPage::make('')->addBlock(
+            SvBlock::make('sv-form-v2')->setProps($formData->toArray())
+        );
 
         $page->build();
 
@@ -54,16 +69,10 @@ class ResourceController extends BaseController
             throw new \Exception("Resource not found [{$resource}]");
         }
 
-        return $this->resource;
-    }
-
-    protected function entry()
-    {
-        if (! $id = request()->route()->parameter('id')) {
-            return null;
+        if ($id = request()->route()->parameter('id')) {
+            $this->resource()->loadEntry($id);
         }
 
-        return $this->resource()->loadEntry($id);
+        return $this->resource;
     }
-
 }

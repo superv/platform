@@ -60,7 +60,7 @@ class Form
         });
     }
 
-    public function build()
+    public function build(): self
     {
         $this->uuid = Str::uuid();
 
@@ -80,6 +80,8 @@ class Form
         $this->url = url('/sv/forms/'.$this->uuid());
 
         $this->cache();
+
+        return $this;
     }
 
     public function uuid()

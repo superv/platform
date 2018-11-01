@@ -15,7 +15,8 @@ return [
         return 'SuperV Platform @'.Current::port()->slug();
     },
 
-    'POST@'.'sv/forms/{form}'                  => FormsController::at('store'),
+    'POST@'.'sv/forms/{form}' => FormsController::at('store'),
 
-    'GET@'.'sv/resources/{resource}/create' => ResourceController::at('create'),
+    'GET@'.'sv/resources/{resource}/create'    => ResourceController::at('create'),
+    'GET@'.'sv/resources/{resource}/{id}/edit' => ResourceController::at('edit'),
 ];

@@ -21,6 +21,8 @@ class Resource
     /** @var \SuperV\Platform\Domains\Resource\ResourceEntryModel */
     protected $entry;
 
+    protected $entryId;
+
     protected $model;
 
     protected $slug;
@@ -94,6 +96,11 @@ class Resource
         return $this->entry;
     }
 
+    public function getEntryId()
+    {
+        return $this->entry ? $this->entry->id : null;
+    }
+
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -141,13 +148,33 @@ class Resource
         return $this->uuid;
     }
 
+    public function route($route)
+    {
+        $base = 'sv/resources/'.$this->getSlug();
+        if ($route === 'edit') {
+            return $base . '/'.$this->getEntryId(). '/edit';
+        }
+        if ($route === 'create') {
+            return $base . '/create';
+        }
+
+    }
+
     public function __sleep()
     {
+        if ($this->entry && $this->entry->exists) {
+            $this->entryId = $this->entry->getKey();
+        }
+
         return array_diff(array_keys(get_object_vars($this)), ['entry']);
     }
 
     public function __wakeup()
     {
-        $this->entry = $this->resolveModel();
+        if ($this->entryId) {
+            $this->loadEntry($this->entryId);
+        } else {
+            $this->entry = $this->resolveModel();
+        }
     }
 }

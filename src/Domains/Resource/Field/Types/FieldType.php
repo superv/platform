@@ -94,6 +94,7 @@ abstract class FieldType
             'label'  => $this->getLabel(),
             'type'   => $this->getType(),
             'config' => $this->getConfig(),
+            'value'  => $this->getValue(),
         ]);
     }
 
