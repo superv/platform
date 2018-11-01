@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Media;
 
 use Exception;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -11,7 +12,6 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class MediaBag
 {
-    /** @var \SuperV\Platform\Domains\Media\MediaOwner */
     protected $owner;
 
     protected $files = [];
@@ -20,7 +20,7 @@ class MediaBag
 
     protected $label;
 
-    public function __construct(MediaOwner $owner, $label)
+    public function __construct($owner, $label)
     {
         $this->owner = $owner;
         $this->label = $label;
@@ -30,12 +30,23 @@ class MediaBag
 
     public function first()
     {
-        return $this->owner->media()->first();
+        return $this->media()->first();
     }
 
     public function get()
     {
-        return $this->owner->media;
+        return $this->media()->get();
+    }
+
+    public function media()
+    {
+        return new MorphMany(
+            (new Media())->newQuery(),
+            $this->owner,
+            'owner_type',
+            'owner_id',
+            'id'
+        );
     }
 
     protected function createEntry($file, $filename, MediaOptions $options)
@@ -51,8 +62,8 @@ class MediaBag
             'extension' => $this->getFileExtension($file),
             'size'      => $file->getSize(),
         ]);
-        $media->owner()->associate($this->owner);
-        $media->save();
+
+        $media->associateOwner($this->owner)->save();
 
         return $media;
     }
@@ -156,7 +167,8 @@ class MediaBag
 
     protected function getFileExtension(File $file)
     {
-        $extension = $file->getExtension();
+        $extension = $file instanceof UploadedFile ? $file->getClientOriginalExtension() : $file->getExtension();
+
         $mimeType = $file->getMimeType();
         if (! $extension && starts_with($mimeType, 'image/svg')) {
             $extension = 'svg';

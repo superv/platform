@@ -32,4 +32,11 @@ class Media extends EntryModel
     {
         return \Storage::disk($this->disk)->path($this->getBasename());
     }
+
+    public function associateOwner($owner): self
+    {
+        $this->owner()->associate($owner);
+
+        return $this;
+    }
 }
