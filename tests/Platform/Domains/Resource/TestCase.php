@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
@@ -12,14 +13,14 @@ class TestCase extends \Tests\Platform\TestCase
 {
     use RefreshDatabase;
 
-    protected function makeResource($slug = 'test_users', array $columns = ['name'])
+    protected function makeResource($slug = 'test_users', array $columns = ['name']): Resource
     {
         $this->makeResourceModel($slug, $columns);
 
         return ResourceFactory::make($slug);
     }
 
-    protected function makeResourceModel($slug, array $columns)
+    protected function makeResourceModel($slug, array $columns): ResourceModel
     {
         Schema::create($slug, function (Blueprint $table) use ($columns) {
             $table->increments('id');

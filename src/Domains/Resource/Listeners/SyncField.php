@@ -5,9 +5,9 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
-class CreateField
+class SyncField
 {
-    public function handle(ColumnCreatedEvent $event)
+    public function handle($event)
     {
         $column = $event->column;
 
@@ -15,7 +15,7 @@ class CreateField
             return;
         }
 
-        if ($event->model) {
+        if (isset($event->model)) {
             $resourceEntry = ResourceModel::withModel($event->model);
         }
         if (! isset($resourceEntry)) {
@@ -26,7 +26,12 @@ class CreateField
             throw new \Exception("Resource model entry not found for table [{$event->table}]");
         }
 
-        $field = $resourceEntry->createField($column->name);
+        if ($resourceEntry->hasField($column->name)) {
+            $field = $resourceEntry->getField($column->name);
+        } else {
+            $field = $resourceEntry->createField($column->name);
+        }
+
         $field->sync($column);
     }
 }

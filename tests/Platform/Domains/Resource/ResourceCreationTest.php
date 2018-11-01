@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource;
 
+use Exception;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\ResourceModel;
@@ -55,6 +56,16 @@ class ResourceCreationTest extends TestCase
         $ageField = $resource->getField('age');
         $this->assertEquals('integer', $ageField->getColumnType());
         $this->assertNotNull($ageField->uuid());
+    }
+
+    /** @test */
+    function fields_are_unique_per_resource()
+    {
+        $resourceEntry = $this->makeResourceModel('test_users', ['name']);
+        $this->assertEquals(1, $resourceEntry->fields()->count());
+
+        $this->expectException(Exception::class);
+        $resourceEntry->createField('name');
     }
 
     /** @test */

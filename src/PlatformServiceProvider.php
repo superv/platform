@@ -53,8 +53,8 @@ class PlatformServiceProvider extends BaseServiceProvider
         'Illuminate\Routing\Events\RouteMatched'          => 'SuperV\Platform\Listeners\RouteMatchedListener',
         'SuperV\Platform\Domains\Port\PortDetectedEvent'  => 'SuperV\Platform\Listeners\PortDetectedListener',
         DropletInstalledEvent::class                      => DropletInstalledListener::class,
-        Domains\Database\Events\ColumnCreatedEvent::class => Domains\Resource\Listeners\CreateField::class,
-        Domains\Database\Events\ColumnUpdatedEvent::class => Domains\Resource\Listeners\UpdateField::class,
+        Domains\Database\Events\ColumnCreatedEvent::class => Domains\Resource\Listeners\SyncField::class,
+        Domains\Database\Events\ColumnUpdatedEvent::class => Domains\Resource\Listeners\SyncField::class,
         Domains\Database\Events\ColumnDroppedEvent::class => Domains\Resource\Listeners\DeleteField::class,
         Domains\Database\Events\TableCreatingEvent::class => Domains\Resource\Listeners\CreateResource::class,
     ];

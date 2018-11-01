@@ -59,7 +59,16 @@ class ResourceModel extends Model
 
     public function createField($name): FieldModel
     {
+        if ($this->hasField($name)) {
+            throw new \Exception("Field with name [{$name}] already exists");
+        }
+
         return $this->fields()->make(['name' => $name]);
+    }
+
+    public function hasField($name)
+    {
+        return $this->fields()->where('name', $name)->exists();
     }
 
     public function getModelClass()
