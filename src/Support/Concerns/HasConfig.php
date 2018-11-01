@@ -4,7 +4,7 @@ namespace SuperV\Platform\Support\Concerns;
 
 trait HasConfig
 {
-    protected $config;
+    protected $config = [];
 
     public function config($key = null, $default = null)
     {
@@ -33,13 +33,14 @@ trait HasConfig
         return $this;
     }
 
-    /**
-     * @param $key
-     * @return bool
-     */
-    public function hasConfigValue($key)
+    public function hasConfigValue($key): bool
     {
         return array_has($this->config, $key);
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config ?: [];
     }
 
     public function setConfig(array $config)
@@ -47,10 +48,5 @@ trait HasConfig
         $this->config = $config;
 
         return $this;
-    }
-
-    public function getConfig()
-    {
-        return $this->config ?: [];
     }
 }

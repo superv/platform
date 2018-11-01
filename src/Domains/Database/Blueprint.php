@@ -43,6 +43,11 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         return $this->string($name)->fieldType('email');
     }
 
+    public function file($name)
+    {
+        return $this->addColumn(null, $name)->fieldType('file')->ignore();
+    }
+
     public function hasMany($related, $relation, $foreignKey = null, $localKey = null)
     {
         return $this->addColumn(null, $relation)

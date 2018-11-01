@@ -58,6 +58,11 @@ class Resource
 
             public static $entryTable;
 
+            public function getMorphClass()
+            {
+                return static::$entryTable;
+            }
+
             public function setTable($table)
             {
                 $this->table = static::$entryTable = $table;

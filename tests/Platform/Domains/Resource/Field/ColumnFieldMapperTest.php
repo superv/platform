@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource;
+namespace Tests\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper as Mapper;
-use Tests\Platform\TestCase;
+use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class ColumnFieldMapperTest extends TestCase
+class ColumnFieldMapperTest extends ResourceTestCase
 {
     /** @test */
     function maps_string_column_to_text_field()

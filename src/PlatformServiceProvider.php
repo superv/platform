@@ -89,7 +89,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->registerCollectionMacros();
 
-        $this->app->extend('url', function () { return app(Domains\Routing\UrlGenerator::class); });
+//        $this->app->extend('url', function () { return app(Domains\Routing\UrlGenerator::class); });
 
         event('platform.registered');
     }

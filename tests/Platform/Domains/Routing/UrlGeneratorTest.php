@@ -13,7 +13,6 @@ class UrlGeneratorTest extends TestCase
     /** @var \SuperV\Platform\Domains\Port\Port */
     protected $port;
 
-    /** @test */
     function platform_overrides_default_url_generator()
     {
         $this->setUpCustomPort('api.superv.io', 'v2');
@@ -21,6 +20,31 @@ class UrlGeneratorTest extends TestCase
 
         $this->assertInstanceOf(UrlGenerator::class, url());
         $this->assertInstanceOf(UrlGenerator::class, app('url'));
+    }
+
+    /** @test */
+    function generates_urls_based_on_the_active_port_with_prefix()
+    {
+        $this->setUpCustomPort('api.superv.io', 'v2');
+        $this->makeRequest('users');
+
+        $url = app(UrlGenerator::class);
+
+        $this->assertEquals('http://api.superv.io/v2/users', $url->full());
+        $this->assertEquals('http://api.superv.io/v2/users', $url->current());
+        $this->assertEquals('http://api.superv.io/v2/users', $url->to('users'));
+        $this->assertEquals('http://api.superv.io/v2/users', sv_url('users'));
+    }
+
+    /** @test */
+    function generates_urls_based_on_the_active_port_without_prefix()
+    {
+        $this->setUpCustomPort('api.superv.io');
+        $this->makeRequest('users');
+
+        $this->assertEquals('http://api.superv.io/users', URL::full());
+        $this->assertEquals('http://api.superv.io/users', URL::current());
+        $this->assertEquals('http://api.superv.io/users', URL::to('users'));
     }
 
     protected function setUpCustomPort($hostname, $prefix = null)
@@ -34,28 +58,5 @@ class UrlGeneratorTest extends TestCase
         $this->app->extend('request', function () use ($path) {
             return Request::create('http://'.$this->port->root().($path ? '/'.$path : ''));
         });
-    }
-
-    /** @test */
-    function generates_urls_based_on_the_active_port_with_prefix()
-    {
-        $this->setUpCustomPort('api.superv.io', 'v2');
-        $this->makeRequest('users');
-
-        $this->assertEquals('http://api.superv.io/v2/users', URL::full());
-        $this->assertEquals('http://api.superv.io/v2/users', URL::current());
-        $this->assertEquals('http://api.superv.io/v2/users', URL::to('users'));
-        $this->assertEquals('http://api.superv.io/v2/users', url('/users'));
-    }
-
-    /** @test */
-    function generates_urls_based_on_the_active_port_without_prefix()
-    {
-        $this->setUpCustomPort('api.superv.io');
-        $this->makeRequest('users');
-
-        $this->assertEquals('http://api.superv.io/users', URL::full());
-        $this->assertEquals('http://api.superv.io/users', URL::current());
-        $this->assertEquals('http://api.superv.io/users', URL::to('users'));
     }
 }

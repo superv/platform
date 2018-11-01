@@ -6,6 +6,7 @@ use SuperV\Modules\Nucleo\Domains\UI\SvComponent;
 use SuperV\Modules\Nucleo\Domains\UI\SvTab;
 use SuperV\Modules\Nucleo\Domains\UI\SvTabs;
 use SuperV\Platform\Domains\Feature\FeatureBus;
+use SuperV\Platform\Domains\Routing\UrlGenerator;
 use SuperV\Platform\Support\Collection;
 use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\RelativePath;
@@ -124,7 +125,7 @@ function sv_config($key, $default = null)
  */
 function sv_guard($guardable)
 {
-   return (new SuperV\Platform\Domains\Auth\Access\Guard\Guard(Current::user()))->filter($guardable);
+    return (new SuperV\Platform\Domains\Auth\Access\Guard\Guard(Current::user()))->filter($guardable);
 }
 
 /**
@@ -171,6 +172,16 @@ function sv_basename($path)
 function sv_filename($path)
 {
     return pathinfo($path, PATHINFO_FILENAME);
+}
+
+function sv_url($path = null)
+{
+    $generator = app(UrlGenerator::class);
+    if (is_null($path)) {
+        return $generator;
+    }
+
+    return $generator->to($path);
 }
 
 function uuid()

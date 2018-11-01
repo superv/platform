@@ -47,7 +47,7 @@ class Form
     {
         $this->callbacks = [];
         $this->fields->map(function (FieldType $field) use ($request) {
-            $this->callbacks[] = $field->setValue($request->get($field->getName()));
+            $this->callbacks[] = $field->setValue($request->__get($field->getName()));
         });
 
         sv_collect($this->resources)->map(function (Resource $resource) { $resource->saveEntry(); });
@@ -77,7 +77,7 @@ class Form
         }
 
         // build Url
-        $this->url = url('/sv/forms/'.$this->uuid());
+        $this->url = sv_url('sv/forms/'.$this->uuid());
 
         $this->cache();
 

@@ -2,6 +2,14 @@
 
 namespace SuperV\Platform\Domains\Database;
 
+/**
+ * Class ColumnDefinition
+ *
+ * @method ColumnDefinition nullable($value = true) Allow NULL values to be inserted into the column
+ *  @method ColumnDefinition ignore($value = true)
+ *  @method ColumnDefinition fieldType($type)
+ *  @method ColumnDefinition config(array $config)
+ */
 class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
 {
     public function isRequired()

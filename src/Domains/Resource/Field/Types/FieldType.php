@@ -7,11 +7,13 @@ use Exception;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceEntryModel;
+use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 abstract class FieldType
 {
     use Hydratable;
+    use HasConfig;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\Resource
@@ -135,18 +137,18 @@ abstract class FieldType
     {
         return $this->type;
     }
-
-    public function getConfig(): array
-    {
-        return $this->config;
-    }
-
-    public function setConfig(array $config): self
-    {
-        $this->config = $config;
-
-        return $this;
-    }
+//
+//    public function getConfig(): array
+//    {
+//        return $this->config;
+//    }
+//
+//    public function setConfig(array $config): self
+//    {
+//        $this->config = $config;
+//
+//        return $this;
+//    }
 
     public function getEntry(): ?FieldModel
     {
@@ -209,7 +211,7 @@ abstract class FieldType
 
     public function getResourceEntry(): ?ResourceEntryModel
     {
-        return $this->resource->getEntry();
+        return $this->resource ? $this->resource->getEntry() : null;
     }
 
     public function getAccessor(): ?Closure
