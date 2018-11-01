@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Resource\Field\Types\TextareaField;
 use SuperV\Platform\Domains\Resource\Field\Types\TextField;
 use SuperV\Platform\Domains\Resource\Resource;
 
-class ResourceTest extends TestCase
+class ResourceTest extends ResourceTestCase
 {
     /** @test */
     function creates_anonymous_model_class_if_not_provided()
@@ -45,18 +45,6 @@ class ResourceTest extends TestCase
         ], $this->getFields($resource));
     }
 
-    protected function getFields(Resource $resource)
-    {
-        return $resource->getFields()->map(
-            function (FieldType $field) {
-                return [
-                    'class' => get_class($field),
-                    'value' => $field->getValue(),
-                ];
-            }
-        )->values()->all();
-    }
-
     /** @test */
     function should_fail_if_field_requested_before_resource_is_built()
     {
@@ -73,5 +61,17 @@ class ResourceTest extends TestCase
 
         $this->fail('Failed to check if resource is built');
 
+    }
+
+    protected function getFields(Resource $resource)
+    {
+        return $resource->getFields()->map(
+            function (FieldType $field) {
+                return [
+                    'class' => get_class($field),
+                    'value' => $field->getValue(),
+                ];
+            }
+        )->values()->all();
     }
 }

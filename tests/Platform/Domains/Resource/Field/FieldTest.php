@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource;
+namespace Tests\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
@@ -12,8 +12,9 @@ use SuperV\Platform\Domains\Resource\Field\Types\SelectField;
 use SuperV\Platform\Domains\Resource\Field\Types\TextField;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
+use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class FieldTest extends TestCase
+class FieldTest extends ResourceTestCase
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;

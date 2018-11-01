@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
-class TestCase extends \Tests\Platform\TestCase
+class ResourceTestCase extends \Tests\Platform\TestCase
 {
     use RefreshDatabase;
 

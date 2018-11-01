@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\Fixtures\TestUser;
 
-class ResourceCreationTest extends TestCase
+class ResourceCreationTest extends ResourceTestCase
 {
     protected function setUp()
     {

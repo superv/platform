@@ -9,7 +9,7 @@ use Tests\Platform\Domains\Resource\Fixtures\TestPost;
 use Tests\Platform\Domains\Resource\Fixtures\TestRole;
 use Tests\Platform\Domains\Resource\Fixtures\TestUser;
 
-class ResourceRelationsTest extends TestCase
+class ResourceRelationsTest extends ResourceTestCase
 {
     /** @test */
     function creates_has_many_relations()

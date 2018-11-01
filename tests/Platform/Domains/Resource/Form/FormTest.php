@@ -1,11 +1,12 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource;
+namespace Tests\Platform\Domains\Resource\Form;
 
 use Current;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class FormTest extends TestCase
+class FormTest extends ResourceTestCase
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
