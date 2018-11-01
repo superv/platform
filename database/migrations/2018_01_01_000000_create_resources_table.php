@@ -7,7 +7,7 @@ class CreateResourcesTable extends Migration
 {
     public function up()
     {
-        Schema::create('platform_resources', function (Blueprint $table) {
+        Schema::create('sv_resources', function (Blueprint $table) {
             $table->increments('id');
             $table->uuid('uuid')->unique();
 //            $table->unsignedInteger('droplet_id');
@@ -22,6 +22,6 @@ class CreateResourcesTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('platform_resources');
+        Schema::dropIfExists('sv_resources');
     }
 }

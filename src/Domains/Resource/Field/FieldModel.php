@@ -12,7 +12,7 @@ use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class FieldModel extends Model
 {
-    protected $table = 'platform_resource_fields';
+    protected $table = 'sv_resource_fields';
 
     protected $guarded = [];
 

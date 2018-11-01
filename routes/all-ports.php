@@ -16,5 +16,6 @@ return [
     },
 
     'POST@'.'sv/forms/{form}'                  => FormsController::at('store'),
-    'GET@'.'sv/resources/{resource}/{id}/view' => ResourceController::at('view'),
+
+    'GET@'.'sv/resources/{resource}/create' => ResourceController::at('create'),
 ];

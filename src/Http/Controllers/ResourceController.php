@@ -22,7 +22,7 @@ class ResourceController extends BaseController
         $this->middleware('auth:superv-api');
     }
 
-    public function view()
+    public function create()
     {
         $this->resource()->build();
         $form = new Form();

@@ -1,14 +1,14 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class CreateAccountsTable extends Migration
 {
     public function up()
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('sv_accounts', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->timestamps();
@@ -17,6 +17,6 @@ class CreateAccountsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('sv_accounts');
     }
 }

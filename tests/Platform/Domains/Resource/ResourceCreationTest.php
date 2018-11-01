@@ -22,7 +22,7 @@ class ResourceCreationTest extends TestCase
             $table->increments('id');
         });
 
-        $this->assertDatabaseHas('platform_resources', ['slug' => 'test_users']);
+        $this->assertDatabaseHas('sv_resources', ['slug' => 'test_users']);
         $resource = ResourceModel::withSlug('test_users');
         $this->assertNotNull($resource);
         $this->assertNotNull($resource->uuid());

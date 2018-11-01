@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DropletModel extends Model
 {
-    protected $table = 'droplets';
+    protected $table = 'sv_droplets';
 
     protected $guarded = [];
 

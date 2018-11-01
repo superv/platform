@@ -7,7 +7,7 @@ class CreateResourceFieldsTable extends Migration
 {
     public function up()
     {
-        Schema::create('platform_resource_fields', function (Blueprint $table) {
+        Schema::create('sv_resource_fields', function (Blueprint $table) {
             $table->increments('id');
             $table->uuid('uuid');
             $table->unsignedInteger('resource_id');
@@ -28,6 +28,6 @@ class CreateResourceFieldsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('platform_resource_fields');
+        Schema::dropIfExists('sv_resource_fields');
     }
 }

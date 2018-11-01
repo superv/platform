@@ -34,7 +34,7 @@ class InstallerTest extends TestCase
                   ->setSlug('superv.droplets.sample')
                   ->install();
 
-        $this->assertDatabaseHas('droplets', [
+        $this->assertDatabaseHas('sv_droplets', [
             'name'      => 'SampleDroplet',
             'vendor'    => 'superv',
             'slug'      => 'superv.droplets.sample',
@@ -71,11 +71,11 @@ class InstallerTest extends TestCase
              ->setSlug('superv.droplets.another')
              ->install();
 
-        $this->assertDatabaseHas('droplets', [
+        $this->assertDatabaseHas('sv_droplets', [
             'name' => 'AnotherDroplet',
             'slug' => 'superv.droplets.another',
         ]);
-        $this->assertDatabaseHas('droplets', [
+        $this->assertDatabaseHas('sv_droplets', [
             'name'      => 'AnotherSubDroplet',
             'slug'      => 'superv.themes.another_sub',
             'type'      => 'droplet',

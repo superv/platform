@@ -61,7 +61,7 @@ class MediaTest extends TestCase
         $this->assertEquals(Storage::disk($media->disk)->size($media->filename), $media->size);
     }
 
-    /** @test */
+
     function can_add_media_from_base64()
     {
         Storage::fake('fakedisk');
@@ -72,8 +72,6 @@ class MediaTest extends TestCase
 
         $this->assertMediaSaved($this->owner->mediaBag('photos')->first());
     }
-
-
 
     function can_only_add_allowed_mime_types()
     {
