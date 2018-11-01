@@ -82,9 +82,17 @@ class ColumnFieldMapperTest extends ResourceTestCase
     }
 
     /** @test */
-    function maps_date_column_to_date_field()
+    function maps_date_column_to_datetime_field()
     {
         $mapper = Mapper::for('date')->map();
-        $this->assertEquals('date', $mapper->getFieldType());
+        $this->assertEquals('datetime', $mapper->getFieldType());
+        $this->assertEquals(false, $mapper->getConfigValue('time'));
+    }
+    /** @test */
+    function maps_datetime_column_to_datetime_field()
+    {
+        $mapper = Mapper::for('datetime')->map();
+        $this->assertEquals('datetime', $mapper->getFieldType());
+        $this->assertEquals(true, $mapper->getConfigValue('time'));
     }
 }
