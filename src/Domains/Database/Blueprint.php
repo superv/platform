@@ -13,7 +13,7 @@ use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Events\TableDroppedEvent;
-use SuperV\Platform\Domains\Resource\RelationConfig as Config;
+use SuperV\Platform\Domains\Resource\Relation\RelationConfig as Config;
 
 class Blueprint extends \Illuminate\Database\Schema\Blueprint
 {

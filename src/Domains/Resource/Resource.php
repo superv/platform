@@ -6,8 +6,8 @@ use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Field\FieldType;
-use SuperV\Platform\Domains\Resource\Field\TypeBuilder;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Builder as FieldBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Builder as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -68,11 +68,11 @@ class Resource
 
         $this->fields = $this->fields
             ->map(function ($field) {
-                if ($field instanceof FieldType) {
+                if ($field instanceof Field) {
                     return $field;
                 }
 
-                return (new TypeBuilder($this))->build($field);
+                return (new FieldBuilder($this))->build($field);
             });
 
         $this->relations = $this->relations
@@ -202,11 +202,11 @@ class Resource
         return optional($this->getField($name))->getEntry();
     }
 
-    public function getField($name): ?FieldType
+    public function getField($name): ?Field
     {
         $this->ensureBuilt();
 
-        return $this->fields->first(function (FieldType $field) use ($name) { return $field->getName() === $name; });
+        return $this->fields->first(function (Field $field) use ($name) { return $field->getName() === $name; });
     }
 
     public function setRelations(Collection $relations): self

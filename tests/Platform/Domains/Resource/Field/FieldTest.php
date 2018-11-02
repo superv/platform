@@ -6,8 +6,8 @@ use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Field\FieldConfig;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Field\FieldType;
-use SuperV\Platform\Domains\Resource\Field\TypeBuilder;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Builder;
 use SuperV\Platform\Domains\Resource\Field\Types\Select;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -38,7 +38,7 @@ class FieldTest extends ResourceTestCase
     /** @test */
     function builds_from_string()
     {
-        $builder = new TypeBuilder($this->resource);
+        $builder = new Builder($this->resource);
         $field = $builder->build('name');
 
         $this->assertInstanceOf(Text::class, $field);
@@ -52,7 +52,7 @@ class FieldTest extends ResourceTestCase
     {
         $fieldEntry = ResourceModel::withSlug('test_users')->getField('name');
 
-        $builder = new TypeBuilder($this->resource);
+        $builder = new Builder($this->resource);
         $field = $builder->build($fieldEntry);
 
         $this->assertInstanceOf(Text::class, $field);
@@ -64,7 +64,7 @@ class FieldTest extends ResourceTestCase
     /** @test */
     function builds_from_instance()
     {
-        $builder = new TypeBuilder($this->resource);
+        $builder = new Builder($this->resource);
         $field = $builder->build(Select::make('gender'));
 
         $this->assertInstanceOf(Select::class, $field);
@@ -76,7 +76,7 @@ class FieldTest extends ResourceTestCase
     /** @test */
     function builds_from_config()
     {
-        $builder = new TypeBuilder($this->resource);
+        $builder = new Builder($this->resource);
         $field = $builder->build(
             FieldConfig::field('name')
                        ->rules(['min:10'])
@@ -105,7 +105,7 @@ class FieldTest extends ResourceTestCase
     }
 }
 
-class TestField extends FieldType
+class TestField extends Field
 {
     protected $label = 'test-label';
 

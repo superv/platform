@@ -5,9 +5,9 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 use Closure;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
-use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Field;
 
-class File extends FieldType
+class File extends Field
 {
     protected $hasColumn = false;
 

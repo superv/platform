@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field;
 use SuperV\Platform\Domains\Resource\Contracts\HasResource;
 use SuperV\Platform\Domains\Resource\Resource;
 
-class TypeBuilder
+class Builder
 {
     /**
      * @var \SuperV\Platform\Domains\Resource\Resource
@@ -46,9 +46,9 @@ class TypeBuilder
         return $this->resolveFromFieldEntry($fieldEntry);
     }
 
-    protected function resolveFromFieldEntry(FieldModel $fieldEntry): FieldType
+    protected function resolveFromFieldEntry(FieldModel $fieldEntry): Field
     {
-        $class = FieldType::resolveClass($fieldEntry->getType());
+        $class = Field::resolveClass($fieldEntry->getType());
 
         return $class::fromEntry($fieldEntry);
     }

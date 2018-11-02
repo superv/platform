@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database;
 
-use SuperV\Platform\Domains\Resource\RelationConfig;
+use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 
 /**
  * Class ColumnDefinition

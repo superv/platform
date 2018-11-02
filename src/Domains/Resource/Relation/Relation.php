@@ -13,7 +13,7 @@ class Relation
     /** @var string */
     protected $name;
 
-    /** @var \SuperV\Platform\Domains\Resource\RelationType */
+    /** @var \SuperV\Platform\Domains\Resource\Relation\RelationType */
     protected $type;
 
     public function getName(): string

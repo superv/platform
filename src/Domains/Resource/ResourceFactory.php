@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
-use SuperV\Platform\Domains\Resource\Field\TypeBuilder;
+use SuperV\Platform\Domains\Resource\Field\Builder;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class ResourceFactory
@@ -21,7 +21,7 @@ class ResourceFactory
 
             if (method_exists($extension, 'fields')) {
                 $fields = sv_collect($extension->fields())->map(function ($field) use ($resource) {
-                    return (new TypeBuilder($resource))->build($field);
+                    return (new Builder($resource))->build($field);
                 });
             }
         }

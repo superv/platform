@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
-use SuperV\Platform\Domains\Resource\Contracts\Fieldable;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Collection;
 
@@ -11,10 +11,7 @@ class FormFields extends Collection
     public function mergeFrom(Resource $resource)
     {
         $fields = $resource->getFields()
-                           ->filter(function ($field) {
-                               return $field instanceof Fieldable;
-                           })
-                           ->map(function (Fieldable $field) {
+                           ->map(function (Field $field) {
                                return $field->build();
                            });
 

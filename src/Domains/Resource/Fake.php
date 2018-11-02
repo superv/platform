@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Faker\Generator;
-use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Field;
 
 class Fake
 {
@@ -31,7 +31,7 @@ class Fake
         $this->faker = app(Generator::class);
 
         return $this->resource->create(
-            $this->resource->getFields()->map(function (FieldType $field) {
+            $this->resource->getFields()->map(function (Field $field) {
                 if ($field->show() && $field->hasColumn()) {
                     return [$field->getColumnName(), $this->fake($field)];
                 }
@@ -39,7 +39,7 @@ class Fake
         );
     }
 
-    protected function fake(FieldType $field)
+    protected function fake(Field $field)
     {
         if ($value = array_get($this->overrides, $field->getColumnName())) {
             return $value;
@@ -51,17 +51,17 @@ class Fake
         return $this->faker->text;
     }
 
-    protected function fakeText(FieldType $field)
+    protected function fakeText(Field $field)
     {
         return $field->getName() === 'name' ? $this->faker->name : $this->faker->text;
     }
 
-    protected function fakeTextarea(FieldType $field)
+    protected function fakeTextarea(Field $field)
     {
         return $this->faker->text;
     }
 
-    protected function fakeNumber(FieldType $field)
+    protected function fakeNumber(Field $field)
     {
         if ($field->getConfigValue('type') === 'decimal') {
             $max = $field->getConfigValue('total', 5) - 2;
@@ -72,17 +72,17 @@ class Fake
         return $field->getName() === 'age' ? $this->faker->numberBetween(10, 99) : $this->faker->randomNumber();
     }
 
-    protected function fakeEmail(FieldType $field)
+    protected function fakeEmail(Field $field)
     {
         return $this->faker->safeEmail;
     }
 
-    protected function fakeBoolean(FieldType $field)
+    protected function fakeBoolean(Field $field)
     {
         return $this->faker->boolean;
     }
 
-    protected function fakeDatetime(FieldType $field)
+    protected function fakeDatetime(Field $field)
     {
         return $field->getConfigValue('time') ? $this->faker->dateTime : $this->faker->date();
     }

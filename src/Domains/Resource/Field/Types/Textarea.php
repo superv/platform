@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Field;
 
-class Textarea extends FieldType
+class Textarea extends Field
 {
     protected $type = 'textarea';
 }

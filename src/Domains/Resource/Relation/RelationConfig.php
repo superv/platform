@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource;
+namespace SuperV\Platform\Domains\Resource\Relation;
 
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -18,7 +18,7 @@ class RelationConfig
     /**
      * Type of the relation
      *
-     * @var \SuperV\Platform\Domains\Resource\RelationType
+     * @var \SuperV\Platform\Domains\Resource\Relation\RelationType
      */
     protected $type;
 

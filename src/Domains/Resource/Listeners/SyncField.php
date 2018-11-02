@@ -6,8 +6,8 @@ use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
@@ -16,7 +16,7 @@ class SyncField
     /** @var \SuperV\Platform\Domains\Resource\ResourceModel */
     protected $resourceEntry;
 
-    /** @var \SuperV\Platform\Domains\Resource\Field\FieldType */
+    /** @var \SuperV\Platform\Domains\Resource\Field\Field */
     protected $fieldType;
 
     public function handle($event)
@@ -34,12 +34,7 @@ class SyncField
             $relation = $column->getRelation();
             $column->ignore();
 
-            if ($relation->type()->isBelongsTo()) {
-                $column->type = 'integer';
-                $relation->relationName(str_replace_last('_id', '', $column->name));
-                $relation->foreignKey($column->name);
-                $column->ignore(false);
-            } elseif ($relation->hasPivotTable()) {
+            if ($relation->hasPivotTable()) {
                 $this->createPivotTable($relation);
             }
 
@@ -98,11 +93,9 @@ class SyncField
             );
         }
 
-        $this->fieldType = FieldType::resolve($column->fieldType);
+        $this->fieldType = Field::resolve($column->fieldType);
         $column->ignore(! $this->fieldType->hasColumn());
-
     }
-
 
     protected function createPivotTable($relation): void
     {
@@ -136,16 +129,14 @@ class SyncField
         }
     }
 
-
     protected function getFieldEntry($fieldName)
     {
         if ($this->resourceEntry->hasField($fieldName)) {
-          return $this->resourceEntry->getField($fieldName);
+            return $this->resourceEntry->getField($fieldName);
         }
 
         return $this->resourceEntry->createField($fieldName);
     }
-
 
     protected function setResourceEntry($event): void
     {

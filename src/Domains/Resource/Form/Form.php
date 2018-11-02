@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Collection;
 
@@ -109,7 +109,7 @@ class Form
      */
     protected function setFieldValues(Request $request): void
     {
-        $this->fields->map(function (FieldType $field) use ($request) {
+        $this->fields->map(function (Field $field) use ($request) {
             $this->callbacks[] = $field->setValueFromRequest($request);
         });
     }

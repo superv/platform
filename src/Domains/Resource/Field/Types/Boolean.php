@@ -3,9 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
-use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Field;
 
-class Boolean extends FieldType
+class Boolean extends Field
 {
     protected $type = 'boolean';
 

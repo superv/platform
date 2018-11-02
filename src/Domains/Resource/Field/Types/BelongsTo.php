@@ -3,15 +3,15 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Field\FieldType;
-use SuperV\Platform\Domains\Resource\RelationConfig;
+use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
-class BelongsTo extends FieldType
+class BelongsTo extends Field
 {
-    /** @var \SuperV\Platform\Domains\Resource\RelationConfig */
+    /** @var \SuperV\Platform\Domains\Resource\Relation\RelationConfig */
     protected $relationConfig;
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */
@@ -25,7 +25,7 @@ class BelongsTo extends FieldType
         return parent::setValue($value);
     }
 
-    public function build(): FieldType
+    public function build(): Field
     {
         $this->buildRelationConfig();
 
