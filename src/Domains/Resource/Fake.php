@@ -32,7 +32,7 @@ class Fake
 
         return $this->resource->create(
             $this->resource->getFields()->map(function (FieldType $field) {
-                if ($field->show()) {
+                if ($field->show() && $field->hasColumn()) {
                     return [$field->getColumnName(), $this->fake($field)];
                 }
             })->filter()->toAssoc()->all()

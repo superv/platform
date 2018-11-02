@@ -58,6 +58,13 @@ abstract class FieldType
      */
     protected $built = false;
 
+    /**
+     * Indicate if field type needs a database column
+     *
+     * @var bool
+     */
+    protected $hasColumn = true;
+
     public function __construct(FieldModel $entry)
     {
         $this->entry = $entry;
@@ -107,6 +114,11 @@ abstract class FieldType
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    public function hasColumn(): bool
+    {
+        return $this->hasColumn;
     }
 
     public function getColumnName(): ?string
@@ -193,6 +205,7 @@ abstract class FieldType
     {
         return $this->setValue($request->__get($this->getColumnName()));
     }
+
     public function resourceExists(): bool
     {
         return $this->resource && $this->resource->getEntryId();
@@ -232,5 +245,21 @@ abstract class FieldType
         $field->hydrate($entry->toArray());
 
         return $field;
+    }
+
+    public static function resolve($type)
+    {
+        $class = static::resolveClass($type);
+
+        return new $class(new FieldModel);
+    }
+    public static function resolveClass($type)
+    {
+        $base = 'SuperV\Platform\Domains\Resource\Field\Types';
+
+        /** @var \SuperV\Platform\Domains\Resource\Field\Types\FieldType $class */
+        $class = $base."\\".studly_case($type);
+
+        return $class;
     }
 }

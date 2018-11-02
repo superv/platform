@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Resource\Field\Types\Boolean;
 use SuperV\Platform\Domains\Resource\Field\Types\Number;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FieldTypeTest extends ResourceTestCase
@@ -41,6 +40,7 @@ class FieldTypeTest extends ResourceTestCase
             $table->date('birthday');
             $table->boolean('employed');
 
+            $table->file('avatar')->config(['test-123']);
             $table->belongsTo('t_groups', 'group');
             $table->hasMany('t_posts', 'posts');
             $table->belongsToMany('t_roles', 'roles', 't_user_roles', 'user_id', 'role_id');
@@ -119,7 +119,7 @@ class FieldTypeTest extends ResourceTestCase
     {
         $groups = Resource::of('t_groups');
         $groups->create(['id' => 100, 'title' => 'Users']);
-        $groups->create(['id' => 110, 'title' => 'Admins']);
+        $adminsGroup = $groups->create(['id' => 110, 'title' => 'Admins']);
 
         $this->assertDatabaseTableHasColumn('t_users', 'group_id');
         $users = Resource::of('t_users');
@@ -138,35 +138,17 @@ class FieldTypeTest extends ResourceTestCase
         $this->assertInstanceOf(BelongsTo::class, $field);
         $this->assertEquals('select', $field->getType());
         $this->assertEquals(100, $field->getValue());
-    }
 
-    function builds()
-    {
-        $userResource = ResourceFactory::make('t_users');
-        $userResource->create(['id' => 3, 'name' => 'Ali']);
-        $userResource->create(['id' => 5, 'name' => 'Veli']);
-
-        $field = $this->resource->getField('user');
-        $builded = $field->build();
-
-        $this->assertEquals('select', $field->getType());
-
-        $this->assertEquals([
-            ['value' => 3, 'text' => 'Ali'],
-            ['value' => 5, 'text' => 'Veli'],
-        ], $builded->getConfigValue('options'));
+        $field->setValue($adminsGroup);
+        $this->assertEquals(110, $field->getValue());
     }
 
     /** @test */
-    function accessor()
+    function type_file()
     {
-        $posts = ResourceFactory::make('t_posts');
-        $entry = $posts->create(['title' => 'Post A', 'user_id' => 9]);
+        $this->assertFalse(in_array('avatar', \Schema::getColumnListing('t_users')));
 
-        $posts->loadEntry($entry->getId())->build();
-
-        $userField = $posts->getField('user');
-
-        $this->assertEquals(9, $userField->getValue());
+        $users = Resource::of('t_users');
+        $users->loadFake();
     }
 }

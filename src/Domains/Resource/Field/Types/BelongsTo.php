@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 use Closure;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\RelationConfig;
+use SuperV\Platform\Domains\Resource\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class BelongsTo extends FieldType
@@ -14,6 +15,14 @@ class BelongsTo extends FieldType
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $relatedResource;
+
+    public function setValue($value): ?Closure
+    {
+        if ($value instanceof ResourceEntryModel) {
+            $value = $value->getId();
+        }
+        return parent::setValue($value);
+    }
 
     public function build(): FieldType
     {

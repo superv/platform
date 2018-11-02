@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
-class FieldRules
+class Rules
 {
     /**
      * @var array
@@ -37,7 +37,7 @@ class FieldRules
         return $rules;
     }
 
-    public static function make(array $rules)
+    public static function make(array $rules): self
     {
         return (new static)->merge($rules);
     }

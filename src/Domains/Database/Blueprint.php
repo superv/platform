@@ -66,7 +66,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         $pivotRelatedKey = null,
         Closure $pivotColumns = null
     ) {
-        return $this->addColumn(null, $relationName, ['ignore' => true, 'nullable' => true])
+        return $this->addColumn(null, $relationName, ['nullable' => true])
                     ->relation(
                         Config::belongsToMany()
                               ->relationName($relationName)
@@ -153,7 +153,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
 
     public function hasMany($related, $relationName, $foreignKey = null, $localKey = null)
     {
-        return $this->addColumn(null, $relationName, ['ignore' => true, 'nullable' => true])
+        return $this->addColumn(null, $relationName, ['nullable' => true])
                     ->relation(
                         Config::hasMany()
                               ->relationName($relationName)
@@ -176,7 +176,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         $pivotRelatedKey = null,
         Closure $pivotColumns = null
     ) {
-        return $this->addColumn(null, $relationName, ['ignore' => true, 'nullable' => true])
+        return $this->addColumn(null, $relationName, ['nullable' => true])
                     ->relation(
                         Config::morphToMany()
                               ->relationName($relationName)

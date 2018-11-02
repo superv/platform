@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Media\MediaOptions;
 
 class File extends FieldType
 {
-    protected $type = 'file';
+    protected $hasColumn = false;
 
     public function getValue()
     {

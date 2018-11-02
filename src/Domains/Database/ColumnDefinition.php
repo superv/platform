@@ -61,9 +61,9 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this->rules;
     }
 
-    public function relation($relation): self
+    public function relation(RelationConfig $relation): self
     {
-        $this->fieldType = 'relation';
+        $this->fieldType = $relation->getType();
         $this->relation = $relation;
 
         return $this;

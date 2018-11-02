@@ -46,8 +46,7 @@ class TypeBuilder
 
     protected function resolveFromFieldEntry(FieldModel $fieldEntry): FieldType
     {
-        /** @var FieldType $class */
-        $class = $this->base."\\".studly_case($fieldEntry->getType());
+        $class = FieldType::resolveClass($fieldEntry->getType());
 
         return $class::fromEntry($fieldEntry);
     }
