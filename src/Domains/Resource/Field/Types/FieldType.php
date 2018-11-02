@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
 use Exception;
+use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceEntryModel;
@@ -188,6 +189,10 @@ abstract class FieldType
         return null;
     }
 
+    public function setValueFromRequest(Request $request)
+    {
+        return $this->setValue($request->__get($this->getColumnName()));
+    }
     public function resourceExists(): bool
     {
         return $this->resource && $this->resource->getEntryId();

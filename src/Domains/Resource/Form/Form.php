@@ -27,29 +27,13 @@ class Form
     protected $method = 'post';
 
     /** @var array */
-    protected $callbacks;
+    protected $callbacks = [];
 
     public function addResource(Resource $resource)
     {
         $this->resources[] = $resource;
     }
 
-    public function post(Request $request)
-    {
-        $this->callbacks = [];
-        $this->fields->map(function (FieldType $field) use ($request) {
-            $this->callbacks[] = $field->setValue($request->__get($field->getName()));
-        });
-
-        sv_collect($this->resources)->map(function (Resource $resource) { $resource->saveEntry(); });
-
-        /**
-         * Apply callbacks should run after the entry is created
-         */
-        collect($this->callbacks)->filter()->map(function (\Closure $callback) {
-            $callback();
-        });
-    }
 
     public function build(): self
     {
@@ -98,6 +82,37 @@ class Form
     public function getMethod(): string
     {
         return $this->method;
+    }
+
+    public function post(Request $request)
+    {
+        $this->setFieldValues($request);
+
+        $this->saveResources();
+
+        $this->applyPostSaveCallbacks();
+    }
+
+    protected function applyPostSaveCallbacks(): void
+    {
+        collect($this->callbacks)->filter()->map(function (\Closure $callback) {
+            $callback();
+        });
+    }
+
+    protected function saveResources(): void
+    {
+        sv_collect($this->resources)->map(function (Resource $resource) { $resource->saveEntry(); });
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     */
+    protected function setFieldValues(Request $request): void
+    {
+        $this->fields->map(function (FieldType $field) use ($request) {
+            $this->callbacks[] = $field->setValueFromRequest($request);
+        });
     }
 
     public static function fromCache($uuid): ?Form

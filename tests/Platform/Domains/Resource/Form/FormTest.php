@@ -86,7 +86,7 @@ class FormTest extends ResourceTestCase
     }
 
     /** @test */
-    function posts_edit_form()
+    function posts_update_form()
     {
         $this->withoutExceptionHandling();
 
@@ -113,6 +113,7 @@ class FormTest extends ResourceTestCase
         $this->assertEquals('Updated Nicola Tesla', $entry->name);
         $this->assertEquals(11, $entry->age);
         $this->assertEquals('Live', $entry->bio);
+        $this->assertEquals(2, $entry->group_id);
     }
 
     protected function makeCreateForm(): Form
