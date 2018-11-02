@@ -15,29 +15,40 @@ class File extends FieldType
         return null;
     }
 
-    public function setValue($requestFile): ?Closure
+    public function getConfig(): array
     {
-        if (! $requestFile) {
-            return null;
+        if ($entry = $this->getResourceEntry()) {
+            $media = $this->makeMediaBag()->media()->where('label', $this->getName())->latest()->first();
+
+            if ($media) {
+                $this->setConfigValue('url', $media->url());
+            }
         }
 
+        return $this->config;
+    }
+
+    public function setValue($requestFile): ?Closure
+    {
         return function () use ($requestFile) {
-            (new MediaBag($this->getResourceEntry(), $this->getName()))
-                ->addFromUploadedFile($requestFile, $this->getConfigAsMediaOptions());
+            if (! $requestFile) {
+                return null;
+            }
+
+            $media = $this->makeMediaBag()
+                          ->addFromUploadedFile($requestFile, $this->getConfigAsMediaOptions());
+
+            if ($media) {
+                $this->setConfigValue('url', $media->url());
+            }
+
+            return $media;
         };
     }
 
-    public function getConfig(): array
+    protected function makeMediaBag(): MediaBag
     {
-        $config = parent::getConfig();
-        if ($entry = $this->getResourceEntry()) {
-            $mediaQuery = (new MediaBag($this->getResourceEntry(), $this->getName()))->media();
-            $media = $mediaQuery->where('label', $this->getName())->latest()->first();
-
-            $media ? $config['url'] = $media->url() : null;
-        }
-
-        return $config;
+        return new MediaBag($this->getResourceEntry(), $this->getName());
     }
 
     protected function getConfigAsMediaOptions()

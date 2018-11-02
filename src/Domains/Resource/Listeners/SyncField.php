@@ -25,24 +25,9 @@ class SyncField
             return;
         }
 
-        if (isset($event->model)) {
-            $resourceEntry = ResourceModel::withModel($event->model);
-        }
-        if (! isset($resourceEntry)) {
-            $resourceEntry = ResourceModel::withSlug($event->table);
-        }
-
-        if (! $resourceEntry) {
-            throw new \Exception("Resource model entry not found for table [{$event->table}]");
-        }
-
-        if ($resourceEntry->hasField($column->name)) {
-            $field = $resourceEntry->getField($column->name);
-        } else {
-            $field = $resourceEntry->createField($column->name);
-        }
-
         $this->mapFieldType($column);
+
+        $field = $this->getFieldEntry($event, $column);
 
         $this->sync($field, $column);
     }
@@ -143,5 +128,33 @@ class SyncField
                     $table->index([$relation->getPivotRelatedKey()], md5(uniqid()));
                 });
         }
+    }
+
+    /**
+     * @param $event
+     * @param $column
+     * @return null|\SuperV\Platform\Domains\Resource\Field\FieldModel
+     * @throws \Exception
+     */
+    protected function getFieldEntry($event, $column)
+    {
+        if (isset($event->model)) {
+            $resourceEntry = ResourceModel::withModel($event->model);
+        }
+        if (! isset($resourceEntry)) {
+            $resourceEntry = ResourceModel::withSlug($event->table);
+        }
+
+        if (! $resourceEntry) {
+            throw new \Exception("Resource model entry not found for table [{$event->table}]");
+        }
+
+        if ($resourceEntry->hasField($column->name)) {
+            $field = $resourceEntry->getField($column->name);
+        } else {
+            $field = $resourceEntry->createField($column->name);
+        }
+
+        return $field;
     }
 }

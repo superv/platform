@@ -50,7 +50,7 @@ class MediaOptions
      * @param string $path
      * @return MediaOptions
      */
-    public function path(string $path)
+    public function path(?string $path)
     {
         $this->path = $path;
 

@@ -54,7 +54,7 @@ class TestCase extends OrchestraTestCase
             $this->artisan('superv:install');
             config([
                 'superv.installed' => true,
-                'jwt.secret' => 'skdjfslkdfj'
+                'jwt.secret'       => 'skdjfslkdfj',
             ]);
 
             $this->handlePostInstallCallbacks();
@@ -138,4 +138,8 @@ class TestCase extends OrchestraTestCase
         });
     }
 
+    protected function basePath($path = null)
+    {
+        return __DIR__.($path ? '/'.$path : '');
+    }
 }
