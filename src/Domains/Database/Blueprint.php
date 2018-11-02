@@ -7,6 +7,7 @@ use Current;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Support\Fluent;
+use SuperV\Modules\Nucleo\Domains\Relation\RelationConfig as Config;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
@@ -28,38 +29,6 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         $this->builder = $builder;
     }
 
-    public function model($model)
-    {
-        $this->builder->setModel($model);
-    }
-
-    public function select($name): ColumnDefinition
-    {
-        return $this->string($name)->fieldType('select');
-    }
-
-    public function email($name)
-    {
-        return $this->string($name)->fieldType('email');
-    }
-
-    public function file($name)
-    {
-        return $this->addColumn(null, $name)->fieldType('file')->ignore();
-    }
-
-    public function hasMany($related, $relation, $foreignKey = null, $localKey = null)
-    {
-        return $this->addColumn(null, $relation)
-                    ->nullable()
-                    ->relation([
-                        'type'        => 'has_many',
-                        'related'     => $related,
-                        'foreign_key' => $foreignKey,
-                        'local_key'   => $localKey,
-                    ]);
-    }
-
     /**
      * Add a new column to the blueprint.
      *
@@ -77,61 +46,47 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         return $column;
     }
 
-    public function nullableBelongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
+    public function belongsToResource($relatedResource, $relationName, $foreignKey = null, $ownerKey = null)
     {
-        return $this->belongsTo($related, $relation, $foreignKey, $ownerKey)->nullable();
+        return $this->addColumn(null, $relationName.'_id')
+                    ->relation(
+                        Config::belongsTo()
+                              ->relationName($relationName)
+                              ->relatedResource($relatedResource)
+                              ->foreignKey($foreignKey)
+                              ->ownerKey($ownerKey)
+                    );
     }
-
-    public function belongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
+    public function belongsTo($relatedModel, $relationName, $foreignKey = null, $ownerKey = null)
     {
-        return $this->addColumn(null, $relation.'_id')//str_replace_last('_id', '', $relation)
-                    ->relation([
-            'type'        => 'belongs_to',
-            'related'     => $related,
-            'foreign_key' => $foreignKey,
-            'owner_key'   => $ownerKey,
-        ]);
+        return $this->addColumn(null, $relationName.'_id')
+                    ->relation(
+                        Config::belongsTo()
+                              ->relationName($relationName)
+                              ->relatedModel($relatedModel)
+                              ->foreignKey($foreignKey)
+                              ->ownerKey($ownerKey)
+                    );
     }
 
     public function belongsToMany(
-        $related,
-        $relation,
+        $relatedModel,
+        $relationName,
         $pivotTable = null,
         $pivotForeignKey = null,
         $pivotRelatedKey = null,
         Closure $pivotColumns = null
     ) {
-        return $this->addColumn(null, $relation)
-                    ->nullable()
-                    ->relation([
-                        'type'              => 'belongs_to_many',
-                        'related'           => $related,
-                        'pivot_table'       => $pivotTable,
-                        'pivot_foreign_key' => $pivotForeignKey,
-                        'pivot_related_key' => $pivotRelatedKey,
-                        'pivot_columns'     => $pivotColumns,
-                    ]);
-    }
-
-    public function morphToMany(
-        $related,
-        $relation,
-        $morphName,
-        $pivotTable = null,
-        $pivotRelatedKey = null,
-        Closure $pivotColumns = null
-    ) {
-        return $this->addColumn(null, $relation)
-                    ->nullable()
-                    ->relation([
-                        'type'              => 'morph_to_many',
-                        'related'           => $related,
-                        'pivot_table'       => $pivotTable,
-                        'pivot_foreign_key' => $morphName.'_id',
-                        'pivot_related_key' => $pivotRelatedKey,
-                        'pivot_columns'     => $pivotColumns,
-                        'morph_name'        => $morphName,
-                    ]);
+        return $this->addColumn(null, $relationName, ['ignore' => true, 'nullable' => true])
+                    ->relation(
+                        Config::belongsToMany()
+                              ->relationName($relationName)
+                              ->relatedModel($relatedModel)
+                              ->pivotTable($pivotTable)
+                              ->pivotForeignKey($pivotForeignKey)
+                              ->pivotRelatedKey($pivotRelatedKey)
+                              ->pivotColumns($pivotColumns)
+                    );
     }
 
     public function build(Connection $connection, Grammar $grammar)
@@ -192,13 +147,71 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         });
     }
 
-    protected function tableName()
+    public function email($name)
     {
-        return $this->table;
+        return $this->string($name)->fieldType('email');
+    }
+
+    public function file($name)
+    {
+        return $this->addColumn(null, $name)->fieldType('file')->ignore();
     }
 
     public function getColumnNames(): array
     {
         return sv_collect($this->getColumns())->pluck('name')->all();
+    }
+
+    public function hasMany($relatedModel, $relationName, $foreignKey = null, $localKey = null)
+    {
+        return $this->addColumn(null, $relationName, ['ignore' => true, 'nullable' => true])
+                    ->relation(
+                        Config::hasMany()
+                              ->relationName($relationName)
+                              ->relatedModel($relatedModel)
+                              ->foreignKey($foreignKey)
+                              ->localKey($localKey)
+                    );
+    }
+
+    public function model($model)
+    {
+        $this->builder->setModel($model);
+    }
+
+    public function morphToMany(
+        $relatedModel,
+        $relationName,
+        $morphName,
+        $pivotTable = null,
+        $pivotRelatedKey = null,
+        Closure $pivotColumns = null
+    ) {
+        return $this->addColumn(null, $relationName, ['ignore' => true, 'nullable' => true])
+                    ->relation(
+                        Config::morphToMany()
+                              ->relationName($relationName)
+                              ->relatedModel($relatedModel)
+                              ->pivotTable($pivotTable)
+                              ->pivotForeignKey($morphName.'_id')
+                              ->pivotRelatedKey($pivotRelatedKey)
+                              ->pivotColumns($pivotColumns)
+                              ->morphName($morphName)
+                    );
+    }
+
+    public function nullableBelongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
+    {
+        return $this->belongsTo($related, $relation, $foreignKey, $ownerKey)->nullable();
+    }
+
+    public function select($name): ColumnDefinition
+    {
+        return $this->string($name)->fieldType('select');
+    }
+
+    protected function tableName()
+    {
+        return $this->table;
     }
 }

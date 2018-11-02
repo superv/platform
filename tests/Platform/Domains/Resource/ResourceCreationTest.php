@@ -95,7 +95,7 @@ class ResourceCreationTest extends ResourceTestCase
 
         $statusField = $resource->getField('status');
         $this->assertEquals('string', $statusField->getColumnType());
-        $this->assertEquals('select', $statusField->getFieldType());
+        $this->assertEquals('select', $statusField->getType());
         $this->assertEquals(['closed' => 'Closed', 'open' => 'Open'], $statusField->getConfigValue('options'));
     }
 

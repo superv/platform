@@ -7,6 +7,7 @@ use Exception;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceEntryModel;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -14,6 +15,7 @@ abstract class FieldType
 {
     use Hydratable;
     use HasConfig;
+    use FiresCallbacks;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\Resource
@@ -65,18 +67,9 @@ abstract class FieldType
         $this->entry = $entry;
     }
 
-    public static function make($name): self
+    public function show()
     {
-        return static::fromEntry(new FieldModel(['name' => $name]));
-    }
-
-    public static function fromEntry(FieldModel $entry): self
-    {
-        $field = new static($entry);
-
-        $field->hydrate($entry->toArray());
-
-        return $field;
+        return true;
     }
 
     public function build(): self
@@ -120,14 +113,11 @@ abstract class FieldType
         return $this->entry->uuid();
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @return mixed
-     */
     public function getLabel()
     {
         return $this->label ?: ucwords(str_replace('_', ' ', $this->name));
@@ -137,18 +127,6 @@ abstract class FieldType
     {
         return $this->type;
     }
-//
-//    public function getConfig(): array
-//    {
-//        return $this->config;
-//    }
-//
-//    public function setConfig(array $config): self
-//    {
-//        $this->config = $config;
-//
-//        return $this;
-//    }
 
     public function getEntry(): ?FieldModel
     {
@@ -191,7 +169,11 @@ abstract class FieldType
 
     public function getValue()
     {
-        if (! $this->getResourceEntry() || ! $this->getResourceEntry()->exists) {
+//        if (! $this->getResourceEntry() || ! $this->getResourceEntry()->exists) {
+//            return null;
+//        }
+
+        if (! $this->resourceExists()) {
             return null;
         }
 
@@ -207,6 +189,11 @@ abstract class FieldType
         ($this->getMutator())($this->getResourceEntry(), $value);
 
         return null;
+    }
+
+    public function resourceExists(): bool
+    {
+        return $this->resource && $this->resource->getEntryId();
     }
 
     public function getResourceEntry(): ?ResourceEntryModel
@@ -231,5 +218,19 @@ abstract class FieldType
         return function (ResourceEntryModel $entry, $value) {
             $entry->setAttribute($this->getName(), $value);
         };
+    }
+
+    public static function make($name): self
+    {
+        return static::fromEntry(new FieldModel(['name' => $name]));
+    }
+
+    public static function fromEntry(FieldModel $entry): self
+    {
+        $field = new static($entry);
+
+        $field->hydrate($entry->toArray());
+
+        return $field;
     }
 }

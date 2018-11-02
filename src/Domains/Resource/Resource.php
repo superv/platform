@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Exception;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\Field\Builder;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
@@ -13,22 +14,44 @@ class Resource
 {
     use Hydratable;
 
+    /**
+     * Database id
+     *
+     * @var int
+     */
+    protected $id;
+
+    /**
+     * Database uuid
+     *
+     * @var string
+     */
     protected $uuid;
 
-    /** @var \Illuminate\Support\Collection */
+    /**
+     * @var \Illuminate\Support\Collection
+     */
     protected $fields;
 
-    /** @var \SuperV\Platform\Domains\Resource\ResourceEntryModel */
+    /**
+     * @var \SuperV\Platform\Domains\Resource\ResourceEntryModel
+     */
     protected $entry;
 
     protected $entryId;
+
+    protected $titleFieldId;
 
     protected $model;
 
     protected $slug;
 
-    /** @var boolean */
+    /**
+     * @var boolean
+     */
     protected $built = false;
+
+    protected static $extensionMap = [];
 
     public function build()
     {
@@ -37,7 +60,11 @@ class Resource
         }
 
         $this->fields = $this->fields
-            ->map(function (FieldModel $field) {
+            ->map(function ($field) {
+                if ($field instanceof FieldType) {
+                    return $field;
+                }
+
                 return (new Builder($this))->build($field);
             });
 
@@ -81,14 +108,21 @@ class Resource
         return $model;
     }
 
+    public function create(array $attributes = []): EntryModelV2
+    {
+        return $this->resolveModel()->create($attributes);
+    }
+
     public function getSlug()
     {
         return $this->slug;
     }
 
-    public function loadEntry($entryId)
+    public function loadEntry($entryId): self
     {
-        return $this->entry = $this->resolveModel()->newQuery()->find($entryId);
+        $this->entry = $this->resolveModel()->newQuery()->find($entryId);
+
+        return $this;
     }
 
     public function saveEntry()
@@ -148,7 +182,12 @@ class Resource
         return $this->built;
     }
 
-    public function uuid()
+    public function id(): int
+    {
+        return $this->id;
+    }
+
+    public function uuid(): string
     {
         return $this->uuid;
     }
@@ -157,12 +196,11 @@ class Resource
     {
         $base = 'sv/resources/'.$this->getSlug();
         if ($route === 'edit') {
-            return $base . '/'.$this->getEntryId(). '/edit';
+            return $base.'/'.$this->getEntryId().'/edit';
         }
         if ($route === 'create') {
-            return $base . '/create';
+            return $base.'/create';
         }
-
     }
 
     public function __sleep()
@@ -181,5 +219,20 @@ class Resource
         } else {
             $this->entry = $this->resolveModel();
         }
+    }
+
+    public function getTitleFieldId()
+    {
+        return $this->titleFieldId;
+    }
+
+    public static function extend($slug, $extension)
+    {
+        static::$extensionMap[$slug] = $extension;
+    }
+
+    public static function extension($slug)
+    {
+        return static::$extensionMap[$slug] ?? null;
     }
 }

@@ -2,9 +2,8 @@
 
 namespace SuperV\Platform\Domains\Database;
 
-/**
+use SuperV\Modules\Nucleo\Domains\Relation\RelationConfig;/**
  * Class ColumnDefinition
- *
  * @method ColumnDefinition nullable($value = true) Allow NULL values to be inserted into the column
  *  @method ColumnDefinition ignore($value = true)
  *  @method ColumnDefinition fieldType($type)
@@ -60,7 +59,7 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this->rules;
     }
 
-    public function relation(array $relation): self
+    public function relation($relation): self
     {
         $this->fieldType = 'relation';
         $this->relation = $relation;
@@ -68,7 +67,7 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this;
     }
 
-    public function getRelation()
+    public function getRelation(): RelationConfig
     {
         return $this->relation;
     }

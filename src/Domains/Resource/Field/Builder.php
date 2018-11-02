@@ -39,13 +39,15 @@ class Builder
 
     protected function resolveFromString($name)
     {
-        return $this->resolveFromFieldEntry($this->resource->getFieldEntry($name));
+        $fieldEntry = FieldModel::query()->where('name', $name)->where('resource_id', $this->resource->id())->first();
+
+        return $this->resolveFromFieldEntry($fieldEntry);
     }
 
     protected function resolveFromFieldEntry(FieldModel $fieldEntry): FieldType
     {
         /** @var FieldType $class */
-        $class = $this->base."\\".studly_case($fieldEntry->getFieldType().'_field');
+        $class = $this->base."\\".studly_case($fieldEntry->getType().'_field');
 
         return $class::fromEntry($fieldEntry);
     }

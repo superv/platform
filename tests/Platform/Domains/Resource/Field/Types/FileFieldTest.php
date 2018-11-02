@@ -12,7 +12,6 @@ class FileFieldTest extends ResourceTestCase
     /** @test */
     function creates_field_from_migration()
     {
-
         Schema::create('test_companies', function (Blueprint $table) {
             $table->string('name');
             $table->file('logo')->config(['*config*']);

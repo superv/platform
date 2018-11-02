@@ -7,14 +7,13 @@ use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
-class FieldModel extends Model
+class FieldModel extends EntryModelV2
 {
     protected $table = 'sv_resource_fields';
-
-    protected $guarded = [];
 
     protected $casts = [
         'rules'      => 'array',
@@ -62,18 +61,18 @@ class FieldModel extends Model
     protected function mapColumn(ColumnDefinition $column): void
     {
         if ($fieldType = $column->getFieldType()) {
-            $this->field_type = $fieldType;
             $this->rules = $column->rules;
 
             if ($fieldType === 'relation') {
-                $this->config = $this->makeRelationConfig($column);
+                $this->makeRelationConfig($column);
             } else {
+                $this->type = $fieldType;
                 $this->config = $column->config;
             }
         } else {
             $mapper = ColumnFieldMapper::for($column->type)->map($column->parameters);
 
-            $this->field_type = $mapper->getFieldType();
+            $this->type = $mapper->getFieldType();
             $this->rules = array_merge($column->getRules(), $mapper->getRules());
             $this->config = array_merge($column->getConfig(), $mapper->getConfig());
         }
@@ -82,47 +81,47 @@ class FieldModel extends Model
     protected function makeRelationConfig(ColumnDefinition $column)
     {
         $relation = $column->getRelation();
+        $this->type = $relation->getType();
 
-        if ($relation['type'] === 'belongs_to') {
+        if ($relation->type()->isBelongsTo()) {
             $column->type = 'integer';
             $this->name = str_replace_last('_id', '', $column->name);
-            $relation = array_merge($relation, ['foreign_key' => $column->name]);
-        } elseif (in_array($relation['type'], ['belongs_to_many', 'morph_to_many'])) {
-            if ($pivotColumnsCallback = array_get($relation, 'pivot_columns')) {
+
+            $relation->foreignKey($column->name);
+
+        } elseif ($relation->hasPivotTable()) {
+            if ($pivotColumnsCallback = $relation->getPivotColumns()) {
                 $pivotColumnsCallback($table = new Blueprint(''));
-                $relation['pivot_columns'] = $table->getColumnNames();
+                $relation->pivotColumns($table->getColumnNames());
             }
-            $pivotTable = $relation['pivot_table'];
-            if (! \Schema::hasTable($pivotTable)) {
+
+            if (! \Schema::hasTable($relation->getPivotTable())) {
                 Schema::create(
-                    $pivotTable,
+                    $relation->getPivotTable(),
                     function (Blueprint $table) use ($relation, $pivotColumnsCallback) {
                         $table->increments('id');
 
-                        if ($relation['type'] === 'morph_to_many') {
-                            $table->morphs($relation['morph_name']);
+                        if ($relation->type()->isMorphToMany()) {
+                            $table->morphs($relation->getMorphName());
                         } else {
-                            $table->unsignedBigInteger($relation['pivot_foreign_key']);
+                            $table->unsignedBigInteger($relation->getPivotForeignKey());
                         }
 
-                        $table->unsignedBigInteger($relation['pivot_related_key']);
+                        $table->unsignedBigInteger($relation->getPivotRelatedKey());
 
                         if ($pivotColumnsCallback) {
                             $pivotColumnsCallback($table);
                         }
 
                         $table->timestamps();
-                        $table->index([$relation['pivot_foreign_key']], md5(uniqid()));
-                        $table->index([$relation['pivot_related_key']], md5(uniqid()));
+                        $table->index([$relation->getPivotForeignKey()], md5(uniqid()));
+                        $table->index([$relation->getPivotRelatedKey()], md5(uniqid()));
                     });
             }
         }
 
-        if (in_array($relation['type'], ['belongs_to_many', 'morph_to_many', 'has_many'])) {
-            $column->ignore();
-        }
+        $this->config = $relation->toArray();
 
-        return $relation;
     }
 
     public function setDefaultValue($value)
@@ -160,9 +159,9 @@ class FieldModel extends Model
         return $this->column_type;
     }
 
-    public function getFieldType()
+    public function getType()
     {
-        return $this->field_type;
+        return $this->type;
     }
 
     public function isSearchable(): bool

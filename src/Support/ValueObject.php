@@ -18,4 +18,9 @@ abstract class ValueObject
     {
         return $this->value === $another->value;
     }
+
+    public function __toString()
+    {
+        return $this->value;
+    }
 }

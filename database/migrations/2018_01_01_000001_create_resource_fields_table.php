@@ -14,7 +14,7 @@ class CreateResourceFieldsTable extends Migration
 
             $table->string('name');
             $table->string('column_type')->nullable();
-            $table->string('field_type');
+            $table->string('type');
             $table->boolean('required');
             $table->boolean('unique');
             $table->boolean('searchable');

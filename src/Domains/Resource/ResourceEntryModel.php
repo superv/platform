@@ -2,22 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
-use Illuminate\Database\Eloquent\Model;
+use SuperV\Platform\Domains\Entry\EntryModelV2;
 
-class ResourceEntryModel extends Model
+class ResourceEntryModel extends EntryModelV2
 {
-    protected $guarded = [];
-//
-//    /**
-//     * Create a new Eloquent model instance.
-//     *
-//     * @param  array  $attributes
-//     * @return void
-//     */
-//    public function __construct(array $attributes = [], $table)
-//    {
-//        $this->table = $table;
-//
-//        parent::__construct($attributes);
-//    }
 }

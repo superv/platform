@@ -21,10 +21,10 @@ trait Hydratable
 
             if (method_exists($this, $method = camel_case('set_'.$parameter))) {
                 $this->{$method}($value);
-            } else {
-                if (property_exists($this, $parameter)) {
-                    $this->$parameter = $value;
-                }
+            } elseif (property_exists($this, $parameter)) {
+                $this->$parameter = $value;
+            } elseif (property_exists($this, $camelCaseParameter = camel_case($parameter))) {
+                $this->$camelCaseParameter = $value;
             }
         }
 

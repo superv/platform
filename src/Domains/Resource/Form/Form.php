@@ -29,15 +29,6 @@ class Form
     /** @var array */
     protected $callbacks;
 
-    public static function fromCache($uuid): ?Form
-    {
-        if ($form = cache('sv:forms:'.$uuid)) {
-            return unserialize($form);
-        }
-
-        return null;
-    }
-
     public function addResource(Resource $resource)
     {
         $this->resources[] = $resource;
@@ -70,6 +61,9 @@ class Form
         foreach ($this->resources as $resource) {
             $this->fields = $this->fields->merge(
                 $resource->getFields()
+                         ->filter(function (FieldType $field) {
+                             return $field->show();
+                         })
                          ->map(function (FieldType $field) {
                              return $field->build();
                          })
@@ -112,5 +106,14 @@ class Form
     public function getMethod(): string
     {
         return $this->method;
+    }
+
+    public static function fromCache($uuid): ?Form
+    {
+        if ($form = cache('sv:forms:'.$uuid)) {
+            return unserialize($form);
+        }
+
+        return null;
     }
 }

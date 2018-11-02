@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
-use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class SyncField
