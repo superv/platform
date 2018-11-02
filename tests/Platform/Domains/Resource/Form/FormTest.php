@@ -143,7 +143,7 @@ class FormTest extends ResourceTestCase
             $table->integer('age');
             $table->text('bio');
 
-            $table->belongsToResource('test_groups', 'group')->nullable();
+            $table->belongsTo('test_groups', 'group')->nullable();
         });
         $this->resource = ResourceFactory::make('test_users');
         $this->resource->build();

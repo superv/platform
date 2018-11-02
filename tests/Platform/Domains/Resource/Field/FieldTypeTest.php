@@ -49,7 +49,7 @@ class FieldTypeTest extends ResourceTestCase
         Schema::create('t_posts', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
-            $table->belongsToResource('t_users', 'user', 'user_id', 'post_id');
+            $table->belongsTo('t_users', 'user', 'user_id', 'post_id');
         });
 
         $this->resource = Resource::of('t_posts');
@@ -117,18 +117,28 @@ class FieldTypeTest extends ResourceTestCase
     /** @test */
     function type_belongs_to()
     {
-        $this->assertDatabaseTableHasColumn('t_users', 'group_id');
-        $resource = Resource::of('t_users');
+        $groups = Resource::of('t_groups');
+        $groups->create(['id' => 100, 'title' => 'Users']);
+        $groups->create(['id' => 110, 'title' => 'Admins']);
 
-        $field = $resource->getField('group');
-        $field->setResource($resource->loadFake(['group_id' => 123]));
+        $this->assertDatabaseTableHasColumn('t_users', 'group_id');
+        $users = Resource::of('t_users');
+        $users->loadFake(['group_id' => 100]);
+
+        $field = $users->getField('group');
+        $field->build();
+
+        $this->assertTrue($field->isBuilt());
+
+        $this->assertEquals([
+            ['value' => 100, 'text' => 'Users'],
+            ['value' => 110, 'text' => 'Admins'],
+        ], $field->getConfigValue('options'));
 
         $this->assertInstanceOf(BelongsTo::class, $field);
         $this->assertEquals('select', $field->getType());
-
-        $this->assertEquals(123, $field->getValue());
+        $this->assertEquals(100, $field->getValue());
     }
-
 
     function builds()
     {

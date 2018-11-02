@@ -1,0 +1,64 @@
+<?php
+
+namespace SuperV\Platform\Domains\Resource;
+
+use SuperV\Platform\Support\ValueObject;
+
+class RelationType extends ValueObject
+{
+    private const HAS_MANY = 'has_many';
+    private const HAS_ONE = 'has_one';
+    private const BELONGS_TO = 'belongs_to';
+    private const BELONGS_TO_MANY = 'belongs_to_many';
+    private const MORPH_TO_MANY = 'morph_to_many';
+
+    public function isBelongsTo(): bool
+    {
+        return $this->equals(static::belongsTo());
+    }
+
+    public function isBelongsToMany(): bool
+    {
+        return $this->equals(static::belongsToMany());
+    }
+
+    public function isHasMany(): bool
+    {
+        return $this->equals(static::hasMany());
+    }
+
+    public function isHasOne(): bool
+    {
+        return $this->equals(static::hasOne());
+    }
+
+    public function isMorphToMany(): bool
+    {
+        return $this->equals(static::morphToMany());
+    }
+
+    public static function hasOne(): self
+    {
+        return new static(self::HAS_ONE);
+    }
+
+    public static function hasMany(): self
+    {
+        return new static(self::HAS_MANY);
+    }
+
+    public static function belongsTo(): self
+    {
+        return new static(self::BELONGS_TO);
+    }
+
+    public static function belongsToMany(): self
+    {
+        return new static(self::BELONGS_TO_MANY);
+    }
+
+    public static function morphToMany(): self
+    {
+        return new static(self::MORPH_TO_MANY);
+    }
+}

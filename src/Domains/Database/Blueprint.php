@@ -7,13 +7,13 @@ use Current;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Support\Fluent;
-use SuperV\Modules\Nucleo\Domains\Relation\RelationConfig as Config;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Events\TableDroppedEvent;
+use SuperV\Platform\Domains\Resource\RelationConfig as Config;
 
 class Blueprint extends \Illuminate\Database\Schema\Blueprint
 {
@@ -46,31 +46,20 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         return $column;
     }
 
-    public function belongsToResource($relatedResource, $relationName, $foreignKey = null, $ownerKey = null)
+    public function belongsTo($related, $relationName, $foreignKey = null, $ownerKey = null)
     {
         return $this->addColumn(null, $relationName.'_id')
                     ->relation(
                         Config::belongsTo()
                               ->relationName($relationName)
-                              ->relatedResource($relatedResource)
-                              ->foreignKey($foreignKey)
-                              ->ownerKey($ownerKey)
-                    );
-    }
-    public function belongsTo($relatedModel, $relationName, $foreignKey = null, $ownerKey = null)
-    {
-        return $this->addColumn(null, $relationName.'_id')
-                    ->relation(
-                        Config::belongsTo()
-                              ->relationName($relationName)
-                              ->relatedModel($relatedModel)
+                              ->related($related)
                               ->foreignKey($foreignKey)
                               ->ownerKey($ownerKey)
                     );
     }
 
     public function belongsToMany(
-        $relatedModel,
+        $related,
         $relationName,
         $pivotTable = null,
         $pivotForeignKey = null,
@@ -81,7 +70,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                     ->relation(
                         Config::belongsToMany()
                               ->relationName($relationName)
-                              ->relatedModel($relatedModel)
+                              ->related($related)
                               ->pivotTable($pivotTable)
                               ->pivotForeignKey($pivotForeignKey)
                               ->pivotRelatedKey($pivotRelatedKey)
@@ -162,13 +151,13 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         return sv_collect($this->getColumns())->pluck('name')->all();
     }
 
-    public function hasMany($relatedModel, $relationName, $foreignKey = null, $localKey = null)
+    public function hasMany($related, $relationName, $foreignKey = null, $localKey = null)
     {
         return $this->addColumn(null, $relationName, ['ignore' => true, 'nullable' => true])
                     ->relation(
                         Config::hasMany()
                               ->relationName($relationName)
-                              ->relatedModel($relatedModel)
+                              ->related($related)
                               ->foreignKey($foreignKey)
                               ->localKey($localKey)
                     );
@@ -180,7 +169,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
     }
 
     public function morphToMany(
-        $relatedModel,
+        $related,
         $relationName,
         $morphName,
         $pivotTable = null,
@@ -191,7 +180,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                     ->relation(
                         Config::morphToMany()
                               ->relationName($relationName)
-                              ->relatedModel($relatedModel)
+                              ->related($related)
                               ->pivotTable($pivotTable)
                               ->pivotForeignKey($morphName.'_id')
                               ->pivotRelatedKey($pivotRelatedKey)

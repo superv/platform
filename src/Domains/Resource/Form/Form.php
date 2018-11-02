@@ -34,7 +34,6 @@ class Form
         $this->resources[] = $resource;
     }
 
-
     public function build(): self
     {
         $this->uuid = Str::uuid();

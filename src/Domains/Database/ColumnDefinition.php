@@ -2,7 +2,9 @@
 
 namespace SuperV\Platform\Domains\Database;
 
-use SuperV\Modules\Nucleo\Domains\Relation\RelationConfig;/**
+use SuperV\Platform\Domains\Resource\RelationConfig;
+
+/**
  * Class ColumnDefinition
  * @method ColumnDefinition nullable($value = true) Allow NULL values to be inserted into the column
  *  @method ColumnDefinition ignore($value = true)

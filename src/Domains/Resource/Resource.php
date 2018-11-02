@@ -113,6 +113,13 @@ class Resource
         return $this->resolveModel()->create($attributes);
     }
 
+    public function createAndLoad(array $attributes = [])
+    {
+        $this->entry = $this->create($attributes);
+
+        return $this;
+    }
+
     public function createFake(array $overrides = []): ResourceEntryModel
     {
         return Fake::create($this, $overrides);

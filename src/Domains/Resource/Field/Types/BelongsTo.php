@@ -3,13 +3,13 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
-use SuperV\Modules\Nucleo\Domains\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class BelongsTo extends FieldType
 {
-    /** @var \SuperV\Modules\Nucleo\Domains\Relation\RelationConfig */
+    /** @var \SuperV\Platform\Domains\Resource\RelationConfig */
     protected $relationConfig;
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */
