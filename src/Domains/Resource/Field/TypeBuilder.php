@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Contracts\HasResource;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class TypeBuilder
@@ -32,7 +32,9 @@ class TypeBuilder
             $field = $this->resolveFromFieldEntry($field);
         }
 
-        $field->setResource($this->resource);
+        if ($field instanceof HasResource) {
+            $field->setResource($this->resource);
+        }
 
         return $field;
     }

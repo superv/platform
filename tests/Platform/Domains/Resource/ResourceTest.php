@@ -5,10 +5,10 @@ namespace Tests\Platform\Domains\Resource;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Resource\Field\FieldConfig;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Types\Number;
-use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
+use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 

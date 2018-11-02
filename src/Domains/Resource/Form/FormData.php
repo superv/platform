@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class FormData
 {

@@ -4,10 +4,10 @@ namespace Tests\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
-use SuperV\Platform\Domains\Resource\Field\TypeBuilder;
 use SuperV\Platform\Domains\Resource\Field\FieldConfig;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Field\TypeBuilder;
 use SuperV\Platform\Domains\Resource\Field\Types\Select;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\ResourceFactory;

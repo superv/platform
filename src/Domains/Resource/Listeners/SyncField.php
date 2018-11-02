@@ -7,13 +7,13 @@ use SuperV\Platform\Domains\Database\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Rules;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class SyncField
 {
-    /** @var \SuperV\Platform\Domains\Resource\Field\Types\FieldType */
+    /** @var \SuperV\Platform\Domains\Resource\Field\FieldType */
     protected $fieldType;
 
     public function handle($event)

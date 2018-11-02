@@ -1,18 +1,19 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types;
+namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Contracts\Fieldable;
+use SuperV\Platform\Domains\Resource\Contracts\HasResource;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceEntryModel;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-abstract class FieldType
+abstract class FieldType implements HasResource, Fieldable
 {
     use Hydratable;
     use HasConfig;
@@ -75,7 +76,7 @@ abstract class FieldType
         return true;
     }
 
-    public function build(): self
+    public function build()
     {
         if ($this->isBuilt()) {
             throw new Exception('Field is already built');
@@ -146,12 +147,12 @@ abstract class FieldType
         $this->config = array_merge($this->config, $config);
     }
 
-    public function getResource(): Resource
+    public function getResource(): ?Resource
     {
         return $this->resource;
     }
 
-    public function setResource(Resource $resource): self
+    public function setResource(Resource $resource)
     {
         $this->resource = $resource;
 

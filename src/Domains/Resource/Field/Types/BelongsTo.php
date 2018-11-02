@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\ResourceFactory;

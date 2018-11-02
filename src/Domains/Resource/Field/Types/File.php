@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 use Closure;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class File extends FieldType
 {

@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Collection;
 

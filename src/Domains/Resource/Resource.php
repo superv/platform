@@ -6,8 +6,8 @@ use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Field\TypeBuilder;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class Resource

@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Faker\Generator;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class Fake
 {

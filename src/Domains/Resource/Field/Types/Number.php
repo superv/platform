@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class Number extends FieldType
 {
