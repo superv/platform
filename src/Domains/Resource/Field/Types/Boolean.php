@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Resource\ResourceEntryModel;
 
-class BooleanField extends FieldType
+class Boolean extends FieldType
 {
     protected $type = 'boolean';
 

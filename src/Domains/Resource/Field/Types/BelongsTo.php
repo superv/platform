@@ -7,10 +7,8 @@ use SuperV\Modules\Nucleo\Domains\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
-class BelongsToField extends FieldType
+class BelongsTo extends FieldType
 {
-
-
     /** @var \SuperV\Modules\Nucleo\Domains\Relation\RelationConfig */
     protected $relationConfig;
 
@@ -25,7 +23,8 @@ class BelongsToField extends FieldType
     public function getValue()
     {
         if ($this->resourceExists()) {
-            return $this->getResourceEntry()->getAttribute($this->getName().'_id');
+            $value = $this->getResourceEntry()->getAttribute($this->getName().'_id');
+            return (int)$value;
         }
     }
 

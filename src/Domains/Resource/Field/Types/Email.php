@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-class EmailField extends FieldType
+class Email extends FieldType
 {
     protected $type = 'email';
 }

@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-class BelongsToManyField extends FieldType
+class BelongsToMany extends FieldType
 {
     public function show()
     {

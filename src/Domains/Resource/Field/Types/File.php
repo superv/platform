@@ -6,7 +6,7 @@ use Closure;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 
-class FileField extends FieldType
+class File extends FieldType
 {
     protected $type = 'file';
 

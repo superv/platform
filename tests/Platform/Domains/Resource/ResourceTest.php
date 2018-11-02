@@ -6,9 +6,9 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Resource\Field\FieldConfig;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Field\Types\NumberField;
-use SuperV\Platform\Domains\Resource\Field\Types\TextareaField;
-use SuperV\Platform\Domains\Resource\Field\Types\TextField;
+use SuperV\Platform\Domains\Resource\Field\Types\Number;
+use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
+use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
@@ -41,9 +41,9 @@ class ResourceTest extends ResourceTestCase
         $this->assertTrue($resource->isBuilt());
 
         $this->assertEquals([
-            ['class' => TextField::class, 'value' => 'Name'],
-            ['class' => NumberField::class, 'value' => 99],
-            ['class' => TextareaField::class, 'value' => 'Bio'],
+            ['class' => Text::class, 'value' => 'Name'],
+            ['class' => Number::class, 'value' => 99],
+            ['class' => Textarea::class, 'value' => 'Bio'],
         ], $this->getFields($resource));
     }
 
@@ -73,8 +73,8 @@ class ResourceTest extends ResourceTestCase
 
         $this->assertEquals(3, $resource->getFields()->count());
 
-        $this->assertInstanceOf(TextField::class, $resource->getField('name'));
-        $this->assertInstanceOf(TextareaField::class, $resource->getField('bio'));
+        $this->assertInstanceOf(Text::class, $resource->getField('name'));
+        $this->assertInstanceOf(Textarea::class, $resource->getField('bio'));
 
         $this->assertEquals(['min:18', 'max:50'], $resource->getField('age')->getRules());
     }
@@ -101,7 +101,7 @@ class TestUserResource
         return [
             'name',
             FieldConfig::field('age')->rules(['min:18', 'max:50']),
-            TextareaField::make('bio')
+            Textarea::make('bio')
         ];
     }
 }

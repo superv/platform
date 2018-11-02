@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-class NumberField extends FieldType
+class Number extends FieldType
 {
     protected $type = 'number';
 }

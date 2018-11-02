@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
-use SuperV\Platform\Domains\Resource\Field\Types\SelectField;
+use SuperV\Platform\Domains\Resource\Field\Types\Select;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -20,7 +20,7 @@ class BelongsToFieldTest extends ResourceTestCase
 
         $userField = $this->resource->getField('user');
         $this->assertNotNull($userField);
-        $this->assertEquals('belongs_to', $userField->getType());
+        $this->assertEquals('select', $userField->getType());
 
         $this->assertEquals([
             'related_resource' => 'test_users',

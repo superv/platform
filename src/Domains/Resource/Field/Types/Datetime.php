@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-class TextField extends FieldType
+class Datetime extends FieldType
 {
-    protected $type = 'text';
+    protected $type = 'datetime';
 }

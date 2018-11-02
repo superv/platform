@@ -8,8 +8,8 @@ use SuperV\Platform\Domains\Resource\Field\Builder;
 use SuperV\Platform\Domains\Resource\Field\FieldConfig;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Field\Types\SelectField;
-use SuperV\Platform\Domains\Resource\Field\Types\TextField;
+use SuperV\Platform\Domains\Resource\Field\Types\Select;
+use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -41,7 +41,7 @@ class FieldTest extends ResourceTestCase
         $builder = new Builder($this->resource);
         $field = $builder->build('name');
 
-        $this->assertInstanceOf(TextField::class, $field);
+        $this->assertInstanceOf(Text::class, $field);
         $this->assertEquals('name', $field->getName());
         $this->assertEquals('text', $field->getType());
         $this->assertEquals($this->resource, $field->getResource());
@@ -55,7 +55,7 @@ class FieldTest extends ResourceTestCase
         $builder = new Builder($this->resource);
         $field = $builder->build($fieldEntry);
 
-        $this->assertInstanceOf(TextField::class, $field);
+        $this->assertInstanceOf(Text::class, $field);
         $this->assertEquals('name', $field->getName());
         $this->assertEquals('text', $field->getType());
         $this->assertEquals($this->resource, $field->getResource());
@@ -65,9 +65,9 @@ class FieldTest extends ResourceTestCase
     function builds_from_instance()
     {
         $builder = new Builder($this->resource);
-        $field = $builder->build(SelectField::make('gender'));
+        $field = $builder->build(Select::make('gender'));
 
-        $this->assertInstanceOf(SelectField::class, $field);
+        $this->assertInstanceOf(Select::class, $field);
         $this->assertEquals('gender', $field->getName());
         $this->assertEquals('select', $field->getType());
         $this->assertEquals($this->resource, $field->getResource());
@@ -83,7 +83,7 @@ class FieldTest extends ResourceTestCase
                        ->config(['foo' => 'bar'])
         );
 
-        $this->assertInstanceOf(TextField::class, $field);
+        $this->assertInstanceOf(Text::class, $field);
         $this->assertEquals(['min:10'], $field->getRules());
         $this->assertEquals(['foo' => 'bar'], $field->getConfig());
         $this->assertEquals($this->resource, $field->getResource());
