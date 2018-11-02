@@ -43,6 +43,11 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this->fieldType;
     }
 
+    public function getFieldName()
+    {
+        return $this->fieldName ?? $this->name;
+    }
+
     public function getConfig()
     {
         return $this->config ?? [];

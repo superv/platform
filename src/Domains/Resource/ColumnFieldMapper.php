@@ -16,7 +16,7 @@ class ColumnFieldMapper
 
     protected $rules = [];
 
-    public static function for($columnType): self
+    public static function for(string $columnType): self
     {
         return (new static())->setColumnType($columnType);
     }
@@ -151,6 +151,10 @@ class ColumnFieldMapper
     {
         $this->fieldType = 'datetime';
         $this->setConfigValue('time', true);
+    }
+
+    protected function mapBelongsTo() {
+
     }
 
     /**

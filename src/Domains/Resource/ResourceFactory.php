@@ -27,7 +27,7 @@ class ResourceFactory
         }
 
         $resource->setFields($fields ?? $modelEntry->getFields());
-
+        $resource->setRelations($modelEntry->getResourceRelations());
         return $resource;
     }
 }

@@ -8,6 +8,8 @@ use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Field\TypeBuilder;
+use SuperV\Platform\Domains\Resource\Relation\Builder as RelationBuilder;
+use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class Resource
@@ -32,6 +34,11 @@ class Resource
      * @var \Illuminate\Support\Collection
      */
     protected $fields;
+
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $relations;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\ResourceEntryModel
@@ -66,6 +73,15 @@ class Resource
                 }
 
                 return (new TypeBuilder($this))->build($field);
+            });
+
+        $this->relations = $this->relations
+            ->map(function ($relation) {
+                if ($relation instanceof Relation) {
+                    return $relation;
+                }
+
+                return (new RelationBuilder($this))->build($relation);
             });
 
         $this->built = true;
@@ -188,22 +204,35 @@ class Resource
 
     public function getField($name): ?FieldType
     {
-        $this->checkState();
+        $this->ensureBuilt();
 
         return $this->fields->first(function (FieldType $field) use ($name) { return $field->getName() === $name; });
     }
 
-    public function checkState()
+    public function setRelations(Collection $relations): self
+    {
+        $this->relations = $relations;
+
+        return $this;
+    }
+
+    public function getRelation($name)
+    {
+        $this->ensureBuilt();
+
+        return $this->relations->first(function (Relation $relation) use ($name) {
+            return $relation->getName() === $name;
+        });
+    }
+
+    public function ensureBuilt()
     {
         if (! $this->isBuilt()) {
             throw new Exception('Resource is not built yet');
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isBuilt()
+    public function isBuilt(): bool
     {
         return $this->built;
     }

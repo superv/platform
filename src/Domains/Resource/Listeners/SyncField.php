@@ -13,6 +13,9 @@ use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class SyncField
 {
+    /** @var \SuperV\Platform\Domains\Resource\ResourceModel */
+    protected $resourceEntry;
+
     /** @var \SuperV\Platform\Domains\Resource\Field\FieldType */
     protected $fieldType;
 
@@ -25,9 +28,33 @@ class SyncField
             return;
         }
 
+        $this->setResourceEntry($event);
+
+        if ($column->relation) {
+            $relation = $column->getRelation();
+            $column->ignore();
+
+            if ($relation->type()->isBelongsTo()) {
+                $column->type = 'integer';
+                $relation->relationName(str_replace_last('_id', '', $column->name));
+                $relation->foreignKey($column->name);
+                $column->ignore(false);
+            } elseif ($relation->hasPivotTable()) {
+                $this->createPivotTable($relation);
+            }
+
+            $this->resourceEntry->resourceRelations()->create([
+                'name'   => $relation->getName(),
+                'type'   => $relation->getType(),
+                'config' => $relation->toArray(),
+            ]);
+
+            return;
+        }
+
         $this->mapFieldType($column);
 
-        $field = $this->getFieldEntry($event, $column);
+        $field = $this->getFieldEntry($column->getFieldName());
 
         $this->sync($field, $column);
     }
@@ -40,12 +67,8 @@ class SyncField
         $field->unique = $column->isUnique();
         $field->searchable = $column->isSearchable();
 
-        if ($column->relation) {
-            $this->makeRelationConfig($field, $column);
-        } else {
-            $field->config = $column->config;
-            $field->rules = Rules::make($column->getRules())->get();
-        }
+        $field->config = $column->config;
+        $field->rules = Rules::make($column->getRules())->get();
 
         $field->setDefaultValue($column->getDefaultValue());
 
@@ -54,22 +77,6 @@ class SyncField
         if ($column->isTitleColumn()) {
             $field->getResourceEntry()->update(['title_field_id' => $field->getKey()]);
         }
-    }
-
-    protected function makeRelationConfig(FieldModel $field, ColumnDefinition $column)
-    {
-        $relation = $column->getRelation();
-
-        if ($relation->type()->isBelongsTo()) {
-            $column->type = 'integer';
-            $field->name = str_replace_last('_id', '', $column->name);
-
-            $relation->foreignKey($column->name);
-        } elseif ($relation->hasPivotTable()) {
-            $this->createPivotTable($relation);
-        }
-
-        $field->config = $relation->toArray();
     }
 
     /**
@@ -93,11 +100,10 @@ class SyncField
 
         $this->fieldType = FieldType::resolve($column->fieldType);
         $column->ignore(! $this->fieldType->hasColumn());
+
     }
 
-    /**
-     * @param $relation
-     */
+
     protected function createPivotTable($relation): void
     {
         if ($pivotColumnsCallback = $relation->getPivotColumns()) {
@@ -130,13 +136,18 @@ class SyncField
         }
     }
 
-    /**
-     * @param $event
-     * @param $column
-     * @return null|\SuperV\Platform\Domains\Resource\Field\FieldModel
-     * @throws \Exception
-     */
-    protected function getFieldEntry($event, $column)
+
+    protected function getFieldEntry($fieldName)
+    {
+        if ($this->resourceEntry->hasField($fieldName)) {
+          return $this->resourceEntry->getField($fieldName);
+        }
+
+        return $this->resourceEntry->createField($fieldName);
+    }
+
+
+    protected function setResourceEntry($event): void
     {
         if (isset($event->model)) {
             $resourceEntry = ResourceModel::withModel($event->model);
@@ -149,12 +160,6 @@ class SyncField
             throw new \Exception("Resource model entry not found for table [{$event->table}]");
         }
 
-        if ($resourceEntry->hasField($column->name)) {
-            $field = $resourceEntry->getField($column->name);
-        } else {
-            $field = $resourceEntry->createField($column->name);
-        }
-
-        return $field;
+        $this->resourceEntry = $resourceEntry;
     }
 }
