@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Resource;
 
-class Builder
+class TypeBuilder
 {
     /**
      * @var \SuperV\Platform\Domains\Resource\Resource

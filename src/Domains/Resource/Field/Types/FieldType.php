@@ -53,11 +53,6 @@ abstract class FieldType
     protected $config = [];
 
     /**
-     * @var Closure
-     */
-    protected $accessor;
-
-    /**
      * @var boolean
      */
     protected $built = false;
@@ -67,25 +62,30 @@ abstract class FieldType
         $this->entry = $entry;
     }
 
-    public function show()
+    public function show(): bool
     {
         return true;
     }
 
     public function build(): self
     {
+        if ($this->isBuilt()) {
+            throw new Exception('Field is already built');
+        }
         $this->built = true;
 
         return $this;
     }
 
-    public function compose()
+    public function compose(): array
     {
-        $this->checkState();
+        if (! $this->isBuilt()) {
+            throw new Exception('Field is not built yet');
+        }
 
         return array_filter([
             'uuid'   => $this->uuid(),
-            'name'   => $this->getName(),
+            'name'   => $this->getColumnName(),
             'label'  => $this->getLabel(),
             'type'   => $this->getType(),
             'config' => $this->getConfig(),
@@ -93,17 +93,7 @@ abstract class FieldType
         ]);
     }
 
-    public function checkState()
-    {
-        if (! $this->isBuilt()) {
-            throw new Exception('Field is not built yet');
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    public function isBuilt()
+    public function isBuilt(): bool
     {
         return $this->built;
     }
@@ -114,6 +104,11 @@ abstract class FieldType
     }
 
     public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function getColumnName(): ?string
     {
         return $this->name;
     }
@@ -131,11 +126,6 @@ abstract class FieldType
     public function getEntry(): ?FieldModel
     {
         return $this->entry;
-    }
-
-    public function mergeRules(array $rules)
-    {
-        $this->rules = array_merge($this->rules, $rules);
     }
 
     public function mergeConfig(array $config)
@@ -167,26 +157,33 @@ abstract class FieldType
         return $this;
     }
 
+    public function mergeRules(array $rules)
+    {
+        $this->rules = array_merge($this->rules, $rules);
+    }
+
     public function getValue()
     {
-//        if (! $this->getResourceEntry() || ! $this->getResourceEntry()->exists) {
-//            return null;
-//        }
-
         if (! $this->resourceExists()) {
             return null;
         }
 
+        $value = $this->getResourceEntry()->getAttribute($this->getColumnName());
+
         if ($accessor = $this->getAccessor()) {
-            return $accessor($this->getResourceEntry(), $this);
+            return $accessor($value);
         }
 
-        return $this->getResourceEntry()->getAttribute($this->getName());
+        return $value;
     }
 
     public function setValue($value): ?Closure
     {
-        ($this->getMutator())($this->getResourceEntry(), $value);
+        if ($mutator = $this->getMutator()) {
+            $value = $mutator($value);
+        }
+
+        $this->getResourceEntry()->setAttribute($this->getColumnName(), $value);
 
         return null;
     }
@@ -203,7 +200,7 @@ abstract class FieldType
 
     public function getAccessor(): ?Closure
     {
-        return $this->accessor;
+        return null;
     }
 
     public function setAccessor(Closure $accessor)
@@ -213,11 +210,9 @@ abstract class FieldType
         return $this;
     }
 
-    public function getMutator()
+    public function getMutator(): ?Closure
     {
-        return function (ResourceEntryModel $entry, $value) {
-            $entry->setAttribute($this->getName(), $value);
-        };
+        return null;
     }
 
     public static function make($name): self

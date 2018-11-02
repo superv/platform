@@ -15,26 +15,6 @@ class BelongsTo extends FieldType
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $relatedResource;
 
-    public function getType(): string
-    {
-        return 'select';
-   }
-
-    public function getValue()
-    {
-        if ($this->resourceExists()) {
-            $value = $this->getResourceEntry()->getAttribute($this->getName().'_id');
-            return (int)$value;
-        }
-    }
-
-    public function setValue($value): ?Closure
-    {
-        $this->getResourceEntry()->setAttribute($this->getName().'_id', (int)$value);
-
-        return null;
-    }
-
     public function build(): FieldType
     {
         $this->buildRelationConfig();
@@ -81,5 +61,27 @@ class BelongsTo extends FieldType
         })->all();
 
         $this->setConfigValue('options', $options);
+    }
+
+    public function getType(): string
+    {
+        return 'select';
+    }
+
+    public function getColumnName(): ?string
+    {
+        return $this->getName().'_id';
+    }
+
+    public function getAccessor(): ?Closure
+    {
+        return function ($value) {
+            return (int)$value;
+        };
+    }
+
+    public function getMutator(): ?Closure
+    {
+        return $this->getAccessor();
     }
 }

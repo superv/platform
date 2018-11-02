@@ -55,19 +55,11 @@ class Form
     {
         $this->uuid = Str::uuid();
 
-        $this->fields = new FormFields($this->fields);
+        $this->fields = new FormFields;
 
         // build Fields
         foreach ($this->resources as $resource) {
-            $this->fields = $this->fields->merge(
-                $resource->getFields()
-                         ->filter(function (FieldType $field) {
-                             return $field->show();
-                         })
-                         ->map(function (FieldType $field) {
-                             return $field->build();
-                         })
-            );
+            $this->fields->mergeFrom($resource);
         }
 
         // build Url

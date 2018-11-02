@@ -2,17 +2,21 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use SuperV\Platform\Domains\Resource\ResourceEntryModel;
+use Closure;
 
 class Boolean extends FieldType
 {
     protected $type = 'boolean';
 
-    public function getMutator()
+    public function getAccessor(): ?Closure
     {
-        return function(ResourceEntryModel $entry, $value) {
-            $value = ($value === 'false' || !$value) ? false : true;
-            $entry->setAttribute($this->getName(), $value);
-         };
+        return function ($value) {
+            return ($value === 'false' || ! $value) ? false : true;
+        };
+    }
+
+    public function getMutator(): ?Closure
+    {
+        return $this->getAccessor();
     }
 }

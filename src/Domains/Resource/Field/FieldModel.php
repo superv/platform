@@ -61,7 +61,7 @@ class FieldModel extends EntryModelV2
     protected function mapColumn(ColumnDefinition $column): void
     {
         if ($fieldType = $column->getFieldType()) {
-            $this->rules = $column->rules;
+            $this->rules = FieldRules::make($column->getRules())->get();
 
             if ($fieldType === 'relation') {
                 $this->makeRelationConfig($column);
@@ -70,10 +70,14 @@ class FieldModel extends EntryModelV2
                 $this->config = $column->config;
             }
         } else {
-            $mapper = ColumnFieldMapper::for($column->type)->map($column->parameters);
+            $mapper = ColumnFieldMapper::for($column->type)->map($column->getAttributes());
 
             $this->type = $mapper->getFieldType();
-            $this->rules = array_merge($column->getRules(), $mapper->getRules());
+//            $this->rules = array_merge($column->getRules(), $mapper->getRules());
+            $this->rules = FieldRules::make($mapper->getRules())
+                                     ->merge($column->getRules())
+                                     ->get();
+
             $this->config = array_merge($column->getConfig(), $mapper->getConfig());
         }
     }

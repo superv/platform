@@ -73,6 +73,16 @@ trait TestHelpers
         $this->assertTrue(\Schema::hasTable($table));
     }
 
+    protected function assertDatabaseTableHasColumn(string $table, string $column)
+    {
+        $this->assertDatabaseTableHaveColumns($table, [$column]);
+    }
+
+    protected function assertDatabaseTableHaveColumns(string $table, array $columns)
+    {
+        $this->assertArrayContains($columns, \Schema::getColumnListing($table));
+    }
+
     protected function assertDatabaseHasNotTable($table)
     {
         $this->assertFalse(\Schema::hasTable($table));

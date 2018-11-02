@@ -79,8 +79,8 @@ class ResourceCreationTest extends ResourceTestCase
 
         $resource = ResourceModel::withSlug('test_users');
 
-        $this->assertEquals(['min:6', 'max:32'], $resource->getField('name')->getRules());
-        $this->assertEquals(['email', 'unique'], $resource->getField('email')->getRules());
+        $this->assertArrayContains(['min:6', 'max:32'], $resource->getField('name')->getRules());
+        $this->assertArrayContains(['email', 'unique'], $resource->getField('email')->getRules());
     }
 
     /** @test */
@@ -114,7 +114,7 @@ class ResourceCreationTest extends ResourceTestCase
         $resource = ResourceModel::withSlug('test_users');
         $nameField = $resource->getField('name');
 
-        $this->assertEquals(['min:16', 'max:64'], $nameField->getRules());
+        $this->assertArrayContains(['min:16', 'max:64'], $nameField->getRules());
     }
 
     /** @test */

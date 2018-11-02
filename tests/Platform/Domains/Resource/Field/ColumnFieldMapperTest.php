@@ -88,6 +88,7 @@ class ColumnFieldMapperTest extends ResourceTestCase
         $this->assertEquals('datetime', $mapper->getFieldType());
         $this->assertEquals(false, $mapper->getConfigValue('time'));
     }
+
     /** @test */
     function maps_datetime_column_to_datetime_field()
     {

@@ -5,8 +5,8 @@ namespace SuperV\Platform\Domains\Resource;
 use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Entry\EntryModelV2;
-use SuperV\Platform\Domains\Resource\Field\Builder;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\TypeBuilder;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -65,7 +65,7 @@ class Resource
                     return $field;
                 }
 
-                return (new Builder($this))->build($field);
+                return (new TypeBuilder($this))->build($field);
             });
 
         $this->built = true;
@@ -113,6 +113,18 @@ class Resource
         return $this->resolveModel()->create($attributes);
     }
 
+    public function createFake(array $overrides = []): ResourceEntryModel
+    {
+        return Fake::create($this, $overrides);
+    }
+
+    public function loadFake(array $overrides = []): self
+    {
+        $this->entry = $this->createFake($overrides);
+
+        return $this;
+    }
+
     public function getSlug()
     {
         return $this->slug;
@@ -133,6 +145,13 @@ class Resource
     public function getEntry(): ?ResourceEntryModel
     {
         return $this->entry;
+    }
+
+    public function setEntry(ResourceEntryModel $entry): self
+    {
+        $this->entry = $entry;
+
+        return $this;
     }
 
     public function getEntryId()
@@ -224,6 +243,16 @@ class Resource
     public function getTitleFieldId()
     {
         return $this->titleFieldId;
+    }
+
+    public static function of(string $handle, bool $build = true): self
+    {
+        $resource = ResourceFactory::make($handle);
+        if (! $build) {
+            return $resource;
+        }
+
+        return $resource->build();
     }
 
     public static function extend($slug, $extension)
