@@ -63,7 +63,7 @@ class FieldTypeTest extends ResourceTestCase
     /** @test */
     function type_text()
     {
-        $this->assertDatabaseTableHasColumn('t_users', 'name');
+        $this->assertColumnExists('t_users', 'name');
         $field = Resource::of('t_users')->getField('name');
 
         $this->assertInstanceOf(Text::class, $field);
@@ -73,7 +73,7 @@ class FieldTypeTest extends ResourceTestCase
     /** @test */
     function type_number_integer()
     {
-        $this->assertDatabaseTableHasColumn('t_users', 'age');
+        $this->assertColumnExists('t_users', 'age');
         $resource = Resource::of('t_users');
 
         $field = $resource->getField('age');
@@ -88,7 +88,7 @@ class FieldTypeTest extends ResourceTestCase
     /** @test */
     function type_number_decimal()
     {
-        $this->assertDatabaseTableHasColumn('t_users', 'height');
+        $this->assertColumnExists('t_users', 'height');
         $resource = Resource::of('t_users');
 
         $field = $resource->getField('height');
@@ -106,7 +106,7 @@ class FieldTypeTest extends ResourceTestCase
     /** @test */
     function type_boolean()
     {
-        $this->assertDatabaseTableHasColumn('t_users', 'employed');
+        $this->assertColumnExists('t_users', 'employed');
         $resource = Resource::of('t_users');
 
         $field = $resource->getField('employed');
@@ -125,7 +125,7 @@ class FieldTypeTest extends ResourceTestCase
         $groups->create(['id' => 100, 'title' => 'Users']);
         $adminsGroup = $groups->create(['id' => 110, 'title' => 'Admins']);
 
-        $this->assertDatabaseTableHasColumn('t_users', 'group_id');
+        $this->assertColumnExists('t_users', 'group_id');
         $users = Resource::of('t_users');
         $users->loadFake(['group_id' => 100]);
 

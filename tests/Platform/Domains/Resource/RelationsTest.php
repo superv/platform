@@ -4,12 +4,12 @@ namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\Fixtures\TestPost;
 use Tests\Platform\Domains\Resource\Fixtures\TestRole;
-use Tests\Platform\Domains\Resource\Fixtures\TestUser;
 
-class ResourceRelationsTest extends ResourceTestCase
+class RelationsTest extends ResourceTestCase
 {
     /** @test */
     function creates_belongs_to_many_relations()
@@ -25,12 +25,12 @@ class ResourceRelationsTest extends ResourceTestCase
             $table->belongsToMany(TestRole::class, 'roles', 'test_user_roles', 'user_id', 'role_id', $pivotColumns);
         });
 
-        $userResource = ResourceModel::withSlug('test_users');
-        $rolesField = $userResource->getField('roles');
+        $users = Resource::of('test_users');
+        $rolesField = $users->getField('roles');
         $this->assertNotNull($rolesField);
         $this->assertEquals('belongs_to_many', $rolesField->getType());
 
-        $this->assertEquals(['id'], \Schema::getColumnListing('test_users'));
+        $this->assertColumnDoesNotExist('test_users', 'roles');
 
         $this->assertEquals(
             ['id', 'user_id', 'role_id', 'status', 'created_at', 'updated_at'],

@@ -8,8 +8,8 @@ class HasMany extends FieldType
 {
     protected $hasColumn = false;
 
-//    public function show(): bool
-//    {
-//        return false;
-//    }
+    public function show(): bool
+    {
+        return false;
+    }
 }

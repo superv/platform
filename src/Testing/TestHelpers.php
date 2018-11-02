@@ -68,24 +68,29 @@ trait TestHelpers
         $this->assertEquals($needle, array_intersect($needle, $haystack));
     }
 
-    protected function assertDatabaseHasTable($table)
+    protected function assertColumnDoesNotExist(string $table, string $column)
     {
-        $this->assertTrue(\Schema::hasTable($table));
+        $this->assertFalse(in_array($column, \Schema::getColumnListing($table)));
     }
 
-    protected function assertDatabaseTableHasColumn(string $table, string $column)
+    protected function assertColumnExists(string $table, string $column)
     {
-        $this->assertDatabaseTableHaveColumns($table, [$column]);
+        $this->assertColumnsExist($table, [$column]);
     }
 
-    protected function assertDatabaseTableHaveColumns(string $table, array $columns)
+    protected function assertColumnsExist(string $table, array $columns)
     {
         $this->assertArrayContains($columns, \Schema::getColumnListing($table));
     }
 
-    protected function assertDatabaseHasNotTable($table)
+    protected function assertTableDoesNotExist($table)
     {
         $this->assertFalse(\Schema::hasTable($table));
+    }
+
+    protected function assertTableExists($table)
+    {
+        $this->assertTrue(\Schema::hasTable($table));
     }
 
     protected function assertProviderRegistered($provider)

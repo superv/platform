@@ -254,6 +254,7 @@ abstract class FieldType implements HasResource, Fieldable
 
         return new $class(new FieldModel);
     }
+
     public static function resolveClass($type)
     {
         $base = 'SuperV\Platform\Domains\Resource\Field\Types';
