@@ -4,9 +4,14 @@ namespace SuperV\Platform\Http\Controllers;
 
 use SuperV\Modules\Nucleo\Domains\UI\Page\SvPage;
 use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
+use SuperV\Modules\Nucleo\Domains\UI\SvCard;
 use SuperV\Modules\Nucleo\Http\Controllers\Concerns\ResolvesResource;
+use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\Table\Table;
+use SuperV\Platform\Domains\Resource\Table\TableColumns;
+use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
 class ResourceController extends BaseController
 {
@@ -20,6 +25,33 @@ class ResourceController extends BaseController
         parent::__construct();
 
         $this->middleware('auth:superv-api');
+    }
+
+    public function table()
+    {
+        $this->resource()->build();
+
+        $config = new TableConfig();
+
+        $config->setResource($this->resource);
+        $config->setColumns(new TableColumns($this->resource->getFields()));
+        $config->setActions([Action::make('edit'), Action::make('delete')]);
+
+
+        $card = SvCard::make()->block(
+            SvBlock::make('sv-table-v2')->setProps($config->build()->compose())
+        );
+
+        return ['data' => sv_compose($card)];
+    }
+
+    public function data($uuid)
+    {
+        $config = TableConfig::fromCache($uuid);
+
+        $table = Table::config($config)->build();
+
+        return ['data' => $table->compose()];
     }
 
     public function create()
@@ -70,7 +102,7 @@ class ResourceController extends BaseController
      * @return mixed
      * @throws \Exception
      */
-    protected function buildFormPage(): mixed
+    protected function buildFormPage()
     {
         $this->resource()->build();
         $form = new Form();

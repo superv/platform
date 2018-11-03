@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
+use SuperV\Platform\Domains\Resource\Action\Action;
+use SuperV\Platform\Domains\Resource\Contracts\HasResource;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 
@@ -20,6 +22,9 @@ class TableRow
     /** @var array */
     protected $values = [];
 
+    /** @var array */
+    protected $actions = [];
+
     public function __construct(Table $table, Resource $resource)
     {
         $this->table = $table;
@@ -32,10 +37,34 @@ class TableRow
 
         $this->table->getColumns()
                     ->map(function (Field $field) {
+                        $field = $field->copy();
 
                         $field->setResource($this->resource);
 
-                        $this->setValue($field->getName(), $field->getValue());
+                        if ($field->getType() === 'boolean') {
+                            if (! $field->isBuilt()) {
+                                $field->build();
+                            }
+                            $this->setValue($field->getName(), $field->compose());
+                        } else if ($field->getType() === 'file') {
+                            if (! $field->isBuilt()) {
+                                $field->build();
+                            }
+                            $field->getConfig();
+                            $this->setValue($field->getName(), $field->compose());
+                        } else {
+                            $this->setValue($field->getName(), $field->getValue());
+                        }
+                    });
+
+        $this->table->getActions()
+                    ->map(function (Action $action) {
+                        $action = $action->copy();
+
+                        if ($action instanceof HasResource) {
+                            $action->setResource($this->resource);
+                        }
+                        $this->actions[] = $action->build()->compose();
                     });
 
         return $this;
@@ -49,5 +78,18 @@ class TableRow
     protected function setValue(string $slug, $newValue)
     {
         $this->values[$slug] = $newValue;
+    }
+
+    public function getActions(): array
+    {
+        return $this->actions;
+    }
+
+    public function compose()
+    {
+        return [
+            'values'  => $this->values,
+            'actions' => $this->actions,
+        ];
     }
 }

@@ -14,7 +14,7 @@ class Table
     use HasOptions;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Table\TableConfig
+     * @var TableConfig
      */
     protected $config;
 
@@ -30,14 +30,20 @@ class Table
     /** @var array */
     protected $pagination;
 
+    protected $built = false;
+
     public function __construct()
     {
         $this->options = collect();
         $this->rows = collect();
     }
 
-    public function build()
+    public function build(): self
     {
+        $this->config->build();
+
+        $this->setResource($this->config->getResource());
+
         $entries = $this->fetchEntries($this->newQuery());
 
         $entries->transform(function (ResourceEntryModel $entry) {
@@ -45,6 +51,10 @@ class Table
         });
 
         $this->buildRows($entries);
+
+        $this->built = true;
+
+        return $this;
     }
 
     protected function fetchEntries(Builder $query)
@@ -107,5 +117,40 @@ class Table
     public function getColumns(): Collection
     {
         return $this->config->getColumns();
+    }
+
+    public function getActions(): Collection
+    {
+        return $this->config->getActions();
+    }
+
+    public function uuid()
+    {
+        return $this->config->uuid();
+    }
+
+    public function url()
+    {
+        return $this->config->getUrl();
+    }
+
+    public function compose(): array
+    {
+        return (new TableData($this))->toArray();
+    }
+
+    public function getConfig(): TableConfig
+    {
+        return $this->config;
+    }
+
+    public function isBuilt(): bool
+    {
+        return $this->built;
+    }
+
+    public static function config(TableConfig $config): self
+    {
+        return app(self::class)->setConfig($config);
     }
 }

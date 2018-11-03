@@ -85,6 +85,11 @@ abstract class Field implements HasResource
         return $this;
     }
 
+    public function copy():self
+    {
+        return clone $this;
+    }
+
     public function compose(): array
     {
         if (! $this->isBuilt()) {

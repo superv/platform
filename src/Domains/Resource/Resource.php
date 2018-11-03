@@ -5,9 +5,9 @@ namespace SuperV\Platform\Domains\Resource;
 use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Entry\EntryModelV2;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\Builder as FieldBuilder;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Relation\Builder as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -136,8 +136,14 @@ class Resource
         return $this;
     }
 
-    public function createFake(array $overrides = []): ResourceEntryModel
+    public function createFake(array $overrides = [], int $number = 1)
     {
+        if ($number > 1) {
+            return collect(range(1, $number))->map(function () use ($overrides) {
+                return $this->createFake($overrides, 1);
+            })->all();
+        }
+
         return Fake::create($this, $overrides);
     }
 
@@ -179,7 +185,7 @@ class Resource
 
     public function getEntryId()
     {
-        return $this->entry ? $this->entry->id : null;
+        return $this->entry ? $this->entry->getId() : null;
     }
 
     /**
@@ -247,14 +253,25 @@ class Resource
         return $this->uuid;
     }
 
-    public function route($route)
+    public function route($route, array $params = [])
     {
         $base = 'sv/resources/'.$this->getSlug();
         if ($route === 'edit') {
             return $base.'/'.$this->getEntryId().'/edit';
         }
+        if ($route === 'delete') {
+            return $base.'/'.$this->getEntryId().'/delete';
+        }
         if ($route === 'create') {
             return $base.'/create';
+        }
+
+        if ($route === 'table') {
+            return $base.'/table';
+        }
+
+        if ($route === 'table.data') {
+            return 'sv/tables/'.$params['uuid'];
         }
     }
 
@@ -286,14 +303,20 @@ class Resource
         return $this->titleFieldId;
     }
 
-    public static function of(string $handle, bool $build = true): self
+    public static function of($handle, bool $build = true): self
     {
-        $resource = ResourceFactory::make($handle);
-        if (! $build) {
-            return $resource;
+        if ($handle instanceof ResourceEntryModel) {
+            $resource = ResourceFactory::make($handle->getTable());
+            $resource->setEntry($handle);
+        } else {
+            $resource = ResourceFactory::make($handle);
         }
 
-        return $resource->build();
+        if ($build) {
+            return $resource->build();
+        }
+
+        return $resource;
     }
 
     public static function extend($slug, $extension)
