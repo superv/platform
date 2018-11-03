@@ -258,6 +258,11 @@ class Resource
         }
     }
 
+    public function fresh($build = false): self
+    {
+        return static::of($this->getSlug(), $build);
+    }
+
     public function __sleep()
     {
         if ($this->entry && $this->entry->exists) {

@@ -24,19 +24,7 @@ class ResourceController extends BaseController
 
     public function create()
     {
-        $this->resource()->build();
-        $form = new Form();
-
-        $form->addResource($this->resource);
-        $formData = $form->build()->compose();
-
-        $page = SvPage::make('')->addBlock(
-            SvBlock::make('sv-form-v2')->setProps($formData->toArray())
-        );
-
-        $page->build();
-
-        return sv_compose($page);
+        return $this->buildFormPage();
     }
 
     public function edit()
@@ -47,9 +35,11 @@ class ResourceController extends BaseController
         $form->addResource($this->resource);
         $formData = $form->build()->compose();
 
-        $page = SvPage::make('')->addBlock(
-            SvBlock::make('sv-form-v2')->setProps($formData->toArray())
-        );
+        $tabs = sv_tabs()
+            ->addTab(sv_tab('General', SvBlock::make('sv-form-v2')->setProps($formData->toArray()))->autoFetch())
+            ->addTab(sv_tab('fds', SvBlock::make('sv-form-v2')->setProps($formData->toArray()))->autoFetch());
+
+        $page = SvPage::make('')->addBlock($tabs);
 
         $page->build();
 
@@ -74,5 +64,26 @@ class ResourceController extends BaseController
         }
 
         return $this->resource;
+    }
+
+    /**
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function buildFormPage(): mixed
+    {
+        $this->resource()->build();
+        $form = new Form();
+
+        $form->addResource($this->resource);
+        $formData = $form->build()->compose();
+
+        $page = SvPage::make('')->addBlock(
+            SvBlock::make('sv-form-v2')->setProps($formData->toArray())
+        );
+
+        $page->build();
+
+        return sv_compose($page);
     }
 }

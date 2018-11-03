@@ -60,7 +60,12 @@ class Form
 
     public function cache()
     {
-        cache()->forever('sv:forms:'.$this->uuid(), serialize($this));
+        cache()->forever($this->cacheKey(), serialize($this));
+    }
+
+    protected function cacheKey(): string
+    {
+        return 'sv:forms:'.$this->uuid();
     }
 
     public function compose(): FormData
@@ -113,6 +118,7 @@ class Form
             $this->callbacks[] = $field->setValueFromRequest($request);
         });
     }
+
 
     public static function fromCache($uuid): ?Form
     {
