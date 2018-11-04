@@ -46,50 +46,6 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         return $column;
     }
 
-    public function belongsTo($related, $relationName, $foreignKey = null, $ownerKey = null)
-    {
-        $this->addColumn(null, $relationName, ['nullable' => true])
-             ->relation(
-                 Config::belongsTo()
-                       ->relationName($relationName)
-                       ->related($related)
-                       ->foreignKey($foreignKey ?? $relationName.'_id')
-                       ->ownerKey($ownerKey)
-             );
-
-        return $this->unsignedInteger($foreignKey ?? $relationName.'_id')
-                    ->fieldType('belongs_to')
-                    ->fieldName($relationName)
-                    ->config(
-                        Config::belongsTo()
-                              ->relationName($relationName)
-                              ->related($related)
-                              ->foreignKey($foreignKey)
-                              ->ownerKey($ownerKey)
-                              ->toArray()
-                    );
-    }
-
-    public function belongsToMany(
-        $related,
-        $relationName,
-        $pivotTable = null,
-        $pivotForeignKey = null,
-        $pivotRelatedKey = null,
-        Closure $pivotColumns = null
-    ) {
-        return $this->addColumn(null, $relationName, ['nullable' => true])
-                    ->relation(
-                        Config::belongsToMany()
-                              ->relationName($relationName)
-                              ->related($related)
-                              ->pivotTable($pivotTable)
-                              ->pivotForeignKey($pivotForeignKey)
-                              ->pivotRelatedKey($pivotRelatedKey)
-                              ->pivotColumns($pivotColumns)
-                    );
-    }
-
     public function build(Connection $connection, Grammar $grammar)
     {
         if ($this->dropping()) {
@@ -163,7 +119,68 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         return sv_collect($this->getColumns())->pluck('name')->all();
     }
 
-    public function hasMany($related, $relationName, $foreignKey = null, $localKey = null)
+    public function nullableBelongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
+    {
+        return $this->belongsTo($related, $relation, $foreignKey, $ownerKey)->nullable();
+    }
+
+    public function belongsTo($related, $relationName, $foreignKey = null, $ownerKey = null)
+    {
+        $this->addColumn(null, $relationName, ['nullable' => true])
+             ->relation(
+                 Config::belongsTo()
+                       ->relationName($relationName)
+                       ->related($related)
+                       ->foreignKey($foreignKey ?? $relationName.'_id')
+                       ->ownerKey($ownerKey)
+             );
+
+        return $this->unsignedInteger($foreignKey ?? $relationName.'_id')
+                    ->fieldType('belongs_to')
+                    ->fieldName($relationName)
+                    ->config(
+                        Config::belongsTo()
+                              ->relationName($relationName)
+                              ->related($related)
+                              ->foreignKey($foreignKey)
+                              ->ownerKey($ownerKey)
+                              ->toArray()
+                    );
+    }
+
+    public function belongsToMany(
+        $related,
+        $relationName,
+        $pivotTable = null,
+        $pivotForeignKey = null,
+        $pivotRelatedKey = null,
+        Closure $pivotColumns = null
+    ) {
+        return $this->addColumn(null, $relationName, ['nullable' => true])
+                    ->relation(
+                        Config::belongsToMany()
+                              ->relationName($relationName)
+                              ->related($related)
+                              ->pivotTable($pivotTable)
+                              ->pivotForeignKey($pivotForeignKey)
+                              ->pivotRelatedKey($pivotRelatedKey)
+                              ->pivotColumns($pivotColumns)
+                    );
+    }
+
+    public function hasOne($related, $relationName, $foreignKey = null, $localKey = null)
+    {
+        return $this->addColumn(null, $relationName, ['nullable' => true])
+                    ->relation(
+                        Config::hasOne()
+                              ->relationName($relationName)
+                              ->related($related)
+                              ->foreignKey($foreignKey)
+                              ->localKey($localKey)
+                    );
+    }
+
+    public function hasMany($related, $relationName, $foreignKey, $localKey = null)
     {
         return $this->addColumn(null, $relationName, ['nullable' => true])
                     ->relation(
@@ -201,9 +218,18 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                     );
     }
 
-    public function nullableBelongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
-    {
-        return $this->belongsTo($related, $relation, $foreignKey, $ownerKey)->nullable();
+    public function morphOne(
+        $related,
+        $relationName,
+        $morphName
+    ) {
+        return $this->addColumn(null, $relationName, ['nullable' => true])
+                    ->relation(
+                        Config::morphOne()
+                              ->relationName($relationName)
+                              ->related($related)
+                              ->morphName($morphName)
+                    );
     }
 
     public function select($name): ColumnDefinition

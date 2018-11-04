@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource;
 
+use Lakcom\Modules\Core\Domains\Address\Address;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
@@ -30,6 +31,34 @@ class RelationsTest extends ResourceTestCase
         $this->assertEquals([
             'related_resource' => 't_groups',
             'foreign_key'      => 'group_id',
+        ], $relation->getConfig()->toArray());
+    }
+
+    /** @test */
+    function create_has_one_relation()
+    {
+        Schema::create('t_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->hasOne('t_profiles', 'profile', 'user_id');
+        });
+
+        Schema::create('t_profiles', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('address');
+            $table->belongsTo('t_users', 'user', 'user_id');
+        });
+
+        $users = Resource::of('t_users');
+        $this->assertColumnDoesNotExist('t_users', 'profile');
+        $this->assertColumnDoesNotExist('t_users', 'user_id');
+
+        $relation = $users->getRelation('profile');
+        $this->assertEquals('has_one', $relation->getType());
+
+        $this->assertEquals([
+            'related_resource' => 't_profiles',
+            'foreign_key'      => 'user_id',
         ], $relation->getConfig()->toArray());
     }
 
@@ -121,31 +150,25 @@ class RelationsTest extends ResourceTestCase
     }
 
     /** @test */
-    function saves_pivot_columns_even_if_pivot_table_is_created_before()
+    function create_morph_one_relation()
     {
         Schema::create('t_users', function (Blueprint $table) {
             $table->increments('id');
-            $pivotColumns = function (Blueprint $pivotTable) {
-                $pivotTable->string('status');
-            };
-            $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
+            $table->string('name');
+            $table->morphOne(Address::class, 'address', 'owner');
         });
 
         $users = Resource::of('t_users');
-        $roles = $users->getRelation('roles');
-        $this->assertEquals(['status'], $roles->getConfig()->getPivotColumns());
+        $this->assertColumnDoesNotExist('t_users', 'address');
+        $this->assertColumnDoesNotExist('t_users', 'address_id');
 
-        Schema::create('t_admins', function (Blueprint $table) {
-            $table->increments('id');
-            $pivotColumns = function (Blueprint $pivotTable) {
-                $pivotTable->string('status');
-            };
-            $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
-        });
+        $relation = $users->getRelation('address');
+        $this->assertEquals('morph_one', $relation->getType());
 
-        $admins = Resource::of('t_admins');
-        $roles = $admins->getRelation('roles');
-        $this->assertEquals(['status'], $roles->getConfig()->getPivotColumns());
+        $this->assertEquals([
+            'related_model' => Address::class,
+            'morph_name'      => 'owner',
+        ], $relation->getConfig()->toArray());
     }
 
     /** @test */
@@ -174,16 +197,38 @@ class RelationsTest extends ResourceTestCase
         $tableConfig = new RelationTableConfig($relation);
         $tableConfig->build();
 
-
         $table = Table::config($tableConfig)->build();
-
-//        $table = $relation->makeTable();
-//
-//        $this->assertInstanceOf(Table::class, $table);
-//
-//        $table->build();
 
         $this->assertEquals(8, \DB::table('t_posts')->count());
         $this->assertEquals(5, $table->getRows()->count());
+    }
+
+
+    /** @test */
+    function saves_pivot_columns_even_if_pivot_table_is_created_before()
+    {
+        Schema::create('t_users', function (Blueprint $table) {
+            $table->increments('id');
+            $pivotColumns = function (Blueprint $pivotTable) {
+                $pivotTable->string('status');
+            };
+            $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
+        });
+
+        $users = Resource::of('t_users');
+        $roles = $users->getRelation('roles');
+        $this->assertEquals(['status'], $roles->getConfig()->getPivotColumns());
+
+        Schema::create('t_admins', function (Blueprint $table) {
+            $table->increments('id');
+            $pivotColumns = function (Blueprint $pivotTable) {
+                $pivotTable->string('status');
+            };
+            $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
+        });
+
+        $admins = Resource::of('t_admins');
+        $roles = $admins->getRelation('roles');
+        $this->assertEquals(['status'], $roles->getConfig()->getPivotColumns());
     }
 }

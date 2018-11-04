@@ -309,9 +309,9 @@ class RelationConfig
         return (new static(new RelationType($type)))->hydrate($data);
     }
 
-    public static function belongsTo(): self
+    public static function hasOne(): self
     {
-        return static::make(RelationType::belongsTo());
+        return static::make(RelationType::hasOne());
     }
 
     public static function hasMany(): self
@@ -319,9 +319,19 @@ class RelationConfig
         return static::make(RelationType::hasMany());
     }
 
+    public static function belongsTo(): self
+    {
+        return static::make(RelationType::belongsTo());
+    }
+
     public static function belongsToMany(): self
     {
         return static::make(RelationType::belongsToMany());
+    }
+
+    public static function morphOne(): self
+    {
+        return static::make(RelationType::morphOne());
     }
 
     public static function morphToMany(): self

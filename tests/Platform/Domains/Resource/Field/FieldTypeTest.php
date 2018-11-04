@@ -46,7 +46,7 @@ class FieldTypeTest extends ResourceTestCase
 
             $table->file('avatar')->config(['test-123']);
             $table->belongsTo('t_groups', 'group');
-            $table->hasMany('t_posts', 'posts');
+            $table->hasMany('t_posts', 'posts', 'user_id');
             $table->belongsToMany('t_roles', 'roles', 't_user_roles', 'user_id', 'role_id');
         });
 
