@@ -216,6 +216,11 @@ class RelationConfig
         return $this;
     }
 
+    public function hasPivotColumns(): bool
+    {
+        return ! empty($this->pivotColumns);
+    }
+
     public function pivotForeignKey(string $pivotForeignKey): self
     {
         $this->pivotForeignKey = $pivotForeignKey;

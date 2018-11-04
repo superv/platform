@@ -27,6 +27,8 @@ class TableConfig
 
     protected $built = false;
 
+    public $query;
+
     public function build(): self
     {
         if ($this->isBuilt()) {

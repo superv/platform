@@ -32,7 +32,6 @@ class Builder
         return $relation;
     }
 
-
     protected function resolveFromRelationEntry(RelationModel $entry): Relation
     {
         /** @var \SuperV\Platform\Domains\Resource\Relation\Relation $class */

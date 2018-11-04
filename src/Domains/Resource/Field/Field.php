@@ -86,7 +86,7 @@ abstract class Field implements HasResource
         return $this;
     }
 
-    public function buildForView(Builder $query)
+    public function buildForView($query)
     {
         return $this;
     }

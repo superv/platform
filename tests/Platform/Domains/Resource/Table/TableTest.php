@@ -74,9 +74,7 @@ class TableTest extends ResourceTestCase
         $fakeA = $this->users->createFake(['group_id' => 123]);
 
         [$fakeB, $fakeC, $fakeD] = $this->users->createFake([], 3);
-        $table = Table::config($this->config)
-                      ->setResource($this->users)
-                      ->build();
+        $table = Table::config($this->config)->build();
 
         $this->assertTrue($this->config->isBuilt());
         $this->assertTrue($table->isBuilt());

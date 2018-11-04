@@ -97,8 +97,6 @@ class Resource
         }
 
         return ResourceEntryModel::make($this);
-
-
     }
 
     public function create(array $attributes = []): EntryModelV2
@@ -165,10 +163,7 @@ class Resource
         return $this->entry ? $this->entry->getId() : null;
     }
 
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    public function getFields()
+    public function getFields(): Collection
     {
         return $this->fields;
     }
@@ -190,6 +185,11 @@ class Resource
         $this->ensureBuilt();
 
         return $this->fields->first(function (Field $field) use ($name) { return $field->getName() === $name; });
+    }
+
+    public function getRelations(): Collection
+    {
+        return $this->relations;
     }
 
     public function setRelations(Collection $relations): self

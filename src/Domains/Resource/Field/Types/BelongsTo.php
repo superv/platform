@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
-use Illuminate\Database\Eloquent\Builder;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
@@ -31,7 +30,7 @@ class BelongsTo extends Field
         return parent::build();
     }
 
-    public function buildForView(Builder $query)
+    public function buildForView($query)
     {
         $query->with($this->getName());
 
@@ -48,8 +47,7 @@ class BelongsTo extends Field
 
         $relatedEntry = $this->getResourceEntry()->getRelation($this->getName());
 
-
-        return $relatedEntry ?  $relatedEntry->getAttribute($titleColumn) : null;
+        return $relatedEntry ? $relatedEntry->getAttribute($titleColumn) : null;
     }
 
     protected function buildRelationConfig()

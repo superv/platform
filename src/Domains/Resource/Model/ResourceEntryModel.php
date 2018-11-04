@@ -18,18 +18,24 @@ class ResourceEntryModel extends EntryModelV2
             return null;
         }
 
+        return $relation->newQuery();
+
         if ($relation->getType()->isBelongsTo()) {
 
-            if ($resource = $relation->getConfigValue('related_resource')) {
-                $query = Resource::of($resource)->resolveModel()->newQuery();
-            } elseif ($model = $relation->getConfigValue('related_model')) {
-                $query =  $model::query()->newQuery();
-            }
+//            if ($resource = $relation->getConfigValue('related_resource')) {
+//                $query = Resource::of($resource)->resolveModel()->newQuery();
+//            } elseif ($model = $relation->getConfigValue('related_model')) {
+//                $query =  $model::query()->newQuery();
+//            }
+
+            $query = $relation->newQuery();
+
+            return $query;
 
             return new BelongsTo(
                 $query,
                 $this,
-                $relation->getConfigValue('foreign_key'),
+                $relation->getConfig()->getForeignKey(),
                 'id',
                 $name
             );

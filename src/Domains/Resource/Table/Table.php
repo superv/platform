@@ -61,7 +61,7 @@ class Table
         return $this;
     }
 
-    protected function fetchEntries(Builder $query)
+    protected function fetchEntries($query)
     {
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
         $paginator = $query->paginate($this->getOption('limit', 10));
@@ -101,7 +101,7 @@ class Table
 
     public function newQuery()
     {
-        return $this->resource->resolveModel()->newQuery()->select($this->resource->getSlug().'.*');
+        return $this->query ?: $this->resource->resolveModel()->newQuery()->select($this->resource->getSlug().'.*');
     }
 
     public function setResource(Resource $resource): Table
@@ -151,6 +151,13 @@ class Table
     public function isBuilt(): bool
     {
         return $this->built;
+    }
+
+    public function setQuery($query): Table
+    {
+        $this->query = $query;
+
+        return $this;
     }
 
     public static function config(TableConfig $config): self

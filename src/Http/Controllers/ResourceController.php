@@ -8,6 +8,7 @@ use SuperV\Modules\Nucleo\Domains\UI\SvCard;
 use SuperV\Modules\Nucleo\Http\Controllers\Concerns\ResolvesResource;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
@@ -31,10 +32,8 @@ class ResourceController extends BaseController
         $this->resource()->build();
 
         $config = new TableConfig();
-
         $config->setResource($this->resource);
         $config->setActions([Action::make('edit'), Action::make('delete')]);
-
 
         $card = SvCard::make()->block(
             SvBlock::make('sv-table-v2')->setProps($config->build()->compose())
@@ -47,9 +46,7 @@ class ResourceController extends BaseController
     {
         $config = TableConfig::fromCache($uuid);
 
-        $table = Table::config($config)->build();
-
-        return ['data' => $table->compose()];
+        return ['data' => Table::config($config)->build()->compose()];
     }
 
     public function create()
@@ -64,10 +61,14 @@ class ResourceController extends BaseController
 
         $form->addResource($this->resource);
         $formData = $form->build()->compose();
+        $editorTab = SvBlock::make('sv-form-v2')->setProps($formData->toArray());
 
-        $tabs = sv_tabs()
-            ->addTab(sv_tab('General', SvBlock::make('sv-form-v2')->setProps($formData->toArray()))->autoFetch())
-            ->addTab(sv_tab('fds', SvBlock::make('sv-form-v2')->setProps($formData->toArray()))->autoFetch());
+        $tabs = sv_tabs()->addTab(sv_tab('Edit', $editorTab)->autoFetch());
+
+        $this->resource->getRelations()->map(function(Relation $relation) use ($tabs) {
+           $table = $relation->makeTable();
+            return $tabs->addTab(sv_tab($relation->getName(),  SvBlock::make('sv-table-v2')->setProps($table->getConfig()->compose())));
+        });
 
         $page = SvPage::make('')->addBlock($tabs);
 
