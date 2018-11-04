@@ -44,6 +44,10 @@ class Table
         $this->resource = $this->config->getResource();
 
         $query = $this->config->newQuery();
+        /** @var \Illuminate\Database\Query\Builder $query */
+//        dump($query->toSql());
+//        dump($query->getBindings());
+//        dump($query);
 
         $this->config->getColumns()->map(function (Field $field) use ($query) {
             $field->buildForView($query);

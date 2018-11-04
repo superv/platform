@@ -30,9 +30,6 @@ class TableConfig
 
     protected $built = false;
 
-    /** @var \Closure */
-    protected $queryCallback;
-
     public function build(): self
     {
         $this->validate();
@@ -145,16 +142,6 @@ class TableConfig
         if (! $this->resource) {
             throw new PlatformException('No resource set');
         }
-    }
-
-    public function hasQueryCallback(): bool
-    {
-        return !is_null($this->queryCallback);
-    }
-
-    public function getQueryCallback(): \Closure
-    {
-        return $this->queryCallback;
     }
 
     public function uuid()

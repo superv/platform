@@ -14,7 +14,7 @@ use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-class Relation implements HasResource
+abstract class Relation implements HasResource
 {
     use Hydratable;
 
@@ -30,32 +30,17 @@ class Relation implements HasResource
     /** @var RelationConfig */
     protected $config;
 
-    /** @var \SuperV\Platform\Domains\Resource\Model\Builder */
-    protected $query;
-//
-//    public function makeTable(): Table
-//    {
-//        $config = $this->makeConfig();
-//
-//        $this->newQuery();
-//
-//        $table = Table::config($config);
-//        $table->setQuery($this->query);
-//
-//        return $table;
-//    }
-
     public function newQuery()
     {
         $instance = $this->newRelatedInstance();
 
-        $this->newRelationQuery($instance);
+        $query = $this->newRelationQuery($instance);
 
         if ($this->config->hasPivotColumns()) {
-            $this->query->withPivot($this->config->getPivotColumns());
+            $query->withPivot($this->config->getPivotColumns());
         }
 
-        return $this->query;
+        return $query;
     }
 
     protected function newRelatedInstance()
@@ -68,82 +53,68 @@ class Relation implements HasResource
 
         throw new PlatformException('Related resource/model not found');
     }
+//
+//    /**
+//     * @param $instance
+//     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+//     */
+//    protected function newHasMany($instance)
+//    {
+//        return new HasMany(
+//            $instance->newQuery(),
+//            $this->resource->getEntry(),
+//            $this->config->getForeignKey(),
+//            $this->resource->getEntry()->getKeyName()
+//        );
+//    }
+//
+//    /**
+//     * @param $instance
+//     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+//     */
+//    protected function newMorphToMany($instance)
+//    {
+//        return new MorphToMany(
+//            $instance->newQuery(),
+//            $this->parentModel,
+//            $this->relationEntry->getMorphName(),
+//            $this->relationEntry->getPivotTable(),
+//            $this->relationEntry->getPivotForeignKey(),
+//            $this->relationEntry->getPivotRelatedKey(),
+//            $this->parentModel->getKeyName(),
+//            $instance->getKeyName()
+//        );
+//    }
+//
+//    protected function newBelongsTo($instance)
+//    {
+//        return new BelongsTo(
+//            $instance->newQuery(),
+//            $this->resource->getEntry(),
+//            $this->config->getForeignKey(),
+//            'id',
+//            $this->getName()
+//        );
+//    }
 
-    /**
-     * @param $instance
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    protected function newHasMany($instance)
-    {
-        return new HasMany(
-            $instance->newQuery(),
-            $this->resource->getEntry(),
-            $this->config->getForeignKey(),
-            $this->resource->getEntry()->getKeyName()
-        );
-    }
+//    /**
+//     * @param $instance
+//     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+//     */
+//    protected function newBelongsToMany($instance)
+//    {
+//        return new BelongsToMany(
+//            $instance->newQuery(),
+//            $this->resource->getEntry(),
+//            $this->config->getPivotTable(),
+//            $this->config->getPivotForeignKey(),
+//            $this->config->getPivotRelatedKey(),
+//            $this->resource->getEntry()->getKeyName(),
+//            $instance->getKeyName()
+//        );
+//    }
 
-    /**
-     * @param $instance
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
-     */
-    protected function newMorphToMany($instance)
-    {
-        return new MorphToMany(
-            $instance->newQuery(),
-            $this->parentModel,
-            $this->relationEntry->getMorphName(),
-            $this->relationEntry->getPivotTable(),
-            $this->relationEntry->getPivotForeignKey(),
-            $this->relationEntry->getPivotRelatedKey(),
-            $this->parentModel->getKeyName(),
-            $instance->getKeyName()
-        );
-    }
-
-    protected function newBelongsTo($instance)
-    {
-        return new BelongsTo(
-            $instance->newQuery(),
-            $this->resource->getEntry(),
-            $this->config->getForeignKey(),
-            'id',
-            $this->getName()
-        );
-    }
-
-    /**
-     * @param $instance
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    protected function newBelongsToMany($instance)
-    {
-        return new BelongsToMany(
-            $instance->newQuery(),
-            $this->resource->getEntry(),
-            $this->config->getPivotTable(),
-            $this->config->getPivotForeignKey(),
-            $this->config->getPivotRelatedKey(),
-            $this->resource->getEntry()->getKeyName(),
-            $instance->getKeyName()
-        );
-    }
-
-    /**
-     * @param $instance
-     */
-    protected function newRelationQuery($instance)
-    {
-        if ($this->type->isMorphToMany()) {
-            $this->query = $this->newMorphToMany($instance);
-        } elseif ($this->type->isBelongsToMany()) {
-            $this->query = $this->newBelongsToMany($instance);
-        } elseif ($this->type->isHasMany()) {
-            $this->query = $this->newHasMany($instance);
-        } elseif ($this->type->isBelongsTo()) {
-            $this->query = $this->newBelongsTo($instance);
-        }
-    }
+    abstract  protected function newRelationQuery($instance);
 
     public function getName(): string
     {

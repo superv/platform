@@ -17,6 +17,7 @@ return [
 
     'POST@'.'sv/forms/{form}' => FormsController::at('store'),
 
+    'GET@nucleo/resources/{resource}'          => ResourceController::at('table'),
     'GET@'.'sv/resources/{resource}/table'     => ResourceController::at('table'),
     'GET@'.'sv/tables/{uuid}'                  => ResourceController::at('data'),
     'GET@'.'sv/resources/{resource}/create'    => ResourceController::at('create'),
