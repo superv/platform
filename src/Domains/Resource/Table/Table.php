@@ -43,7 +43,7 @@ class Table
     {
         $this->resource = $this->config->getResource();
 
-        $query = $this->newQuery();
+        $query = $this->config->newQuery();
 
         $this->config->getColumns()->map(function (Field $field) use ($query) {
             $field->buildForView($query);
@@ -97,11 +97,6 @@ class Table
     public function getRows(): Collection
     {
         return $this->rows;
-    }
-
-    public function newQuery()
-    {
-        return $this->query ?: $this->resource->resolveModel()->newQuery()->select($this->resource->getSlug().'.*');
     }
 
     public function setResource(Resource $resource): Table

@@ -4,12 +4,15 @@ namespace SuperV\Platform\Domains\Resource\Table;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class TableConfig
 {
+    public $query;
+
     protected $uuid;
 
     /**
@@ -27,13 +30,12 @@ class TableConfig
 
     protected $built = false;
 
-    public $query;
+    /** @var \Closure */
+    protected $queryCallback;
 
     public function build(): self
     {
-        if ($this->isBuilt()) {
-            throw new PlatformException('Config is already built');
-        }
+        $this->validate();
 
         $this->uuid = Str::uuid();
 
@@ -47,14 +49,21 @@ class TableConfig
                                         })
                                         ->filter();
 
+        $this->actions = $this->actions ? collect($this->actions) : collect([Action::make('edit'), Action::make('delete')]);
+
         // build Url
         $this->url = sv_url($this->resource->route('table.data', ['uuid' => $this->uuid]));
 
-        $this->cache();
-
         $this->built = true;
 
+        $this->cache();
+
         return $this;
+    }
+
+    public function newQuery()
+    {
+        return $this->query ?: $this->resource->resolveModel()->newQuery()->select($this->resource->getSlug().'.*');
     }
 
     public function compose()
@@ -89,34 +98,23 @@ class TableConfig
         return $this;
     }
 
-    public function uuid()
-    {
-        return $this->uuid;
-    }
-
-    public function cache()
-    {
-        cache()->forever($this->cacheKey(), serialize($this));
-    }
-
-    public function cacheKey(): string
-    {
-        return 'sv:tables:'.$this->uuid();
-    }
-
     public function getColumns(): Collection
     {
+        if (! $this->isBuilt()) {
+           throw new PlatformException('Config is not built yet');
+        }
+
         return $this->columns;
     }
 
-    public function getActions(): Collection
+    public function getActions(): ?Collection
     {
         return $this->actions;
     }
 
     public function setActions($actions): TableConfig
     {
-        $this->actions = collect($actions);
+        $this->actions = $actions;
 
         return $this;
     }
@@ -138,10 +136,47 @@ class TableConfig
         return $this;
     }
 
+    protected function validate(): void
+    {
+        if ($this->isBuilt()) {
+            throw new PlatformException('Config is already built');
+        }
+
+        if (! $this->resource) {
+            throw new PlatformException('No resource set');
+        }
+    }
+
+    public function hasQueryCallback(): bool
+    {
+        return !is_null($this->queryCallback);
+    }
+
+    public function getQueryCallback(): \Closure
+    {
+        return $this->queryCallback;
+    }
+
+    public function uuid()
+    {
+        return $this->uuid;
+    }
+
+    public function cache()
+    {
+        cache()->forever($this->cacheKey(), serialize($this));
+    }
+
+    public function cacheKey(): string
+    {
+        return 'sv:tables:'.$this->uuid();
+    }
+
     public static function fromCache($uuid): ?TableConfig
     {
         if ($config = cache('sv:tables:'.$uuid)) {
-            return unserialize($config);
+            $config = unserialize($config);
+            return $config;
         }
 
         return null;

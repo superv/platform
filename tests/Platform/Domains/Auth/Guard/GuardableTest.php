@@ -115,14 +115,14 @@ class GuardableTest extends TestCase
     /** @test */
     function guards_entries()
     {
-        $order = new Order();
+        $order = new TestOrder();
         $order->setUp();
 
         $user = $this->beUser();
-        $user->forbid($entry = Order::create(['title' => 'secret']));
+        $user->forbid($entry = TestOrder::create(['title' => 'secret']));
         $this->assertFalse($user->can($entry));
 
-        $entryPublic = Order::create(['title' => 'public']);
+        $entryPublic = TestOrder::create(['title' => 'public']);
         $user->allow($entryPublic);
         $this->assertTrue($user->can($entryPublic));
     }
@@ -130,17 +130,17 @@ class GuardableTest extends TestCase
     /** @test */
     function guards_entries_in_collection()
     {
-        $order = new Order();
+        $order = new TestOrder();
         $order->setUp();
 
         $user = $this->beUser();
-        $user->forbid(Order::create(['title' => 'a']));
-        $user->allow(Order::create(['title' => 'b']));
-        $user->allow(Order::create(['title' => 'c']));
-        $user->forbid(Order::create(['title' => 'd']));
-        $user->allow(Order::create(['title' => 'e']));
+        $user->forbid(TestOrder::create(['title' => 'a']));
+        $user->allow(TestOrder::create(['title' => 'b']));
+        $user->allow(TestOrder::create(['title' => 'c']));
+        $user->forbid(TestOrder::create(['title' => 'd']));
+        $user->allow(TestOrder::create(['title' => 'e']));
 
-        $filtered = sv_guard(Order::all());
+        $filtered = sv_guard(TestOrder::all());
 
         $this->assertEquals(3, $filtered->count());
         $this->assertArrayContains($filtered->pluck('title')->all(), ['b', 'c', 'e']);
@@ -186,7 +186,7 @@ class GuardableTest extends TestCase
     }
 }
 
-class Order extends Model implements Guardable
+class TestOrder extends Model implements Guardable
 {
     public $timestamps = false;
 

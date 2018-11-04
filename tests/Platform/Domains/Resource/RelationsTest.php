@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use Tests\Platform\Domains\Resource\Fixtures\TestPost;
@@ -166,15 +167,23 @@ class RelationsTest extends ResourceTestCase
 
         $user = $users->loadFake();
         $posts->createFake(['t_user_id' => $user->getEntryId()], 5);
+        $posts->createFake(['t_user_id' => 999], 3); // these should be excluded
 
         $relation = $user->getRelation('posts');
-        $table = $relation->makeTable();
-        $this->assertInstanceOf(Table::class, $table);
 
-        $table->build();
+        $tableConfig = new RelationTableConfig($relation);
+        $tableConfig->build();
 
-        $this->assertEquals(5,\DB::table('t_posts')->count());
+
+        $table = Table::config($tableConfig)->build();
+
+//        $table = $relation->makeTable();
+//
+//        $this->assertInstanceOf(Table::class, $table);
+//
+//        $table->build();
+
+        $this->assertEquals(8, \DB::table('t_posts')->count());
         $this->assertEquals(5, $table->getRows()->count());
-
     }
 }

@@ -32,30 +32,18 @@ class Relation implements HasResource
 
     /** @var \SuperV\Platform\Domains\Resource\Model\Builder */
     protected $query;
-
-    public function makeConfig(): TableConfig
-    {
-        $config = new TableConfig();
-        $config->setResource(Resource::of($this->config->getRelatedResource()));
-        $config->setActions([Action::make('edit'), Action::make('delete')]);
-
-        $config->query  = $this->newQuery();
-        $config->build();
-
-        return $config;
-    }
-
-    public function makeTable(): Table
-    {
-        $config = $this->makeConfig();
-
-        $this->newQuery();
-
-        $table = Table::config($config);
-        $table->setQuery($this->query);
-
-        return $table;
-    }
+//
+//    public function makeTable(): Table
+//    {
+//        $config = $this->makeConfig();
+//
+//        $this->newQuery();
+//
+//        $table = Table::config($config);
+//        $table->setQuery($this->query);
+//
+//        return $table;
+//    }
 
     public function newQuery()
     {

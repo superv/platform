@@ -9,6 +9,7 @@ use SuperV\Modules\Nucleo\Http\Controllers\Concerns\ResolvesResource;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
@@ -65,9 +66,14 @@ class ResourceController extends BaseController
 
         $tabs = sv_tabs()->addTab(sv_tab('Edit', $editorTab)->autoFetch());
 
-        $this->resource->getRelations()->map(function(Relation $relation) use ($tabs) {
-           $table = $relation->makeTable();
-            return $tabs->addTab(sv_tab($relation->getName(),  SvBlock::make('sv-table-v2')->setProps($table->getConfig()->compose())));
+        $this->resource->getRelations()->map(function (Relation $relation) use ($tabs) {
+            $config = new RelationTableConfig($relation);
+
+            $card = SvCard::make()->block(
+                SvBlock::make('sv-table-v2')->setProps($config->build()->compose())
+            );
+
+            return $tabs->addTab(sv_tab($relation->getName(), $card));
         });
 
         $page = SvPage::make('')->addBlock($tabs);
