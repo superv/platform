@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Contracts;
 
-interface Fieldable
+interface ProvidesField
 {
     public function build();
 }

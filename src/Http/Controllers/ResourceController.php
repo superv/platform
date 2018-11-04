@@ -5,8 +5,8 @@ namespace SuperV\Platform\Http\Controllers;
 use SuperV\Modules\Nucleo\Domains\UI\Page\SvPage;
 use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
 use SuperV\Modules\Nucleo\Domains\UI\SvCard;
-use SuperV\Modules\Nucleo\Http\Controllers\Concerns\ResolvesResource;
 use SuperV\Platform\Domains\Resource\Action\Action;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
@@ -14,19 +14,10 @@ use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
-class ResourceController extends BaseController
+class ResourceController extends BaseApiController
 {
-    use ResolvesResource;
-
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->middleware('auth:superv-api');
-    }
 
     public function table()
     {
@@ -66,15 +57,17 @@ class ResourceController extends BaseController
 
         $tabs = sv_tabs()->addTab(sv_tab('Edit', $editorTab)->autoFetch());
 
-        $this->resource->getRelations()->map(function (Relation $relation) use ($tabs) {
-            $config = new RelationTableConfig($relation);
+        $this->resource->getRelations()
+                       ->filter(function (Relation $relation) { return $relation instanceof ProvidesTable; })
+                       ->map(function (Relation $relation) use ($tabs) {
+                           $config = new RelationTableConfig($relation);
 
-            $card = SvCard::make()->block(
-                SvBlock::make('sv-table-v2')->setProps($config->build()->compose())
-            );
+                           $card = SvCard::make()->block(
+                               SvBlock::make('sv-table-v2')->setProps($config->build()->compose())
+                           );
 
-            return $tabs->addTab(sv_tab($relation->getName(), $card));
-        });
+                           return $tabs->addTab(sv_tab($relation->getName(), $card));
+                       });
 
         $page = SvPage::make('')->addBlock($tabs);
 
