@@ -41,20 +41,22 @@ class TableRow
 
                         $field->setResource($this->resource);
 
-                        if ($field->getType() === 'boolean') {
-                            if (! $field->isBuilt()) {
-                                $field->build();
-                            }
-                            $this->setValue($field->getName(), $field->compose());
-                        } else if ($field->getType() === 'file') {
-                            if (! $field->isBuilt()) {
-                                $field->build();
-                            }
-                            $field->getConfig();
-                            $this->setValue($field->getName(), $field->compose());
-                        } else {
-                            $this->setValue($field->getName(), $field->getValue());
-                        }
+//                        if ($field->getType() === 'boolean') {
+//                            if (! $field->isBuilt()) {
+//                                $field->build();
+//                            }
+//                            $this->setValue($field->getName(), $field->compose());
+//                        } else if ($field->getType() === 'file') {
+//                            if (! $field->isBuilt()) {
+//                                $field->build();
+//                            }
+//                            $field->getConfig();
+//                            $this->setValue($field->getName(), $field->compose());
+//                        } else {
+//                            $this->setValue($field->getName(), $field->getValue());
+//                        }
+
+                        $this->setValue($field->getName(), $field->presentValue());
                     });
 
         $this->table->getActions()

@@ -3,11 +3,12 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
-use SuperV\Platform\Domains\Resource\ResourceEntryModel;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\Resource;
 
 class BelongsTo extends Field
 {
@@ -17,23 +18,38 @@ class BelongsTo extends Field
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $relatedResource;
 
-    public function setValue($value): ?Closure
-    {
-        if ($value instanceof ResourceEntryModel) {
-            $value = $value->getId();
-        }
-        return parent::setValue($value);
-    }
-
     public function build(): Field
     {
         $this->buildRelationConfig();
 
+        $this->relatedResource = Resource::of($this->relationConfig->getRelatedResource());
+
         $this->buildOptions();
 
-        $this->setConfigValue('placeholder', 'Select '.$this->relatedResource->getSlug());
+        $this->buildConfig();
 
         return parent::build();
+    }
+
+    public function buildForView(Builder $query)
+    {
+        $query->with($this->getName());
+
+        return parent::buildForView($query);
+    }
+
+    public function presentValue()
+    {
+        $this->buildRelationConfig();
+
+        $related = Resource::of($this->relationConfig->getRelatedResource());
+
+        $titleColumn = $related->getTitleFieldName();
+
+        $relatedEntry = $this->getResourceEntry()->getRelation($this->getName());
+
+
+        return $relatedEntry ?  $relatedEntry->getAttribute($titleColumn) : null;
     }
 
     protected function buildRelationConfig()
@@ -46,8 +62,6 @@ class BelongsTo extends Field
      */
     protected function buildOptions()
     {
-        $this->relatedResource = ResourceFactory::make($this->relationConfig->getRelatedResource());
-
         $titleField = FieldModel::find($this->relatedResource->getTitleFieldId());
 
         $titleFieldName = $titleField ? $titleField->getName() : 'name';
@@ -71,6 +85,20 @@ class BelongsTo extends Field
         })->all();
 
         $this->setConfigValue('options', $options);
+    }
+
+    protected function buildConfig(): void
+    {
+        $this->setConfigValue('placeholder', 'Select '.$this->relatedResource->getSlug());
+    }
+
+    public function setValue($value): ?Closure
+    {
+        if ($value instanceof ResourceEntryModel) {
+            $value = $value->getId();
+        }
+
+        return parent::setValue($value);
     }
 
     public function getType(): string

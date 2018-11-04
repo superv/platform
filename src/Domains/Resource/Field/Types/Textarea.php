@@ -6,5 +6,5 @@ use SuperV\Platform\Domains\Resource\Field\Field;
 
 class Textarea extends Field
 {
-    protected $type = 'textarea';
+    protected $config = ['hide.table' => true];
 }

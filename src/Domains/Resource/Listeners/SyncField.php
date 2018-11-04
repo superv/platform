@@ -61,9 +61,12 @@ class SyncField
         $field->required = $column->isRequired();
         $field->unique = $column->isUnique();
         $field->searchable = $column->isSearchable();
-
         $field->config = $column->config;
         $field->rules = Rules::make($column->getRules())->get();
+
+        if ($column->hide) {
+            $field->setConfigValue('hide.'.$column->hide, true );
+        }
 
         $field->setDefaultValue($column->getDefaultValue());
 

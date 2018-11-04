@@ -130,6 +130,7 @@ class FieldTypeTest extends ResourceTestCase
         $users->loadFake(['group_id' => 100]);
 
         $field = $users->getField('group');
+        $this->assertEquals('t_groups', $field->getConfigValue('related_resource'));
         $field->build();
 
         $this->assertTrue($field->isBuilt());

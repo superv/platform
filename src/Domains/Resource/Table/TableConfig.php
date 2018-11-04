@@ -29,7 +29,21 @@ class TableConfig
 
     public function build(): self
     {
+        if ($this->isBuilt()) {
+            throw new PlatformException('Config is already built');
+        }
+
         $this->uuid = Str::uuid();
+
+        $this->columns = $this->resource->getFields()
+                                        ->map(function (Field $field) {
+                                            if ($field->getConfigValue('hide.table') === true) {
+                                                return null;
+                                            }
+
+                                            return $field;
+                                        })
+                                        ->filter();
 
         // build Url
         $this->url = sv_url($this->resource->route('table.data', ['uuid' => $this->uuid]));
@@ -91,13 +105,6 @@ class TableConfig
     public function getColumns(): Collection
     {
         return $this->columns;
-    }
-
-    public function setColumns(TableColumns $columns): TableConfig
-    {
-        $this->columns = $columns;
-
-        return $this;
     }
 
     public function getActions(): Collection

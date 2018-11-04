@@ -4,9 +4,6 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Database\Blueprint;
-use SuperV\Platform\Domains\Database\ColumnDefinition;
-use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 

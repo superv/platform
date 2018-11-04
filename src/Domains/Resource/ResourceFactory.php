@@ -7,7 +7,7 @@ use SuperV\Platform\Exceptions\PlatformException;
 
 class ResourceFactory
 {
-    public static function make($slug)
+    public static function make(string $slug)
     {
         if (! $modelEntry = ResourceModel::withSlug($slug)) {
             throw new PlatformException("Resource model entry not found for [{$slug}]");

@@ -48,6 +48,15 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
 
     public function belongsTo($related, $relationName, $foreignKey = null, $ownerKey = null)
     {
+        $this->addColumn(null, $relationName, ['nullable' => true])
+             ->relation(
+                 Config::belongsTo()
+                       ->relationName($relationName)
+                       ->related($related)
+                       ->foreignKey($foreignKey ?? $relationName.'_id')
+                       ->ownerKey($ownerKey)
+             );
+
         return $this->unsignedInteger($foreignKey ?? $relationName.'_id')
                     ->fieldType('belongs_to')
                     ->fieldName($relationName)

@@ -4,10 +4,11 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Resource\Contracts\HasResource;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\ResourceEntryModel;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -82,6 +83,11 @@ abstract class Field implements HasResource
         }
         $this->built = true;
 
+        return $this;
+    }
+
+    public function buildForView(Builder $query)
+    {
         return $this;
     }
 
@@ -178,6 +184,11 @@ abstract class Field implements HasResource
     public function mergeRules(array $rules)
     {
         $this->rules = array_merge($this->rules, $rules);
+    }
+
+    public function presentValue()
+    {
+        return $this->getValue();
     }
 
     public function getValue()

@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\Field\Builder as FieldBuilder;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Builder as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -41,7 +42,7 @@ class Resource
     protected $relations;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\ResourceEntryModel
+     * @var \SuperV\Platform\Domains\Resource\Model\ResourceEntryModel
      */
     protected $entry;
 
@@ -95,33 +96,9 @@ class Resource
             return app($this->model);
         }
 
-        $model = new class extends ResourceEntryModel
-        {
-            public $timestamps = false;
+        return ResourceEntryModel::make($this);
 
-            public static $entryTable;
 
-            public function getMorphClass()
-            {
-                return static::$entryTable;
-            }
-
-            public function setTable($table)
-            {
-                $this->table = static::$entryTable = $table;
-            }
-
-            public static function __callStatic($method, $parameters)
-            {
-                $static = (new static);
-                $static->setTable($static::$entryTable);
-
-                return $static->$method(...$parameters);
-            }
-        };
-        $model->setTable($this->getSlug());
-
-        return $model;
     }
 
     public function create(array $attributes = []): EntryModelV2
@@ -222,7 +199,7 @@ class Resource
         return $this;
     }
 
-    public function getRelation($name)
+    public function getRelation($name): ?Relation
     {
         $this->ensureBuilt();
 
@@ -296,6 +273,18 @@ class Resource
         } else {
             $this->entry = $this->resolveModel();
         }
+    }
+
+    public function getTitleField(): ?FieldModel
+    {
+        return FieldModel::find($this->titleFieldId);
+    }
+
+    public function getTitleFieldName(): string
+    {
+        $field = $this->getTitleField();
+
+        return $field ? $field->getName() : 'name';
     }
 
     public function getTitleFieldId()

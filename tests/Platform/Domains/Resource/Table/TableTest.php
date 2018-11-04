@@ -2,35 +2,67 @@
 
 namespace Tests\Platform\Domains\Resource\Table;
 
+use SuperV\Platform\Domains\Database\Blueprint;
+use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Table;
-use SuperV\Platform\Domains\Resource\Table\TableColumns;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class TableTest extends ResourceTestCase
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $resource;
+    protected $users;
+
+    /** @var \SuperV\Platform\Domains\Resource\Resource */
+    protected $groups;
+
+    /** @var \SuperV\Platform\Domains\Resource\Table\TableConfig */
+    protected $config;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        Schema::create('t_groups', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title')->titleColumn();
+        });
+
+        $this->groups = Resource::of('t_groups');
+        $this->groups->create(['id' => 50, 'title' => 'Users']);
+        $this->groups->create(['id' => 123, 'title' => 'Admins']);
+
+        Schema::create('t_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->integer('age');
+            $table->text('bio')->hide('table');
+
+//            $table->text('bio')->visibility(function (Visibility $visibility) {
+//                $visibility->hideIf()->scopeIs('table');
+//            });
+
+            $table->belongsTo('t_groups', 'group')->nullable();
+        });
+
+        $this->users = Resource::of('t_users');
+        $this->users->build();
+        $this->config = new TableConfig();
+        $this->config->setResource($this->users);
+        $this->config->setActions([Action::make('edit'), Action::make('delete')]);
+        $this->config->build();
+    }
 
     /** @test */
     function builds_table_config()
     {
-        $this->resource = $this->makeResource('test_users', ['name' => 'titleColumn', 'age:integer', 'bio:text']);
-        $this->resource->build();
+        $this->assertEquals(sv_url($this->users->route('table.data', ['uuid' => $this->config->uuid()])), $this->config->getUrl());
+        $this->assertEquals(3, $this->config->getColumns()->count());
 
-        $config = new TableConfig();
-        $config->setResource($this->resource);
-//        $config->setUrl(sv_url($this->resource->route('table')));
-        $config->setColumns(new TableColumns($this->resource->getFields()));
-        $config->build();
-
-        $this->assertEquals(sv_url($this->resource->route('table.data', ['uuid' => $config->uuid()])), $config->getUrl());
-        $this->assertEquals(3, $config->getColumns()->count());
-
-        $configArray = $config->compose();
-        $this->assertEquals($config->getUrl(), array_get($configArray, 'config.dataUrl'));
+        $configArray = $this->config->compose();
+        $this->assertEquals($this->config->getUrl(), array_get($configArray, 'config.dataUrl'));
 
         $columns = collect(array_get($configArray, 'config.meta.columns'))->keyBy('name');
         $this->assertEquals(['label' => 'Name', 'name' => 'name'], $columns->get('name'));
@@ -39,29 +71,23 @@ class TableTest extends ResourceTestCase
     /** @test */
     function builds_table_rows()
     {
-        $this->resource = $this->makeResource('test_users', ['name' => 'titleColumn', 'age:integer', 'bio:text']);
-        $this->resource->build();
+        $fakeA = $this->users->createFake(['group_id' => 123]);
 
-        [$fakeA, $fakeB, $fakeC, $fakeD] = $this->resource->createFake([], 4);
-
-        $config = new TableConfig();
-
-        $config->setResource($this->resource);
-        $config->setColumns(new TableColumns($this->resource->getFields()));
-        $config->setActions([Action::make('edit'), Action::make('delete')]);
-
-        $table = Table::config($config)
-                      ->setResource($this->resource)
+        [$fakeB, $fakeC, $fakeD] = $this->users->createFake([], 3);
+        $table = Table::config($this->config)
+                      ->setResource($this->users)
                       ->build();
 
-        $this->assertTrue($config->isBuilt());
+        $this->assertTrue($this->config->isBuilt());
         $this->assertTrue($table->isBuilt());
 
         $this->assertEquals(4, $table->getRows()->count());
-        $this->assertEquals($fakeA->toArray(), $table->getRows()->get(0)->getValues());
-        $this->assertEquals($fakeB->toArray(), $table->getRows()->get(1)->getValues());
-        $this->assertEquals($fakeC->toArray(), $table->getRows()->get(2)->getValues());
-        $this->assertEquals($fakeD->toArray(), $table->getRows()->get(3)->getValues());
+        $this->assertEquals([
+            'id'    => $fakeA->id,
+            'name'  => $fakeA->name,
+            'age'   => $fakeA->age,
+            'group' => 'Admins',
+        ], $table->getRows()->get(0)->getValues());
 
         $rowResource = Resource::of($fakeA);
         $rowActions = $table->getRows()->first()->getActions();
@@ -72,13 +98,13 @@ class TableTest extends ResourceTestCase
 
         $this->withoutExceptionHandling();
 
-        $configArray = $config->compose();
+        $configArray = $this->config->compose();
 
         $this->newUser();
-        $response = $this->getJson($this->resource->route('table'), $this->getHeaderWithAccessToken());
+        $response = $this->getJson($this->users->route('table'), $this->getHeaderWithAccessToken());
         $this->assertEquals(array_get($configArray, 'config.meta.columns'), $response->decodeResponseJson('data.props.block.props.config.meta.columns'));
 
-        $response = $this->getJson($this->resource->route('table.data', ['uuid' => $config->uuid()]), $this->getHeaderWithAccessToken());
+        $response = $this->getJson($this->users->route('table.data', ['uuid' => $this->config->uuid()]), $this->getHeaderWithAccessToken());
         $this->assertEquals($table->compose(), $response->decodeResponseJson('data'));
     }
 }

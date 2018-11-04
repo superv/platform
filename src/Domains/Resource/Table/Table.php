@@ -5,8 +5,9 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\ResourceEntryModel;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
 class Table
@@ -40,15 +41,18 @@ class Table
 
     public function build(): self
     {
-        $this->config->build();
+        $this->resource = $this->config->getResource();
 
-        $this->setResource($this->config->getResource());
+        $query = $this->newQuery();
 
-        $entries = $this->fetchEntries($this->newQuery());
-
-        $entries->transform(function (ResourceEntryModel $entry) {
-            return $this->resource->fresh()->setEntry($entry);
+        $this->config->getColumns()->map(function (Field $field) use ($query) {
+            $field->buildForView($query);
         });
+
+        $entries = $this->fetchEntries($query)
+                        ->map(function (ResourceEntryModel $entry) {
+                            return $this->resource->fresh()->setEntry($entry);
+                        });
 
         $this->buildRows($entries);
 
@@ -62,7 +66,7 @@ class Table
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
         $paginator = $query->paginate($this->getOption('limit', 10));
         $countBefore = $paginator->getCollection()->count();
-        $entries = sv_guard($paginator->getCollection());
+        $entries = $paginator->getCollection();
 
         // Repaginate if guard filtered some of the entries..
         // Not ideal but should do the trick for now
@@ -97,19 +101,12 @@ class Table
 
     public function newQuery()
     {
-        return $this->resource->resolveModel()->newQuery();
+        return $this->resource->resolveModel()->newQuery()->select($this->resource->getSlug().'.*');
     }
 
     public function setResource(Resource $resource): Table
     {
         $this->resource = $resource;
-
-        return $this;
-    }
-
-    public function setConfig(TableConfig $config): self
-    {
-        $this->config = $config;
 
         return $this;
     }
@@ -142,6 +139,13 @@ class Table
     public function getConfig(): TableConfig
     {
         return $this->config;
+    }
+
+    public function setConfig(TableConfig $config): self
+    {
+        $this->config = $config;
+
+        return $this;
     }
 
     public function isBuilt(): bool

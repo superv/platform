@@ -65,7 +65,7 @@ class FormTest extends ResourceTestCase
     {
         $form = $this->makeEditForm();
 
-//        $this->assertEquals($form, Form::fromCache($form->uuid()));
+        $this->assertNotNull(Form::fromCache($form->uuid()));
 
         $formData = $form->compose();
         $this->assertEquals(Current::url('sv/forms/'.$form->uuid()), $formData->getUrl());
@@ -81,15 +81,14 @@ class FormTest extends ResourceTestCase
         $this->newUser();
         $response = $this->getJson($this->resource->route('edit'), $this->getHeaderWithAccessToken());
         $response->assertStatus(200);
-        $fields = $response->decodeResponseJson('data.props.page.blocks.0.props.fields');
+
+        $fields = $response->decodeResponseJson('data.props.page.blocks.0.props.tabs.0.block.props.fields');
         $this->assertEquals($formDataArray['fields'], $fields);
     }
 
     /** @test */
     function posts_update_form()
     {
-        $this->withoutExceptionHandling();
-
         $this->newUser();
 
         $form = $this->makeEditForm();
@@ -149,10 +148,10 @@ class FormTest extends ResourceTestCase
         $this->resource->build();
 
         $resourceModelEntry = $this->resource->create([
-            'name' => 'Nicola Tesla',
-            'age'  => 99,
-            'bio'  => 'Dead',
-            'group_id' => 1
+            'name'     => 'Nicola Tesla',
+            'age'      => 99,
+            'bio'      => 'Dead',
+            'group_id' => 1,
         ]);
 
         $this->resource->loadEntry($resourceModelEntry->getKey());

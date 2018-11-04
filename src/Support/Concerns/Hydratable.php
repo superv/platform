@@ -6,6 +6,8 @@ trait Hydratable
 {
     public function hydrate(array $parameters)
     {
+        $parameters = array_filter($parameters);
+
         if (empty($parameters)) {
             return $this;
         }

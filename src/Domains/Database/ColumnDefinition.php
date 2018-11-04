@@ -2,7 +2,9 @@
 
 namespace SuperV\Platform\Domains\Database;
 
+use Closure;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
+use SuperV\Platform\Domains\Resource\Visibility\Visibility;
 
 /**
  * Class ColumnDefinition
@@ -86,5 +88,11 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         $this->config = $config;
 
         return $this;
+    }
+
+    public function visibility(Closure $callback)
+    {
+        $visibility = new Visibility();
+        $callback($visibility);
     }
 }

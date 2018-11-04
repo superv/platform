@@ -21,9 +21,17 @@ class Relation
         return $this->name;
     }
 
-    public function getType():string
+    public function getType(): RelationType
     {
         return $this->type;
+    }
+
+    /**
+     * @param \SuperV\Platform\Domains\Resource\Relation\RelationType $type
+     */
+    public function setType($type): void
+    {
+        $this->type = is_string($type) ? new RelationType($type) : $type;
     }
 
     public static function fromEntry(RelationModel $entry): self

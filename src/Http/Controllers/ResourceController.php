@@ -10,7 +10,6 @@ use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
-use SuperV\Platform\Domains\Resource\Table\TableColumns;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
 class ResourceController extends BaseController
@@ -34,7 +33,6 @@ class ResourceController extends BaseController
         $config = new TableConfig();
 
         $config->setResource($this->resource);
-        $config->setColumns(new TableColumns($this->resource->getFields()));
         $config->setActions([Action::make('edit'), Action::make('delete')]);
 
 

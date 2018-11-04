@@ -11,6 +11,27 @@ use Tests\Platform\Domains\Resource\Fixtures\TestRole;
 class RelationsTest extends ResourceTestCase
 {
     /** @test */
+    function creates_belongs_to_relations()
+    {
+        Schema::create('t_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->belongsTo('t_groups', 'group');
+        });
+
+        $users = Resource::of('t_users');
+        $this->assertColumnDoesNotExist('t_users', 'posts');
+
+        $relation = $users->getRelation('group');
+        $this->assertEquals('belongs_to', $relation->getType());
+
+        $this->assertEquals([
+            'related_resource' => 't_groups',
+            'foreign_key'   => 'group_id',
+        ], $relation->getConfig());
+    }
+
+    /** @test */
     function creates_has_many_relations()
     {
         Schema::create('t_users', function (Blueprint $table) {
