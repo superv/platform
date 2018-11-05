@@ -32,7 +32,14 @@ class ResourceController extends BaseApiController
             SvBlock::make('sv-table-v2')->setProps($config->build()->compose())
         );
 
-        return ['data' => sv_compose($card)];
+        $page = SvPage::make('')->addBlock($card);
+        $page->hydrate([
+                'title' => $this->resource->label(),
+            ]
+        );
+        $page->build();
+
+        return sv_compose($page);
     }
 
     public function data($uuid)
@@ -60,7 +67,6 @@ class ResourceController extends BaseApiController
         $this->resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesForm; })
                        ->map(function (ProvidesForm $relation) use ($tabs) {
-
                            $form = $relation->makeForm();
                            $formData = $form->build()->compose();
 
@@ -81,6 +87,10 @@ class ResourceController extends BaseApiController
                        });
 
         $page = SvPage::make('')->addBlock($tabs);
+
+        $page->hydrate([
+             'title' => $this->resource->entryLabel()
+         ]);
 
         $page->build();
 
@@ -120,6 +130,9 @@ class ResourceController extends BaseApiController
             SvBlock::make('sv-form-v2')->setProps($formData->toArray())
         );
 
+        $page->hydrate([
+            'title' => 'Create new '.$this->resource->singularLabel()
+        ]);
         $page->build();
 
         return sv_compose($page);
