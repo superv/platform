@@ -15,7 +15,7 @@ class HasMany extends Relation implements ProvidesTable
     {
         return new EloquentHasMany(
             $instance->newQuery(),
-            $this->resource->getEntry(),
+            $this->getParentEntry(),
             $this->config->getForeignKey(),
             $this->resource->getEntry()->getKeyName()
         );

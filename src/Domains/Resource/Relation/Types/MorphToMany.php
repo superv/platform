@@ -12,16 +12,14 @@ class MorphToMany extends Relation implements ProvidesTable
 {
     protected function newRelationQuery(ResourceEntryModel $instance): EloquentRelation
     {
-        $parentModel = $this->resource->getEntry();
-
         return new EloquentMorphToMany(
             $instance->newQuery(),
-            $parentModel,
+            $this->getParentEntry(),
             $this->config->getMorphName(),
             $this->config->getPivotTable(),
             $this->config->getPivotForeignKey(),
             $this->config->getPivotRelatedKey(),
-            $parentModel->getKeyName(),
+            $this->getParentEntry()->getKeyName(),
             $instance->getKeyName()
         );
     }

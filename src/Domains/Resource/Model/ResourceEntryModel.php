@@ -21,7 +21,7 @@ class ResourceEntryModel extends EntryModelV2
 
         $relation = RelationBuilder::resolveFromRelationEntry($relation);
 
-        $relation->setChildEntry($this);
+        $relation->setParentEntry($this);
 
         return $relation->newQuery();
     }

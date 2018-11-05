@@ -14,15 +14,14 @@ class MorphOne extends Relation implements ProvidesForm
 {
     protected function newRelationQuery(ResourceEntryModel $instance): EloquentRelation
     {
-        $parentModel = $this->resource->getEntry();
         $morphName = $this->config->getMorphName();
 
         return new EloquentMorphOne(
             $instance->newQuery(),
-            $parentModel,
+            $this->getParentEntry(),
             $morphName.'_type',
             $morphName.'_id',
-            $parentModel->getKeyName()
+            $this->getParentEntry()->getKeyName()
         );
     }
 
