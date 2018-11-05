@@ -34,7 +34,7 @@ class MorphOne extends Relation implements ProvidesForm
     {
         $relatedEntry = $this->getRelatedEntry() ?? $this->newRelatedInstance();
 
-        $form = Form::of($relatedEntry->resource());
+        $form = Form::of($relatedEntry->wrap());
 
         $form->removeFieldBeforeBuild(function (Field $field) {
 

@@ -71,6 +71,7 @@ class ResourceController extends BaseApiController
         $form = Form::of($this->resource());
         $formData = $form->build()->compose();
 
+        // main edit form
         $editorTab = SvBlock::make('sv-form-v2')->setProps($formData->toArray());
 
         $tabs = sv_tabs()->addTab(sv_tab('Edit', $editorTab)->autoFetch());
@@ -101,7 +102,8 @@ class ResourceController extends BaseApiController
         $page = SvPage::make('')->addBlock($tabs);
 
         $page->hydrate([
-             'title' => $this->resource->entryLabel()
+             'title' => $this->resource->entryLabel(),
+            'actions' => ['create']
          ]);
 
         $page->build();

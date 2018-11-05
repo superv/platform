@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use Exception;
 use SuperV\Platform\Domains\Resource\Field\Builder;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -70,7 +71,7 @@ class ResourceFactory
         }
 
         if ($this->entry->getFields()->count() > 30) {
-            throw new PlatformException('Somethings wrong here: '.$this->entry->getFields()->count());
+            throw new Exception('Somethings wrong here: '.$this->entry->getFields()->count());
         }
 
         return $fields ?? $this->entry->getFields();

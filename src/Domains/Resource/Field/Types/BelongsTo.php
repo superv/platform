@@ -42,11 +42,10 @@ class BelongsTo extends Field
     {
         $this->buildRelationConfig();
 
-        $related = Resource::of($this->relationConfig->getRelatedResource());
-
+        /** @var ResourceEntryModel $relatedEntry */
         $relatedEntry = $this->getResourceEntry()->getRelation($this->getName());
 
-        return $relatedEntry ? $relatedEntry->resource()->entryLabel() : null;
+        return $relatedEntry ? $relatedEntry->wrap()->entryLabel() : null;
     }
 
     protected function buildRelationConfig()

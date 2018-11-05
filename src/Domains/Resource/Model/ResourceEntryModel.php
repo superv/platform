@@ -10,7 +10,12 @@ use SuperV\Platform\Domains\Resource\Resource;
 
 class ResourceEntryModel extends EntryModelV2
 {
-    public function resource(): Resource
+    /**
+     * Wrap the entry model with parent resource
+     *
+     * @return Resource
+     */
+    public function wrap(): Resource
     {
         return Resource::of($this->getTable(), false)->setEntry($this);
     }

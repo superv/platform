@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Jobs\BuildResourceJob;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -313,7 +314,9 @@ class Resource
 
     public static function modelOf($handle)
     {
-        $resourceEntry = ResourceModel::withSlug($handle);
+        if (!$resourceEntry = ResourceModel::withSlug($handle)) {
+          throw new PlatformException("Resource model not found with handle [{$handle}]");
+        }
 
         if ($model = array_get($resourceEntry->getConfig(), 'model')) {
             return new $model;

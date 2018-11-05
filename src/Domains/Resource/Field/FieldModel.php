@@ -46,10 +46,10 @@ class FieldModel extends EntryModelV2
 
     public function getResourceEntry()
     {
-        return $this->resource;
+        return $this->resourceEntry;
     }
 
-    public function resource()
+    public function resourceEntry()
     {
         return $this->belongsTo(ResourceModel::class, 'resource_id');
     }

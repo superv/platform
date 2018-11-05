@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 
-class ResourceModel extends Model
+class ResourceModel extends EntryModelV2
 {
     protected $table = 'sv_resources';
 

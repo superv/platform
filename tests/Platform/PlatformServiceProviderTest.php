@@ -40,7 +40,9 @@ class PlatformServiceProviderTest extends TestCase
     {
         config(['superv.installed' => false]);
 
+        Platform::shouldReceive('isInstalled')->andReturn(false);
         Platform::shouldReceive('boot')->never();
+
         (new PlatformServiceProvider($this->app))->boot();
     }
 }

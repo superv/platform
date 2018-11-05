@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Resource;
 
-class ResourceLabelTest extends ResourceTestCase
+class ResourceConfigTest extends ResourceTestCase
 {
     /** @test */
     function builds_label_from_table_name()
