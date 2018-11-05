@@ -65,6 +65,7 @@ class Table
         return $this;
     }
 
+    /** @param Builder $query */
     protected function fetchEntries($query)
     {
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */

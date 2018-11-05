@@ -80,7 +80,7 @@ class Resource
             return new $model;
         }
 
-        return ResourceEntryModel::make($this);
+        return ResourceEntryModel::make($this->slug());
     }
 
     public function create(array $attributes = []): EntryModelV2
@@ -258,23 +258,6 @@ class Resource
             $this->entry = $this->resolveModel();
         }
     }
-
-//    public function getTitleField(): ?FieldModel
-//    {
-//        return FieldModel::find($this->titleFieldId);
-//    }
-//
-//    public function getTitleFieldName(): string
-//    {
-//        $field = $this->getTitleField();
-//
-//        return $field ? $field->getName() : 'name';
-//    }
-//
-//    public function getTitleFieldId()
-//    {
-//        return $this->titleFieldId;
-//    }
 
     public function makeEntry(): void
     {
