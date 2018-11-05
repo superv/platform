@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Relation;
 
 use SuperV\Platform\Domains\Resource\Contracts\HasResource;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class Builder
 {
@@ -22,7 +23,7 @@ class Builder
     public function build($relation)
     {
         if ($relation instanceof RelationModel) {
-            $relation = $this->resolveFromRelationEntry($relation);
+            $relation = static::resolveFromRelationEntry($relation);
         }
 
         if ($relation instanceof HasResource) {
@@ -32,10 +33,13 @@ class Builder
         return $relation;
     }
 
-    protected function resolveFromRelationEntry(RelationModel $entry): Relation
+    public static function resolveFromRelationEntry(RelationModel $entry): Relation
     {
         /** @var \SuperV\Platform\Domains\Resource\Relation\Relation $class */
         $class = Relation::resolveClass($entry->getType());
+        if (! class_exists($class)) {
+            throw new PlatformException("Relation class not found for type ".$entry->getType());
+        }
 
         return $class::fromEntry($entry);
     }
