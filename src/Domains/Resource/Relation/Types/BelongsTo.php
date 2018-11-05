@@ -13,7 +13,7 @@ class BelongsTo extends Relation
     {
         return new EloquentBelongsTo(
             $instance->newQuery(),
-            $this->resource->getEntry(),
+            $this->childEntry ?? $this->resource->getEntry(),
             $this->config->getForeignKey(),
             'id',
             $this->getName()
