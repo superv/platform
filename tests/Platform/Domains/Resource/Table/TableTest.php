@@ -100,7 +100,7 @@ class TableTest extends ResourceTestCase
 
         $this->newUser();
         $response = $this->getJson($this->users->route('table'), $this->getHeaderWithAccessToken());
-        $this->assertEquals(array_get($configArray, 'config.meta.columns'), $response->decodeResponseJson('data.props.block.props.config.meta.columns'));
+        $this->assertEquals(array_get($configArray, 'config.meta.columns'), $response->decodeResponseJson('data.props.page.blocks.0.props.block.props.config.meta.columns'));
 
         $response = $this->getJson($this->users->route('table.data', ['uuid' => $this->config->uuid()]), $this->getHeaderWithAccessToken());
         $this->assertEquals($table->compose(), $response->decodeResponseJson('data'));
