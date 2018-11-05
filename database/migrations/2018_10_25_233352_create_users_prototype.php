@@ -1,6 +1,7 @@
 <?php
 
 use SuperV\Platform\Domains\Auth\Account;
+use SuperV\Platform\Domains\Auth\Profile;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Auth\Access\Action;
 use SuperV\Platform\Domains\Auth\Access\Role;
@@ -20,6 +21,7 @@ class CreateUsersPrototype extends Migration
             $table->string('remember_token')->nullable();
             $table->timestamps();
 
+            $table->hasOne(Profile::class, 'profile', 'user_id');
             $table->morphToMany(Role::class, 'roles', 'owner', 'auth_assigned_roles', 'role_id');
 
             $pivotColumns = function (Blueprint $pivotTable) {

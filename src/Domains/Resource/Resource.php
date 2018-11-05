@@ -8,8 +8,8 @@ use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\Field\Builder as FieldBuilder;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Jobs\BuildResourceJob;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
-use SuperV\Platform\Domains\Resource\Relation\Builder as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -63,29 +63,7 @@ class Resource
 
     public function build()
     {
-        if (! $this->entry) {
-            $this->entry = $this->resolveModel();
-        }
-
-        $this->fields = $this->fields
-            ->map(function ($field) {
-                if ($field instanceof Field) {
-                    return $field;
-                }
-
-                return (new FieldBuilder($this))->build($field);
-            });
-
-        $this->relations = $this->relations
-            ->map(function ($relation) {
-                if ($relation instanceof Relation) {
-                    return $relation;
-                }
-
-                return (new RelationBuilder($this))->build($relation);
-            });
-
-        $this->built = true;
+        BuildResourceJob::dispatch($this);
 
         return $this;
     }
@@ -127,11 +105,6 @@ class Resource
         $this->entry = $this->createFake($overrides);
 
         return $this;
-    }
-
-    public function getSlug()
-    {
-        return $this->slug;
     }
 
     public function loadEntry($entryId): self
@@ -232,7 +205,7 @@ class Resource
 
     public function route($route, array $params = [])
     {
-        $base = 'sv/resources/'.$this->getSlug();
+        $base = 'sv/resources/'.$this->slug();
         if ($route === 'edit') {
             return $base.'/'.$this->getEntryId().'/edit';
         }
@@ -254,7 +227,7 @@ class Resource
 
     public function fresh($build = false): self
     {
-        return static::of($this->getSlug(), $build);
+        return static::of($this->slug(), $build);
     }
 
     public function __sleep()
@@ -290,6 +263,36 @@ class Resource
     public function getTitleFieldId()
     {
         return $this->titleFieldId;
+    }
+
+    public function makeEntry(): void
+    {
+        if (! $this->entry) {
+            $this->entry = $this->resolveModel();
+        }
+    }
+
+    public function buildFields(): void
+    {
+        $this->fields = $this->fields
+            ->map(function ($field) {
+                if ($field instanceof Field) {
+                    return $field;
+                }
+
+                return (new FieldBuilder($this))->build($field);
+            });
+    }
+
+    public function slug()
+    {
+        return $this->slug;
+    }
+
+
+    public function markAsBuilt()
+    {
+        $this->built = true;
     }
 
     public static function of($handle, bool $build = true): self

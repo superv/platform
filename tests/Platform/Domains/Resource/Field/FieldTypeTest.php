@@ -57,7 +57,6 @@ class FieldTypeTest extends ResourceTestCase
         });
 
         $this->resource = Resource::of('t_posts');
-        $this->resource->build();
     }
 
     /** @test */

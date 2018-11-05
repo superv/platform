@@ -2,13 +2,26 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class ResourceEntryModel extends EntryModelV2
 {
+    public function resource(): Resource
+    {
+        return Resource::of($this->getTable(), false)->setEntry($this);
+    }
+
+    public function getRelationshipFromConfig($name)
+    {
+        if (! $relation = Resource::of($this->getTable())->getRelation($name)) {
+            return null;
+        }
+
+        return $relation->newQuery();
+    }
+
     /**
      * Create a new Eloquent query builder for the model.
      *
@@ -52,15 +65,6 @@ class ResourceEntryModel extends EntryModelV2
              */
             public static $resource;
 
-            public function getRelationshipFromConfig($name)
-            {
-                if (! $relation = Resource::of($this->getTable())->getRelation($name)) {
-                    return null;
-                }
-
-                return $relation->newQuery();
-            }
-
             public function setTable($table)
             {
                 return $this->table = static::$resource = $table;
@@ -79,7 +83,7 @@ class ResourceEntryModel extends EntryModelV2
                 return $static->$method(...$parameters);
             }
         };
-        $model->setTable($resource->getSlug());
+        $model->setTable($resource->slug());
 
         return $model;
     }

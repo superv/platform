@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use SuperV\Platform\Domains\Auth\User;
+use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Database\Blueprint;
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class CreateProfilesTable extends Migration
 {
@@ -10,9 +11,9 @@ class CreateProfilesTable extends Migration
     {
         Schema::create('user_profiles', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->belongsTo(User::class, 'user');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
             $table->timestamps();
         });
     }

@@ -48,7 +48,7 @@ class TableTest extends ResourceTestCase
         });
 
         $this->users = Resource::of('t_users');
-        $this->users->build();
+
         $this->config = new TableConfig();
         $this->config->setResource($this->users);
         $this->config->setActions([Action::make('edit'), Action::make('delete')]);

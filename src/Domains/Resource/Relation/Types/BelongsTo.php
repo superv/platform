@@ -2,17 +2,14 @@
 
 namespace SuperV\Platform\Domains\Resource\Relation\Types;
 
-use SuperV\Platform\Domains\Resource\Relation\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentBelongsTo;
+use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
+use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class BelongsTo extends Relation
 {
-    protected function newRelationQuery($instance)
-    {
-        return $this->newBelongsTo($instance);
-    }
-
-    protected function newBelongsTo($instance)
+    protected function newRelationQuery(ResourceEntryModel $instance): EloquentRelation
     {
         return new EloquentBelongsTo(
             $instance->newQuery(),

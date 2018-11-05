@@ -168,7 +168,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                     );
     }
 
-    public function hasOne($related, $relationName, $foreignKey = null, $localKey = null)
+    public function hasOne($related, $relationName, $foreignKey, $localKey = null)
     {
         return $this->addColumn(null, $relationName, ['nullable' => true])
                     ->relation(

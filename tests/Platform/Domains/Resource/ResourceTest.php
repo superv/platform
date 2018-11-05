@@ -4,8 +4,10 @@ namespace Tests\Platform\Domains\Resource;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use SuperV\Platform\Domains\Resource\Field\FieldConfig;
+use SuperV\Platform\Domains\Database\Blueprint;
+use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldConfig;
 use SuperV\Platform\Domains\Resource\Field\Types\Number;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
@@ -45,6 +47,18 @@ class ResourceTest extends ResourceTestCase
             ['class' => Number::class, 'value' => 99],
             ['class' => Textarea::class, 'value' => 'Bio'],
         ], $this->getFields($resource));
+    }
+
+    /** @test */
+    function builds_resource_and_entry_labels()
+    {
+        Schema::create('customer_reviews', function (Blueprint $table) {
+            $table->increments('id');
+        });
+
+        $resource = Resource::of('customer_reviews');
+        $this->assertEquals('Customer Reviews', $resource->label());
+
     }
 
     /** @test */
@@ -101,7 +115,7 @@ class TestUserResource
         return [
             'name',
             FieldConfig::field('age')->rules(['min:18', 'max:50']),
-            Textarea::make('bio')
+            Textarea::make('bio'),
         ];
     }
 }

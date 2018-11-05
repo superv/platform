@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource\Form;
 use Current;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -14,12 +15,22 @@ class FormTest extends ResourceTestCase
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
 
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->newUser();
+    }
+
     /** @test */
     function builds_create_form()
     {
-        $form = $this->makeCreateForm();
+        $this->resource = $this->makeResource('test_users', ['name', 'age:integer', 'bio:text']);
+        $form = Form::of($this->resource)->build();
 
         $this->assertEquals($form, Form::fromCache($form->uuid()));
+
+        $this->assertEquals(3, $form->getFields()->count());
 
         $formData = $form->compose();
         $this->assertEquals(Current::url('sv/forms/'.$form->uuid()), $formData->getUrl());
@@ -29,19 +40,18 @@ class FormTest extends ResourceTestCase
 
         $formDataArray = $formData->toArray();
 
-        $this->newUser();
         $response = $this->getJson($this->resource->route('create'), $this->getHeaderWithAccessToken());
-        $response->assertStatus(200);
-        $fields = $response->decodeResponseJson('data.props.page.blocks.0.props.fields');
-        $this->assertEquals($formDataArray['fields'], $fields);
+        $this->assertEquals(
+            $formDataArray['fields'],
+            $response->decodeResponseJson('data.props.page.blocks.0.props.fields')
+        );
     }
 
     /** @test */
     function posts_create_form()
     {
-        $this->newUser();
-
-        $form = $this->makeCreateForm();
+        $this->resource = $this->makeResource('test_users', ['name', 'age:integer', 'bio:text']);
+        $form = Form::of($this->resource)->build();
 
         $data = [
             'name' => 'Nicola Tesla',
@@ -78,7 +88,6 @@ class FormTest extends ResourceTestCase
         })->toAssoc()->all();
         $this->assertEquals(['name' => 'Nicola Tesla', 'age' => 99, 'bio' => 'Dead', 'group_id' => 1], $valueMap);
 
-        $this->newUser();
         $response = $this->getJson($this->resource->route('edit'), $this->getHeaderWithAccessToken());
         $response->assertStatus(200);
 
@@ -89,8 +98,6 @@ class FormTest extends ResourceTestCase
     /** @test */
     function posts_update_form()
     {
-        $this->newUser();
-
         $form = $this->makeEditForm();
 
         $groups = ResourceFactory::make('test_groups');
@@ -115,15 +122,22 @@ class FormTest extends ResourceTestCase
         $this->assertEquals(2, $entry->group_id);
     }
 
-    protected function makeCreateForm(): Form
+    /** @test */
+    function removes_fields_from_form()
     {
         $this->resource = $this->makeResource('test_users', ['name', 'age:integer', 'bio:text']);
-        $this->resource->build();
-        $form = new Form();
-        $form->addResource($this->resource);
-        $form->build();
+        $form = Form::of($this->resource);
 
-        return $form;
+        $form->removeFieldBeforeBuild(function (Field $field) {
+            return $field->getName() === 'age';
+        });
+
+        $form->build();
+        $this->assertEquals(2, $form->getFields()->count());
+
+
+        // make sure values() applied after filter
+        $this->assertEquals($form->getFields(), $form->getFields()->values());
     }
 
     /**
@@ -145,7 +159,7 @@ class FormTest extends ResourceTestCase
             $table->belongsTo('test_groups', 'group')->nullable();
         });
         $this->resource = ResourceFactory::make('test_users');
-        $this->resource->build();
+//        $this->resource->build();
 
         $resourceModelEntry = $this->resource->create([
             'name'     => 'Nicola Tesla',

@@ -2,15 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Relation;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use SuperV\Platform\Domains\Resource\Action\Action;
+use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Resource\Contracts\HasResource;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\Table\Table;
-use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -30,7 +25,7 @@ abstract class Relation implements HasResource
     /** @var RelationConfig */
     protected $config;
 
-    public function newQuery()
+    public function newQuery(): EloquentRelation
     {
         $instance = $this->newRelatedInstance();
 
@@ -43,7 +38,7 @@ abstract class Relation implements HasResource
         return $query;
     }
 
-    protected function newRelatedInstance()
+    protected function newRelatedInstance(): ?ResourceEntryModel
     {
         if ($table = $this->config->getRelatedResource()) {
             return Resource::of($table)->resolveModel();
@@ -53,68 +48,8 @@ abstract class Relation implements HasResource
 
         throw new PlatformException('Related resource/model not found');
     }
-//
-//    /**
-//     * @param $instance
-//     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-//     */
-//    protected function newHasMany($instance)
-//    {
-//        return new HasMany(
-//            $instance->newQuery(),
-//            $this->resource->getEntry(),
-//            $this->config->getForeignKey(),
-//            $this->resource->getEntry()->getKeyName()
-//        );
-//    }
-//
-//    /**
-//     * @param $instance
-//     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
-//     */
-//    protected function newMorphToMany($instance)
-//    {
-//        return new MorphToMany(
-//            $instance->newQuery(),
-//            $this->parentModel,
-//            $this->relationEntry->getMorphName(),
-//            $this->relationEntry->getPivotTable(),
-//            $this->relationEntry->getPivotForeignKey(),
-//            $this->relationEntry->getPivotRelatedKey(),
-//            $this->parentModel->getKeyName(),
-//            $instance->getKeyName()
-//        );
-//    }
-//
-//    protected function newBelongsTo($instance)
-//    {
-//        return new BelongsTo(
-//            $instance->newQuery(),
-//            $this->resource->getEntry(),
-//            $this->config->getForeignKey(),
-//            'id',
-//            $this->getName()
-//        );
-//    }
 
-//    /**
-//     * @param $instance
-//     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-//     */
-//    protected function newBelongsToMany($instance)
-//    {
-//        return new BelongsToMany(
-//            $instance->newQuery(),
-//            $this->resource->getEntry(),
-//            $this->config->getPivotTable(),
-//            $this->config->getPivotForeignKey(),
-//            $this->config->getPivotRelatedKey(),
-//            $this->resource->getEntry()->getKeyName(),
-//            $instance->getKeyName()
-//        );
-//    }
-
-    abstract  protected function newRelationQuery($instance);
+    abstract protected function newRelationQuery(ResourceEntryModel $instance): EloquentRelation;
 
     public function getName(): string
     {
@@ -126,10 +61,7 @@ abstract class Relation implements HasResource
         return $this->type;
     }
 
-    /**
-     * @param \SuperV\Platform\Domains\Resource\Relation\RelationType $type
-     */
-    public function setType($type): void
+    public function setType($type)
     {
         $this->type = is_string($type) ? new RelationType($type) : $type;
     }

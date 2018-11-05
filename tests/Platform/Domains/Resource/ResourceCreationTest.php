@@ -17,7 +17,7 @@ class ResourceCreationTest extends ResourceTestCase
     }
 
     /** @test */
-    function creates_resource_when_a_table_is_created()
+    function creates_resource_model_entry_when_a_table_is_created()
     {
         Schema::create('test_users', function (Blueprint $table) {
             $table->increments('id');

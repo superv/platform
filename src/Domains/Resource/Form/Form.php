@@ -2,23 +2,28 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
+use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Support\Collection;
+use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Form
 {
+    use FiresCallbacks;
+
     protected $uuid;
 
     /**
-     * @var array
+     * @var \Illuminate\Support\Collection
      */
-    protected $resources = [];
+    protected $resources;
 
     /**
-     * @var Collection
+     * @var \Illuminate\Support\Collection
      */
     protected $fields;
 
@@ -27,26 +32,47 @@ class Form
     protected $method = 'post';
 
     /** @var array */
-    protected $callbacks = [];
+    protected $postSaveCallbacks = [];
+
+    /** @var bool */
+    protected $built = false;
+
+    public function __construct()
+    {
+        $this->fields = collect();
+        $this->resources = collect();
+    }
 
     public function addResource(Resource $resource)
     {
-        $this->resources[] = $resource;
+        $this->resources->push($resource);
+
+        return $this;
     }
 
     public function build(): self
     {
+        if ($this->isBuilt()) {
+            throw new PlatformException('Form is already built.');
+        }
+        $this->resources->map->build();
+
         $this->uuid = Str::uuid();
 
-        $this->fields = new FormFields;
-
-        // build Fields
-        foreach ($this->resources as $resource) {
-            $this->fields->mergeFrom($resource);
-        }
+        // first add all fields from all resources
+        $this->resources->map(function (Resource $resource) {
+            $resource->getFields()
+                     ->map(function (Field $field) {
+                         $this->addField($field);
+                     });
+        });
+        $this->fire('building.fields', ['form' => $this]);
+        $this->fields->map->build();
 
         // build Url
         $this->url = sv_url('sv/forms/'.$this->uuid());
+
+        $this->built = true;
 
         $this->cache();
 
@@ -60,6 +86,7 @@ class Form
 
     public function cache()
     {
+        $this->callbacks = [];
         cache()->forever($this->cacheKey(), serialize($this));
     }
 
@@ -78,6 +105,26 @@ class Form
         return $this->fields;
     }
 
+    public function removeField(Closure $callback)
+    {
+        $this->fields = $this->fields->filter(function (Field $field) use ($callback) {
+            return ! $callback($field);
+        })->values();
+
+    }
+
+    public function removeFieldBeforeBuild(Closure $callback)
+    {
+        $this->on('building.fields', function (Form $form) use ($callback) {
+            $form->removeField($callback);
+        });
+    }
+
+    public function addField(Field $field)
+    {
+        $this->fields->push($field);
+    }
+
     public function getUrl()
     {
         return $this->url;
@@ -92,21 +139,16 @@ class Form
     {
         $this->setFieldValues($request);
 
-        $this->saveResources();
+        $this->resources->map->saveEntry();
 
         $this->applyPostSaveCallbacks();
     }
 
     protected function applyPostSaveCallbacks(): void
     {
-        collect($this->callbacks)->filter()->map(function (\Closure $callback) {
+        collect($this->postSaveCallbacks)->filter()->map(function (\Closure $callback) {
             $callback();
         });
-    }
-
-    protected function saveResources(): void
-    {
-        sv_collect($this->resources)->map(function (Resource $resource) { $resource->saveEntry(); });
     }
 
     /**
@@ -115,10 +157,19 @@ class Form
     protected function setFieldValues(Request $request): void
     {
         $this->fields->map(function (Field $field) use ($request) {
-            $this->callbacks[] = $field->setValueFromRequest($request);
+            $this->postSaveCallbacks[] = $field->setValueFromRequest($request);
         });
     }
 
+    public function isBuilt(): bool
+    {
+        return $this->built;
+    }
+
+    public static function of(Resource $resource): self
+    {
+        return app(Form::class)->addResource($resource);
+    }
 
     public static function fromCache($uuid): ?Form
     {

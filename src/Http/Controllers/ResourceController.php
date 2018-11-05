@@ -6,6 +6,7 @@ use SuperV\Modules\Nucleo\Domains\UI\Page\SvPage;
 use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
 use SuperV\Modules\Nucleo\Domains\UI\SvCard;
 use SuperV\Platform\Domains\Resource\Action\Action;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
@@ -46,17 +47,27 @@ class ResourceController extends BaseApiController
         return $this->buildFormPage();
     }
 
-    public function edit()
+    public function edit() // resource index
     {
-        $this->resource()->build();
-        $form = new Form();
-
-        $form->addResource($this->resource);
+        $form = Form::of($this->resource());
         $formData = $form->build()->compose();
+
         $editorTab = SvBlock::make('sv-form-v2')->setProps($formData->toArray());
 
         $tabs = sv_tabs()->addTab(sv_tab('Edit', $editorTab)->autoFetch());
 
+        // make forms
+        $this->resource->getRelations()
+                       ->filter(function (Relation $relation) { return $relation instanceof ProvidesForm; })
+                       ->map(function (ProvidesForm $relation) use ($tabs) {
+
+                           $form = $relation->makeForm();
+                           $formData = $form->build()->compose();
+
+                           return $tabs->addTab(sv_tab($relation->getName(), SvBlock::make('sv-form-v2')->setProps($formData->toArray())));
+                       });
+
+        // make tables
         $this->resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesTable; })
                        ->map(function (Relation $relation) use ($tabs) {
@@ -102,10 +113,7 @@ class ResourceController extends BaseApiController
      */
     protected function buildFormPage()
     {
-        $this->resource()->build();
-        $form = new Form();
-
-        $form->addResource($this->resource);
+        $form = Form::of(($this->resource()));
         $formData = $form->build()->compose();
 
         $page = SvPage::make('')->addBlock(

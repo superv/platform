@@ -60,7 +60,7 @@ class TableConfig
 
     public function newQuery()
     {
-        return $this->query ?: $this->resource->resolveModel()->newQuery()->select($this->resource->getSlug().'.*');
+        return $this->query ?: $this->resource->resolveModel()->newQuery()->select($this->resource->slug().'.*');
     }
 
     public function compose()

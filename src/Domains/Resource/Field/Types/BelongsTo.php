@@ -87,7 +87,7 @@ class BelongsTo extends Field
 
     protected function buildConfig(): void
     {
-        $this->setConfigValue('placeholder', 'Select '.$this->relatedResource->getSlug());
+        $this->setConfigValue('placeholder', 'Select '.$this->relatedResource->slug());
     }
 
     public function setValue($value): ?Closure
