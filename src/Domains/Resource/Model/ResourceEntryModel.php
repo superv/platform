@@ -4,6 +4,8 @@ namespace SuperV\Platform\Domains\Resource\Model;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use SuperV\Platform\Domains\Entry\EntryModelV2;
+use SuperV\Platform\Domains\Resource\Relation\Builder as RelationBuilder;
+use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class ResourceEntryModel extends EntryModelV2
@@ -15,9 +17,11 @@ class ResourceEntryModel extends EntryModelV2
 
     public function getRelationshipFromConfig($name)
     {
-        if (! $relation = Resource::of($this->getTable())->getRelation($name)) {
-            return null;
-        }
+        $relation = RelationModel::fromCache($this->getTable(), $name);
+
+        $relation = RelationBuilder::resolveFromRelationEntry($relation);
+
+        $relation->setChildEntry($this);
 
         return $relation->newQuery();
     }
@@ -47,12 +51,13 @@ class ResourceEntryModel extends EntryModelV2
         );
     }
 
+    /** @return self */
     public function newInstance($attributes = [], $exists = false)
     {
         return parent::newInstance($attributes, $exists);
     }
 
-    public static function make(Resource $resource)
+    public static function make($resourceHandle)
     {
         $model = new class extends ResourceEntryModel
         {
@@ -83,7 +88,7 @@ class ResourceEntryModel extends EntryModelV2
                 return $static->$method(...$parameters);
             }
         };
-        $model->setTable($resource->slug());
+        $model->setTable($resourceHandle);
 
         return $model;
     }

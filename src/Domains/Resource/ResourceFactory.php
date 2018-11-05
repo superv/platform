@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
-use Exception;
 use SuperV\Platform\Domains\Resource\Field\Builder;
 use SuperV\Platform\Exceptions\PlatformException;
 
