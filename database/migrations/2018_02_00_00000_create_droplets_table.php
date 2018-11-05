@@ -18,6 +18,8 @@ class CreateDropletsTable extends Migration
             $table->string('type');
             $table->boolean('enabled');
             $table->timestamps();
+
+            $table->resource()->label('SuperV Droplets');
         });
     }
 

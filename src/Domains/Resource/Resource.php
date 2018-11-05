@@ -11,11 +11,13 @@ use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Jobs\BuildResourceJob;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class Resource
 {
     use Hydratable;
+    use HasConfig;
 
     /**
      * Database id
@@ -54,6 +56,10 @@ class Resource
 
     protected $slug;
 
+    protected $label;
+
+    protected $entryLabel;
+
     /**
      * @var boolean
      */
@@ -70,8 +76,8 @@ class Resource
 
     public function resolveModel()
     {
-        if ($this->model) {
-            return app($this->model);
+        if ($model = $this->getConfigValue('model')) {
+            return new $model;
         }
 
         return ResourceEntryModel::make($this);
@@ -89,6 +95,11 @@ class Resource
         return $this;
     }
 
+    /**
+     * @param array $overrides
+     * @param int   $number
+     * @return ResourceEntryModel|array[ResourceEntryModel]
+     */
     public function createFake(array $overrides = [], int $number = 1)
     {
         if ($number > 1) {
@@ -248,22 +259,22 @@ class Resource
         }
     }
 
-    public function getTitleField(): ?FieldModel
-    {
-        return FieldModel::find($this->titleFieldId);
-    }
-
-    public function getTitleFieldName(): string
-    {
-        $field = $this->getTitleField();
-
-        return $field ? $field->getName() : 'name';
-    }
-
-    public function getTitleFieldId()
-    {
-        return $this->titleFieldId;
-    }
+//    public function getTitleField(): ?FieldModel
+//    {
+//        return FieldModel::find($this->titleFieldId);
+//    }
+//
+//    public function getTitleFieldName(): string
+//    {
+//        $field = $this->getTitleField();
+//
+//        return $field ? $field->getName() : 'name';
+//    }
+//
+//    public function getTitleFieldId()
+//    {
+//        return $this->titleFieldId;
+//    }
 
     public function makeEntry(): void
     {
@@ -284,11 +295,34 @@ class Resource
             });
     }
 
+    public function label()
+    {
+        return $this->getConfigValue('label');
+    }
+
+    public function singularLabel()
+    {
+        return $this->getConfigValue('singular_label', str_singular($this->getConfigValue('label')));
+    }
+
+    public function entryLabelTemplate()
+    {
+        return $this->getConfigValue('entry_label');
+    }
+
+    public function entryLabel()
+    {
+        $label = $this->getConfigValue('entry_label');
+
+        return sv_parse($label, $this->getEntry()->toArray());
+
+//        return $this->singularLabel().' #'.$this->getEntryId();
+    }
+
     public function slug()
     {
         return $this->slug;
     }
-
 
     public function markAsBuilt()
     {

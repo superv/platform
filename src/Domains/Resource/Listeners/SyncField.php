@@ -72,9 +72,9 @@ class SyncField
 
         $field->save();
 
-        if ($column->isTitleColumn()) {
-            $field->getResourceEntry()->update(['title_field_id' => $field->getKey()]);
-        }
+//        if ($column->isTitleColumn()) {
+//            $field->getResourceEntry()->update(['title_field_id' => $field->getKey()]);
+//        }
     }
 
     /**

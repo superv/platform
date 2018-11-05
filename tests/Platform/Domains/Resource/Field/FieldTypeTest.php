@@ -26,17 +26,17 @@ class FieldTypeTest extends ResourceTestCase
 
         Schema::create('t_groups', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title')->titleColumn();
+            $table->string('title')->entryLabel();
         });
 
         Schema::create('t_roles', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('role')->titleColumn();
+            $table->string('role')->entryLabel();
         });
 
         Schema::create('t_users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->titleColumn();
+            $table->string('name')->entryLabel();
             $table->unsignedInteger('age');
             $table->decimal('height', 3, 2);
             $table->text('bio');

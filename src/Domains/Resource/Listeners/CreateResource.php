@@ -13,20 +13,14 @@ class CreateResource
             return;
         }
 
-//        if ($event->scope === 'platform') {
-//            $dropletId = 0;
-//        } else {
-//            $dropletEntry = DropletModel::bySlug($event->scope);
-//            if (! $dropletEntry) {
-//                return;
-//            }
-//            $dropletId = $dropletEntry->getKey();
-//        }
+        $resource = $event->blueprint;
 
-        ResourceModel::create([
-            'slug'         => $event->table,
-            'model'        => $event->model,
-            'droplet_slug' => $event->scope,
-        ]);
+        ResourceModel::create(array_filter(
+            [
+                'slug'         => $event->table,
+                'config'       => $resource->config($event->table, $event->columns),
+                'droplet_slug' => $event->scope,
+            ]
+        ));
     }
 }

@@ -27,7 +27,7 @@ class TableTest extends ResourceTestCase
 
         Schema::create('t_groups', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title')->titleColumn();
+            $table->string('title')->entryLabel();
         });
 
         $this->groups = Resource::of('t_groups');

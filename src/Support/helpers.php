@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Feature\FeatureBus;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
 use SuperV\Platform\Support\Collection;
 use SuperV\Platform\Support\Composer\Composer;
+use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
 
 /**
@@ -162,6 +163,11 @@ function sv_relative_path($path)
 function sv_compose($data)
 {
     return (new Composer())->compose($data);
+}
+
+function sv_parse($target, array $data)
+{
+    return app(Parser::class)->parse($target, $data);
 }
 
 function sv_basename($path)

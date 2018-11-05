@@ -147,7 +147,7 @@ class FormTest extends ResourceTestCase
     {
         Schema::create('test_groups', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title')->titleColumn();
+            $table->string('title')->entryLabel();
         });
 
         Schema::create('test_users', function (Blueprint $table) {

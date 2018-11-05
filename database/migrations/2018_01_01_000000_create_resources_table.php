@@ -11,10 +11,14 @@ class CreateResourcesTable extends Migration
             $table->increments('id');
             $table->uuid('uuid')->unique();
 //            $table->unsignedInteger('droplet_id');
-            $table->unsignedInteger('title_field_id')->nullable();
+//            $table->unsignedInteger('title_field_id')->nullable();
             $table->string('slug');
             $table->string('droplet_slug');
-            $table->string('model')->nullable();
+//            $table->string('label');
+//            $table->string('entry_label')->nullable();
+//            $table->string('model')->nullable();
+
+            $table->text('config')->nullable();
 
             $table->timestamps();
         });

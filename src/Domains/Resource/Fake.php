@@ -30,13 +30,10 @@ class Fake
     {
         $this->faker = app(Generator::class);
 
-        return $this->resource->create(
-            $this->resource->getFields()->map(function (Field $field) {
-                if ($field->show() && $field->hasColumn()) {
-                    return [$field->getColumnName(), $this->fake($field)];
-                }
-            })->filter()->toAssoc()->all()
-        );
+        $attributes = $this->makeAttributes();
+        $attributes['id'] = $this->overrides['id'] ?? null;
+
+        return $this->resource->create($attributes);
     }
 
     protected function fake(Field $field)
@@ -53,7 +50,11 @@ class Fake
 
     protected function fakeText(Field $field)
     {
-        return $field->getName() === 'name' ? $this->faker->name : $this->faker->text;
+        if ($fake = $this->faker->__get(camel_case($field->getName()))) {
+            return $fake;
+        }
+
+        return $this->faker->text;
     }
 
     protected function fakeTextarea(Field $field)
@@ -85,6 +86,20 @@ class Fake
     protected function fakeDatetime(Field $field)
     {
         return $field->getConfigValue('time') ? $this->faker->dateTime : $this->faker->date();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function makeAttributes()
+    {
+        $attributes = $this->resource->getFields()->map(function (Field $field) {
+            if ($field->show() && $field->hasColumn()) {
+                return [$field->getColumnName(), $this->fake($field)];
+            }
+        })->filter()->toAssoc()->all();
+
+        return $attributes;
     }
 
     public static function create(Resource $resource, array $overrides = [])

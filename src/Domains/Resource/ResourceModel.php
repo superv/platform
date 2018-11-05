@@ -15,6 +15,8 @@ class ResourceModel extends Model
 
     protected $guarded = [];
 
+    protected $casts = ['config' => 'array'];
+
     public function uuid()
     {
         return $this->uuid;
@@ -61,7 +63,7 @@ class ResourceModel extends Model
 
     public function getModelClass()
     {
-        return $this->model;
+        return array_get($this->config, 'model');
     }
 
     public function dropletEntry()
@@ -79,10 +81,10 @@ class ResourceModel extends Model
         return $this->droplet_slug;
     }
 
-    public function getTitleFieldId()
-    {
-        return $this->title_field_id;
-    }
+//    public function getTitleFieldId()
+//    {
+//        return $this->title_field_id;
+//    }
 
     public function getSlug()
     {

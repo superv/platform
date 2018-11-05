@@ -15,7 +15,7 @@ class CreateResourceTestTables extends Migration
             $table->string('email')->rules('email|unique');
             $table->timestamps();
 
-            $table->model(TestUser::class);
+            $table->resource()->model(TestUser::class);
         });
     }
 

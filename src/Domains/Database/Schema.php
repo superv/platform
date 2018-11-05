@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Database;
 
+use SuperV\Platform\Domains\Resource\Blueprint as ResourceBlueprint;
+
 /**
  * @method \Illuminate\Database\Schema\Builder create($table, \Closure $callback)
  * @method static $this table($table, \Closure $callback)
@@ -16,6 +18,9 @@ class Schema
      * @var string
      */
     protected $model;
+
+    /** @var \SuperV\Platform\Domains\Database\Blueprint  */
+    protected $resource;
 
     protected $translatable = false;
 
@@ -38,6 +43,18 @@ class Schema
                 return new Blueprint($table, $callback, $this);
             });
         }
+
+        $this->resource = new ResourceBlueprint();
+    }
+
+    public function resource(): ResourceBlueprint
+    {
+        return $this->resource;
+    }
+
+    public function getResource(): ResourceBlueprint
+    {
+        return $this->resource;
     }
 
     public static function nucleo($table, $callback)

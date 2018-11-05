@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource;
 use Exception;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\Fixtures\TestUser;
 
@@ -35,12 +36,11 @@ class ResourceCreationTest extends ResourceTestCase
     {
         Schema::create('test_users', function (Blueprint $table) {
             $table->increments('id');
-            $table->model(TestUser::class);
+            $table->resource()->model(TestUser::class);
         });
 
-        $resource = ResourceModel::withSlug('test_users');
-
-        $this->assertEquals(TestUser::class, $resource->getModelClass());
+        $this->assertEquals(TestUser::class, ResourceModel::withSlug('test_users')->getModelClass());
+        $this->assertInstanceOf(TestUser::class, Resource::of('test_users')->resolveModel());
     }
 
     /** @test */
@@ -160,14 +160,6 @@ class ResourceCreationTest extends ResourceTestCase
 
         $this->assertTrue($resource->getField('name')->isRequired());
         $this->assertTrue($resource->getField('title')->isNullable());
-    }
-
-    /** @test */
-    function marks_title_field()
-    {
-        $resource = $this->makeResourceModel('test_users', ['name' => 'titleColumn']);
-
-        $this->assertEquals($resource->getField('name')->getKey(), $resource->getTitleFieldId());
     }
 
     /** @test */

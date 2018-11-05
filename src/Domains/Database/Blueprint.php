@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Database;
 
 use Closure;
 use Current;
+use Exception;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Support\Fluent;
@@ -40,6 +41,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
     public function addColumn($type, $name, array $parameters = [])
     {
         $this->columns[] = $column = new ColumnDefinition(
+            $this->builder ? $this->builder->getResource() : new \SuperV\Platform\Domains\Resource\Blueprint,
             array_merge(compact('type', 'name'), $parameters)
         );
 
@@ -59,7 +61,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         }
 
         if ($this->creating()) {
-            TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->builder->getModel(), Current::migrationScope());
+            TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->builder->getResource(), Current::migrationScope());
         } else {
             // Dropping Columns
             foreach ($this->commands as $command) {
@@ -192,9 +194,9 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                     );
     }
 
-    public function model($model)
+    public function resource()
     {
-        $this->builder->setModel($model);
+        return $this->builder->resource();
     }
 
     public function morphToMany(

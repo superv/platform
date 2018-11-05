@@ -50,18 +50,6 @@ class ResourceTest extends ResourceTestCase
     }
 
     /** @test */
-    function builds_resource_and_entry_labels()
-    {
-        Schema::create('customer_reviews', function (Blueprint $table) {
-            $table->increments('id');
-        });
-
-        $resource = Resource::of('customer_reviews');
-        $this->assertEquals('Customer Reviews', $resource->label());
-
-    }
-
-    /** @test */
     function should_fail_if_field_requested_before_resource_is_built()
     {
         $resource = $this->makeResource('test_users', ['name']);
