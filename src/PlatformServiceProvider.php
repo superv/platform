@@ -24,16 +24,17 @@ use SuperV\Platform\Providers\TwigServiceProvider;
 
 class PlatformServiceProvider extends BaseServiceProvider
 {
-    protected $providers = [
-        'SuperV\Platform\Providers\ThemeServiceProvider',
-        'SuperV\Platform\Adapters\AdapterServiceProvider',
-        'SuperV\Platform\Domains\Auth\AuthServiceProvider',
-        'SuperV\Platform\Domains\Asset\AssetServiceProvider',
-        'SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider',
-    ];
-
     protected $_bindings = [
         Collector::class => DropletNavigationCollector::class,
+    ];
+
+    protected $providers = [
+        Providers\ThemeServiceProvider::class,
+        Adapters\AdapterServiceProvider::class,
+        Domains\Auth\AuthServiceProvider::class,
+        Domains\Asset\AssetServiceProvider::class,
+        Domains\Resource\ResourceServiceProvider::class,
+        Domains\Database\Migrations\MigrationServiceProvider::class,
     ];
 
     protected $aliases = [
@@ -132,7 +133,7 @@ class PlatformServiceProvider extends BaseServiceProvider
             $this->publishConfig();
         }
 
-        if (config('superv.installed') !== true) {
+        if (!Platform::isInstalled()) {
             return;
         }
 

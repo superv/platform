@@ -2,13 +2,17 @@
 
 namespace SuperV\Platform;
 
+use Closure;
 use SuperV\Platform\Domains\Droplet\Droplet;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Events\PlatformBootedEvent;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Platform extends Droplet
 {
+    use FiresCallbacks;
+
     /**
      * @var \SuperV\Platform\Domains\Port\Port
      */
@@ -86,6 +90,16 @@ class Platform extends Droplet
     public function slug()
     {
         return 'platform';
+    }
+
+    public function isInstalled():bool
+    {
+        return config('superv.installed') === true;
+    }
+
+    public function postInstall(Closure $callback)
+    {
+        $this->on('installed', $callback);
     }
 
     public function namespace()
