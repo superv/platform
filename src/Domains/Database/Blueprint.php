@@ -144,7 +144,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                         Config::belongsTo()
                               ->relationName($relationName)
                               ->related($related)
-                              ->foreignKey($foreignKey)
+                              ->foreignKey($foreignKey ?? $relationName.'_id')
                               ->ownerKey($ownerKey)
                               ->toArray()
                     );
