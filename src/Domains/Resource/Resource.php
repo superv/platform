@@ -298,7 +298,6 @@ class Resource
         $label = $this->getConfigValue('entry_label');
 
         return sv_parse($label, $this->getEntry()->toArray());
-
 //        return $this->singularLabel().' #'.$this->getEntryId();
     }
 
@@ -310,6 +309,17 @@ class Resource
     public function markAsBuilt()
     {
         $this->built = true;
+    }
+
+    public static function modelOf($handle)
+    {
+        $resourceEntry = ResourceModel::withSlug($handle);
+
+        if ($model = array_get($resourceEntry->getConfig(), 'model')) {
+            return new $model;
+        }
+
+        return ResourceEntryModel::make($resourceEntry->getSlug());
     }
 
     public static function of($handle, bool $build = true): self

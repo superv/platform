@@ -27,6 +27,11 @@ class ResourceModel extends Model
         return $this->fields;
     }
 
+    public function getConfig()
+    {
+        return $this->config ?? [];
+    }
+
     public function getField($name): ?FieldModel
     {
         return $this->fields()->where('name', $name)->first();
@@ -81,11 +86,6 @@ class ResourceModel extends Model
         return $this->droplet_slug;
     }
 
-//    public function getTitleFieldId()
-//    {
-//        return $this->title_field_id;
-//    }
-
     public function getSlug()
     {
         return $this->slug;
@@ -98,7 +98,20 @@ class ResourceModel extends Model
 
     public static function withSlug($table): ?self
     {
+        return static::fromCache($table);
+
         return static::query()->where('slug', $table)->first();
+    }
+
+    public static function fromCache($handle)
+    {
+        $cacheKey = 'sv:resources:'.$handle;
+
+        $entry = cache()->rememberForever($cacheKey, function () use ($handle) {
+            return static::query()->where('slug', $handle)->first();
+        });
+
+        return $entry;
     }
 
     protected static function boot()

@@ -27,9 +27,7 @@ class FormTest extends ResourceTestCase
     {
         $this->resource = $this->makeResource('test_users', ['name', 'age:integer', 'bio:text']);
         $form = Form::of($this->resource)->build();
-
         $this->assertEquals($form, Form::fromCache($form->uuid()));
-
         $this->assertEquals(3, $form->getFields()->count());
 
         $formData = $form->compose();
@@ -38,11 +36,11 @@ class FormTest extends ResourceTestCase
         $this->assertEquals(['name', 'age', 'bio'], $formData->getFieldKeys());
         $this->assertEquals('Name', $formData->getField('name')->getLabel());
 
-        $formDataArray = $formData->toArray();
-
+        cache()->clear();
         $response = $this->getJson($this->resource->route('create'), $this->getHeaderWithAccessToken());
+
         $this->assertEquals(
-            $formDataArray['fields'],
+            $formData->toArray()['fields'],
             $response->decodeResponseJson('data.props.page.blocks.0.props.fields')
         );
     }
@@ -59,7 +57,6 @@ class FormTest extends ResourceTestCase
             'bio'  => 'Dead',
         ];
         $response = $this->postJson($form->getUrl(), $data, $this->getHeaderWithAccessToken());
-
         $this->assertEquals(201, $response->getStatusCode());
 
         $entryModel = $this->resource->resolveModel();
@@ -76,6 +73,7 @@ class FormTest extends ResourceTestCase
         $form = $this->makeEditForm();
 
         $this->assertNotNull(Form::fromCache($form->uuid()));
+        $this->assertEquals(4, $form->getFields()->count());
 
         $formData = $form->compose();
         $this->assertEquals(Current::url('sv/forms/'.$form->uuid()), $formData->getUrl());
@@ -84,10 +82,17 @@ class FormTest extends ResourceTestCase
         $formDataArray = $formData->toArray();
 
         $valueMap = collect($formDataArray['fields'])->map(function ($field) {
-            return [$field['name'], $field['value'] ?? null];
+            return [$field['name'], $field['value'] ?? $field];
         })->toAssoc()->all();
-        $this->assertEquals(['name' => 'Nicola Tesla', 'age' => 99, 'bio' => 'Dead', 'group_id' => 1], $valueMap);
 
+        $this->assertEquals([
+            'name'     => 'Nicola Tesla',
+            'age'      => 99,
+            'bio'      => 'Dead',
+            'group_id' => 1,
+        ], $valueMap);
+
+        cache()->clear();
         $response = $this->getJson($this->resource->route('edit'), $this->getHeaderWithAccessToken());
         $response->assertStatus(200);
 
@@ -99,10 +104,6 @@ class FormTest extends ResourceTestCase
     function posts_update_form()
     {
         $form = $this->makeEditForm();
-
-        $groups = ResourceFactory::make('test_groups');
-        $groups->create(['id' => 1, 'title' => 'Group A']);
-        $groups->create(['id' => 2, 'title' => 'Group B']);
 
         $data = [
             'name'     => 'Updated Nicola Tesla',
@@ -135,7 +136,6 @@ class FormTest extends ResourceTestCase
         $form->build();
         $this->assertEquals(2, $form->getFields()->count());
 
-
         // make sure values() applied after filter
         $this->assertEquals($form->getFields(), $form->getFields()->values());
     }
@@ -150,6 +150,10 @@ class FormTest extends ResourceTestCase
             $table->string('title')->entryLabel();
         });
 
+        $groups = ResourceFactory::make('test_groups');
+        $groups->create(['id' => 1, 'title' => 'Group A']);
+        $groups->create(['id' => 2, 'title' => 'Group B']);
+
         Schema::create('test_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
@@ -158,8 +162,8 @@ class FormTest extends ResourceTestCase
 
             $table->belongsTo('test_groups', 'group')->nullable();
         });
+
         $this->resource = ResourceFactory::make('test_users');
-//        $this->resource->build();
 
         $resourceModelEntry = $this->resource->create([
             'name'     => 'Nicola Tesla',
@@ -170,10 +174,6 @@ class FormTest extends ResourceTestCase
 
         $this->resource->loadEntry($resourceModelEntry->getKey());
 
-        $form = new Form();
-        $form->addResource($this->resource);
-        $form->build();
-
-        return $form;
+        return Form::of($this->resource)->build();
     }
 }

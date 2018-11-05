@@ -51,7 +51,19 @@ class ResourceController extends BaseApiController
 
     public function create()
     {
-        return $this->buildFormPage();
+        $form = Form::of(($this->resource()));
+        $formData = $form->build()->compose();
+
+        $page = SvPage::make('')->addBlock(
+            SvBlock::make('sv-form-v2')->setProps($formData->toArray())
+        );
+
+        $page->hydrate([
+            'title' => 'Create new '.$this->resource->singularLabel()
+        ]);
+        $page->build();
+
+        return sv_compose($page);
     }
 
     public function edit() // resource index
@@ -117,24 +129,4 @@ class ResourceController extends BaseApiController
         return $this->resource;
     }
 
-    /**
-     * @return mixed
-     * @throws \Exception
-     */
-    protected function buildFormPage()
-    {
-        $form = Form::of(($this->resource()));
-        $formData = $form->build()->compose();
-
-        $page = SvPage::make('')->addBlock(
-            SvBlock::make('sv-form-v2')->setProps($formData->toArray())
-        );
-
-        $page->hydrate([
-            'title' => 'Create new '.$this->resource->singularLabel()
-        ]);
-        $page->build();
-
-        return sv_compose($page);
-    }
 }

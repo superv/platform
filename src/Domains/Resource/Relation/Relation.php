@@ -23,7 +23,7 @@ abstract class Relation implements HasResource
     protected $resource;
 
     /** @var ResourceEntryModel */
-    protected $childEntry;
+    protected $parentEntry;
 
     /** @var RelationConfig */
     protected $config;
@@ -44,7 +44,7 @@ abstract class Relation implements HasResource
     protected function newRelatedInstance(): ?ResourceEntryModel
     {
         if ($table = $this->config->getRelatedResource()) {
-            return Resource::of($table, false)->resolveModel();
+            return Resource::modelOf($table);
         } elseif ($model = $this->config->getRelatedModel()) {
             return new $model;
         }
@@ -84,11 +84,16 @@ abstract class Relation implements HasResource
         return $this->config;
     }
 
-    public function setChildEntry(ResourceEntryModel $childEntry): Relation
+    public function setParentEntry(ResourceEntryModel $parentEntry): Relation
     {
-        $this->childEntry = $childEntry;
+        $this->parentEntry = $parentEntry;
 
         return $this;
+    }
+
+    public function getParentEntry(): ResourceEntryModel
+    {
+        return $this->parentEntry ?? $this->resource->getEntry();
     }
 
     public static function fromEntry(RelationModel $entry): self
