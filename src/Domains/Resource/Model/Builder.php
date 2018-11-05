@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 class Builder extends \Illuminate\Database\Eloquent\Builder
 {
+    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntryModel */
+    protected $model;
+
     /**
      * Get the relation instance for the given relation name.
      *
@@ -41,5 +44,15 @@ class Builder extends \Illuminate\Database\Eloquent\Builder
         }
 
         return $relation;
+    }
+
+    /**
+     * Get the model instance being queried.
+     *
+     * @return  \SuperV\Platform\Domains\Resource\Model\ResourceEntryModel|static
+     */
+    public function getModel()
+    {
+        return $this->model;
     }
 }
