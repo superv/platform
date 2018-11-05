@@ -8,13 +8,13 @@ class CreateResourceFieldsTable extends Migration
 {
     public function up()
     {
-        Schema::create('sv_resource_fields', function (Blueprint $table) {
+        Schema::create('sv_fields', function (Blueprint $table) {
             Blueprints::fields($table);
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('sv_resource_fields');
+        Schema::dropIfExists('sv_fields');
     }
 }

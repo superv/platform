@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database\Events;
 
-use SuperV\Platform\Domains\Resource\Blueprint;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Events\BaseEvent;
 
 class TableCreatingEvent extends BaseEvent
@@ -22,10 +22,10 @@ class TableCreatingEvent extends BaseEvent
      */
     public $scope;
 
-    /** @var \SuperV\Platform\Domains\Resource\Blueprint  */
+    /** @var \SuperV\Platform\Domains\Resource\ResourceBlueprint  */
     public $blueprint;
 
-    public function __construct($table, array $columns = [], Blueprint $blueprint, $scope)
+    public function __construct($table, array $columns = [], ResourceBlueprint $blueprint, $scope)
     {
         $this->table = $table;
         $this->columns = $columns;

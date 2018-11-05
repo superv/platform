@@ -1,10 +1,10 @@
 <?php
 
-namespace SuperV\Platform\Domains\Entry;
+namespace SuperV\Platform\Domains\Resource\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EntryModelV2 extends Model
+class EntryModel extends Model
 {
     protected $guarded = [];
 

@@ -3,13 +3,14 @@
 namespace SuperV\Platform\Domains\Resource\Support;
 
 use SuperV\Platform\Domains\Database\Blueprint;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 class Blueprints
 {
     /**
      * @param \SuperV\Platform\Domains\Database\Blueprint $table
      */
-    public static function resources($table)
+    public static function resources($table, ResourceBlueprint $resource = null)
     {
         $table->increments('id');
         $table->uuid('uuid')->unique();
@@ -18,10 +19,10 @@ class Blueprints
         $table->text('config')->nullable();
 
         if ($table instanceof Blueprint) {
-            $table->hasMany('sv_resource_fields', 'fields', 'resource_id');
+            $table->hasMany('sv_fields', 'fields', 'resource_id');
             $table->hasMany('sv_relations', 'relations', 'resource_id');
 
-            $table->resource()->label('Platform Resources');
+            $resource->label('Platform Resources');
         }
 
         $table->timestamps();
@@ -30,14 +31,14 @@ class Blueprints
     /**
      * @param \SuperV\Platform\Domains\Database\Blueprint $table
      */
-    public static function fields($table)
+    public static function fields($table, ResourceBlueprint $resource = null)
     {
         $table->increments('id');
         $table->uuid('uuid');
 
         if ($table instanceof Blueprint) {
             $table->belongsTo('sv_resources', 'resource');
-            $table->resource()->label('Resource Fields');
+            $resource->label('Resource Fields');
         } else {
             $table->unsignedInteger('resource_id');
         }
@@ -57,13 +58,13 @@ class Blueprints
     /**
      * @param \SuperV\Platform\Domains\Database\Blueprint $table
      */
-    public static function relations($table)
+    public static function relations($table, ResourceBlueprint $resource = null)
     {
         $table->increments('id');
         $table->uuid('uuid');
         if ($table instanceof Blueprint) {
             $table->belongsTo('sv_resources', 'resource');
-            $table->resource()->label('Resource Relations');
+            $resource->label('Resource Relations');
         } else {
             $table->unsignedInteger('resource_id');
         }
@@ -71,6 +72,26 @@ class Blueprints
         $table->string('name');
         $table->string('type');
         $table->text('config')->nullable();
+
+        $table->timestamps();
+    }
+
+    /**
+     * @param \SuperV\Platform\Domains\Database\Blueprint $table
+     */
+    public static function navigation($table, ResourceBlueprint $resource = null)
+    {
+        $table->increments('id');
+        if ($table instanceof Blueprint) {
+            $table->belongsTo('sv_resources', 'resource');
+            $resource->label('Resource Navigation');
+        } else {
+            $table->unsignedInteger('resource_id');
+        }
+
+        $table->string('scope');
+        $table->string('parent');
+        $table->string('title');
 
         $table->timestamps();
     }

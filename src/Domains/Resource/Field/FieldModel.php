@@ -4,12 +4,12 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Entry\EntryModelV2;
+use SuperV\Platform\Domains\Resource\Model\EntryModel;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
-class FieldModel extends EntryModelV2
+class FieldModel extends EntryModel
 {
-    protected $table = 'sv_resource_fields';
+    protected $table = 'sv_fields';
 
     protected $casts = [
         'rules'      => 'array',

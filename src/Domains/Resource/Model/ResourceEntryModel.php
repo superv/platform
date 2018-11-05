@@ -3,12 +3,11 @@
 namespace SuperV\Platform\Domains\Resource\Model;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\Relation\Builder as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Domains\Resource\Resource;
 
-class ResourceEntryModel extends EntryModelV2
+class ResourceEntryModel extends EntryModel
 {
     /**
      * Wrap the entry model with parent resource

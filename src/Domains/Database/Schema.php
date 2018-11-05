@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database;
 
-use SuperV\Platform\Domains\Resource\Blueprint as ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 /**
  * @method \Illuminate\Database\Schema\Builder create($table, \Closure $callback)
@@ -12,27 +12,15 @@ use SuperV\Platform\Domains\Resource\Blueprint as ResourceBlueprint;
  */
 class Schema
 {
-    /**
-     * Model of the table
-     *
-     * @var string
-     */
-    protected $model;
-
     /** @var \SuperV\Platform\Domains\Database\Blueprint  */
     protected $resource;
 
-    protected $translatable = false;
-
-    /** @var \Illuminate\Database\Schema\Builder */
+    /** @var \SuperV\Platform\Domains\Database\Builder */
     protected $builder;
-
-    /** @var \SuperV\Modules\Nucleo\Domains\Prototype\Prototype */
-    protected $prototype;
 
     protected $columns;
 
-    public $doNotDo;
+    public $justRun;
 
     public function __construct()
     {
@@ -44,44 +32,25 @@ class Schema
             });
         }
 
-        $this->resource = new ResourceBlueprint();
+//        $this->resource = new ResourceBlueprint();
     }
 
-    public function resource(): ResourceBlueprint
-    {
-        return $this->resource;
-    }
+//    public function resource(): ResourceBlueprint
+//    {
+//        return $this->resource;
+//    }
 
-    public function getResource(): ResourceBlueprint
-    {
-        return $this->resource;
-    }
+//    public function getResource(): ResourceBlueprint
+//    {
+//        return $this->resource;
+//    }
 
     public static function nucleo($table, $callback)
     {
         $schema = new static;
-        $schema->doNotDo = true;
+        $schema->justRun = true;
 
         return call_user_func_array([$schema, 'create'], [$table, $callback]);
-    }
-
-    /**
-     * @param bool $translatable
-     * @return Schema
-     */
-    public function translatable(bool $translatable): Schema
-    {
-        $this->translatable = $translatable;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTranslatable(): bool
-    {
-        return $this->translatable;
     }
 
     public function __call($name, $arguments)
@@ -102,27 +71,8 @@ class Schema
         return call_user_func_array([new static, $name], $arguments);
     }
 
-    /**
-     * @return \Illuminate\Database\Schema\Builder
-     */
     public function builder()
     {
         return $this->builder;
-    }
-
-    /**
-     * @param string $model
-     */
-    public function setModel(string $model): void
-    {
-        $this->model = $model;
-    }
-
-    /**
-     * @return string
-     */
-    public function getModel()
-    {
-        return $this->model;
     }
 }

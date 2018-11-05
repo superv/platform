@@ -4,11 +4,11 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Exception;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Entry\EntryModelV2;
 use SuperV\Platform\Domains\Resource\Field\Builder as FieldBuilder;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Jobs\BuildResourceJob;
+use SuperV\Platform\Domains\Resource\Model\EntryModel;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -84,7 +84,7 @@ class Resource
         return ResourceEntryModel::make($this->slug());
     }
 
-    public function create(array $attributes = []): EntryModelV2
+    public function create(array $attributes = []): EntryModel
     {
         return $this->resolveModel()->create($attributes);
     }

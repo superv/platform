@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Illuminate\Support\Fluent;
 
-class Blueprint extends Fluent
+class ResourceBlueprint extends Fluent
 {
     public function config($table, array $columns)
     {

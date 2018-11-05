@@ -41,7 +41,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
     public function addColumn($type, $name, array $parameters = [])
     {
         $this->columns[] = $column = new ColumnDefinition(
-            $this->builder ? $this->builder->getResource() : new \SuperV\Platform\Domains\Resource\Blueprint,
+            $this->builder ? $this->builder->resource() : new \SuperV\Platform\Domains\Resource\ResourceBlueprint,
             array_merge(compact('type', 'name'), $parameters)
         );
 
@@ -51,7 +51,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
     public function build(Connection $connection, Grammar $grammar)
     {
         if ($this->dropping()) {
-            if (! $this->builder->doNotDo) {
+            if (! $this->builder->justRun) {
                 parent::build($connection, $grammar);
             }
 
@@ -61,7 +61,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         }
 
         if ($this->creating()) {
-            TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->builder->getResource(), Current::migrationScope());
+            TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->builder->resource(), Current::migrationScope());
         } else {
             // Dropping Columns
             foreach ($this->commands as $command) {
@@ -78,14 +78,14 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         });
 
         sv_collect($this->getAddedColumns())->map(function ($column) {
-            ColumnCreatedEvent::dispatch($this->tableName(), $column, $this->builder->getModel());
+            ColumnCreatedEvent::dispatch($this->tableName(), $column, $this->builder->resource()->model);
         });
 
         $this->columns = array_filter($this->columns, function ($column) {
             return ! $column->ignore;
         });
 
-        if (! $this->builder->doNotDo) {
+        if (! $this->builder->justRun) {
             parent::build($connection, $grammar);
         }
 
@@ -194,7 +194,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                     );
     }
 
-    public function resource()
+    public function resourceeeeeeeeee()
     {
         return $this->builder->resource();
     }
@@ -239,7 +239,7 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
         return $this->string($name)->fieldType('select');
     }
 
-    protected function tableName()
+    public function tableName()
     {
         return $this->table;
     }

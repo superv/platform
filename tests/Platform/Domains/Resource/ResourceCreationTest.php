@@ -6,6 +6,7 @@ use Exception;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\Fixtures\TestUser;
 
@@ -34,9 +35,9 @@ class ResourceCreationTest extends ResourceTestCase
     /** @test */
     function saves_resource_model_class_if_provided()
     {
-        Schema::create('test_users', function (Blueprint $table) {
+        Schema::create('test_users', function (Blueprint $table, ResourceBlueprint $resource) {
             $table->increments('id');
-            $table->resource()->model(TestUser::class);
+            $resource->model(TestUser::class);
         });
 
         $this->assertEquals(TestUser::class, ResourceModel::withSlug('test_users')->getModelClass());

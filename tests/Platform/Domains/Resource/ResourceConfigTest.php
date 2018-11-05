@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 class ResourceConfigTest extends ResourceTestCase
 {
@@ -22,10 +23,11 @@ class ResourceConfigTest extends ResourceTestCase
     /** @test */
     function builds_label_from_given()
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('customers', function (Blueprint $table, ResourceBlueprint $resource) {
             $table->increments('id');
-            $table->resource()->label('SuperV Customers');
-            $table->resource()->singularLabel('Customer');
+
+            $resource->label('SuperV Customers');
+            $resource->singularLabel('Customer');
         });
 
         $this->assertEquals('SuperV Customers', Resource::of('customers')->label());
@@ -35,12 +37,12 @@ class ResourceConfigTest extends ResourceTestCase
     /** @test */
     function builds_label_for_resource_entry()
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('customers', function (Blueprint $table, ResourceBlueprint $resource) {
             $table->increments('id');
             $table->string('first_name');
             $table->string('last_name');
 
-            $table->resource()->entryLabel('{last_name}, {first_name}');
+            $resource->entryLabel('{last_name}, {first_name}');
         });
 
         $resource = Resource::of('customers');

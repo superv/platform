@@ -6,12 +6,17 @@ use Closure;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Fluent;
 
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+
 class Builder extends \Illuminate\Database\Schema\Builder
 {
     /**
      * @var \SuperV\Platform\Domains\Database\Schema
      */
     protected $schema;
+
+    /** @var \SuperV\Platform\Domains\Resource\ResourceBlueprint  */
+    protected $resource;
 
     public function __construct(Connection $connection, Schema $schema)
     {
@@ -23,16 +28,18 @@ class Builder extends \Illuminate\Database\Schema\Builder
     {
         $mainBlueprint = $this->createBlueprint($table);
 
+        $this->resource = new ResourceBlueprint();
+
         $this->build(tap($mainBlueprint, function ($blueprint) use ($callback) {
             $blueprint->create();
 
-            $callback($blueprint);
+            $callback($blueprint, $this->resource);
         }));
 
         /**
          * Create a second table for translations if schema is translatable
          */
-        if ($this->schema->isTranslatable()) {
+        if (false) {
             $blueprint = $this->createBlueprint($table.'_translations');
 
             $blueprint->create();
@@ -55,5 +62,10 @@ class Builder extends \Illuminate\Database\Schema\Builder
 
             $this->build($blueprint);
         }
+    }
+
+    public function resource(): ResourceBlueprint
+    {
+        return $this->resource;
     }
 }
