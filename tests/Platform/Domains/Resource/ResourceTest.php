@@ -61,23 +61,6 @@ class ResourceTest extends ResourceTestCase
         $this->fail('Failed to check if resource is built');
     }
 
-    /** @test */
-    function extends_resource()
-    {
-        $this->makeResource('test_users', ['name', 'age:integer']);
-
-        Resource::extend('test_users', TestUserResource::class);
-
-        $resource = ResourceFactory::make('test_users');
-        $resource->build();
-
-        $this->assertEquals(3, $resource->getFields()->count());
-
-        $this->assertInstanceOf(Text::class, $resource->getField('name'));
-        $this->assertInstanceOf(Textarea::class, $resource->getField('bio'));
-
-        $this->assertEquals(['min:18', 'max:50'], $resource->getField('age')->getRules());
-    }
 
     protected function getFields(Resource $resource)
     {
@@ -92,16 +75,3 @@ class ResourceTest extends ResourceTestCase
     }
 }
 
-class TestUserResource
-{
-    public static $extends = 'test_users';
-
-    public function fields()
-    {
-        return [
-            'name',
-            FieldConfig::field('age')->rules(['min:18', 'max:50']),
-            Textarea::make('bio'),
-        ];
-    }
-}

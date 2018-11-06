@@ -3,12 +3,28 @@
 namespace SuperV\Platform\Domains\Resource\Model;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
+use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
 use SuperV\Platform\Domains\Resource\Relation\Builder as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class ResourceEntryModel extends EntryModel
 {
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function(ResourceEntryModel $entry) {
+            EntrySavingEvent::dispatch($entry);
+        });
+
+        static::saved(function(ResourceEntryModel $entry) {
+            EntrySavedEvent::dispatch($entry);
+        });
+
+    }
+
     /**
      * Wrap the entry model with parent resource
      *

@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Exception;
+use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Builder;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -60,9 +61,7 @@ class ResourceFactory
 
     public function getFields()
     {
-        if ($extension = Resource::extension($this->handle)) {
-            $extension = app($extension);
-
+        if ($extension = Extension::get($this->handle)) {
             if (method_exists($extension, 'fields')) {
                 $fields = sv_collect($extension->fields())->map(function ($field) {
                     return (new Builder($this->resource))->build($field);
@@ -77,7 +76,7 @@ class ResourceFactory
         return $fields ?? $this->entry->getFields();
     }
 
-    public static function make(string $slug)
+    public static function make(string $slug): Resource
     {
         return (new static($slug))->build();
     }

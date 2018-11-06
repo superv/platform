@@ -66,8 +66,6 @@ class Resource
      */
     protected $built = false;
 
-    protected static $extensionMap = [];
-
     public function build()
     {
         BuildResourceJob::dispatch($this);
@@ -341,13 +339,4 @@ class Resource
         return $resource;
     }
 
-    public static function extend($slug, $extension)
-    {
-        static::$extensionMap[$slug] = $extension;
-    }
-
-    public static function extension($slug)
-    {
-        return static::$extensionMap[$slug] ?? null;
-    }
 }
