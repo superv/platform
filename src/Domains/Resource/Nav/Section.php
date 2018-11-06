@@ -9,6 +9,24 @@ class Section extends EntryModel
 {
     protected $table = 'sv_navigation';
 
+    public function add(string $namespace): Section
+    {
+        return static::createFromString($namespace, $this);
+    }
+
+    public function compose()
+    {
+        return array_filter([
+            'title'    => $this->title,
+            'handle'   => $this->handle,
+            'sections' => $this->children()
+                               ->with('children')
+                               ->get()
+                               ->map(function (Section $section) { return $section->compose(); })
+                               ->filter()->all(),
+        ]);
+    }
+
 //    public function add(string $namespace): Section
 //    {
 //        $count = count($parts = explode('.', $namespace));
@@ -54,20 +72,23 @@ class Section extends EntryModel
         return $this->children()->create(static::make($title));
     }
 
+    public static function get(string $handle): self
+    {
+        return static::where('handle', $handle)->first();
+    }
+
     public static function createFromString(string $string, ?Section $parent = null): Section
     {
         $count = count($parts = explode('.', $string));
         if ($count === 1) {
-             if ($parent) {
-                 return $parent->getChildOrCreate($parts[0]);
-             }
+            if ($parent) {
+                return $parent->getChildOrCreate($parts[0]);
+            }
 
-             return static::where('handle', $parts[0])->firstOrCreate(static::make(null, $parts[0]));
-
-
+            return static::where('handle', $parts[0])->firstOrCreate(static::make(null, $parts[0]));
 //            return $parent ? $parent->getChildOrCreate($handle) : static::create(static::make(null, $handle));
         } else {
-            $entry =  static::createFromString(array_shift($parts), $parent);
+            $entry = static::createFromString(array_shift($parts), $parent);
 //            $entry =  $parent ? $parent->getChildOrCreate(array_shift($parts)) : static::createFromString(array_shift($parts));
 //            $entry =  $parent ? $parent->getChildOrCreate(array_shift($parts)) : static::create(static::make(null, array_shift($parts)));
             if (count($parts)) {

@@ -29,7 +29,7 @@ class DataController extends BaseController
 
         return [
             'data' => $portNav ? [
-                'nav' => Nav::make($portNav)->build()->compose(),
+                'nav' => Nav::get($portNav)->compose(),
             ] : ['message' => 'Current port has no navigation'],
         ];
     }

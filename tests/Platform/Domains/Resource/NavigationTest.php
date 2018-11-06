@@ -79,10 +79,10 @@ class NavigationTest extends ResourceTestCase
     {
         $nav = Nav::create('sv');
 
-        $nav->add('a.a.a.a.a');
-        $nav->add('a.b.a.a.a');
-        $nav->add('a.c.a.a.a');
-        $nav->add('a.d.a.a.a');
+        $a = $nav->add('a.a.a.a.a');
+        $a->add('b.a.a.a');
+        $a->add('c.a.a.a');
+        $a->add('d.a.a.a');
 
         $this->assertEquals(18, Section::count());
     }
@@ -113,11 +113,53 @@ class NavigationTest extends ResourceTestCase
     /** @test */
     function composes_nav()
     {
-        $nav = Nav::create('Acp');
-        $marketing = $nav->addSection('Marketing');
-        $marketingCrm = $marketing->addChild('Crm');
-        $marketingPromotions = $marketing->addChild('Promotions');
-        $marketingPromotionsCodes = $marketingPromotions->addChild('Codes');
+        $nav = Nav::create('acp');
+        $nav->add('foo.bar');
+        $nav->add('foo.baz');
+        $nav->add('foo.baz.bom');
+        $nav->add('bar.baz');
+        $nav->add('bar.foo');
+
+        $this->assertEquals([
+            'title'      => 'Acp',
+            'handle'      => 'acp',
+            'sections' => [
+                [
+                    'title'    => 'Foo',
+                    'handle'   => 'foo',
+                    'sections' => [
+                        [
+                            'title'  => 'Bar',
+                            'handle' => 'bar',
+                        ],
+                        [
+                            'title'    => 'Baz',
+                            'handle'   => 'baz',
+                            'sections' => [
+                                [
+                                    'title'  => 'Bom',
+                                    'handle' => 'bom',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'title'    => 'Bar',
+                    'handle'    => 'bar',
+                    'sections' => [
+                        [
+                            'title'  => 'Baz',
+                            'handle' => 'baz',
+                        ],
+                        [
+                            'title'  => 'Foo',
+                            'handle' => 'foo',
+                        ],
+                    ],
+                ],
+            ],
+        ], Nav::get('acp')->compose());
     }
 
     function builds_navigation()

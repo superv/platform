@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Nav;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class Nav
 {
@@ -49,8 +50,19 @@ class Nav
 
     public function compose()
     {
+
+        return $this->entry->compose();
+        $sections = $this->entry->children()->with('children')->get();
+
         return [
-            'sections' => $this->sections->toArray(),
+            'title'    => $this->entry->title,
+            'handle'   => $this->entry->handle,
+            'sections' => $sections
+                ->map(function (Section $section) {
+                    return $section->compose();
+                })
+                ->filter()
+                ->all(),
         ];
     }
 
@@ -67,6 +79,14 @@ class Nav
     public function entry(): Section
     {
         return $this->entry;
+    }
+
+    public static function get(string $handle): Nav
+    {
+        if (!$entry = Section::get($handle)) {
+            throw new PlatformException('Nav not found : ' . $handle);
+        }
+        return new static($entry);
     }
 
     public static function create(string $namespace)
