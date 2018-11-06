@@ -3,8 +3,8 @@
 namespace Tests\Platform\Domains\Resource;
 
 use Exception;
-use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
-use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\ResourceModel;

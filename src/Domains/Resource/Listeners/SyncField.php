@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
-use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
-use SuperV\Platform\Domains\Database\ColumnDefinition;
-use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
+use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
@@ -21,7 +21,7 @@ class SyncField
 
     public function handle($event)
     {
-        /** @var \SuperV\Platform\Domains\Database\ColumnDefinition $column */
+        /** @var \SuperV\Platform\Domains\Database\Schema\ColumnDefinition $column */
         $column = $event->column;
 
         if ($column->autoIncrement || $column->type === 'timestamp') {

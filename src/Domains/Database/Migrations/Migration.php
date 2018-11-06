@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database\Migrations;
 
-use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Database\Schema\Schema;
 
 class Migration extends \Illuminate\Database\Migrations\Migration implements InScope
 {

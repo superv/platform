@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Database\Blueprint;
+namespace SuperV\Platform\Domains\Database\Schema;
 
 use Closure;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig as Config;

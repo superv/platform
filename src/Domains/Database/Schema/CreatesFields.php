@@ -1,8 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Database\Blueprint;
-
-use SuperV\Platform\Domains\Database\ColumnDefinition;
+namespace SuperV\Platform\Domains\Database\Schema;
 
 trait CreatesFields
 {

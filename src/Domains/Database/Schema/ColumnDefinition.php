@@ -1,10 +1,10 @@
 <?php
 
-namespace SuperV\Platform\Domains\Database;
+namespace SuperV\Platform\Domains\Database\Schema;
 
 use Closure;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\Visibility\Visibility;
 
 /**

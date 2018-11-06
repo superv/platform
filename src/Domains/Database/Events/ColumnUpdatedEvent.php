@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database\Events;
 
-use SuperV\Platform\Domains\Database\ColumnDefinition;
+use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
 use SuperV\Platform\Events\BaseEvent;
 
 class ColumnUpdatedEvent extends BaseEvent
@@ -13,7 +13,7 @@ class ColumnUpdatedEvent extends BaseEvent
     public $table;
 
     /**
-     * @var \SuperV\Platform\Domains\Database\ColumnDefinition
+     * @var \SuperV\Platform\Domains\Database\Schema\ColumnDefinition
      */
     public $column;
 

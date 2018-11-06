@@ -1,6 +1,6 @@
 <?php
 
-use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class CreateTasksTable extends Migration

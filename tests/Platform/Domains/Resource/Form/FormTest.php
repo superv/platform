@@ -3,8 +3,8 @@
 namespace Tests\Platform\Domains\Resource\Form;
 
 use Current;
-use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
-use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\ResourceFactory;

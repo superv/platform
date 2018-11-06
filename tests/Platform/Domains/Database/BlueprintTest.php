@@ -4,14 +4,13 @@ namespace Tests\Platform\Domains\Database;
 
 use Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Events\TableDroppedEvent;
-use SuperV\Platform\Domains\Database\Schema;
 use Tests\Platform\TestCase;
 
 class BlueprintTest extends TestCase
@@ -64,11 +63,11 @@ class BlueprintTest extends TestCase
     {
         Event::fake(TableDroppedEvent::class);
 
-        Schema::create('tasks', function (Blueprint $table) {
+        \SuperV\Platform\Domains\Database\Schema\Schema::create('tasks', function (Blueprint $table) {
             $table->string('title');
         });
 
-        Schema::drop('tasks');
+        \SuperV\Platform\Domains\Database\Schema\Schema::drop('tasks');
 
         Event::assertDispatched(TableDroppedEvent::class, function (TableDroppedEvent $event) {
             return $event->table === 'tasks';
@@ -83,12 +82,12 @@ class BlueprintTest extends TestCase
         $columns = sv_collect();
         $dispatchedColumns = sv_collect();
 
-        Schema::create('tasks', function (Blueprint $table) use ($columns) {
+        \SuperV\Platform\Domains\Database\Schema\Schema::create('tasks', function (Blueprint $table) use ($columns) {
             $columns->put('title', $table->string('title'));
             $columns->put('priority', $table->string('priority'));
         });
 
-        Schema::table('tasks', function (Blueprint $table) use ($columns) {
+        \SuperV\Platform\Domains\Database\Schema\Schema::table('tasks', function (Blueprint $table) use ($columns) {
             $columns->put('description', $table->string('description')->nullable());
         });
 
@@ -111,12 +110,12 @@ class BlueprintTest extends TestCase
     {
         Event::fake(ColumnUpdatedEvent::class);
 
-        Schema::create('tasks', function (Blueprint $table) {
+        \SuperV\Platform\Domains\Database\Schema\Schema::create('tasks', function (Blueprint $table) {
             $table->string('title', 50);
         });
 
         $columns = sv_collect();
-        Schema::table('tasks', function (Blueprint $table) use ($columns) {
+        \SuperV\Platform\Domains\Database\Schema\Schema::table('tasks', function (Blueprint $table) use ($columns) {
             $columns->put('title', $table->string('title', 100)->change());
         });
 
@@ -131,13 +130,13 @@ class BlueprintTest extends TestCase
     function dispatch_event_when_a_column_is_dropped()
     {
         Event::fake(ColumnDroppedEvent::class);
-        Schema::create('tasks', function (Blueprint $table) {
+        \SuperV\Platform\Domains\Database\Schema\Schema::create('tasks', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
             $table->string('priority');
         });
 
-        Schema::table('tasks', function (Blueprint $table) {
+        \SuperV\Platform\Domains\Database\Schema\Schema::table('tasks', function (Blueprint $table) {
             $table->dropColumn(['title', 'priority']);
         });
 

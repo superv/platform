@@ -1,16 +1,15 @@
 <?php
 
-namespace SuperV\Platform\Domains\Database;
+namespace SuperV\Platform\Domains\Database\Schema;
 
 use Closure;
 use Illuminate\Database\Connection;
-
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 class Builder extends \Illuminate\Database\Schema\Builder
 {
     /**
-     * @var \SuperV\Platform\Domains\Database\Schema
+     * @var \SuperV\Platform\Domains\Database\Schema\Schema
      */
     protected $schema;
 

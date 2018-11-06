@@ -2,8 +2,8 @@
 
 namespace Tests\Platform\Domains\Resource\Field;
 
-use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
-use SuperV\Platform\Domains\Database\Schema;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Field\Builder;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldConfig;

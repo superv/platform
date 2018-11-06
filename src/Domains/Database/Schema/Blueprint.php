@@ -1,20 +1,18 @@
 <?php
 
-namespace SuperV\Platform\Domains\Database\Blueprint;
+namespace SuperV\Platform\Domains\Database\Schema;
 
 use Current;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint as LaravelBlueprint;
 use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Support\Fluent;
-use SuperV\Platform\Domains\Database\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Events\TableDroppedEvent;
-use SuperV\Platform\Domains\Database\Schema;
 
 class Blueprint extends LaravelBlueprint
 {
@@ -22,7 +20,7 @@ class Blueprint extends LaravelBlueprint
     use CreatesFields;
 
     /**
-     * @var \SuperV\Platform\Domains\Database\Schema
+     * @var \SuperV\Platform\Domains\Database\Schema\Schema
      */
     protected $builder;
 

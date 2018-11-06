@@ -1,8 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Database;
-
-use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
+namespace SuperV\Platform\Domains\Database\Schema;
 
 /**
  * @method \Illuminate\Database\Schema\Builder create($table, \Closure $callback)
@@ -12,10 +10,10 @@ use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
  */
 class Schema
 {
-    /** @var \SuperV\Platform\Domains\Database\Blueprint\Blueprint  */
+    /** @var \SuperV\Platform\Domains\Database\Schema\Blueprint  */
     protected $resource;
 
-    /** @var \SuperV\Platform\Domains\Database\Builder */
+    /** @var \SuperV\Platform\Domains\Database\Schema\Builder */
     protected $builder;
 
     protected $columns;

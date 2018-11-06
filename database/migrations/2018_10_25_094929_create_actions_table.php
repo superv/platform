@@ -1,8 +1,8 @@
 <?php
 
-use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
-use SuperV\Platform\Domains\Database\Schema;
 
 class CreateActionsTable extends Migration
 {
