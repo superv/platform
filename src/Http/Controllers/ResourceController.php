@@ -89,14 +89,14 @@ class ResourceController extends BaseApiController
         // make tables
         $this->resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesTable; })
-                       ->map(function (Relation $relation) use ($tabs) {
-                           $config = new RelationTableConfig($relation);
+                       ->map(function (ProvidesTable $tableProvider) use ($tabs) {
+                           $config = $tableProvider->makeTableConfig();
 
                            $card = SvCard::make()->block(
-                               SvBlock::make('sv-table-v2')->setProps($config->build()->compose())
+                               SvBlock::make('sv-table-v2')->setProps($config->compose())
                            );
 
-                           return $tabs->addTab(sv_tab($relation->getName(), $card));
+                           return $tabs->addTab(sv_tab($config->getTitle(), $card));
                        });
 
         $page = SvPage::make('')->addBlock($tabs);

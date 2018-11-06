@@ -141,7 +141,7 @@ class FieldTypeTest extends ResourceTestCase
         ], $field->getConfigValue('options'));
 
         $this->assertInstanceOf(BelongsTo::class, $field);
-        $this->assertEquals('select', $field->getType());
+        $this->assertEquals('belongs_to', $field->getType());
         $this->assertEquals(100, $field->getValue());
 
         $field->setValue($adminsGroup);

@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Resource\Action\Action;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -16,7 +17,13 @@ class TableConfig
     protected $uuid;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Table\TableColumns
+     * Table title
+     * @var string
+     */
+    protected $title;
+
+    /**
+     * @var \Illuminate\Support\Collection
      */
     protected $columns;
 
@@ -29,6 +36,9 @@ class TableConfig
     protected $url;
 
     protected $built = false;
+
+    /** @var ProvidesQuery */
+    protected $queryProvider;
 
     public function build(): self
     {
@@ -46,7 +56,8 @@ class TableConfig
                                         })
                                         ->filter();
 
-        $this->actions = $this->actions ? collect($this->actions) : collect([Action::make('edit'), Action::make('delete')]);
+        $this->actions = $this->actions ? collect($this->actions) : collect([Action::make('edit'),
+            Action::make('delete')]);
 
         // build Url
         $this->url = sv_url($this->resource->route('table.data', ['uuid' => $this->uuid]));
@@ -60,6 +71,10 @@ class TableConfig
 
     public function newQuery()
     {
+        if ($this->queryProvider) {
+            return $this->queryProvider->newQuery();
+        }
+
         return $this->query ?: $this->resource->resolveModel()->newQuery()->select($this->resource->slug().'.*');
     }
 
@@ -71,7 +86,7 @@ class TableConfig
 
         return [
             'config' => [
-                'meta'    => [
+                'meta' => [
                     'columns' => $this->getColumns()
                                       ->map(function (Field $field) {
                                           return ['label' => $field->getLabel(), 'name' => $field->getName()];
@@ -95,10 +110,17 @@ class TableConfig
         return $this;
     }
 
+    public function removeColumn(string $name)
+    {
+        $this->columns = $this->columns->filter(function(Field $field) use ($name) {
+            return $field->getName() !== $name;
+        });
+    }
+
     public function getColumns(): Collection
     {
         if (! $this->isBuilt()) {
-           throw new PlatformException('Config is not built yet');
+            throw new PlatformException('Config is not built yet');
         }
 
         return $this->columns;
@@ -159,10 +181,31 @@ class TableConfig
         return 'sv:tables:'.$this->uuid();
     }
 
+    public function queryProvider(ProvidesQuery $queryProvider): TableConfig
+    {
+        $this->queryProvider = $queryProvider;
+
+        return $this;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
     public static function fromCache($uuid): ?TableConfig
     {
         if ($config = cache('sv:tables:'.$uuid)) {
             $config = unserialize($config);
+
             return $config;
         }
 

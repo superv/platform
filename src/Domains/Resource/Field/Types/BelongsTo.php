@@ -100,11 +100,6 @@ class BelongsTo extends Field
         return parent::setValue($value);
     }
 
-    public function getType(): string
-    {
-        return 'select';
-    }
-
     public function getColumnName(): ?string
     {
         return $this->getName().'_id';

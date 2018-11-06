@@ -55,6 +55,11 @@ function array_set_if($condition, &$array, $key, $value)
     }
 }
 
+function array_filter_null(array $array = [])
+{
+    return array_filter($array, function ($item) { return ! is_null($item); });
+}
+
 function html_attributes($attributes)
 {
     $html = [];

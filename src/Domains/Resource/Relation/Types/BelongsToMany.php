@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
+use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
 class BelongsToMany extends Relation implements ProvidesTable
 {
@@ -21,5 +23,10 @@ class BelongsToMany extends Relation implements ProvidesTable
             $this->resource->getEntry()->getKeyName(),
             $instance->getKeyName()
         );
+    }
+
+    public function makeTableConfig(): TableConfig
+    {
+        return new RelationTableConfig($this);
     }
 }

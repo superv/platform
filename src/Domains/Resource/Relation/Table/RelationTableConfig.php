@@ -19,14 +19,6 @@ class RelationTableConfig extends TableConfig
         $this->relation = $relation;
     }
 
-//
-//    public function setParentResource(Resource $parentResource): RelationTableConfig
-//    {
-//        $this->parentResource = $parentResource;
-//
-//        return $this;
-//    }
-
     public function build(): TableConfig
     {
         $resource = Resource::of($this->relation->getConfig()->getRelatedResource());

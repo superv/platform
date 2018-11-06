@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource;
 use Lakcom\Modules\Core\Domains\Address\Address;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Table;
@@ -194,8 +195,12 @@ class RelationsTest extends ResourceTestCase
 
         $relation = $user->getRelation('posts');
 
-        $tableConfig = new RelationTableConfig($relation);
-        $tableConfig->build();
+        $this->assertInstanceOf(ProvidesTable::class, $relation);
+
+        $tableConfig = $relation->makeTableConfig();
+
+        // t_user column is not needed there
+        $this->assertEquals(1, $tableConfig->getColumns()->count());
 
         $table = Table::config($tableConfig)->build();
 
