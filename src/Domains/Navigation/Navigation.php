@@ -8,9 +8,9 @@ use SuperV\Platform\Domains\Auth\Access\Guard\HasGuardableItems;
 class Navigation implements SectionBag, HasGuardableItems
 {
     /**
-     * @var \SuperV\Platform\Domains\Droplet\DropletCollection
+     * @var \SuperV\Platform\Domains\Addon\AddonCollection
      */
-    protected $droplets;
+    protected $addons;
 
     /**
      * @var string

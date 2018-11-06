@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Model\EntryModel;
 use SuperV\Platform\Domains\Resource\Nav\Section;
@@ -85,10 +85,10 @@ class ResourceModel extends EntryModel
 
     public function dropletEntry()
     {
-        return $this->belongsTo(DropletModel::class, 'droplet_id');
+        return $this->belongsTo(AddonModel::class, 'droplet_id');
     }
 
-    public function getDropletEntry(): DropletModel
+    public function getDropletEntry(): AddonModel
     {
         return $this->dropletEntry;
     }

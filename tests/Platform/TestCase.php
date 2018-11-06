@@ -4,9 +4,9 @@ namespace Tests\Platform;
 
 use Hub;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use SuperV\Platform\Domains\Droplet\DropletModel;
-use SuperV\Platform\Domains\Droplet\Installer;
-use SuperV\Platform\Domains\Droplet\Locator;
+use SuperV\Platform\Domains\Addon\AddonModel;
+use SuperV\Platform\Domains\Addon\Installer;
+use SuperV\Platform\Domains\Addon\Locator;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\PlatformServiceProvider;
 use SuperV\Platform\Testing\TestHelpers;
@@ -84,12 +84,12 @@ class TestCase extends OrchestraTestCase
     /**
      * @param string $slug
      * @param string $path
-     * @return \SuperV\Platform\Domains\Droplet\Droplet
+     * @return \SuperV\Platform\Domains\Addon\Addon
      * @throws \SuperV\Platform\Exceptions\PathNotFoundException
      */
     protected function setUpDroplet(
-        $slug = 'superv.droplets.sample',
-        $path = 'tests/Platform/__fixtures__/sample-droplet'
+        $slug = 'superv.addons.sample',
+        $path = 'tests/Platform/__fixtures__/sample-addon'
     ) {
         ComposerLoader::load(base_path($path));
         $this->app->make(Installer::class)
@@ -97,7 +97,7 @@ class TestCase extends OrchestraTestCase
                   ->setPath($path)
                   ->install();
 
-        $entry = DropletModel::bySlug($slug);
+        $entry = AddonModel::bySlug($slug);
 
         return $entry->resolveDroplet();
     }

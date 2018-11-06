@@ -8,13 +8,13 @@ use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
-use SuperV\Platform\Domains\Droplet\Console\DropletInstallCommand;
-use SuperV\Platform\Domains\Droplet\Console\DropletMakeMigrationCommand;
-use SuperV\Platform\Domains\Droplet\Console\DropletRunMigrationCommand;
-use SuperV\Platform\Domains\Droplet\Console\MakeDropletCommand;
-use SuperV\Platform\Domains\Droplet\DropletCollection;
-use SuperV\Platform\Domains\Droplet\Events\DropletInstalledEvent;
-use SuperV\Platform\Domains\Droplet\Listeners\DropletInstalledListener;
+use SuperV\Platform\Domains\Addon\Console\DropletInstallCommand;
+use SuperV\Platform\Domains\Addon\Console\DropletMakeMigrationCommand;
+use SuperV\Platform\Domains\Addon\Console\DropletRunMigrationCommand;
+use SuperV\Platform\Domains\Addon\Console\MakeDropletCommand;
+use SuperV\Platform\Domains\Addon\AddonCollection;
+use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
+use SuperV\Platform\Domains\Addon\Listeners\DropletInstalledListener;
 use SuperV\Platform\Domains\Navigation\Collector;
 use SuperV\Platform\Domains\Navigation\DropletNavigationCollector;
 use SuperV\Platform\Domains\Routing\Router;
@@ -46,14 +46,14 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     protected $_singletons = [
         'SuperV\Platform\Domains\Auth\Contracts\Users' => 'SuperV\Platform\Domains\Auth\Users',
-        'droplets'                                     => DropletCollection::class,
+        'addons'                                       => AddonCollection::class,
         ExceptionHandler::class                        => PlatformExceptionHandler::class,
     ];
 
     protected $listeners = [
         'Illuminate\Routing\Events\RouteMatched'          => 'SuperV\Platform\Listeners\RouteMatchedListener',
         'SuperV\Platform\Domains\Port\PortDetectedEvent'  => 'SuperV\Platform\Listeners\PortDetectedListener',
-        DropletInstalledEvent::class                      => DropletInstalledListener::class,
+        AddonInstalledEvent::class                        => DropletInstalledListener::class,
         Domains\Database\Events\ColumnCreatedEvent::class => Domains\Resource\Listeners\SyncField::class,
         Domains\Database\Events\ColumnUpdatedEvent::class => Domains\Resource\Listeners\SyncField::class,
         Domains\Database\Events\ColumnDroppedEvent::class => Domains\Resource\Listeners\DeleteField::class,
@@ -137,7 +137,7 @@ class PlatformServiceProvider extends BaseServiceProvider
             return;
         }
 
-        superv('droplets')->put('superv.platform', Platform::instance());
+        superv('addons')->put('superv.platform', Platform::instance());
 
         Platform::boot();
 

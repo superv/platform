@@ -3,13 +3,13 @@
 namespace SuperV\Platform;
 
 use Closure;
-use SuperV\Platform\Domains\Droplet\Droplet;
-use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Addon\Addon;
+use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Events\PlatformBootedEvent;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-class Platform extends Droplet
+class Platform extends Addon
 {
     use FiresCallbacks;
 
@@ -24,18 +24,18 @@ class Platform extends Droplet
     protected $events;
 
     /**
-     * Boot enabled droplets
+     * Boot enabled addons
      */
     public function boot()
     {
-        $entries = DropletModel::enabled()->get();
+        $entries = AddonModel::enabled()->get();
 
-        /** @var DropletModel $entry */
+        /** @var AddonModel $entry */
         foreach ($entries as $entry) {
             $droplet = $entry->resolveDroplet();
             app()->register($droplet->resolveProvider());
 
-            superv('droplets')->put($droplet->slug(), $droplet);
+            superv('addons')->put($droplet->slug(), $droplet);
         }
 
         PlatformBootedEvent::dispatch();

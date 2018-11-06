@@ -1,8 +1,8 @@
 <?php namespace {model.namespace};
 
-use SuperV\Platform\Domains\Droplet\DropletServiceProvider;
+use SuperV\Platform\Domains\Addon\AddonServiceProvider;
 
-class {provider.class_name} extends DropletServiceProvider
+class {provider.class_name} extends AddonServiceProvider
 {
 
 }

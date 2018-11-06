@@ -29,8 +29,8 @@ return [
     |
     */
 
-    'droplets' => [
-        'location' => env('SV_DROPLETS', 'droplets'),
+    'addons' => [
+        'location' => env('SV_DROPLETS', 'addons'),
     ],
 
     /*

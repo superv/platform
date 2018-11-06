@@ -2,7 +2,7 @@
 
 namespace Tests\Platform\Console;
 
-use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Addon\AddonModel;
 use Tests\Platform\TestCase;
 use Tests\Platform\TestsConsoleCommands;
 
@@ -61,7 +61,7 @@ class SuperVInstallCommandTest extends TestCase
     {
         $this->artisan('superv:install');
 
-        $this->assertEquals(0, DropletModel::count());
+        $this->assertEquals(0, AddonModel::count());
     }
 
     protected function envPath($name)

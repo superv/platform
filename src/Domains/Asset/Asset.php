@@ -7,7 +7,7 @@ use Assetic\Asset\GlobAsset;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
 use SuperV\Platform\Contracts\Filesystem;
-use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Support\Template;
 
 class Asset
@@ -281,7 +281,7 @@ class Asset
             if ($path = array_get($this->paths, $slug)) {
                 $file = $this->paths['theme'].DIRECTORY_SEPARATOR.$file;
             } else {
-                if (!$droplet = DropletModel::bySlug($slug)) {
+                if (! $droplet = AddonModel::bySlug($slug)) {
                     throw new \Exception("Asset Droplet not found: {$slug}");
                 }
                 $file = $droplet->path.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.$file;

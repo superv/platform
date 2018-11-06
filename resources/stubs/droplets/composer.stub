@@ -1,6 +1,6 @@
 {
     "name": "{model.vendor}/{model.name}-{model.type}",
-    "type": "superv-droplet",
+    "type": "superv-addon",
     "autoload": {
         "psr-4": {
             "{psr4_prefix}\\": "src/"

@@ -13,24 +13,24 @@ class DropletServiceProviderTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    function registers_droplets_routes_from_routes_folder()
+    function registers_addons_routes_from_routes_folder()
     {
         $router = $this->app->instance(Router::class, Mockery::mock(Router::class));
         $router->shouldReceive('loadFromPath')
-               ->with('tests/Platform/__fixtures__/sample-droplet/routes')
+               ->with('tests/Platform/__fixtures__/sample-addon/routes')
                ->once();
 
         $this->setUpDroplet();
     }
 
     /** @test */
-    function adds_droplets_view_namespaces()
+    function adds_addons_view_namespaces()
     {
         $droplet = $this->setUpDroplet();
 
         $hints = $this->app['view']->getFinder()->getHints();
-        $this->assertContains(base_path($droplet->resourcePath('views')), $hints['superv.droplets.sample']);
-        $this->assertDirectoryExists(reset($hints['superv.droplets.sample']));
+        $this->assertContains(base_path($droplet->resourcePath('views')), $hints['superv.addons.sample']);
+        $this->assertDirectoryExists(reset($hints['superv.addons.sample']));
     }
 
     /** @test */

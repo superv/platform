@@ -1,7 +1,7 @@
 <?php namespace {model.namespace};
 
-use SuperV\Platform\Domains\Droplet\Droplet;
+use SuperV\Platform\Domains\Addon\Addon;
 
-class {class} extends Droplet
+class {class} extends Addon
 {
 }

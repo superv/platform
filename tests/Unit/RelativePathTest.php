@@ -35,8 +35,8 @@ class RelativePathTest extends TestCase
     /** @test */
     function get_relative_path()
     {
-        $base = '/droplets/superv/platform';
-        $path = '/droplets/superv/platform/resources/views';
+        $base = '/addons/superv/platform';
+        $path = '/addons/superv/platform/resources/views';
 
         $relative = (new RelativePath($base))->get($path);
 
@@ -46,8 +46,8 @@ class RelativePathTest extends TestCase
     /** @test */
     function get_relative_path_when_same()
     {
-        $base = '/droplets/superv/platform';
-        $path = '/droplets/superv/platform';
+        $base = '/addons/superv/platform';
+        $path = '/addons/superv/platform';
 
         $relative = (new RelativePath($base))->get($path);
 
@@ -57,8 +57,8 @@ class RelativePathTest extends TestCase
     /** @test */
     function get_relative_path_when_outside_base_by_one_level()
     {
-        $base = '/droplets/superv/platform';
-        $path = '/droplets/superv/modules/guard';
+        $base = '/addons/superv/platform';
+        $path = '/addons/superv/modules/guard';
 
         $relative = (new RelativePath($base))->get($path);
 
@@ -68,8 +68,8 @@ class RelativePathTest extends TestCase
     /** @test */
     function get_relative_path_when_outside_base_by_two_levels()
     {
-        $base = '/droplets/superv/platform/src';
-        $path = '/droplets/superv/modules/guard';
+        $base = '/addons/superv/platform/src';
+        $path = '/addons/superv/modules/guard';
 
         $relative = (new RelativePath($base))->get($path);
 

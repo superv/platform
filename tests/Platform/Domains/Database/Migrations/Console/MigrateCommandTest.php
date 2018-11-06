@@ -36,14 +36,14 @@ class MigrateCommandTest extends TestCase
     /** @test */
     function migrate_command_get_path_from_registered_scopes()
     {
-        Scopes::register('superv.droplets.sample', base_path('tests/Platform/__fixtures__/sample-droplet/database/migrations'));
+        Scopes::register('superv.addons.sample', base_path('tests/Platform/__fixtures__/sample-addon/database/migrations'));
 
-        $this->artisan('migrate', ['--scope' => 'superv.droplets.sample']);
+        $this->artisan('migrate', ['--scope' => 'superv.addons.sample']);
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration',
-                                                'scope'     => 'superv.droplets.sample']);
+                                                'scope'     => 'superv.addons.sample']);
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200100_droplet_bar_migration',
-                                                'scope'     => 'superv.droplets.sample']);
+                                                'scope'     => 'superv.addons.sample']);
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_droplet_baz_migration',
-                                                'scope'     => 'superv.droplets.sample']);
+                                                'scope'     => 'superv.addons.sample']);
     }
 }

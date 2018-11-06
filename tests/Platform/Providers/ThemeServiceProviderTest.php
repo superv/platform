@@ -4,7 +4,7 @@ namespace Tests\Platform\Providers;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use SuperV\Platform\Domains\Droplet\Installer;
+use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Events\ThemeActivatedEvent;

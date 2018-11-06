@@ -1,0 +1,9 @@
+{
+    "name": "superv/sample-addon",
+    "type": "superv-addon",
+    "autoload": {
+        "psr-4": {
+            "SuperV\\Addons\\Sample\\": "src/"
+        }
+    }
+}

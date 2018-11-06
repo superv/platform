@@ -9,7 +9,7 @@ class CreateDropletsTable extends Migration
 {
     public function up()
     {
-        Schema::create('sv_droplets', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::create('sv_addons', function (Blueprint $table, ResourceBlueprint $resource) {
             $table->increments('id');
             $table->string('name');
             $table->string('vendor');
@@ -26,6 +26,6 @@ class CreateDropletsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('sv_droplets');
+        Schema::dropIfExists('sv_addons');
     }
 }

@@ -5,7 +5,7 @@ namespace Tests\Platform;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Platform;
-use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Events\PlatformBootedEvent;
 
@@ -14,11 +14,11 @@ class PlatformTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    function registers_service_providers_for_enabled_droplets()
+    function registers_service_providers_for_enabled_addons()
     {
         $this->setUpDroplet();
 
-        $entry = DropletModel::bySlug('superv.droplets.sample');
+        $entry = AddonModel::bySlug('superv.addons.sample');
 
         Platform::boot();
 

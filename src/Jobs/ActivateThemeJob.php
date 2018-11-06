@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Jobs;
 
 use Illuminate\View\Factory;
-use SuperV\Platform\Domains\Droplet\DropletModel;
+use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Events\ThemeActivatedEvent;
 use SuperV\Platform\Exceptions\DropletNotFoundException;
 
@@ -18,7 +18,7 @@ class ActivateThemeJob
 
     public function handle(Factory $view)
     {
-        if (! $theme = DropletModel::bySlug($this->themeSlug)) {
+        if (! $theme = AddonModel::bySlug($this->themeSlug)) {
             throw new DropletNotFoundException($this->themeSlug);
         }
 

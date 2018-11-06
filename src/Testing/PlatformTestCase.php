@@ -5,8 +5,8 @@ namespace SuperV\Platform\Testing;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Domains\Droplet\Installer;
-use SuperV\Platform\Domains\Droplet\Locator;
+use SuperV\Platform\Domains\Addon\Installer;
+use SuperV\Platform\Domains\Addon\Locator;
 use SuperV\Platform\PlatformServiceProvider;
 use Tests\CreatesApplication;
 use Tests\TestCase;

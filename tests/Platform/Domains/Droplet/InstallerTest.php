@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Platform\Domains\Droplet;
+namespace Tests\Platform\Domains\addon;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Droplets\Sample\SampleDroplet;
-use SuperV\Platform\Domains\Droplet\Events\DropletInstalledEvent;
-use SuperV\Platform\Domains\Droplet\Installer;
-use SuperV\Platform\Domains\Droplet\Locator;
+use SuperV\Addons\Sample\SampleAddon;
+use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
+use SuperV\Platform\Domains\Addon\Installer;
+use SuperV\Platform\Domains\Addon\Locator;
 use SuperV\Platform\Exceptions\PathNotFoundException;
 use Tests\Platform\ComposerLoader;
 use Tests\Platform\TestCase;
@@ -18,81 +18,81 @@ class InstallerTest extends TestCase
     /** @test */
     function installs_a_droplet()
     {
-        ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-droplet'));
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-addon'));
 
         $installer = $this->installer();
 
         app('events')->listen(
-            DropletInstalledEvent::class,
-            function (DropletInstalledEvent $event) use ($installer) {
-                if ($event->droplet !== $installer->getDroplet()) {
-                    $this->fail('Failed to match droplet in dispatched event');
+            AddonInstalledEvent::class,
+            function (AddonInstalledEvent $event) use ($installer) {
+                if ($event->addon !== $installer->getAddon()) {
+                    $this->fail('Failed to match addon in dispatched event');
                 }
             });
 
-        $installer->setPath('tests/Platform/__fixtures__/sample-droplet')
-                  ->setSlug('superv.droplets.sample')
+        $installer->setPath('tests/Platform/__fixtures__/sample-addon')
+                  ->setSlug('superv.addons.sample')
                   ->install();
 
-        $this->assertDatabaseHas('sv_droplets', [
-            'name'      => 'SampleDroplet',
+        $this->assertDatabaseHas('sv_addons', [
+            'name'      => 'SampleAddon',
             'vendor'    => 'superv',
-            'slug'      => 'superv.droplets.sample',
-            'type'      => 'droplet',
-            'path'      => 'tests/Platform/__fixtures__/sample-droplet',
+            'slug'      => 'superv.addons.sample',
+            'type'      => 'addon',
+            'path'      => 'tests/Platform/__fixtures__/sample-addon',
             'enabled'   => true,
-            'namespace' => 'SuperV\\Droplets\\Sample',
+            'namespace' => 'SuperV\\Addons\\Sample',
         ]);
     }
 
     /** @test */
-    function ensures_droplet_is_available_in_droplets_collection_right_after_it_is_installed()
+    function ensures_droplet_is_available_in_addons_collection_right_after_it_is_installed()
     {
-        ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-droplet'));
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-addon'));
 
-        $this->installer()->setPath('tests/Platform/__fixtures__/sample-droplet')
-                  ->setSlug('superv.droplets.sample')
+        $this->installer()->setPath('tests/Platform/__fixtures__/sample-addon')
+             ->setSlug('superv.addons.sample')
                   ->install();
 
-        $droplet = superv('droplets')->get('superv.droplets.sample');
-        $this->assertNotNull($droplet);
-        $this->assertInstanceOf(SampleDroplet::class, $droplet);
+        $addon = superv('addons')->get('superv.addons.sample');
+        $this->assertNotNull($addon);
+        $this->assertInstanceOf(SampleAddon::class, $addon);
 
     }
 
     /** @test */
-    function droplet_installs_subdroplets()
+    function droplet_installs_subaddons()
     {
-        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/droplets/another'));
-        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/droplets/another/droplets/themes/another_sub-droplet'));
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another'));
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another/addons/themes/another_sub-addon'));
 
         $this->installer()
-             ->setPath('tests/Platform/__fixtures__/superv/droplets/another')
-             ->setSlug('superv.droplets.another')
+             ->setPath('tests/Platform/__fixtures__/superv/addons/another')
+             ->setSlug('superv.addons.another')
              ->install();
 
-        $this->assertDatabaseHas('sv_droplets', [
-            'name' => 'AnotherDroplet',
-            'slug' => 'superv.droplets.another',
+        $this->assertDatabaseHas('sv_addons', [
+            'name' => 'AnotherAddon',
+            'slug' => 'superv.addons.another',
         ]);
-        $this->assertDatabaseHas('sv_droplets', [
-            'name'      => 'AnotherSubDroplet',
+        $this->assertDatabaseHas('sv_addons', [
+            'name'      => 'AnotherSubAddon',
             'slug'      => 'superv.themes.another_sub',
-            'type'      => 'droplet',
-            'path'      => 'tests/Platform/__fixtures__/superv/droplets/another/droplets/themes/another_sub-droplet',
+            'type'      => 'addon',
+            'path'      => 'tests/Platform/__fixtures__/superv/addons/another/addons/themes/another_sub-addon',
             'enabled'   => true,
-            'namespace' => 'SuperV\\Droplets\\AnotherSub',
+            'namespace' => 'SuperV\\Addons\\AnotherSub',
         ]);
     }
 
     /** @test */
-    function runs_droplets_migrations_when_installed()
+    function runs_addons_migrations_when_installed()
     {
-        ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-droplet'));
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-addon'));
 
         $this->installer()
-             ->setPath('tests/Platform/__fixtures__/sample-droplet')
-             ->setSlug('superv.droplets.sample')
+             ->setPath('tests/Platform/__fixtures__/sample-addon')
+             ->setSlug('superv.addons.sample')
              ->install();
 
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration']);
@@ -103,18 +103,18 @@ class InstallerTest extends TestCase
     /** @test */
     function locates_droplet_from_slug_if_path_is_not_given()
     {
-        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/droplets/another'));
-        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/droplets/another/droplets/themes/another_sub-droplet'));
-        config()->set('superv.droplets.location', 'tests/Platform/__fixtures__');
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another'));
+        ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another/addons/themes/another_sub-addon'));
+        config()->set('superv.addons.location', 'tests/Platform/__fixtures__');
 
-        $droplet = $this->installer()
-                        ->setLocator(new Locator())
-                        ->setSlug('superv.droplets.another')
-                        ->install()
-                        ->getDroplet();
+        $addon = $this->installer()
+                      ->setLocator(new Locator())
+                      ->setSlug('superv.addons.another')
+                      ->install()
+                      ->getAddon();
 
-        $this->assertEquals('tests/Platform/__fixtures__/superv/droplets/another', (new Locator())->locate('superv.droplets.another'));
-        $this->assertEquals('tests/Platform/__fixtures__/superv/droplets/another', $droplet->path());
+        $this->assertEquals('tests/Platform/__fixtures__/superv/addons/another', (new Locator())->locate('superv.addons.another'));
+        $this->assertEquals('tests/Platform/__fixtures__/superv/addons/another', $addon->path());
     }
 
     /** @test */
@@ -124,7 +124,7 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('path/does/not/exist')
-             ->setSlug('superv.droplets.sample')
+             ->setSlug('superv.addons.sample')
              ->install();
     }
 
@@ -132,15 +132,15 @@ class InstallerTest extends TestCase
     function parses_composer_data()
     {
         $installer = $this->installer();
-        $installer->setPath('tests/Platform/__fixtures__/sample-droplet');
+        $installer->setPath('tests/Platform/__fixtures__/sample-addon');
 
-        $this->assertEquals("SuperV\\Droplets\\Sample", $installer->namespace());
-        $this->assertEquals('droplet', $installer->type());
-        $this->assertEquals('SampleDroplet', $installer->name());
+        $this->assertEquals("SuperV\\Addons\\Sample", $installer->namespace());
+        $this->assertEquals('addon', $installer->type());
+        $this->assertEquals('SampleAddon', $installer->name());
     }
 
     /**
-     * @return \SuperV\Platform\Domains\Droplet\Installer
+     * @return \SuperV\Platform\Domains\Addon\Installer
      */
     protected function installer()
     {

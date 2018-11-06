@@ -1,0 +1,9 @@
+{
+    "name": "superv/another_sub-addon",
+    "type": "superv-addon",
+    "autoload": {
+        "psr-4": {
+            "SuperV\\Addons\\AnotherSub\\": "src/"
+        }
+    }
+}
