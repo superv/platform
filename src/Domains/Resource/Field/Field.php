@@ -152,6 +152,11 @@ abstract class Field implements HasResource
         return $this->entry;
     }
 
+    public function hasEntry(): bool
+    {
+        return $this->entry && $this->entry->exists;
+    }
+
     public function mergeConfig(array $config)
     {
         $this->config = array_merge($this->config, $config);
@@ -251,7 +256,10 @@ abstract class Field implements HasResource
 
     public static function make($name): self
     {
-        return static::fromEntry(new FieldModel(['name' => $name]));
+        return static::fromEntry(new FieldModel([
+            'name' => $name,
+            'type' => strtolower(class_basename(get_called_class()))
+        ]));
     }
 
     public static function fromEntry(FieldModel $entry): self

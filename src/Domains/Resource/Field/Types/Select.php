@@ -6,8 +6,6 @@ use SuperV\Platform\Domains\Resource\Field\Field;
 
 class Select extends Field
 {
-    protected $type = 'select';
-
     public function build(): Field
     {
         if (array_has($this->config, 'options')) {

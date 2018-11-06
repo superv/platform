@@ -33,11 +33,14 @@ class Fake
         $attributes = $this->makeAttributes();
         $attributes['id'] = $this->overrides['id'] ?? null;
 
-        return $this->resource->create($attributes);
+        return $this->resource->create(array_filter($attributes));
     }
 
     protected function fake(Field $field)
     {
+        if (!$field->hasEntry()) {
+            return null;
+        }
         if ($value = array_get($this->overrides, $field->getColumnName())) {
             return $value;
         }

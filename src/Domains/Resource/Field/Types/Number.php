@@ -7,8 +7,6 @@ use SuperV\Platform\Domains\Resource\Field\Field;
 
 class Number extends Field
 {
-    protected $type = 'number';
-
     public function getAccessor(): ?Closure
     {
         if ($this->getConfigValue('type') === 'decimal') {
