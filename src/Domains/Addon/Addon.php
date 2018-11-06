@@ -35,7 +35,7 @@ class Addon
     {
         $class = $this->providerClass();
 
-        return (new $class(app()))->setDroplet($this);
+        return (new $class(app()))->setAddon($this);
     }
 
     public function path($prefix = null)
@@ -54,7 +54,7 @@ class Addon
     }
 
     /**
-     * Return Droplet Entry
+     * Return Addon Entry
      *
      * @return \SuperV\Platform\Domains\Addon\AddonModel
      */

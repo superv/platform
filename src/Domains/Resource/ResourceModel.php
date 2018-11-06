@@ -83,19 +83,19 @@ class ResourceModel extends EntryModel
         return array_get($this->config, 'model');
     }
 
-    public function dropletEntry()
+    public function addonEntry()
     {
-        return $this->belongsTo(AddonModel::class, 'droplet_id');
+        return $this->belongsTo(AddonModel::class, 'addon_id');
     }
 
-    public function getDropletEntry(): AddonModel
+    public function getAddonEntry(): AddonModel
     {
-        return $this->dropletEntry;
+        return $this->addonEntry;
     }
 
-    public function getDroplet()
+    public function getAddon()
     {
-        return $this->droplet;
+        return $this->addon;
     }
 
     public function getSlug()

@@ -4,15 +4,15 @@ namespace SuperV\Platform\Domains\Addon\Listeners;
 
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 
-class DropletInstalledListener
+class AddonInstalledListener
 {
     public function handle(AddonInstalledEvent $event)
     {
-        $droplet = $event->addon;
+        $addon = $event->addon;
 
-        superv('addons')->put($droplet->slug(), $droplet);
-        if (method_exists($droplet, 'postInstall')) {
-            $droplet->postInstall();
+        superv('addons')->put($addon->slug(), $addon);
+        if (method_exists($addon, 'postInstall')) {
+            $addon->postInstall();
         }
     }
 }

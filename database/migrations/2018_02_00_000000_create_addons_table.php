@@ -5,7 +5,7 @@ use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
-class CreateDropletsTable extends Migration
+class CreateAddonsTable extends Migration
 {
     public function up()
     {
@@ -20,7 +20,7 @@ class CreateDropletsTable extends Migration
             $table->boolean('enabled');
             $table->timestamps();
 
-            $resource->label('SuperV Droplets');
+            $resource->label('SuperV Addons');
         });
     }
 

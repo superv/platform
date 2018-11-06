@@ -25,8 +25,8 @@ class SuperVInstallCommand extends Command
 
         $this->comment("SuperV installed..! \n");
 
-        $this->call('droplet:install', ['slug' => 'superv.modules.nucleo']);
-//        $this->call('droplet:install', ['slug' => 'superv.modules.guard']);
+        $this->call('addon:install', ['slug' => 'superv.modules.nucleo']);
+//        $this->call('addon:install', ['slug' => 'superv.modules.guard']);
     }
 
     public function setEnv($line)

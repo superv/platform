@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Addon\Jobs;
 
 use SuperV\Platform\Domains\Addon\AddonModel;
 
-class MakeDropletModel
+class MakeAddonModel
 {
     private $slug;
 

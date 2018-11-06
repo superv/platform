@@ -5,14 +5,14 @@ namespace SuperV\Platform\Domains\Addon\Console;
 use SuperV\Platform\Contracts\Command;
 use SuperV\Platform\Domains\Addon\AddonModel;
 
-class DropletMakeMigrationCommand extends Command
+class AddonMakeMigrationCommand extends Command
 {
-    protected $signature = 'droplet:migration';
+    protected $signature = 'addon:migration';
 
     public function handle()
     {
         $mode = $this->choice('Create or Alter?', ['0' => 'Create', '1' => 'Alter'], 0);
-        $droplet = $this->choice('Droplet ?', AddonModel::enabled()->latest()->get()->pluck('slug')->all());
+        $addon = $this->choice('Addon ?', AddonModel::enabled()->latest()->get()->pluck('slug')->all());
         if ($mode === 'Alter') {
             $allTables = [];
             foreach (\DB::select('SHOW tables') as $key => $table) {
@@ -30,13 +30,13 @@ class DropletMakeMigrationCommand extends Command
             $arguments = [
                 'name'     => "create_{$table}_table".$name,
                 '--create' => $table,
-                '--scope'  => $droplet,
+                '--scope'  => $addon,
             ];
         } else {
             $arguments = [
                 'name'    => "alter_{$table}_table".$name,
                 '--table' => $table,
-                '--scope' => $droplet,
+                '--scope' => $addon,
             ];
         }
 

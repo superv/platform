@@ -10,7 +10,7 @@ class MigrationsTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    function adds_column_droplet_to_migrations_table()
+    function adds_column_addon_to_migrations_table()
     {
         $this->assertDatabaseHas('migrations', ['scope' => 'platform']);
     }

@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Events\ThemeActivatedEvent;
-use SuperV\Platform\Exceptions\DropletNotFoundException;
+use SuperV\Platform\Exceptions\AddonNotFoundException;
 use SuperV\Platform\Providers\ThemeServiceProvider;
 use Tests\Platform\ComposerLoader;
 use Tests\Platform\TestCase;
@@ -74,7 +74,7 @@ class ThemeServiceProviderTest extends TestCase
     /** @test */
     function throws_exception_if_ports_theme_is_not_found()
     {
-        $this->expectException(DropletNotFoundException::class);
+        $this->expectException(AddonNotFoundException::class);
 
         $this->setUpPort('web', 'superv.io', $theme = 'non.existant.theme');
 

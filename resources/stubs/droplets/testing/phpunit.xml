@@ -10,7 +10,7 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Droplet Tests">
+        <testsuite name="Addon Tests">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>

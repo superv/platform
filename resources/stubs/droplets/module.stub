@@ -2,6 +2,6 @@
 
 use SuperV\Platform\Domains\Addon\Addon;
 
-class {droplet.class_name} extends Addon
+class {addon.class_name} extends Addon
 {
 }

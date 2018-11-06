@@ -8,15 +8,15 @@ use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
-use SuperV\Platform\Domains\Addon\Console\DropletInstallCommand;
-use SuperV\Platform\Domains\Addon\Console\DropletMakeMigrationCommand;
-use SuperV\Platform\Domains\Addon\Console\DropletRunMigrationCommand;
-use SuperV\Platform\Domains\Addon\Console\MakeDropletCommand;
+use SuperV\Platform\Domains\Addon\Console\AddonInstallCommand;
+use SuperV\Platform\Domains\Addon\Console\AddonMakeMigrationCommand;
+use SuperV\Platform\Domains\Addon\Console\AddonRunMigrationCommand;
+use SuperV\Platform\Domains\Addon\Console\MakeAddonCommand;
 use SuperV\Platform\Domains\Addon\AddonCollection;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
-use SuperV\Platform\Domains\Addon\Listeners\DropletInstalledListener;
+use SuperV\Platform\Domains\Addon\Listeners\AddonInstalledListener;
 use SuperV\Platform\Domains\Navigation\Collector;
-use SuperV\Platform\Domains\Navigation\DropletNavigationCollector;
+use SuperV\Platform\Domains\Navigation\AddonNavigationCollector;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Exceptions\PlatformExceptionHandler;
 use SuperV\Platform\Providers\BaseServiceProvider;
@@ -25,7 +25,7 @@ use SuperV\Platform\Providers\TwigServiceProvider;
 class PlatformServiceProvider extends BaseServiceProvider
 {
     protected $_bindings = [
-        Collector::class => DropletNavigationCollector::class,
+        Collector::class => AddonNavigationCollector::class,
     ];
 
     protected $providers = [
@@ -53,7 +53,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected $listeners = [
         'Illuminate\Routing\Events\RouteMatched'          => 'SuperV\Platform\Listeners\RouteMatchedListener',
         'SuperV\Platform\Domains\Port\PortDetectedEvent'  => 'SuperV\Platform\Listeners\PortDetectedListener',
-        AddonInstalledEvent::class                        => DropletInstalledListener::class,
+        AddonInstalledEvent::class                        => AddonInstalledListener::class,
         Domains\Database\Events\ColumnCreatedEvent::class => Domains\Resource\Listeners\SyncField::class,
         Domains\Database\Events\ColumnUpdatedEvent::class => Domains\Resource\Listeners\SyncField::class,
         Domains\Database\Events\ColumnDroppedEvent::class => Domains\Resource\Listeners\DeleteField::class,
@@ -62,10 +62,10 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     protected $commands = [
         SuperVInstallCommand::class,
-        DropletInstallCommand::class,
-        MakeDropletCommand::class,
-        DropletMakeMigrationCommand::class,
-        DropletRunMigrationCommand::class,
+        AddonInstallCommand::class,
+        MakeAddonCommand::class,
+        AddonMakeMigrationCommand::class,
+        AddonRunMigrationCommand::class,
     ];
 
     public function register()

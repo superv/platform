@@ -16,13 +16,13 @@ class PlatformTest extends TestCase
     /** @test */
     function registers_service_providers_for_enabled_addons()
     {
-        $this->setUpDroplet();
+        $this->setUpAddon();
 
         $entry = AddonModel::bySlug('superv.addons.sample');
 
         Platform::boot();
 
-        $this->assertContains($entry->resolveDroplet()->providerClass(), array_keys(app()->getLoadedProviders()));
+        $this->assertContains($entry->resolveAddon()->providerClass(), array_keys(app()->getLoadedProviders()));
     }
 
     /** @test */

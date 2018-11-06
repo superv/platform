@@ -33,9 +33,9 @@ class PlatformTestCase extends TestCase
 
         $this->handlePostInstallCallbacks();
 
-        foreach ($this->installs as $droplet) {
+        foreach ($this->installs as $addon) {
             app(Installer::class)->setLocator(new Locator())
-                                 ->setSlug($droplet)
+                                 ->setSlug($addon)
                                  ->install();
         }
 

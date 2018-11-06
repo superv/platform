@@ -60,10 +60,10 @@ class TestCase extends OrchestraTestCase
 
             $this->handlePostInstallCallbacks();
 
-            foreach ($this->installs as $droplet) {
+            foreach ($this->installs as $addon) {
                 app(Installer::class)
                     ->setLocator(new Locator(realpath(__DIR__.'/../../../../')))
-                    ->setSlug($droplet)
+                    ->setSlug($addon)
                     ->install();
             }
 
@@ -87,7 +87,7 @@ class TestCase extends OrchestraTestCase
      * @return \SuperV\Platform\Domains\Addon\Addon
      * @throws \SuperV\Platform\Exceptions\PathNotFoundException
      */
-    protected function setUpDroplet(
+    protected function setUpAddon(
         $slug = 'superv.addons.sample',
         $path = 'tests/Platform/__fixtures__/sample-addon'
     ) {
@@ -99,7 +99,7 @@ class TestCase extends OrchestraTestCase
 
         $entry = AddonModel::bySlug($slug);
 
-        return $entry->resolveDroplet();
+        return $entry->resolveAddon();
     }
 
     protected function tearDown()

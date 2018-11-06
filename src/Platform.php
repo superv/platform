@@ -32,10 +32,10 @@ class Platform extends Addon
 
         /** @var AddonModel $entry */
         foreach ($entries as $entry) {
-            $droplet = $entry->resolveDroplet();
-            app()->register($droplet->resolveProvider());
+            $addon = $entry->resolveAddon();
+            app()->register($addon->resolveProvider());
 
-            superv('addons')->put($droplet->slug(), $droplet);
+            superv('addons')->put($addon->slug(), $addon);
         }
 
         PlatformBootedEvent::dispatch();

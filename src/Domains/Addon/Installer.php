@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Addon;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
-use SuperV\Platform\Domains\Addon\Contracts\DropletLocator;
+use SuperV\Platform\Domains\Addon\Contracts\AddonLocator;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 use SuperV\Platform\Exceptions\PathNotFoundException;
 use SuperV\Platform\Support\Concerns\HasPath;
@@ -29,7 +29,7 @@ class Installer
     /** @var array * */
     protected $composerJson;
 
-    /** @var DropletLocator */
+    /** @var AddonLocator */
     protected $locator;
 
     public function __construct(Kernel $console)
@@ -37,7 +37,7 @@ class Installer
         $this->console = $console;
     }
 
-    public function setLocator(DropletLocator $locator)
+    public function setLocator(AddonLocator $locator)
     {
         $this->locator = $locator;
 
@@ -45,7 +45,7 @@ class Installer
     }
 
     /**
-     * Install droplet
+     * Install addon
      *
      * @throws \SuperV\Platform\Exceptions\PathNotFoundException
      */
@@ -63,7 +63,7 @@ class Installer
 
         $this->migrate();
 
-        $this->installSubDroplets();
+        $this->installSubAddons();
 
         AddonInstalledEvent::dispatch($this->addon);
 
@@ -71,7 +71,7 @@ class Installer
     }
 
     /**
-     * Return the installed droplet
+     * Return the installed addon
      *
      * @return \SuperV\Platform\Domains\Addon\Addon
      */
@@ -81,7 +81,7 @@ class Installer
     }
 
     /**
-     * Parse droplet type from composer config
+     * Parse addon type from composer config
      *
      * @return string
      */
@@ -110,7 +110,7 @@ class Installer
     }
 
     /**
-     * Parse droplet name from composer config
+     * Parse addon name from composer config
      *
      * @return string
      */
@@ -120,7 +120,7 @@ class Installer
     }
 
     /**
-     * Set droplet slug
+     * Set addon slug
      *
      * @param string $slug
      * @return Installer
@@ -133,7 +133,7 @@ class Installer
     }
 
     /**
-     * Set droplet path
+     * Set addon path
      *
      * @param string $path
      * @return Installer
@@ -158,7 +158,7 @@ class Installer
     }
 
     /**
-     * Validate droplet parameters
+     * Validate addon parameters
      */
     protected function validate()
     {
@@ -182,7 +182,7 @@ class Installer
     }
 
     /**
-     * Make droplet entry
+     * Make addon entry
      */
     protected function make()
     {
@@ -197,11 +197,11 @@ class Installer
         ]);
 
         /** @var \SuperV\Platform\Domains\Addon\AddonModel $entry */
-        $this->addon = $entry->resolveDroplet();
+        $this->addon = $entry->resolveAddon();
     }
 
     /**
-     * Register droplet service provider
+     * Register addon service provider
      */
     protected function register()
     {
@@ -209,7 +209,7 @@ class Installer
     }
 
     /**
-     * Migrate droplet migrations
+     * Migrate addon migrations
      */
     protected function migrate()
     {
@@ -223,10 +223,10 @@ class Installer
     /**
      * Install sub addons
      */
-    protected function installSubDroplets()
+    protected function installSubAddons()
     {
-        if ($subDroplets = $this->addon->installs()) {
-            foreach ($subDroplets as $slug => $path) {
+        if ($subAddons = $this->addon->installs()) {
+            foreach ($subAddons as $slug => $path) {
                 app(self::class)->setSlug($slug)
                                 ->setPath($this->path.'/'.$path)
                                 ->install();
@@ -235,7 +235,7 @@ class Installer
     }
 
     /**
-     * Load composer config from droplet path
+     * Load composer config from addon path
      *
      * @param null $key
      * @return array|string

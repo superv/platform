@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Addon\Contracts;
 
-interface DropletLocator
+interface AddonLocator
 {
     public function locate(string $slug);
 }

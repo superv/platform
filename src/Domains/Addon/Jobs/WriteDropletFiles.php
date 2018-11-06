@@ -7,7 +7,7 @@ use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Support\Parser;
 
-class WriteDropletFiles
+class WriteAddonFiles
 {
     /** @var \SuperV\Platform\Domains\Addon\AddonModel */
     private $model;
@@ -31,8 +31,8 @@ class WriteDropletFiles
             'provider'    => [
                 'class_name' => $providerClass = "{$name}{$type}ServiceProvider",
             ],
-            'droplet'     => [
-                'class_name' => $dropletClass = "{$name}{$type}",
+            'addon'       => [
+                'class_name' => $addonClass = "{$name}{$type}",
                 'extends'    => ucwords($type),
                 'short_name' => $shortName = $this->model->shortName(),
                 'slug'       => $this->model->fullSlug(),
@@ -41,7 +41,7 @@ class WriteDropletFiles
             'psr4_prefix' => str_replace('\\', '\\\\', $this->model->namespace),
         ];
 
-        $this->makeStub('addons/'.strtolower($type).'.stub', $tokens, "src/{$dropletClass}.php");
+        $this->makeStub('addons/'.strtolower($type).'.stub', $tokens, "src/{$addonClass}.php");
         $this->makeStub('addons/provider.stub', $tokens, "src/{$providerClass}.php");
         $this->makeStub('addons/composer.stub', $tokens, 'composer.json');
 
@@ -50,7 +50,7 @@ class WriteDropletFiles
          */
         $this->makeStub('addons/testing/phpunit.xml', [], 'phpunit.xml');
         $this->makeStub('addons/testing/TestCase.stub', $tokens, "tests/{$shortName}/TestCase.php");
-        $this->makeStub('addons/testing/DropletTest.stub', $tokens, "tests/{$shortName}/{$shortName}Test.php");
+        $this->makeStub('addons/testing/AddonTest.stub', $tokens, "tests/{$shortName}/{$shortName}Test.php");
     }
 
     protected function makeStub($stub, $tokens, $target)

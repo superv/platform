@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\{droplet.short_name};
+namespace Tests\{addon.short_name};
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Testing\PlatformTestCase;
@@ -9,5 +9,5 @@ class TestCase extends PlatformTestCase
 {
     use RefreshDatabase;
 
-    protected $installs = ['{droplet.slug}'];
+    protected $installs = ['{addon.slug}'];
 }

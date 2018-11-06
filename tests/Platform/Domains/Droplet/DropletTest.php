@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Domains\Droplet;
+namespace Tests\Platform\Domains\Addon;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Addons\Sample\SampleAddon;
@@ -10,35 +10,35 @@ use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\AddonServiceProvider;
 use Tests\Platform\TestCase;
 
-class DropletTest extends TestCase
+class AddonTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
-    function creates_droplet_instance()
+    function creates_addon_instance()
     {
-        $this->setUpDroplet();
+        $this->setUpAddon();
 
         $entry = AddonModel::bySlug('superv.addons.sample');
-        $droplet = $entry->resolveDroplet();
+        $addon = $entry->resolveAddon();
 
-        $this->assertInstanceOf(Addon::class, $droplet);
-        $this->assertInstanceOf(SampleAddon::class, $droplet);
-        $this->assertEquals($entry, $droplet->entry());
+        $this->assertInstanceOf(Addon::class, $addon);
+        $this->assertInstanceOf(SampleAddon::class, $addon);
+        $this->assertEquals($entry, $addon->entry());
     }
 
     /** @test */
     function creates_service_provider_instance()
     {
-        $this->setUpDroplet();
+        $this->setUpAddon();
 
         $entry = AddonModel::bySlug('superv.addons.sample');
-        $droplet = $entry->resolveDroplet();
-        $provider = $droplet->resolveProvider();
+        $addon = $entry->resolveAddon();
+        $provider = $addon->resolveProvider();
 
         $this->assertInstanceOf(AddonServiceProvider::class, $provider);
         $this->assertInstanceOf(SampleAddonServiceProvider::class, $provider);
 
-        $this->assertEquals($droplet, $provider->droplet());
+        $this->assertEquals($addon, $provider->addon());
     }
 }

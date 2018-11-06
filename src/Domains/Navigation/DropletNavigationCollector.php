@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Addon\Addon;
 use SuperV\Platform\Domains\Addon\AddonCollection;
 
-class DropletNavigationCollector implements Collector
+class AddonNavigationCollector implements Collector
 {
     /**
      * @var \SuperV\Platform\Domains\Addon\AddonCollection
@@ -31,10 +31,10 @@ class DropletNavigationCollector implements Collector
 
     public function collect(string $slug): Collection
     {
-        $this->addons->map(function (Addon $droplet) use ($slug) {
-            $menu = config($droplet->slug().'::navigation.'.$slug);
+        $this->addons->map(function (Addon $addon) use ($slug) {
+            $menu = config($addon->slug().'::navigation.'.$slug);
             if ($menu && !empty($menu)) {
-                $this->sections->put($droplet->slug(), collect($menu));
+                $this->sections->put($addon->slug(), collect($menu));
             }
         });
 

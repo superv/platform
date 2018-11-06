@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Addon\Jobs;
 use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Addon\AddonModel;
 
-class CreateDropletPaths
+class CreateAddonPaths
 {
     /** @var \SuperV\Platform\Domains\Addon\AddonModel */
     private $model;

@@ -15,7 +15,7 @@ class Blueprints
         $table->increments('id');
         $table->uuid('uuid')->unique();
         $table->string('slug');
-        $table->string('droplet');
+        $table->string('addon');
         $table->string('model')->nullable();
         $table->text('config')->nullable();
 

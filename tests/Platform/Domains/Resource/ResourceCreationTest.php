@@ -29,7 +29,7 @@ class ResourceCreationTest extends ResourceTestCase
         $resource = ResourceModel::withSlug('test_users');
         $this->assertNotNull($resource);
         $this->assertNotNull($resource->uuid());
-        $this->assertEquals('platform', $resource->getDroplet());
+        $this->assertEquals('platform', $resource->getAddon());
     }
 
     /** @test */

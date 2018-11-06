@@ -16,7 +16,7 @@ class InstallerTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    function installs_a_droplet()
+    function installs_a_addon()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-addon'));
 
@@ -46,7 +46,7 @@ class InstallerTest extends TestCase
     }
 
     /** @test */
-    function ensures_droplet_is_available_in_addons_collection_right_after_it_is_installed()
+    function ensures_addon_is_available_in_addons_collection_right_after_it_is_installed()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-addon'));
 
@@ -61,7 +61,7 @@ class InstallerTest extends TestCase
     }
 
     /** @test */
-    function droplet_installs_subaddons()
+    function addon_installs_subaddons()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another'));
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another/addons/themes/another_sub-addon'));
@@ -95,13 +95,13 @@ class InstallerTest extends TestCase
              ->setSlug('superv.addons.sample')
              ->install();
 
-        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration']);
-        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200100_droplet_bar_migration']);
-        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_droplet_baz_migration']);
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_addon_foo_migration']);
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200100_addon_bar_migration']);
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_addon_baz_migration']);
     }
 
     /** @test */
-    function locates_droplet_from_slug_if_path_is_not_given()
+    function locates_addon_from_slug_if_path_is_not_given()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another'));
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another/addons/themes/another_sub-addon'));
@@ -118,7 +118,7 @@ class InstallerTest extends TestCase
     }
 
     /** @test */
-    function verifies_droplet_path_exists()
+    function verifies_addon_path_exists()
     {
         $this->expectException(PathNotFoundException::class);
 

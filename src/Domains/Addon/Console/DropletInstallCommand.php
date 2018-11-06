@@ -6,9 +6,9 @@ use Illuminate\Console\Command;
 use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Addon\Locator;
 
-class DropletInstallCommand extends Command
+class AddonInstallCommand extends Command
 {
-    protected $signature = 'droplet:install {slug} {--path=}';
+    protected $signature = 'addon:install {slug} {--path=}';
 
     public function handle(Installer $installer)
     {
@@ -25,7 +25,7 @@ class DropletInstallCommand extends Command
 
             $installer->install();
 
-            $this->comment(sprintf("Droplet %s installed \n", $this->argument('slug')));
+            $this->comment(sprintf("Addon %s installed \n", $this->argument('slug')));
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }

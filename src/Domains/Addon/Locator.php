@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Addon;
 
-use SuperV\Platform\Domains\Addon\Contracts\DropletLocator;
+use SuperV\Platform\Domains\Addon\Contracts\AddonLocator;
 
-class Locator implements DropletLocator
+class Locator implements AddonLocator
 {
     /**
      * @var string

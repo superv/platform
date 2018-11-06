@@ -11,13 +11,13 @@ class AddonModel extends Model
     protected $guarded = [];
 
     /**
-     * Create new Droplet instance
+     * Create new Addon instance
      *
      * @return \SuperV\Platform\Domains\Addon\Addon
      */
-    public function resolveDroplet()
+    public function resolveAddon()
     {
-        $class = $this->dropletClass();
+        $class = $this->addonClass();
 
         return new $class($this);
     }
@@ -41,7 +41,7 @@ class AddonModel extends Model
     /**
      * @return string
      */
-    public function dropletClass()
+    public function addonClass()
     {
         return $this->namespace.'\\'.$this->name;
     }

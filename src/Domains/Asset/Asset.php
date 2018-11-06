@@ -281,10 +281,10 @@ class Asset
             if ($path = array_get($this->paths, $slug)) {
                 $file = $this->paths['theme'].DIRECTORY_SEPARATOR.$file;
             } else {
-                if (! $droplet = AddonModel::bySlug($slug)) {
-                    throw new \Exception("Asset Droplet not found: {$slug}");
+                if (! $addon = AddonModel::bySlug($slug)) {
+                    throw new \Exception("Asset Addon not found: {$slug}");
                 }
-                $file = $droplet->path.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.$file;
+                $file = $addon->path.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.$file;
             }
         }
 

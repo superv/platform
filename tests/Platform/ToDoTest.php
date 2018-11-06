@@ -31,13 +31,13 @@ class ToDoTest extends TestCase
     }
 
     /** @test */
-    function seeder_seeds_droplet_seeds()
+    function seeder_seeds_addon_seeds()
     {
         $this->addToAssertionCount(1);
     }
 
     /** @test */
-    function installer_uninstalls_subaddons_when_a_droplet_is_uninstalled()
+    function installer_uninstalls_subaddons_when_a_addon_is_uninstalled()
     {
         $this->addToAssertionCount(1);
     }

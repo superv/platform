@@ -2,6 +2,6 @@
 
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 
-class DropletBazMigration extends Migration
+class AddonFooMigration extends Migration
 {
 }

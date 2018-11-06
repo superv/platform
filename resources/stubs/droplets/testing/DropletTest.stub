@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\{droplet.short_name};
+namespace Tests\{addon.short_name};
 
-class {droplet.short_name}Test extends TestCase
+class {addon.short_name}Test extends TestCase
 {
     /** @test */
     function module_is_installed()
     {
-        $this->assertNotNull(superv('addons')->get('{droplet.slug}'));
+        $this->assertNotNull(superv('addons')->get('{addon.slug}'));
     }
 }

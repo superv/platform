@@ -9,23 +9,23 @@ class EnableConfigFiles
     /**
      * @var Addon
      */
-    private $droplet;
+    private $addon;
 
-    public function __construct(Addon $droplet)
+    public function __construct(Addon $addon)
     {
-        $this->droplet = $droplet;
+        $this->addon = $addon;
     }
 
     public function handle()
     {
-        foreach (glob($this->droplet->path('config/*')) as $path) {
+        foreach (glob($this->addon->path('config/*')) as $path) {
             $key = pathinfo($path, PATHINFO_FILENAME);
             $config = config()->get("superv.{$key}", []);
 
             $fromModule = require $path;
             $merged = array_replace_recursive($fromModule, $config);
 
-            config()->set($this->droplet->slug().'::'.$key, $merged);
+            config()->set($this->addon->slug().'::'.$key, $merged);
         }
     }
 }

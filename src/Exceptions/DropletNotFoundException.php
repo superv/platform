@@ -2,6 +2,6 @@
 
 namespace SuperV\Platform\Exceptions;
 
-class DropletNotFoundException extends PlatformException
+class AddonNotFoundException extends PlatformException
 {
 }

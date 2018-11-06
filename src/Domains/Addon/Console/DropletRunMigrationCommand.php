@@ -5,16 +5,16 @@ namespace SuperV\Platform\Domains\Addon\Console;
 use SuperV\Platform\Contracts\Command;
 use SuperV\Platform\Domains\Addon\AddonModel;
 
-class DropletRunMigrationCommand extends Command
+class AddonRunMigrationCommand extends Command
 {
-    protected $signature = 'droplet:migrate {--droplet=}';
+    protected $signature = 'addon:migrate {--addon=}';
 
     public function handle()
     {
-        if (! $droplet = $this->option('droplet')) {
-            $droplet = $this->choice('Droplet ?', AddonModel::enabled()->latest()->get()->pluck('slug')->all());
+        if (! $addon = $this->option('addon')) {
+            $addon = $this->choice('Addon ?', AddonModel::enabled()->latest()->get()->pluck('slug')->all());
         }
 
-        $this->call('migrate', ['--scope' => $droplet]);
+        $this->call('migrate', ['--scope' => $addon]);
     }
 }

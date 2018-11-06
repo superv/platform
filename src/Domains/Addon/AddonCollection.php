@@ -12,9 +12,9 @@ class AddonCollection extends Collection
      */
     public function withSlug($slug)
     {
-        foreach ($this->items as $key => $droplet) {
+        foreach ($this->items as $key => $addon) {
             if ($slug === $key) {
-                return $droplet;
+                return $addon;
             }
         }
     }
@@ -25,9 +25,9 @@ class AddonCollection extends Collection
      */
     public function withClass($class)
     {
-        foreach ($this->items as $key => $droplet) {
-            if ($class === get_class($droplet)) {
-                return $droplet;
+        foreach ($this->items as $key => $addon) {
+            if ($class === get_class($addon)) {
+                return $addon;
             }
         }
     }

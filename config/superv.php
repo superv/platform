@@ -23,14 +23,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Droplets Location
+    | Addons Location
     |--------------------------------------------------------------------------
     |
     |
     */
 
     'addons' => [
-        'location' => env('SV_DROPLETS', 'addons'),
+        'location' => env('SV_ADDONS', 'addons'),
     ],
 
     /*

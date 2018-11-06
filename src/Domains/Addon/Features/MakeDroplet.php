@@ -4,23 +4,23 @@ namespace SuperV\Platform\Domains\Addon\Features;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\Addon\Events\MakingAddonEvent;
-use SuperV\Platform\Domains\Addon\Jobs\CreateDropletPaths;
-use SuperV\Platform\Domains\Addon\Jobs\MakeDropletModel;
-use SuperV\Platform\Domains\Addon\Jobs\WriteDropletFiles;
+use SuperV\Platform\Domains\Addon\Jobs\CreateAddonPaths;
+use SuperV\Platform\Domains\Addon\Jobs\MakeAddonModel;
+use SuperV\Platform\Domains\Addon\Jobs\WriteAddonFiles;
 
-class MakeDroplet
+class MakeAddon
 {
     use DispatchesJobs;
 
     /**
-     * Slug of the droplet as vendor.type.name.
+     * Slug of the addon as vendor.type.name.
      *
      * @var string
      */
     private $slug;
 
     /**
-     * Target path of the droplet.
+     * Target path of the addon.
      *
      * @var null
      */
@@ -34,11 +34,11 @@ class MakeDroplet
 
     public function handle()
     {
-        $model = $this->dispatch(new MakeDropletModel($this->slug, $this->path));
+        $model = $this->dispatch(new MakeAddonModel($this->slug, $this->path));
 
-        $this->dispatch(new CreateDropletPaths($model));
+        $this->dispatch(new CreateAddonPaths($model));
 
-        $this->dispatch(new WriteDropletFiles($model));
+        $this->dispatch(new WriteAddonFiles($model));
 
         MakingAddonEvent::dispatch($model);
 

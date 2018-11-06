@@ -11,18 +11,18 @@ class AddonServiceProvider extends BaseServiceProvider
     /**
      * @var \SuperV\Platform\Domains\Addon\Addon
      */
-    protected $droplet;
+    protected $addon;
 
-    public function setDroplet(Addon $droplet)
+    public function setAddon(Addon $addon)
     {
-        $this->droplet = $droplet;
+        $this->addon = $addon;
 
         return $this;
     }
 
-    public function droplet()
+    public function addon()
     {
-        return $this->droplet;
+        return $this->addon;
     }
 
     public function register()
@@ -30,18 +30,18 @@ class AddonServiceProvider extends BaseServiceProvider
         parent::register();
 
         $this->addViewNamespaces([
-            $this->droplet->slug() => base_path($this->droplet->resourcePath('views')),
+            $this->addon->slug() => base_path($this->addon->resourcePath('views')),
         ]);
 
         if ($this->app->runningInConsole()) {
-            MigrationScopes::register($this->droplet->slug(), base_path($this->droplet->path('database/migrations')));
+            MigrationScopes::register($this->addon->slug(), base_path($this->addon->path('database/migrations')));
         }
 
-        $this->droplet->loadConfigFiles();
+        $this->addon->loadConfigFiles();
     }
 
     public function boot()
     {
-        app(Router::class)->loadFromPath($this->droplet->path('routes'));
+        app(Router::class)->loadFromPath($this->addon->path('routes'));
     }
 }

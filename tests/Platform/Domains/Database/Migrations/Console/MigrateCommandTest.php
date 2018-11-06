@@ -39,11 +39,11 @@ class MigrateCommandTest extends TestCase
         Scopes::register('superv.addons.sample', base_path('tests/Platform/__fixtures__/sample-addon/database/migrations'));
 
         $this->artisan('migrate', ['--scope' => 'superv.addons.sample']);
-        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_droplet_foo_migration',
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_addon_foo_migration',
                                                 'scope'     => 'superv.addons.sample']);
-        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200100_droplet_bar_migration',
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200100_addon_bar_migration',
                                                 'scope'     => 'superv.addons.sample']);
-        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_droplet_baz_migration',
+        $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_addon_baz_migration',
                                                 'scope'     => 'superv.addons.sample']);
     }
 }
