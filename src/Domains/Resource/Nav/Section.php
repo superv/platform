@@ -19,6 +19,8 @@ class Section extends EntryModel
         return array_filter([
             'title'    => $this->title,
             'handle'   => $this->handle,
+            'icon'   => $this->icon,
+            'url'   => $this->url,
             'sections' => $this->children()
                                ->with('children')
                                ->get()
@@ -26,21 +28,6 @@ class Section extends EntryModel
                                ->filter()->all(),
         ]);
     }
-
-//    public function add(string $namespace): Section
-//    {
-//        $count = count($parts = explode('.', $namespace));
-//        if ($count === 1) {
-//            return $this->getChildOrCreate($parts[0]);
-//        } else {
-//            $parent = $this->getChildOrCreate(array_shift($parts));
-//            if (count($parts)) {
-//                $parent->add(implode('.', $parts));
-//            }
-//
-//            return $parent;
-//        }
-//    }
 
     public function parent()
     {
@@ -96,6 +83,7 @@ class Section extends EntryModel
         // acp settings auth
         if (! $parent) {
             $parent = static::get(array_shift($parts));
+
             return static::get(implode('.', $parts), $parent);  // setting.auth, acp
         }
 
@@ -113,18 +101,26 @@ class Section extends EntryModel
             }
 
             return static::where('handle', $parts[0])->firstOrCreate(static::make(null, $parts[0]));
-//            return $parent ? $parent->getChildOrCreate($handle) : static::create(static::make(null, $handle));
         } else {
             $entry = static::createFromString(array_shift($parts), $parent);
-//            $entry =  $parent ? $parent->getChildOrCreate(array_shift($parts)) : static::createFromString(array_shift($parts));
-//            $entry =  $parent ? $parent->getChildOrCreate(array_shift($parts)) : static::create(static::make(null, array_shift($parts)));
             if (count($parts)) {
                 static::createFromString(implode('.', $parts), $entry);
-//                $entry->add(implode('.', $parts));
             }
 
             return $entry;
         }
+    }
+
+    public static function createFromArray(array $data)
+    {
+        $parent = array_pull($data, 'parent');
+        $handle = ($parent ? $parent.'.' : '').$data['handle'] ?? str_slug($data['title'], '_');
+
+        static::createFromString($handle);
+        $section = static::get($handle);
+        $section->update($data);
+
+        return $section;
     }
 
     public static function make(?string $title = null, ?string $handle = null): array

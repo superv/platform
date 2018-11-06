@@ -96,6 +96,8 @@ class Blueprints
 
         $table->string('title')->entryLabel();
         $table->string('handle');
+        $table->string('icon')->nullable();
+        $table->string('url')->nullable();
 
 //        $table->unique(['handle', 'parent_id']);  @TODO: test
 

@@ -2,9 +2,11 @@
 
 namespace Tests\Platform\Domains\Resource;
 
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Nav\Nav;
 use SuperV\Platform\Domains\Resource\Nav\Section;
-use SuperV\Platform\Domains\Resource\ResourceModel;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 class NavigationTest extends ResourceTestCase
 {
@@ -165,18 +167,37 @@ class NavigationTest extends ResourceTestCase
         $this->assertEquals(1, $e->children()->count());
     }
 
-    function builds_navigation()
+    /** @test */
+    function creates_from_resource_blueprint()
     {
-        $this->makeResource('t_users', [], ['nav' => 'acp.settings.auth', 'label' => 'System Users']);
+        Schema::create('t_users', function (Blueprint $table, ResourceBlueprint $resource) {
+            $table->increments('id');
+            $resource->nav([
+                'parent' => 'acp.settings.auth',
+                'title'  => 'System Users',
+                'handle' => 'users',
+                'icon'   => 'user',
+            ]);
+        });
 
-        $navEntry = Section::query()->latest()->first();
         $this->assertArrayContains([
-            'nav'         => 'acp',
-            'section'     => 'settings',
-            'subsection'  => 'auth',
-            'slug'        => 'system_users',
-            'title'       => 'System Users',
-            'resource_id' => ResourceModel::withSlug('t_users')->getId(),
-        ], $navEntry->toArray());
+            'title'  => 'System Users',
+            'handle' => 'users',
+            'icon'   => 'user',
+            'url'    => 'sv/res/t_users',
+        ], Section::get('acp.settings.auth.users')->compose());
+
+
+        Schema::create('t_templates', function (Blueprint $table, ResourceBlueprint $resource) {
+            $table->increments('id');
+            $resource->label('Templates'); // modifies section handle and title
+            $resource->nav('acp.settings');
+        });
+
+        $this->assertEquals([
+            'title'  => 'Templates',
+            'handle' => 'templates',
+            'url'    => 'sv/res/t_templates',
+        ], Section::get('acp.settings.templates')->fresh()->compose());
     }
 }

@@ -3,10 +3,12 @@
 namespace SuperV\Platform\Domains\Resource\Nav;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Traits\ForwardsCalls;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class Nav
 {
+    use ForwardsCalls;
     /**
      * @var Section
      */
@@ -89,8 +91,13 @@ class Nav
         return new static($entry);
     }
 
-    public static function create(string $namespace)
+    public static function create(string $handle): Nav
     {
-        return new static(Section::createFromString($namespace));
+        return new static(Section::createFromString($handle));
     }
+    public static function createFromArray(array $array): Section
+    {
+        return Section::createFromArray($array);
+    }
+
 }
