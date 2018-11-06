@@ -93,9 +93,9 @@ class ResourceModel extends EntryModel
         return $this->dropletEntry;
     }
 
-    public function getDropletSlug()
+    public function getDroplet()
     {
-        return $this->droplet_slug;
+        return $this->droplet;
     }
 
     public function getSlug()

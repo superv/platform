@@ -4,6 +4,14 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Illuminate\Support\Fluent;
 
+/**
+ * Class ResourceBlueprint
+ *
+ *  @method ResourceBlueprint model($model)
+ *  @method ResourceBlueprint nav($nav)
+ *  @method ResourceBlueprint label($label)
+ *  @method ResourceBlueprint entryLabel($entryLabel)
+ */
 class ResourceBlueprint extends Fluent
 {
     public function fill(array $attributes = [])
@@ -12,6 +20,7 @@ class ResourceBlueprint extends Fluent
             $this->attributes[$key] = $value;
         }
     }
+
     public function config($table, array $columns)
     {
         if (! $this->label) {
@@ -30,9 +39,6 @@ class ResourceBlueprint extends Fluent
         return $attributes;
     }
 
-    /**
-     * @param array $columns
-     */
     public function guessEntryLabel(array $columns): void
     {
         $columns = collect($columns)->keyBy('name');

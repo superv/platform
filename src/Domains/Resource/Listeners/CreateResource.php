@@ -19,8 +19,9 @@ class CreateResource
         $entry = ResourceModel::create(array_filter(
             [
                 'slug'         => $event->table,
+                'model'        => $resource->model,
                 'config'       => $resource->config($event->table, $event->columns),
-                'droplet_slug' => $event->scope,
+                'droplet' => $event->scope,
             ]
         ));
 
@@ -34,10 +35,10 @@ class CreateResource
                     'subsection' => $parts[2] ?? null,
                 ];
             }
-            if (!isset($nav['title'])) {
+            if (! isset($nav['title'])) {
                 $nav['title'] = $entry->getConfigValue('label');
             }
-            if (!isset($nav['slug'])) {
+            if (! isset($nav['slug'])) {
                 $nav['slug'] = str_slug($nav['title'], '_');
             }
             $entry->nav()->create(array_filter($nav));
