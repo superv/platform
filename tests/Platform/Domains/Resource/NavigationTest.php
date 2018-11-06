@@ -2,8 +2,6 @@
 
 namespace Tests\Platform\Domains\Resource;
 
-use Platform;
-use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Resource\Nav\Nav;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\ResourceModel;
@@ -17,25 +15,25 @@ class NavigationTest extends ResourceTestCase
         $navEntry = $nav->entry()->fresh();
 
         $this->assertInstanceOf(Section::class, $navEntry);
-        $this->assertEquals('Acp', $navEntry->title);
-        $this->assertEquals('acp', $navEntry->handle);
-        $this->assertNull($navEntry->parent);
+        $this->assertEquals('Acp', $navEntry->getTitle());
+        $this->assertEquals('acp', $navEntry->getHandle());
+        $this->assertNull($navEntry->getParent());
 
         $marketing = $nav->addSection('Marketing')->fresh();
-        $this->assertEquals($navEntry->id, $marketing->parent->id);
-        $this->assertEquals('Marketing', $marketing->title);
-        $this->assertEquals('marketing', $marketing->handle);
+        $this->assertEquals($navEntry->id, $marketing->getParent()->id);
+        $this->assertEquals('Marketing', $marketing->getTitle());
+        $this->assertEquals('marketing', $marketing->getHandle());
 
         $marketingCrm = $marketing->addChild('Crm');
-        $this->assertEquals($marketing->id, $marketingCrm->parent->id);
-        $this->assertEquals('Crm', $marketingCrm->title);
+        $this->assertEquals($marketing->id, $marketingCrm->getParent()->id);
+        $this->assertEquals('Crm', $marketingCrm->getTitle());
 
         $marketingPromotions = $marketing->addChild('Promotions');
-        $this->assertEquals($marketing->id, $marketingPromotions->parent->id);
-        $this->assertEquals('Promotions', $marketingPromotions->title);
+        $this->assertEquals($marketing->id, $marketingPromotions->getParent()->id);
+        $this->assertEquals('Promotions', $marketingPromotions->getTitle());
 
         $marketingPromotionsCodes = $marketingPromotions->addChild('Codes');
-        $this->assertEquals($marketingPromotions->id, $marketingPromotionsCodes->parent->id);
+        $this->assertEquals($marketingPromotions->id, $marketingPromotionsCodes->getParent()->id);
 
         $marketing->getChildren()->assertEquals([$marketingCrm, $marketingPromotions]);
     }
@@ -47,30 +45,30 @@ class NavigationTest extends ResourceTestCase
         // level 1
         $nav->add('marketing');
         $marketing = $nav->getChild('marketing');
-        $this->assertEquals('Marketing', $marketing->title);
-        $this->assertEquals('marketing', $marketing->handle);
+        $this->assertEquals('Marketing', $marketing->getTitle());
+        $this->assertEquals('marketing', $marketing->getHandle());
 
         // level 2
         $settings = $nav->add('settings.auth');
-        $this->assertEquals('Settings', $settings->title);
-        $this->assertEquals('settings', $settings->handle);
-        $this->assertEquals($nav->entry()->id, $settings->parent->id);
+        $this->assertEquals('Settings', $settings->getTitle());
+        $this->assertEquals('settings', $settings->getHandle());
+        $this->assertEquals($nav->entry()->id, $settings->getParent()->id);
         $this->assertEquals(1, $settings->children()->count());
 
         $auth = $settings->getChild('auth');
-        $this->assertEquals('Auth', $auth->title);
-        $this->assertEquals('auth', $auth->handle);
+        $this->assertEquals('Auth', $auth->getTitle());
+        $this->assertEquals('auth', $auth->getHandle());
         $this->assertEquals(0, $auth->children()->count());
 
         // level 3
         $settingsAgain = $nav->add('settings.config.mail_templates');
         $this->assertEquals($settings->id, $settingsAgain->id);
-        $this->assertEquals($nav->entry()->id, $settings->parent->id);
+        $this->assertEquals($nav->entry()->id, $settings->getParent()->id);
         $this->assertEquals(2, $settings->children()->count());
 
         $config = $settings->getChild('config');
-        $this->assertEquals('Config', $config->title);
-        $this->assertEquals('config', $config->handle);
+        $this->assertEquals('Config', $config->getTitle());
+        $this->assertEquals('config', $config->getHandle());
         $this->assertEquals(1, $config->children()->count());
     }
 
@@ -101,16 +99,6 @@ class NavigationTest extends ResourceTestCase
     }
 
     /** @test */
-    function get_from_namespace()
-    {
-        Nav::create('a.b.c.d.e.f');
-
-        $e = Nav::get('a.b.c.d.e');
-        $this->assertEquals('E', $e->title);
-        $this->assertEquals(1, $e->children()->count());
-    }
-
-    /** @test */
     function composes_nav()
     {
         $nav = Nav::create('acp');
@@ -121,8 +109,8 @@ class NavigationTest extends ResourceTestCase
         $nav->add('bar.foo');
 
         $this->assertEquals([
-            'title'      => 'Acp',
-            'handle'      => 'acp',
+            'title'    => 'Acp',
+            'handle'   => 'acp',
             'sections' => [
                 [
                     'title'    => 'Foo',
@@ -146,7 +134,7 @@ class NavigationTest extends ResourceTestCase
                 ],
                 [
                     'title'    => 'Bar',
-                    'handle'    => 'bar',
+                    'handle'   => 'bar',
                     'sections' => [
                         [
                             'title'  => 'Baz',
@@ -162,13 +150,25 @@ class NavigationTest extends ResourceTestCase
         ], Nav::get('acp')->compose());
     }
 
+    /** @test */
+    function get_from_full_handle()
+    {
+        Nav::create('acp.settings.auth');
+
+        $auth = Section::get('acp.settings.auth');
+        $this->assertEquals('auth', $auth->getHandle());
+
+        Nav::create('a.b.c.d.e.f');
+
+        $e = Section::get('a.b.c.d.e');
+        $this->assertEquals('E', $e->getTitle());
+        $this->assertEquals(1, $e->children()->count());
+    }
+
     function builds_navigation()
     {
-        $this->makeResource('no_nav_resource_a');
-        $this->makeResource('no_nav_resource_b');
-        $this->makeResource('no_nav_resource_c');
-
         $this->makeResource('t_users', [], ['nav' => 'acp.settings.auth', 'label' => 'System Users']);
+
         $navEntry = Section::query()->latest()->first();
         $this->assertArrayContains([
             'nav'         => 'acp',
@@ -178,52 +178,5 @@ class NavigationTest extends ResourceTestCase
             'title'       => 'System Users',
             'resource_id' => ResourceModel::withSlug('t_users')->getId(),
         ], $navEntry->toArray());
-    }
-
-    function build_sections()
-    {
-        $this->makeResource('t_users', [], ['nav' => 'acp.settings.auth']);
-        $this->makeResource('t_roles', [], ['nav' => 'acp.settings.auth']);
-        $this->makeResource('t_actions', [], ['nav' => 'acp.settings.auth']);
-
-        $this->makeResource('t_templates', [], ['nav' => 'acp.settings.config']);
-        $this->makeResource('t_mails', [], ['nav' => 'acp.settings.config']);
-
-        $this->makeResource('t_clients', [], ['nav' => 'acp.marketing.crm']);
-        $this->makeResource('t_features', [], ['nav' => 'acp.marketing.memberships']);
-        $this->makeResource('t_memtypes', [], ['nav' => 'acp.marketing.memberships']);
-        $this->makeResource('t_subs', [], ['nav' => 'acp.marketing.memberships']);
-
-        $nav = Nav::make('acp');
-        $nav->build();
-
-        $this->assertEquals(2, $nav->sections()->count());
-
-        $settings = $nav->section('settings');
-        $this->assertInstanceOf(Section::class, $settings);
-        $this->assertEquals('Settings', $settings->title());
-        $this->assertEquals('settings', $settings->slug());
-        $this->assertEquals(10, $settings->ranking());
-        $this->assertNull($settings->slug());
-
-        $this->assertEquals(2, $settings->count());
-        $this->assertEquals(3, $settings->get('auth')->count());
-        $this->assertEquals(2, $settings->get('config')->count());
-
-        $marketing = $nav->section('marketing');
-        $this->assertEquals(2, $marketing->count());
-        $this->assertEquals(1, $marketing->get('crm')->count());
-        $this->assertEquals(3, $marketing->get('memberships')->count());
-
-        $composed = $nav->compose();
-
-        $this->newUser();
-
-        Platform::setPort(new Port(['slug' => 'acp', 'navigation_slug' => 'acp']));
-        $this->withoutExceptionHandling();
-
-        $response = $this->getJson('data/nav', $this->getHeaderWithAccessToken());
-
-        $this->assertEquals($composed, $response->decodeResponseJson('data.nav'));
     }
 }

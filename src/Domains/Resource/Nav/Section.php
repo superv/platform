@@ -47,6 +47,11 @@ class Section extends EntryModel
         return $this->belongsTo(Section::class, 'parent_id');
     }
 
+    public function getParent(): ?Section
+    {
+        return $this->parent;
+    }
+
     public function children()
     {
         return $this->hasMany(Section::class, 'parent_id');
@@ -72,9 +77,31 @@ class Section extends EntryModel
         return $this->children()->create(static::make($title));
     }
 
-    public static function get(string $handle): self
+    public function getHandle(): ?string
     {
-        return static::where('handle', $handle)->first();
+        return $this->handle;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public static function get(string $handle, ?Section $parent = null): ?self
+    {
+        $count = count($parts = explode('.', $handle));
+        if ($count === 1) {
+            return $parent ? $parent->getChild($handle) : static::where('handle', $handle)->first();
+        }
+        // acp settings auth
+        if (! $parent) {
+            $parent = static::get(array_shift($parts));
+            return static::get(implode('.', $parts), $parent);  // setting.auth, acp
+        }
+
+        $firstChild = $parent->getChild(array_shift($parts)); // find setting in acp
+
+        return static::get(implode('.', $parts), $firstChild); // auth, setting
     }
 
     public static function createFromString(string $string, ?Section $parent = null): Section
