@@ -8,6 +8,7 @@ use SuperV\Platform\Http\Controllers\ResourceController;
 return [
     'data/init'  => DataController::class.'@init',
     'data/nav'   => DataController::class.'@nav',
+    'data/navold'   => DataController::class.'@navold',
     'post@login' => [
         'uses' => AuthController::class.'@login',
     ],

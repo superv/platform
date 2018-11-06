@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
+use SuperV\Platform\Domains\Resource\Nav\Nav;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class CreateResource
@@ -27,21 +28,22 @@ class CreateResource
 
         if ($nav = $resource->nav) {
             if (is_string($nav)) {
-                $parts = explode('.', $nav);
-
-                $nav = [
-                    'nav'        => $parts[0],
-                    'section'    => $parts[1] ?? null,
-                    'subsection' => $parts[2] ?? null,
-                ];
+                Nav::create($nav.'.'.str_singular($event->table));
+//                $parts = explode('.', $nav);
+//
+//                $nav = [
+//                    'nav'        => $parts[0],
+//                    'section'    => $parts[1] ?? null,
+//                    'subsection' => $parts[2] ?? null,
+//                ];
             }
-            if (! isset($nav['title'])) {
-                $nav['title'] = $entry->getConfigValue('label');
-            }
-            if (! isset($nav['slug'])) {
-                $nav['slug'] = str_slug($nav['title'], '_');
-            }
-            $entry->nav()->create(array_filter($nav));
+//            if (! isset($nav['title'])) {
+//                $nav['title'] = $entry->getConfigValue('label');
+//            }
+//            if (! isset($nav['slug'])) {
+//                $nav['slug'] = str_slug($nav['title'], '_');
+//            }
+//            $entry->nav()->create(array_filter($nav));
         }
     }
 }

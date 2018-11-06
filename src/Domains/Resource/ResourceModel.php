@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Model\EntryModel;
-use SuperV\Platform\Domains\Resource\Nav\NavModel;
+use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 
 class ResourceModel extends EntryModel
@@ -26,7 +26,7 @@ class ResourceModel extends EntryModel
 
     public function nav()
     {
-        return $this->hasOne(NavModel::class, 'resource_id');
+        return $this->hasOne(Section::class, 'resource_id');
     }
 
     public function getFields(): Collection

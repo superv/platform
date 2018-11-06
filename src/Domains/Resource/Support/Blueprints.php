@@ -84,17 +84,20 @@ class Blueprints
     {
         $table->increments('id');
         if ($table instanceof Blueprint) {
-            $table->belongsTo('sv_resources', 'resource');
             $resource->label('Resource Navigation');
+
+            $table->nullableBelongsTo('sv_navigation', 'parent');
+            $table->nullableBelongsTo('sv_resources', 'resource');
+
         } else {
-            $table->unsignedInteger('resource_id');
+            $table->unsignedInteger('parent_id')->nullable();
+            $table->unsignedInteger('resource_id')->nullable();
         }
 
-        $table->string('nav');
-        $table->string('section')->nullable();
-        $table->string('subsection')->nullable();
-        $table->string('slug');
         $table->string('title')->entryLabel();
+        $table->string('handle');
+
+//        $table->unique(['handle', 'parent_id']);  @TODO: test
 
         $table->timestamps();
     }

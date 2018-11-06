@@ -4,7 +4,7 @@ namespace SuperV\Platform\Http\Controllers;
 
 use Current;
 use SuperV\Platform\Domains\Navigation\Navigation;
-use SuperV\Platform\Domains\Resource\Nav;
+use SuperV\Platform\Domains\Resource\Nav\Nav;
 
 class DataController extends BaseController
 {
@@ -34,7 +34,7 @@ class DataController extends BaseController
         ];
     }
 
-    public function nav_old(Navigation $nav)
+    public function navold(Navigation $nav)
     {
         $portNav = Current::port()->getNavigationSlug();
 

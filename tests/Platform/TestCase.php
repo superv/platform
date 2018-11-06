@@ -48,6 +48,7 @@ class TestCase extends OrchestraTestCase
         $this->loadLaravelMigrations();
         $this->withFactories(__DIR__.'/../database/factories');
         $this->makeTmpDirectory();
+        $this->setUpMacros();
 
         $this->app->setBasePath(realpath(__DIR__.'/../../'));
         if (method_exists($this, 'refreshDatabase')) {
