@@ -101,6 +101,16 @@ class NavigationTest extends ResourceTestCase
     }
 
     /** @test */
+    function get_from_namespace()
+    {
+        Nav::create('a.b.c.d.e.f');
+
+        $e = Nav::get('a.b.c.d.e');
+        $this->assertEquals('E', $e->title);
+        $this->assertEquals(1, $e->children()->count());
+    }
+
+    /** @test */
     function composes_nav()
     {
         $nav = Nav::create('Acp');
