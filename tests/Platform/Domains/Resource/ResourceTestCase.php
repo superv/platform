@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Database\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
@@ -13,16 +14,17 @@ class ResourceTestCase extends \Tests\Platform\TestCase
 {
     use RefreshDatabase;
 
-    protected function makeResource($slug = 'test_users', array $columns = ['name']): Resource
+    protected function makeResource($slug = 'test_users', array $columns = ['name'], array $resource = []): Resource
     {
-        $this->makeResourceModel($slug, $columns);
+        $this->makeResourceModel($slug, $columns, $resource);
 
         return ResourceFactory::make($slug);
     }
 
-    protected function makeResourceModel($slug, array $columns): ResourceModel
+    protected function makeResourceModel($slug, array $columns, array $resource): ResourceModel
     {
-        Schema::create($slug, function (Blueprint $table) use ($columns) {
+
+        Schema::create($slug, function (Blueprint $table, ResourceBlueprint $resourceBlueprint) use ($columns, $resource) {
             $table->increments('id');
 
             foreach ($columns as $key => $column) {
@@ -45,6 +47,8 @@ class ResourceTestCase extends \Tests\Platform\TestCase
                     $column->{$param}();
                 }
             }
+
+            $resourceBlueprint->fill($resource);
         });
         $resource = ResourceModel::withSlug($slug);
 

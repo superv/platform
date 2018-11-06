@@ -318,7 +318,7 @@ class Resource
           throw new PlatformException("Resource model not found with handle [{$handle}]");
         }
 
-        if ($model = array_get($resourceEntry->getConfig(), 'model')) {
+        if ($model = $resourceEntry->getConfigValue('model')) {
             return new $model;
         }
 

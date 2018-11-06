@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Droplet\DropletModel;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Model\EntryModel;
+use SuperV\Platform\Domains\Resource\Nav\NavModel;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 
 class ResourceModel extends EntryModel
@@ -23,6 +24,11 @@ class ResourceModel extends EntryModel
         return $this->uuid;
     }
 
+    public function nav()
+    {
+        return $this->hasOne(NavModel::class, 'resource_id');
+    }
+
     public function getFields(): Collection
     {
         return $this->fields;
@@ -31,6 +37,11 @@ class ResourceModel extends EntryModel
     public function getConfig()
     {
         return $this->config ?? [];
+    }
+
+    public function getConfigValue($key, $default = null)
+    {
+        return array_get($this->getConfig(), $key, $default);
     }
 
     public function getField($name): ?FieldModel

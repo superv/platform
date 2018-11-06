@@ -6,6 +6,12 @@ use Illuminate\Support\Fluent;
 
 class ResourceBlueprint extends Fluent
 {
+    public function fill(array $attributes = [])
+    {
+        foreach ($attributes as $key => $value) {
+            $this->attributes[$key] = $value;
+        }
+    }
     public function config($table, array $columns)
     {
         if (! $this->label) {

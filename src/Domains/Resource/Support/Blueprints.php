@@ -89,9 +89,11 @@ class Blueprints
             $table->unsignedInteger('resource_id');
         }
 
-        $table->string('scope');
-        $table->string('parent');
-        $table->string('title');
+        $table->string('nav');
+        $table->string('section')->nullable();
+        $table->string('subsection')->nullable();
+        $table->string('slug');
+        $table->string('title')->entryLabel();
 
         $table->timestamps();
     }

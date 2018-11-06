@@ -15,12 +15,32 @@ class CreateResource
 
         $resource = $event->blueprint;
 
-        ResourceModel::create(array_filter(
+        /** @var ResourceModel $entry */
+        $entry = ResourceModel::create(array_filter(
             [
                 'slug'         => $event->table,
                 'config'       => $resource->config($event->table, $event->columns),
                 'droplet_slug' => $event->scope,
             ]
         ));
+
+        if ($nav = $resource->nav) {
+            if (is_string($nav)) {
+                $parts = explode('.', $nav);
+
+                $nav = [
+                    'nav'        => $parts[0],
+                    'section'    => $parts[1] ?? null,
+                    'subsection' => $parts[2] ?? null,
+                ];
+            }
+            if (!isset($nav['title'])) {
+                $nav['title'] = $entry->getConfigValue('label');
+            }
+            if (!isset($nav['slug'])) {
+                $nav['slug'] = str_slug($nav['title'], '_');
+            }
+            $entry->nav()->create(array_filter($nav));
+        }
     }
 }
