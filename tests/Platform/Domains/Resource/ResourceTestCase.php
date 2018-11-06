@@ -21,7 +21,7 @@ class ResourceTestCase extends \Tests\Platform\TestCase
         return ResourceFactory::make($slug);
     }
 
-    protected function makeResourceModel($slug, array $columns, array $resource): ResourceModel
+    protected function makeResourceModel($slug, array $columns, array $resource = []): ResourceModel
     {
 
         Schema::create($slug, function (Blueprint $table, ResourceBlueprint $resourceBlueprint) use ($columns, $resource) {

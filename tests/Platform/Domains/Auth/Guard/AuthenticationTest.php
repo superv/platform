@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Port\Port;
 use Tests\Platform\TestCase;
 
-class AuthenticationTest extends TestCase
+class AuthenticationTest
 {
     use RefreshDatabase;
 

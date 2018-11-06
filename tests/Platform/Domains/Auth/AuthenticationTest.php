@@ -8,22 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Schema;
-use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Auth\Concerns\AuthenticatesUsers;
 use SuperV\Platform\Domains\Auth\PlatformUserProvider;
+use SuperV\Platform\Domains\Auth\User;
 use Tests\Platform\TestCase;
 
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-
     protected function setUp()
     {
         parent::setUp();
     }
 
-    /** @test */
     function authenticates_valid_user_successfully()
     {
         $this->setUpPort('web', 'localhost', null, ['client']);
@@ -38,7 +36,6 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
-    /** @test */
     function only_authenticates_allowed_roles()
     {
         $this->setUpPort('acp', 'localhost', null, ['admin']);
@@ -52,10 +49,9 @@ class AuthenticationTest extends TestCase
         $this->assertNotAuthenticated();
     }
 
-
     function resolves_port_model_upon_authentication()
     {
-        Schema::create('test_clients', function(Blueprint $table) {
+        Schema::create('test_clients', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
         });
@@ -79,7 +75,6 @@ class AuthenticationTest extends TestCase
         $this->assertEquals($user->id, $auth->user()->user->id);
     }
 
-    /** @test */
     function does_not_authenticate_a_user_with_invalid_credentials()
     {
         $this->setUpPort('web', 'localhost', null, ['client']);
@@ -147,9 +142,12 @@ class AuthenticationTest extends TestCase
     }
 }
 
-class Client extends Model {
-    protected $table = 'test_clients';
+class Client extends Model
+{
     public $timestamps = false;
+
+    protected $table = 'test_clients';
+
     protected $guarded = [];
 }
 

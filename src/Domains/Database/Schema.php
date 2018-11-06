@@ -31,21 +31,9 @@ class Schema
                 return new Blueprint($table, $callback, $this);
             });
         }
-
-//        $this->resource = new ResourceBlueprint();
     }
 
-//    public function resource(): ResourceBlueprint
-//    {
-//        return $this->resource;
-//    }
-
-//    public function getResource(): ResourceBlueprint
-//    {
-//        return $this->resource;
-//    }
-
-    public static function nucleo($table, $callback)
+    public static function run($table, $callback)
     {
         $schema = new static;
         $schema->justRun = true;

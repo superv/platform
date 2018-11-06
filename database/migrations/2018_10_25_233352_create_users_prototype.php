@@ -12,7 +12,7 @@ class CreateUsersPrototype extends Migration
 {
     public function up()
     {
-        Schema::nucleo('users', function (Blueprint $table) {
+        Schema::run('users', function (Blueprint $table) {
             $table->increments('id');
             $table->belongsTo(Account::class, 'account')->nullable();
             $table->string('name')->nullable();
