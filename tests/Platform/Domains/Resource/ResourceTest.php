@@ -4,8 +4,6 @@ namespace Tests\Platform\Domains\Resource;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use SuperV\Platform\Domains\Database\Blueprint;
-use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldConfig;
 use SuperV\Platform\Domains\Resource\Field\Types\Number;

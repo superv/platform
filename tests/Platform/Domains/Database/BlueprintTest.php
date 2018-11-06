@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Database;
 
 use Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Domains\Database\Blueprint;
+use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;

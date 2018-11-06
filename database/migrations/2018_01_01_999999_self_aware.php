@@ -1,6 +1,6 @@
 <?php
 
-use SuperV\Platform\Domains\Database\Blueprint;
+use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;

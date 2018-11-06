@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database;
 
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
 
 /**
  * @method \Illuminate\Database\Schema\Builder create($table, \Closure $callback)
@@ -12,7 +12,7 @@ use SuperV\Platform\Domains\Resource\ResourceBlueprint;
  */
 class Schema
 {
-    /** @var \SuperV\Platform\Domains\Database\Blueprint  */
+    /** @var \SuperV\Platform\Domains\Database\Blueprint\Blueprint  */
     protected $resource;
 
     /** @var \SuperV\Platform\Domains\Database\Builder */

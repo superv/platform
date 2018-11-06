@@ -1,19 +1,20 @@
 <?php
 
-namespace SuperV\Platform\Domains\Database;
+namespace SuperV\Platform\Domains\Database\Blueprint;
 
 use Closure;
 use Current;
-use Exception;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Grammars\Grammar;
 use Illuminate\Support\Fluent;
+use SuperV\Platform\Domains\Database\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Events\TableDroppedEvent;
+use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig as Config;
 
 class Blueprint extends \Illuminate\Database\Schema\Blueprint
@@ -192,11 +193,6 @@ class Blueprint extends \Illuminate\Database\Schema\Blueprint
                               ->foreignKey($foreignKey)
                               ->localKey($localKey)
                     );
-    }
-
-    public function resourceeeeeeeeee()
-    {
-        return $this->builder->resource();
     }
 
     public function morphToMany(

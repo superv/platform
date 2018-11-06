@@ -1,11 +1,11 @@
 <?php
 
-use SuperV\Platform\Domains\Auth\Account;
-use SuperV\Platform\Domains\Auth\Profile;
-use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Auth\Access\Action;
 use SuperV\Platform\Domains\Auth\Access\Role;
-use SuperV\Platform\Domains\Database\Blueprint;
+use SuperV\Platform\Domains\Auth\Account;
+use SuperV\Platform\Domains\Auth\Profile;
+use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema;
 
 class CreateUsersPrototype extends Migration

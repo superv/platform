@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource;
 
 use Lakcom\Modules\Core\Domains\Address\Address;
-use SuperV\Platform\Domains\Database\Blueprint;
+use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
 use SuperV\Platform\Domains\Resource\Resource;

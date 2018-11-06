@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Auth\Access\Guard\Guard;
 use SuperV\Platform\Domains\Auth\Access\Guard\Guardable;
 use SuperV\Platform\Domains\Auth\Access\Guard\HasGuardableItems;
 use SuperV\Platform\Domains\Auth\User;
-use SuperV\Platform\Domains\Database\Blueprint;
+use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
 use Tests\Platform\TestCase;
 

@@ -2,13 +2,13 @@
 
 namespace SuperV\Platform\Domains\Resource\Support;
 
-use SuperV\Platform\Domains\Database\Blueprint;
+use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 class Blueprints
 {
     /**
-     * @param \SuperV\Platform\Domains\Database\Blueprint $table
+     * @param \SuperV\Platform\Domains\Database\Blueprint\Blueprint $table
      */
     public static function resources($table, ResourceBlueprint $resource = null)
     {
@@ -29,7 +29,7 @@ class Blueprints
     }
 
     /**
-     * @param \SuperV\Platform\Domains\Database\Blueprint $table
+     * @param \SuperV\Platform\Domains\Database\Blueprint\Blueprint $table
      */
     public static function fields($table, ResourceBlueprint $resource = null)
     {
@@ -56,7 +56,7 @@ class Blueprints
     }
 
     /**
-     * @param \SuperV\Platform\Domains\Database\Blueprint $table
+     * @param \SuperV\Platform\Domains\Database\Blueprint\Blueprint $table
      */
     public static function relations($table, ResourceBlueprint $resource = null)
     {
@@ -77,7 +77,7 @@ class Blueprints
     }
 
     /**
-     * @param \SuperV\Platform\Domains\Database\Blueprint $table
+     * @param \SuperV\Platform\Domains\Database\Blueprint\Blueprint $table
      */
     public static function navigation($table, ResourceBlueprint $resource = null)
     {

@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource\Field;
 use Closure;
 use Illuminate\Http\UploadedFile;
 use Storage;
-use SuperV\Platform\Domains\Database\Blueprint;
+use SuperV\Platform\Domains\Database\Blueprint\Blueprint;
 use SuperV\Platform\Domains\Database\Schema;
 use SuperV\Platform\Domains\Resource\Field\Types\BelongsTo;
 use SuperV\Platform\Domains\Resource\Field\Types\Boolean;
