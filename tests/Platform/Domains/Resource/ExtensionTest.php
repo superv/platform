@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaved;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaving;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ResourceExtension;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
+use SuperV\Platform\Domains\Resource\Extension\RegisterExtensionsInPath;
 use SuperV\Platform\Domains\Resource\Field\FieldConfig;
 use SuperV\Platform\Domains\Resource\Field\Types\Number;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
@@ -65,6 +66,18 @@ class ExtensionTest extends ResourceTestCase
 
         // since the last one was after saving, it is not persisted
         $this->assertEquals(101, $user->fresh()->age);
+    }
+
+    /** @test */
+    function registers_extensions_from_path()
+    {
+        RegisterExtensionsInPath::dispatch(
+            __DIR__.'/Fixtures/Extensions',
+            'Tests\Platform\Domains\Resource\Fixtures\Extensions'
+        );
+
+        $this->assertNotNull(Extension::get('test_a'));
+//        $this->assertNotNull(Extension::get('test_b'));
     }
 
     protected function tearDown()

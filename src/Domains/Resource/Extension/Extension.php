@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaved;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaving;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class Extension
 {
@@ -22,9 +23,12 @@ class Extension
         $this->events = $events;
     }
 
-    public function __invoke(string $handle)
+    public function __invoke(string $class)
     {
-        $extender = app($handle);
+        if (!class_exists($class)) {
+            throw new PlatformException("Extension class not found: [{$class}]");
+        }
+        $extender =  app($class);
         static::extend($extender->extends(), $extender);
 
         if ($extender instanceof ObservesSaving) {

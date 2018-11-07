@@ -33,9 +33,8 @@ class Platform extends Addon
         /** @var AddonModel $entry */
         foreach ($entries as $entry) {
             $addon = $entry->resolveAddon();
-            app()->register($addon->resolveProvider());
 
-            superv('addons')->put($addon->slug(), $addon);
+            $addon->boot();
         }
 
         PlatformBootedEvent::dispatch();

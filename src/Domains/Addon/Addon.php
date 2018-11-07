@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Addon;
 
+use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
+
 class Addon
 {
     /**
@@ -14,6 +16,15 @@ class Addon
     public function __construct(AddonModel $entry)
     {
         $this->entry = $entry;
+    }
+
+    public function boot()
+    {
+        app()->register($this->resolveProvider());
+
+        superv('addons')->put($this->slug(), $this);
+
+        AddonBootedEvent::dispatch($this);
     }
 
     public function slug()

@@ -2,12 +2,14 @@
 
 namespace Tests\Platform\Domains\Addon;
 
+use Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Addons\Sample\SampleAddon;
 use SuperV\Addons\Sample\SampleAddonServiceProvider;
 use SuperV\Platform\Domains\Addon\Addon;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\AddonServiceProvider;
+use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
 use Tests\Platform\TestCase;
 
 class AddonTest extends TestCase
@@ -40,5 +42,21 @@ class AddonTest extends TestCase
         $this->assertInstanceOf(SampleAddonServiceProvider::class, $provider);
 
         $this->assertEquals($addon, $provider->addon());
+    }
+
+    /** @test */
+    function dispatches_event_when_booted()
+    {
+        $this->setUpAddon();
+        $entry = AddonModel::bySlug('superv.addons.sample');
+        $addon = $entry->resolveAddon();
+
+        Event::fake(AddonBootedEvent::class);
+
+        $addon->boot();
+
+        Event::assertDispatched(AddonBootedEvent::class, function (AddonBootedEvent $event) use ($addon) {
+            return $addon->slug() === $event->addon->slug();
+        });
     }
 }
