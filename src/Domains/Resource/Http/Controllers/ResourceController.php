@@ -1,11 +1,10 @@
 <?php
 
-namespace SuperV\Platform\Http\Controllers;
+namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Modules\Nucleo\Domains\UI\Page\SvPage;
 use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
 use SuperV\Modules\Nucleo\Domains\UI\SvCard;
-use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\Form;
@@ -13,6 +12,7 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
+use SuperV\Platform\Http\Controllers\BaseApiController;
 
 class ResourceController extends BaseApiController
 {
@@ -40,7 +40,7 @@ class ResourceController extends BaseApiController
         return sv_compose($page);
     }
 
-    public function data($uuid)
+    public function table($uuid)
     {
         $config = TableConfig::fromCache($uuid);
 
@@ -64,7 +64,7 @@ class ResourceController extends BaseApiController
         return sv_compose($page);
     }
 
-    public function edit() // resource index
+    public function edit()
     {
         $form = Form::of($this->resource());
         $formData = $form->build()->compose();
