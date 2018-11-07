@@ -26,6 +26,34 @@ function feature($handler = null, array $input = [])
     return app(FeatureBus::class);
 }
 
+function log_callers($limit = 10) {
+    $callers = get_callers($limit);
+
+    $callers->map(function($caller) { info($caller); });
+}
+
+function get_callers($limit = 10): \Illuminate\Support\Collection
+{
+    $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $limit);
+    $callers = collect($stack)->map(function ($trace) {
+        $function = $trace['function'] ?? '';
+
+        if (in_array($function, ['get_callers', 'log_callers', 'array_map']))
+            return null;
+
+        if (!$class = $trace['class'] ?? '') {
+            return $function;
+        }
+        if (str_contains($class, 'Illuminate\Support'))
+            return null;
+
+        return $function  . '@' . $class;
+    })->filter()->values();
+
+
+    return $callers;
+}
+
 function reload_env()
 {
     foreach (file(base_path('.env'), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
