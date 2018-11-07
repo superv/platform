@@ -61,7 +61,7 @@ class Form
 
         // first add all fields from all resources
         $this->resources->map(function (Resource $resource) {
-            $resource->getFields()
+            $resource->copyFreshFields()
                      ->map(function (Field $field) {
                          $this->addField($field);
                      });
@@ -110,7 +110,6 @@ class Form
         $this->fields = $this->fields->filter(function (Field $field) use ($callback) {
             return ! $callback($field);
         })->values();
-
     }
 
     public function removeFieldBeforeBuild(Closure $callback)

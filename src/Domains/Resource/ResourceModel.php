@@ -73,7 +73,7 @@ class ResourceModel extends EntryModel
         return $this->hasMany(RelationModel::class, 'resource_id');
     }
 
-    public function getResourceRelations()
+    public function getResourceRelations(): Collection
     {
         return $this->resourceRelations;
     }

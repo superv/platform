@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field;
 use SuperV\Platform\Domains\Resource\Contracts\HasResource;
 use SuperV\Platform\Domains\Resource\Resource;
 
-class Builder
+class FieldFactory
 {
     /**
      * @var \SuperV\Platform\Domains\Resource\Resource
@@ -19,7 +19,7 @@ class Builder
         $this->resource = $resource;
     }
 
-    public function build($field)
+    public function make($field)
     {
         if (is_string($field)) {
             $field = $this->resolveFromString($field);

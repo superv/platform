@@ -13,7 +13,7 @@ class ColumnFieldMapperTest extends ResourceTestCase
         $mapper = Mapper::for('string')->map(['length' => 64]);
 
         $this->assertEquals('text', $mapper->getFieldType());
-        $this->assertArrayContains(['max:64'], $mapper->getRules());
+        $this->assertEquals(64, $mapper->getConfigValue('length'));
     }
 
     /** @test */

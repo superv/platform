@@ -4,13 +4,14 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Exception;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Field\Builder as FieldBuilder;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Jobs\BuildResourceJob;
 use SuperV\Platform\Domains\Resource\Model\EntryModel;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Domains\Resource\Relation\RelationFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -38,6 +39,10 @@ class Resource
      * @var \Illuminate\Support\Collection
      */
     protected $fields;
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $freshFields;
 
     /**
      * @var \Illuminate\Support\Collection
@@ -68,9 +73,43 @@ class Resource
 
     public function build()
     {
-        BuildResourceJob::dispatch($this);
+        if ($this->isBuilt()) {
+            throw new PlatformException('Resource is already built.');
+        }
+
+        $this->makeEntry();
+
+        // keep unbuilt fields
+        $this->freshFields = collect();
+
+        $this->getFields(false)
+                 ->transform(function ($field) {
+                     $field = (new FieldFactory($this))->make($field);
+
+                     $this->freshFields->push($field->copy());
+
+                     return $field->build();
+                 });
+
+        $this->getRelations()
+                 ->transform(function ($relation) {
+                     if ($relation instanceof Relation) {
+                         return $relation;
+                     }
+
+                     return (new RelationFactory($this))->make($relation);
+                 });
+
+        $this->markAsBuilt();
 
         return $this;
+    }
+
+    public function copyFreshFields(): Collection
+    {
+        return $this->freshFields->map(function(Field $field) {
+            return $field->copy();
+        });
     }
 
     public function resolveModel()
@@ -79,7 +118,7 @@ class Resource
             return new $model;
         }
 
-        return ResourceEntryModel::make($this->slug());
+        return ResourceEntryModel::make($this->handle());
     }
 
     public function create(array $attributes = []): EntryModel
@@ -110,11 +149,9 @@ class Resource
         return Fake::create($this, $overrides);
     }
 
-    public function loadFake(array $overrides = []): self
+    public function freshWithFake(array $overrides = []): self
     {
-        $this->entry = $this->createFake($overrides);
-
-        return $this;
+        return $this->fresh()->setEntry($this->createFake($overrides));
     }
 
     public function loadEntry($entryId): self
@@ -157,6 +194,14 @@ class Resource
 
     public function setFields(Collection $fields): self
     {
+        $this->ensureNotBuilt();
+
+        $fields->map(function ($field) {
+            if ($field instanceof Field && $field->isBuilt()) {
+                throw new Exception("Can not accept a built field");
+            }
+        });
+
         $this->fields = $fields;
 
         return $this;
@@ -202,6 +247,13 @@ class Resource
         }
     }
 
+    public function ensureNotBuilt()
+    {
+        if ($this->isBuilt()) {
+            throw new Exception('Resource is already built');
+        }
+    }
+
     public function isBuilt(): bool
     {
         return $this->built;
@@ -219,7 +271,7 @@ class Resource
 
     public function route($route, array $params = [])
     {
-        $base = 'sv/resources/'.$this->slug();
+        $base = 'sv/res/'.$this->handle();
         if ($route === 'edit') {
             return $base.'/'.$this->getEntryId().'/edit';
         }
@@ -231,7 +283,7 @@ class Resource
         }
 
         if ($route === 'table') {
-            return $base.'/table';
+            return $base;
         }
 
         if ($route === 'table.data') {
@@ -241,7 +293,7 @@ class Resource
 
     public function fresh($build = false): self
     {
-        return static::of($this->slug(), $build);
+        return static::of($this->handle(), $build);
     }
 
     public function __sleep()
@@ -267,18 +319,6 @@ class Resource
         if (! $this->entry) {
             $this->entry = $this->resolveModel();
         }
-    }
-
-    public function buildFields(): void
-    {
-        $this->fields = $this->fields
-            ->map(function ($field) {
-                if ($field instanceof Field) {
-                    return $field;
-                }
-
-                return (new FieldBuilder($this))->build($field);
-            });
     }
 
     public function label()
@@ -334,6 +374,7 @@ class Resource
 
     public static function of($handle, bool $build = true): self
     {
+        /** @var \SuperV\Platform\Domains\Resource\Resource $resource */
         if ($handle instanceof ResourceEntryModel) {
             $resource = ResourceFactory::make($handle->getTable());
             $resource->setEntry($handle);

@@ -87,6 +87,7 @@ abstract class Field implements HasResource
         if ($this->isBuilt()) {
             throw new Exception('Field is already built');
         }
+
         $this->built = true;
 
         return $this;
@@ -99,6 +100,10 @@ abstract class Field implements HasResource
 
     public function copy(): self
     {
+        if ($this->isBuilt()) {
+            return static::fromEntry($this->entry->fresh());
+        }
+
         return clone $this;
     }
 
@@ -175,6 +180,9 @@ abstract class Field implements HasResource
 
     public function setResource(Resource $resource)
     {
+        if ($this->isBuilt()) {
+            throw new PlatformException('Can not set resource after field is built');
+        }
         $this->resource = $resource;
 
         return $this;
@@ -211,7 +219,8 @@ abstract class Field implements HasResource
 
     public function mergeRules(array $rules)
     {
-        $this->rules = array_merge($this->rules, $rules);
+        $this->rules = Rules::make($this->rules)->merge($rules)->get();
+//        $this->rules = array_merge($this->rules, $rules);
     }
 
     public function presentValue()
@@ -300,7 +309,7 @@ abstract class Field implements HasResource
         $field = new static($entry);
 
         $field->hydrate($entry->toArray());
-        $field->setRules($entry->getRules());
+        $field->setRules($entry->getRules()); // @TODO: refactor, very problematic
 
         return $field;
     }

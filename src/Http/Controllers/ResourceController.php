@@ -10,7 +10,6 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
@@ -20,13 +19,12 @@ class ResourceController extends BaseApiController
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
 
-    public function table()
+    public function index()
     {
         $this->resource()->build();
 
         $config = new TableConfig();
         $config->setResource($this->resource);
-        $config->setActions([Action::make('edit'), Action::make('delete')]);
 
         $card = SvCard::make()->block(
             SvBlock::make('sv-table-v2')->setProps($config->build()->compose())

@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
+use SuperV\Platform\Domains\Resource\Relation\Types\HasMany;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use Tests\Platform\Domains\Resource\Fixtures\TestPost;
@@ -17,13 +18,17 @@ class RelationsTest extends ResourceTestCase
     /** @test */
     function creates_belongs_to_relations()
     {
-        Schema::create('t_users', function (Blueprint $table) {
+        $groups = $this->create('t_groups', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title')->entryLabel();
+        });
+
+       $users = $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->belongsTo('t_groups', 'group');
         });
 
-        $users = Resource::of('t_users');
         $this->assertColumnDoesNotExist('t_users', 'posts');
 
         $relation = $users->getRelation('group');
@@ -38,13 +43,13 @@ class RelationsTest extends ResourceTestCase
     /** @test */
     function create_has_one_relation()
     {
-        Schema::create('t_users', function (Blueprint $table) {
+        $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->hasOne('t_profiles', 'profile', 'user_id');
         });
 
-        Schema::create('t_profiles', function (Blueprint $table) {
+        $this->create('t_profiles', function (Blueprint $table) {
             $table->increments('id');
             $table->string('address');
             $table->belongsTo('t_users', 'user', 'user_id');
@@ -66,7 +71,7 @@ class RelationsTest extends ResourceTestCase
     /** @test */
     function creates_has_many_relations()
     {
-        Schema::create('t_users', function (Blueprint $table) {
+        $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->hasMany(TestPost::class, 'posts', 'user_id', 'post_id');
@@ -89,7 +94,7 @@ class RelationsTest extends ResourceTestCase
     function creates_belongs_to_many_relations()
     {
         /** @test */
-        Schema::create('t_users', function (Blueprint $table) {
+        $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->belongsToMany(
                 TestRole::class, 'roles', 't_user_roles', 'user_id', 'role_id',
@@ -118,7 +123,7 @@ class RelationsTest extends ResourceTestCase
     /** @test */
     function creates_morph_to_many_relations()
     {
-        Schema::create('t_users', function (Blueprint $table) {
+        $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $pivotColumns = function (Blueprint $pivotTable) {
                 $pivotTable->string('status');
@@ -153,7 +158,7 @@ class RelationsTest extends ResourceTestCase
     /** @test */
     function create_morph_one_relation()
     {
-        Schema::create('t_users', function (Blueprint $table) {
+        $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->morphOne(Address::class, 'address', 'owner');
@@ -175,30 +180,29 @@ class RelationsTest extends ResourceTestCase
     /** @test */
     function creates_table_from_has_many()
     {
-        Schema::create('t_users', function (Blueprint $table) {
+        $users = $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->hasMany('t_posts', 'posts', 't_user_id');
         });
-        Schema::create('t_posts', function (Blueprint $table) {
+        $posts=  $this->create('t_posts', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
             $table->belongsTo('t_users', 't_user');
         });
 
-        $users = Resource::of('t_users');
-        $posts = Resource::of('t_posts');
 
-        $user = $users->loadFake();
+        $user = $users->freshWithFake()->build();
+
+
         $posts->createFake(['t_user_id' => $user->getEntryId()], 5);
         $posts->createFake(['t_user_id' => 999], 3); // these should be excluded
 
         $relation = $user->getRelation('posts');
-
         $this->assertInstanceOf(ProvidesTable::class, $relation);
+        $this->assertInstanceOf(HasMany::class, $relation);
 
         $tableConfig = $relation->makeTableConfig();
-
         // t_user column is not needed there
         $this->assertEquals(1, $tableConfig->getColumns()->count());
 
@@ -212,7 +216,7 @@ class RelationsTest extends ResourceTestCase
     /** @test */
     function saves_pivot_columns_even_if_pivot_table_is_created_before()
     {
-        Schema::create('t_users', function (Blueprint $table) {
+        $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $pivotColumns = function (Blueprint $pivotTable) {
                 $pivotTable->string('status');
@@ -224,7 +228,7 @@ class RelationsTest extends ResourceTestCase
         $roles = $users->getRelation('roles');
         $this->assertEquals(['status'], $roles->getConfig()->getPivotColumns());
 
-        Schema::create('t_admins', function (Blueprint $table) {
+        $this->create('t_admins', function (Blueprint $table) {
             $table->increments('id');
             $pivotColumns = function (Blueprint $pivotTable) {
                 $pivotTable->string('status');

@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Rules;
 
 class Number extends Field
 {
@@ -42,6 +43,6 @@ class Number extends Field
             $rules[] = 'min:0';
         }
 
-        return array_merge($rules, parent::makeRules());
+        return Rules::make($rules)->merge(parent::makeRules())->get();
     }
 }

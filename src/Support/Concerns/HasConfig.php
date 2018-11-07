@@ -21,7 +21,7 @@ trait HasConfig
 
     public function getConfigValue($key, $default = null)
     {
-        return array_get($this->config, $key, $default);
+        return array_get($this->getConfig(), $key, $default);
     }
 
     public function setConfigValue($key, $value = null)
@@ -35,7 +35,7 @@ trait HasConfig
 
     public function hasConfigValue($key): bool
     {
-        return array_has($this->config, $key);
+        return array_has($this->getConfig(), $key);
     }
 
     public function getConfig(): array

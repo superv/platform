@@ -3,8 +3,8 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Exception;
+use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
-use SuperV\Platform\Domains\Resource\Field\Builder;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class ResourceFactory
@@ -31,9 +31,15 @@ class ResourceFactory
 
         $this->makeResource();
 
-        $fields = $this->getFields();
-        $this->resource->setFields($fields);
-        $this->resource->setRelations($this->entry->getResourceRelations());
+        $this->resource->setFields($this->getFields()->map(function ($field) {
+            if (is_object($field)) {
+                $field = clone $field;
+            };
+
+            return $field;
+        }));
+
+        $this->resource->setRelations($this->getRelations());
 
         return $this->resource;
     }
@@ -59,13 +65,11 @@ class ResourceFactory
         $this->resource->hydrate($entryArray);
     }
 
-    public function getFields()
+    public function getFields(): Collection
     {
         if ($extension = Extension::get($this->handle)) {
             if (method_exists($extension, 'fields')) {
-                $fields = sv_collect($extension->fields())->map(function ($field) {
-                    return (new Builder($this->resource))->build($field);
-                });
+                $fields = collect($extension->fields());
             }
         }
 
@@ -74,6 +78,17 @@ class ResourceFactory
         }
 
         return $fields ?? $this->entry->getFields();
+    }
+
+    protected function getRelations()
+    {
+        return $this->entry->getResourceRelations()->map(function ($relation) {
+            if (is_object($relation)) {
+                $relation = clone $relation;
+            };
+
+            return $relation;
+        });
     }
 
     public static function make(string $slug): Resource

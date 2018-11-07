@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
@@ -12,7 +11,7 @@ class ResourceConfigTest extends ResourceTestCase
     /** @test */
     function builds_label_from_table_name()
     {
-        Schema::create('customers', function (Blueprint $table) {
+        $this->create('customers', function (Blueprint $table) {
             $table->increments('id');
         });
 
@@ -23,7 +22,7 @@ class ResourceConfigTest extends ResourceTestCase
     /** @test */
     function builds_label_from_given()
     {
-        Schema::create('customers', function (Blueprint $table, ResourceBlueprint $resource) {
+        $this->create('customers', function (Blueprint $table, ResourceBlueprint $resource) {
             $table->increments('id');
 
             $resource->label('SuperV Customers');
@@ -37,7 +36,7 @@ class ResourceConfigTest extends ResourceTestCase
     /** @test */
     function builds_label_for_resource_entry()
     {
-        Schema::create('customers', function (Blueprint $table, ResourceBlueprint $resource) {
+        $res = $this->create('customers', function (Blueprint $table, ResourceBlueprint $resource) {
             $table->increments('id');
             $table->string('first_name');
             $table->string('last_name');
@@ -45,25 +44,23 @@ class ResourceConfigTest extends ResourceTestCase
             $resource->entryLabel('{last_name}, {first_name}');
         });
 
-        $resource = Resource::of('customers');
-        $resource->loadFake(['first_name' => 'Nicola', 'last_name' => 'Tesla']);
+        $res = $res->freshWithFake(['first_name' => 'Nicola', 'last_name' => 'Tesla'])->build();
 
-        $this->assertEquals('Tesla, Nicola', $resource->entryLabel());
+        $this->assertEquals('Tesla, Nicola', $res->entryLabel());
     }
 
     /** @test */
     function makes_entry_label_from_marked_column()
     {
-        Schema::create('customers', function (Blueprint $table) {
+        $res = $this->create('customers', function (Blueprint $table) {
             $table->increments('id');
             $table->string('first_name');
             $table->string('last_name')->entryLabel();
         });
 
-        $resource = Resource::of('customers');
-        $resource->loadFake();
+        $res = $res->freshWithFake()->build();
 
-        $this->assertEquals($resource->getEntry()->getAttribute('last_name'), $resource->entryLabel());
+        $this->assertEquals($res->getEntry()->getAttribute('last_name'), $res->entryLabel());
     }
 
     /** @test */
@@ -81,5 +78,4 @@ class ResourceConfigTest extends ResourceTestCase
         $this->makeResource('customers', ['height:decimal', 'age:integer']);
         $this->assertEquals('Customer #{id}', Resource::of('customers')->entryLabelTemplate());
     }
-
 }

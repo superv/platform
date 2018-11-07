@@ -6,5 +6,9 @@ use SuperV\Platform\Domains\Resource\Field\Field;
 
 class Textarea extends Field
 {
-    protected $config = ['hide.table' => true];
+    public function getConfig(): array
+    {
+        return array_merge(['hide.table' => true], parent::getConfig());
+    }
+
 }

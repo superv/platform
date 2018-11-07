@@ -16,11 +16,6 @@ class ColumnFieldMapper
 
     protected $rules = [];
 
-    public static function for(string $columnType): self
-    {
-        return (new static())->setColumnType($columnType);
-    }
-
     /**
      * @param mixed $columnType
      * @return ColumnFieldMapper
@@ -59,7 +54,7 @@ class ColumnFieldMapper
     {
         $this->fieldType = 'text';
         if ($length = $this->getParameter('length')) {
-            $this->addRule('max:'.$length);
+            $this->setConfigValue('length', $length);
         }
     }
 
@@ -144,8 +139,8 @@ class ColumnFieldMapper
         $this->setConfigValue('time', true);
     }
 
-    protected function mapBelongsTo() {
-
+    protected function mapBelongsTo()
+    {
     }
 
     /**
@@ -162,5 +157,10 @@ class ColumnFieldMapper
     public function getRules()
     {
         return $this->rules;
+    }
+
+    public static function for(string $columnType): self
+    {
+        return (new static())->setColumnType($columnType);
     }
 }

@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\Contracts\HasResource;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 
-class Builder
+class RelationFactory
 {
     /**
      * @var \SuperV\Platform\Domains\Resource\Resource
@@ -20,7 +20,7 @@ class Builder
         $this->resource = $resource;
     }
 
-    public function build($relation)
+    public function make($relation)
     {
         if ($relation instanceof RelationModel) {
             $relation = static::resolveFromRelationEntry($relation);
