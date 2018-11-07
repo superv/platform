@@ -214,6 +214,12 @@ abstract class Field implements HasResource
             $rules[] = $rule;
         }
 
+        if (! $this->isRequired()) {
+            $rules[] = 'nullable';
+        } elseif (! $this->resourceExists()) {
+            $rules[] = 'sometimes';
+        }
+
         return $rules;
     }
 
@@ -241,6 +247,11 @@ abstract class Field implements HasResource
         }
 
         return $value;
+    }
+
+    public function getValueForValidation()
+    {
+        return $this->getValue();
     }
 
     public function setValue($value): ?Closure

@@ -138,7 +138,9 @@ class Form
     {
         $this->setFieldValues($request);
 
-        $this->resources->map->saveEntry();
+        $this->resources->map(function (Resource $resource) {
+            $resource->saveEntry(['form' => $this]);
+        });
 
         $this->applyPostSaveCallbacks();
     }

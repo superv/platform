@@ -6,10 +6,24 @@ use Closure;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Rules;
 
 class File extends Field
 {
     protected $hasColumn = false;
+
+    protected $requestFile;
+
+    public function makeRules()
+    {
+        $rules = [];
+        return Rules::make($rules)->merge(parent::makeRules())->get();
+    }
+
+    public function getValueForValidation()
+    {
+        return $this->requestFile;
+    }
 
     public function getValue()
     {
@@ -31,6 +45,8 @@ class File extends Field
 
     public function setValue($requestFile): ?Closure
     {
+        $this->requestFile = $requestFile;
+
         return function () use ($requestFile) {
             if (! $requestFile) {
                 return null;

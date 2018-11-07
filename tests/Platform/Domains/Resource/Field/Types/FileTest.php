@@ -19,7 +19,9 @@ class FileTest extends ResourceTestCase
             $table->file('avatar');
         });
 
-        $this->assertFalse($res->getField('avatar')->isRequired());
+        $avatar = $res->getField('avatar');
+        $this->assertFalse($avatar->isRequired());
+
     }
 
     /** @test */
@@ -27,7 +29,7 @@ class FileTest extends ResourceTestCase
     {
         $res = $this->create(null, function (Blueprint $table) {
             $table->increments('id');
-            $table->file('avatar')->config(['test-123']);
+            $table->file('avatar')->config(['disk' => 'fakedisk']);
         });
 
         $this->assertColumnDoesNotExist('avatar', $res->handle());
@@ -37,16 +39,17 @@ class FileTest extends ResourceTestCase
 
         $this->assertInstanceOf(File::class, $field);
         $this->assertEquals('file', $field->getType());
-        $this->assertEquals(['test-123'], $field->getConfig());
+        $this->assertEquals(['disk' => 'fakedisk'], $field->getConfig());
         $this->assertNull($field->getValue());
 
         //upload
         Storage::fake('fakedisk');
-        $field->setConfig([
-            'disk' => 'fakedisk',
-        ]);
-        $callback = $field->setValue(new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png'));
+
+        $uploadedFile = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
+        $callback = $field->setValue($uploadedFile);
         $this->assertInstanceOf(Closure::class, $callback);
+
+        $this->assertEquals($uploadedFile, $field->getValueForValidation());
 
         /** @var \SuperV\Platform\Domains\Media\Media $media */
         $media = $callback();

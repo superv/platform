@@ -24,11 +24,13 @@ class ValidateSavingEntry
 
     public function handle(EntrySavingEvent $event)
     {
-        $this->entry = $event->entry;
+//        $this->entry = $event->entry;
+        $form = $event->form;
 
-        $resource = $this->entry->wrap()->build();
+//        $resource = $this->entry->getResource();
+//        $resource = $this->entry->wrap()->build();
 
-        $rules = $resource->getFields()->map(function (Field $field) {
+        $rules = $form->getFields()->map(function (Field $field) {
             if (! $field->hasEntry()) {
                 return null;
             }
@@ -36,11 +38,11 @@ class ValidateSavingEntry
             return [$field->getName(), Rules::of($field)->get()];
         })->filter()->toAssoc()->all();
 
-        $data = $resource->getFields()->map(function (Field $field) {
-            return [$field->getName(), $field->getValue()];
+        $data = $form->getFields()->map(function (Field $field) {
+            return [$field->getName(), $field->getValueForValidation()];
         })->toAssoc()->all();
 
-        $attributes = $resource->getFields()->map(function (Field $field) {
+        $attributes = $form->getFields()->map(function (Field $field) {
             return [$field->getName(), $field->getLabel()];
         })->toAssoc()->all();
 

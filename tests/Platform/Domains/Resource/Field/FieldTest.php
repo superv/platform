@@ -96,7 +96,7 @@ class FieldTest extends ResourceTestCase
         );
 
         $this->assertInstanceOf(Number::class, $age);
-        $this->assertEquals(['integer', 'min:18'], $age->makeRules());
+        $this->assertEquals(['integer', 'min:18', 'nullable'], $age->makeRules());
     }
 
     /** @test */

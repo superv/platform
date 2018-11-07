@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Jobs\BuildResourceJob;
 use SuperV\Platform\Domains\Resource\Model\EntryModel;
+use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory;
@@ -161,9 +162,11 @@ class Resource
         return $this;
     }
 
-    public function saveEntry()
+    public function saveEntry(array $params = [])
     {
-        $this->getEntry()->save();
+       $entry = $this->getEntry();
+                     EntrySavingEvent::dispatch($entry, $params);
+                     $entry->save();
     }
 
     public function getEntry(): ?ResourceEntryModel

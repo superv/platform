@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Model;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory as RelationBuilder;
@@ -11,13 +12,27 @@ use SuperV\Platform\Domains\Resource\Resource;
 
 class ResourceEntryModel extends EntryModel
 {
+    protected $__form;
+
+    public function setForm($_form): self
+    {
+        $this->__form = $_form;
+
+        return $this;
+    }
+
+    public function getForm(): Form
+    {
+        return $this->__form;
+    }
+
     protected static function boot()
     {
         parent::boot();
 
-        static::saving(function(ResourceEntryModel $entry) {
-            EntrySavingEvent::dispatch($entry);
-        });
+//        static::saving(function(ResourceEntryModel $entry) {
+//            EntrySavingEvent::dispatch($entry);
+//        });
 
         static::saved(function(ResourceEntryModel $entry) {
             EntrySavedEvent::dispatch($entry);
