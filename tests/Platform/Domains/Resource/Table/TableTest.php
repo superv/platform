@@ -58,7 +58,7 @@ class TableTest extends ResourceTestCase
     /** @test */
     function builds_table_config()
     {
-        $this->assertEquals(sv_url($this->users->route('table.data', ['uuid' => $this->config->uuid()])), $this->config->getUrl());
+        $this->assertEquals(sv_url($this->users->route('table', ['uuid' => $this->config->uuid()])), $this->config->getUrl());
         $this->assertEquals(3, $this->config->getColumns()->count());
 
         $configArray = $this->config->compose();
@@ -99,10 +99,10 @@ class TableTest extends ResourceTestCase
         $configArray = $this->config->compose();
 
         $this->newUser();
-        $response = $this->getJson($this->users->route('table'), $this->getHeaderWithAccessToken());
+        $response = $this->getJson($this->users->route('index'), $this->getHeaderWithAccessToken());
         $this->assertEquals(array_get($configArray, 'config.meta.columns'), $response->decodeResponseJson('data.props.page.blocks.0.props.block.props.config.meta.columns'));
 
-        $response = $this->getJson($this->users->route('table.data', ['uuid' => $this->config->uuid()]), $this->getHeaderWithAccessToken());
+        $response = $this->getJson($this->users->route('table', ['uuid' => $this->config->uuid()]), $this->getHeaderWithAccessToken());
         $this->assertEquals($table->compose(), $response->decodeResponseJson('data'));
     }
 }
