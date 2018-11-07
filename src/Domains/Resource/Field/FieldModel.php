@@ -95,6 +95,9 @@ class FieldModel extends EntryModel
         if ($this->isUnique()) {
             $rules[] = 'unique:'.$this->getResourceTable().','.$this->getName().',{entry.id},id';
         }
+        if ($this->isRequired()) {
+            $rules[] = 'required';
+        }
 
         return $rules;
     }

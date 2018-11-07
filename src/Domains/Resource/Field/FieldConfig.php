@@ -30,7 +30,7 @@ class FieldConfig
         return $this->rules;
     }
 
-    public function rules(array $rules): self
+    public function mergeRules(array $rules): self
     {
         $this->rules = $rules;
 

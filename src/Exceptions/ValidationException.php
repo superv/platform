@@ -22,19 +22,12 @@ class ValidationException extends \Exception
         return $this;
     }
 
-    public static function error($key, $message) {
-        return (new  self())->setErrors([$key => $message]);
-    }
-
     /**
-     * @param mixed $rules
-     * @return ValidationException
+     * @return mixed
      */
-    public function setRules($rules)
+    public function getData()
     {
-        $this->rules = $rules;
-
-        return $this;
+        return $this->data;
     }
 
     /**
@@ -51,16 +44,31 @@ class ValidationException extends \Exception
     /**
      * @return mixed
      */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getRules()
     {
         return $this->rules;
+    }
+
+    /**
+     * @param mixed $rules
+     * @return ValidationException
+     */
+    public function setRules($rules)
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
+    public function toResponse()
+    {
+        return response()->json([
+            'errors' => $this->errors,
+        ], 400);
+    }
+
+    public static function error($key, $message)
+    {
+        return (new  self())->setErrors([$key => $message]);
     }
 }

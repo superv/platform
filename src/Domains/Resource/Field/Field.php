@@ -4,11 +4,11 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Resource\Contracts\HasResource;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -43,6 +43,12 @@ abstract class Field implements HasResource
      * @var string
      */
     protected $type;
+
+    /** @var bool */
+    protected $unique = false;
+
+    /** @var bool */
+    protected $required = false;
 
     /**
      * @var array
@@ -91,7 +97,7 @@ abstract class Field implements HasResource
         return $this;
     }
 
-    public function copy():self
+    public function copy(): self
     {
         return clone $this;
     }
@@ -186,6 +192,23 @@ abstract class Field implements HasResource
         return $this;
     }
 
+    public function makeRules()
+    {
+        if (! $entry = $this->getResourceEntry()) {
+            throw new PlatformException('Can not make rules without an entry');
+        }
+
+        $rules = [];
+        foreach ($this->rules as $rule) {
+            if (starts_with($rule, 'unique:')) {
+                $rule = str_replace('{entry.id}', $entry->exists ? $entry->id : 'NULL', $rule);
+            }
+            $rules[] = $rule;
+        }
+
+        return $rules;
+    }
+
     public function mergeRules(array $rules)
     {
         $this->rules = array_merge($this->rules, $rules);
@@ -229,7 +252,7 @@ abstract class Field implements HasResource
 
     public function resourceExists(): bool
     {
-        return $this->resource && $this->resource->getEntryId();
+        return (bool)$this->resource;
     }
 
     public function getResourceEntry(): ?ResourceEntryModel
@@ -254,11 +277,21 @@ abstract class Field implements HasResource
         return null;
     }
 
+    public function isUnique(): bool
+    {
+        return $this->unique;
+    }
+
+    public function isRequired(): bool
+    {
+        return $this->required;
+    }
+
     public static function make($name): self
     {
         return static::fromEntry(new FieldModel([
             'name' => $name,
-            'type' => strtolower(class_basename(get_called_class()))
+            'type' => strtolower(class_basename(get_called_class())),
         ]));
     }
 
@@ -267,6 +300,7 @@ abstract class Field implements HasResource
         $field = new static($entry);
 
         $field->hydrate($entry->toArray());
+        $field->setRules($entry->getRules());
 
         return $field;
     }

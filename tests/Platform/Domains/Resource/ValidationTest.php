@@ -2,21 +2,23 @@
 
 namespace Tests\Platform\Domains\Resource;
 
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Exceptions\ValidationException;
 
 class ValidationTest extends ResourceTestCase
 {
     /** @test */
-    function runs_validation_when_saving_resource_entry()
+    function runs_validation_when_creating_resource_entry()
     {
-        $res = $this->makeResource('t_users', ['name', 'age:integer']);
-        $res->build();
-
-        $user = $res->create(['name' => 'Nicola']);
+        $resource = $this->create('tx_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->unsignedInteger('age')->min(10)->max(50);
+        });
 
         $this->expectException(ValidationException::class);
 
-        $user->save();
-
+        $resource->create(['name' => 'Nicola']);
     }
 }

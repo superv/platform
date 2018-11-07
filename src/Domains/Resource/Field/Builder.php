@@ -26,8 +26,8 @@ class Builder
         } elseif ($field instanceof FieldConfig) {
             $config = $field;
             $field = $this->resolveFromString($config->getFieldName());
-            $field->setRules($config->getRules());
-            $field->setConfig($config->getConfig());
+            $field->mergeRules($config->getRules());
+            $field->mergeConfig($config->getConfig());
         } elseif ($field instanceof FieldModel) {
             $field = $this->resolveFromFieldEntry($field);
         }

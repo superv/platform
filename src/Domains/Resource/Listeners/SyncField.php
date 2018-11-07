@@ -71,15 +71,8 @@ class SyncField
         $field->setDefaultValue($column->getDefaultValue());
 
         $field->save();
-
-//        if ($column->isTitleColumn()) {
-//            $field->getResourceEntry()->update(['title_field_id' => $field->getKey()]);
-//        }
     }
 
-    /**
-     * @param $column
-     */
     protected function mapFieldType(ColumnDefinition $column): void
     {
         if (! $column->fieldType) {

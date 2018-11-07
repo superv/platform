@@ -72,13 +72,11 @@ class ResourceCreationTest extends ResourceTestCase
     /** @test */
     function saves_field_rules()
     {
-        Schema::create('test_users', function (Blueprint $table) {
+        $resource = $this->create('test_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->rules(['min:6', 'max:32']);
             $table->string('email')->rules('email|unique');
         });
-
-        $resource = ResourceModel::withSlug('test_users');
 
         $this->assertArrayContains(['min:6', 'max:32'], $resource->getField('name')->getRules());
         $this->assertArrayContains(['email', 'unique'], $resource->getField('email')->getRules());
@@ -166,7 +164,7 @@ class ResourceCreationTest extends ResourceTestCase
     /** @test */
     function marks_unique_columns()
     {
-        $resource = $this->makeResourceModel('test_users', ['name', 'slug' => 'unique']);
+        $resource = $this->makeResource('test_users', ['name', 'slug' => 'unique'])->build();
 
         $slugField = $resource->getField('slug');
         $this->assertTrue($slugField->isUnique());

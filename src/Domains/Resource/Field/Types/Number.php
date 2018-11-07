@@ -27,4 +27,21 @@ class Number extends Field
     {
         return $this->getAccessor();
     }
+
+    public function makeRules()
+    {
+        $rules = [];
+
+        $type = $this->getConfigValue('type');
+        if ($type === 'integer') {
+            $rules[] = 'integer';
+        } elseif ($type === 'decimal') {
+            $rules[] = 'numeric';
+        }
+        if ($this->getConfigValue('unsigned') === true) {
+            $rules[] = 'min:0';
+        }
+
+        return array_merge($rules, parent::makeRules());
+    }
 }

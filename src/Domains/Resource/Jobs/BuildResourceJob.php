@@ -33,11 +33,11 @@ class BuildResourceJob
 
         $resource->makeEntry();
 
-        $resource->getFields()
+        $resource->getFields(false)
                  ->transform(function ($field) {
-                     if ($field instanceof Field) {
-                         return $field;
-                     }
+//                     if ($field instanceof Field) {
+//                         return $field;
+//                     }
 
                      return (new FieldBuilder($this->resource))->build($field);
                  });

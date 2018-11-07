@@ -33,7 +33,7 @@ class ExtensionTest extends ResourceTestCase
         $age = $ext->getField('age');
         $this->assertInstanceOf(Number::class, $age);
         $this->assertEquals($res->getField('age')->getEntry(), $age->getEntry());
-        $this->assertEquals(['min:18', 'max:50'], $age->getRules());
+        $this->assertEquals(['integer', 'required', 'min:18', 'max:150'], $age->makeRules());
 
         $bio = $ext->getField('bio');
         $this->assertInstanceOf(Textarea::class, $bio);
@@ -48,7 +48,7 @@ class ExtensionTest extends ResourceTestCase
 
         Extension::register(TestUserResourceExtension::class);
         $ext = Resource::of('t_users');
-        $user = $ext->createFake();
+        $user = $ext->createFake(['age => 40']); // rules set in extension
 
         TestUserResourceExtension::$callbacks['saving'] = function (ResourceEntryModel $entry) {
             $this->assertEquals(100, $entry->age);
@@ -121,7 +121,7 @@ class TestUserResourceExtension implements ResourceExtension, ObservesSaving, Ob
     {
         return [
             'name',
-            FieldConfig::field('age')->rules(['min:18', 'max:50']),
+            FieldConfig::field('age')->mergeRules(['min:18', 'max:150']),
             Textarea::make('bio'),
         ];
     }

@@ -12,6 +12,8 @@ use SuperV\Platform\Domains\Resource\Listeners\CreateResource;
 use SuperV\Platform\Domains\Resource\Listeners\DeleteField;
 use SuperV\Platform\Domains\Resource\Listeners\RegisterExtensions;
 use SuperV\Platform\Domains\Resource\Listeners\SyncField;
+use SuperV\Platform\Domains\Resource\Listeners\ValidateSavingEntry;
+use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
 use SuperV\Platform\Providers\BaseServiceProvider;
 
 class ResourceServiceProvider extends BaseServiceProvider
@@ -22,6 +24,7 @@ class ResourceServiceProvider extends BaseServiceProvider
         ColumnDroppedEvent::class => DeleteField::class,
         TableCreatingEvent::class => CreateResource::class,
         AddonBootedEvent::class   => RegisterExtensions::class,
+        EntrySavingEvent::class   => ValidateSavingEntry::class,
     ];
 
     public function boot()

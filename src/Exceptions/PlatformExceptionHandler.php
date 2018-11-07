@@ -9,15 +9,6 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 class PlatformExceptionHandler extends ExceptionHandler
 {
     /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array
-     */
-    protected $dontReport = [
-        //
-    ];
-
-    /**
      * A list of the inputs that are never flashed for validation exceptions.
      *
      * @var array
@@ -49,11 +40,11 @@ class PlatformExceptionHandler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if ($exception instanceof PlatformException) {
-            return response()->json([
-                    'error' => [
-                        'description' => $exception->getMessage()
-                    ],
-            ], 400);
+            return $exception->toResponse();
+        }
+
+        if ($exception instanceof ValidationException) {
+            return $exception->toResponse();
         }
 
         return parent::render($request, $exception);

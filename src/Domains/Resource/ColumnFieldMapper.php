@@ -97,12 +97,8 @@ class ColumnFieldMapper
     protected function mapInteger()
     {
         $this->fieldType = 'number';
-        $this->addRule('integer');
         $this->setConfigValue('type', 'integer');
-
-        if ($this->getParameter('unsigned') === true) {
-            $this->addRule('min:0');
-        }
+        $this->setConfigValue('unsigned', $this->getParameter('unsigned'));
     }
 
     protected function mapBigInteger()
@@ -113,12 +109,7 @@ class ColumnFieldMapper
     protected function mapDecimal()
     {
         $this->fieldType = 'number';
-        $this->addRule('numeric');
         $this->setConfigValue('type', 'decimal');
-
-        if ($this->getParameter('unsigned') === true) {
-            $this->addRule('min:0');
-        }
 
         $this->setConfigValue('total', $this->getParameter('total'));
         $this->setConfigValue('places', $this->getParameter('places'));

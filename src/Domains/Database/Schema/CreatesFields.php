@@ -11,7 +11,7 @@ trait CreatesFields
 
     public function file($name)
     {
-        return $this->addColumn(null, $name)->fieldType('file')->ignore();
+        return $this->addColumn(null, $name)->fieldType('file')->ignore()->nullable();
     }
 
     public function select($name): ColumnDefinition

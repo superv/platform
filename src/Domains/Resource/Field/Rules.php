@@ -23,18 +23,31 @@ class Rules
         return $this;
     }
 
-    public function get()
+    public function setRule($rule, $params): self
+    {
+        $this->rules[$rule] = $params;
+
+        return $this;
+    }
+
+    public function get(array $params = [])
     {
         $rules = [];
         foreach ($this->rules as $key => $value) {
             if (is_bool($value)) {
                 $rules[] = $key;
             } else {
-                $rules[] = $key.':'.$value;
+                $rules[] = $key.':'. ($params ? sv_parse($value, $params) : $value);
             }
         }
 
         return $rules;
+    }
+
+    public static function of(Field $field)
+    {
+        return static::make($field->makeRules());
+
     }
 
     public static function make(array $rules): self

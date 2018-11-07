@@ -72,34 +72,48 @@ class FieldTypeTest extends ResourceTestCase
     /** @test */
     function type_number_integer()
     {
-        $this->assertColumnExists('t_users', 'age');
+        $res = $this->create(function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('age');
+        });
+        $this->assertColumnExists($res->handle(), 'age');
         $resource = Resource::of('t_users');
 
-        $field = $resource->getField('age');
-        $field->setResource($resource->loadFake(['age' => '10', 'group_id' => 1]));
+        $age = $resource->getField('age');
+        $age->setResource($resource->loadFake(['age' => '10', 'group_id' => 1]));
 
-        $this->assertInstanceOf(Number::class, $field);
-        $this->assertEquals('number', $field->getType());
+        $this->assertInstanceOf(Number::class, $age);
+        $this->assertEquals('number', $age->getType());
+        $this->assertEquals(['integer', 'min:0', 'required'], $age->makeRules());
+        $this->assertEquals('integer', $age->getConfigValue('type'));
+        $this->assertTrue($age->getConfigValue('unsigned'));
 
-        $this->assertSame(10, $field->getValue());
+        $this->assertSame(10, $age->getValue());
     }
 
     /** @test */
     function type_number_decimal()
     {
-        $this->assertColumnExists('t_users', 'height');
+        $res = $this->create(function (Blueprint $table) {
+            $table->increments('id');
+            $table->decimal('height', 3, 2);
+        });
+        $this->assertColumnExists($res->handle(), 'height');
         $resource = Resource::of('t_users');
 
-        $field = $resource->getField('height');
-        $field->setResource($resource->loadFake(['height' => '1.754234', 'group_id' => 1]));
+        $height = $resource->getField('height');
 
-        $this->assertInstanceOf(Number::class, $field);
-        $this->assertEquals('number', $field->getType());
-        $this->assertEquals('decimal', $field->getConfigValue('type'));
-        $this->assertEquals(3, $field->getConfigValue('total'));
-        $this->assertEquals(2, $field->getConfigValue('places'));
+        $height->setResource($resource->loadFake(['height' => '1.754234']));
 
-        $this->assertSame(1.75, $field->getValue());
+        $this->assertInstanceOf(Number::class, $height);
+        $this->assertEquals('number', $height->getType());
+        $this->assertEquals('decimal', $height->getConfigValue('type'));
+        $this->assertEquals(['numeric', 'required'], $height->makeRules());
+
+        $this->assertEquals(3, $height->getConfigValue('total'));
+        $this->assertEquals(2, $height->getConfigValue('places'));
+
+        $this->assertSame(1.75, $height->getValue());
     }
 
     /** @test */
@@ -149,6 +163,17 @@ class FieldTypeTest extends ResourceTestCase
     }
 
     /** @test */
+    function type_file_is_not_required_by_default()
+    {
+        $res = $this->create(null, function (Blueprint $table) {
+            $table->increments('id');
+            $table->file('avatar');
+        });
+
+        $this->assertFalse($res->getField('avatar')->isRequired());
+    }
+
+    /** @test */
     function type_file()
     {
         $this->assertFalse(in_array('avatar', \Schema::getColumnListing('t_users')));
@@ -177,6 +202,5 @@ class FieldTypeTest extends ResourceTestCase
         $this->assertNotNull($field->getConfigValue('url'));
 
         $this->assertFileExists($media->filePath());
-
     }
 }

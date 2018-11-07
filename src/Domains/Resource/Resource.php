@@ -146,8 +146,12 @@ class Resource
         return $this->entry ? $this->entry->getId() : null;
     }
 
-    public function getFields(): Collection
+    public function getFields($ensureBuilt = true): Collection
     {
+        if ($ensureBuilt) {
+            $this->ensureBuilt();
+        }
+
         return $this->fields;
     }
 
@@ -300,7 +304,12 @@ class Resource
 //        return $this->singularLabel().' #'.$this->getEntryId();
     }
 
-    public function slug()
+    public function slug(): string
+    {
+        return $this->handle();
+    }
+
+    public function handle(): string
     {
         return $this->slug;
     }
@@ -312,8 +321,8 @@ class Resource
 
     public static function modelOf($handle)
     {
-        if (!$resourceEntry = ResourceModel::withSlug($handle)) {
-          throw new PlatformException("Resource model not found with handle [{$handle}]");
+        if (! $resourceEntry = ResourceModel::withSlug($handle)) {
+            throw new PlatformException("Resource model not found with handle [{$handle}]");
         }
 
         if ($model = $resourceEntry->getConfigValue('model')) {
@@ -338,5 +347,4 @@ class Resource
 
         return $resource;
     }
-
 }
