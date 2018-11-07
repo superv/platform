@@ -60,7 +60,7 @@ class TableConfig
             Action::make('delete')]);
 
         // build Url
-        $this->url = sv_url($this->resource->route('table.data', ['uuid' => $this->uuid]));
+        $this->url = sv_url($this->resource->route('table', ['uuid' => $this->uuid]));
 
         $this->built = true;
 

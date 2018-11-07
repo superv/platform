@@ -40,6 +40,7 @@ class Resource
      * @var \Illuminate\Support\Collection
      */
     protected $fields;
+
     /**
      * @var \Illuminate\Support\Collection
      */
@@ -74,6 +75,8 @@ class Resource
 
     public function build()
     {
+        log_callers();
+
         if ($this->isBuilt()) {
             throw new PlatformException('Resource is already built.');
         }
@@ -285,11 +288,11 @@ class Resource
             return $base.'/create';
         }
 
-        if ($route === 'table') {
+        if ($route === 'index') {
             return $base;
         }
 
-        if ($route === 'table.data') {
+        if ($route === 'table') {
             return 'sv/tables/'.$params['uuid'];
         }
     }
