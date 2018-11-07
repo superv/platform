@@ -64,7 +64,7 @@ class BelongsTo extends Field
 
         $entryLabel = $this->relatedResource->getConfigValue('entry_label', '#{id}');
 
-        $query = $this->relatedResource->resolveModel()->newQuery();
+        $query = $this->relatedResource->newEntryInstance()->newQuery();
 
         if ($this->hasCallback('querying')) {
             $this->fire('querying', ['query' => $query]);

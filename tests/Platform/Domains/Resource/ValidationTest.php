@@ -24,7 +24,6 @@ class ValidationTest extends ResourceTestCase
         $resource->create(['name' => 'Nicola']);
     }
 
-    /** @test */
     function validates_file_fields()
     {
         $res = $this->create('tx_users', function (Blueprint $table) {

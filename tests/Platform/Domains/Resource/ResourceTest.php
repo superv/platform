@@ -19,7 +19,7 @@ class ResourceTest extends ResourceTestCase
     {
         $resource = $this->makeResource('test_users');
 
-        $resourceModel = $resource->resolveModel();
+        $resourceModel = $resource->newEntryInstance();
 
         $this->assertInstanceOf(Model::class, $resourceModel);
         $this->assertEquals('test_users', $resourceModel->getTable());
@@ -30,7 +30,7 @@ class ResourceTest extends ResourceTestCase
     {
         $resource = $this->makeResource('test_users', ['name', 'age:integer', 'bio:text']);
         $resource->build();
-        $entry = $resource->resolveModel()->newQuery()->create([
+        $entry = $resource->newEntryInstance()->newQuery()->create([
             'name' => 'Name',
             'age'  => 99,
             'bio'  => 'Bio',

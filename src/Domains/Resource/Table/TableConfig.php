@@ -75,7 +75,7 @@ class TableConfig
             return $this->queryProvider->newQuery();
         }
 
-        return $this->query ?: $this->resource->resolveModel()->newQuery()->select($this->resource->slug().'.*');
+        return $this->query ?: $this->resource->newEntryInstance()->newQuery()->select($this->resource->slug().'.*');
     }
 
     public function compose()

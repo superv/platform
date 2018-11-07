@@ -59,7 +59,7 @@ class FormTest extends ResourceTestCase
         $response = $this->postJson($form->getUrl(), $data, $this->getHeaderWithAccessToken());
         $this->assertEquals(201, $response->getStatusCode());
 
-        $entryModel = $this->resource->resolveModel();
+        $entryModel = $this->resource->newEntryInstance();
         $entry = $entryModel::first();
         $this->assertNotNull($entry);
         $this->assertEquals('Nicola Tesla', $entry->name);
@@ -114,7 +114,7 @@ class FormTest extends ResourceTestCase
         $response = $this->postJson($form->getUrl(), $data, $this->getHeaderWithAccessToken());
         $response->assertStatus(201);
 
-        $entryModel = $this->resource->resolveModel();
+        $entryModel = $this->resource->newEntryInstance();
         $entry = $entryModel::first();
         $this->assertNotNull($entry);
         $this->assertEquals('Updated Nicola Tesla', $entry->name);

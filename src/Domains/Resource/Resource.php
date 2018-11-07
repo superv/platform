@@ -116,7 +116,7 @@ class Resource
         });
     }
 
-    public function resolveModel()
+    public function newEntryInstance()
     {
         if ($model = $this->getConfigValue('model')) {
             return new $model;
@@ -127,7 +127,7 @@ class Resource
 
     public function create(array $attributes = []): EntryModel
     {
-        return $this->resolveModel()->create($attributes);
+        return $this->newEntryInstance()->create($attributes);
     }
 
     public function createAndLoad(array $attributes = [])
@@ -160,7 +160,7 @@ class Resource
 
     public function loadEntry($entryId): self
     {
-        $this->entry = $this->resolveModel()->newQuery()->find($entryId);
+        $this->entry = $this->newEntryInstance()->newQuery()->find($entryId);
 
         return $this;
     }
@@ -316,14 +316,14 @@ class Resource
         if ($this->entryId) {
             $this->loadEntry($this->entryId);
         } else {
-            $this->entry = $this->resolveModel();
+            $this->entry = $this->newEntryInstance();
         }
     }
 
     public function makeEntry(): void
     {
         if (! $this->entry) {
-            $this->entry = $this->resolveModel();
+            $this->entry = $this->newEntryInstance();
         }
     }
 

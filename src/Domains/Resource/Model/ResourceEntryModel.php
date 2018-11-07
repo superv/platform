@@ -30,9 +30,9 @@ class ResourceEntryModel extends EntryModel
     {
         parent::boot();
 
-//        static::saving(function(ResourceEntryModel $entry) {
-//            EntrySavingEvent::dispatch($entry);
-//        });
+        static::saving(function(ResourceEntryModel $entry) {
+            EntrySavingEvent::dispatch($entry);
+        });
 
         static::saved(function(ResourceEntryModel $entry) {
             EntrySavedEvent::dispatch($entry);

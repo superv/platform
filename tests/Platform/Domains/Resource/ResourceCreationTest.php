@@ -41,7 +41,7 @@ class ResourceCreationTest extends ResourceTestCase
         });
 
         $this->assertEquals(TestUser::class, ResourceModel::withSlug('test_users')->getModelClass());
-        $this->assertInstanceOf(TestUser::class, Resource::of('test_users')->resolveModel());
+        $this->assertInstanceOf(TestUser::class, Resource::of('test_users')->newEntryInstance());
     }
 
     /** @test */
