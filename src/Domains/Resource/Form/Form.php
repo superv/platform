@@ -60,17 +60,6 @@ class Form
         return $this->uuid;
     }
 
-    public function cache()
-    {
-        $this->callbacks = [];
-        cache()->forever($this->cacheKey(), serialize($this));
-    }
-
-    protected function cacheKey(): string
-    {
-        return 'sv:forms:'.$this->uuid();
-    }
-
     public function compose(): FormData
     {
         return FormData::make($this);
@@ -138,6 +127,17 @@ class Form
         $form->url = sv_url('sv/forms/'.$form->uuid());
 
         return $form;
+    }
+
+    public function cache()
+    {
+        $this->callbacks = [];
+        cache()->forever($this->cacheKey(), serialize($this));
+    }
+
+    protected function cacheKey(): string
+    {
+        return 'sv:forms:'.$this->uuid();
     }
 
     public static function fromCache($uuid): ?Form

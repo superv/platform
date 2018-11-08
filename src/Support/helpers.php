@@ -26,31 +26,35 @@ function feature($handler = null, array $input = [])
     return app(FeatureBus::class);
 }
 
-function dump_callers($limit = 10) {
+function dump_callers($limit = 10)
+{
     $callers = get_callers($limit);
 
-    $callers->map(function($caller) { dump($caller); });
+    $callers->map(function ($caller) { dump($caller); });
 }
 
 function get_callers($limit = 10): \Illuminate\Support\Collection
 {
     $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $limit);
     $callers = collect($stack)->map(function ($trace, $key) {
-        if ($key < 3) return null;
+        if ($key < 3) {
+            return null;
+        }
         $function = $trace['function'] ?? '';
 
-        if (in_array($function, ['get_callers', 'dump_callers', 'array_map']))
+        if (in_array($function, ['get_callers', 'dump_callers', 'array_map'])) {
             return null;
+        }
 
-        if (!$class = $trace['class'] ?? '') {
+        if (! $class = $trace['class'] ?? '') {
             return $function;
         }
-        if (str_contains($class, 'Illuminate\Support'))
+        if (str_contains($class, 'Illuminate\Support')) {
             return null;
+        }
 
-        return "[{$key}]".  $function  . '@' . $class;
+        return "[{$key}]".$function.'@'.$class;
     })->filter()->first();
-
 
     return collect([$callers]);
 }
@@ -231,8 +235,14 @@ function uuid()
     return str_replace('-', '', $uuid);
 }
 
-function str_unslug(string $slug) {
+function str_unslug(string $slug)
+{
     return ucwords(str_replace('_', ' ', $slug));
+}
+
+function str_prefix(?string $str, $prefix)
+{
+    return is_null($str) ? $str : "{$prefix}.{$str}";
 }
 
 /** @return SvTabs */
