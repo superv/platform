@@ -2,9 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
-use SuperV\Platform\Domains\Resource\Contracts\HasResource;
-use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class FieldFactory
@@ -49,9 +47,9 @@ class FieldFactory
         return $this->resolveFromFieldEntry($fieldEntry);
     }
 
-    protected function resolveFromFieldEntry(FieldModel $fieldEntry): Field
+    protected function resolveFromFieldEntry(FieldModel $fieldEntry): FieldType
     {
-        $class = Field::resolveClass($fieldEntry->getType());
+        $class = FieldType::resolveClass($fieldEntry->getType());
 
         return $class::fromEntry($fieldEntry);
     }

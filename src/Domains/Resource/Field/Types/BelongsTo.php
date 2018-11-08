@@ -3,14 +3,11 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
-use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Support\Parser;
 
-class BelongsTo extends Field
+class BelongsTo extends FieldType
 {
     /** @var \SuperV\Platform\Domains\Resource\Relation\RelationConfig */
     protected $relationConfig;
@@ -18,7 +15,7 @@ class BelongsTo extends Field
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $relatedResource;
 
-    public function build(): Field
+    public function build(): FieldType
     {
         $this->buildRelationConfig();
 

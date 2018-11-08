@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Resource;
@@ -44,7 +44,7 @@ class BuildForm
             $this->form->addEntry($entry = new Entry($resource->getEntry()));
 
             $resource->copyFreshFields()
-                     ->map(function (Field $field) use ($entry) {
+                     ->map(function (FieldType $field) use ($entry) {
                          $field->setEntry($entry);
                          $this->form->addField($field);
                      });

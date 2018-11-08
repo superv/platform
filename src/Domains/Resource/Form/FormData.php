@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 
 class FormData
 {
@@ -34,14 +34,14 @@ class FormData
     public function getFieldKeys()
     {
         return $this->form->getFields()
-                          ->map(function (Field $field) { return $field->getName(); })
+                          ->map(function (FieldType $field) { return $field->getName(); })
                           ->all();
     }
 
-    public function getField(string $name): ?Field
+    public function getField(string $name): ?FieldType
     {
         $field = collect($this->form->getFields())
-            ->first(function (Field $field) use ($name) {
+            ->first(function (FieldType $field) use ($name) {
                 return $field->getName() === $name;
             });
 
@@ -54,7 +54,7 @@ class FormData
             'url'    => $this->form->getUrl(),
             'method' => $this->form->getMethod(),
             'fields' => collect($this->form->getFields())
-                ->map(function (Field $field) { return $field->compose(); })
+                ->map(function (FieldType $field) { return $field->compose(); })
                 ->all(),
         ];
     }

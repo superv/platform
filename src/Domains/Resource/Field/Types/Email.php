@@ -2,8 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use SuperV\Platform\Domains\Resource\Field\Field;
-
-class Email extends Field
+class Email extends FieldType
 {
 }

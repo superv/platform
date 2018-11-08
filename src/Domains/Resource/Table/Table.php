@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Concerns\HasOptions;
@@ -49,7 +49,7 @@ class Table
 //        dump($query->getBindings());
 //        dump($query);
 
-        $this->config->getColumns()->map(function (Field $field) use ($query) {
+        $this->config->getColumns()->map(function (FieldType $field) use ($query) {
             $field->buildForView($query);
         });
 

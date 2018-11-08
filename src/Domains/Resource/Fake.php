@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Faker\Generator;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 
 class Fake
 {
@@ -36,7 +36,7 @@ class Fake
         return $this->resource->create(array_filter_null($attributes));
     }
 
-    protected function fake(Field $field)
+    protected function fake(FieldType $field)
     {
         if (!$field->hasFieldEntry()) {
             return null;
@@ -51,7 +51,7 @@ class Fake
         return $this->faker->text;
     }
 
-    protected function fakeText(Field $field)
+    protected function fakeText(FieldType $field)
     {
         if ($fake = $this->faker->__get(camel_case($field->getName()))) {
             return $fake;
@@ -60,12 +60,12 @@ class Fake
         return $this->faker->text;
     }
 
-    protected function fakeTextarea(Field $field)
+    protected function fakeTextarea(FieldType $field)
     {
         return $this->faker->text;
     }
 
-    protected function fakeNumber(Field $field)
+    protected function fakeNumber(FieldType $field)
     {
         if ($field->getConfigValue('type') === 'decimal') {
             $max = $field->getConfigValue('total', 5) - 2;
@@ -76,17 +76,17 @@ class Fake
         return $field->getName() === 'age' ? $this->faker->numberBetween(10, 99) : $this->faker->randomNumber();
     }
 
-    protected function fakeEmail(Field $field)
+    protected function fakeEmail(FieldType $field)
     {
         return $this->faker->safeEmail;
     }
 
-    protected function fakeBoolean(Field $field)
+    protected function fakeBoolean(FieldType $field)
     {
         return $this->faker->boolean;
     }
 
-    protected function fakeDatetime(Field $field)
+    protected function fakeDatetime(FieldType $field)
     {
         return $field->getConfigValue('time') ? $this->faker->dateTime : $this->faker->date();
     }
@@ -96,7 +96,7 @@ class Fake
      */
     public function makeAttributes()
     {
-        $attributes = $this->resource->getFields()->map(function (Field $field) {
+        $attributes = $this->resource->getFields()->map(function (FieldType $field) {
             if ($field->show() && $field->hasColumn()) {
                 return [$field->getColumnName(), $this->fake($field)];
             }

@@ -3,10 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
-use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 
-class Number extends Field
+class Number extends FieldType
 {
     public function getAccessor(): ?Closure
     {

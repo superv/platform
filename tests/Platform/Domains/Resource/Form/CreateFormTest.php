@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Form;
 
 use Current;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\Jobs\BuildForm;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -64,7 +64,7 @@ class CreateFormTest extends ResourceTestCase
         $drop = $this->makeResource('test_users', ['name', 'age:integer', 'bio:text']);
         $form = Form::make();
 
-        $form->removeFieldBeforeBuild(function (Field $field) {
+        $form->removeFieldBeforeBuild(function (FieldType $field) {
             return $field->getName() === 'age';
         });
 

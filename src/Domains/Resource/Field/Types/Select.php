@@ -2,11 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use SuperV\Platform\Domains\Resource\Field\Field;
-
-class Select extends Field
+class Select extends FieldType
 {
-    public function build(): Field
+    public function build(): FieldType
     {
         if (array_has($this->config, 'options')) {
             $this->setConfigValue('options', Select::parseOptions($this->getConfigValue('options')));

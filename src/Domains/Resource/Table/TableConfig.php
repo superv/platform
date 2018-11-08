@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -47,7 +47,7 @@ class TableConfig
         $this->uuid = Str::uuid();
 
         $this->columns = $this->resource->getFields()
-                                        ->map(function (Field $field) {
+                                        ->map(function (FieldType $field) {
                                             if ($field->getConfigValue('hide.table') === true) {
                                                 return null;
                                             }
@@ -88,7 +88,7 @@ class TableConfig
             'config' => [
                 'meta' => [
                     'columns' => $this->getColumns()
-                                      ->map(function (Field $field) {
+                                      ->map(function (FieldType $field) {
                                           return ['label' => $field->getLabel(), 'name' => $field->getName()];
                                       })
                                       ->all(),
@@ -112,7 +112,7 @@ class TableConfig
 
     public function removeColumn(string $name)
     {
-        $this->columns = $this->columns->filter(function(Field $field) use ($name) {
+        $this->columns = $this->columns->filter(function(FieldType $field) use ($name) {
             return $field->getName() !== $name;
         });
     }

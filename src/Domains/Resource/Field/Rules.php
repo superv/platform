@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+
 class Rules
 {
     /**
@@ -44,7 +46,7 @@ class Rules
         return $rules;
     }
 
-    public static function of(Field $field)
+    public static function of(FieldType $field)
     {
         return static::make($field->makeRules());
 

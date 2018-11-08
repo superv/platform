@@ -6,10 +6,9 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Jobs\PostForm;
 use SuperV\Platform\Domains\Resource\Model\Entry;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Form
@@ -51,7 +50,6 @@ class Form
         return $this;
     }
 
-
     public function post(Request $request)
     {
         PostForm::dispatch($this, $request);
@@ -85,7 +83,7 @@ class Form
 
     public function removeField(Closure $callback)
     {
-        $this->fields = $this->fields->filter(function (Field $field) use ($callback) {
+        $this->fields = $this->fields->filter(function (FieldType $field) use ($callback) {
             return ! $callback($field);
         })->values();
     }
@@ -97,7 +95,7 @@ class Form
         });
     }
 
-    public function addField(Field $field)
+    public function addField(FieldType $field)
     {
         $this->fields->push($field);
     }

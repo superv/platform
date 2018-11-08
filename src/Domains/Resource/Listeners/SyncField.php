@@ -6,9 +6,9 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
-use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Rules;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class SyncField
@@ -16,7 +16,7 @@ class SyncField
     /** @var \SuperV\Platform\Domains\Resource\ResourceModel */
     protected $resourceEntry;
 
-    /** @var \SuperV\Platform\Domains\Resource\Field\Field */
+    /** @var \SuperV\Platform\Domains\Resource\Field\Types\FieldType */
     protected $fieldType;
 
     public function handle($event)
@@ -89,7 +89,7 @@ class SyncField
             );
         }
 
-        $this->fieldType = Field::resolve($column->fieldType);
+        $this->fieldType = FieldType::resolve($column->fieldType);
         $column->ignore(! $this->fieldType->hasColumn());
     }
 

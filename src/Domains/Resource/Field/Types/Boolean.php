@@ -3,9 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
-use SuperV\Platform\Domains\Resource\Field\Field;
 
-class Boolean extends Field
+class Boolean extends FieldType
 {
     public function getAccessor(): ?Closure
     {

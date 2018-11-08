@@ -4,9 +4,9 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Exception;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Jobs\BuildResourceJob;
 use SuperV\Platform\Domains\Resource\Model\EntryModel;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
@@ -109,7 +109,7 @@ class Resource
 
     public function copyFreshFields(): Collection
     {
-        return $this->freshFields->map(function(Field $field) {
+        return $this->freshFields->map(function(FieldType $field) {
             return $field->copy();
         });
     }
@@ -201,7 +201,7 @@ class Resource
         $this->ensureNotBuilt();
 
         $fields->map(function ($field) {
-            if ($field instanceof Field && $field->isBuilt()) {
+            if ($field instanceof FieldType && $field->isBuilt()) {
                 throw new Exception("Can not accept a built field");
             }
         });
@@ -216,11 +216,11 @@ class Resource
         return optional($this->getField($name))->getEntry();
     }
 
-    public function getField($name): ?Field
+    public function getField($name): ?FieldType
     {
         $this->ensureBuilt();
 
-        return $this->fields->first(function (Field $field) use ($name) { return $field->getName() === $name; });
+        return $this->fields->first(function (FieldType $field) use ($name) { return $field->getName() === $name; });
     }
 
     public function getRelations(): Collection

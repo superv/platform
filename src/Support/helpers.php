@@ -231,6 +231,10 @@ function uuid()
     return str_replace('-', '', $uuid);
 }
 
+function str_unslug(string $slug) {
+    return ucwords(str_replace('_', ' ', $slug));
+}
+
 /** @return SvTabs */
 function sv_tabs()
 {

@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Contracts\HasResource;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class TableRow
@@ -37,7 +37,7 @@ class TableRow
         $this->setValue('id', $this->resource->getEntryId());
 
         $this->table->getColumns()
-                    ->map(function (Field $field) {
+                    ->map(function (FieldType $field) {
                         $field = $field->copy();
 
                         if ($field instanceof NeedsEntry) {

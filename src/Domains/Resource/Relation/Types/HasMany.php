@@ -3,13 +3,13 @@
 namespace SuperV\Platform\Domains\Resource\Relation\Types;
 
 
+use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
@@ -34,7 +34,7 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery
 
         $config->build();
 
-        $belongsTo = $config->getColumns()->first(function(Field $field) {
+        $belongsTo = $config->getColumns()->first(function(FieldType $field) {
             if ($field->getType() !== 'belongs_to') {
                 return null;
             }

@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Resource;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Types\Number;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
@@ -62,7 +62,7 @@ class ResourceTest extends ResourceTestCase
     protected function getFields(Resource $resource)
     {
         return $resource->getFields()->map(
-            function (Field $field) {
+            function (FieldType $field) {
                 return [
                     'class' => get_class($field),
                     'value' => $field->getValue(),
