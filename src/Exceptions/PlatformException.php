@@ -12,4 +12,9 @@ class PlatformException extends \Exception
             ],
         ], 400);
     }
+
+    public static function fail(?string $msg)
+    {
+        throw new static($msg);
+    }
 }

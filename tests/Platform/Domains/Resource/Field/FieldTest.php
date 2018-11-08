@@ -3,8 +3,8 @@
 namespace Tests\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldObserver;
 use SuperV\Platform\Domains\Resource\Field\FieldValue;
+use SuperV\Platform\Domains\Resource\Field\Watcher;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FieldTest extends ResourceTestCase
@@ -25,27 +25,29 @@ class FieldTest extends ResourceTestCase
     }
 
     /** @test */
-    function observable_values()
+    function notify_watchers()
     {
         $entry = new TestEntry();
         $field = new Field('name', 'text');
 
-        $field->attach($entry);
+        $field->addWatcher($entry);
         $field->setValue('Omar');
         $this->assertEquals('Omar', $entry->name);
 
-        $field->detach($entry);
+        $field->removeWatcher($entry);
         $field->setValue('Hattab');
         $this->assertEquals('Omar', $entry->name);
     }
 }
 
-class TestEntry implements FieldObserver
+class TestEntry implements Watcher
 {
     public $name;
 
-    public function fieldValueUpdated(FieldValue $fieldValue)
+    public function watchableUpdated($params)
     {
-        $this->{$fieldValue->fieldName()} = $fieldValue->get();
+        if ($params instanceof FieldValue) {
+            $this->{$params->fieldName()} = $params->get();
+        }
     }
 }

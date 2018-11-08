@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use Illuminate\Support\Str;
+use SuperV\Platform\Domains\Resource\Concerns\Watchable;
 
 /**
  * Class Field  IMMUTABLE!!!!!!!!
@@ -11,6 +12,8 @@ use Illuminate\Support\Str;
  */
 class Field
 {
+    use Watchable;
+
     /**
      * @var string
      */
@@ -36,10 +39,6 @@ class Field
      */
     protected $value;
 
-    /**
-     * @var array
-     */
-    protected $observers = [];
 
     public function __construct(string $name, string $type)
     {
@@ -48,29 +47,6 @@ class Field
         $this->uuid = Str::uuid()->toString();
 
         $this->value = new FieldValue($this);
-    }
-
-    public function attach(FieldObserver $observer)
-    {
-        $this->observers[] = $observer;
-
-        return $this;
-    }
-
-    public function detach(FieldObserver $detach)
-    {
-        $this->observers = collect($this->observers)->filter(function (FieldObserver $observer) use($detach) {
-            return $observer !== $detach;
-        })->filter()->values()->all();
-
-        return $this;
-    }
-
-    public function notify()
-    {
-        collect($this->observers)->map(function (FieldObserver $observer) {
-            $observer->fieldValueUpdated($this->value());
-        });
     }
 
     public function uuid(): string
@@ -86,7 +62,8 @@ class Field
     public function setValue($value)
     {
         $this->value->set($value);
-        $this->notify();
+
+        $this->notifyWatchers($this->value);
     }
 
     public function getType(): string

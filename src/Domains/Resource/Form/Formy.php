@@ -5,10 +5,14 @@ namespace SuperV\Platform\Domains\Resource\Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use SuperV\Platform\Domains\Resource\Concerns\Watchable;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class Formy
 {
+    use Watchable;
+
     /**
      * @var array
      */
@@ -34,15 +38,23 @@ class Formy
      */
     protected $request;
 
+    protected $isBooted = false;
+
     public function __construct(array $fields)
     {
         $this->fields = collect($fields);
     }
 
+    //
+    //      < M U T A T O R   M E T H O D S >
+    //
+
     public function boot(): self
     {
         $this->uuid = Str::uuid()->toString();
         $this->url = sv_url('sv/forms/'.$this->uuid);
+
+        $this->isBooted = true;
 
         $this->cache();
 
@@ -51,20 +63,31 @@ class Formy
 
     public function save()
     {
+        if (! $this->isBooted) {
+            PlatformException::fail('Form is not booted yet.');
+        }
+
         $this->fields()->map(function (Field $field) {
             $field->setValue($this->request->__get($field->getName()));
         });
-    }
 
-    public function uuid(): string
-    {
-        return $this->uuid;
+        $this->notifyWatchers($this);
     }
 
     public function request(Request $request)
     {
         $this->request = $request;
     }
+
+    //
+    //      </ M U T A T O R   M E T H O D S >
+    //
+
+    public function uuid(): string
+    {
+        return $this->uuid;
+    }
+
 
     public function compose(): array
     {
@@ -92,6 +115,10 @@ class Formy
 
     public function cache()
     {
+        if (! $this->isBooted) {
+            PlatformException::fail('Form is not booted yet.');
+        }
+
         cache()->forever($this->cacheKey($this->uuid()), serialize($this));
     }
 
