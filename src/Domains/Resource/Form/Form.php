@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Form\Jobs\BuildForm;
+use SuperV\Platform\Domains\Resource\Form\Jobs\PostForm;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -52,31 +54,22 @@ class Form
 
     public function build(): self
     {
-        if ($this->isBuilt()) {
-            throw new PlatformException('Form is already built.');
-        }
-        $this->resources->map->build();
-
         $this->uuid = Str::uuid();
 
-        // first add all fields from all resources
-        $this->resources->map(function (Resource $resource) {
-            $resource->copyFreshFields()
-                     ->map(function (Field $field) {
-                         $this->addField($field);
-                     });
-        });
-        $this->fire('building.fields', ['form' => $this]);
-        $this->fields->map->build();
-
-        // build Url
         $this->url = sv_url('sv/forms/'.$this->uuid());
+
+        BuildForm::dispatch($this);
 
         $this->built = true;
 
         $this->cache();
 
         return $this;
+    }
+
+    public function post(Request $request)
+    {
+        PostForm::dispatch($this, $request);
     }
 
     public function uuid()
@@ -134,18 +127,7 @@ class Form
         return $this->method;
     }
 
-    public function post(Request $request)
-    {
-        $this->setFieldValues($request);
-
-        $this->resources->map(function (Resource $resource) {
-            $resource->saveEntry(['form' => $this]);
-        });
-
-        $this->applyPostSaveCallbacks();
-    }
-
-    protected function applyPostSaveCallbacks(): void
+    public function applyPostSaveCallbacks(): void
     {
         collect($this->postSaveCallbacks)->filter()->map(function (\Closure $callback) {
             $callback();
@@ -155,7 +137,7 @@ class Form
     /**
      * @param \Illuminate\Http\Request $request
      */
-    protected function setFieldValues(Request $request): void
+    public function setFieldValues(Request $request): void
     {
         $this->fields->map(function (Field $field) use ($request) {
             $this->postSaveCallbacks[] = $field->setValueFromRequest($request);
@@ -165,6 +147,11 @@ class Form
     public function isBuilt(): bool
     {
         return $this->built;
+    }
+
+    public function getResources(): \Illuminate\Support\Collection
+    {
+        return $this->resources;
     }
 
     public static function of(Resource $resource): self
