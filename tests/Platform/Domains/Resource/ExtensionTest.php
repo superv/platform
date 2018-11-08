@@ -32,7 +32,7 @@ class ExtensionTest extends ResourceTestCase
 
         $age = $ext->getField('age');
         $this->assertInstanceOf(Number::class, $age);
-        $this->assertEquals($res->getField('age')->getEntry(), $age->getEntry());
+        $this->assertEquals($res->getField('age')->getFieldEntry(), $age->getFieldEntry());
         $this->assertEquals(['integer', 'required', 'min:18', 'max:150'], $age->makeRules());
 
         $bio = $ext->getField('bio');

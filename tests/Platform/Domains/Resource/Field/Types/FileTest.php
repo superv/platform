@@ -21,7 +21,6 @@ class FileTest extends ResourceTestCase
 
         $avatar = $res->getField('avatar');
         $this->assertFalse($avatar->isRequired());
-
     }
 
     /** @test */

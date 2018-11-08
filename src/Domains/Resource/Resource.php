@@ -75,8 +75,6 @@ class Resource
 
     public function build()
     {
-        log_callers();
-
         if ($this->isBuilt()) {
             throw new PlatformException('Resource is already built.');
         }

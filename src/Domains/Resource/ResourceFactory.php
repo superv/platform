@@ -91,7 +91,7 @@ class ResourceFactory
         });
     }
 
-    public static function make(string $slug): Resource
+    public static function make(string $slug): \SuperV\Platform\Domains\Resource\Resource
     {
         return (new static($slug))->build();
     }

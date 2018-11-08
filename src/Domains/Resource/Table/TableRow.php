@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Table;
 
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Contracts\HasResource;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 
@@ -39,7 +40,9 @@ class TableRow
                     ->map(function (Field $field) {
                         $field = $field->copy();
 
-                        $field->setResource($this->resource);
+                        if ($field instanceof NeedsEntry) {
+                            $field->setResource($this->resource);
+                        }
 
 //                        if ($field->getType() === 'boolean') {
 //                            if (! $field->isBuilt()) {

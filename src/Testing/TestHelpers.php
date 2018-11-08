@@ -182,4 +182,22 @@ trait TestHelpers
     {
         return app('tymon.jwt')->fromUser($user);
     }
+
+    public function postJsonUser($uri, array $data = []): TestResponse
+    {
+        if (!$this->testUser) {
+            $this->newUser();
+        }
+
+        return $this->postJson($uri, $data, $this->getHeaderWithAccessToken());
+    }
+
+    public function getJsonUser($uri): TestResponse
+    {
+        if (!$this->testUser) {
+            $this->newUser();
+        }
+
+        return $this->getJson($uri, $this->getHeaderWithAccessToken());
+    }
 }

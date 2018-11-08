@@ -5,12 +5,10 @@ namespace Tests\Platform\Domains\Resource;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldConfig;
 use SuperV\Platform\Domains\Resource\Field\Types\Number;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class ResourceTest extends ResourceTestCase
 {
@@ -60,7 +58,6 @@ class ResourceTest extends ResourceTestCase
         }
         $this->fail('Failed to check if resource is built');
     }
-
 
     protected function getFields(Resource $resource)
     {

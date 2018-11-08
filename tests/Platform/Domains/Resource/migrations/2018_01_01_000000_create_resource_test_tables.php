@@ -1,8 +1,8 @@
 <?php
 
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Database\Migrations\Migration;
 use Tests\Platform\Domains\Resource\Fixtures\TestUser;
 
 class CreateResourceTestTables extends Migration

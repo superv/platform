@@ -8,6 +8,7 @@ use SuperV\Modules\Nucleo\Domains\UI\SvCard;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\Jobs\BuildForm;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
@@ -49,8 +50,9 @@ class ResourceController extends BaseApiController
 
     public function create()
     {
-        $form = Form::of(($this->resource()));
-        $formData = $form->build()->compose();
+        BuildForm::dispatch($form = Form::make(), collect([$this->resource()]));
+
+        $formData = $form->compose();
 
         $page = SvPage::make('')->addBlock(
             SvBlock::make('sv-form-v2')->setProps($formData->toArray())
@@ -66,8 +68,9 @@ class ResourceController extends BaseApiController
 
     public function edit()
     {
-        $form = Form::of($this->resource());
-        $formData = $form->build()->compose();
+        BuildForm::dispatch($form = Form::make(), collect([$this->resource()]));
+
+        $formData = $form->compose();
 
         // main edit form
         $editorTab = SvBlock::make('sv-form-v2')->setProps($formData->toArray());
@@ -79,7 +82,7 @@ class ResourceController extends BaseApiController
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesForm; })
                        ->map(function (ProvidesForm $relation) use ($tabs) {
                            $form = $relation->makeForm();
-                           $formData = $form->build()->compose();
+                           $formData = $form->compose();
 
                            return $tabs->addTab(sv_tab($relation->getName(), SvBlock::make('sv-form-v2')->setProps($formData->toArray())));
                        });

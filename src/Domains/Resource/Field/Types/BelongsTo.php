@@ -43,7 +43,7 @@ class BelongsTo extends Field
         $this->buildRelationConfig();
 
         /** @var ResourceEntryModel $relatedEntry */
-        $relatedEntry = $this->getResourceEntry()->getRelation($this->getName());
+        $relatedEntry = $this->getEntry()->getRelation($this->getName());
 
         return $relatedEntry ? $relatedEntry->wrap()->entryLabel() : null;
     }
@@ -71,8 +71,8 @@ class BelongsTo extends Field
 
             // If parent exists, make sure we get the
             // current related entry in the list
-            if (optional($this->getEntry())->exists) {
-                $query->orWhere($query->getModel()->getQualifiedKeyName(), $this->getEntry()->getAttribute($this->getName()));
+            if (optional($this->getFieldEntry())->exists) {
+                $query->orWhere($query->getModel()->getQualifiedKeyName(), $this->getFieldEntry()->getAttribute($this->getName()));
             }
         } else {
             $query->get();

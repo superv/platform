@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\Jobs\BuildForm;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
@@ -34,7 +35,7 @@ class MorphOne extends Relation implements ProvidesForm
     {
         $relatedEntry = $this->getRelatedEntry() ?? $this->newRelatedInstance();
 
-        $form = Form::of($relatedEntry->wrap());
+        BuildForm::dispatch($form = Form::make(), collect([$relatedEntry->wrap()]));
 
         $form->removeFieldBeforeBuild(function (Field $field) {
 

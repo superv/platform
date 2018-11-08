@@ -2,8 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
+use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Dispatchable;
@@ -17,9 +19,15 @@ class BuildForm
      */
     protected $form;
 
-    public function __construct(Form $form)
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $resources;
+
+    public function __construct(Form $form, Collection $resources)
     {
         $this->form = $form;
+        $this->resources = $resources;
     }
 
     public function handle()
@@ -29,15 +37,24 @@ class BuildForm
         }
 
         // first add all fields from all resources
-        $this->form->getResources()->map(function (Resource $resource) {
+        $this->resources->map(function (Resource $resource) {
+//            $this->form->addResource($resource);
             $resource->build();
 
+            $this->form->addEntry($entry = new Entry($resource->getEntry()));
+
             $resource->copyFreshFields()
-                     ->map(function (Field $field) {
+                     ->map(function (Field $field) use ($entry) {
+                         $field->setEntry($entry);
                          $this->form->addField($field);
                      });
         });
+
         $this->form->fire('building.fields', ['form' => $this->form]);
         $this->form->getFields()->map->build();
+
+        $this->form->setBuilt(true);
+
+        $this->form->cache();
     }
 }

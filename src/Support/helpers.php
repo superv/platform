@@ -26,19 +26,20 @@ function feature($handler = null, array $input = [])
     return app(FeatureBus::class);
 }
 
-function log_callers($limit = 10) {
+function dump_callers($limit = 10) {
     $callers = get_callers($limit);
 
-    $callers->map(function($caller) { info($caller); });
+    $callers->map(function($caller) { dump($caller); });
 }
 
 function get_callers($limit = 10): \Illuminate\Support\Collection
 {
     $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $limit);
-    $callers = collect($stack)->map(function ($trace) {
+    $callers = collect($stack)->map(function ($trace, $key) {
+        if ($key < 3) return null;
         $function = $trace['function'] ?? '';
 
-        if (in_array($function, ['get_callers', 'log_callers', 'array_map']))
+        if (in_array($function, ['get_callers', 'dump_callers', 'array_map']))
             return null;
 
         if (!$class = $trace['class'] ?? '') {
@@ -47,11 +48,11 @@ function get_callers($limit = 10): \Illuminate\Support\Collection
         if (str_contains($class, 'Illuminate\Support'))
             return null;
 
-        return $function  . '@' . $class;
-    })->filter()->values();
+        return "[{$key}]".  $function  . '@' . $class;
+    })->filter()->first();
 
 
-    return $callers;
+    return collect([$callers]);
 }
 
 function reload_env()

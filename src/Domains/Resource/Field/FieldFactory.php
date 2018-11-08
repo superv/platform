@@ -3,6 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Resource\Contracts\HasResource;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class FieldFactory
@@ -32,9 +34,10 @@ class FieldFactory
             $field = $this->resolveFromFieldEntry($field);
         }
 
-        if ($field instanceof HasResource) {
-            $field->setResource($this->resource);
-        }
+//        if ($field instanceof NeedsEntry) {
+//            $entry = $this->resource->getEntry();
+//            $field->setEntry(new Entry($entry));
+//        }
 
         return $field;
     }

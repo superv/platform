@@ -3,8 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
 use Illuminate\Http\Request;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Dispatchable;
 
 class PostForm
@@ -21,6 +21,9 @@ class PostForm
      */
     protected $request;
 
+    /** @var array */
+    protected $callbacks;
+
     public function __construct(Form $form, Request $request)
     {
         $this->form = $form;
@@ -29,13 +32,34 @@ class PostForm
 
     public function handle()
     {
-        $this->form->setFieldValues($this->request);
+        $all = $this->request->all();
+        $this->form->getFields()->map(function (Field $field) {
+            $entry = $field->getEntry()->toArray();
 
-        $this->form->getResources()->map(function (Resource $resource) {
-            $resource->saveEntry(['form' => $this->form]);
+            $this->callbacks[] = $field->setValueFromRequest($this->request);
+
+            $entry = $field->getEntry()->toArray();
+            $value = $field->getValue();
+
+            $entry2 = $field;
         });
 
-        $this->form->applyPostSaveCallbacks();
-    }
+        $this->form->getFields()->map(function (Field $field) {
+            $entry = $field->getEntry();
 
+            if ($entry->exists && ! $entry->isDirty()) {
+                return;
+            }
+
+            $entry->save();
+        });
+
+//        $this->form->getResources()->map(function (Resource $resource) {
+//            $resource->saveEntry(['form' => $this->form]);
+//        });
+
+        collect($this->callbacks)->filter()->map(function (\Closure $callback) {
+            $callback();
+        });
+    }
 }

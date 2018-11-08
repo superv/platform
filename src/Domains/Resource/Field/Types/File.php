@@ -32,7 +32,7 @@ class File extends Field
 
     public function getConfig(): array
     {
-        if ($entry = $this->getResourceEntry()) {
+        if ($entry = $this->getEntry()) {
             $media = $this->makeMediaBag()->media()->where('label', $this->getName())->latest()->first();
 
             if ($media) {
@@ -65,7 +65,7 @@ class File extends Field
 
     protected function makeMediaBag(): MediaBag
     {
-        return new MediaBag($this->getResourceEntry(), $this->getName());
+        return new MediaBag($this->getEntry(), $this->getName());
     }
 
     protected function getConfigAsMediaOptions()

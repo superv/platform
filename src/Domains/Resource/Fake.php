@@ -38,7 +38,7 @@ class Fake
 
     protected function fake(Field $field)
     {
-        if (!$field->hasEntry()) {
+        if (!$field->hasFieldEntry()) {
             return null;
         }
         if ($value = array_get($this->overrides, $field->getColumnName())) {

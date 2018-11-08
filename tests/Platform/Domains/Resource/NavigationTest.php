@@ -187,7 +187,6 @@ class NavigationTest extends ResourceTestCase
             'url'    => 'sv/res/t_users',
         ], Section::get('acp.settings.auth.users')->compose());
 
-
         Schema::create('t_templates', function (Blueprint $table, ResourceBlueprint $resource) {
             $table->increments('id');
             $resource->label('Templates'); // modifies section handle and title

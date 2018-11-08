@@ -18,7 +18,7 @@ class ResourceTestCase extends \Tests\Platform\TestCase
 
     protected function create($table, Closure $callback = null): \SuperV\Platform\Domains\Resource\Resource
     {
-        if ($table instanceof  Closure) {
+        if ($table instanceof Closure) {
             $callback = $table;
             $table = Str::random(8);
         }

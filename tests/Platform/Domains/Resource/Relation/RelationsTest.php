@@ -1,17 +1,15 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource;
+namespace Tests\Platform\Domains\Resource\Relation;
 
-use Lakcom\Modules\Core\Domains\Address\Address;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
 use SuperV\Platform\Domains\Resource\Relation\Types\HasMany;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use Tests\Platform\Domains\Resource\Fixtures\TestPost;
 use Tests\Platform\Domains\Resource\Fixtures\TestRole;
+use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class RelationsTest extends ResourceTestCase
 {
@@ -23,7 +21,7 @@ class RelationsTest extends ResourceTestCase
             $table->string('title')->entryLabel();
         });
 
-       $users = $this->create('t_users', function (Blueprint $table) {
+        $users = $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->belongsTo('t_groups', 'group');
@@ -156,28 +154,6 @@ class RelationsTest extends ResourceTestCase
     }
 
     /** @test */
-    function create_morph_one_relation()
-    {
-        $this->create('t_users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->morphOne(Address::class, 'address', 'owner');
-        });
-
-        $users = Resource::of('t_users');
-        $this->assertColumnDoesNotExist('t_users', 'address');
-        $this->assertColumnDoesNotExist('t_users', 'address_id');
-
-        $relation = $users->getRelation('address');
-        $this->assertEquals('morph_one', $relation->getType());
-
-        $this->assertEquals([
-            'related_model' => Address::class,
-            'morph_name'      => 'owner',
-        ], $relation->getConfig()->toArray());
-    }
-
-    /** @test */
     function creates_table_from_has_many()
     {
         $users = $this->create('t_users', function (Blueprint $table) {
@@ -185,15 +161,13 @@ class RelationsTest extends ResourceTestCase
             $table->string('name');
             $table->hasMany('t_posts', 'posts', 't_user_id');
         });
-        $posts=  $this->create('t_posts', function (Blueprint $table) {
+        $posts = $this->create('t_posts', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
             $table->belongsTo('t_users', 't_user');
         });
 
-
         $user = $users->freshWithFake()->build();
-
 
         $posts->createFake(['t_user_id' => $user->getEntryId()], 5);
         $posts->createFake(['t_user_id' => 999], 3); // these should be excluded
@@ -211,7 +185,6 @@ class RelationsTest extends ResourceTestCase
         $this->assertEquals(8, \DB::table('t_posts')->count());
         $this->assertEquals(5, $table->getRows()->count());
     }
-
 
     /** @test */
     function saves_pivot_columns_even_if_pivot_table_is_created_before()

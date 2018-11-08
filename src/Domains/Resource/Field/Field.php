@@ -5,15 +5,14 @@ namespace SuperV\Platform\Domains\Resource\Field;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Contracts\HasResource;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-abstract class Field implements HasResource
+abstract class Field implements NeedsEntry
 {
     use Hydratable;
     use HasConfig;
@@ -24,10 +23,13 @@ abstract class Field implements HasResource
      */
     protected $resource;
 
+    /** @var \SuperV\Platform\Domains\Resource\Model\Entry */
+    protected $entry;
+
     /**
      * @var \SuperV\Platform\Domains\Resource\Field\FieldModel
      */
-    protected $entry;
+    protected $fieldEntry;
 
     /**
      * @var string
@@ -72,9 +74,12 @@ abstract class Field implements HasResource
      */
     protected $hasColumn = true;
 
+    /** @var \SuperV\Platform\Domains\Resource\Field\FieldValue */
+    protected $value;
+
     public function __construct(FieldModel $entry)
     {
-        $this->entry = $entry;
+        $this->fieldEntry = $entry;
     }
 
     public function show(): bool
@@ -101,7 +106,7 @@ abstract class Field implements HasResource
     public function copy(): self
     {
         if ($this->isBuilt()) {
-            return static::fromEntry($this->entry->fresh());
+            return static::fromEntry($this->fieldEntry->fresh());
         }
 
         return clone $this;
@@ -130,7 +135,7 @@ abstract class Field implements HasResource
 
     public function uuid()
     {
-        return $this->entry->uuid();
+        return $this->fieldEntry->uuid();
     }
 
     public function getName(): ?string
@@ -158,14 +163,14 @@ abstract class Field implements HasResource
         return $this->type;
     }
 
-    public function getEntry(): ?FieldModel
+    public function getFieldEntry(): ?FieldModel
     {
-        return $this->entry;
+        return $this->fieldEntry;
     }
 
-    public function hasEntry(): bool
+    public function hasFieldEntry(): bool
     {
-        return $this->entry && $this->entry->exists;
+        return $this->fieldEntry && $this->fieldEntry->exists;
     }
 
     public function mergeConfig(array $config)
@@ -173,20 +178,6 @@ abstract class Field implements HasResource
         $this->config = array_merge($this->config, $config);
     }
 
-    public function getResource(): ?Resource
-    {
-        return $this->resource;
-    }
-
-    public function setResource(Resource $resource)
-    {
-        if ($this->isBuilt()) {
-            throw new PlatformException('Can not set resource after field is built');
-        }
-        $this->resource = $resource;
-
-        return $this;
-    }
 
     public function getRules(): array
     {
@@ -202,21 +193,24 @@ abstract class Field implements HasResource
 
     public function makeRules()
     {
-        if (! $entry = $this->getResourceEntry()) {
-            throw new PlatformException('Can not make rules without an entry');
-        }
+//        if (! $entry = $this->getEntry()) {
+//            throw new PlatformException('Can not make rules without an entry');
+//        }
+
+
 
         $rules = [];
         foreach ($this->rules as $rule) {
             if (starts_with($rule, 'unique:')) {
-                $rule = str_replace('{entry.id}', $entry->exists ? $entry->id : 'NULL', $rule);
+                $str = ($this->hasEntry() && $this->entryExists()) ? $this->getEntry()->getId() : 'NULL';
+                $rule = str_replace('{entry.id}', $str, $rule);
             }
             $rules[] = $rule;
         }
 
         if (! $this->isRequired()) {
             $rules[] = 'nullable';
-        } elseif (! $this->resourceExists()) {
+        } elseif (! $this->entryExists()) {
             $rules[] = 'sometimes';
         }
 
@@ -229,6 +223,28 @@ abstract class Field implements HasResource
 //        $this->rules = array_merge($this->rules, $rules);
     }
 
+    public function setEntry(\SuperV\Platform\Domains\Resource\Model\Entry $entry): Field
+    {
+        $this->entry = $entry;
+
+        return $this;
+    }
+
+    public function getEntry(): ?ResourceEntryModel
+    {
+        return $this->entry ? $this->entry->getEntry() : null;
+    }
+
+    public function entryExists()
+    {
+        return optional($this->entry)->exists();
+    }
+
+    public function hasEntry()
+    {
+        return !is_null($this->entry);
+    }
+
     public function presentValue()
     {
         return $this->getValue();
@@ -236,11 +252,11 @@ abstract class Field implements HasResource
 
     public function getValue()
     {
-        if (! $this->resourceExists()) {
+        if (! $this->hasEntry()) {
             return null;
         }
 
-        $value = $this->getResourceEntry()->getAttribute($this->getColumnName());
+        $value = $this->getEntry()->getAttribute($this->getColumnName());
 
         if ($accessor = $this->getAccessor()) {
             return $accessor($value);
@@ -260,7 +276,7 @@ abstract class Field implements HasResource
             $value = $mutator($value);
         }
 
-        $this->getResourceEntry()->setAttribute($this->getColumnName(), $value);
+        $this->getEntry()->setAttribute($this->getColumnName(), $value);
 
         return null;
     }
@@ -270,15 +286,6 @@ abstract class Field implements HasResource
         return $this->setValue($request->__get($this->getColumnName()));
     }
 
-    public function resourceExists(): bool
-    {
-        return (bool)$this->resource;
-    }
-
-    public function getResourceEntry(): ?ResourceEntryModel
-    {
-        return $this->resource ? $this->resource->getEntry() : null;
-    }
 
     public function getAccessor(): ?Closure
     {
@@ -306,6 +313,7 @@ abstract class Field implements HasResource
     {
         return $this->required;
     }
+
 
     public static function make($name): self
     {

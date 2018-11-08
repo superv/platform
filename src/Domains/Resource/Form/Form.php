@@ -7,10 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Form\Jobs\BuildForm;
 use SuperV\Platform\Domains\Resource\Form\Jobs\PostForm;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Form
@@ -22,7 +21,7 @@ class Form
     /**
      * @var \Illuminate\Support\Collection
      */
-    protected $resources;
+    protected $entries;
 
     /**
      * @var \Illuminate\Support\Collection
@@ -42,30 +41,16 @@ class Form
     public function __construct()
     {
         $this->fields = collect();
-        $this->resources = collect();
+        $this->entries = collect();
     }
 
-    public function addResource(Resource $resource)
+    public function addEntry(Entry $entry)
     {
-        $this->resources->push($resource);
+        $this->entries->push($entry);
 
         return $this;
     }
 
-    public function build(): self
-    {
-        $this->uuid = Str::uuid();
-
-        $this->url = sv_url('sv/forms/'.$this->uuid());
-
-        BuildForm::dispatch($this);
-
-        $this->built = true;
-
-        $this->cache();
-
-        return $this;
-    }
 
     public function post(Request $request)
     {
@@ -127,36 +112,34 @@ class Form
         return $this->method;
     }
 
-    public function applyPostSaveCallbacks(): void
-    {
-        collect($this->postSaveCallbacks)->filter()->map(function (\Closure $callback) {
-            $callback();
-        });
-    }
-
-    /**
-     * @param \Illuminate\Http\Request $request
-     */
-    public function setFieldValues(Request $request): void
-    {
-        $this->fields->map(function (Field $field) use ($request) {
-            $this->postSaveCallbacks[] = $field->setValueFromRequest($request);
-        });
-    }
 
     public function isBuilt(): bool
     {
         return $this->built;
     }
 
-    public function getResources(): \Illuminate\Support\Collection
+    /**
+     * @param bool $built
+     */
+    public function setBuilt(bool $built): void
     {
-        return $this->resources;
+        $this->built = $built;
     }
 
-    public static function of(Resource $resource): self
+    public function getEntries(): \Illuminate\Support\Collection
     {
-        return app(Form::class)->addResource($resource);
+        return $this->entries;
+    }
+
+    public static function make(): self
+    {
+        $form = new static;
+
+        $form->uuid = Str::uuid();
+
+        $form->url = sv_url('sv/forms/'.$form->uuid());
+
+        return $form;
     }
 
     public static function fromCache($uuid): ?Form
