@@ -8,9 +8,12 @@ use SuperV\Modules\Nucleo\Domains\UI\SvCard;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\Jobs\BuildForm;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\Jobs\BuildFormDeprecated;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Http\Controllers\BaseApiController;
@@ -50,16 +53,21 @@ class ResourceController extends BaseApiController
 
     public function create()
     {
-        BuildForm::dispatch($form = Form::make(), collect([$this->resource()]));
+        $handle = $this->resource()->handle();
+        $watcher = new Entry($this->resource()->newEntryInstance());
+        $fields = ResourceModel::withSlug($this->resource()->handle());
 
-        $formData = $form->compose();
+        $form = (new FormBuilder)
+            ->addGroup($handle, $watcher, $fields)
+            ->prebuild()
+            ->getForm();
 
         $page = SvPage::make('')->addBlock(
-            SvBlock::make('sv-form-v2')->setProps($formData->toArray())
+            SvBlock::make('sv-form-v2')->setProps($form->compose())
         );
 
         $page->hydrate([
-            'title' => 'Create new '.$this->resource->singularLabel()
+            'title' => 'Create new '.$this->resource->singularLabel(),
         ]);
         $page->build();
 
@@ -68,12 +76,17 @@ class ResourceController extends BaseApiController
 
     public function edit()
     {
-        BuildForm::dispatch($form = Form::make(), collect([$this->resource()]));
+        $handle = $this->resource()->handle();
+        $watcher = new Entry($this->resource()->getEntry());
+        $fields = ResourceModel::withSlug($this->resource()->handle());
 
-        $formData = $form->compose();
+        $form = (new FormBuilder)
+            ->addGroup($handle, $watcher, $fields)
+            ->prebuild()
+            ->getForm();
 
         // main edit form
-        $editorTab = SvBlock::make('sv-form-v2')->setProps($formData->toArray());
+        $editorTab = SvBlock::make('sv-form-v2')->setProps($form->compose());
 
         $tabs = sv_tabs()->addTab(sv_tab('Edit', $editorTab)->autoFetch());
 
@@ -103,9 +116,9 @@ class ResourceController extends BaseApiController
         $page = SvPage::make('')->addBlock($tabs);
 
         $page->hydrate([
-             'title' => $this->resource->entryLabel(),
-            'actions' => ['create']
-         ]);
+            'title'   => $this->resource->entryLabel(),
+            'actions' => ['create'],
+        ]);
 
         $page->build();
 
@@ -131,5 +144,4 @@ class ResourceController extends BaseApiController
 
         return $this->resource;
     }
-
 }

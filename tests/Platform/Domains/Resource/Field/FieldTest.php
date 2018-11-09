@@ -12,7 +12,7 @@ class FieldTest extends ResourceTestCase
     /** @test */
     function instantiates()
     {
-        $field = new Field('display_name', 'text');
+        $field = Field::make(['name' => 'display_name', 'type' => 'text']);
         $this->assertNotNull($field->uuid());
         $this->assertInstanceOf(FieldValue::class, $field->value());
 
@@ -28,13 +28,13 @@ class FieldTest extends ResourceTestCase
     function notify_watchers()
     {
         $entry = new TestEntry();
-        $field = new Field('name', 'text');
+        $field = Field::make(['name' => 'name', 'type' => 'text']);
 
-        $field->addWatcher($entry);
+        $field->setWatcher($entry);
         $field->setValue('Omar');
         $this->assertEquals('Omar', $entry->name);
 
-        $field->removeWatcher($entry);
+        $field->removeWatcher();
         $field->setValue('Hattab');
         $this->assertEquals('Omar', $entry->name);
     }
@@ -44,10 +44,16 @@ class TestEntry implements Watcher
 {
     public $name;
 
-    public function watchableUpdated($params)
+    public function setAttribute($key, $value)
     {
-        if ($params instanceof FieldValue) {
-            $this->{$params->fieldName()} = $params->get();
-        }
+        $this->{$key} = $value;
+    }
+
+    public function getAttribute($key)
+    {
+    }
+
+    public function save()
+    {
     }
 }

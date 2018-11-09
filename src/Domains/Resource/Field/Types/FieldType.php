@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
@@ -28,9 +29,9 @@ abstract class FieldType implements NeedsEntry
     protected $entry;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Field\FieldModel
+     * @var \SuperV\Platform\Domains\Resource\Field\Field
      */
-    protected $fieldEntry;
+    protected $field;
 
     /**
      * @var string
@@ -78,10 +79,11 @@ abstract class FieldType implements NeedsEntry
     /** @var \SuperV\Platform\Domains\Resource\Field\FieldValue */
     protected $value;
 
-    public function __construct(FieldModel $entry)
-    {
-        $this->fieldEntry = $entry;
-    }
+    protected $accessor;
+
+    protected $mutator;
+
+
 
     public function show(): bool
     {
@@ -136,7 +138,7 @@ abstract class FieldType implements NeedsEntry
 
     public function uuid()
     {
-        return $this->fieldEntry->uuid();
+        return $this->field->uuid();
     }
 
     public function getName(): ?string
@@ -159,6 +161,16 @@ abstract class FieldType implements NeedsEntry
         return $this->label ?: ucwords(str_replace('_', ' ', $this->name));
     }
 
+    public function isUnique(): bool
+    {
+        return $this->unique;
+    }
+
+    public function isRequired(): bool
+    {
+        return $this->required;
+    }
+
     public function getType(): string
     {
         return $this->type;
@@ -166,19 +178,19 @@ abstract class FieldType implements NeedsEntry
 
     public function getFieldEntry(): ?FieldModel
     {
-        return $this->fieldEntry;
+        return null;
     }
 
     public function hasFieldEntry(): bool
     {
-        return $this->fieldEntry && $this->fieldEntry->exists;
+        return false;
+//        return $this->fieldEntry && $this->fieldEntry->exists;
     }
 
     public function mergeConfig(array $config)
     {
         $this->config = array_merge($this->config, $config);
     }
-
 
     public function getRules(): array
     {
@@ -197,8 +209,6 @@ abstract class FieldType implements NeedsEntry
 //        if (! $entry = $this->getEntry()) {
 //            throw new PlatformException('Can not make rules without an entry');
 //        }
-
-
 
         $rules = [];
         foreach ($this->rules as $rule) {
@@ -224,16 +234,16 @@ abstract class FieldType implements NeedsEntry
 //        $this->rules = array_merge($this->rules, $rules);
     }
 
+    public function getEntry(): ?ResourceEntryModel
+    {
+        return $this->entry ? $this->entry->getEntry() : null;
+    }
+
     public function setEntry(\SuperV\Platform\Domains\Resource\Model\Entry $entry): FieldType
     {
         $this->entry = $entry;
 
         return $this;
-    }
-
-    public function getEntry(): ?ResourceEntryModel
-    {
-        return $this->entry ? $this->entry->getEntry() : null;
     }
 
     public function entryExists()
@@ -243,7 +253,7 @@ abstract class FieldType implements NeedsEntry
 
     public function hasEntry()
     {
-        return !is_null($this->entry);
+        return ! is_null($this->entry);
     }
 
     public function presentValue()
@@ -266,11 +276,6 @@ abstract class FieldType implements NeedsEntry
         return $value;
     }
 
-    public function getValueForValidation()
-    {
-        return $this->getValue();
-    }
-
     public function setValue($value): ?Closure
     {
         if ($mutator = $this->getMutator()) {
@@ -282,18 +287,22 @@ abstract class FieldType implements NeedsEntry
         return null;
     }
 
+    public function getValueForValidation()
+    {
+        return $this->getValue();
+    }
+
     public function setValueFromRequest(Request $request)
     {
         return $this->setValue($request->__get($this->getColumnName()));
     }
 
-
     public function getAccessor(): ?Closure
     {
-        return null;
+        return $this->accessor;
     }
 
-    public function setAccessor(Closure $accessor)
+    public function setAccessor(?Closure $accessor)
     {
         $this->accessor = $accessor;
 
@@ -305,16 +314,10 @@ abstract class FieldType implements NeedsEntry
         return null;
     }
 
-    public function isUnique(): bool
+    public function watchField(Field $field)
     {
-        return $this->unique;
+        $field->on('accessing', $this->getAccessor());
     }
-
-    public function isRequired(): bool
-    {
-        return $this->required;
-    }
-
 
     public static function make($name): self
     {
@@ -324,12 +327,32 @@ abstract class FieldType implements NeedsEntry
         ]));
     }
 
-    public static function fromEntry(FieldModel $entry): self
-    {
-        $field = new static($entry);
 
-        $field->hydrate($entry->toArray());
-        $field->setRules($entry->getRules()); // @TODO: refactor, very problematic
+    public static function resolveType(FieldModel $fieldEntry): FieldType
+    {
+        $class = FieldType::resolveClass($fieldEntry->getType());
+
+        return $class::fromEntry($fieldEntry);
+    }
+
+    public static function fromField(Field $field)
+    {
+        $class = FieldType::resolveClass($field->getType());
+
+        /** @var \SuperV\Platform\Domains\Resource\Field\Types\FieldType $fieldType */
+        $fieldType = new $class;
+
+        return $fieldType;
+    }
+
+    public static function fromEntry(FieldModel $fieldEntry): self
+    {
+        $class = FieldType::resolveClass($fieldEntry->getType());
+
+        $field = new $class($fieldEntry);
+
+        $field->hydrate($fieldEntry->toArray());
+        $field->setRules($fieldEntry->getRules()); // @TODO: refactor, very problematic
 
         return $field;
     }

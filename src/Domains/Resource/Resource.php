@@ -4,7 +4,8 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Exception;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
+use SuperV\Platform\Domains\Resource\Field\FieldDefactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Jobs\BuildResourceJob;
@@ -86,7 +87,7 @@ class Resource
 
         $this->getFields(false)
                  ->transform(function ($field) {
-                     $field = (new FieldFactory($this))->make($field);
+                     $field = (new FieldDefactory($this))->make($field);
 
                      $this->freshFields->push($field->copy());
 

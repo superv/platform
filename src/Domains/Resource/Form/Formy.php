@@ -4,19 +4,24 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Resource\Concerns\Watchable;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldsProvider;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class Formy
 {
-    use Watchable;
-
     /**
-     * @var array
+     * @var \Illuminate\Support\Collection
      */
     protected $fields;
+
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $fieldTypes;
 
     /**
      * @var string
@@ -38,69 +43,115 @@ class Formy
      */
     protected $request;
 
-    protected $isBooted = false;
+    /**
+     * @var bool
+     */
+    protected $booted = false;
 
-    public function __construct(array $fields)
+    public function __construct(array $fields = [])
     {
         $this->fields = collect($fields);
-    }
-
-    //
-    //      < M U T A T O R   M E T H O D S >
-    //
-
-    public function boot(): self
-    {
-        $this->uuid = Str::uuid()->toString();
+        $this->uuid = uuid();
         $this->url = sv_url('sv/forms/'.$this->uuid);
-
-        $this->isBooted = true;
-
-        $this->cache();
-
-        return $this;
     }
 
-    public function save()
+    public function boot()
     {
-        if (! $this->isBooted) {
-            PlatformException::fail('Form is not booted yet.');
+        if ($this->booted) {
+            PlatformException::fail("Form already booted");
         }
 
-        $this->fields()->map(function (Field $field) {
+        $this->booted = true;
+
+        // Make field type and tell them to watch the fields
+        $this->getFields()->map(function (Field $field) {
+            FieldType::fromField($field)->watchField($field);
+        });
+    }
+
+    public function save(): self
+    {
+        $this->ensureBooted();
+
+        $this->getFields()->map(function (Field $field) {
             $field->setValue($this->request->__get($field->getName()));
         });
 
         $this->notifyWatchers($this);
+
+        return $this;
     }
 
-    public function request(Request $request)
+    public function setRequest(Request $request)
     {
         $this->request = $request;
     }
 
-    //
-    //      </ M U T A T O R   M E T H O D S >
-    //
+    public function addGroups(Collection $groups)
+    {
+        $groups->map(function (Group $group) {
+            $this->fields = $this->fields->merge($group->getFields());
+            if ($group->getWatcher()) {
+                $this->addWatcher($group->getHandle(), $group->getWatcher());
+            }
+        });
+    }
+
+    protected $watchers = [];
+
+    public function addWatcher($handle, Watcher $watcher)
+    {
+        $this->watchers[$handle] = $watcher;
+
+        return $this;
+    }
+
+    public function removeWatcher(Watcher $detach)
+    {
+        $this->watchers = collect($this->watchers)->filter(function (Watcher $watcher) use ($detach) {
+            return $watcher !== $detach;
+        })->filter()->values()->all();
+
+        return $this;
+    }
+
+    public function notifyWatchers($params = null)
+    {
+        collect($this->watchers)->map(function (Watcher $watcher) use ($params) {
+            $watcher->save();
+        });
+    }
 
     public function uuid(): string
     {
         return $this->uuid;
     }
 
+    //
+    //      <!---  M U T A T O R   M E T H O D S   E N D S  H E R E  --->
+    //
 
     public function compose(): array
     {
         return [
             'url'    => $this->getUrl(),
             'method' => $this->getMethod(),
-            'fields' => $this->fields()->map->compose()->all(),
+            'fields' => $this->getFields()->map->compose()->all(),
         ];
     }
 
-    public function fields(): Collection
+    public function getFields(): Collection
     {
         return $this->fields;
+    }
+
+    public function getField(string $name): Field
+    {
+        return $this->getFields()
+                    ->first(
+                        function (Field $field) use ($name) {
+                            return $field->getName() === $name;
+                        });
     }
 
     public function getUrl(): string
@@ -115,11 +166,19 @@ class Formy
 
     public function cache()
     {
-        if (! $this->isBooted) {
+        cache()->forever($this->cacheKey($this->uuid()), serialize($this));
+    }
+
+    public function ensureBooted(): void
+    {
+        if (! $this->booted) {
             PlatformException::fail('Form is not booted yet.');
         }
+    }
 
-        cache()->forever($this->cacheKey($this->uuid()), serialize($this));
+    public function getWatcher($handle)
+    {
+        return $this->watchers[$handle];
     }
 
     public static function cacheKeyPrefix()
@@ -127,9 +186,9 @@ class Formy
         return 'sv:forms';
     }
 
-    public static function cacheKey(?string $uuid = null): string
+    public static function cacheKey(string $uuid): string
     {
-        return static::cacheKeyPrefix().str_prefix($uuid, ':');
+        return static::cacheKeyPrefix().':'.$uuid;
     }
 
     public static function wakeup($uuid): ?self
@@ -139,5 +198,12 @@ class Formy
         }
 
         return null;
+    }
+
+    public static function of(FieldsProvider $provider): Formy
+    {
+        $form = (new static($provider->provide()));
+
+        return $form;
     }
 }

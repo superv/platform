@@ -2,9 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
+use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Domains\Resource\Resource;
 
-class Entry
+class Entry implements Watcher
 {
     /**
      * @var \SuperV\Platform\Domains\Resource\Model\ResourceEntryModel
@@ -57,5 +58,20 @@ class Entry
         }
 
         $this->entry = $resource->loadEntry($this->entryId)->getEntry();
+    }
+
+    public function setAttribute($key, $value)
+    {
+        $this->entry->setAttribute($key, $value);
+    }
+
+    public function getAttribute($key)
+    {
+        return $this->entry->getAttribute($key);
+    }
+
+    public function save()
+    {
+        return $this->entry->save();
     }
 }

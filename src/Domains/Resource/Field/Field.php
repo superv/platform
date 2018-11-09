@@ -2,8 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
-use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Resource\Concerns\Watchable;
+use Closure;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
+use SuperV\Platform\Support\Concerns\Hydratable;
 
 /**
  * Class Field  IMMUTABLE!!!!!!!!
@@ -12,7 +13,8 @@ use SuperV\Platform\Domains\Resource\Concerns\Watchable;
  */
 class Field
 {
-    use Watchable;
+    use Hydratable;
+    use FiresCallbacks;
 
     /**
      * @var string
@@ -39,19 +41,35 @@ class Field
      */
     protected $value;
 
+    /** @var Closure */
+    protected $accessor;
 
-    public function __construct(string $name, string $type)
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Field\Watcher
+     */
+    protected $watcher;
+
+    protected function __construct()
     {
-        $this->name = $name;
-        $this->type = $type;
-        $this->uuid = Str::uuid()->toString();
+    }
+
+    protected function boot()
+    {
+        $this->uuid = $this->uuid ?? uuid();
 
         $this->value = new FieldValue($this);
     }
 
-    public function uuid(): string
+    public function getAccessor(): ?Closure
     {
-        return $this->uuid;
+        return $this->accessor;
+    }
+
+    public function setAccessor(?Closure $accessor)
+    {
+        $this->accessor = $accessor;
+
+        return $this;
     }
 
     public function value(): FieldValue
@@ -59,11 +77,48 @@ class Field
         return $this->value;
     }
 
+    public function getValue()
+    {
+        $value = $this->value->get();
+
+        if ($this->hasCallback('accessing')) {
+            $this->setAccessor($this->getCallback('accessing'));
+        }
+
+        if ($accessor = $this->getAccessor()) {
+            return $accessor($value);
+        }
+
+        return $value;
+    }
+
     public function setValue($value)
     {
         $this->value->set($value);
 
-        $this->notifyWatchers($this->value);
+        if ($this->watcher) {
+            $this->watcher->setAttribute($this->getName(), $this->value->get());
+        }
+    }
+
+    public function setWatcher(Watcher $watcher)
+    {
+        $this->watcher = $watcher;
+
+        return $this;
+    }
+
+    public function removeWatcher()
+    {
+        $this->watcher = null;
+
+        return $this;
+    }
+
+    public function setValueFromWatcher()
+    {
+        $value = $this->watcher->getAttribute($this->getName());
+        $this->setValue($value);
     }
 
     public function getType(): string
@@ -88,6 +143,21 @@ class Field
             'uuid'  => $this->uuid(),
             'name'  => $this->getName(),
             'label' => $this->getLabel(),
+            'value' => $this->getValue(),
         ];
+    }
+
+    public function uuid(): string
+    {
+        return $this->uuid;
+    }
+
+    public static function make(array $params): self
+    {
+        $field = new static;
+        $field->hydrate($params);
+        $field->boot();
+
+        return $field;
     }
 }

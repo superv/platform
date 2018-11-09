@@ -6,6 +6,7 @@ use Hub;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factory as ModelFactory;
 use Illuminate\Foundation\Testing\TestResponse;
+use Illuminate\Http\Request;
 use PHPUnit\Framework\Assert;
 use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Port\Port;
@@ -185,7 +186,7 @@ trait TestHelpers
 
     public function postJsonUser($uri, array $data = []): TestResponse
     {
-        if (!$this->testUser) {
+        if (! $this->testUser) {
             $this->newUser();
         }
 
@@ -194,10 +195,20 @@ trait TestHelpers
 
     public function getJsonUser($uri): TestResponse
     {
-        if (!$this->testUser) {
+        if (! $this->testUser) {
             $this->newUser();
         }
 
         return $this->getJson($uri, $this->getHeaderWithAccessToken());
+    }
+
+    protected function makePostRequest($uri, array $data = []): Request
+    {
+        if (is_array($uri) && empty($data)) {
+            $data = $uri;
+            $uri = '';
+        }
+
+        return Request::create($uri, 'POST', $data);
     }
 }

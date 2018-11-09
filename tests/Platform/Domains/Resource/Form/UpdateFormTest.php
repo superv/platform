@@ -5,12 +5,16 @@ namespace Tests\Platform\Domains\Resource\Form;
 use Current;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\Jobs\BuildForm;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\Jobs\BuildFormDeprecated;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class PostFormTest extends ResourceTestCase
+class UpdateFormTest extends ResourceTestCase
 {
     protected function setUp()
     {
@@ -49,21 +53,23 @@ class PostFormTest extends ResourceTestCase
 
         $drop->loadEntry($resourceModelEntry->getKey());
 
-        BuildForm::dispatch($form = Form::make(), collect([$drop]));
+//        BuildFormDeprecated::dispatch($form = Form::make(), collect([$drop]));
+//        $formFields = $form->getFields();
+//        $this->assertNotNull(Form::fromCache($form->uuid()));
+//        $this->assertEquals(4, $formFields->count());
 
-        $formFields = $form->getFields();
+        $builder = (new FormBuilder)->setProvider(ResourceModel::withSlug('test_users'))->prebuild();
+        $builder->addEntry(new Entry($drop->getEntry()));
+        $form = $builder->getForm();
 
-        $this->assertNotNull(Form::fromCache($form->uuid()));
-        $this->assertEquals(4, $formFields->count());
+        $this->assertEquals(Current::url('sv/forms/'.$form->uuid()), $form->getUrl());
+        $this->assertEquals('post', $form->getMethod());
 
-        $formData = $form->compose();
-        $this->assertEquals(Current::url('sv/forms/'.$form->uuid()), $formData->getUrl());
-        $this->assertEquals('post', $formData->getMethod());
+        $builder = FormBuilder::wakeup($builder->uuid());
+        $freshForm = $builder->build()->getForm();
 
-        $formDataArray = $formData->toArray();
-
-        $valueMap = collect($formDataArray['fields'])->map(function ($field) {
-            return [$field['name'], $field['value'] ?? null];
+        $valueMap = $freshForm->getFields()->map(function (Field $field) {
+            return [$field->getName(), $field->getValue() ?? null];
         })->toAssoc()->all();
 
         $this->assertEquals([
@@ -86,16 +92,15 @@ class PostFormTest extends ResourceTestCase
     {
         $resource = ResourceFactory::make('test_users');
         $nicola = $resource->create([
-                    'name'     => 'Nicola Tesla',
-                    'age'      => 99,
-                    'bio'      => 'Dead',
-                    'group_id' => 1,
-                ]);
+            'name'     => 'Nicola Tesla',
+            'age'      => 99,
+            'bio'      => 'Dead',
+            'group_id' => 1,
+        ]);
 
         $resource->loadEntry($nicola->getKey());
 
-        BuildForm::dispatch($form = Form::make(), collect([$resource]));
-
+        BuildFormDeprecated::dispatch($form = Form::make(), collect([$resource]));
 
         $data = [
             'name'     => 'Updated Nicola Tesla',
@@ -113,7 +118,4 @@ class PostFormTest extends ResourceTestCase
         $this->assertEquals('Live', $entry->bio);
         $this->assertEquals(2, $entry->group_id);
     }
-
-
-
 }

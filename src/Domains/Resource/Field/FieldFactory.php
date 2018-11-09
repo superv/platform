@@ -3,54 +3,45 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Resource;
 
 class FieldFactory
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Resource
+     * @var \SuperV\Platform\Domains\Resource\Field\FieldModel
      */
-    protected $resource;
+    protected $fieldEntry;
 
-    protected $base = 'SuperV\Platform\Domains\Resource\Field\Types';
+    /**
+     * @var array
+     */
+    protected $params;
 
-    public function __construct(Resource $resource)
+    protected function create(array $params): Field
     {
-        $this->resource = $resource;
-    }
-
-    public function make($field)
-    {
-        if (is_string($field)) {
-            $field = $this->resolveFromString($field);
-        } elseif ($field instanceof FieldConfig) {
-            $config = $field;
-            $field = $this->resolveFromString($config->getFieldName());
-            $field->mergeRules($config->getRules());
-            $field->mergeConfig($config->getConfig());
-        } elseif ($field instanceof FieldModel) {
-            $field = $this->resolveFromFieldEntry($field);
-        }
-
-//        if ($field instanceof NeedsEntry) {
-//            $entry = $this->resource->getEntry();
-//            $field->setEntry(new Entry($entry));
-//        }
+        $field = Field::make($params);
 
         return $field;
     }
 
-    protected function resolveFromString($name)
+    public function fromType(FieldType $fieldType): Field
     {
-        $fieldEntry = FieldModel::query()->where('name', $name)->where('resource_id', $this->resource->id())->first();
+        $params = [
+            'name' => $fieldType->getName(),
+            'type' => $fieldType->getType(),
+        ];
 
-        return $this->resolveFromFieldEntry($fieldEntry);
+
+        return $this->create($params);
     }
 
-    protected function resolveFromFieldEntry(FieldModel $fieldEntry): FieldType
+    public function fromEntry(FieldModel $fieldEntry): Field
     {
-        $class = FieldType::resolveClass($fieldEntry->getType());
-
-        return $class::fromEntry($fieldEntry);
+        return $this->create($fieldEntry->toArray());
     }
+
+    public static function createFromEntry(FieldModel $entry): Field
+    {
+        return (new static)->fromEntry($entry);
+    }
+
 }

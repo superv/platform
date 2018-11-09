@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Dispatchable;
 
-class BuildForm
+class BuildFormDeprecated
 {
     use Dispatchable;
 

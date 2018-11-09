@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource\Field\Types;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Field\FieldConfig;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Field\FieldDefactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\Select;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
@@ -38,7 +38,7 @@ class FieldTypeTest extends ResourceTestCase
     /** @test */
     function builds_from_string()
     {
-        $builder = new FieldFactory($this->resource);
+        $builder = new FieldDefactory($this->resource);
         $field = $builder->make('name');
 
         $this->assertInstanceOf(Text::class, $field);
@@ -52,7 +52,7 @@ class FieldTypeTest extends ResourceTestCase
     {
         $fieldEntry = ResourceModel::withSlug('test_users')->getField('name');
 
-        $builder = new FieldFactory($this->resource);
+        $builder = new FieldDefactory($this->resource);
         $field = $builder->make($fieldEntry);
 
         $this->assertInstanceOf(Text::class, $field);
@@ -64,7 +64,7 @@ class FieldTypeTest extends ResourceTestCase
     /** @test */
     function builds_from_instance()
     {
-        $builder = new FieldFactory($this->resource);
+        $builder = new FieldDefactory($this->resource);
         $field = $builder->make(Select::make('gender'));
 
         $this->assertInstanceOf(Select::class, $field);
@@ -76,7 +76,7 @@ class FieldTypeTest extends ResourceTestCase
     /** @test */
     function builds_from_config()
     {
-        $builder = new FieldFactory($this->resource);
+        $builder = new FieldDefactory($this->resource);
         $field = $builder->make(
             FieldConfig::field('name')
                        ->mergeRules(['min:10'])
@@ -88,7 +88,7 @@ class FieldTypeTest extends ResourceTestCase
         $this->assertEquals(['foo' => 'bar', 'length' => 255], $field->getConfig());
 //        $this->assertEquals($this->resource, $field->getResource());
 
-        $builder = new FieldFactory($this->resource);
+        $builder = new FieldDefactory($this->resource);
         $age = $builder->make(
             FieldConfig::field('age')
                        ->mergeRules(['min:18'])
