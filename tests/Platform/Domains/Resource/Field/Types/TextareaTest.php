@@ -17,11 +17,11 @@ class TextareaTest extends ResourceTestCase
         });
         $this->assertColumnExists($res->getHandle(), 'bio');
 
-        $field = $res->freshWithFake()->build()->getFieldType('bio');
+        $fieldType = $res->getFieldType('bio');
 
-        $this->assertInstanceOf(Textarea::class, $field);
-        $this->assertEquals('textarea', $field->getType());
+        $this->assertInstanceOf(Textarea::class, $fieldType);
+        $this->assertEquals('textarea', $fieldType->getType());
 
-        $this->assertEquals(true, $field->getConfigValue('hide.table'));
+        $this->assertEquals(true, $fieldType->getConfigValue('hide.table'));
     }
 }

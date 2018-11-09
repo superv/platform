@@ -3,9 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
-use Exception;
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
@@ -94,7 +92,6 @@ abstract class FieldType implements NeedsEntry
         return $this;
     }
 
-
     public function getName(): ?string
     {
         return $this->name;
@@ -171,7 +168,7 @@ abstract class FieldType implements NeedsEntry
         if (! $this->isRequired()) {
             $rules[] = 'nullable';
         } elseif (! $this->entryExists()) {
-            $rules[] = 'sometimes';
+//            $rules[] = 'sometimes';
         }
 
         return $rules;
@@ -272,17 +269,6 @@ abstract class FieldType implements NeedsEntry
         return null;
     }
 
-//    public function attach(Field $field)
-//    {
-//        if ($this->hasAccessor()) {
-//            $field->on('accessing', $this->getAccessor());
-//        }
-//
-//        $field->setVisible($this->visible())
-//              ->setColumnName($this->getColumnName())
-//              ->setHasDatabaseColumn($this instanceof NeedsDatabaseColumn);
-//    }
-
     public static function make($name): self
     {
         return static::fromEntry(new FieldModel([
@@ -297,14 +283,6 @@ abstract class FieldType implements NeedsEntry
 
         return $class::fromEntry($fieldEntry);
     }
-//
-//    public static function attachTo(Field $field)
-//    {
-//        $type = static::fromField($field);
-//        $type->attach($field);
-//
-//        return $type;
-//    }
 
     public static function fromField(Field $field)
     {

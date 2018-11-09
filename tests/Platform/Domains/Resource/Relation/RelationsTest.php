@@ -182,8 +182,9 @@ class RelationsTest extends ResourceTestCase
         $this->assertEquals(1, $tableConfig->getColumns()->count());
 
         $table = Table::config($tableConfig)->build();
+        $allPost = \DB::table('t_posts')->get();
 
-        $this->assertEquals(8, \DB::table('t_posts')->count());
+        $this->assertEquals(8, $allPost->count());
         $this->assertEquals(5, $table->getRows()->count());
     }
 

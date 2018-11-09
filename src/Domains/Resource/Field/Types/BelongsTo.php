@@ -4,21 +4,19 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
+use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class BelongsTo extends FieldType implements NeedsDatabaseColumn
 {
-    /** @var \SuperV\Platform\Domains\Resource\Relation\RelationConfig */
-    protected $relationConfig;
 
     public function build(): FieldType
     {
-        $this->buildRelationConfig();
-
         $this->buildOptions();
-
-        $this->buildConfig();
 
         return $this;
     }
@@ -30,26 +28,11 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         return parent::buildForView($query);
     }
 
-    public function presentValue()
-    {
-        $this->buildRelationConfig();
-
-        /** @var ResourceEntryModel $relatedEntry */
-        $relatedEntry = $this->getEntry()->getRelation($this->getName());
-
-        return $relatedEntry ? $relatedEntry->wrap()->entryLabel() : null;
-    }
-
     public function getPresentingCallback(): ?Closure
     {
-        return function (?ResourceEntryModel $relatedEntry) {
-            return $relatedEntry ? $relatedEntry->wrap()->entryLabel() : null;
+        return function (?Entry $relatedEntry) {
+            return $relatedEntry ? $relatedEntry->getLabel() : null;
         };
-    }
-
-    protected function buildRelationConfig()
-    {
-        $this->relationConfig = RelationConfig::create($this->type, $this->config);
     }
 
     /**
@@ -57,19 +40,20 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
      */
     protected function buildOptions()
     {
+        $relationConfig = RelationConfig::create($this->type, $this->config);
 
-//        $entryLabel = $this->relatedResource->getConfigValue('entry_label', '#{id}');
-        $entryLabel = '#{id}';
+        $relatedResource = ResourceFactory::make($relationConfig->getRelatedResource());
+        $entryLabel = $relatedResource->getConfigValue('entry_label', '#{id}');
 
-        $query = $this->entry->newEntryInstance()->newQuery();
+        $query = $relatedResource->newQuery();
 
         if ($this->hasCallback('querying')) {
             $this->fire('querying', ['query' => $query]);
 
             // If parent exists, make sure we get the
             // current related entry in the list
-            if (optional($this->getFieldEntry())->exists) {
-                $query->orWhere($query->getModel()->getQualifiedKeyName(), $this->getFieldEntry()->getAttribute($this->getName()));
+            if ($this->entryExists()) {
+                $query->orWhere($query->getModel()->getQualifiedKeyName(), $this->getEntry()->getAttribute($this->getName()));
             }
         } else {
             $query->get();
@@ -80,11 +64,8 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         })->all();
 
         $this->setConfigValue('options', $options);
-    }
 
-    protected function buildConfig(): void
-    {
-        $this->setConfigValue('placeholder', 'Select '.$this->entry->getHandle());
+        $this->setConfigValue('placeholder', 'Choose a '.$this->entry->getHandle());
     }
 
     public function setValue($value): ?Closure

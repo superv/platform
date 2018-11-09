@@ -45,7 +45,7 @@ class MorphOneTest extends ResourceTestCase
         ], $relation->getConfig()->toArray());
     }
 
-    /** @test */
+
     function makes_form()
     {
         $relation = $this->parentResource->getRelation('tag');

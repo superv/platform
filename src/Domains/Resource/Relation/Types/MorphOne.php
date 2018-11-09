@@ -8,17 +8,18 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\Jobs\BuildFormDeprecated;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class MorphOne extends Relation implements ProvidesForm
 {
-    protected function newRelationQuery(ResourceEntryModel $instance): EloquentRelation
+    protected function newRelationQuery(Entry $relatedEntryInstance): EloquentRelation
     {
         $morphName = $this->config->getMorphName();
 
         return new EloquentMorphOne(
-            $instance->newQuery(),
+            $relatedEntryInstance->newQuery(),
             $this->getParentEntry(),
             $morphName.'_type',
             $morphName.'_id',

@@ -3,6 +3,10 @@
 namespace SuperV\Platform\Domains\Resource\Model;
 
 use SuperV\Platform\Domains\Resource\Fake;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\Jobs\AttachTypeToField;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -31,7 +35,7 @@ class Entry implements Watcher
 
     public function id()
     {
-        return $this->entry->getKey();
+        return $this->getEntry()->getKey();
     }
 
     public function getEntry(): ResourceEntryModel
@@ -41,7 +45,7 @@ class Entry implements Watcher
 
     public function exists()
     {
-        return $this->entry && $this->entry->exists;
+        return $this->getEntry() && $this->getEntry()->exists;
     }
 
     public function __sleep()
@@ -61,30 +65,30 @@ class Entry implements Watcher
             return;
         }
 
-        $resource = Resource::of($this->handle);
+//        $resource = Resource::of($this->getHandle());
 
         if (! $this->entryId) {
-            $this->entry = $resource->newEntryInstance();
+            $this->entry = static::newInstance($this->getHandle())->getEntry();
 
             return;
         }
 
-        $this->entry = $resource->loadEntry($this->entryId)->getEntry();
+        $this->entry = $resource->find($this->entryId)->getEntry();
     }
 
     public function setAttribute($key, $value)
     {
-        $this->entry->setAttribute($key, $value);
+        $this->getEntry()->setAttribute($key, $value);
     }
 
     public function getAttribute($key)
     {
-        return $this->entry->getAttribute($key);
+        return $this->getEntry()->getAttribute($key);
     }
 
     public function save()
     {
-        return $this->entry->save();
+        return $this->getEntry()->save();
     }
 
     public function getHandle(): string
@@ -94,7 +98,17 @@ class Entry implements Watcher
 
     public function getResource(): Resource
     {
+        if (!$this->resource) {
+            $this->resource = Resource::of($this->getHandle());
+        }
         return $this->resource;
+    }
+
+    public function getLabel()
+    {
+        $label = $this->getResource()->getConfigValue('entry_label');
+
+        return sv_parse($label, $this->getEntry()->toArray());
     }
 
     public function route($route)
@@ -106,18 +120,24 @@ class Entry implements Watcher
         if ($route === 'delete') {
             return $base.'/'.$this->id().'/delete';
         }
-        if ($route === 'create') {
-            return $base.'/create';
-        }
+    }
 
-        if ($route === 'index') {
-            return $base;
-        }
+    public function getField(string $name): ?Field
+    {
+        return $this->getResource()->getField($name)->setWatcher($this);
+    }
+
+    public function getFieldType(string $name): ?FieldType
+    {
+        $fieldType = FieldType::fromEntry(FieldModel::withUuid($this->getField($name)->uuid()));
+        $fieldType->setEntry($this);
+
+        return $fieldType;
     }
 
     public function newQuery()
     {
-        return $this->entry->newQuery();
+        return $this->entry->newQuery()->select($this->getHandle().'.*');
     }
 
     public function __call($name, $arguments)
@@ -154,7 +174,7 @@ class Entry implements Watcher
                     ->all();
             }
 
-            return static::make(Fake::create($resource), $resource);
+            return Fake::create($resource, $overrides);
         }
 
         PlatformException::fail("Can not fake, resource not found");

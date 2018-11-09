@@ -8,6 +8,8 @@ use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Types\Number;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
+use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class ResourceTest extends ResourceTestCase
@@ -19,7 +21,7 @@ class ResourceTest extends ResourceTestCase
 
         $resourceModel = $resource->newEntryInstance();
 
-        $this->assertInstanceOf(Model::class, $resourceModel);
+        $this->assertInstanceOf(Entry::class, $resourceModel);
         $this->assertEquals('test_users', $resourceModel->getTable());
     }
 

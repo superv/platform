@@ -44,9 +44,9 @@ class ResourceConfigTest extends ResourceTestCase
             $resource->entryLabel('{last_name}, {first_name}');
         });
 
-        $res = $res->freshWithFake(['first_name' => 'Nicola', 'last_name' => 'Tesla'])->build();
+        $entry = $res->fake(['first_name' => 'Nicola', 'last_name' => 'Tesla']);
 
-        $this->assertEquals('Tesla, Nicola', $res->entryLabel());
+        $this->assertEquals('Tesla, Nicola', $entry->getLabel());
     }
 
     /** @test */
@@ -58,9 +58,9 @@ class ResourceConfigTest extends ResourceTestCase
             $table->string('last_name')->entryLabel();
         });
 
-        $res = $res->freshWithFake()->build();
+        $entry = $res->fake();
 
-        $this->assertEquals($res->getEntry()->getAttribute('last_name'), $res->entryLabel());
+        $this->assertEquals($entry->getAttribute('last_name'), $entry->getLabel());
     }
 
     /** @test */

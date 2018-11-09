@@ -77,12 +77,12 @@ class ResourceController extends BaseApiController
 
     public function edit()
     {
-        $handle = $this->resource()->getHandle();
-        $watcher = new Entry($this->resource()->getEntry());
-        $fields = ResourceModel::withSlug($this->resource()->getHandle());
-
         $form = (new FormBuilder)
-            ->addGroup($handle, $watcher, $fields)
+            ->addGroup(
+                $handle = $this->resource()->getHandle(),
+                $entry = new Entry($this->resource()->getEntry()),
+                $fields = ResourceModel::withSlug($this->resource()->getHandle())
+            )
             ->prebuild()
             ->getForm();
 
@@ -96,9 +96,8 @@ class ResourceController extends BaseApiController
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesForm; })
                        ->map(function (ProvidesForm $relation) use ($tabs) {
                            $form = $relation->makeForm();
-                           $formData = $form->compose();
 
-                           return $tabs->addTab(sv_tab($relation->getName(), SvBlock::make('sv-form-v2')->setProps($formData->toArray())));
+                           return $tabs->addTab(sv_tab($relation->getName(), SvBlock::make('sv-form-v2')->setProps($form->compose())));
                        });
 
         // make tables
@@ -117,7 +116,7 @@ class ResourceController extends BaseApiController
         $page = SvPage::make()->addBlock($tabs);
 
         $page->hydrate([
-            'title'   => $this->resource->entryLabel(),
+            'title'   => $entry->getLabel(),
             'actions' => ['create'],
         ]);
 

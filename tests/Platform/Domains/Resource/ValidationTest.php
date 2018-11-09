@@ -34,7 +34,7 @@ class ValidationTest extends ResourceTestCase
         //upload
         Storage::fake('fakedisk');
 
-        $field = $res->freshWithFake()->build()->getFieldType('avatar');
+        $field = $res->fake()->getFieldType('avatar');
 
         $field->setValue(new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png'));
     }

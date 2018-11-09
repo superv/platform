@@ -9,27 +9,20 @@ use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\Entry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
 class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEntry
 {
-    /** @var \SuperV\Platform\Domains\Resource\Model\Entry */
-    protected $resourceEntry;
-
     protected function newRelationQuery(Entry $relatedEntryInstance): EloquentRelation
     {
         $entry = $this->resourceEntry->getEntry();
-        $parentEntry = $this->getParentEntry() ? $this->getParentEntry()->getEntry() : $entry;
 
         return new EloquentHasMany(
             $relatedEntryInstance->newQuery(),
-            $parentEntry,
+            $this->getParentEntry(),
             $this->config->getForeignKey(),
             $entry->getKeyName()
         );
@@ -60,8 +53,4 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEnt
         return $config;
     }
 
-    public function setEntry(Entry $entry)
-    {
-        $this->resourceEntry = $entry;
-    }
 }

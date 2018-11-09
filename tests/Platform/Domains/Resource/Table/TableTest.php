@@ -60,7 +60,7 @@ class TableTest extends ResourceTestCase
     /** @test */
     function builds_table_config()
     {
-        $this->assertEquals(sv_url($this->users->route('table', ['uuid' => $this->config->uuid()])), $this->config->getUrl());
+        $this->assertEquals(sv_url('sv/tables/'.$this->config->uuid()), $this->config->getUrl());
         $this->assertEquals(3, $this->config->getColumns()->count());
 
         $configArray = $this->config->compose();
@@ -73,9 +73,9 @@ class TableTest extends ResourceTestCase
     /** @test */
     function builds_table_rows()
     {
-        $fakeA = $this->users->createFake(['group_id' => 123]);
+        $fakeA = $this->users->fake(['group_id' => 123]);
 
-        [$fakeB, $fakeC, $fakeD] = $this->users->createFake([], 3);
+        [$fakeB, $fakeC, $fakeD] = $this->users->fake([], 3);
         $table = Table::config($this->config)->build();
 
         $this->assertTrue($this->config->isBuilt());
@@ -89,7 +89,6 @@ class TableTest extends ResourceTestCase
             'group' => 'Admins',
         ], $table->getRows()->get(0)->getValues());
 
-        $fakeA = Entry::make($fakeA, $this->users);
         $rowActions = $table->getRows()->first()->getActions();
         $this->assertEquals([
             ['name' => 'edit', 'title' => 'Edit', 'url' => $fakeA->route('edit')],
@@ -100,11 +99,10 @@ class TableTest extends ResourceTestCase
 
         $configArray = $this->config->compose();
 
-        $this->newUser();
-        $response = $this->getJson($this->users->route('index'), $this->getHeaderWithAccessToken());
+        $response = $this->getJsonUser($this->users->route('index'));
         $this->assertEquals(array_get($configArray, 'config.meta.columns'), $response->decodeResponseJson('data.props.page.blocks.0.props.block.props.config.meta.columns'));
 
-        $response = $this->getJson($this->users->route('table', ['uuid' => $this->config->uuid()]), $this->getHeaderWithAccessToken());
+        $response = $this->getJsonUser('sv/tables/'.$this->config->uuid());
         $this->assertEquals($table->compose(), $response->decodeResponseJson('data'));
     }
 }

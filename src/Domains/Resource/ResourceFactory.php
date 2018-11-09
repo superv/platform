@@ -23,38 +23,32 @@ class ResourceFactory
 
         $resourceId = $resourceEntry->getId();
         $attributes = array_merge($resourceEntry->toArray(), [
-            'fields'            => function (?Entry $entry) use ($resourceEntry) {
+            'fields' => function () use ($resourceEntry) {
                 return $resourceEntry->getFields()
-                                     ->map(function (FieldModel $fieldEntry) use ($entry) {
+                                     ->map(function (FieldModel $fieldEntry) {
                                          $field = FieldFactory::createFromEntry($fieldEntry);
-                                         if ($field instanceof NeedsEntry) {
-                                             $field->setEntry($entry);
-                                         }
 
                                          return $field;
                                      })
                                      ->keyBy(function (Field $field) { return $field->getName(); });
             },
-//            'relations'         => function (?Entry $entry) use ($resourceEntry) {
-//                return $resourceEntry->getResourceRelations()
-//                                     ->map(function (RelationModel $relation) use ($entry) {
-//                                         $relation = (new RelationFactory)->make($relation);
-//                                         if ($relation instanceof NeedsEntry) {
-//                                             $relation->setEntry($entry);
-//                                         }
-//
-//                                         return $relation;
-//                                     })
-//                                     ->keyBy(function (Relation $relation) { return $relation->getName(); });
-//            },
-            'relation_provider' => function (string $name, Entry $entry) use ($resourceId) {
+            'relations' => function () use ($resourceEntry) {
+                return $resourceEntry->getResourceRelations()
+                                     ->map(function (RelationModel $relation) {
+                                         $relation = (new RelationFactory)->make($relation);
+
+                                         return $relation;
+                                     })
+                                     ->keyBy(function (Relation $relation) { return $relation->getName(); });
+            },
+            'relation_provider' => function (string $name, ?Entry $entry = null) use ($resourceId) {
                 $relationEntry = RelationModel::query()
                                               ->where('resource_id', $resourceId)
                                               ->where('name', $name)
                                               ->first();
 
                 $relation = (new RelationFactory)->make($relationEntry);
-                if ($relation instanceof NeedsEntry) {
+                if ($entry && $relation instanceof NeedsEntry) {
                     $relation->setEntry($entry);
                 }
 

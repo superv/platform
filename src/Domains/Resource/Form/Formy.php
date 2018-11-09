@@ -67,7 +67,7 @@ class Formy
 
         // Make field type and tell them to watch the fields
         $this->getFields()->map(function (Field $field) {
-            FieldType::fromField($field);
+//            FieldType::fromField($field);
         });
     }
 

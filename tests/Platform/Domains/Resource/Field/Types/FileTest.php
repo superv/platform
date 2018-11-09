@@ -34,7 +34,7 @@ class FileTest extends ResourceTestCase
         $this->assertColumnDoesNotExist('avatar', $res->getHandle());
         $this->assertFalse(in_array('avatar', \Schema::getColumnListing($res->getHandle())));
 
-        $field = $res->freshWithFake()->build()->getFieldType('avatar');
+        $field = $res->fake()->getFieldType('avatar');
 
         $this->assertInstanceOf(File::class, $field);
         $this->assertEquals('file', $field->getType());
