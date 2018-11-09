@@ -35,9 +35,12 @@ class Fake
     {
         $this->faker = app(Generator::class);
 
-        $this->resource->getFields()->map(function (Field $field) {
+        $this->resource->getFields()->map(function ($field) {
 
-            $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid()));
+            if ($field instanceof Field) {
+                $field = FieldModel::withUuid($field->uuid());
+            }
+            $fieldType = FieldType::fromEntry($field);
 
             if ($fieldType->visible() && $fieldType->hasColumn()) {
                 $this->attributes[$fieldType->getColumnName()] = $this->fake($fieldType);

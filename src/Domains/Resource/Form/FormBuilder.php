@@ -17,7 +17,7 @@ class FormBuilder
     protected $provider;
 
     /**
-     * @var Formy
+     * @var Form
      */
     protected $form;
 
@@ -28,9 +28,9 @@ class FormBuilder
 
     protected $prebuilt = false;
 
-    public function __construct(?Formy $formy = null)
+    public function __construct(?Form $formy = null)
     {
-        $this->form = $formy ?? new Formy;
+        $this->form = $formy ?? new Form;
         $this->groups = collect();
     }
 
@@ -91,7 +91,7 @@ class FormBuilder
         return $this->form->uuid();
     }
 
-    public function getForm(): Formy
+    public function getForm(): Form
     {
         return $this->form;
     }
@@ -101,7 +101,7 @@ class FormBuilder
      */
     public function makeFields()
     {
-        $fields = $this->groups ?? $this->provider->getFields();
+        $fields = $this->groups ?? $this->provider->provideFields();
 
         $fields = $fields->map(function ($field) {
             if ($field instanceof Field) {
@@ -117,7 +117,7 @@ class FormBuilder
     protected function provideFields($fields)
     {
         if ($fields instanceof ProvidesFields) {
-            $fields = $fields->getFields();
+            $fields = $fields->provideFields();
         }
 
         if (is_array($fields)) {
@@ -129,7 +129,7 @@ class FormBuilder
 
     public static function wakeup($uuid): self
     {
-        $form = Formy::wakeup($uuid);
+        $form = Form::wakeup($uuid);
 
         return new static($form);
     }

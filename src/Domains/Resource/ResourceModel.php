@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -30,7 +31,12 @@ class ResourceModel extends EntryModel implements ProvidesFields
         return $this->hasOne(Section::class, 'resource_id');
     }
 
-    public function getFields(): Collection
+    public function provideFields(): Collection
+    {
+        return $this->getFields();
+    }
+
+    public function getFields()
     {
         return $this->fields;
     }

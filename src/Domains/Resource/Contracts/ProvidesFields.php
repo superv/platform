@@ -6,5 +6,5 @@ use Illuminate\Support\Collection;
 
 interface ProvidesFields
 {
-    public function getFields(): Collection;
+    public function provideFields(): Collection;
 }

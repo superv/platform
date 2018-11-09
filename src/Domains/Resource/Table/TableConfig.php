@@ -2,11 +2,13 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class TableConfig
@@ -46,7 +48,7 @@ class TableConfig
 
         $this->uuid = Str::uuid();
 
-        $this->columns = $this->fieldsProvider->getFields()
+        $this->columns = $this->fieldsProvider->provideFields()
                                               ->map(function (Field $field) {
                                                   if ($field->getConfigValue('hide.table') === true) {
                                                       return null;
@@ -77,14 +79,14 @@ class TableConfig
     public function compose()
     {
         if (! $this->isBuilt()) {
-            throw new PlatformException('Table Config is not built yet');
+            throw new Exception('Table Config is not built yet');
         }
 
         return [
             'config' => [
                 'meta'    => [
                     'columns' => $this->getColumns()
-                                      ->map(function (Field $field) {
+                                      ->map(function ($field) {
                                           return ['label' => $field->getLabel(), 'name' => $field->getName()];
                                       })
                                       ->all(),
@@ -108,7 +110,7 @@ class TableConfig
 
     public function removeColumn(string $name)
     {
-        $this->columns = $this->columns->filter(function (Field $field) use ($name) {
+        $this->columns = $this->columns->filter(function ($field) use ($name) {
             return $field->getName() !== $name;
         });
     }
@@ -116,7 +118,7 @@ class TableConfig
     public function getColumns(): Collection
     {
         if (! $this->isBuilt()) {
-            throw new PlatformException('Config is not built yet');
+            throw new Exception('Config is not built yet');
         }
 
         return $this->columns;
@@ -142,7 +144,7 @@ class TableConfig
     protected function validate(): void
     {
         if ($this->isBuilt()) {
-            throw new PlatformException('Config is already built');
+            throw new Exception('Config is already built');
         }
     }
 

@@ -24,7 +24,7 @@ class FieldsProvider
 
     protected function createFields(): Collection
     {
-        return $this->provider->getFields()->map(function (FieldModel $field) {
+        return $this->provider->provideFields()->map(function (FieldModel $field) {
             return FieldFactory::createFromEntry($field);
         });
     }

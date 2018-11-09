@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
-use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Model\Entry;
@@ -14,36 +13,59 @@ use SuperV\Platform\Exceptions\PlatformException;
 
 class ResourceFactory
 {
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
-    public static function make(string $handle)
+    /**
+     * @var string
+     */
+    protected $handle;
+
+    /**
+     * @var \SuperV\Platform\Domains\Resource\ResourceModel
+     */
+    protected $model;
+
+    protected function __construct(string $handle)
     {
-        if (! $resourceEntry = ResourceModel::withSlug($handle)) {
-            throw new PlatformException("Resource model entry not found for [{$handle}]");
+        $this->handle = $handle;
+    }
+
+    protected function getFieldsProvider()
+    {
+        return function () {
+            return $this->model->getFields()
+                               ->map(function (FieldModel $fieldEntry) {
+                                   $field = FieldFactory::createFromEntry($fieldEntry);
+
+                                   return $field;
+                               });
+        };
+    }
+
+    protected function getRelationsProvider() {
+
+        return function () {
+            return $this->model->getResourceRelations()
+                               ->map(function (RelationModel $relation) {
+                                   $relation = (new RelationFactory)->make($relation);
+
+                                   return $relation;
+                               })
+                               ->keyBy(function (Relation $relation) { return $relation->getName(); });
+        };
+    }
+
+    protected function get()
+    {
+        if (! $this->model = ResourceModel::withSlug($this->handle)) {
+            throw new PlatformException("Resource model entry not found for [{$this->handle}]");
         }
 
-        $resourceId = $resourceEntry->getId();
-        $attributes = array_merge($resourceEntry->toArray(), [
-            'fields' => function () use ($resourceEntry) {
-                return $resourceEntry->getFields()
-                                     ->map(function (FieldModel $fieldEntry) {
-                                         $field = FieldFactory::createFromEntry($fieldEntry);
-
-                                         return $field;
-                                     })
-                                     ->keyBy(function (Field $field) { return $field->getName(); });
-            },
-            'relations' => function () use ($resourceEntry) {
-                return $resourceEntry->getResourceRelations()
-                                     ->map(function (RelationModel $relation) {
-                                         $relation = (new RelationFactory)->make($relation);
-
-                                         return $relation;
-                                     })
-                                     ->keyBy(function (Relation $relation) { return $relation->getName(); });
-            },
-            'relation_provider' => function (string $name, ?Entry $entry = null) use ($resourceId) {
+        return array_merge($this->model->toArray(), [
+            'handle'            => $this->model->getSlug(),
+            'fields'            => $this->getFieldsProvider(),
+            'relations'         => $this->getRelationsProvider(),
+            'relation_provider' => function (string $name, ?Entry $entry = null)  {
                 $relationEntry = RelationModel::query()
-                                              ->where('resource_id', $resourceId)
+                                              ->where('resource_id', $this->model->id)
                                               ->where('name', $name)
                                               ->first();
 
@@ -55,7 +77,16 @@ class ResourceFactory
                 return $relation;
             },
         ]);
+    }
 
-        return new Resource($attributes);
+    public static function attributesFor(string $handle): array
+    {
+        return (new static($handle))->get();
+    }
+
+    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    public static function make(string $handle)
+    {
+        return new Resource(static::attributesFor($handle));
     }
 }

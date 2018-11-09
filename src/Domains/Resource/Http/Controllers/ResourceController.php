@@ -5,12 +5,11 @@ namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 use SuperV\Modules\Nucleo\Domains\UI\Page\SvPage;
 use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
 use SuperV\Modules\Nucleo\Domains\UI\SvCard;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\Jobs\BuildFormDeprecated;
-use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
@@ -23,9 +22,12 @@ class ResourceController extends BaseApiController
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
 
+    /** @var \SuperV\Platform\Domains\Resource\Model\Entry */
+    protected $entry;
+
     public function index()
     {
-        $this->resource()->build();
+        $this->resource();
 
         $config = new TableConfig();
         $config->setFieldsProvider($this->resource);
@@ -54,12 +56,12 @@ class ResourceController extends BaseApiController
 
     public function create()
     {
-        $handle = $this->resource()->getHandle();
-        $watcher = new Entry($this->resource()->newEntryInstance());
-        $fields = ResourceModel::withSlug($this->resource()->getHandle());
-
         $form = (new FormBuilder)
-            ->addGroup($handle, $watcher, $fields)
+            ->addGroup(
+                $this->resource()->getHandle(),
+                $this->resource()->newEntryInstance(),
+                ResourceModel::withSlug($this->resource()->getHandle())
+            )
             ->prebuild()
             ->getForm();
 
@@ -80,7 +82,7 @@ class ResourceController extends BaseApiController
         $form = (new FormBuilder)
             ->addGroup(
                 $handle = $this->resource()->getHandle(),
-                $entry = new Entry($this->resource()->getEntry()),
+                $entry = $this->entry,
                 $fields = ResourceModel::withSlug($this->resource()->getHandle())
             )
             ->prebuild()
@@ -94,16 +96,22 @@ class ResourceController extends BaseApiController
         // make forms
         $this->resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesForm; })
-                       ->map(function (ProvidesForm $relation) use ($tabs) {
-                           $form = $relation->makeForm();
+                       ->map(function (ProvidesForm $formProvider) use ($tabs) {
+                           if ($formProvider instanceof NeedsEntry) {
+                               $formProvider->setEntry($this->entry);
+                           }
+                           $form = $formProvider->makeForm();
 
-                           return $tabs->addTab(sv_tab($relation->getName(), SvBlock::make('sv-form-v2')->setProps($form->compose())));
+                           return $tabs->addTab(sv_tab($formProvider->getFormTitle(), SvBlock::make('sv-form-v2')->setProps($form->compose())));
                        });
 
         // make tables
         $this->resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesTable; })
                        ->map(function (ProvidesTable $tableProvider) use ($tabs) {
+                           if ($tableProvider instanceof NeedsEntry) {
+                               $tableProvider->setEntry($this->entry);
+                           }
                            $config = $tableProvider->makeTableConfig();
 
                            $card = SvCard::make()->block(
@@ -139,7 +147,7 @@ class ResourceController extends BaseApiController
         }
 
         if ($id = request()->route()->parameter('id')) {
-            $this->resource()->loadEntry($id);
+            $this->entry = $this->resource()->find($id);
         }
 
         return $this->resource;

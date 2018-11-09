@@ -30,7 +30,7 @@ class ValidateSavingEntry
 //        $resource = $this->entry->getResource();
 //        $resource = $this->entry->wrap()->build();
 
-        $rules = $form->getFields()->map(function (FieldType $field) {
+        $rules = $form->provideFields()->map(function (FieldType $field) {
             if (! $field->hasFieldEntry()) {
                 return null;
             }
@@ -38,11 +38,11 @@ class ValidateSavingEntry
             return [$field->getName(), Rules::of($field)->get()];
         })->filter()->toAssoc()->all();
 
-        $data = $form->getFields()->map(function (FieldType $field) {
+        $data = $form->provideFields()->map(function (FieldType $field) {
             return [$field->getName(), $field->getValueForValidation()];
         })->toAssoc()->all();
 
-        $attributes = $form->getFields()->map(function (FieldType $field) {
+        $attributes = $form->provideFields()->map(function (FieldType $field) {
             return [$field->getName(), $field->getLabel()];
         })->toAssoc()->all();
 

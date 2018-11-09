@@ -25,9 +25,9 @@ class ExtensionTest extends ResourceTestCase
         Extension::register(TestUserResourceExtension::class);
         $ext = Resource::of('t_users');
 
-        $this->assertNotEquals($res, $ext);
+        $this->assertNotEquals($res->getFields(), $ext->getFields());
 
-        $this->assertEquals(3, $ext->getFields()->count());
+        $this->assertEquals(3, $ext->provideFields()->count());
         $this->assertInstanceOf(Text::class, $ext->getFieldType('name'));
 
         $age = $ext->getFieldType('age');

@@ -11,7 +11,6 @@ use SuperV\Platform\Domains\Resource\Field\Jobs\AttachTypeToField;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
 class Table
@@ -44,7 +43,7 @@ class Table
     {
         $query = $this->config->newQuery();
 
-        $this->config->getColumns()->map(function (Field $field) use ($query) {
+        $this->config->getColumns()->map(function ($field) use ($query) {
             $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid()));
             AttachTypeToField::dispatch($fieldType, $field);
             $fieldType->buildForView($query);
