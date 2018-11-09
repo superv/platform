@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource\Table;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Action\Action;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
@@ -50,7 +51,8 @@ class TableTest extends ResourceTestCase
         $this->users = Resource::of('t_users');
 
         $this->config = new TableConfig();
-        $this->config->setResource($this->users);
+        $this->config->setFieldsProvider($this->users);
+        $this->config->setQueryProvider($this->users);
         $this->config->setActions([Action::make('edit'), Action::make('delete')]);
         $this->config->build();
     }
@@ -87,11 +89,11 @@ class TableTest extends ResourceTestCase
             'group' => 'Admins',
         ], $table->getRows()->get(0)->getValues());
 
-        $rowResource = Resource::of($fakeA);
+        $fakeA = Entry::make($fakeA, $this->users);
         $rowActions = $table->getRows()->first()->getActions();
         $this->assertEquals([
-            ['name' => 'edit', 'title' => 'Edit', 'url' => $rowResource->route('edit')],
-            ['name' => 'delete', 'title' => 'Delete', 'url' => $rowResource->route('delete')],
+            ['name' => 'edit', 'title' => 'Edit', 'url' => $fakeA->route('edit')],
+            ['name' => 'delete', 'title' => 'Delete', 'url' => $fakeA->route('delete')],
         ], $rowActions);
 
         $this->withoutExceptionHandling();

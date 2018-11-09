@@ -3,29 +3,24 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
-use SuperV\Platform\Domains\Resource\Resource;
 
-class BelongsTo extends FieldType
+class BelongsTo extends FieldType implements NeedsDatabaseColumn
 {
     /** @var \SuperV\Platform\Domains\Resource\Relation\RelationConfig */
     protected $relationConfig;
-
-    /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $relatedResource;
 
     public function build(): FieldType
     {
         $this->buildRelationConfig();
 
-        $this->relatedResource = Resource::of($this->relationConfig->getRelatedResource());
-
         $this->buildOptions();
 
         $this->buildConfig();
 
-        return parent::build();
+        return $this;
     }
 
     public function buildForView($query)
@@ -45,6 +40,13 @@ class BelongsTo extends FieldType
         return $relatedEntry ? $relatedEntry->wrap()->entryLabel() : null;
     }
 
+    public function getPresentingCallback(): ?Closure
+    {
+        return function (?ResourceEntryModel $relatedEntry) {
+            return $relatedEntry ? $relatedEntry->wrap()->entryLabel() : null;
+        };
+    }
+
     protected function buildRelationConfig()
     {
         $this->relationConfig = RelationConfig::create($this->type, $this->config);
@@ -55,13 +57,11 @@ class BelongsTo extends FieldType
      */
     protected function buildOptions()
     {
-//        $titleField = FieldModel::find($this->relatedResource->getTitleFieldId());
-//
-//        $titleFieldName = $titleField ? $titleField->getName() : 'name';
 
-        $entryLabel = $this->relatedResource->getConfigValue('entry_label', '#{id}');
+//        $entryLabel = $this->relatedResource->getConfigValue('entry_label', '#{id}');
+        $entryLabel = '#{id}';
 
-        $query = $this->relatedResource->newEntryInstance()->newQuery();
+        $query = $this->entry->newEntryInstance()->newQuery();
 
         if ($this->hasCallback('querying')) {
             $this->fire('querying', ['query' => $query]);
@@ -76,7 +76,6 @@ class BelongsTo extends FieldType
         }
 
         $options = $query->get()->map(function ($item) use ($entryLabel) {
-
             return ['value' => $item->id, 'text' => sv_parse($entryLabel, $item->toArray())];
         })->all();
 
@@ -85,7 +84,7 @@ class BelongsTo extends FieldType
 
     protected function buildConfig(): void
     {
-        $this->setConfigValue('placeholder', 'Select '.$this->relatedResource->slug());
+        $this->setConfigValue('placeholder', 'Select '.$this->entry->getHandle());
     }
 
     public function setValue($value): ?Closure

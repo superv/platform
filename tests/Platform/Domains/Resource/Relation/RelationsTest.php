@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Resource\Relation;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Relation\Types\HasMany;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Table;
@@ -156,7 +157,7 @@ class RelationsTest extends ResourceTestCase
     /** @test */
     function creates_table_from_has_many()
     {
-        $users = $this->create('t_users', function (Blueprint $table) {
+        $usersResource = $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->hasMany('t_posts', 'posts', 't_user_id');
@@ -167,12 +168,12 @@ class RelationsTest extends ResourceTestCase
             $table->belongsTo('t_users', 't_user');
         });
 
-        $user = $users->freshWithFake()->build();
+        $userEntry = Entry::fake($usersResource);
 
-        $posts->createFake(['t_user_id' => $user->getEntryId()], 5);
-        $posts->createFake(['t_user_id' => 999], 3); // these should be excluded
+        Entry::fake($posts, ['t_user_id' => $userEntry->id()], 5);
+        Entry::fake($posts, ['t_user_id' => 999], 3); // these should be excluded
 
-        $relation = $user->getRelation('posts');
+        $relation = $usersResource->getRelation('posts', $userEntry);
         $this->assertInstanceOf(ProvidesTable::class, $relation);
         $this->assertInstanceOf(HasMany::class, $relation);
 

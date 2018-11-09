@@ -9,11 +9,12 @@ class FormsController extends BaseApiController
 {
     public function post($uuid)
     {
-        $builder = FormBuilder::wakeup($uuid);
-        $builder->setRequest($this->request);
-        $form = $builder->build()->getForm();
+        $form = FormBuilder::wakeup($uuid)
+                           ->setRequest($this->request)
+                           ->build()
+                           ->getForm();
         $form->save();
 
-        return response()->json([], 201);
+        return response()->json([]);
     }
 }

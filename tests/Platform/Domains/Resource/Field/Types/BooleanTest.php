@@ -15,9 +15,9 @@ class BooleanTest extends ResourceTestCase
             $table->increments('id');
             $table->boolean('active');
         });
-        $this->assertColumnExists($res->handle(), 'active');
+        $this->assertColumnExists($res->getHandle(), 'active');
 
-        $field = $res->freshWithFake(['active' => 1])->build()->getField('active');
+        $field = $res->freshWithFake(['active' => 1])->build()->getFieldType('active');
 
         $this->assertInstanceOf(Boolean::class, $field);
         $this->assertEquals('boolean', $field->getType());

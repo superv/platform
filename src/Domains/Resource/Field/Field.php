@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
+use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 /**
@@ -15,6 +16,7 @@ class Field
 {
     use Hydratable;
     use FiresCallbacks;
+    use HasConfig;
 
     /**
      * @var string
@@ -41,6 +43,9 @@ class Field
      */
     protected $value;
 
+    /** @var boolean */
+    protected $visible = true;
+
     /** @var Closure */
     protected $accessor;
 
@@ -48,6 +53,11 @@ class Field
      * @var \SuperV\Platform\Domains\Resource\Field\Watcher
      */
     protected $watcher;
+
+    /** @var boolean */
+    protected $hasDatabaseColumn;
+
+    protected $columnName;
 
     protected function __construct()
     {
@@ -60,18 +70,6 @@ class Field
         $this->value = new FieldValue($this);
     }
 
-    public function getAccessor(): ?Closure
-    {
-        return $this->accessor;
-    }
-
-    public function setAccessor(?Closure $accessor)
-    {
-        $this->accessor = $accessor;
-
-        return $this;
-    }
-
     public function value(): FieldValue
     {
         return $this->value;
@@ -82,11 +80,9 @@ class Field
         $value = $this->value->get();
 
         if ($this->hasCallback('accessing')) {
-            $this->setAccessor($this->getCallback('accessing'));
-        }
+            $callback = $this->getCallback('accessing');
 
-        if ($accessor = $this->getAccessor()) {
-            return $accessor($value);
+            return $callback($value);
         }
 
         return $value;
@@ -138,18 +134,54 @@ class Field
 
     public function compose(): array
     {
-        return [
+        return array_filter([
             'type'  => $this->getType(),
             'uuid'  => $this->uuid(),
             'name'  => $this->getName(),
             'label' => $this->getLabel(),
             'value' => $this->getValue(),
-        ];
+        ]);
     }
 
     public function uuid(): string
     {
         return $this->uuid;
+    }
+
+    public function getColumnName(): string
+    {
+        return $this->columnName;
+    }
+
+    public function setColumnName($columnName)
+    {
+        $this->columnName = $columnName;
+
+        return $this;
+    }
+
+    public function isVisible(): bool
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(bool $visible): Field
+    {
+        $this->visible = $visible;
+
+        return $this;
+    }
+
+    public function hasDatabaseColumn(): bool
+    {
+        return $this->hasDatabaseColumn;
+    }
+
+    public function setHasDatabaseColumn($doesIt)
+    {
+        $this->hasDatabaseColumn = $doesIt;
+
+        return $this;
     }
 
     public static function make(array $params): self

@@ -26,7 +26,7 @@ class ResourceTestCase extends \Tests\Platform\TestCase
 
         Schema::create($table, $callback);
 
-        return Resource::of($table);
+        return ResourceFactory::make($table);
     }
 
     protected function makeResource(

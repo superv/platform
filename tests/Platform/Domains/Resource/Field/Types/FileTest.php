@@ -11,7 +11,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FileTest extends ResourceTestCase
 {
-    /** @test */
+
     function type_file_is_not_required_by_default()
     {
         $res = $this->create(null, function (Blueprint $table) {
@@ -19,7 +19,7 @@ class FileTest extends ResourceTestCase
             $table->file('avatar');
         });
 
-        $avatar = $res->getField('avatar');
+        $avatar = $res->getFieldType('avatar');
         $this->assertFalse($avatar->isRequired());
     }
 
@@ -31,10 +31,10 @@ class FileTest extends ResourceTestCase
             $table->file('avatar')->config(['disk' => 'fakedisk']);
         });
 
-        $this->assertColumnDoesNotExist('avatar', $res->handle());
-        $this->assertFalse(in_array('avatar', \Schema::getColumnListing($res->handle())));
+        $this->assertColumnDoesNotExist('avatar', $res->getHandle());
+        $this->assertFalse(in_array('avatar', \Schema::getColumnListing($res->getHandle())));
 
-        $field = $res->freshWithFake()->build()->getField('avatar');
+        $field = $res->freshWithFake()->build()->getFieldType('avatar');
 
         $this->assertInstanceOf(File::class, $field);
         $this->assertEquals('file', $field->getType());

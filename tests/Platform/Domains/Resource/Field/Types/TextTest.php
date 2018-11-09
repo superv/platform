@@ -15,11 +15,10 @@ class TextTest extends ResourceTestCase
             $table->increments('id');
             $table->string('name');
         });
-        $this->assertColumnExists($res->handle(), 'name');
+        $this->assertColumnExists($res->getHandle(), 'name');
 
-        $field = $res->freshWithFake()->build()->getField('name');
+        $field = $res->freshWithFake()->build()->getFieldType('name');
 
-        $this->assertTrue($field->isBuilt());
         $this->assertInstanceOf(Text::class, $field);
         $this->assertEquals(['max:255', 'required'], $field->makeRules());
         $this->assertEquals('text', $field->getType());

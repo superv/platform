@@ -28,14 +28,14 @@ class ExtensionTest extends ResourceTestCase
         $this->assertNotEquals($res, $ext);
 
         $this->assertEquals(3, $ext->getFields()->count());
-        $this->assertInstanceOf(Text::class, $ext->getField('name'));
+        $this->assertInstanceOf(Text::class, $ext->getFieldType('name'));
 
-        $age = $ext->getField('age');
+        $age = $ext->getFieldType('age');
         $this->assertInstanceOf(Number::class, $age);
-        $this->assertEquals($res->getField('age')->getFieldEntry(), $age->getFieldEntry());
+        $this->assertEquals($res->getFieldType('age')->getFieldEntry(), $age->getFieldEntry());
         $this->assertEquals(['integer', 'required', 'min:18', 'max:150'], $age->makeRules());
 
-        $bio = $ext->getField('bio');
+        $bio = $ext->getFieldType('bio');
         $this->assertInstanceOf(Textarea::class, $bio);
         $this->assertEquals('textarea', $bio->getType());
     }

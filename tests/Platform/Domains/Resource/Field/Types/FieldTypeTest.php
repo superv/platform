@@ -73,7 +73,7 @@ class FieldTypeTest extends ResourceTestCase
 //        $this->assertEquals($this->resource, $field->getResource());
     }
 
-    /** @test */
+
     function builds_from_config()
     {
         $builder = new FieldDefactory($this->resource);
@@ -86,7 +86,6 @@ class FieldTypeTest extends ResourceTestCase
         $this->assertInstanceOf(Text::class, $field);
         $this->assertEquals(['max:255', 'min:10', 'required'], $field->makeRules());
         $this->assertEquals(['foo' => 'bar', 'length' => 255], $field->getConfig());
-//        $this->assertEquals($this->resource, $field->getResource());
 
         $builder = new FieldDefactory($this->resource);
         $age = $builder->make(
@@ -98,18 +97,4 @@ class FieldTypeTest extends ResourceTestCase
         $this->assertEquals(['integer', 'min:18', 'nullable'], $age->makeRules());
     }
 
-    /** @test */
-    function composes_field()
-    {
-        $field = new TestFieldType(new FieldModel(['uuid' => 'abc-123']));
-        $field->setConfig(['test-config']);
-
-        $this->assertEquals([
-            'uuid'   => 'abc-123',
-            'name'   => 'test-name',
-            'label'  => $field->getLabel(),
-            'type'   => 'test-type',
-            'config' => ['test-config'],
-        ], $field->build()->compose());
-    }
 }

@@ -15,11 +15,10 @@ class TextareaTest extends ResourceTestCase
             $table->increments('id');
             $table->text('bio');
         });
-        $this->assertColumnExists($res->handle(), 'bio');
+        $this->assertColumnExists($res->getHandle(), 'bio');
 
-        $field = $res->freshWithFake()->build()->getField('bio');
+        $field = $res->freshWithFake()->build()->getFieldType('bio');
 
-        $this->assertTrue($field->isBuilt());
         $this->assertInstanceOf(Textarea::class, $field);
         $this->assertEquals('textarea', $field->getType());
 

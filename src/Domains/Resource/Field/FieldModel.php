@@ -138,4 +138,9 @@ class FieldModel extends EntryModel
             $model->attributes['uuid'] = Str::orderedUuid()->toString();
         });
     }
+
+    public static function withUuid($uuid):self
+    {
+        return static::query()->where('uuid', $uuid)->firstOrFail();
+    }
 }

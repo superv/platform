@@ -3,9 +3,10 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 
-class Number extends FieldType
+class Number extends FieldType implements NeedsDatabaseColumn
 {
     public function getAccessor(): ?Closure
     {
@@ -43,5 +44,12 @@ class Number extends FieldType
         }
 
         return Rules::make($rules)->merge(parent::makeRules())->get();
+    }
+
+    public function getDatabaseColumns($fieldName, $fieldConfig)
+    {
+        return [
+            ['name' => $fieldName, 'type' => $fieldConfig['type']]
+        ];
     }
 }

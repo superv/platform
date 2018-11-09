@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
@@ -65,7 +66,7 @@ class SyncField
         $field->rules = Rules::make($column->getRules())->get();
 
         if ($column->hide) {
-            $field->setConfigValue('hide.'.$column->hide, true );
+            $field->setConfigValue('hide.'.$column->hide, true);
         }
 
         $field->setDefaultValue($column->getDefaultValue());
@@ -89,8 +90,8 @@ class SyncField
             );
         }
 
-        $this->fieldType = FieldType::resolve($column->fieldType);
-        $column->ignore(! $this->fieldType->hasColumn());
+        $this->fieldType =  FieldType::resolve($column->fieldType);
+        $this->checkMustBeCreated($column);
     }
 
     protected function createPivotTable($relation): void
@@ -148,5 +149,15 @@ class SyncField
         }
 
         $this->resourceEntry = $resourceEntry;
+    }
+
+    /**
+     * @param \SuperV\Platform\Domains\Database\Schema\ColumnDefinition $column
+     */
+    protected function checkMustBeCreated(ColumnDefinition $column): void
+    {
+        if (! $this->fieldType instanceof NeedsDatabaseColumn) {
+            $column->ignore();
+        }
     }
 }

@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Relation;
 
-use SuperV\Platform\Domains\Resource\Contracts\HasResource;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -15,19 +14,15 @@ class RelationFactory
 
     protected $base = 'SuperV\Platform\Domains\Resource\Relation\Types';
 
-    public function __construct(Resource $resource)
+    public function __construct()
     {
-        $this->resource = $resource;
+//        $this->resource = $resource;
     }
 
     public function make($relation)
     {
         if ($relation instanceof RelationModel) {
             $relation = static::resolveFromRelationEntry($relation);
-        }
-
-        if ($relation instanceof HasResource) {
-            $relation->setResource($this->resource);
         }
 
         return $relation;

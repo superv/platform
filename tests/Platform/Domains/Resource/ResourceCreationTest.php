@@ -78,8 +78,8 @@ class ResourceCreationTest extends ResourceTestCase
             $table->string('email')->rules('email|unique');
         });
 
-        $this->assertArrayContains(['min:6', 'max:32'], $resource->getField('name')->getRules());
-        $this->assertArrayContains(['email', 'unique'], $resource->getField('email')->getRules());
+        $this->assertArrayContains(['min:6', 'max:32'], $resource->getFieldType('name')->getRules());
+        $this->assertArrayContains(['email', 'unique'], $resource->getFieldType('email')->getRules());
     }
 
     /** @test */
@@ -166,7 +166,7 @@ class ResourceCreationTest extends ResourceTestCase
     {
         $resource = $this->makeResource('test_users', ['name', 'slug' => 'unique'])->build();
 
-        $slugField = $resource->getField('slug');
+        $slugField = $resource->getFieldType('slug');
         $this->assertTrue($slugField->isUnique());
 
         $this->assertArraySubset(['unique:test_users,slug,{entry.id},id'], $slugField->getRules());

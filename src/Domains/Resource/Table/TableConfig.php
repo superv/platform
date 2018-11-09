@@ -6,8 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class TableConfig
@@ -18,6 +17,7 @@ class TableConfig
 
     /**
      * Table title
+     *
      * @var string
      */
     protected $title;
@@ -30,15 +30,15 @@ class TableConfig
     /** @var Collection */
     protected $actions;
 
-    /** @var Resource */
-    protected $resource;
-
     protected $url;
 
     protected $built = false;
 
-    /** @var ProvidesQuery */
+    /** @var \SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery */
     protected $queryProvider;
+
+    /** @var \SuperV\Platform\Domains\Resource\Contracts\ProvidesFields */
+    protected $fieldsProvider;
 
     public function build(): self
     {
@@ -46,21 +46,21 @@ class TableConfig
 
         $this->uuid = Str::uuid();
 
-        $this->columns = $this->resource->getFields()
-                                        ->map(function (FieldType $field) {
-                                            if ($field->getConfigValue('hide.table') === true) {
-                                                return null;
-                                            }
+        $this->columns = $this->fieldsProvider->getFields()
+                                              ->map(function (Field $field) {
+                                                  if ($field->getConfigValue('hide.table') === true) {
+                                                      return null;
+                                                  }
 
-                                            return $field;
-                                        })
-                                        ->filter();
+                                                  return $field;
+                                              })
+                                              ->filter();
 
         $this->actions = $this->actions ? collect($this->actions) : collect([Action::make('edit'),
             Action::make('delete')]);
 
         // build Url
-        $this->url = sv_url($this->resource->route('table', ['uuid' => $this->uuid]));
+        $this->url = sv_url('sv/tables/'.$this->uuid());
 
         $this->built = true;
 
@@ -71,11 +71,7 @@ class TableConfig
 
     public function newQuery()
     {
-        if ($this->queryProvider) {
-            return $this->queryProvider->newQuery();
-        }
-
-        return $this->query ?: $this->resource->newEntryInstance()->newQuery()->select($this->resource->slug().'.*');
+        return $this->queryProvider->newQuery();
     }
 
     public function compose()
@@ -86,9 +82,9 @@ class TableConfig
 
         return [
             'config' => [
-                'meta' => [
+                'meta'    => [
                     'columns' => $this->getColumns()
-                                      ->map(function (FieldType $field) {
+                                      ->map(function (Field $field) {
                                           return ['label' => $field->getLabel(), 'name' => $field->getName()];
                                       })
                                       ->all(),
@@ -112,7 +108,7 @@ class TableConfig
 
     public function removeColumn(string $name)
     {
-        $this->columns = $this->columns->filter(function(FieldType $field) use ($name) {
+        $this->columns = $this->columns->filter(function (Field $field) use ($name) {
             return $field->getName() !== $name;
         });
     }
@@ -143,26 +139,10 @@ class TableConfig
         return $this->built;
     }
 
-    public function getResource(): Resource
-    {
-        return $this->resource;
-    }
-
-    public function setResource(Resource $resource): TableConfig
-    {
-        $this->resource = $resource;
-
-        return $this;
-    }
-
     protected function validate(): void
     {
         if ($this->isBuilt()) {
             throw new PlatformException('Config is already built');
-        }
-
-        if (! $this->resource) {
-            throw new PlatformException('No resource set');
         }
     }
 
@@ -181,7 +161,7 @@ class TableConfig
         return 'sv:tables:'.$this->uuid();
     }
 
-    public function queryProvider(ProvidesQuery $queryProvider): TableConfig
+    public function setQueryProvider(ProvidesQuery $queryProvider): TableConfig
     {
         $this->queryProvider = $queryProvider;
 
@@ -199,6 +179,13 @@ class TableConfig
     public function setTitle(string $title): void
     {
         $this->title = $title;
+    }
+
+    public function setFieldsProvider($fieldsProvider)
+    {
+        $this->fieldsProvider = $fieldsProvider;
+
+        return $this;
     }
 
     public static function fromCache($uuid): ?TableConfig

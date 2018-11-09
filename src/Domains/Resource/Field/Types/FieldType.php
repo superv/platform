@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
@@ -64,18 +65,6 @@ abstract class FieldType implements NeedsEntry
      */
     protected $config = [];
 
-    /**
-     * @var boolean
-     */
-    protected $built = false;
-
-    /**
-     * Indicate if field type needs a database column
-     *
-     * @var bool
-     */
-    protected $hasColumn = true;
-
     /** @var \SuperV\Platform\Domains\Resource\Field\FieldValue */
     protected $value;
 
@@ -83,22 +72,16 @@ abstract class FieldType implements NeedsEntry
 
     protected $mutator;
 
+    protected $hasColumn = true;
 
-
-    public function show(): bool
+    public function hasColumn(): bool
     {
-        return true;
+        return $this->hasColumn;
     }
 
-    public function build()
+    public function visible(): bool
     {
-        if ($this->isBuilt()) {
-            throw new Exception('Field is already built');
-        }
-
-        $this->built = true;
-
-        return $this;
+        return true;
     }
 
     public function buildForView($query)
@@ -106,49 +89,15 @@ abstract class FieldType implements NeedsEntry
         return $this;
     }
 
-    public function copy(): self
+    public function build(): self
     {
-        if ($this->isBuilt()) {
-            return static::fromEntry($this->fieldEntry->fresh());
-        }
-
-        return clone $this;
+        return $this;
     }
 
-    public function compose(): array
-    {
-        if (! $this->isBuilt()) {
-            throw new Exception('Field is not built yet');
-        }
-
-        return array_filter([
-            'uuid'   => $this->uuid(),
-            'name'   => $this->getColumnName(),
-            'label'  => $this->getLabel(),
-            'type'   => $this->getType(),
-            'config' => $this->getConfig(),
-            'value'  => $this->getValue(),
-        ]);
-    }
-
-    public function isBuilt(): bool
-    {
-        return $this->built;
-    }
-
-    public function uuid()
-    {
-        return $this->field->uuid();
-    }
 
     public function getName(): ?string
     {
         return $this->name;
-    }
-
-    public function hasColumn(): bool
-    {
-        return $this->hasColumn;
     }
 
     public function getColumnName(): ?string
@@ -297,6 +246,11 @@ abstract class FieldType implements NeedsEntry
         return $this->setValue($request->__get($this->getColumnName()));
     }
 
+    public function hasAccessor()
+    {
+        return ! is_null($this->getAccessor());
+    }
+
     public function getAccessor(): ?Closure
     {
         return $this->accessor;
@@ -314,10 +268,20 @@ abstract class FieldType implements NeedsEntry
         return null;
     }
 
-    public function watchField(Field $field)
-    {
-        $field->on('accessing', $this->getAccessor());
+    public function getPresentingCallback(): ?Closure {
+        return null;
     }
+
+//    public function attach(Field $field)
+//    {
+//        if ($this->hasAccessor()) {
+//            $field->on('accessing', $this->getAccessor());
+//        }
+//
+//        $field->setVisible($this->visible())
+//              ->setColumnName($this->getColumnName())
+//              ->setHasDatabaseColumn($this instanceof NeedsDatabaseColumn);
+//    }
 
     public static function make($name): self
     {
@@ -327,13 +291,20 @@ abstract class FieldType implements NeedsEntry
         ]));
     }
 
-
     public static function resolveType(FieldModel $fieldEntry): FieldType
     {
         $class = FieldType::resolveClass($fieldEntry->getType());
 
         return $class::fromEntry($fieldEntry);
     }
+//
+//    public static function attachTo(Field $field)
+//    {
+//        $type = static::fromField($field);
+//        $type->attach($field);
+//
+//        return $type;
+//    }
 
     public static function fromField(Field $field)
     {

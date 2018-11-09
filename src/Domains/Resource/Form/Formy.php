@@ -48,6 +48,8 @@ class Formy
      */
     protected $booted = false;
 
+    protected $watchers = [];
+
     public function __construct(array $fields = [])
     {
         $this->fields = collect($fields);
@@ -65,7 +67,7 @@ class Formy
 
         // Make field type and tell them to watch the fields
         $this->getFields()->map(function (Field $field) {
-            FieldType::fromField($field)->watchField($field);
+            FieldType::fromField($field);
         });
     }
 
@@ -96,8 +98,6 @@ class Formy
             }
         });
     }
-
-    protected $watchers = [];
 
     public function addWatcher($handle, Watcher $watcher)
     {

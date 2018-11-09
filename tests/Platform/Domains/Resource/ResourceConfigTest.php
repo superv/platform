@@ -15,7 +15,7 @@ class ResourceConfigTest extends ResourceTestCase
             $table->increments('id');
         });
 
-        $this->assertEquals('Customers', Resource::of('customers')->label());
+        $this->assertEquals('Customers', Resource::of('customers')->getLabel());
         $this->assertEquals('Customer', Resource::of('customers')->singularLabel());
     }
 
@@ -29,7 +29,7 @@ class ResourceConfigTest extends ResourceTestCase
             $resource->singularLabel('Customer');
         });
 
-        $this->assertEquals('SuperV Customers', Resource::of('customers')->label());
+        $this->assertEquals('SuperV Customers', Resource::of('customers')->getLabel());
         $this->assertEquals('Customer', Resource::of('customers')->singularLabel());
     }
 

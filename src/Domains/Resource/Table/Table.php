@@ -5,7 +5,11 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\Jobs\AttachTypeToField;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Concerns\HasOptions;
@@ -18,9 +22,6 @@ class Table
      * @var TableConfig
      */
     protected $config;
-
-    /** @var Resource */
-    protected $resource;
 
     /** @var Builder */
     protected $query;
@@ -41,31 +42,25 @@ class Table
 
     public function build(): self
     {
-        $this->resource = $this->config->getResource();
-
         $query = $this->config->newQuery();
-        /** @var \Illuminate\Database\Query\Builder $query */
-//        dump($query->toSql());
-//        dump($query->getBindings());
-//        dump($query);
 
-        $this->config->getColumns()->map(function (FieldType $field) use ($query) {
-            $field->buildForView($query);
+        $this->config->getColumns()->map(function (Field $field) use ($query) {
+            $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid()));
+            AttachTypeToField::dispatch($fieldType, $field);
+            $fieldType->buildForView($query);
         });
 
-        $entries = $this->fetchEntries($query)
-                        ->map(function (ResourceEntryModel $entry) {
-                            return $this->resource->fresh()->setEntry($entry);
-                        });
-
-        $this->buildRows($entries);
+        $this->fetchEntries($query)
+             ->map(function (ResourceEntryModel $entry) {
+                 $row = new TableRow($this, Entry::make($entry));
+                 $this->rows->push($row->build());
+             });
 
         $this->built = true;
 
         return $this;
     }
 
-    /** @param Builder $query */
     protected function fetchEntries($query)
     {
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
@@ -91,24 +86,9 @@ class Table
         return $entries;
     }
 
-    protected function buildRows(Collection $entries)
-    {
-        $entries->map(function ($entry) {
-            $row = new TableRow($this, $entry);
-            $this->rows->push($row->build());
-        });
-    }
-
     public function getRows(): Collection
     {
         return $this->rows;
-    }
-
-    public function setResource(Resource $resource): Table
-    {
-        $this->resource = $resource;
-
-        return $this;
     }
 
     public function getColumns(): Collection

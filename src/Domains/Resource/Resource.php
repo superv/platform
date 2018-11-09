@@ -2,23 +2,27 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
-use Exception;
+use Closure;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
-use SuperV\Platform\Domains\Resource\Field\FieldDefactory;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Jobs\BuildResourceJob;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Model\EntryModel;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory;
+use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-class Resource
+class Resource implements ProvidesFields, ProvidesQuery
 {
     use Hydratable;
     use HasConfig;
@@ -53,6 +57,11 @@ class Resource
     protected $relations;
 
     /**
+     * @var Closure
+     */
+    protected $relationProvider;
+
+    /**
      * @var \SuperV\Platform\Domains\Resource\Model\ResourceEntryModel
      */
     protected $entry;
@@ -74,45 +83,14 @@ class Resource
      */
     protected $built = false;
 
-    public function build()
+    public function __construct(array $attributes = [])
     {
-        if ($this->isBuilt()) {
-            throw new PlatformException('Resource is already built.');
-        }
-
-        $this->makeEntry();
-
-        // keep unbuilt fields
-        $this->freshFields = collect();
-
-        $this->getFields(false)
-                 ->transform(function ($field) {
-                     $field = (new FieldDefactory($this))->make($field);
-
-                     $this->freshFields->push($field->copy());
-
-                     return $field->build();
-                 });
-
-        $this->getRelations()
-                 ->transform(function ($relation) {
-                     if ($relation instanceof Relation) {
-                         return $relation;
-                     }
-
-                     return (new RelationFactory($this))->make($relation);
-                 });
-
-        $this->markAsBuilt();
-
-        return $this;
+        $this->hydrate($attributes);
     }
 
-    public function copyFreshFields(): Collection
+    public function build()
     {
-        return $this->freshFields->map(function(FieldType $field) {
-            return $field->copy();
-        });
+        return $this;
     }
 
     public function newEntryInstance()
@@ -121,7 +99,7 @@ class Resource
             return new $model;
         }
 
-        return ResourceEntryModel::make($this->handle());
+        return Entry::newInstance($this);
     }
 
     public function create(array $attributes = []): EntryModel
@@ -136,11 +114,6 @@ class Resource
         return $this;
     }
 
-    /**
-     * @param array $overrides
-     * @param int   $number
-     * @return ResourceEntryModel|array[ResourceEntryModel]
-     */
     public function createFake(array $overrides = [], int $number = 1)
     {
         if ($number > 1) {
@@ -166,9 +139,9 @@ class Resource
 
     public function saveEntry(array $params = [])
     {
-       $entry = $this->getEntry();
-                     EntrySavingEvent::dispatch($entry, $params);
-                     $entry->save();
+        $entry = $this->getEntry();
+        EntrySavingEvent::dispatch($entry, $params);
+        $entry->save();
     }
 
     public function getEntry(): ?ResourceEntryModel
@@ -188,80 +161,49 @@ class Resource
         return $this->entry ? $this->entry->getId() : null;
     }
 
-    public function getFields($ensureBuilt = true): Collection
+    public function getFields(): Collection
     {
-        if ($ensureBuilt) {
-            $this->ensureBuilt();
+        if ($this->fields instanceof Closure) {
+            $this->fields = ($this->fields)($this->getEntry());
         }
 
         return $this->fields;
     }
 
-    public function setFields(Collection $fields): self
-    {
-        $this->ensureNotBuilt();
-
-        $fields->map(function ($field) {
-            if ($field instanceof FieldType && $field->isBuilt()) {
-                throw new Exception("Can not accept a built field");
-            }
-        });
-
-        $this->fields = $fields;
-
-        return $this;
-    }
-
     public function getFieldEntry($name): ?FieldModel
     {
-        return optional($this->getField($name))->getEntry();
+        return optional($this->getFieldType($name))->getEntry();
     }
 
-    public function getField($name): ?FieldType
+    public function getFieldType($name): ?FieldType
     {
-        $this->ensureBuilt();
+        $field = $this->getField($name);
 
-        return $this->fields->first(function (FieldType $field) use ($name) { return $field->getName() === $name; });
+        $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid()));
+        if (! $this->getEntry() || $fieldType->getEntry()) {
+            return $fieldType;
+        }
+
+        return $fieldType->setEntry(Entry::make($this->getEntry()));
+    }
+
+    public function getField($name): ?Field
+    {
+        return $this->fields->first(function (Field $field) use ($name) { return $field->getName() === $name; });
     }
 
     public function getRelations(): Collection
     {
+        if ($this->relations instanceof Closure) {
+            $this->relations = ($this->relations)($this->getEntry());
+        }
+
         return $this->relations;
     }
 
-    public function setRelations(Collection $relations): self
+    public function getRelation($name, Entry $entry): ?Relation
     {
-        $this->relations = $relations;
-
-        return $this;
-    }
-
-    public function getRelation($name): ?Relation
-    {
-        $this->ensureBuilt();
-
-        return $this->relations->first(function (Relation $relation) use ($name) {
-            return $relation->getName() === $name;
-        });
-    }
-
-    public function ensureBuilt()
-    {
-        if (! $this->isBuilt()) {
-            throw new Exception('Resource is not built yet');
-        }
-    }
-
-    public function ensureNotBuilt()
-    {
-        if ($this->isBuilt()) {
-            throw new Exception('Resource is already built');
-        }
-    }
-
-    public function isBuilt(): bool
-    {
-        return $this->built;
+        return ($this->relationProvider)($name, $entry);
     }
 
     public function id(): int
@@ -274,59 +216,12 @@ class Resource
         return $this->uuid;
     }
 
-    public function route($route, array $params = [])
-    {
-        $base = 'sv/res/'.$this->handle();
-        if ($route === 'edit') {
-            return $base.'/'.$this->getEntryId().'/edit';
-        }
-        if ($route === 'delete') {
-            return $base.'/'.$this->getEntryId().'/delete';
-        }
-        if ($route === 'create') {
-            return $base.'/create';
-        }
-
-        if ($route === 'index') {
-            return $base;
-        }
-
-        if ($route === 'table') {
-            return 'sv/tables/'.$params['uuid'];
-        }
-    }
-
     public function fresh($build = false): self
     {
-        return static::of($this->handle(), $build);
+        return static::of($this->getHandle(), $build);
     }
 
-    public function __sleep()
-    {
-        if ($this->entry && $this->entry->exists) {
-            $this->entryId = $this->entry->getKey();
-        }
-
-        return array_diff(array_keys(get_object_vars($this)), ['entry']);
-    }
-
-    public function __wakeup()
-    {
-        if ($this->entryId) {
-            $this->loadEntry($this->entryId);
-        } else {
-            $this->entry = $this->newEntryInstance();
-        }
-    }
-
-    public function makeEntry(): void
-    {
-        if (! $this->entry) {
-            $this->entry = $this->newEntryInstance();
-        }
-    }
-
-    public function label()
+    public function getLabel()
     {
         return $this->getConfigValue('label');
     }
@@ -349,12 +244,12 @@ class Resource
 //        return $this->singularLabel().' #'.$this->getEntryId();
     }
 
-    public function slug(): string
+    public function getSlug(): string
     {
-        return $this->handle();
+        return $this->getHandle();
     }
 
-    public function handle(): string
+    public function getHandle(): string
     {
         return $this->slug;
     }
@@ -362,6 +257,11 @@ class Resource
     public function markAsBuilt()
     {
         $this->built = true;
+    }
+
+    public function newQuery()
+    {
+        return $this->newEntryInstance()->newQuery()->select($this->getHandle().'.*');
     }
 
     public static function modelOf($handle)
@@ -377,8 +277,10 @@ class Resource
         return ResourceEntryModel::make($resourceEntry->getSlug());
     }
 
-    public static function of($handle, bool $build = true): self
+    public static function of($handle): self
     {
+        PlatformException::fail("Resource is offfff");
+
         /** @var \SuperV\Platform\Domains\Resource\Resource $resource */
         if ($handle instanceof ResourceEntryModel) {
             $resource = ResourceFactory::make($handle->getTable());
@@ -387,10 +289,30 @@ class Resource
             $resource = ResourceFactory::make($handle);
         }
 
-        if ($build) {
-            return $resource->build();
+        return $resource;
+    }
+
+    public function __sleep()
+    {
+        if ($this->relations instanceof Closure) {
+            $this->relations = null;
         }
 
-        return $resource;
+        if ($this->fields instanceof Closure) {
+            $this->fields = null;
+        }
+
+        $this->relationProvider = null;
+
+        return array_diff(array_keys(get_object_vars($this)), []);
+    }
+
+    public function __wakeup()
+    {
+        if ($this->entryId) {
+            $this->loadEntry($this->entryId);
+        } else {
+            $this->entry = $this->newEntryInstance();
+        }
     }
 }

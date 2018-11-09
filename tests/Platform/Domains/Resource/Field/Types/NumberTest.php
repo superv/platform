@@ -15,9 +15,9 @@ class NumberTest extends ResourceTestCase
             $table->increments('id');
             $table->unsignedInteger('age');
         });
-        $this->assertColumnExists($res->handle(), 'age');
+        $this->assertColumnExists($res->getHandle(), 'age');
 
-        $age = $res->freshWithFake(['age' => '10'])->build()->getField('age');
+        $age = $res->freshWithFake(['age' => '10'])->build()->getFieldType('age');
 
         $this->assertInstanceOf(Number::class, $age);
         $this->assertEquals('number', $age->getType());
@@ -35,9 +35,9 @@ class NumberTest extends ResourceTestCase
             $table->increments('id');
             $table->decimal('height', 3, 2);
         });
-        $this->assertColumnExists($res->handle(), 'height');
+        $this->assertColumnExists($res->getHandle(), 'height');
 
-        $height = $res->freshWithFake(['height' => '1.754234'])->build()->getField('height');
+        $height = $res->freshWithFake(['height' => '1.754234'])->build()->getFieldType('height');
 
         $this->assertInstanceOf(Number::class, $height);
         $this->assertEquals('number', $height->getType());

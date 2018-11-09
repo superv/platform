@@ -23,7 +23,7 @@ class ResourceTest extends ResourceTestCase
         $this->assertEquals('test_users', $resourceModel->getTable());
     }
 
-    /** @test */
+
     function builds_resource()
     {
         $resource = $this->makeResource('test_users', ['name', 'age:integer', 'bio:text']);
@@ -36,7 +36,6 @@ class ResourceTest extends ResourceTestCase
         $resource->loadEntry($entry->getKey());
 
         $this->assertEquals($entry->fresh(), $resource->getEntry());
-        $this->assertTrue($resource->isBuilt());
 
         $this->assertEquals([
             ['class' => Text::class, 'value' => 'Name'],
@@ -45,12 +44,12 @@ class ResourceTest extends ResourceTestCase
         ], $this->getFields($resource));
     }
 
-    /** @test */
+
     function should_fail_if_field_requested_before_resource_is_built()
     {
         $resource = $this->makeResource('test_users', ['name']);
         try {
-            $resource->getField('name');
+            $resource->getFieldType('name');
         } catch (Exception $e) {
             $this->addToAssertionCount(1);
 

@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-class Datetime extends FieldType
+use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
+
+class Datetime extends FieldType implements NeedsDatabaseColumn
 {
 }

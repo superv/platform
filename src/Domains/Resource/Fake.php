@@ -3,6 +3,8 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Faker\Generator;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 
 class Fake
@@ -20,6 +22,9 @@ class Fake
     /** @var \Faker\Generator */
     protected $faker;
 
+    /** @var array */
+    protected $attributes = [];
+
     public function __construct(Resource $resource, array $overrides = [])
     {
         $this->resource = $resource;
@@ -30,17 +35,20 @@ class Fake
     {
         $this->faker = app(Generator::class);
 
-        $attributes = $this->makeAttributes();
-        $attributes['id'] = $this->overrides['id'] ?? null;
+        $this->resource->getFields()->map(function (Field $field) {
 
-        return $this->resource->create(array_filter_null($attributes));
+            $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid()));
+
+            if ($fieldType->visible() && $fieldType->hasColumn()) {
+                $this->attributes[$fieldType->getColumnName()] = $this->fake($fieldType);
+            }
+        })->filter()->toAssoc()->all();
+
+        return $this->resource->create(array_filter_null($this->attributes));
     }
 
     protected function fake(FieldType $field)
     {
-        if (!$field->hasFieldEntry()) {
-            return null;
-        }
         if ($value = array_get($this->overrides, $field->getColumnName())) {
             return $value;
         }
@@ -60,7 +68,7 @@ class Fake
         return $this->faker->text;
     }
 
-    protected function fakeTextarea(FieldType $field)
+    protected function fakeTextarea()
     {
         return $this->faker->text;
     }
@@ -76,12 +84,12 @@ class Fake
         return $field->getName() === 'age' ? $this->faker->numberBetween(10, 99) : $this->faker->randomNumber();
     }
 
-    protected function fakeEmail(FieldType $field)
+    protected function fakeEmail()
     {
         return $this->faker->safeEmail;
     }
 
-    protected function fakeBoolean(FieldType $field)
+    protected function fakeBoolean()
     {
         return $this->faker->boolean;
     }
@@ -89,20 +97,6 @@ class Fake
     protected function fakeDatetime(FieldType $field)
     {
         return $field->getConfigValue('time') ? $this->faker->dateTime : $this->faker->date();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function makeAttributes()
-    {
-        $attributes = $this->resource->getFields()->map(function (FieldType $field) {
-            if ($field->show() && $field->hasColumn()) {
-                return [$field->getColumnName(), $this->fake($field)];
-            }
-        })->filter()->toAssoc()->all();
-
-        return $attributes;
     }
 
     public static function create(Resource $resource, array $overrides = [])

@@ -28,7 +28,8 @@ class ResourceController extends BaseApiController
         $this->resource()->build();
 
         $config = new TableConfig();
-        $config->setResource($this->resource);
+        $config->setFieldsProvider($this->resource);
+        $config->setQueryProvider($this->resource);
 
         $card = SvCard::make()->block(
             SvBlock::make('sv-table-v2')->setProps($config->build()->compose())
@@ -36,7 +37,7 @@ class ResourceController extends BaseApiController
 
         $page = SvPage::make('')->addBlock($card);
         $page->hydrate([
-                'title' => $this->resource->label(),
+                'title' => $this->resource->getLabel(),
             ]
         );
         $page->build();
@@ -53,9 +54,9 @@ class ResourceController extends BaseApiController
 
     public function create()
     {
-        $handle = $this->resource()->handle();
+        $handle = $this->resource()->getHandle();
         $watcher = new Entry($this->resource()->newEntryInstance());
-        $fields = ResourceModel::withSlug($this->resource()->handle());
+        $fields = ResourceModel::withSlug($this->resource()->getHandle());
 
         $form = (new FormBuilder)
             ->addGroup($handle, $watcher, $fields)
@@ -76,9 +77,9 @@ class ResourceController extends BaseApiController
 
     public function edit()
     {
-        $handle = $this->resource()->handle();
+        $handle = $this->resource()->getHandle();
         $watcher = new Entry($this->resource()->getEntry());
-        $fields = ResourceModel::withSlug($this->resource()->handle());
+        $fields = ResourceModel::withSlug($this->resource()->getHandle());
 
         $form = (new FormBuilder)
             ->addGroup($handle, $watcher, $fields)
@@ -113,7 +114,7 @@ class ResourceController extends BaseApiController
                            return $tabs->addTab(sv_tab($config->getTitle(), $card));
                        });
 
-        $page = SvPage::make('')->addBlock($tabs);
+        $page = SvPage::make()->addBlock($tabs);
 
         $page->hydrate([
             'title'   => $this->resource->entryLabel(),

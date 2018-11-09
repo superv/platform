@@ -4,8 +4,8 @@ namespace SuperV\Platform\Domains\Resource\Table;
 
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Contracts\HasResource;
-use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class TableRow
@@ -26,50 +26,37 @@ class TableRow
     /** @var array */
     protected $actions = [];
 
-    public function __construct(Table $table, Resource $resource)
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Model\Entry
+     */
+    protected $entry;
+
+    public function __construct(Table $table, Entry $entry)
     {
         $this->table = $table;
-        $this->resource = $resource;
+        $this->entry = $entry;
     }
 
     public function build(): self
     {
-        $this->setValue('id', $this->resource->getEntryId());
+        $this->setValue('id', $this->entry->id);
 
         $this->table->getColumns()
-                    ->map(function (FieldType $field) {
-                        $field = $field->copy();
+                    ->map(function (Field $field) {
+                        $value = $this->entry->getAttribute($field->getName());
 
-                        if ($field instanceof NeedsEntry) {
-                            $field->setResource($this->resource);
+                        if ($field->hasCallback('presenting')) {
+                            $callback = $field->getCallback('presenting');
+                            $value = $callback($value);
                         }
 
-//                        if ($field->getType() === 'boolean') {
-//                            if (! $field->isBuilt()) {
-//                                $field->build();
-//                            }
-//                            $this->setValue($field->getName(), $field->compose());
-//                        } else if ($field->getType() === 'file') {
-//                            if (! $field->isBuilt()) {
-//                                $field->build();
-//                            }
-//                            $field->getConfig();
-//                            $this->setValue($field->getName(), $field->compose());
-//                        } else {
-//                            $this->setValue($field->getName(), $field->getValue());
-//                        }
-
-                        $this->setValue($field->getName(), $field->presentValue());
+                        $this->setValue($field->getName(), $value);
                     });
 
         $this->table->getActions()
                     ->map(function (Action $action) {
                         $action = $action->copy();
-
-                        if ($action instanceof HasResource) {
-                            $action->setResource($this->resource);
-                        }
-                        $this->actions[] = $action->build()->compose();
+                        $this->actions[] = $action->build()->compose($this->entry);
                     });
 
         return $this;

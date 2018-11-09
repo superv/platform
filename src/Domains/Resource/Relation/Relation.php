@@ -3,13 +3,13 @@
 namespace SuperV\Platform\Domains\Resource\Relation;
 
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
-use SuperV\Platform\Domains\Resource\Contracts\HasResource;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-abstract class Relation implements HasResource
+abstract class Relation
 {
     use Hydratable;
 
@@ -19,10 +19,7 @@ abstract class Relation implements HasResource
     /** @var \SuperV\Platform\Domains\Resource\Relation\RelationType */
     protected $type;
 
-    /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $resource;
-
-    /** @var ResourceEntryModel */
+    /** @var \SuperV\Platform\Domains\Resource\Model\Entry */
     protected $parentEntry;
 
     /** @var RelationConfig */
@@ -41,18 +38,18 @@ abstract class Relation implements HasResource
         return $query;
     }
 
-    protected function newRelatedInstance(): ?ResourceEntryModel
+    protected function newRelatedInstance(): ?Entry
     {
         if ($table = $this->config->getRelatedResource()) {
-            return Resource::modelOf($table);
+            return Entry::newInstance($table);
         } elseif ($model = $this->config->getRelatedModel()) {
-            return new $model;
+            return new Entry(new $model);
         }
 
         throw new PlatformException('Related resource/model not found');
     }
 
-    abstract protected function newRelationQuery(ResourceEntryModel $instance): EloquentRelation;
+    abstract protected function newRelationQuery(Entry $relatedEntryInstance): EloquentRelation;
 
     public function getName(): string
     {
@@ -69,31 +66,21 @@ abstract class Relation implements HasResource
         $this->type = is_string($type) ? new RelationType($type) : $type;
     }
 
-    public function getResource(): ?Resource
-    {
-        return $this->resource;
-    }
-
-    public function setResource(Resource $resource)
-    {
-        $this->resource = $resource;
-    }
-
     public function getConfig(): RelationConfig
     {
         return $this->config;
     }
 
-    public function setParentEntry(ResourceEntryModel $parentEntry): Relation
+    public function setParentEntry(Entry $parentEntry): Relation
     {
         $this->parentEntry = $parentEntry;
 
         return $this;
     }
 
-    public function getParentEntry(): ResourceEntryModel
+    public function getParentEntry(): ?Entry
     {
-        return $this->parentEntry ?? $this->resource->getEntry();
+        return $this->parentEntry;
     }
 
     public static function fromEntry(RelationModel $entry): self

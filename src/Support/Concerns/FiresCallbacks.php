@@ -8,7 +8,7 @@ trait FiresCallbacks
 {
     protected $callbacks = [];
 
-    public function on($trigger, $callback)
+    public function on($trigger, Closure $callback)
     {
         if (! isset($this->callbacks[$trigger])) {
             $this->callbacks[$trigger] = [];
@@ -56,7 +56,7 @@ trait FiresCallbacks
      */
     public function hasCallback($trigger)
     {
-        return isset($this->callbacks[$trigger]);
+        return  isset($this->callbacks[$trigger]);
     }
 
     public function getCallback($trigger): ?Closure

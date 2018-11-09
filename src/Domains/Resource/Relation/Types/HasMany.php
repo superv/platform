@@ -5,36 +5,47 @@ namespace SuperV\Platform\Domains\Resource\Relation\Types;
 
 use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
-class HasMany extends Relation implements ProvidesTable, ProvidesQuery
+class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEntry
 {
-    protected function newRelationQuery(ResourceEntryModel $instance): EloquentRelation
+    /** @var \SuperV\Platform\Domains\Resource\Model\Entry */
+    protected $resourceEntry;
+
+    protected function newRelationQuery(Entry $relatedEntryInstance): EloquentRelation
     {
+        $entry = $this->resourceEntry->getEntry();
+        $parentEntry = $this->getParentEntry() ? $this->getParentEntry()->getEntry() : $entry;
+
         return new EloquentHasMany(
-            $instance->newQuery(),
-            $this->getParentEntry(),
+            $relatedEntryInstance->newQuery(),
+            $parentEntry,
             $this->config->getForeignKey(),
-            $this->resource->getEntry()->getKeyName()
+            $entry->getKeyName()
         );
     }
 
     public function makeTableConfig(): TableConfig
     {
         $config = new TableConfig();
-        $config->setResource(Resource::of($this->getConfig()->getRelatedResource()));
-        $config->queryProvider($this);
+        $relatedResource = ResourceFactory::make($this->getConfig()->getRelatedResource());
+        $config->setFieldsProvider($relatedResource);
+        $config->setQueryProvider($this);
         $config->setTitle($this->getName());
 
         $config->build();
 
-        $belongsTo = $config->getColumns()->first(function(FieldType $field) {
+        $belongsTo = $config->getColumns()->first(function(Field $field) {
             if ($field->getType() !== 'belongs_to') {
                 return null;
             }
@@ -47,5 +58,10 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery
         $config->removeColumn($belongsTo->getName());
 
         return $config;
+    }
+
+    public function setEntry(Entry $entry)
+    {
+        $this->resourceEntry = $entry;
     }
 }

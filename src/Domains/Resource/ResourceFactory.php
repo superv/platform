@@ -2,97 +2,66 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
-use Exception;
-use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Extension\Extension;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Domains\Resource\Relation\RelationFactory;
+use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class ResourceFactory
 {
-    /**
-     * @var string
-     */
-    protected $handle;
-
-    /** @var \SuperV\Platform\Domains\Resource\ResourceModel */
-    protected $entry;
-
-    /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $resource;
-
-    public function __construct(string $handle)
+    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    public static function make(string $handle)
     {
-        $this->handle = $handle;
-    }
-
-    public function build()
-    {
-        $this->loadEntry();
-
-        $this->makeResource();
-
-        $this->resource->setFields($this->getFields()->map(function ($field) {
-            if (is_object($field)) {
-                $field = clone $field;
-            };
-
-            return $field;
-        }));
-
-        $this->resource->setRelations($this->getRelations());
-
-        return $this->resource;
-    }
-
-    /**
-     * @return null|\SuperV\Platform\Domains\Resource\ResourceModel
-     * @throws \SuperV\Platform\Exceptions\PlatformException
-     */
-    public function loadEntry()
-    {
-        if (! $this->entry = ResourceModel::withSlug($this->handle)) {
-            throw new PlatformException("Resource model entry not found for [{$this->handle}]");
+        if (! $resourceEntry = ResourceModel::withSlug($handle)) {
+            throw new PlatformException("Resource model entry not found for [{$handle}]");
         }
 
-        return $this->entry;
-    }
+        $resourceId = $resourceEntry->getId();
+        $attributes = array_merge($resourceEntry->toArray(), [
+            'fields'            => function (?Entry $entry) use ($resourceEntry) {
+                return $resourceEntry->getFields()
+                                     ->map(function (FieldModel $fieldEntry) use ($entry) {
+                                         $field = FieldFactory::createFromEntry($fieldEntry);
+                                         if ($field instanceof NeedsEntry) {
+                                             $field->setEntry($entry);
+                                         }
 
-    public function makeResource(): void
-    {
-        $this->resource = new Resource();
-        $entryArray = array_except($this->entry->toArray(), ['fields', 'relations']);
+                                         return $field;
+                                     })
+                                     ->keyBy(function (Field $field) { return $field->getName(); });
+            },
+//            'relations'         => function (?Entry $entry) use ($resourceEntry) {
+//                return $resourceEntry->getResourceRelations()
+//                                     ->map(function (RelationModel $relation) use ($entry) {
+//                                         $relation = (new RelationFactory)->make($relation);
+//                                         if ($relation instanceof NeedsEntry) {
+//                                             $relation->setEntry($entry);
+//                                         }
+//
+//                                         return $relation;
+//                                     })
+//                                     ->keyBy(function (Relation $relation) { return $relation->getName(); });
+//            },
+            'relation_provider' => function (string $name, Entry $entry) use ($resourceId) {
+                $relationEntry = RelationModel::query()
+                                              ->where('resource_id', $resourceId)
+                                              ->where('name', $name)
+                                              ->first();
 
-        $this->resource->hydrate($entryArray);
-    }
+                $relation = (new RelationFactory)->make($relationEntry);
+                if ($relation instanceof NeedsEntry) {
+                    $relation->setEntry($entry);
+                }
 
-    public function getFields(): Collection
-    {
-        if ($extension = Extension::get($this->handle)) {
-            if (method_exists($extension, 'fields')) {
-                $fields = collect($extension->fields());
-            }
-        }
+                return $relation;
+            },
+        ]);
 
-        if ($this->entry->getFields()->count() > 30) {
-            throw new Exception('Somethings wrong here: '.$this->entry->getFields()->count());
-        }
-
-        return $fields ?? $this->entry->getFields();
-    }
-
-    protected function getRelations()
-    {
-        return $this->entry->getResourceRelations()->map(function ($relation) {
-            if (is_object($relation)) {
-                $relation = clone $relation;
-            };
-
-            return $relation;
-        });
-    }
-
-    public static function make(string $slug): \SuperV\Platform\Domains\Resource\Resource
-    {
-        return (new static($slug))->build();
+        return new Resource($attributes);
     }
 }

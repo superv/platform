@@ -2,7 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-class Textarea extends FieldType
+use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
+
+class Textarea extends FieldType implements NeedsDatabaseColumn
 {
     public function getConfig(): array
     {

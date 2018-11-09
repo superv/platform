@@ -3,8 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
+use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 
-class Boolean extends FieldType
+class Boolean extends FieldType implements NeedsDatabaseColumn
 {
     public function getAccessor(): ?Closure
     {

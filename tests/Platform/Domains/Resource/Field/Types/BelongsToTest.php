@@ -27,7 +27,8 @@ class BelongsToTest extends ResourceTestCase
 
         $this->assertColumnExists('t_users', 'group_id');
 
-        $field = $users->freshWithFake(['group_id' => 100])->build()->getField('group');
+        $field = $users->freshWithFake(['group_id' => 100])->build()->getFieldType('group');
+        $field->build();
 
         $this->assertInstanceOf(BelongsTo::class, $field);
         $this->assertEquals('belongs_to', $field->getType());

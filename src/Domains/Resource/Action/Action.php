@@ -2,11 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Domains\Resource\Contracts\HasResource;
-use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Exceptions\PlatformException;
 
-class Action implements HasResource
+class Action
 {
     /**
      * @var string
@@ -38,7 +37,7 @@ class Action implements HasResource
         return $this;
     }
 
-    public function compose(): array
+    public function compose(Entry $entry): array
     {
         if (! $this->isBuilt()) {
             throw new PlatformException('Action is not built yet');
@@ -47,7 +46,7 @@ class Action implements HasResource
         return [
             'name'  => $this->getName(),
             'title' => $this->getTitle(),
-            'url' => $this->resource->route($this->getName())
+            'url'   => $entry->route($this->getName()),
         ];
     }
 
@@ -69,15 +68,5 @@ class Action implements HasResource
     public static function make(string $name): self
     {
         return new static($name);
-    }
-
-    public function getResource(): ?Resource
-    {
-        return $this->resource;
-    }
-
-    public function setResource(Resource $resource)
-    {
-        $this->resource = $resource;
     }
 }
