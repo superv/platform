@@ -45,4 +45,9 @@ class MorphOne extends Relation implements ProvidesForm
 
         return $form;
     }
+
+    public function getFormTitle(): string
+    {
+        return $this->getName();
+    }
 }

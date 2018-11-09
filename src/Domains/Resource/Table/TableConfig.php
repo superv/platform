@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Resource\Action\Action;
@@ -77,7 +78,7 @@ class TableConfig
     public function compose()
     {
         if (! $this->isBuilt()) {
-            throw new PlatformException('Table Config is not built yet');
+            throw new Exception('Table Config is not built yet');
         }
 
         return [
@@ -116,7 +117,7 @@ class TableConfig
     public function getColumns(): Collection
     {
         if (! $this->isBuilt()) {
-            throw new PlatformException('Config is not built yet');
+            throw new Exception('Config is not built yet');
         }
 
         return $this->columns;
@@ -142,7 +143,7 @@ class TableConfig
     protected function validate(): void
     {
         if ($this->isBuilt()) {
-            throw new PlatformException('Config is already built');
+            throw new Exception('Config is already built');
         }
     }
 

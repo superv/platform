@@ -3,12 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Model;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use SuperV\Platform\Domains\Resource\Field\FieldValue;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\Formy;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
-use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Domains\Resource\Resource;

@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Resource\Model;
 use SuperV\Platform\Domains\Resource\Fake;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Field\Jobs\AttachTypeToField;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Domains\Resource\Resource;
@@ -73,7 +72,7 @@ class Entry implements Watcher
             return;
         }
 
-        $this->entry = $resource->find($this->entryId)->getEntry();
+        $this->entry = Resource::of($this->getHandle())->find($this->entryId)->getEntry();
     }
 
     public function setAttribute($key, $value)
@@ -98,9 +97,10 @@ class Entry implements Watcher
 
     public function getResource(): Resource
     {
-        if (!$this->resource) {
+        if (! $this->resource) {
             $this->resource = Resource::of($this->getHandle());
         }
+
         return $this->resource;
     }
 
@@ -137,7 +137,7 @@ class Entry implements Watcher
 
     public function newQuery()
     {
-        return $this->entry->newQuery()->select($this->getHandle().'.*');
+        return $this->entry->newQuery();
     }
 
     public function __call($name, $arguments)

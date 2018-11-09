@@ -7,4 +7,6 @@ use SuperV\Platform\Domains\Resource\Form\Form;
 interface ProvidesForm
 {
     public function makeForm(): Form;
+
+    public function getFormTitle(): string;
 }

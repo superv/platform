@@ -14,16 +14,17 @@ use SuperV\Platform\Exceptions\PlatformException;
 
 class ResourceFactory
 {
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
-    public static function make(string $handle)
+    public static function attributesFor(string $handle): array
     {
         if (! $resourceEntry = ResourceModel::withSlug($handle)) {
             throw new PlatformException("Resource model entry not found for [{$handle}]");
         }
 
         $resourceId = $resourceEntry->getId();
-        $attributes = array_merge($resourceEntry->toArray(), [
-            'fields' => function () use ($resourceEntry) {
+
+        return array_merge($resourceEntry->toArray(), [
+            'handle'            => $resourceEntry->getSlug(),
+            'fields'            => function () use ($resourceEntry) {
                 return $resourceEntry->getFields()
                                      ->map(function (FieldModel $fieldEntry) {
                                          $field = FieldFactory::createFromEntry($fieldEntry);
@@ -32,7 +33,7 @@ class ResourceFactory
                                      })
                                      ->keyBy(function (Field $field) { return $field->getName(); });
             },
-            'relations' => function () use ($resourceEntry) {
+            'relations'         => function () use ($resourceEntry) {
                 return $resourceEntry->getResourceRelations()
                                      ->map(function (RelationModel $relation) {
                                          $relation = (new RelationFactory)->make($relation);
@@ -55,7 +56,11 @@ class ResourceFactory
                 return $relation;
             },
         ]);
+    }
 
-        return new Resource($attributes);
+    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    public static function make(string $handle)
+    {
+        return new Resource(static::attributesFor($handle));
     }
 }

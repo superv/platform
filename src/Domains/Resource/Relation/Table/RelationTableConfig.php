@@ -22,7 +22,9 @@ class RelationTableConfig extends TableConfig
     public function build(): TableConfig
     {
         $resource = Resource::of($this->relation->getConfig()->getRelatedResource());
-        $this->setResource($resource);
+        $this->setQueryProvider($resource);
+        $this->setFieldsProvider($resource);
+        $this->setTitle($this->relation->getName());
 
 
         return parent::build();

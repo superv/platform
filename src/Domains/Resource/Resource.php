@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Closure;
+use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
@@ -66,7 +67,7 @@ class Resource implements ProvidesFields, ProvidesQuery
 
     protected $model;
 
-    protected $slug;
+    protected $handle;
 
     protected $label;
 
@@ -100,17 +101,22 @@ class Resource implements ProvidesFields, ProvidesQuery
     {
         $entry = ResourceEntryModel::make($this->getHandle())->create($attributes);
 
-        return Entry::make($entry, $this);
+        return Entry::make($entry, $this->fresh());
     }
 
     public function find($id): ?Entry
     {
-        $entry = ResourceEntryModel::make($this->getHandle())->find($id);
+        $entry = $this->newQuery()->find($id);
         if (! $entry) {
             return null;
         }
 
-        return Entry::make($entry, $this);
+        return Entry::make($entry, $this->fresh());
+    }
+
+    public  function fresh(): self
+    {
+        return static::of($this->getHandle());
     }
 
     public function fake(array $overrides = [], int $number = 1)
@@ -177,11 +183,6 @@ class Resource implements ProvidesFields, ProvidesQuery
         return $this->uuid;
     }
 
-    public function fresh($build = false): self
-    {
-        return static::of($this->getHandle(), $build);
-    }
-
     public function getLabel()
     {
         return $this->getConfigValue('label');
@@ -197,13 +198,6 @@ class Resource implements ProvidesFields, ProvidesQuery
         return $this->getConfigValue('entry_label');
     }
 
-    public function entryLabel()
-    {
-        $label = $this->getConfigValue('entry_label');
-
-        return sv_parse($label, $this->getEntry()->toArray());
-    }
-
     public function getSlug(): string
     {
         return $this->getHandle();
@@ -211,17 +205,12 @@ class Resource implements ProvidesFields, ProvidesQuery
 
     public function getHandle(): string
     {
-        return $this->slug;
-    }
-
-    public function markAsBuilt()
-    {
-        $this->built = true;
+        return $this->handle;
     }
 
     public function newQuery()
     {
-        return $this->newEntryInstance()->newQuery()->select($this->getHandle().'.*');
+        return $this->newEntryInstance()->newQuery();
     }
 
     public function __sleep()
@@ -241,6 +230,7 @@ class Resource implements ProvidesFields, ProvidesQuery
 
     public function __wakeup()
     {
+        $this->hydrate(ResourceFactory::attributesFor($this->getHandle()));
     }
 
     public static function modelOf($handle)

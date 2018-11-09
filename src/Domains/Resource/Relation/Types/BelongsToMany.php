@@ -27,6 +27,6 @@ class BelongsToMany extends Relation implements ProvidesTable
 
     public function makeTableConfig(): TableConfig
     {
-        return new RelationTableConfig($this);
+        return (new RelationTableConfig($this))->build();
     }
 }

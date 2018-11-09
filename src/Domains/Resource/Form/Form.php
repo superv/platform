@@ -2,67 +2,140 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
-use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Form\Jobs\PostForm;
-use SuperV\Platform\Domains\Resource\Model\Entry;
-use SuperV\Platform\Support\Concerns\FiresCallbacks;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldsProvider;
+use SuperV\Platform\Domains\Resource\Field\Watcher;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class Form
 {
-    use FiresCallbacks;
-
-    protected $uuid;
-
-    /**
-     * @var \Illuminate\Support\Collection
-     */
-    protected $entries;
-
     /**
      * @var \Illuminate\Support\Collection
      */
     protected $fields;
 
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $fieldTypes;
+
+    /**
+     * @var string
+     */
     protected $url;
 
+    /**
+     * @var string
+     */
     protected $method = 'post';
 
-    /** @var array */
-    protected $postSaveCallbacks = [];
+    /**
+     * @var string
+     */
+    protected $uuid;
 
-    /** @var bool */
-    protected $built = false;
+    /**
+     * @var \Illuminate\Http\Request
+     */
+    protected $request;
 
-    public function __construct()
+    /**
+     * @var bool
+     */
+    protected $booted = false;
+
+    protected $watchers = [];
+
+    public function __construct(array $fields = [])
     {
-        $this->fields = collect();
-        $this->entries = collect();
+        $this->fields = collect($fields);
+        $this->uuid = uuid();
+        $this->url = sv_url('sv/forms/'.$this->uuid);
     }
 
-    public function addEntry(Entry $entry)
+    public function boot()
     {
-        $this->entries->push($entry);
+        if ($this->booted) {
+            PlatformException::fail("Form already booted");
+        }
+
+        $this->booted = true;
+
+        // Make field type and tell them to watch the fields
+        $this->getFields()->map(function (Field $field) {
+//            FieldType::fromField($field);
+        });
+    }
+
+    public function save(): self
+    {
+        $this->ensureBooted();
+
+        $this->getFields()->map(function (Field $field) {
+            $field->setValue($this->request->__get($field->getName()));
+        });
+
+        $this->notifyWatchers($this);
 
         return $this;
     }
 
-    public function post(Request $request)
+    public function setRequest(Request $request)
     {
-        PostForm::dispatch($this, $request);
+        $this->request = $request;
     }
 
-    public function uuid()
+    public function addGroups(Collection $groups)
+    {
+        $groups->map(function (Group $group) {
+            $this->fields = $this->fields->merge($group->getFields());
+            if ($group->getWatcher()) {
+                $this->addWatcher($group->getHandle(), $group->getWatcher());
+            }
+        });
+    }
+
+    public function addWatcher($handle, Watcher $watcher)
+    {
+        $this->watchers[$handle] = $watcher;
+
+        return $this;
+    }
+
+    public function removeWatcher(Watcher $detach)
+    {
+        $this->watchers = collect($this->watchers)->filter(function (Watcher $watcher) use ($detach) {
+            return $watcher !== $detach;
+        })->filter()->values()->all();
+
+        return $this;
+    }
+
+    public function notifyWatchers($params = null)
+    {
+        collect($this->watchers)->map(function (Watcher $watcher) use ($params) {
+            $watcher->save();
+        });
+    }
+
+    public function uuid(): string
     {
         return $this->uuid;
     }
 
-    public function compose(): FormData
+    //
+    //      <!---  M U T A T O R   M E T H O D S   E N D S  H E R E  --->
+    //
+
+    public function compose(): array
     {
-        return FormData::make($this);
+        return [
+            'url'    => $this->getUrl(),
+            'method' => $this->getMethod(),
+            'fields' => $this->getFields()->map->compose()->all(),
+        ];
     }
 
     public function getFields(): Collection
@@ -70,26 +143,16 @@ class Form
         return $this->fields;
     }
 
-    public function removeField(Closure $callback)
+    public function getField(string $name): Field
     {
-        $this->fields = $this->fields->filter(function (FieldType $field) use ($callback) {
-            return ! $callback($field);
-        })->values();
+        return $this->getFields()
+                    ->first(
+                        function (Field $field) use ($name) {
+                            return $field->getName() === $name;
+                        });
     }
 
-    public function removeFieldBeforeBuild(Closure $callback)
-    {
-        $this->on('building.fields', function (Form $form) use ($callback) {
-            $form->removeField($callback);
-        });
-    }
-
-    public function addField(FieldType $field)
-    {
-        $this->fields->push($field);
-    }
-
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->url;
     }
@@ -99,53 +162,46 @@ class Form
         return $this->method;
     }
 
-
-    public function isBuilt(): bool
-    {
-        return $this->built;
-    }
-
-    /**
-     * @param bool $built
-     */
-    public function setBuilt(bool $built): void
-    {
-        $this->built = $built;
-    }
-
-    public function getEntries(): \Illuminate\Support\Collection
-    {
-        return $this->entries;
-    }
-
-    public static function make(): self
-    {
-        $form = new static;
-
-        $form->uuid = Str::uuid();
-
-        $form->url = sv_url('sv/forms/'.$form->uuid());
-
-        return $form;
-    }
-
     public function cache()
     {
-        $this->callbacks = [];
-        cache()->forever($this->cacheKey(), serialize($this));
+        cache()->forever($this->cacheKey($this->uuid()), serialize($this));
     }
 
-    protected function cacheKey(): string
+    public function ensureBooted(): void
     {
-        return 'sv:forms:'.$this->uuid();
+        if (! $this->booted) {
+            PlatformException::fail('Form is not booted yet.');
+        }
     }
 
-    public static function fromCache($uuid): ?Form
+    public function getWatcher($handle)
     {
-        if ($form = cache('sv:forms:'.$uuid)) {
+        return $this->watchers[$handle];
+    }
+
+    public static function cacheKeyPrefix()
+    {
+        return 'sv:forms';
+    }
+
+    public static function cacheKey(string $uuid): string
+    {
+        return static::cacheKeyPrefix().':'.$uuid;
+    }
+
+    public static function wakeup($uuid): ?self
+    {
+        if ($form = cache(static::cacheKey($uuid))) {
             return unserialize($form);
         }
 
         return null;
+    }
+
+    public static function of(FieldsProvider $provider): Form
+    {
+        $form = (new static($provider->provide()));
+
+        return $form;
     }
 }
