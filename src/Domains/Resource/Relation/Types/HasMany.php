@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Relation\Types;
 
+
 use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
@@ -10,7 +11,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Model\Entry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
 class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEntry
@@ -29,15 +30,15 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEnt
 
     public function makeTableConfig(): TableConfig
     {
-//        $config = new TableConfig();
-//        $relatedResource = ResourceFactory::make($this->getConfig()->getRelatedResource());
-//        $config->setFieldsProvider($relatedResource);
-//        $config->setQueryProvider($this);
-//        $config->setTitle($this->getName());
+        $config = new TableConfig();
+        $relatedResource = ResourceFactory::make($this->getConfig()->getRelatedResource());
+        $config->setFieldsProvider($relatedResource);
+        $config->setQueryProvider($this);
+        $config->setTitle($this->getName());
 
-        $config = (new RelationTableConfig($this))->build();
+        $config->build();
 
-        $belongsTo = $config->getColumns()->first(function ($field) {
+        $belongsTo = $config->getColumns()->first(function (Field $field) {
             if ($field->getType() !== 'belongs_to') {
                 return null;
             }
@@ -51,4 +52,5 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEnt
 
         return $config;
     }
+
 }
