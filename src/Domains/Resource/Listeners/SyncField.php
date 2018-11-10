@@ -20,6 +20,8 @@ class SyncField
     /** @var \SuperV\Platform\Domains\Resource\Field\Types\FieldType */
     protected $fieldType;
 
+    protected $fieldWithoutEloquent = true;
+
     public function handle($event)
     {
         /** @var \SuperV\Platform\Domains\Database\Schema\ColumnDefinition $column */
@@ -50,9 +52,12 @@ class SyncField
 
         $this->mapFieldType($column);
 
-        $field = $this->getFieldEntry($column->getFieldName());
-
-        $this->sync($field, $column);
+        if ($this->fieldWithoutEloquent === true) {
+            $this->fieldWithoutEloquent($column);
+        } else {
+            $field = $this->getFieldEntry($column->getFieldName());
+            $this->sync($field, $column);
+        }
     }
 
     protected function sync(FieldModel $field, ColumnDefinition $column)
@@ -62,15 +67,16 @@ class SyncField
         $field->required = $column->isRequired();
         $field->unique = $column->isUnique();
         $field->searchable = $column->isSearchable();
-        $field->config = $column->config;
-        $field->rules = Rules::make($column->getRules())->get();
+        $config = $column->config ?? [];
 
         if ($column->hide) {
-            $field->setConfigValue('hide.'.$column->hide, true);
+            $config['hide.'.$column->hide] = true;
         }
 
-        $field->setDefaultValue($column->getDefaultValue());
+        $config['default_value'] = $column->getDefaultValue();
 
+        $field->config = array_filter_null($config);
+        $field->rules = Rules::make($column->getRules())->get();
         $field->save();
     }
 
@@ -90,7 +96,7 @@ class SyncField
             );
         }
 
-        $this->fieldType =  FieldType::resolve($column->fieldType);
+        $this->fieldType = FieldType::resolve($column->fieldType);
         $this->checkMustBeCreated($column);
     }
 
@@ -158,6 +164,54 @@ class SyncField
     {
         if (! $this->fieldType instanceof NeedsDatabaseColumn) {
             $column->ignore();
+        }
+    }
+
+    protected function fieldWithoutEloquent(ColumnDefinition $column)
+    {
+        $resourceId = $this->resourceEntry->id;
+        $fieldName = $column->getFieldName();
+
+        $fieldObj = \DB::table('sv_fields')->where('resource_id', '=', $resourceId)->where('name', '=', $fieldName)->first();
+
+        if (! $fieldObj) {
+            $field = [
+                'name'        => $fieldName,
+                'resource_id' => $resourceId,
+                'uuid'        => uuid(),
+                'config'      => $column->config ?? [],
+                'rules'       => Rules::make($column->getRules())->get(),
+            ];
+        } else {
+//            $field = [];
+//            foreach(get_object_vars($fieldObj) as $key => $value) {
+//                $field[$key] = $value;
+//            }
+            $field = (array)$fieldObj;
+            $field['config'] = array_merge(json_decode($field['config'] ?? "[]", true), $column->config);
+            $field['rules'] = array_merge(json_decode($field['rules'] ?? "[]", true), Rules::make($column->getRules())->get());
+        }
+
+        $field['type'] = $column->fieldType;
+        $field['column_type'] = $column->type;
+        $field['required'] = $column->isRequired();
+        $field['unique'] = $column->isUnique();
+        $field['searchable'] = $column->isSearchable();
+
+        if ($column->hide) {
+            $field['config']['hide.'.$column->hide] = true;
+        }
+
+        $field['config']['default_value'] = $column->getDefaultValue();
+
+        $field['rules'] = json_encode(array_filter_null($field['rules']));
+        $field['config'] = json_encode(array_filter_null($field['config']));
+
+
+        if (isset($field['id'])) {
+            \DB::table('sv_fields')->where('id', $field['id'])->update($field);
+        } else {
+            \DB::table('sv_fields')->insert($field);
         }
     }
 }
