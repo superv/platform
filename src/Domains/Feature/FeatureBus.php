@@ -4,14 +4,14 @@ namespace SuperV\Platform\Domains\Feature;
 
 use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Exceptions\ValidationException;
-use SuperV\Platform\Support\Collection;
+use Illuminate\Support\Collection;
 use SuperV\Platform\Support\Composer\Composer;
 
 class FeatureBus implements Responsable
 {
     protected $handler;
 
-    /** @var \SuperV\Platform\Support\Collection */
+    /** @var \Illuminate\Support\Collection */
     protected $input;
 
     /** @var \SuperV\Platform\Domains\Feature\Feature */

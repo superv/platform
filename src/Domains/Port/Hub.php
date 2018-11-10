@@ -2,12 +2,12 @@
 
 namespace SuperV\Platform\Domains\Port;
 
-use SuperV\Platform\Support\Collection;
+use Illuminate\Support\Collection;
 
 class Hub
 {
     /**
-     * @var \SuperV\Platform\Support\Collection
+     * @var \Illuminate\Support\Collection
      */
     protected $ports;
 
@@ -32,7 +32,7 @@ class Hub
         return $port;
     }
 
-    /** @return \SuperV\Platform\Support\Collection */
+    /** @return \Illuminate\Support\Collection */
     public function ports()
     {
         return $this->ports;

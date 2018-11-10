@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Addon;
 
-use SuperV\Platform\Support\Collection;
+use Illuminate\Support\Collection;
 
 class AddonCollection extends Collection
 {

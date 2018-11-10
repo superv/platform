@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Feature;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use SuperV\Platform\Support\Collection;
+use Illuminate\Support\Collection;
 
 abstract class AbstractFeature implements Feature
 {
@@ -12,7 +12,7 @@ abstract class AbstractFeature implements Feature
     /** @var \SuperV\Platform\Domains\Feature\Request */
     protected $request;
 
-    /** @var \SuperV\Platform\Support\Collection */
+    /** @var \Illuminate\Support\Collection */
     protected $params;
 
     /**

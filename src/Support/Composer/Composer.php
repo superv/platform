@@ -1,6 +1,6 @@
 <?php namespace SuperV\Platform\Support\Composer;
 
-use SuperV\Platform\Support\Collection;
+use Illuminate\Support\Collection;
 
 class Composer
 {

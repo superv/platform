@@ -7,7 +7,7 @@ use SuperV\Modules\Nucleo\Domains\UI\SvTab;
 use SuperV\Modules\Nucleo\Domains\UI\SvTabs;
 use SuperV\Platform\Domains\Feature\FeatureBus;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
-use SuperV\Platform\Support\Collection;
+use Illuminate\Support\Collection;
 use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
@@ -171,7 +171,7 @@ function sv_guard($guardable)
  * Create a collection from the given value.
  *
  * @param  mixed $value
- * @return \SuperV\Platform\Support\Collection
+ * @return \Illuminate\Support\Collection
  */
 function sv_collect($value = null)
 {
