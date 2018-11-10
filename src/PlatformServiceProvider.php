@@ -6,17 +6,18 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
 use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
-use SuperV\Platform\Domains\Auth\Contracts\User;
-use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
+use SuperV\Platform\Domains\Addon\AddonCollection;
 use SuperV\Platform\Domains\Addon\Console\AddonInstallCommand;
 use SuperV\Platform\Domains\Addon\Console\AddonMakeMigrationCommand;
 use SuperV\Platform\Domains\Addon\Console\AddonRunMigrationCommand;
 use SuperV\Platform\Domains\Addon\Console\MakeAddonCommand;
-use SuperV\Platform\Domains\Addon\AddonCollection;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 use SuperV\Platform\Domains\Addon\Listeners\AddonInstalledListener;
-use SuperV\Platform\Domains\Navigation\Collector;
+use SuperV\Platform\Domains\Auth\Contracts\User;
+use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
+use SuperV\Platform\Domains\Database\Model\Listener;
 use SuperV\Platform\Domains\Navigation\AddonNavigationCollector;
+use SuperV\Platform\Domains\Navigation\Collector;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Exceptions\PlatformExceptionHandler;
 use SuperV\Platform\Providers\BaseServiceProvider;
@@ -51,9 +52,9 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $listeners = [
-        'Illuminate\Routing\Events\RouteMatched'          => 'SuperV\Platform\Listeners\RouteMatchedListener',
-        'SuperV\Platform\Domains\Port\PortDetectedEvent'  => 'SuperV\Platform\Listeners\PortDetectedListener',
-        AddonInstalledEvent::class                        => AddonInstalledListener::class,
+        'Illuminate\Routing\Events\RouteMatched'         => 'SuperV\Platform\Listeners\RouteMatchedListener',
+        'SuperV\Platform\Domains\Port\PortDetectedEvent' => 'SuperV\Platform\Listeners\PortDetectedListener',
+        AddonInstalledEvent::class                       => AddonInstalledListener::class,
     ];
 
     protected $commands = [
@@ -129,7 +130,7 @@ class PlatformServiceProvider extends BaseServiceProvider
             $this->publishConfig();
         }
 
-        if (!Platform::isInstalled()) {
+        if (! Platform::isInstalled()) {
             return;
         }
 
@@ -140,6 +141,8 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->registerPlatformRoutes();
 
         \Route::pattern('id', '[0-9]+');
+
+        Listener::listen();
     }
 
     protected function registerMigrationScope(): void

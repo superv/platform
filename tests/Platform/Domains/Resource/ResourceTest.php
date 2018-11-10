@@ -33,6 +33,15 @@ class ResourceTest extends ResourceTestCase
         $this->assertInstanceOf(TestResourceModel::class, $resource->fake()->getEntry());
         $this->assertEquals('test_resource_models', $entry->getTable());
     }
+
+    function test__count()
+    {
+        $res = $this->makeResource('t_items');
+        $res->fake([], 3);
+
+        $this->assertEquals(3, $res->count());
+
+    }
 }
 
 class TestResourceModel extends ResourceEntryModel {

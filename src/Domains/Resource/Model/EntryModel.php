@@ -2,12 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
-use Illuminate\Database\Eloquent\Model;
+use SuperV\Platform\Domains\Database\Model\Entry;
 
-class EntryModel extends Model
+class EntryModel extends Entry
 {
-    protected $guarded = [];
-
     public function getId()
     {
         return $this->id;

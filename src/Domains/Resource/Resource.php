@@ -115,6 +115,11 @@ class Resource implements ProvidesFields, ProvidesQuery
         return ResourceEntry::make($entry, $this->fresh());
     }
 
+    public function count(): int
+    {
+        return $this->newQuery()->count();
+    }
+
     public  function fresh(): self
     {
         return static::of($this->getHandle());

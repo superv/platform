@@ -2,13 +2,11 @@
 
 namespace SuperV\Platform\Domains\Auth\Access;
 
-use Illuminate\Database\Eloquent\Model;
+use SuperV\Platform\Domains\Database\Model\Entry;
 
-class Action extends Model
+class Action extends Entry
 {
     protected $table = 'auth_actions';
-
-    protected $guarded = [];
 
     public static function withSlug($slug)
     {

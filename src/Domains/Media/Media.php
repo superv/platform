@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Media;
 
-use SuperV\Platform\Domains\Entry\EntryModel;
+use SuperV\Platform\Domains\Database\Model\Entry;
 
-class Media extends EntryModel
+class Media extends Entry
 {
     protected $visible = ['id', 'filename', 'size', 'original', 'mime_type', 'created_at'];
 
