@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Jobs\AttachTypeToField;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
@@ -51,7 +51,7 @@ class Table
 
         $this->fetchEntries($query)
              ->map(function (ResourceEntryModel $entry) {
-                 $row = new TableRow($this, Entry::make($entry));
+                 $row = new TableRow($this, ResourceEntry::make($entry));
                  $this->rows->push($row->build());
              });
 

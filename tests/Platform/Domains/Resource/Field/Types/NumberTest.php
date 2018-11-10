@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\Number;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class NumberTest extends ResourceTestCase
@@ -18,7 +18,7 @@ class NumberTest extends ResourceTestCase
         });
         $this->assertColumnExists($res->getHandle(), 'age');
 
-        $age = Entry::fake($res)->getFieldType('age');
+        $age = ResourceEntry::fake($res)->getFieldType('age');
 
         $this->assertInstanceOf(Number::class, $age);
         $this->assertEquals('number', $age->getType());

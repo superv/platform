@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class Action
@@ -37,7 +37,7 @@ class Action
         return $this;
     }
 
-    public function compose(Entry $entry): array
+    public function compose(ResourceEntry $entry): array
     {
         if (! $this->isBuilt()) {
             throw new PlatformException('Action is not built yet');

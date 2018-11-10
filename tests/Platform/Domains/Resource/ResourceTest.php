@@ -2,15 +2,9 @@
 
 namespace Tests\Platform\Domains\Resource;
 
-use Exception;
-use Illuminate\Database\Eloquent\Model;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Field\Types\Number;
-use SuperV\Platform\Domains\Resource\Field\Types\Text;
-use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
-use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 class ResourceTest extends ResourceTestCase
 {
@@ -19,57 +13,29 @@ class ResourceTest extends ResourceTestCase
     {
         $resource = $this->makeResource('test_users');
 
-        $resourceModel = $resource->newEntryInstance();
+        $entry = $resource->newEntryInstance();
 
-        $this->assertInstanceOf(Entry::class, $resourceModel);
-        $this->assertEquals('test_users', $resourceModel->getTable());
+        $this->assertInstanceOf(ResourceEntryModel::class, $entry->getEntry());
+        $this->assertEquals('test_users', $entry->getTable());
     }
 
-
-    function builds_resource()
+    /** @test */
+    function instantiates_entries_using_provided_model()
     {
-        $resource = $this->makeResource('test_users', ['name', 'age:integer', 'bio:text']);
-        $resource->build();
-        $entry = $resource->newEntryInstance()->newQuery()->create([
-            'name' => 'Name',
-            'age'  => 99,
-            'bio'  => 'Bio',
-        ]);
-        $resource->loadEntry($entry->getKey());
+        $resource =  $this->create('test_resource_models', function (Blueprint $table, ResourceBlueprint $resource) {
+            $table->increments('id');
 
-        $this->assertEquals($entry->fresh(), $resource->getEntry());
+            $resource->model(TestResourceModel::class);
+        });
 
-        $this->assertEquals([
-            ['class' => Text::class, 'value' => 'Name'],
-            ['class' => Number::class, 'value' => 99],
-            ['class' => Textarea::class, 'value' => 'Bio'],
-        ], $this->getFields($resource));
-    }
-
-
-    function should_fail_if_field_requested_before_resource_is_built()
-    {
-        $resource = $this->makeResource('test_users', ['name']);
-        try {
-            $resource->getFieldType('name');
-        } catch (Exception $e) {
-            $this->addToAssertionCount(1);
-
-            return;
-        }
-        $this->fail('Failed to check if resource is built');
-    }
-
-    protected function getFields(Resource $resource)
-    {
-        return $resource->getFields()->map(
-            function (FieldType $field) {
-                return [
-                    'class' => get_class($field),
-                    'value' => $field->getValue(),
-                ];
-            }
-        )->values()->all();
+        $entry = $resource->newEntryInstance();
+        $this->assertInstanceOf(TestResourceModel::class, $entry->getEntry());
+        $this->assertInstanceOf(TestResourceModel::class, $resource->fake()->getEntry());
+        $this->assertEquals('test_resource_models', $entry->getTable());
     }
 }
 
+class TestResourceModel extends ResourceEntryModel {
+        protected $table = 'test_resource_models';
+        public $timestamps = false;
+}

@@ -9,14 +9,14 @@ use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
 class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEntry
 {
-    protected function newRelationQuery(Entry $relatedEntryInstance): EloquentRelation
+    protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation
     {
         $entry = $this->resourceEntry->getEntry();
 

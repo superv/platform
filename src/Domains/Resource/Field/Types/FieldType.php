@@ -24,7 +24,7 @@ abstract class FieldType implements NeedsEntry
      */
     protected $resource;
 
-    /** @var \SuperV\Platform\Domains\Resource\Model\Entry */
+    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
     protected $entry;
 
     /**
@@ -185,7 +185,7 @@ abstract class FieldType implements NeedsEntry
         return $this->entry ? $this->entry->getEntry() : null;
     }
 
-    public function setEntry(\SuperV\Platform\Domains\Resource\Model\Entry $entry): FieldType
+    public function setEntry(\SuperV\Platform\Domains\Resource\Model\ResourceEntry $entry): FieldType
     {
         $this->entry = $entry;
 

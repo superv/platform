@@ -56,7 +56,7 @@ class ResourceEntryModel extends EntryModel implements Watcher
 
         $relation = RelationBuilder::resolveFromRelationEntry($relation);
 
-        $relation->setParentEntry(new Entry($this));
+        $relation->setParentEntry(new ResourceEntry($this));
 
         return $relation->newQuery();
     }

@@ -12,7 +12,7 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 
-class Entry implements Watcher
+class ResourceEntry implements Watcher
 {
     /** @var Resource */
     protected $resource;
@@ -25,6 +25,8 @@ class Entry implements Watcher
     protected $handle;
 
     protected $entryId;
+
+    protected $config;
 
     public function __construct(ResourceEntryModel $entry, ?Resource $resource = null)
     {
@@ -186,7 +188,7 @@ class Entry implements Watcher
         PlatformException::fail("Can not fake, resource not found");
     }
 
-    public static function newInstance($handle): Entry
+    public static function newInstance($handle): ResourceEntry
     {
         if (is_string($handle)) {
             return new static(ResourceEntryModel::make($handle));

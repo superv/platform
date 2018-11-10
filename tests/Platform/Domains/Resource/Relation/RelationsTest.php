@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Resource\Relation;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\Types\HasMany;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Table;
@@ -168,10 +168,10 @@ class RelationsTest extends ResourceTestCase
             $table->belongsTo('t_users', 't_user');
         });
 
-        $userEntry = Entry::fake($usersResource);
+        $userEntry = ResourceEntry::fake($usersResource);
 
-        Entry::fake($posts, ['t_user_id' => $userEntry->id()], 5);
-        Entry::fake($posts, ['t_user_id' => 999], 3); // these should be excluded
+        ResourceEntry::fake($posts, ['t_user_id' => $userEntry->id()], 5);
+        ResourceEntry::fake($posts, ['t_user_id' => 999], 3); // these should be excluded
 
         $relation = $usersResource->getRelation('posts', $userEntry);
         $this->assertInstanceOf(ProvidesTable::class, $relation);

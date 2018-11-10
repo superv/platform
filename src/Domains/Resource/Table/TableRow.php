@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Table;
 
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 
 class TableRow
@@ -26,11 +26,11 @@ class TableRow
     protected $actions = [];
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Model\Entry
+     * @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry
      */
     protected $entry;
 
-    public function __construct(Table $table, Entry $entry)
+    public function __construct(Table $table, ResourceEntry $entry)
     {
         $this->table = $table;
         $this->entry = $entry;
@@ -46,7 +46,7 @@ class TableRow
 
                         if ($field->hasCallback('presenting')) {
                             if ($value instanceof ResourceEntryModel) {
-                                $value = Entry::make($value);
+                                $value = ResourceEntry::make($value);
                             }
 
                             $callback = $field->getCallback('presenting');

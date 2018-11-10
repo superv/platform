@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource\Field\Types;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\BelongsTo;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class BelongsToTest extends ResourceTestCase

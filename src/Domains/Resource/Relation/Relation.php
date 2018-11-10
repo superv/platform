@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Relation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -21,13 +21,13 @@ abstract class Relation implements NeedsEntry
     /** @var \SuperV\Platform\Domains\Resource\Relation\RelationType */
     protected $type;
 
-    /** @var Entry */
+    /** @var ResourceEntry */
     protected $parentEntry;
 
     /** @var RelationConfig */
     protected $config;
 
-    /** @var Entry */
+    /** @var ResourceEntry */
     protected $resourceEntry;
 
     public function newQuery(): EloquentRelation
@@ -43,23 +43,23 @@ abstract class Relation implements NeedsEntry
         return $query;
     }
 
-    protected function newRelatedInstance(): ?Entry
+    protected function newRelatedInstance(): ?ResourceEntry
     {
         if ($table = $this->config->getRelatedResource()) {
-            return Entry::newInstance($table);
+            return ResourceEntry::newInstance($table);
         } elseif ($model = $this->config->getRelatedModel()) {
-            return new Entry(new $model);
+            return new ResourceEntry(new $model);
         }
 
         throw new PlatformException('Related resource/model not found');
     }
 
-    public function setEntry(Entry $entry)
+    public function setEntry(ResourceEntry $entry)
     {
         $this->resourceEntry = $entry;
     }
 
-    abstract protected function newRelationQuery(Entry $relatedEntryInstance): EloquentRelation;
+    abstract protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation;
 
     public function getName(): string
     {
@@ -81,7 +81,7 @@ abstract class Relation implements NeedsEntry
         return $this->config;
     }
 
-    public function setParentEntry(Entry $parentEntry): Relation
+    public function setParentEntry(ResourceEntry $parentEntry): Relation
     {
         $this->parentEntry = $parentEntry;
 
@@ -93,7 +93,7 @@ abstract class Relation implements NeedsEntry
         return $this->parentEntry ? $this->parentEntry->getEntry() : $this->resourceEntry->getEntry();
     }
 
-    public function getEntry(): Entry
+    public function getEntry(): ResourceEntry
     {
         return $this->resourceEntry;
     }

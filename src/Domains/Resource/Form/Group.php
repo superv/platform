@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 
 class Group
@@ -45,7 +45,7 @@ class Group
     public function build()
     {
         if ($this->watcher instanceof ResourceEntryModel) {
-            $this->watcher = new Entry($this->watcher);
+            $this->watcher = new ResourceEntry($this->watcher);
         }
         $this->types = collect();
 

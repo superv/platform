@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\Resource;
@@ -30,7 +30,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
 
     public function getPresentingCallback(): ?Closure
     {
-        return function (?Entry $relatedEntry) {
+        return function (?ResourceEntry $relatedEntry) {
             return $relatedEntry ? $relatedEntry->getLabel() : null;
         };
     }

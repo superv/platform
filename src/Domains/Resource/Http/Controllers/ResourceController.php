@@ -22,7 +22,7 @@ class ResourceController extends BaseApiController
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
 
-    /** @var \SuperV\Platform\Domains\Resource\Model\Entry */
+    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
     protected $entry;
 
     public function index()

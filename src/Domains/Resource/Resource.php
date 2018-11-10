@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -91,27 +91,28 @@ class Resource implements ProvidesFields, ProvidesQuery
     public function newEntryInstance()
     {
         if ($model = $this->getConfigValue('model')) {
-            return new Entry(new $model);
+            return new ResourceEntry(new $model);
         }
 
-        return Entry::newInstance($this);
+        return ResourceEntry::newInstance($this);
     }
 
-    public function create(array $attributes = []): Entry
+    public function create(array $attributes = []): ResourceEntry
     {
-        $entry = ResourceEntryModel::make($this->getHandle())->create($attributes);
+//        $entry = ResourceEntryModel::make($this->getHandle())->create($attributes);
+        $entry = $this->newEntryInstance()->create($attributes);
 
-        return Entry::make($entry, $this->fresh());
+        return ResourceEntry::make($entry, $this->fresh());
     }
 
-    public function find($id): ?Entry
+    public function find($id): ?ResourceEntry
     {
         $entry = $this->newQuery()->find($id);
         if (! $entry) {
             return null;
         }
 
-        return Entry::make($entry, $this->fresh());
+        return ResourceEntry::make($entry, $this->fresh());
     }
 
     public  function fresh(): self
@@ -119,9 +120,10 @@ class Resource implements ProvidesFields, ProvidesQuery
         return static::of($this->getHandle());
     }
 
+    /** @return \SuperV\Platform\Domains\Resource\Model\ResourceEntry|array */
     public function fake(array $overrides = [], int $number = 1)
     {
-        return Entry::fake($this, $overrides, $number);
+        return ResourceEntry::fake($this, $overrides, $number);
     }
 
     public function route($route)
@@ -173,7 +175,7 @@ class Resource implements ProvidesFields, ProvidesQuery
         return $this->relations;
     }
 
-    public function getRelation($name, ?Entry $entry = null): ?Relation
+    public function getRelation($name, ?ResourceEntry $entry = null): ?Relation
     {
         return ($this->relationProvider)($name, $entry);
     }
