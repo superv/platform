@@ -4,7 +4,7 @@ use Illuminate\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Resource\Support\Blueprints;
 
-class CreateResourceFieldsTable extends Migration
+class CreateFieldsTable extends Migration
 {
     public function up()
     {

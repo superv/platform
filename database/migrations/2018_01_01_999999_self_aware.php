@@ -1,8 +1,8 @@
 <?php
 
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\Support\Blueprints;
 
@@ -25,10 +25,13 @@ class SelfAware extends Migration
         Schema::run('sv_navigation', function (Blueprint $table, ResourceBlueprint $resource) {
             Blueprints::navigation($table, $resource);
         });
+
+        Schema::run('sv_meta', function (Blueprint $table, ResourceBlueprint $resource) {
+            Blueprints::meta($table, $resource);
+        });
     }
 
     public function down()
     {
-
     }
 }

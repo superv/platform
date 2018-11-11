@@ -14,55 +14,60 @@ class Meta implements ArrayAccess
     /**
      * @var array
      */
-    protected $items;
+    protected $data = [];
 
-    public function __construct(array $items = [])
+    public function __construct($data = null, ?string $uuid = null)
     {
-        $this->setItems($items);
-        $this->uuid = uuid();
-    }
-
-    public function setItems(array $items = [])
-    {
-        foreach ($items as $key => $value) {
-            $this->offsetSet($key, $value);
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $this->offsetSet($key, $value);
+            }
         }
+        $this->uuid = $uuid ?? uuid();
     }
 
     public function has($key): bool
     {
-        return array_key_exists($key, $this->items);
+        return array_key_exists($key, $this->data);
     }
 
     public function set($key, $value = null)
     {
         if (count($keys = explode('.', $key)) === 1) {
-            return $this->offsetSet($key, $value);
+            $this->offsetSet($key, $value);
+        } else {
+            $this->offsetSet(array_shift($keys), $item = new Meta);
+            $item->set(implode('.', $keys), $value);
         }
-
-        $this->offsetSet(array_shift($keys), $item = new Meta);
-        $item->set(implode('.', $keys), $value);
     }
 
     public function get($key, $default = null)
     {
         if (count($keys = explode('.', $key)) === 1) {
-            if ($data = $this->items[$key] ?? null) {
-                return $data instanceof Meta ? $data->all() : $data;
+            if ($data = $this->data[$key] ?? null) {
+                return $data instanceof Meta ? $data->compose() : $data;
             }
 
             return $default;
         }
 
-        if ($data = $this->items[$subKey = array_shift($keys)] ?? null) {
+        if ($data = $this->data[$subKey = array_shift($keys)] ?? null) {
             return $data->get(implode('.', $keys));
         }
     }
 
-    public function all(): array
+    public function data()
     {
-        foreach ($this->items as $key => $data) {
-            $all[$key] = $data instanceof Meta ? $data->all() : $data;
+        return $this->data;
+    }
+
+    public function compose()
+    {
+        if (! $this->data) {
+            return [];
+        }
+        foreach ($this->data as $key => $data) {
+            $all[$key] = $data instanceof Meta ? $data->compose() : $data;
         }
 
         return $all ?? [];
@@ -75,12 +80,13 @@ class Meta implements ArrayAccess
 
     public function offsetGet($offset)
     {
-        return $this->items[$offset] ?? null;
+        return $this->data[$offset] ?? null;
     }
 
     public function offsetSet($offset, $value)
     {
-        $this->items[$offset] = is_array($value) ? new Meta($value) : $value;
+        $this->data[$offset] = is_array($value) ? new Meta($value) : $value;
+        $this->data = array_filter_null($this->data);
     }
 
     public function offsetUnset($offset)
@@ -88,7 +94,7 @@ class Meta implements ArrayAccess
         $this->offsetSet($offset, null);
     }
 
-    public function uuid(): string
+    public function uuid(): ?string
     {
         return $this->uuid;
     }

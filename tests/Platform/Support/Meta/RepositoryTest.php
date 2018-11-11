@@ -2,32 +2,55 @@
 
 namespace Tests\Platform\Support\Meta;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
 use SuperV\Platform\Support\Meta\Meta;
+use SuperV\Platform\Support\Meta\Repository;
+use Tests\Platform\TestCase;
 
-class RepositoryTest
+class RepositoryTest extends TestCase
 {
-    function t1est__create()
-    {
-        $metaKeys = ResourceFactory::make('sv_meta_keys');
-        $meta = Meta::create(['type' => 'string', 'length' => 255]);
+    use RefreshDatabase;
+    use ResourceTestHelpers;
 
-        $this->assertNotNull($meta->uuid());
-        $this->assertEquals(2, $metaKeys->count());
+    function test__creates_db_record_single_level()
+    {
+        $meta = new Meta(['name' => 'Omar', 'age' => 33]);
+        ($repo = new Repository)->save($meta);
+
+        $records = $repo->all();
+        $this->assertEquals(2, $records->count());
+
+        $this->assertArrayContains([
+            'uuid' => $meta->uuid(),
+            'value' => 'Omar'
+        ], $records->where('key', 'name')->first()->toArray());
+
+        $this->assertArrayContains([
+            'uuid' => $meta->uuid(),
+            'value' => 33
+        ], $records->where('key', 'age')->first()->toArray());
     }
 
-    function t1est__update()
+    function test__creates_db_record_2_level()
     {
-        $metaKeys = ResourceFactory::make('sv_meta_keys');
-        $meta = Meta::create(['type' => 'string', 'length' => 255]);
-        $meta->set('length', 128);
-        $meta->save();
+        $meta = new Meta(['config' => ['rules' => ['min' => 10, 'max' => 99]]]);
+        ($repo = new Repository)->save($meta);
 
-        $this->assertEquals(2, $metaKeys->count());
-        $lengthValue = $metaKeys->newQuery()
-                                ->where('uuid', $meta->uuid())
-                                ->where('key', 'length')
-                                ->value('value');
-        $this->assertEquals(128, $lengthValue);
+        $records = $repo->all();
+        $this->assertEquals(4, $records->count());
+    }
+
+    function test_load() {
+        $meta = new Meta(['config' => ['rules' => ['min' => 10, 'max' => 99]]]);
+        ($repo = new Repository)->save($meta);
+
+        $fresh = $repo->load($meta->uuid());
+        $this->assertEquals($meta->compose(), $fresh->compose());
+    }
+
+    function test_owner() {
+
     }
 }

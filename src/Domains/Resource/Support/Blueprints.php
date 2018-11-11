@@ -53,6 +53,7 @@ class Blueprints
 
         $table->text('rules')->nullable();
         $table->text('config')->nullable();
+        $table->uuid('config_uuid')->nullable();
         $table->timestamps();
     }
 
@@ -88,7 +89,6 @@ class Blueprints
 
             $table->nullableBelongsTo('sv_navigation', 'parent');
             $table->nullableBelongsTo('sv_resources', 'resource');
-
         } else {
             $table->unsignedInteger('parent_id')->nullable();
             $table->unsignedInteger('resource_id')->nullable();
@@ -102,5 +102,26 @@ class Blueprints
 //        $table->unique(['handle', 'parent_id']);  @TODO: test
 
         $table->timestamps();
+    }
+
+    /**
+     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
+     */
+    public static function meta($table, ResourceBlueprint $resource = null)
+    {
+        $table->increments('id');
+
+        if ($table instanceof Blueprint) {
+            $resource->label('Meta');
+
+            $table->nullableBelongsTo('sv_meta', 'parent');
+            $table->hasMany('sv_meta', 'items', 'parent_id', 'id');
+        } else {
+            $table->unsignedInteger('parent_id')->nullable();
+        }
+
+        $table->uuid('uuid')->nullable();
+        $table->string('key');
+        $table->text('value')->nullable();
     }
 }

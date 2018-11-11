@@ -25,21 +25,38 @@ class MetaTest extends TestCase
         parent::setUp();
 
         $this->metadata = [
-            'type'   => 'string',
-            'length' => 255,
+            'type'      => 'string',
+            'length'    => 255,
+            'abc'       => 'cba',
+            'array'     => ['d', 'e', 'f'],
+            'associate' => ['g' => 'G', 'h' => 'H', 'i' => 'I'],
         ];
-
         $this->meta = new Meta($this->metadata);
     }
 
     function test__construct()
     {
+        $meta = new Meta();
+        $this->assertEquals([], $meta->data());
+
+        $meta = new Meta([]);
+        $this->assertEquals([], $meta->data());
+
+        $meta = new Meta(['noor']);
+        $this->assertEquals(['noor'], $meta->data());
+
+        $meta = new Meta($this->metadata);
+        $this->assertEquals($this->metadata, $meta->data());
+    }
+
+    function test__array_access()
+    {
         $this->assertInstanceOf(ArrayAccess::class, $this->meta);
     }
 
-    function test__all()
+    function test__data()
     {
-        $this->assertEquals($this->metadata, $this->meta->all());
+        $this->assertEquals($this->metadata, $this->meta->compose());
     }
 
     function test__has()
@@ -49,7 +66,14 @@ class MetaTest extends TestCase
 
     function test__get()
     {
-        $this->assertEquals('string', $this->meta->get('type'));
+        $meta = new Meta($this->metadata);
+        $this->assertEquals('string', $meta->get('type'));
+        $this->assertEquals('H', $meta->get('associate.h'));
+
+        $meta = new Meta(['parent' => $meta]);
+        $this->assertEquals('string', $meta->get('parent.type'));
+        $this->assertEquals('H', $meta->get('parent.associate.h'));
+
     }
 
     function test__get_with_dot_notation()
@@ -83,7 +107,15 @@ class MetaTest extends TestCase
         $meta = new Meta();
         $meta->set('rules.nullable', true);
 
-        $this->assertEquals(['rules' => ['nullable' => true]], $meta->all());
+        $this->assertEquals(['rules' => ['nullable' => true]], $meta->compose());
+    }
+
+    function test__set_null()
+    {
+        $meta = new Meta(['key' => null]);
+        $meta->set('foo', null);
+        $this->assertFalse($meta->has('key'));
+        $this->assertFalse($meta->has('foo'));
     }
 
     function test_set_converts_array_values()
