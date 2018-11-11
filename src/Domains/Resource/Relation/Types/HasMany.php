@@ -18,13 +18,16 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEnt
 {
     protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation
     {
-        $entry = $this->resourceEntry->getEntry();
+        if (!$localKey = $this->config->getLocalKey()) {
+            $entry = $this->resourceEntry->getEntry();
+            $localKey = $entry->getKeyName();
+        }
 
         return new EloquentHasMany(
             $relatedEntryInstance->newQuery(),
             $this->getParentEntry(),
             $this->config->getForeignKey(),
-            $entry->getKeyName()
+            $localKey
         );
     }
 
