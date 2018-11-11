@@ -3,10 +3,8 @@
 namespace SuperV\Platform\Support\Meta;
 
 use ArrayAccess;
-use SuperV\Platform\Contracts\Repository;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 
-class Meta implements Repository, ArrayAccess
+class Meta implements ArrayAccess
 {
     /**
      * @var string
@@ -26,31 +24,9 @@ class Meta implements Repository, ArrayAccess
 
     public function setItems(array $items = [])
     {
-        $this->items = [];
-        $this->mergeItems($items);
-    }
-
-    public function mergeItems(array $items = [])
-    {
         foreach ($items as $key => $value) {
-            $this->items[$key] = new MetaValue($value);
+            $this->offsetSet($key, $value);
         }
-    }
-
-    public function uuid(): string
-    {
-        return $this->uuid;
-    }
-
-    public function all(): array
-    {
-        $all = [];
-        /**  @var  \SuperV\Platform\Support\Meta\MetaValue $data */
-        foreach ($this->items as $key => $data) {
-            $all[$key] = $data->getValue();
-        }
-
-        return $all;
     }
 
     public function has($key): bool
@@ -60,33 +36,36 @@ class Meta implements Repository, ArrayAccess
 
     public function set($key, $value = null)
     {
-        if (is_array($key)) {
-            $this->mergeItems($key);
-        } else {
-            $this->items[$key] = new MetaValue($value);
+        if (count($keys = explode('.', $key)) === 1) {
+            return $this->offsetSet($key, $value);
+        }
+
+        $this->offsetSet(array_shift($keys), $item = new Meta);
+        $item->set(implode('.', $keys), $value);
+    }
+
+    public function get($key, $default = null)
+    {
+        if (count($keys = explode('.', $key)) === 1) {
+            if ($data = $this->items[$key] ?? null) {
+                return $data instanceof Meta ? $data->all() : $data;
+            }
+
+            return $default;
+        }
+
+        if ($data = $this->items[$subKey = array_shift($keys)] ?? null) {
+            return $data->get(implode('.', $keys));
         }
     }
 
-    public function push($key, $value)
+    public function all(): array
     {
-        if (! $data = $this->get($key)) {
-            $this->set($key, new Meta([$value]));
-        } else {
-            $data->push($key, $value);
+        foreach ($this->items as $key => $data) {
+            $all[$key] = $data instanceof Meta ? $data->all() : $data;
         }
-    }
 
-    public function save()
-    {
-        $metaKeys = ResourceFactory::make('sv_meta_keys');
-
-        foreach ($this->items as $key => $value) {
-            $metaKeys->create([
-                'uuid'  => $this->uuid(),
-                'key'   => $key,
-                'value' => $value,
-            ]);
-        }
+        return $all ?? [];
     }
 
     public function offsetExists($offset)
@@ -96,48 +75,21 @@ class Meta implements Repository, ArrayAccess
 
     public function offsetGet($offset)
     {
-        return $this->get($offset);
+        return $this->items[$offset] ?? null;
     }
 
     public function offsetSet($offset, $value)
     {
-        $this->set($offset, $value);
+        $this->items[$offset] = is_array($value) ? new Meta($value) : $value;
     }
 
     public function offsetUnset($offset)
     {
-        $this->set($offset, null);
+        $this->offsetSet($offset, null);
     }
 
-    public function get($key, $default = null)
+    public function uuid(): string
     {
-        $keys = explode('.', $key);
-        if (count($keys) === 1) {
-            if ($data = $this->items[$key] ?? null) {
-                return $data->getValue();
-            }
-
-            return $default;
-        }
-
-        if ($data = $this->items[$subKey = array_shift($keys)] ?? null) {
-            return $data->get(implode('.', $keys));
-        }
-
-//        $this->set($subKey, new Meta());
-//
-//        return $default;
-    }
-
-    public static function create(array $items = []): self
-    {
-        $meta = new Meta($items);
-        $meta->save();
-
-        return $meta;
-    }
-
-    public static function load(string $uuid)
-    {
+        return $this->uuid;
     }
 }
