@@ -153,6 +153,9 @@ class ResourceEntry implements Watcher
         if (method_exists($this, $name)) {
             return call_user_func_array([$this, $name], $arguments);
         }
+        if ($relation = $this->entry->getRelationshipFromConfig($name)) {
+            return $relation;
+        }
 
         return call_user_func_array([$this->entry, $name], $arguments);
     }

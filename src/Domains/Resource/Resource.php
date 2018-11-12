@@ -107,8 +107,16 @@ class Resource implements ProvidesFields, ProvidesQuery
 
     public function find($id): ?ResourceEntry
     {
-        $entry = $this->newQuery()->find($id);
-        if (! $entry) {
+        if (! $entry = $this->newQuery()->find($id)) {
+            return null;
+        }
+
+        return ResourceEntry::make($entry, $this->fresh());
+    }
+
+    public function first(): ?ResourceEntry
+    {
+        if (! $entry = $this->newQuery()->first()) {
             return null;
         }
 

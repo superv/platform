@@ -73,7 +73,6 @@ class MetaTest extends TestCase
         $meta = new Meta(['parent' => $meta]);
         $this->assertEquals('string', $meta->get('parent.type'));
         $this->assertEquals('H', $meta->get('parent.associate.h'));
-
     }
 
     function test__get_with_dot_notation()
@@ -96,10 +95,14 @@ class MetaTest extends TestCase
         $this->assertEquals('default', $this->meta->get('nobody', 'default'));
     }
 
+    function test__set_returns_self()
+    {
+        $this->assertInstanceOf(Meta::class, Meta::make()->set('key', 'valye'));
+    }
+
     function test__set()
     {
-        $this->meta->set('label', 'logo');
-        $this->assertEquals('logo', $this->meta->get('label'));
+        $this->assertEquals('ABC', Meta::make()->set('abc', 'ABC')->get('abc'));
     }
 
     function test__set_with_dot_notation()
@@ -120,13 +123,35 @@ class MetaTest extends TestCase
 
     function test_set_converts_array_values()
     {
-        $meta = new Meta([
-            'config' => ['rules' => ['unique', 'required']],
-        ]);
+        $meta = Meta::make(['config' => ['rules' => ['unique', 'required']]]);
 
         $this->assertEquals(['rules' => ['unique', 'required']], $meta->get('config'));
         $this->assertEquals(['unique', 'required'], $meta->get('config.rules'));
         $this->assertEquals('unique', $meta->get('config.rules.0'));
+    }
+
+    function test__zip()
+    {
+        $meta = Meta::make()->set('abc.def', 'DEF');
+
+        $this->assertEquals(['abc' => ['def' => 'DEF']], $meta->zip()->data());
+    }
+
+    function test__unzip()
+    {
+        $meta = Meta::make(['rules' => ['unique', 'required']]);
+        $meta->unzip();
+
+        $this->assertInstanceOf(Meta::class, $meta->get('rules'));
+
+
+    }
+
+    function test__zip_returns_new_instance()
+    {
+        $meta = Meta::make();
+
+        $this->assertNotEquals($meta, $meta->zip());
     }
 
     function test__offset_exists()

@@ -6,29 +6,41 @@ use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class Repository
 {
-    protected $table = 'sv_meta';
+    /** @var \SuperV\Platform\Domains\Resource\Resource */
+    protected $metas;
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $resource;
+    protected $items;
 
     public function __construct()
     {
-        $this->resource = ResourceFactory::make($this->table);
+        $this->metas = ResourceFactory::make('sv_meta');
+        $this->items = ResourceFactory::make('sv_meta_items');
     }
 
-    public function save(Meta $meta, $parentId = null)
+    public function save($meta, $parentId = null)
     {
-        $metadata = $meta->data();
+        if ($meta instanceof Meta) {
+            if ($owner = $meta->getOwner()) {
+                $metaEntry = $this->metas->create($owner);
+            } else {
+                $metaEntry = $this->metas->create( ['uuid' => $meta->uuid()]);
+            }
 
-        foreach ($metadata as $key => $value) {
-            $record = $this->resource->create([
+            $metaEntryId = $metaEntry->id();
+
+            $meta = $meta->compose();
+        }
+
+        foreach ($meta as $key => $value) {
+            $record = $this->items->create([
+                'meta_id'   => $metaEntryId ?? null,
                 'parent_id' => $parentId ?? null,
-                'uuid'      => $parentId ? null : $meta->uuid(),
                 'key'       => $key,
-                'value'     => $value instanceof Meta ? null : $value,
+                'value'     => is_array($value) ? null : $value,
             ]);
 
-            if ($value instanceof Meta) {
+            if (is_array($value)) {
                 $this->save($value, $record->id());
             }
         }
@@ -36,7 +48,9 @@ class Repository
 
     public function load(string $uuid)
     {
-        $items = $this->newQuery()->with('items')->where('uuid', $uuid)->get();
+        $meta = $this->metas->newQuery()->with('items')->where('uuid', $uuid)->first();
+
+        $items = $meta->items;
 
         $data = $this->someFunction($items);
 
@@ -58,22 +72,16 @@ class Repository
             ];
 
             return $sub;
-
         })->toAssoc()->all();
     }
 
     public function all()
     {
-        return $this->resource->newQuery()->get();
+        return $this->metas->newQuery()->get();
     }
 
     public function newQuery()
     {
-        return $this->resource->newQuery();
-    }
-
-    public function getResource(): \SuperV\Platform\Domains\Resource\Resource
-    {
-        return $this->resource;
+        return $this->metas->newQuery();
     }
 }

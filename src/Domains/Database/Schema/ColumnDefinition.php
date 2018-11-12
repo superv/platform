@@ -94,7 +94,7 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this;
     }
 
-    public function getRelation(): RelationConfig
+    public function getRelationConfig(): RelationConfig
     {
         return $this->relation;
     }

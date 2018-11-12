@@ -114,13 +114,34 @@ class Blueprints
         if ($table instanceof Blueprint) {
             $resource->label('Meta');
 
-            $table->nullableBelongsTo('sv_meta', 'parent');
-            $table->hasMany('sv_meta', 'items', 'parent_id', 'id');
+            $table->hasMany('sv_meta_items', 'items', 'meta_id', 'id');
+        }
+
+        $table->nullableMorphs('owner');
+        $table->string('label')->nullable();
+
+
+        $table->uuid('uuid')->nullable();
+    }
+
+    /**
+     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
+     */
+    public static function metaItems($table, ResourceBlueprint $resource = null)
+    {
+        $table->increments('id');
+
+        if ($table instanceof Blueprint) {
+            $resource->label('Meta Items');
+
+            $table->nullableBelongsTo('sv_meta', 'meta');
+            $table->nullableBelongsTo('sv_meta_items', 'parent');
+            $table->hasMany('sv_meta_items', 'items', 'parent_id', 'id');
         } else {
+            $table->unsignedInteger('meta_id')->nullable();
             $table->unsignedInteger('parent_id')->nullable();
         }
 
-        $table->uuid('uuid')->nullable();
         $table->string('key');
         $table->text('value')->nullable();
     }

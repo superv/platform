@@ -2,15 +2,17 @@
 
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
-use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use Current;
 use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
-use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Jobs\CreatePivotTable;
 use SuperV\Platform\Domains\Resource\ResourceModel;
+use SuperV\Platform\Support\Meta\Meta;
+use SuperV\Platform\Support\Meta\Repository;
 
 class SyncField
 {
@@ -22,113 +24,104 @@ class SyncField
 
     protected $fieldWithoutEloquent = true;
 
+    /** @var \SuperV\Platform\Domains\Database\Schema\ColumnDefinition */
+    protected $column;
+
     public function handle($event)
     {
         /** @var \SuperV\Platform\Domains\Database\Schema\ColumnDefinition $column */
-        $column = $event->column;
+        $this->column = $event->column;
 
-        if ($column->autoIncrement || $column->type === 'timestamp') {
+        if ($this->column->autoIncrement || $this->column->type === 'timestamp') {
             return;
         }
 
         $this->setResourceEntry($event);
 
-        if ($column->relation) {
-            $relation = $column->getRelation();
-            $column->ignore();
-
-            if ($relation->hasPivotTable()) {
-                $this->createPivotTable($relation);
-            }
-
-            $this->resourceEntry->resourceRelations()->create([
-                'name'   => $relation->getName(),
-                'type'   => $relation->getType(),
-                'config' => $relation->toArray(),
-            ]);
-
-            return;
+        if ($this->column->relation) {
+            return $this->handleRelationConfig();
         }
 
-        $this->mapFieldType($column);
+        $this->mapFieldType();
+        $this->checkMustBeCreated();
 
         if ($this->fieldWithoutEloquent === true) {
-            $this->fieldWithoutEloquent($column);
+            $this->fieldWithoutEloquent($this->column);
         } else {
-            $field = $this->getFieldEntry($column->getFieldName());
-            $this->sync($field, $column);
+            $field = $this->getFieldEntry($this->column->getFieldName());
+            $this->sync($field, $this->column);
         }
     }
 
-    protected function sync(FieldModel $field, ColumnDefinition $column)
+    protected function mapFieldType()
     {
-        $field->type = $column->fieldType;
-        $field->column_type = $column->type;
-        $field->required = $column->isRequired();
-        $field->unique = $column->isUnique();
-        $field->searchable = $column->isSearchable();
-        $config = $column->config ?? [];
+        if (! $this->column->fieldType) {
+            $mapper = ColumnFieldMapper::for($this->column->type)->map($this->column->toArray());
 
-        if ($column->hide) {
-            $config['hide.'.$column->hide] = true;
-        }
+            $this->column->fieldType($mapper->getFieldType());
 
-        $config['default_value'] = $column->getDefaultValue();
+            $this->column->config(array_merge($this->column->getConfig(), $mapper->getConfig()));
 
-        $field->config = array_filter_null($config);
-        $field->rules = Rules::make($column->getRules())->get();
-        $field->save();
-    }
-
-    protected function mapFieldType(ColumnDefinition $column): void
-    {
-        if (! $column->fieldType) {
-            $mapper = ColumnFieldMapper::for($column->type)->map($column->toArray());
-
-            $column->fieldType($mapper->getFieldType());
-
-            $column->config(array_merge($column->getConfig(), $mapper->getConfig()));
-
-            $column->rules(
+            $this->column->rules(
                 Rules::make($mapper->getRules())
-                     ->merge($column->getRules())
+                     ->merge($this->column->getRules())
                      ->get()
             );
         }
 
-        $this->fieldType = FieldType::resolve($column->fieldType);
-        $this->checkMustBeCreated($column);
+        $this->fieldType = FieldType::resolve($this->column->fieldType);
     }
 
-    protected function createPivotTable($relation): void
+    protected function fieldWithoutEloquent()
     {
-        if ($pivotColumnsCallback = $relation->getPivotColumns()) {
-            $pivotColumnsCallback($table = new Blueprint(''));
-            $relation->pivotColumns($table->getColumnNames());
+        $column = $this->column;
+        $resourceId = $this->resourceEntry->id;
+        $fieldName = $column->getFieldName();
+
+        $fieldObj = \DB::table('sv_fields')->where('resource_id', '=', $resourceId)->where('name', '=', $fieldName)->first();
+
+        if (! $fieldObj) {
+            $field = [
+                'name'        => $fieldName,
+                'resource_id' => $resourceId,
+                'uuid'        => uuid(),
+                'config'      => $column->config ?? [],
+                'rules'       => Rules::make($column->getRules())->get(),
+            ];
+        } else {
+            $field = (array)$fieldObj;
+            $field['config'] = array_merge(json_decode($field['config'] ?? "[]", true), $column->config);
+            $field['rules'] = array_merge(json_decode($field['rules'] ?? "[]", true), Rules::make($column->getRules())->get());
         }
 
-        if (! \Schema::hasTable($relation->getPivotTable())) {
-            Schema::create(
-                $relation->getPivotTable(),
-                function (Blueprint $table) use ($relation, $pivotColumnsCallback) {
-                    $table->increments('id');
+        $field['type'] = $column->fieldType;
+        $field['column_type'] = $column->type;
+        $field['required'] = $column->isRequired();
+        $field['unique'] = $column->isUnique();
+        $field['searchable'] = $column->isSearchable();
 
-                    if ($relation->type()->isMorphToMany()) {
-                        $table->morphs($relation->getMorphName());
-                    } else {
-                        $table->unsignedBigInteger($relation->getPivotForeignKey());
-                    }
+        $theConfig = $field['config'];
+        if ($column->hide) {
+            $theConfig['hide.'.$column->hide] = true;
+        }
+        $theConfig['default_value'] = $column->getDefaultValue();
 
-                    $table->unsignedBigInteger($relation->getPivotRelatedKey());
+        $field['rules'] = json_encode(array_filter_null($field['rules']));
+        $field['config'] = json_encode(array_filter_null($theConfig));
 
-                    if ($pivotColumnsCallback) {
-                        $pivotColumnsCallback($table);
-                    }
+        if (isset($field['id'])) {
+            \DB::table('sv_fields')->where('id', $field['id'])->update($field);
+        } else {
+            $field['id'] = \DB::table('sv_fields')->insertGetId($field);
+        }
 
-                    $table->timestamps();
-                    $table->index([$relation->getPivotForeignKey()], md5(uniqid()));
-                    $table->index([$relation->getPivotRelatedKey()], md5(uniqid()));
-                });
+        if (! Current::envIsTesting()) {
+            if (! $column->ignore) {
+                if (ResourceModel::withSlug('sv_meta_items')) {
+                    $meta = Meta::make($theConfig)->setOwner('sv_fields', $field['id'], 'config');
+                    (new Repository)->save($meta);
+                }
+            }
         }
     }
 
@@ -160,58 +153,46 @@ class SyncField
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\ColumnDefinition $column
      */
-    protected function checkMustBeCreated(ColumnDefinition $column): void
+    protected function checkMustBeCreated()
     {
         if (! $this->fieldType instanceof NeedsDatabaseColumn) {
-            $column->ignore();
+            $this->column->ignore();
         }
     }
 
-    protected function fieldWithoutEloquent(ColumnDefinition $column)
+    protected function sync(FieldModel $field, ColumnDefinition $column)
     {
-        $resourceId = $this->resourceEntry->id;
-        $fieldName = $column->getFieldName();
-
-        $fieldObj = \DB::table('sv_fields')->where('resource_id', '=', $resourceId)->where('name', '=', $fieldName)->first();
-
-        if (! $fieldObj) {
-            $field = [
-                'name'        => $fieldName,
-                'resource_id' => $resourceId,
-                'uuid'        => uuid(),
-                'config'      => $column->config ?? [],
-                'rules'       => Rules::make($column->getRules())->get(),
-            ];
-        } else {
-//            $field = [];
-//            foreach(get_object_vars($fieldObj) as $key => $value) {
-//                $field[$key] = $value;
-//            }
-            $field = (array)$fieldObj;
-            $field['config'] = array_merge(json_decode($field['config'] ?? "[]", true), $column->config);
-            $field['rules'] = array_merge(json_decode($field['rules'] ?? "[]", true), Rules::make($column->getRules())->get());
-        }
-
-        $field['type'] = $column->fieldType;
-        $field['column_type'] = $column->type;
-        $field['required'] = $column->isRequired();
-        $field['unique'] = $column->isUnique();
-        $field['searchable'] = $column->isSearchable();
+        $field->type = $column->fieldType;
+        $field->column_type = $column->type;
+        $field->required = $column->isRequired();
+        $field->unique = $column->isUnique();
+        $field->searchable = $column->isSearchable();
+        $config = $column->config ?? [];
 
         if ($column->hide) {
-            $field['config']['hide.'.$column->hide] = true;
+            $config['hide.'.$column->hide] = true;
         }
 
-        $field['config']['default_value'] = $column->getDefaultValue();
+        $config['default_value'] = $column->getDefaultValue();
 
-        $field['rules'] = json_encode(array_filter_null($field['rules']));
-        $field['config'] = json_encode(array_filter_null($field['config']));
+        $field->config = array_filter_null($config);
+        $field->rules = Rules::make($column->getRules())->get();
+        $field->save();
+    }
 
+    protected function handleRelationConfig()
+    {
+        $relationConfig = $this->column->getRelationConfig();
+        $this->column->ignore();
 
-        if (isset($field['id'])) {
-            \DB::table('sv_fields')->where('id', $field['id'])->update($field);
-        } else {
-            \DB::table('sv_fields')->insert($field);
+        if ($relationConfig->hasPivotTable()) {
+            CreatePivotTable::dispatch($relationConfig);
         }
+
+        $this->resourceEntry->resourceRelations()->create([
+            'name'   => $relationConfig->getName(),
+            'type'   => $relationConfig->getType(),
+            'config' => $relationConfig->toArray(),
+        ]);
     }
 }

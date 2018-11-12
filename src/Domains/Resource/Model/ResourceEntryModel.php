@@ -14,30 +14,16 @@ class ResourceEntryModel extends EntryModel implements Watcher
 {
     protected $__form;
 
-    public function setForm($_form): self
-    {
-        $this->__form = $_form;
-
-        return $this;
-    }
-
     public function getForm(): Form
     {
         return $this->__form;
     }
 
-    protected static function boot()
+    public function setForm($_form): self
     {
-        parent::boot();
+        $this->__form = $_form;
 
-//        static::saving(function(ResourceEntryModel $entry) {
-//            EntrySavingEvent::dispatch($entry);
-//        });
-
-        static::saved(function(ResourceEntryModel $entry) {
-            EntrySavedEvent::dispatch($entry);
-        });
-
+        return $this;
     }
 
     /**
@@ -52,7 +38,9 @@ class ResourceEntryModel extends EntryModel implements Watcher
 
     public function getRelationshipFromConfig($name)
     {
-        $relation = RelationModel::fromCache($this->getTable(), $name);
+        if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
+            return null;
+        }
 
         $relation = RelationBuilder::resolveFromRelationEntry($relation);
 
@@ -90,6 +78,19 @@ class ResourceEntryModel extends EntryModel implements Watcher
     public function newInstance($attributes = [], $exists = false)
     {
         return parent::newInstance($attributes, $exists);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+//        static::saving(function(ResourceEntryModel $entry) {
+//            EntrySavingEvent::dispatch($entry);
+//        });
+
+        static::saved(function (ResourceEntryModel $entry) {
+            EntrySavedEvent::dispatch($entry);
+        });
     }
 
     public static function make($resourceHandle)
