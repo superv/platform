@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Auth;
 use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Auth\Contracts\Account as AccountContract;
 
-class Account extends Model implements AccountContract
+class Account extends Model implements AccountContract, \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract
 {
     protected $guarded = [];
 
@@ -14,5 +14,10 @@ class Account extends Model implements AccountContract
     public function users()
     {
         return $this->hasMany(config('superv.auth.user.model'));
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 }

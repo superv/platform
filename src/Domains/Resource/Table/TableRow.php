@@ -2,10 +2,11 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 
 class TableRow
 {
@@ -45,7 +46,7 @@ class TableRow
                         $value = $this->entry->getAttribute($field->getName());
 
                         if ($field->hasCallback('presenting')) {
-                            if ($value instanceof ResourceEntryModel) {
+                            if ($value instanceof EntryContract) {
                                 $value = ResourceEntry::make($value);
                             }
 

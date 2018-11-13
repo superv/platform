@@ -3,12 +3,10 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
-use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class BelongsTo extends FieldType implements NeedsDatabaseColumn
@@ -70,7 +68,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
 
     public function setValue($value): ?Closure
     {
-        if ($value instanceof ResourceEntryModel) {
+        if ($value instanceof EntryContract) {
             $value = $value->getId();
         }
 

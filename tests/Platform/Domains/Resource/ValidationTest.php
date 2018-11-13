@@ -7,7 +7,7 @@ use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Exceptions\ValidationException;
 
-class ValidationTest extends ResourceTestCase
+class ValidationTest
 {
     /** @test */
     function runs_validation_when_creating_resource_entry()

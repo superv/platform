@@ -3,8 +3,9 @@
 namespace SuperV\Platform\Domains\Database\Model;
 
 use Illuminate\Database\Eloquent\Model;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 
-class Entry extends Model implements Morphable
+class Entry extends Model implements Morphable, EntryContract
 {
     protected $guarded = [];
 

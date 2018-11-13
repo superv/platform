@@ -14,7 +14,7 @@ use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Resource;
 
-class ExtensionTest extends ResourceTestCase
+class ExtensionTest
 {
     /** @test */
     function overrides_fields()

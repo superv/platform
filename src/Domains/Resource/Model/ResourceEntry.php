@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Morphable;
 use SuperV\Platform\Domains\Resource\Fake;
 use SuperV\Platform\Domains\Resource\Field\Field;
@@ -29,7 +30,7 @@ class ResourceEntry implements Watcher, Morphable
 
     protected $config;
 
-    public function __construct(ResourceEntryModel $entry, ?Resource $resource = null)
+    public function __construct($entry, ?Resource $resource = null)
     {
         $this->entry = $entry;
         $this->handle = $this->entry->getTable();
@@ -41,7 +42,7 @@ class ResourceEntry implements Watcher, Morphable
         return $this->getEntry()->getKey();
     }
 
-    public function getEntry(): ResourceEntryModel
+    public function getEntry(): EntryContract
     {
         return $this->entry;
     }

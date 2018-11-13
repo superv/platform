@@ -3,12 +3,12 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 
 class Group
 {
@@ -44,7 +44,7 @@ class Group
 
     public function build()
     {
-        if ($this->watcher instanceof ResourceEntryModel) {
+        if ($this->watcher instanceof Entry) {
             $this->watcher = new ResourceEntry($this->watcher);
         }
         $this->types = collect();
