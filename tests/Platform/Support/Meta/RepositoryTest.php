@@ -2,8 +2,10 @@
 
 namespace Tests\Platform\Support\Meta;
 
+use DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Database\Model\Morphable;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
 use SuperV\Platform\Support\Meta\Meta;
@@ -52,6 +54,7 @@ class RepositoryTest extends TestCase
     {
         $meta = Meta::make(['config' => ['rules' => ['min' => 10, 'max' => 99]]]);
         ($repo = new Repository)->save($meta);
+        $this->assertNotNull($meta->id());
 
         $this->assertEquals(1, $this->allMetas->count());
         $metaEntry = $this->allMetas->first();
@@ -65,7 +68,21 @@ class RepositoryTest extends TestCase
         ($repo = new Repository)->save($meta);
 
         $fresh = $repo->load($meta->uuid());
+        $this->assertNotNull($fresh->id());
         $this->assertEquals($meta->compose(), $fresh->compose());
+    }
+
+    function test__update()
+    {
+        $repo = new Repository;
+
+        $meta = Meta::make(['2' => '4']);
+        $repo->save($meta);
+
+        $meta->set('3', '9');
+        $repo->save($meta);
+        $this->assertEquals(1, $this->allMetas->count());
+        $this->assertEquals(2, $this->allItems->count());
     }
 
     function test_owner()
@@ -81,17 +98,35 @@ class RepositoryTest extends TestCase
         $this->assertNotNull($meta);
     }
 
-    function test_owner_label()
+    function test_owner_loads_meta_from_relation()
     {
-        $meta = Meta::make()->setOwner('meta_owners', 234, 'config');
-        ($repo = new Repository)->save($meta);
+        $owners = $this->create('t_owners', function (Blueprint $table) {
+            $table->increments('id');
+            $table->morphOne('sv_meta', 'config', 'owner', Repository::class);
+        });
 
-        $meta = $this->allMetas->newQuery()
-                               ->where('owner_type', 'meta_owners')
-                               ->where('owner_id', 234)
-                               ->where('label', 'config')
-                               ->first();
-        $this->assertNotNull($meta);
+        $owner = $owners->create()->fresh();
+
+        /** @var Meta $meta */
+        $meta = $owner->makeConfig([]);
+        $this->assertInstanceOf(Meta::class, $meta);
+        $this->assertEquals($owner, $meta->getOwnerEntry());
+
+        (new Repository)->save($meta);
+        /** @var Meta $configMeta */
+        $configMeta = $owner->fresh()->getConfig();
+        $this->assertInstanceOf(Meta::class, $configMeta);
+        $this->assertEquals($owner, $configMeta->getOwnerEntry());
+
+        $configMeta->set('type', 'morph');
+        (new Repository)->save($configMeta);
+
+        $freshConfigMeta = $owner->fresh()->getConfig();
+
+        $this->assertInstanceOf(Meta::class, $freshConfigMeta);
+        $this->assertEquals($owner, $freshConfigMeta->getOwnerEntry());
+
+        $this->assertEquals(['type' => 'morph'], $freshConfigMeta->data());
     }
 }
 

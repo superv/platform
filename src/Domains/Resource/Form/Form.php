@@ -12,14 +12,9 @@ use SuperV\Platform\Exceptions\PlatformException;
 class Form
 {
     /**
-     * @var \Illuminate\Support\Collection
+     * @var \SuperV\Platform\Domains\Resource\Field\Field[]
      */
     protected $fields;
-
-    /**
-     * @var \Illuminate\Support\Collection
-     */
-    protected $fieldTypes;
 
     /**
      * @var string

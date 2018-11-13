@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Database\Model;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Arr;
 
 class QueryBuilder extends Builder
 {
@@ -40,7 +41,7 @@ class QueryBuilder extends Builder
           // the results. We will need to also flatten these bindings before running
           // the query so they are all in one huge, flattened array for execution.
           $compiledInsert = $this->grammar->compileInsert($this, $values);
-dd($compiledInsert);
+
           return $this->connection->insert(
               $compiledInsert,
               $this->cleanBindings(Arr::flatten($values, 1))
@@ -57,7 +58,6 @@ dd($compiledInsert);
     public function insertGetId(array $values, $sequence = null)
     {
         $sql = $this->grammar->compileInsertGetId($this, $values, $sequence);
-        info($sql);
 
         $values = $this->cleanBindings($values);
 

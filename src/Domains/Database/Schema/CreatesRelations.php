@@ -36,6 +36,39 @@ trait CreatesRelations
                     );
     }
 
+    public function hasOne($related, $relationName, $foreignKey, $localKey = null)
+    {
+        return $this->addColumn(null, $relationName, ['nullable' => true])
+                    ->relation(
+                        Config::hasOne()
+                              ->relationName($relationName)
+                              ->related($related)
+                              ->foreignKey($foreignKey)
+                              ->localKey($localKey)
+                    );
+    }
+
+    public function morphOne($related, $relationName, $morphName, $targetModel = null)
+    {
+        return $this->addColumn(null, $relationName, ['nullable' => true])
+                    ->relation(
+                        Config::morphOne()
+                              ->relationName($relationName)
+                              ->related($related)
+                              ->morphName($morphName)
+                              ->targetModel($targetModel)
+                    );
+    }
+
+    public function morphTo($relationName)
+    {
+        return $this->addColumn(null, $relationName, ['nullable' => true])
+                    ->relation(
+                        Config::morphTo()
+                              ->relationName($relationName)
+                    );
+    }
+
     public function belongsToMany(
         $related,
         $relationName,
@@ -53,18 +86,6 @@ trait CreatesRelations
                               ->pivotForeignKey($pivotForeignKey)
                               ->pivotRelatedKey($pivotRelatedKey)
                               ->pivotColumns($pivotColumns)
-                    );
-    }
-
-    public function hasOne($related, $relationName, $foreignKey, $localKey = null)
-    {
-        return $this->addColumn(null, $relationName, ['nullable' => true])
-                    ->relation(
-                        Config::hasOne()
-                              ->relationName($relationName)
-                              ->related($related)
-                              ->foreignKey($foreignKey)
-                              ->localKey($localKey)
                     );
     }
 
@@ -97,20 +118,6 @@ trait CreatesRelations
                               ->pivotForeignKey($morphName.'_id')
                               ->pivotRelatedKey($pivotRelatedKey)
                               ->pivotColumns($pivotColumns)
-                              ->morphName($morphName)
-                    );
-    }
-
-    public function morphOne(
-        $related,
-        $relationName,
-        $morphName
-    ) {
-        return $this->addColumn(null, $relationName, ['nullable' => true])
-                    ->relation(
-                        Config::morphOne()
-                              ->relationName($relationName)
-                              ->related($related)
                               ->morphName($morphName)
                     );
     }

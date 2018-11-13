@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
 
 /**
@@ -21,7 +22,7 @@ class ResourceBlueprint extends Fluent
         }
     }
 
-    public function config($table, array $columns)
+    public function config($table, Collection $columns)
     {
         if (! $this->label) {
             $this->label(ucwords(str_replace('_', ' ', $table)));
@@ -39,9 +40,9 @@ class ResourceBlueprint extends Fluent
         return $attributes;
     }
 
-    public function guessEntryLabel(array $columns): void
+    public function guessEntryLabel(Collection $columns): void
     {
-        $columns = collect($columns)->keyBy('name');
+//        $columns = collect($columns)->keyBy('name');
         if ($columns->has('name')) {
             $this->entryLabel('{name}');
         } elseif ($columns->has('title')) {

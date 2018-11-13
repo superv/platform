@@ -2,18 +2,17 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Addon\AddonModel;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Model\EntryModel;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 
-class ResourceModel extends EntryModel implements ProvidesFields
+class ResourceModel extends Entry implements ProvidesFields
 {
     protected $table = 'sv_resources';
 
@@ -58,6 +57,7 @@ class ResourceModel extends EntryModel implements ProvidesFields
 
     public function fields()
     {
+//        return ResourceFactory::make('sv_fields')->newQuery()->where('resource_id', $this->getKey());
         return $this->hasMany(FieldModel::class, 'resource_id');
     }
 

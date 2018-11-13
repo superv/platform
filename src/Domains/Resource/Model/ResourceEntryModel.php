@@ -3,6 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Model;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use SuperV\Platform\Domains\Database\Model\Entry;
+use SuperV\Platform\Domains\Database\Model\MakesEntry;
+use SuperV\Platform\Domains\Database\Model\Repository;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
@@ -10,7 +13,7 @@ use SuperV\Platform\Domains\Resource\Relation\RelationFactory as RelationBuilder
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Domains\Resource\Resource;
 
-class ResourceEntryModel extends EntryModel implements Watcher
+class ResourceEntryModel extends Entry implements Watcher
 {
     protected $__form;
 
@@ -38,6 +41,13 @@ class ResourceEntryModel extends EntryModel implements Watcher
 
     public function getRelationshipFromConfig($name)
     {
+        if ($relation = $this->resolveRelation($name)) {
+            return $relation->newQuery();
+        }
+    }
+
+    protected function resolveRelation($name)
+    {
         if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
             return null;
         }
@@ -46,7 +56,44 @@ class ResourceEntryModel extends EntryModel implements Watcher
 
         $relation->setParentEntry(new ResourceEntry($this));
 
-        return $relation->newQuery();
+        return $relation;
+    }
+
+    public function __call($name, $arguments)
+    {
+        if (starts_with($name, 'get')) {
+            $relationName = snake_case(str_replace_first('get', '', $name));
+            if ($relation = $this->resolveRelation($relationName)) {
+                if ($targetModel = $relation->getConfig()->getTargetModel()) {
+                    /** @var \SuperV\Platform\Domains\Database\Model\Entry $relatedEntry */
+                    if ($relatedEntry = $relation->newQuery()->getResults()->first()) {
+                        $targetModelInstance = new $targetModel;
+
+                        if ($targetModelInstance instanceof Repository) {
+                            return $targetModelInstance->resolve($relatedEntry, $this);
+                        }
+                    }
+                }
+            }
+        } elseif (starts_with($name, 'make')) {
+            $relationName = snake_case(str_replace_first('make', '', $name));
+            if ($relation = $this->resolveRelation($relationName)) {
+                if ($targetModel = $relation->getConfig()->getTargetModel()) {
+                    /** @var \SuperV\Platform\Domains\Database\Model\Entry $relatedEntry */
+                    if ($relation instanceof MakesEntry) {
+                        if ($relatedEntry = $relation->make($arguments)) {
+                            $targetModelInstance = new $targetModel;
+
+                            if ($targetModelInstance instanceof Repository) {
+                                return $targetModelInstance->make($relatedEntry, $this);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return parent::__call($name, $arguments);
     }
 
     /**
@@ -108,7 +155,8 @@ class ResourceEntryModel extends EntryModel implements Watcher
 
             public function setTable($table)
             {
-                return $this->table = static::$resource = $table;
+//                return $this->table = static::$resource = $table;
+                return $this->table = $table;
             }
 
             public function getMorphClass()
@@ -116,7 +164,7 @@ class ResourceEntryModel extends EntryModel implements Watcher
                 return $this->getTable();
             }
 
-            public static function __callStatic($method, $parameters)
+            public static function __callStaticxxxx($method, $parameters)
             {
                 $static = (new static);
                 $static->setTable($static::$resource);

@@ -6,17 +6,5 @@ use SuperV\Platform\Domains\Database\Model\Entry;
 
 class EntryModel extends Entry
 {
-    public function getId()
-    {
-        return $this->id;
-    }
 
-    /**
-     * @param $id
-     * @return static
-     */
-    public static function find($id)
-    {
-        return static::query()->find($id);
-    }
 }

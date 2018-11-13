@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Relation;
 
+use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class RelationConfig
@@ -98,6 +100,13 @@ class RelationConfig
      * @var string
      */
     protected $morphName;
+
+    /**
+     * Target model to be hydrated
+     *
+     * @var string
+     */
+    protected $targetModel;
 
     public function __construct(RelationType $type)
     {
@@ -248,6 +257,12 @@ class RelationConfig
             return $this->relatedModel($related);
         }
 
+        if ($resource = ResourceModel::withSlug($related)) {
+            if ($model = $resource->getConfigValue('model')) {
+                $this->relatedModel($model);
+            }
+        }
+
         return $this->relatedResource($related);
     }
 
@@ -283,6 +298,18 @@ class RelationConfig
         }
 
         return null;
+    }
+
+    public function targetModel(?string $targetModel): RelationConfig
+    {
+        $this->targetModel = $targetModel;
+
+        return $this;
+    }
+
+    public function getTargetModel(): string
+    {
+        return $this->targetModel;
     }
 
     public function toArray()
@@ -332,6 +359,11 @@ class RelationConfig
     public static function morphOne(): self
     {
         return static::make(RelationType::morphOne());
+    }
+
+    public static function morphTo(): self
+    {
+        return static::make(RelationType::morphTo());
     }
 
     public static function morphToMany(): self

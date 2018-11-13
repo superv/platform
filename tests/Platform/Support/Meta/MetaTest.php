@@ -137,16 +137,6 @@ class MetaTest extends TestCase
         $this->assertEquals(['abc' => ['def' => 'DEF']], $meta->zip()->data());
     }
 
-    function test__unzip()
-    {
-        $meta = Meta::make(['rules' => ['unique', 'required']]);
-        $meta->unzip();
-
-        $this->assertInstanceOf(Meta::class, $meta->get('rules'));
-
-
-    }
-
     function test__zip_returns_new_instance()
     {
         $meta = Meta::make();

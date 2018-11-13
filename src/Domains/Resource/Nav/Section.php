@@ -3,9 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Nav;
 
 use Illuminate\Database\Eloquent\Collection;
-use SuperV\Platform\Domains\Resource\Model\EntryModel;
+use SuperV\Platform\Domains\Database\Model\Entry;
 
-class Section extends EntryModel
+class Section extends Entry
 {
     protected $table = 'sv_navigation';
 

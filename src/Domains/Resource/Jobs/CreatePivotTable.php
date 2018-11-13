@@ -47,8 +47,8 @@ class CreatePivotTable
                     }
 
                     $table->timestamps();
-                    $table->index([$this->relation->getPivotForeignKey()], md5(uniqid()));
-                    $table->index([$this->relation->getPivotRelatedKey()], md5(uniqid()));
+                    $table->index([$this->relation->getPivotForeignKey()]);
+                    $table->index([$this->relation->getPivotRelatedKey()]);
                 });
         }
     }

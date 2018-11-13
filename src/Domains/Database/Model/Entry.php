@@ -4,14 +4,14 @@ namespace SuperV\Platform\Domains\Database\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Entry extends Model
+class Entry extends Model implements Morphable
 {
     protected $guarded = [];
 
     /**
      * Create a new Eloquent query builder for the model.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  \Illuminate\Database\Query\Builder $query
      * @return \SuperV\Platform\Domains\Database\Model\EloquentQueryBuilder|static
      */
     public function newEloquentBuilder($query)
@@ -26,5 +26,29 @@ class Entry extends Model
         return new QueryBuilder(
             $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
         );
+    }
+
+    public function getOwnerType()
+    {
+        return $this->getMorphClass();
+    }
+
+    public function getOwnerId()
+    {
+        return $this->getKey();
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param $id
+     * @return static
+     */
+    public static function find($id)
+    {
+        return static::query()->find($id);
     }
 }

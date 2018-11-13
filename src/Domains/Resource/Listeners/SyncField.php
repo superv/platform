@@ -3,10 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use Current;
-use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Jobs\CreatePivotTable;
@@ -27,10 +26,18 @@ class SyncField
     /** @var \SuperV\Platform\Domains\Database\Schema\ColumnDefinition */
     protected $column;
 
+    /** @var \Illuminate\Support\Collection|\SuperV\Platform\Domains\Database\Schema\ColumnDefinition[] */
+    protected $allColumns;
+
+    /** @var \SuperV\Platform\Domains\Database\Schema\Blueprint */
+    protected $blueprint;
+
     public function handle($event)
     {
         /** @var \SuperV\Platform\Domains\Database\Schema\ColumnDefinition $column */
         $this->column = $event->column;
+
+        $this->blueprint = $event->blueprint;
 
         if ($this->column->autoIncrement || $this->column->type === 'timestamp') {
             return;
@@ -39,17 +46,34 @@ class SyncField
         $this->setResourceEntry($event);
 
         if ($this->column->relation) {
-            return $this->handleRelationConfig();
+            $this->handleRelationConfig();
+
+            return;
         }
 
         $this->mapFieldType();
         $this->checkMustBeCreated();
 
-        if ($this->fieldWithoutEloquent === true) {
-            $this->fieldWithoutEloquent($this->column);
-        } else {
-            $field = $this->getFieldEntry($this->column->getFieldName());
-            $this->sync($field, $this->column);
+//        $field = $this->syncWithPDO();
+        $field = $this->syncWithEloquent();
+//        $field = $this->syncWithResource();
+
+        if (! Current::envIsTesting()) {
+            if (! $this->column->ignore) {
+                if (ResourceModel::withSlug('sv_meta_items')) {
+                    (new Repository)
+                        ->save(
+                            Meta::make($field['config'] ?? [])
+                                ->setOwner('sv_fields', $field['id'], 'config')
+                        );
+
+                    (new Repository)
+                        ->save(
+                            Meta::make($field['rules'] ?? [])
+                                ->setOwner('sv_fields', $field['id'], 'rules')
+                        );
+                }
+            }
         }
     }
 
@@ -72,7 +96,7 @@ class SyncField
         $this->fieldType = FieldType::resolve($this->column->fieldType);
     }
 
-    protected function fieldWithoutEloquent()
+    protected function syncWithPDO()
     {
         $column = $this->column;
         $resourceId = $this->resourceEntry->id;
@@ -100,38 +124,55 @@ class SyncField
         $field['unique'] = $column->isUnique();
         $field['searchable'] = $column->isSearchable();
 
-        $theConfig = $field['config'];
         if ($column->hide) {
-            $theConfig['hide.'.$column->hide] = true;
+            $field['config']['hide.'.$column->hide] = true;
         }
-        $theConfig['default_value'] = $column->getDefaultValue();
+        $field['config']['default_value'] = $column->getDefaultValue();
 
-        $field['rules'] = json_encode(array_filter_null($field['rules']));
-        $field['config'] = json_encode(array_filter_null($theConfig));
-
+        $dataArray = array_merge($field, [
+            'rules'  => json_encode(array_filter_null($field['rules'])),
+            'config' => json_encode(array_filter_null($field['config'])),
+        ]);
         if (isset($field['id'])) {
-            \DB::table('sv_fields')->where('id', $field['id'])->update($field);
+            \DB::table('sv_fields')->where('id', $field['id'])->update($dataArray);
         } else {
-            $field['id'] = \DB::table('sv_fields')->insertGetId($field);
+            $field['id'] = \DB::table('sv_fields')->insertGetId($dataArray);
         }
 
-        if (! Current::envIsTesting()) {
-            if (! $column->ignore) {
-                if (ResourceModel::withSlug('sv_meta_items')) {
-                    $meta = Meta::make($theConfig)->setOwner('sv_fields', $field['id'], 'config');
-                    (new Repository)->save($meta);
-                }
-            }
-        }
+        return $field;
     }
 
-    protected function getFieldEntry($fieldName)
+    protected function syncWithEloquent()
     {
+        $column = $this->column;
+
+        $fieldName = $column->getFieldName();
+
         if ($this->resourceEntry->hasField($fieldName)) {
-            return $this->resourceEntry->getField($fieldName);
+            $field = $this->resourceEntry->getField($fieldName);
+
+        } else {
+            $field = $this->resourceEntry->createField($fieldName);
         }
 
-        return $this->resourceEntry->createField($fieldName);
+        $field->type = $column->fieldType;
+        $field->column_type = $column->type;
+        $field->required = $column->isRequired();
+        $field->unique = $column->isUnique();
+        $field->searchable = $column->isSearchable();
+        $config = $column->config ?? [];
+
+        if ($column->hide) {
+            $config['hide.'.$column->hide] = true;
+        }
+
+        $config['default_value'] = $column->getDefaultValue();
+
+        $field->config = array_filter_null($config);
+        $field->rules = Rules::make($column->getRules())->get();
+        $field->save();
+
+        return $field->toArray();
     }
 
     protected function setResourceEntry($event): void
@@ -160,26 +201,6 @@ class SyncField
         }
     }
 
-    protected function sync(FieldModel $field, ColumnDefinition $column)
-    {
-        $field->type = $column->fieldType;
-        $field->column_type = $column->type;
-        $field->required = $column->isRequired();
-        $field->unique = $column->isUnique();
-        $field->searchable = $column->isSearchable();
-        $config = $column->config ?? [];
-
-        if ($column->hide) {
-            $config['hide.'.$column->hide] = true;
-        }
-
-        $config['default_value'] = $column->getDefaultValue();
-
-        $field->config = array_filter_null($config);
-        $field->rules = Rules::make($column->getRules())->get();
-        $field->save();
-    }
-
     protected function handleRelationConfig()
     {
         $relationConfig = $this->column->getRelationConfig();
@@ -187,6 +208,17 @@ class SyncField
 
         if ($relationConfig->hasPivotTable()) {
             CreatePivotTable::dispatch($relationConfig);
+        }
+
+        if ($relationConfig->type()->isMorphTo()) {
+            $name = $relationConfig->getName();
+
+            $this->blueprint->addPostBuildCallback(
+                function (Blueprint $blueprint) use ($name) {
+                    $blueprint->string("{$name}_type");
+                    $blueprint->unsignedBigInteger("{$name}_id");
+                    $blueprint->index(["{$name}_type", "{$name}_id"]);
+                });
         }
 
         $this->resourceEntry->resourceRelations()->create([

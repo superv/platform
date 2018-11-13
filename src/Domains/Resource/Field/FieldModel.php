@@ -4,10 +4,10 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Resource\Model\EntryModel;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
-class FieldModel extends EntryModel
+class FieldModel extends Entry
 {
     protected $table = 'sv_fields';
 
@@ -18,11 +18,6 @@ class FieldModel extends EntryModel
         'unique'     => 'bool',
         'searchable' => 'bool',
     ];
-
-    public function uuid()
-    {
-        return $this->uuid;
-    }
 
     public function setDefaultValue($value)
     {
@@ -130,6 +125,11 @@ class FieldModel extends EntryModel
         $this->attributes['rules'] = json_encode($rules);
     }
 
+    public function uuid()
+    {
+        return $this->uuid;
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -139,7 +139,7 @@ class FieldModel extends EntryModel
         });
     }
 
-    public static function withUuid($uuid):self
+    public static function withUuid($uuid): self
     {
         return static::query()->where('uuid', $uuid)->firstOrFail();
     }

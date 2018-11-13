@@ -4,10 +4,10 @@ namespace SuperV\Platform\Domains\Resource\Relation;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Resource\Model\EntryModel;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
-class RelationModel extends EntryModel
+class RelationModel extends Entry
 {
     protected $table = 'sv_relations';
 

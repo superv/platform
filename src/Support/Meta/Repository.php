@@ -2,9 +2,10 @@
 
 namespace SuperV\Platform\Support\Meta;
 
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
-class Repository
+class Repository implements \SuperV\Platform\Domains\Database\Model\Repository
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $metas;
@@ -21,40 +22,85 @@ class Repository
     public function save($meta, $parentId = null)
     {
         if ($meta instanceof Meta) {
-            if ($owner = $meta->getOwner()) {
-                $metaEntry = $this->metas->create($owner);
+            if ($meta->id()) {
+                $metaEntry = $this->metas->find($meta->id());
             } else {
-                $metaEntry = $this->metas->create( ['uuid' => $meta->uuid()]);
+                if ($owner = $meta->getOwner()) {
+                    $metaEntry = $meta->id() ? $this->metas->find($meta->id()) : $this->metas->create($owner);
+                } else {
+                    $metaEntry = $this->metas->create(['uuid' => $meta->uuid()]);
+                }
+
+                $meta->setId($metaEntry->id());
             }
-
             $metaEntryId = $metaEntry->id();
-
             $meta = $meta->compose();
         }
 
         foreach ($meta as $key => $value) {
-            $record = $this->items->create([
-                'meta_id'   => $metaEntryId ?? null,
-                'parent_id' => $parentId ?? null,
-                'key'       => $key,
-                'value'     => is_array($value) ? null : $value,
-            ]);
+            $item = $this->items
+                ->newQuery()
+                ->when($metaEntryId ?? null, function ($query, $value) {
+                    $query->where('meta_id', $value);
+                })
+                ->when($parentId ?? null, function ($query, $value) {
+                    $query->where('parent_item_id', $value);
+                })
+                ->where('key', $key)
+                ->first();
+
+            if ($item) {
+                $item->update(['value' => is_array($value) ? null : $value]);
+            } else {
+                $item = $this->items->create([
+                    'meta_id'        => $metaEntryId ?? null,
+                    'parent_item_id' => $parentId ?? null,
+                    'key'            => $key,
+                    'value'          => is_array($value) ? null : $value,
+                ]);
+            }
 
             if (is_array($value)) {
-                $this->save($value, $record->id());
+                $this->save($value, $item->id());
             }
         }
     }
 
-    public function load(string $uuid)
+    public function load($key)
     {
-        $meta = $this->metas->newQuery()->with('items')->where('uuid', $uuid)->first();
+        $query = $this->metas->newQuery()->with('items');
+        if (is_string($uuid = $key)) {
+            $entry = $query->where('uuid', $uuid)->first();
+        } elseif ($key instanceof Entry) {
+            $entry = $query->where('owner_type', $mc = $key->getMorphClass())->where('owner_id', $kk = $key->getKey())->first();
+        }
 
-        $items = $meta->items;
+        if (isset($entry)) {
+            $meta = new Meta($this->someFunction($entry->items), $entry->uuid);
+//            $meta->hydrate($entry);
+            if (is_object($key)) {
+                $meta->setOwnerEntry($key);
+            }
+            $meta->setId($entry->getKey());
 
-        $data = $this->someFunction($items);
+            return $meta;
+        }
+    }
 
-        return new Meta($data, $uuid);
+    public function resolve($entry, $owner)
+    {
+        $entry->load('items');
+        $meta = new Meta($this->someFunction($entry->items), $entry->uuid);
+//            $meta->hydrate($entry);
+        $meta->setOwner($owner);
+        $meta->setId($entry->getKey());
+
+        return $meta;
+    }
+
+    public function make($entry, $owner)
+    {
+        return (new Meta)->setOwner($owner);
     }
 
     public function someFunction($items)

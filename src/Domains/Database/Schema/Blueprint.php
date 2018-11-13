@@ -2,11 +2,11 @@
 
 namespace SuperV\Platform\Domains\Database\Schema;
 
+use Closure;
 use Current;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint as LaravelBlueprint;
 use Illuminate\Database\Schema\Grammars\Grammar;
-use Illuminate\Support\Fluent;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
@@ -24,6 +24,12 @@ class Blueprint extends LaravelBlueprint
      */
     protected $builder;
 
+    /** @var \Illuminate\Support\Collection|\SuperV\Platform\Domains\Database\Schema\ColumnDefinition[] */
+    protected $columns = [];
+
+    /** @var \Illuminate\Support\Collection|\Closure[] */
+    protected $postBuildCallbacks;
+
     public function __construct(string $table, ?\Closure $callback = null, Schema $builder = null)
     {
         parent::__construct($table, $callback);
@@ -31,10 +37,10 @@ class Blueprint extends LaravelBlueprint
         $this->builder = $builder;
     }
 
-    public function addColumn($type, $name, array $parameters = [])
+    public function addColumn($type, $name, array $parameters = []): ColumnDefinition
     {
         // Here, while adding a column let's pass along
-        // resource blueprint to each column
+        // the resource blueprint to each column
         $this->columns[] = $column = new ColumnDefinition(
             $this->builder ? $this->builder->resource() : new \SuperV\Platform\Domains\Resource\ResourceBlueprint,
             array_merge(compact('type', 'name'), $parameters)
@@ -55,24 +61,28 @@ class Blueprint extends LaravelBlueprint
             return;
         }
 
+        $this->postBuildCallbacks = collect();
+        $this->columns = collect($this->columns)->keyBy('name');
+
         if ($this->creating()) {
             TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->builder->resource(), Current::migrationScope());
         } else {
-            // Dropping Columns
             $this->runDropOperations();
         }
 
-        sv_collect($this->getChangedColumns())->map(function (Fluent $column) {
-            ColumnUpdatedEvent::dispatch($this->tableName(), $column);
-        });
+        $this->columns = $this->columns->map(
+            function (ColumnDefinition $column) {
+                if ($column->change) {
+                    ColumnUpdatedEvent::dispatch($this->tableName(), $this, $column);
+                } else {
+                    ColumnCreatedEvent::dispatch($this->tableName(), $this, $column, $this->builder->resource()->model);
+                }
 
-        sv_collect($this->getAddedColumns())->map(function ($column) {
-            ColumnCreatedEvent::dispatch($this->tableName(), $column, $this->builder->resource()->model);
-        });
+                return $column->ignore ? null : $column;
+            }
+        )->filter()->all();
 
-        $this->columns = array_filter($this->columns, function ($column) {
-            return ! $column->ignore;
-        });
+        $this->applyPostBuildCallbacks();
 
         if (! $this->builder->justRun) {
             parent::build($connection, $grammar);
@@ -109,5 +119,39 @@ class Blueprint extends LaravelBlueprint
                 });
             }
         }
+    }
+
+    /**
+     * Specify an index for the table.
+     *
+     * @param  string|array $columns
+     * @param  string       $name
+     * @param  string|null  $algorithm
+     * @return \Illuminate\Support\Fluent
+     */
+    public function index($columns, $name = null, $algorithm = null)
+    {
+        $indexName = $name ?? md5(uniqid());
+
+        return $this->indexCommand('index', $columns, $indexName, $algorithm);
+    }
+
+    public function getPostBuildCallbacks()
+    {
+        return $this->postBuildCallbacks;
+    }
+
+    public function applyPostBuildCallbacks()
+    {
+        $this->postBuildCallbacks->map(function(Closure $callback) {
+            $callback($this);
+        });
+    }
+
+    public function addPostBuildCallback(Closure $callback)
+    {
+        $this->postBuildCallbacks[] = $callback;
+
+        return $this;
     }
 }

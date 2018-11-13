@@ -3,12 +3,16 @@
 namespace SuperV\Platform\Support\Meta;
 
 use ArrayAccess;
-use ArrayIterator;
-use IteratorAggregate;
+use Exception;
+use SuperV\Platform\Domains\Database\Model\BelongsToEntry;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Model\Morphable;
 
-class Meta implements ArrayAccess, IteratorAggregate
+class Meta implements ArrayAccess, BelongsToEntry
 {
+    /** @var int */
+    protected $id;
+
     /**
      * @var string
      */
@@ -19,19 +23,16 @@ class Meta implements ArrayAccess, IteratorAggregate
      */
     protected $data = [];
 
-    /** @var Morphable */
+    /** @var array */
     protected $owner;
+
+    /** @var \SuperV\Platform\Domains\Database\Model\Entry */
+    protected $ownerEntry;
 
     protected $alwaysZip = false;
 
     public function __construct($data = [], ?string $uuid = null)
     {
-//        if (is_array($data)) {
-//            foreach ($data as $key => $value) {
-//                $this->offsetSet($key, $value);
-//            }
-//        }
-
         $this->data = $data;
         $this->uuid = $uuid ?? uuid();
     }
@@ -134,23 +135,49 @@ class Meta implements ArrayAccess, IteratorAggregate
 
     public function setOwner($ownerType, $ownerId = null, $label = null): Meta
     {
-        if ($ownerType instanceof Morphable) {
-            $this->owner = [
-                'owner_type' => $ownerType->getOwnerType(),
-                'owner_id'   => $ownerType->getOwnerId(),
-            ];
+        if (is_object($ownerType)) {
+            if ($ownerType instanceof Morphable) {
+                $this->owner = [
+                    'owner_type' => $ownerType->getOwnerType(),
+                    'owner_id'   => $ownerType->getOwnerId(),
+                ];
+            } else {
+                throw new Exception('Unknown owner type');
+            }
         } else {
-            $this->owner = ['owner_type' => $ownerType, 'owner_id'   => $ownerId];
+            $this->owner = ['owner_type' => $ownerType, 'owner_id' => $ownerId];
         }
 
-        $this->owner['label'] = $label;
+//        $this->owner['label'] = $label;
+
+        if ($ownerType instanceof Entry) {
+            $this->ownerEntry = $ownerType;
+        }
 
         return $this;
     }
 
-    public function getIterator()
+    public function getOwnerEntry(): ?Entry
     {
-        return new ArrayIterator($this);
+        return $this->ownerEntry;
+    }
+
+    public function setOwnerEntry(Entry $entry)
+    {
+        $this->setOwner($entry);
+    }
+
+    public function id(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
     }
 
     public function uuid(): ?string

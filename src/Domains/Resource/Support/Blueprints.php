@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Support;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Support\Meta\MetaModel;
 
 class Blueprints
 {
@@ -38,8 +39,9 @@ class Blueprints
         $table->uuid('uuid');
 
         if ($table instanceof Blueprint) {
-            $table->belongsTo('sv_resources', 'resource');
             $resource->label('Resource Fields');
+            $table->belongsTo('sv_resources', 'resource');
+            $table->morphOne('sv_meta', 'configMeta', 'owner');
         } else {
             $table->unsignedInteger('resource_id');
         }
@@ -53,7 +55,8 @@ class Blueprints
 
         $table->text('rules')->nullable();
         $table->text('config')->nullable();
-        $table->uuid('config_uuid')->nullable();
+
+
         $table->timestamps();
     }
 
@@ -113,15 +116,15 @@ class Blueprints
 
         if ($table instanceof Blueprint) {
             $resource->label('Meta');
-
+//            $resource->model(MetaModel::class);
             $table->hasMany('sv_meta_items', 'items', 'meta_id', 'id');
         }
 
         $table->nullableMorphs('owner');
         $table->string('label')->nullable();
-
-
         $table->uuid('uuid')->nullable();
+
+        $table->timestamps();
     }
 
     /**
@@ -135,11 +138,11 @@ class Blueprints
             $resource->label('Meta Items');
 
             $table->nullableBelongsTo('sv_meta', 'meta');
-            $table->nullableBelongsTo('sv_meta_items', 'parent');
-            $table->hasMany('sv_meta_items', 'items', 'parent_id', 'id');
+            $table->nullableBelongsTo('sv_meta_items', 'parent_item');
+            $table->hasMany('sv_meta_items', 'items', 'parent_item_id', 'id');
         } else {
             $table->unsignedInteger('meta_id')->nullable();
-            $table->unsignedInteger('parent_id')->nullable();
+            $table->unsignedInteger('parent_item_id')->nullable();
         }
 
         $table->string('key');

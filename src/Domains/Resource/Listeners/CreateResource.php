@@ -14,7 +14,7 @@ class CreateResource
             return;
         }
 
-        $resource = $event->blueprint;
+        $resource = $event->resourceBlueprint;
 
         /** @var ResourceModel $entry */
         $entry = ResourceModel::create(array_filter(

@@ -41,8 +41,5 @@ class DatabaseListenerTest extends TestCase
 
     }
 
-    function test__cache_registers_to_events()
-    {
-        
-    }
+
 }

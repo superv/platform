@@ -25,8 +25,8 @@ class Listener
             } elseif(true || $operation === 'update') {
                 $table = trim($parts[1], '"');
 
-                info('paer', $parts);
-                info('bind', $query->bindings);
+//                info('paer', $parts);
+//                info('bind', $query->bindings);
 
                 TableUpdateEvent::dispatch($table, last($query->bindings));
             }

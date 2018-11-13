@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -45,10 +43,10 @@ abstract class Relation implements NeedsEntry
 
     protected function newRelatedInstance(): ?ResourceEntry
     {
-        if ($table = $this->config->getRelatedResource()) {
-            return ResourceEntry::newInstance($table);
-        } elseif ($model = $this->config->getRelatedModel()) {
+        if ($model = $this->config->getRelatedModel()) {
             return new ResourceEntry(new $model);
+        } elseif ($table = $this->config->getRelatedResource()) {
+            return ResourceEntry::newInstance($table);
         }
 
         throw new PlatformException('Related resource/model not found');
@@ -81,16 +79,16 @@ abstract class Relation implements NeedsEntry
         return $this->config;
     }
 
+    public function getParentEntry(): ?Model
+    {
+        return $this->parentEntry ? $this->parentEntry->getEntry() : $this->resourceEntry->getEntry();
+    }
+
     public function setParentEntry(ResourceEntry $parentEntry): Relation
     {
         $this->parentEntry = $parentEntry;
 
         return $this;
-    }
-
-    public function getParentEntry(): ?Model
-    {
-        return $this->parentEntry ? $this->parentEntry->getEntry() : $this->resourceEntry->getEntry();
     }
 
     public function getEntry(): ResourceEntry

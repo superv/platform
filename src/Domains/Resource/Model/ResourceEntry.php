@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
+use SuperV\Platform\Domains\Database\Model\Morphable;
 use SuperV\Platform\Domains\Resource\Fake;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
@@ -12,7 +13,7 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 
-class ResourceEntry implements Watcher
+class ResourceEntry implements Watcher, Morphable
 {
     /** @var Resource */
     protected $resource;
@@ -200,5 +201,15 @@ class ResourceEntry implements Watcher
         if (($resource = $handle) instanceof Resource) {
             return new static(ResourceEntryModel::make($resource->getHandle()), $resource);
         }
+    }
+
+    public function getOwnerType()
+    {
+        return $this->getHandle();
+    }
+
+    public function getOwnerId()
+    {
+        return $this->id();
     }
 }
