@@ -28,6 +28,8 @@ class FormBuilder
 
     protected $prebuilt = false;
 
+    protected $skipFields = [];
+
     public function __construct(?Form $formy = null)
     {
         $this->form = $formy ?? new Form;
@@ -42,7 +44,10 @@ class FormBuilder
 
         $this->prebuilt = true;
 
-        $this->groups->map->build();
+        $this->groups->map(function (Group $group) {
+            $group->setSkipFields($this->skipFields);
+            $group->build();
+        });
 
         $this->form->addGroups($this->groups);
 
@@ -65,6 +70,16 @@ class FormBuilder
         return $this;
     }
 
+    public function removeField(string $name)
+    {
+        $this->skipFields[] = $name;
+
+        return $this;
+//        $this->fields = $this->fields->filter(function(Field $field) use ($name) {
+//            return $field->getName() !== $name;
+//        })->values();
+    }
+
     public function setRequest(Request $request): self
     {
         $this->form->setRequest($request);
@@ -84,11 +99,6 @@ class FormBuilder
         $this->form->boot();
 
         return $this;
-    }
-
-    public function uuid()
-    {
-        return $this->form->uuid();
     }
 
     public function getForm(): Form
@@ -125,6 +135,11 @@ class FormBuilder
         }
 
         return $fields;
+    }
+
+    public function uuid()
+    {
+        return $this->form->uuid();
     }
 
     public static function wakeup($uuid): self

@@ -61,7 +61,7 @@ class ResourceFactory
 
         return array_merge($this->model->toArray(), [
             'handle'            => $this->model->getSlug(),
-            'fields'            => $this->getFieldsProvider(),
+//            'fields'            => $this->getFieldsProvider(),
             'relations'         => $this->getRelationsProvider(),
             'relation_provider' => function (string $name, ?ResourceEntry $entry = null)  {
                 $relationEntry = RelationModel::query()

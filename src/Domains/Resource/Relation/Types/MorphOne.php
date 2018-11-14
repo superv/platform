@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\Jobs\BuildFormDeprecated;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
@@ -28,21 +29,22 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry
         );
     }
 
-    protected function getRelatedEntry(): ?ResourceEntryModel
+    protected function getRelatedEntry(): ?ResourceEntry
     {
-        return $this->newQuery()->getResults();
+        if ($entry = $this->newQuery()->getResults()) {
+            return ResourceEntry::make($entry);
+        }
     }
 
     public function makeForm(): Form
     {
         $relatedEntry = $this->getRelatedEntry() ?? $this->newRelatedInstance();
 
-        BuildFormDeprecated::dispatch($form = Form::make(), collect([$relatedEntry->wrap()]));
+        $form = (new FormBuilder)
+            ->addGroup($relatedEntry->getHandle(), $relatedEntry, $relatedEntry->getResource())
+            ->prebuild()
+            ->getForm();
 
-        $form->removeFieldBeforeBuild(function (FieldType $field) {
-
-            return starts_with($field->getColumnName(), $this->config->getMorphName().'_');
-        });
 
         return $form;
     }

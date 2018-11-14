@@ -2,21 +2,18 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
 use SuperV\Platform\Support\Negotiator\Negotiator;
 
-class ActionComposer
+class Builder
 {
     /** @var \SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract */
     protected $action;
 
     protected $contexts = [];
 
-    public function __construct(ActionContract $action)
+    public function __construct($actionClass)
     {
-        $this->action = $action;
-
-        $this->addContext($action);
+        $this->addContext($this->action = $actionClass::make());
     }
 
     public function compose(): array

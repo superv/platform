@@ -2,10 +2,14 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
+use SuperV\Platform\Domains\Resource\Contracts\MustBeInitialized;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-class Action
+class Action implements ActionContract
 {
+    use FiresCallbacks;
+
     /**
      * Unique name of the action
      *
@@ -16,13 +20,22 @@ class Action
     /** @var string */
     protected $title;
 
-    public function compose(ResourceEntry $entry): array
+    protected $payload;
+
+
+    protected function __construct() { }
+
+    public function compose(): array
     {
-        return [
+        $this->payload = array_filter_null([
             'name'  => $this->getName(),
             'title' => $this->getTitle(),
-            'url'   => $entry->route($this->getName()),
-        ];
+        ]);
+
+
+        $this->fire('composed');
+
+        return $this->payload;
     }
 
     public function getName(): string
@@ -40,6 +53,10 @@ class Action
         $action = new static;
         if ($name) {
             $action->name = $name;
+        }
+
+        if ($action instanceof MustBeInitialized) {
+            $action->init();
         }
 
         return $action;

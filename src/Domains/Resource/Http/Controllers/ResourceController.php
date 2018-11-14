@@ -60,7 +60,7 @@ class ResourceController extends BaseApiController
             ->addGroup(
                 $this->resource()->getHandle(),
                 $this->resource()->newEntryInstance(),
-                ResourceModel::withSlug($this->resource()->getHandle())
+                $this->resource()->getFields()
             )
             ->prebuild()
             ->getForm();
@@ -83,7 +83,8 @@ class ResourceController extends BaseApiController
             ->addGroup(
                 $handle = $this->resource()->getHandle(),
                 $entry = $this->entry,
-                $fields = ResourceModel::withSlug($this->resource()->getHandle())
+                $fields = $this->resource()->getFields()
+//                $fields = ResourceModel::withSlug($this->resource()->getHandle())
             )
             ->prebuild()
             ->getForm();

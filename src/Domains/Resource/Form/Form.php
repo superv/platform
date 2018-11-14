@@ -59,9 +59,11 @@ class Form
         $this->booted = true;
 
         // Make field type and tell them to watch the fields
-        $this->getFields()->map(function (Field $field) {
-//            FieldType::fromField($field);
-        });
+//        $this->getFields()->map(function (Field $field) {
+////            FieldType::fromField($field);
+//        });
+//
+
     }
 
     public function save(): self
@@ -115,11 +117,6 @@ class Form
         });
     }
 
-    public function uuid(): string
-    {
-        return $this->uuid;
-    }
-
     //
     //      <!---  M U T A T O R   M E T H O D S   E N D S  H E R E  --->
     //
@@ -138,7 +135,7 @@ class Form
         return $this->fields;
     }
 
-    public function getField(string $name): Field
+    public function getField(string $name): ?Field
     {
         return $this->getFields()
                     ->first(
@@ -172,6 +169,11 @@ class Form
     public function getWatcher($handle)
     {
         return $this->watchers[$handle];
+    }
+
+    public function uuid(): string
+    {
+        return $this->uuid;
     }
 
     public static function cacheKeyPrefix()

@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -45,6 +47,22 @@ class FormBuilderTest extends ResourceTestCase
 
         $this->assertEquals('Omar', $form->getField('name')->compose()['value']);
         $this->assertEquals(33, $form->getField('age')->compose()['value']);
+    }
+
+    function test__removes_field()
+    {
+        $form = (new FormBuilder)
+            ->addGroup('test_user', new TestUser(['name' => 'Omar', 'age' => 33]), $this->makeFields())
+            ->removeField('name')
+            ->prebuild()
+            ->getForm();
+
+
+        $this->assertEquals(1, $form->getFields()->count());
+        $this->assertNull($form->getField('name'));
+
+        // make sure to get values after filter
+        $this->assertEquals($form->getFields()->values(), $form->getFields());
     }
 
     /** @test */
@@ -163,7 +181,7 @@ class FormBuilderTest extends ResourceTestCase
         });
 
         $builder = (new FormBuilder)
-            ->addGroup('test_user', $user = new TestUser, ResourceModel::withSlug('test_users'))
+            ->addGroup('test_user', $user = new TestUser, ResourceFactory::make('test_users'))
             ->prebuild();
 
         $form = FormBuilder::wakeup($builder->uuid())
@@ -180,9 +198,6 @@ class FormBuilderTest extends ResourceTestCase
         $this->assertTrue($user->wasRecentlyCreated);
     }
 
-    /**
-     * @return array
-     */
     public function makeFields(): array
     {
         return [

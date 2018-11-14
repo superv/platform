@@ -10,6 +10,7 @@ use Illuminate\Support\Fluent;
  *
  *  @method ResourceBlueprint model($model)
  *  @method ResourceBlueprint nav($nav)
+ *  @method ResourceBlueprint resourceKey($key)
  *  @method ResourceBlueprint label($label)
  *  @method ResourceBlueprint entryLabel($entryLabel)
  */

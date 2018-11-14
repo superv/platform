@@ -59,8 +59,11 @@ class Field
 
     protected $columnName;
 
+    protected $sid;
+
     protected function __construct()
     {
+        $this->sid = md5(uniqid());
     }
 
     protected function boot()
@@ -187,6 +190,17 @@ class Field
     public static function make(array $params): self
     {
         $field = new static;
+        $config = array_pull($params, 'config');
+        $rules = array_pull($params, 'rules');
+
+        // @TODO:fix
+        if (is_string($config)) {
+            $params['config'] = json_decode($config, true);
+        }
+        if (is_string($rules)) {
+            $params['rules'] = json_decode($rules, true);
+        }
+
         $field->hydrate($params);
         $field->boot();
 

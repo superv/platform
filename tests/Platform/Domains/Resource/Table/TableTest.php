@@ -4,8 +4,8 @@ namespace Tests\Platform\Domains\Resource\Table;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Resource\Action\Action;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
+use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
@@ -53,7 +53,7 @@ class TableTest extends ResourceTestCase
         $this->config = new TableConfig();
         $this->config->setFieldsProvider($this->users);
         $this->config->setQueryProvider($this->users);
-        $this->config->setActions([Action::make('edit'), Action::make('delete')]);
+        $this->config->setActions([EditEntryAction::class, DeleteEntryAction::class]);
         $this->config->build();
     }
 
@@ -61,7 +61,7 @@ class TableTest extends ResourceTestCase
     function builds_table_config()
     {
         $this->assertEquals(sv_url('sv/tables/'.$this->config->uuid()), $this->config->getUrl());
-        $this->assertEquals(3, $this->config->getColumns()->count());
+        $this->assertEquals(3, $this->config->getFields()->count());
 
         $configArray = $this->config->compose();
         $this->assertEquals($this->config->getUrl(), array_get($configArray, 'config.dataUrl'));

@@ -2,7 +2,8 @@
 
 namespace Tests\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Domains\Resource\Action\ActionComposer;
+use SuperV\Platform\Domains\Resource\Action\Action;
+use SuperV\Platform\Domains\Resource\Action\Builder;
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
 use SuperV\Platform\Support\Negotiator\Providing;
 use SuperV\Platform\Support\Negotiator\Requirement;
@@ -22,15 +23,13 @@ class ActionTest extends ResourceTestCase
 {
     function test__construct()
     {
-        $action = new Action;
+        $action = Action::make('some');
         $this->assertInstanceOf(ActionContract::class, $action);
-        $this->assertEquals('edit', $action->getName());
-        $this->assertEquals('Edit Entry', $action->getTitle());
     }
 
-    function test__composer_start_today()
+    function test__composer_negotiation()
     {
-        $composer = new ActionComposer($action = new EntryAction);
+        $composer = new Builder($action = EntryAction::make('entry'));
         $composer->addContext($page = new TestPage);
 
         $this->assertEquals([
@@ -49,31 +48,6 @@ class TestPage implements ProvidesActionTestEntry
     }
 }
 
-class Action implements ActionContract
-{
-    protected $name = 'edit';
-
-    protected $title = 'Edit Entry';
-
-    public function compose(): array
-    {
-        return array_filter_null([
-            'name'  => $this->getName(),
-            'title' => $this->getTitle(),
-        ]);
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function getTitle()
-    {
-        return $this->title;
-    }
-}
-
 class ActionTestEntry
 {
     public $name;
@@ -86,6 +60,10 @@ class ActionTestEntry
 
 class EntryAction extends Action implements RequiresActionTestEntry
 {
+    protected $name = 'edit';
+
+    protected $title = 'Edit Entry';
+
     protected $entryName;
 
     public function compose(): array

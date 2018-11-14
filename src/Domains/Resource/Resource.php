@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Closure;
-use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
@@ -13,6 +12,7 @@ use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Domains\Resource\Relation\RelationFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -128,7 +128,7 @@ class Resource implements ProvidesFields, ProvidesQuery
         return $this->newQuery()->count();
     }
 
-    public  function fresh(): self
+    public function fresh(): self
     {
         return static::of($this->getHandle());
     }
@@ -158,11 +158,21 @@ class Resource implements ProvidesFields, ProvidesQuery
 
     public function getFields(): Collection
     {
-        if ($this->fields instanceof Closure) {
-            $this->fields = ($this->fields)();
-        }
+        $self = ResourceFactory::make('sv_resources')
+                               ->newQuery()
+                               ->with('fields')
+                               ->where('handle', $this->getHandle())
+                               ->first();
 
-        return $this->fields;
+        return $self->fields->map(function (ResourceEntryModel $fieldEntry) {
+            return Field::make($fieldEntry->toArray());
+        });
+
+//        if ($this->fields instanceof Closure) {
+//            $this->fields = ($this->fields)();
+//        }
+//
+//        return $this->fields;
     }
 
     public function getFieldType($name): ?FieldType
@@ -176,11 +186,22 @@ class Resource implements ProvidesFields, ProvidesQuery
 
     public function getField($name)
     {
-        return $this->getFields()->first(function( $field) use ($name) { return $field->getName() === $name; });
+        return $this->getFields()->first(function ($field) use ($name) { return $field->getName() === $name; });
     }
 
     public function getRelations(): Collection
     {
+//        $self = ResourceFactory::make('sv_resources')
+//                               ->newQuery()
+//                               ->with('relations')
+//                               ->where('handle', $this->getHandle())
+//                               ->first();
+//
+//        return $self->relations->map(function (ResourceEntryModel $relationEntry) {
+//            return RelationFactory::resolveFromRelationEntry($relationEntry);
+//        })
+//                               ->keyBy(function (Relation $relation) { return $relation->getName(); });
+//
         if ($this->relations instanceof Closure) {
             $this->relations = ($this->relations)();
         }
@@ -190,17 +211,8 @@ class Resource implements ProvidesFields, ProvidesQuery
 
     public function getRelation($name, ?ResourceEntry $entry = null): ?Relation
     {
+//        return $this->getRelations()->get($name);
         return ($this->relationProvider)($name, $entry);
-    }
-
-    public function id(): int
-    {
-        return $this->id;
-    }
-
-    public function uuid(): string
-    {
-        return $this->uuid;
     }
 
     public function getLabel()
@@ -211,6 +223,11 @@ class Resource implements ProvidesFields, ProvidesQuery
     public function singularLabel()
     {
         return $this->getConfigValue('singular_label', str_singular($this->getConfigValue('label')));
+    }
+
+    public function resourceKey()
+    {
+        return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
     }
 
     public function entryLabelTemplate()
@@ -251,6 +268,16 @@ class Resource implements ProvidesFields, ProvidesQuery
     public function __wakeup()
     {
         $this->hydrate(ResourceFactory::attributesFor($this->getHandle()));
+    }
+
+    public function uuid(): string
+    {
+        return $this->uuid;
+    }
+
+    public function id(): int
+    {
+        return $this->id;
     }
 
     public static function modelOf($handle)

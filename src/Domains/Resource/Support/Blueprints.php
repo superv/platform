@@ -15,6 +15,7 @@ class Blueprints
     {
         $table->increments('id');
         $table->uuid('uuid')->unique();
+        $table->string('handle');
         $table->string('slug');
         $table->string('addon');
         $table->string('model')->nullable();

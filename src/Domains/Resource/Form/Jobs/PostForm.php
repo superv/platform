@@ -32,6 +32,7 @@ class PostForm
 
     public function handle()
     {
+        return null;
         $all = $this->request->all();
         $this->form->getFields()->map(function (FieldType $field) {
             $entry = $field->getEntry()->toArray();

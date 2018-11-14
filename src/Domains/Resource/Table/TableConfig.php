@@ -5,11 +5,9 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Resource\Action\Action;
+use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Exceptions\PlatformException;
 
 class TableConfig
 {
@@ -25,11 +23,13 @@ class TableConfig
     protected $title;
 
     /**
-     * @var \Illuminate\Support\Collection
+     * @var array
      */
-    protected $columns;
+    protected $hiddenFields = [];
 
-    /** @var Collection */
+    /**
+     * @var Collection
+     */
     protected $actions;
 
     protected $url;
@@ -44,22 +44,19 @@ class TableConfig
 
     public function build(): self
     {
-        $this->validate();
-
         $this->uuid = Str::uuid();
+//
+//        $this->fields = $this->fieldsProvider->provideFields()
+//                                             ->map(function (Field $field) {
+//                                                 if ($field->getConfigValue('hide.table') === true) {
+//                                                     return null;
+//                                                 }
+//
+//                                                 return $field;
+//                                             })
+//                                             ->filter();
 
-        $this->columns = $this->fieldsProvider->provideFields()
-                                              ->map(function (Field $field) {
-                                                  if ($field->getConfigValue('hide.table') === true) {
-                                                      return null;
-                                                  }
-
-                                                  return $field;
-                                              })
-                                              ->filter();
-
-        $this->actions = $this->actions ? collect($this->actions) : collect([Action::make('edit'),
-            Action::make('delete')]);
+        $this->actions = $this->actions ? collect($this->actions) : collect([EditEntryAction::class]);
 
         // build Url
         $this->url = sv_url('sv/tables/'.$this->uuid());
@@ -85,7 +82,7 @@ class TableConfig
         return [
             'config' => [
                 'meta'    => [
-                    'columns' => $this->getColumns()
+                    'columns' => $this->getFields()
                                       ->map(function ($field) {
                                           return ['label' => $field->getLabel(), 'name' => $field->getName()];
                                       })
@@ -110,18 +107,23 @@ class TableConfig
 
     public function removeColumn(string $name)
     {
-        $this->columns = $this->columns->filter(function ($field) use ($name) {
-            return $field->getName() !== $name;
-        });
+        $this->hiddenFields[] = $name;
     }
 
-    public function getColumns(): Collection
+    public function getFields(): Collection
     {
-        if (! $this->isBuilt()) {
-            throw new Exception('Config is not built yet');
-        }
+        return $this->fieldsProvider->provideFields()
+                                    ->map(function (Field $field) {
+                                        if ($field->getConfigValue('hide.table') === true) {
+                                            return null;
+                                        }
+                                        if (in_array($field->getName(), $this->hiddenFields)) {
+                                            return null;
+                                        }
 
-        return $this->columns;
+                                        return $field;
+                                    })
+                                    ->filter();
     }
 
     public function getActions(): ?Collection
@@ -146,11 +148,6 @@ class TableConfig
         if ($this->isBuilt()) {
             throw new Exception('Config is already built');
         }
-    }
-
-    public function uuid()
-    {
-        return $this->uuid;
     }
 
     public function cache()
@@ -188,6 +185,11 @@ class TableConfig
         $this->fieldsProvider = $fieldsProvider;
 
         return $this;
+    }
+
+    public function uuid()
+    {
+        return $this->uuid;
     }
 
     public static function fromCache($uuid): ?TableConfig

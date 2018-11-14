@@ -7,7 +7,6 @@ use ReflectionClass;
 class Negotiator
 {
     const PROVIDES = 'Provides';
-
     const REQUIRES = 'Requires';
 
     /**
@@ -30,7 +29,6 @@ class Negotiator
 
         $this->makeStrategies();
 
-
         foreach ($this->strategies as $requirement => $providing) {
             $providingMethod = static::getFirstMethod($providing);
             $provider = $this->providings[$providing];
@@ -51,14 +49,10 @@ class Negotiator
     {
         $implements = class_implements($party);
         foreach ($implements as $interface) {
-            if (starts_with(class_basename($interface), self::PROVIDES)) {
-                if (array_key_exists(Providing::class, class_implements($interface))) {
-                    $this->providings[$interface] = $party;
-                }
-            } elseif (starts_with(class_basename($interface), self::REQUIRES)) {
-                if (array_key_exists(Requirement::class, class_implements($interface))) {
-                    $this->requirements[$interface] = $party;
-                }
+            if (starts_with($bn = class_basename($interface), self::PROVIDES)) {
+                $this->providings[$interface] = $party;
+            } elseif (starts_with($bn = class_basename($interface), self::REQUIRES)) {
+                $this->requirements[$interface] = $party;
             }
         }
     }

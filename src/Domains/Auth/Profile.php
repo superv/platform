@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Auth;
 
-use Illuminate\Database\Eloquent\Model;
+use SuperV\Platform\Domains\Database\Model\Entry;
 
-class Profile extends Model
+class Profile extends Entry
 {
     protected $table = 'user_profiles';
 

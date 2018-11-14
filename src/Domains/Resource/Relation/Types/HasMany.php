@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Relation\Types;
 
-
 use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
@@ -18,16 +17,18 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEnt
 {
     protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation
     {
-        if (!$localKey = $this->config->getLocalKey()) {
-            $entry = $this->resourceEntry->getEntry();
-            $localKey = $entry->getKeyName();
+        if (! $localKey = $this->config->getLocalKey()) {
+            if ($this->resourceEntry) {
+                $entry = $this->resourceEntry->getEntry();
+                $localKey = $entry->getKeyName();
+            }
         }
 
         return new EloquentHasMany(
             $relatedEntryInstance->newQuery(),
             $this->getParentEntry(),
             $this->config->getForeignKey(),
-            $localKey
+            $localKey ?? 'id'
         );
     }
 
@@ -41,7 +42,7 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEnt
 
         $config->build();
 
-        $belongsTo = $config->getColumns()->first(function (Field $field) {
+        $belongsTo = $config->getFields()->first(function (Field $field) {
             if ($field->getType() !== 'belongs_to') {
                 return null;
             }
@@ -55,5 +56,4 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEnt
 
         return $config;
     }
-
 }

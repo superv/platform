@@ -307,7 +307,7 @@ class RelationConfig
         return $this;
     }
 
-    public function getTargetModel(): string
+    public function getTargetModel(): ?string
     {
         return $this->targetModel;
     }

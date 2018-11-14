@@ -25,8 +25,11 @@ class Table
     /** @var Builder */
     protected $query;
 
-    /** @var Collection */
+    /** @var \SuperV\Platform\Domains\Resource\Table\TableRow|\Illuminate\Support\Collection */
     protected $rows;
+
+    /** @var \SuperV\Platform\Domains\Resource\Field\Field[]|\Illuminate\Support\Collection */
+    protected $fields;
 
     /** @var array */
     protected $pagination;
@@ -43,10 +46,12 @@ class Table
     {
         $query = $this->config->newQuery();
 
-        $this->config->getColumns()->map(function ($field) use ($query) {
+        $this->fields = $this->config->getFields()->map(function (Field $field) use ($query) {
             $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid()));
             AttachTypeToField::dispatch($fieldType, $field);
             $fieldType->buildForView($query);
+
+            return $field;
         });
 
         $this->fetchEntries($query)
@@ -90,19 +95,14 @@ class Table
         return $this->rows;
     }
 
-    public function getColumns(): Collection
+    public function getFields(): Collection
     {
-        return $this->config->getColumns();
+        return $this->fields;
     }
 
     public function getActions(): Collection
     {
         return $this->config->getActions();
-    }
-
-    public function uuid()
-    {
-        return $this->config->uuid();
     }
 
     public function url()
@@ -137,6 +137,11 @@ class Table
         $this->query = $query;
 
         return $this;
+    }
+
+    public function uuid()
+    {
+        return $this->config->uuid();
     }
 
     public static function config(TableConfig $config): self

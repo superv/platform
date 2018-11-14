@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
+use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Field\Field;
@@ -24,6 +25,8 @@ class Group
 
     /** @var \Illuminate\Support\Collection */
     protected $types;
+
+    protected $skipFields = [];
 
     public function __construct(string $handle, Watcher $watcher = null, $fields)
     {
@@ -49,11 +52,16 @@ class Group
         }
         $this->types = collect();
 
+        $this->fields = $this->fields->filter(function(Field $field) {
+            return  !in_array($field->getName(), $this->skipFields);
+        })->values();
+
         $this->fields = $this->fields
             ->map(function ($field) {
-                if (! $field instanceof Field) {
-                    $field = FieldFactory::createFromEntry($field);
-                }
+//                if (! $field instanceof Field) {
+//                    throw new Exception('aaaaa');
+//                    $field = FieldFactory::createFromEntry($field);
+//                }
 
                 if ($this->watcher) {
                     $field->setWatcher($this->watcher);
@@ -69,5 +77,12 @@ class Group
     public function getHandle(): string
     {
         return $this->handle;
+    }
+
+    public function setSkipFields(array $skipFields): Group
+    {
+        $this->skipFields = $skipFields;
+
+        return $this;
     }
 }

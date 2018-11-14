@@ -40,34 +40,6 @@ class RelationsTest extends ResourceTestCase
     }
 
     /** @test */
-    function create_has_one_relation()
-    {
-        $this->create('t_users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->hasOne('t_profiles', 'profile', 'user_id');
-        });
-
-        $this->create('t_profiles', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('address');
-            $table->belongsTo('t_users', 'user', 'user_id');
-        });
-
-        $users = Resource::of('t_users');
-        $this->assertColumnDoesNotExist('t_users', 'profile');
-        $this->assertColumnDoesNotExist('t_users', 'user_id');
-
-        $relation = $users->getRelation('profile');
-        $this->assertEquals('has_one', $relation->getType());
-
-        $this->assertEquals([
-            'related_resource' => 't_profiles',
-            'foreign_key'      => 'user_id',
-        ], $relation->getConfig()->toArray());
-    }
-
-    /** @test */
     function creates_has_many_relations()
     {
         $this->create('t_users', function (Blueprint $table) {
@@ -119,40 +91,6 @@ class RelationsTest extends ResourceTestCase
         ], $relation->getConfig()->toArray());
     }
 
-    /** @test */
-    function creates_morph_to_many_relations()
-    {
-        $this->create('t_users', function (Blueprint $table) {
-            $table->increments('id');
-            $pivotColumns = function (Blueprint $pivotTable) {
-                $pivotTable->string('status');
-            };
-            $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
-        });
-
-        $users = Resource::of('t_users');
-
-        $this->assertColumnDoesNotExist('t_users', 'roles');
-        $this->assertColumnsExist('t_assigned_roles', ['id',
-            'owner_type',
-            'owner_id',
-            'role_id',
-            'status',
-            'created_at',
-            'updated_at']);
-
-        $relation = $users->getRelation('roles');
-        $this->assertEquals('morph_to_many', $relation->getType());
-
-        $this->assertEquals([
-            'related_model'     => TestRole::class,
-            'pivot_table'       => 't_assigned_roles',
-            'pivot_foreign_key' => 'owner_id',
-            'pivot_related_key' => 'role_id',
-            'morph_name'        => 'owner',
-            'pivot_columns'     => ['status'],
-        ], $relation->getConfig()->toArray());
-    }
 
     /** @test */
     function creates_table_from_has_many()
@@ -177,9 +115,10 @@ class RelationsTest extends ResourceTestCase
         $this->assertInstanceOf(ProvidesTable::class, $relation);
         $this->assertInstanceOf(HasMany::class, $relation);
 
+         /** @var \SuperV\Platform\Domains\Resource\Table\TableConfig $tableConfig */
         $tableConfig = $relation->makeTableConfig();
         // t_user column is not needed there
-        $this->assertEquals(1, $tableConfig->getColumns()->count());
+        $this->assertEquals(1, $tableConfig->getFields()->count());
 
         $table = Table::config($tableConfig)->build();
         $allPost = \DB::table('t_posts')->get();

@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Relation;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -96,7 +97,7 @@ abstract class Relation implements NeedsEntry
         return $this->resourceEntry;
     }
 
-    public static function fromEntry(RelationModel $entry): self
+    public static function fromEntry(Entry $entry): self
     {
         $relation = new static;
 

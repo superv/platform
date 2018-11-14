@@ -20,6 +20,7 @@ class CreateResource
         $entry = ResourceModel::create(array_filter(
             [
                 'slug'   => $event->table,
+                'handle'   => $event->table,
                 'model'  => $resource->model,
                 'config' => $resource->config($event->table, $event->columns),
                 'addon'  => $event->scope,

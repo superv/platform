@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Model;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Database\Model\Morphable;
 use SuperV\Platform\Domains\Resource\Fake;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
@@ -35,11 +34,6 @@ class ResourceEntry implements Watcher
         $this->entry = $entry;
         $this->handle = $this->entry->getTable();
         $this->resource = $resource;
-    }
-
-    public function id()
-    {
-        return $this->getEntry()->getKey();
     }
 
     public function getEntry(): EntryContract
@@ -100,7 +94,7 @@ class ResourceEntry implements Watcher
         return $this->handle;
     }
 
-    public function getResource(): Resource
+    public function getResource(): \SuperV\Platform\Domains\Resource\Resource
     {
         if (! $this->resource) {
             $this->resource = Resource::of($this->getHandle());
@@ -155,7 +149,9 @@ class ResourceEntry implements Watcher
         if (method_exists($this, $name)) {
             return call_user_func_array([$this, $name], $arguments);
         }
-        if ($relation = $this->entry->getRelationshipFromConfig($name)) {
+
+        if ($this->entry instanceof ResourceEntryModel &&
+            $relation = $this->entry->getRelationshipFromConfig($name)) {
             return $relation;
         }
 
@@ -165,6 +161,21 @@ class ResourceEntry implements Watcher
     public function __get($key)
     {
         return $this->entry->{$key};
+    }
+
+    public function getOwnerType()
+    {
+        return $this->getHandle();
+    }
+
+    public function getOwnerId()
+    {
+        return $this->id();
+    }
+
+    public function id()
+    {
+        return $this->getEntry()->getKey();
     }
 
     public static function make($entry, ?Resource $resource = null): self
@@ -202,15 +213,5 @@ class ResourceEntry implements Watcher
         if (($resource = $handle) instanceof Resource) {
             return new static(ResourceEntryModel::make($resource->getHandle()), $resource);
         }
-    }
-
-    public function getOwnerType()
-    {
-        return $this->getHandle();
-    }
-
-    public function getOwnerId()
-    {
-        return $this->id();
     }
 }

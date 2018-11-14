@@ -8,7 +8,6 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class HasOne extends Relation implements ProvidesForm
@@ -17,15 +16,19 @@ class HasOne extends Relation implements ProvidesForm
     {
         return new EloquentHasOne(
             $relatedEntryInstance->newQuery(),
-            $this->resourceEntry->getEntry(),
+            $this->getParentEntry(),
             $this->config->getForeignKey(),
             $this->config->getLocalKey() ?? 'id'
         );
     }
 
-    protected function getRelatedEntry(): ?ResourceEntryModel
+    protected function getRelatedEntry(): ?ResourceEntry
     {
-        return $this->newQuery()->getResults();
+        if ($entry = $this->newQuery()->getResults()) {
+            return ResourceEntry::make($entry);
+        }
+
+        return null;
     }
 
     public function makeForm(): Form
@@ -34,15 +37,9 @@ class HasOne extends Relation implements ProvidesForm
 
         $form = (new FormBuilder)
             ->addGroup($relatedEntry->getHandle(), $relatedEntry, $relatedEntry->getResource())
+            ->removeField($this->resourceEntry->getResource()->resourceKey())
             ->prebuild()
             ->getForm();
-
-//        $form->removeFieldBeforeBuild(function (FieldType $field) {
-//            if ( !$field instanceof BelongsTo) {
-//                return false;
-//            }
-//            return $field->getName() === str_singular($this->resource->slug());
-//        });
 
         return $form;
     }
