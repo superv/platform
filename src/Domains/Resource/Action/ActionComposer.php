@@ -2,75 +2,33 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use ReflectionClass;
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
 use SuperV\Platform\Support\Negotiator\Negotiator;
-use SuperV\Platform\Support\Negotiator\Provider;
-use Tests\Platform\Domains\Resource\Action\RequiresActionTestEntry;
 
-class ActionComposer implements Provider
+class ActionComposer
 {
-    protected $entry;
-
-    protected $table;
-
     /** @var \SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract */
     protected $action;
 
-    protected $resolvers = [
-        RequiresActionTestEntry::class => 'entry',
-    ];
+    protected $contexts = [];
 
     public function __construct(ActionContract $action)
     {
-        $this->action = new $action;
-    }
+        $this->action = $action;
 
-    public function build()
-    {
-        (new Negotiator($this->action))($this);
-    }
-
-
-    public function getResolutionFor($requirement)
-    {
-        return function ($requiree) use ($requirement) {
-            $resolver = $this->resolvers[$requirement];
-            $requiredValue = $this->{$resolver};
-
-            $reflection = new ReflectionClass($requirement);
-
-            $method = $reflection->getMethods()[0]->getName();
-
-            $requiree->{$method}($requiredValue);
-        };
-    }
-
-    public function getProvidings(): array
-    {
-        return array_keys($this->resolvers);
+        $this->addContext($action);
     }
 
     public function compose(): array
     {
-        $this->build();
+        (new Negotiator)->handshake($this->contexts);
 
-        return array_merge([
-                    'name'  => $this->action->getName(),
-                    'title' => $this->action->getTitle(),
-                ], $this->action->getComposed());
+        return $this->action->compose();
     }
 
-    public function setEntry($entry)
+    public function addContext($context)
     {
-        $this->entry = $entry;
-
-        return $this;
-    }
-
-    public function setTable($table)
-    {
-        $this->table = $table;
+        $this->contexts[] = $context;
 
         return $this;
     }

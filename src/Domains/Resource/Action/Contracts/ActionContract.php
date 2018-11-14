@@ -7,4 +7,7 @@ interface ActionContract
     public function getName();
 
     public function getTitle();
+
+    public function compose(): array;
+
 }

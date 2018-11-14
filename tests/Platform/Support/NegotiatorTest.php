@@ -3,68 +3,84 @@
 namespace Tests\Platform\Support;
 
 use SuperV\Platform\Support\Negotiator\Negotiator;
-use SuperV\Platform\Support\Negotiator\Provider;
-use SuperV\Platform\Support\Negotiator\Requirer;
+use SuperV\Platform\Support\Negotiator\Providing;
+use SuperV\Platform\Support\Negotiator\Requirement;
 use Tests\Platform\TestCase;
+
+interface RequiresPlane extends Requirement
+{
+    public function setPlane($plane);
+}
+
+interface RequiresMoney extends Requirement
+{
+    public function setMoney($money);
+}
+
+interface ProvidesPlane extends Providing
+{
+    public function getPlane();
+}
+
+interface ProvidesMoney extends Providing
+{
+    public function getMoney();
+}
 
 class NegotiatorTest extends TestCase
 {
-    function test__all()
+    function test__handshakes_requirer_with_provider()
     {
-        $negotiator = new Negotiator([RequiresPlane::class => ProvidesPlane::class]);
+        $provider = new ConcreteProvider;
+        $requirer = new ConcreteRequirer;
 
-        $negotiator->handshake(
-            $provider = new ConcreteProvider,
-            $requirer = new ConcreteRequirer
-        );
+        $this->assertNull($requirer->plane);
+        $this->assertNull($provider->money);
+
+        (new Negotiator())->handshake([
+            $provider,
+            $requirer,
+        ]);
 
         $this->assertEquals('Boink 404', $requirer->plane);
+        $this->assertEquals('123', $provider->money);
     }
 }
 
-class ConcreteRequirer implements Requirer, RequiresPlane
+class ConcreteRequirer implements RequiresPlane, ProvidesMoney
 {
     public $plane;
-
-    public function getRequirements()
-    {
-        return [RequiresPlane::class => [$this, 'setPlane']];
-    }
 
     public function setPlane($plane)
     {
         $this->plane = $plane;
     }
+
+    public function getMoney()
+    {
+        return '123';
+    }
 }
 
-class ConcreteProvider implements Provider, ProvidesPlane
+class ConcreteProvider implements ProvidesPlane, RequiresMoney
 {
-    protected $plane = 'Boink 404';
+    public $money;
 
     public function getProvidings(): array
     {
-        return [RequiresPlane::class => [$this, 'getPlane']];
+        return [RequiresPlane::class];
     }
 
     public function getPlane()
     {
-        return $this->plane;
+        return 'Boink 404';
+    }
+
+    public function setMoney($money)
+    {
+        $this->money = $money;
     }
 }
 
-interface RequiresPlane
-{
-    public function setPlane($plane);
-}
 
-interface ProvidesPlane
-{
-    public function getPlane();
-}
 
-interface PlaneRequirement
-{
-    public function getPlane();
-
-    public function setPlane($plane);
-}
