@@ -59,8 +59,7 @@ class TableRow
 
         $this->table->getActions()
                     ->map(function (Action $action) {
-                        $action = $action->copy();
-                        $this->actions[] = $action->build()->compose($this->entry);
+                        $this->actions[] = $action->compose($this->entry);
                     });
 
         return $this;
