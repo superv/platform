@@ -60,7 +60,7 @@ class AddonModel extends Model
 
     public function shortName()
     {
-        return ucfirst($this->shortSlug());
+        return studly_case($this->shortSlug());
     }
 
     public function scopeEnabled($query) {

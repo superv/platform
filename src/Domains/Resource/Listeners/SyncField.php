@@ -58,23 +58,23 @@ class SyncField
         $field = $this->syncWithEloquent();
 //        $field = $this->syncWithResource();
 
-        if (! Current::envIsTesting()) {
-            if (! $this->column->ignore) {
-                if (ResourceModel::withSlug('sv_meta_items')) {
-                    (new Repository)
-                        ->save(
-                            Meta::make($field['config'] ?? [])
-                                ->setOwner('sv_fields', $field['id'], 'config')
-                        );
-
-                    (new Repository)
-                        ->save(
-                            Meta::make($field['rules'] ?? [])
-                                ->setOwner('sv_fields', $field['id'], 'rules')
-                        );
-                }
-            }
-        }
+//        if (! Current::envIsTesting()) {
+//            if (! $this->column->ignore) {
+//                if (ResourceModel::withSlug('sv_meta_items')) {
+//                    (new Repository)
+//                        ->save(
+//                            Meta::make($field['config'] ?? [])
+//                                ->setOwner('sv_fields', $field['id'], 'config')
+//                        );
+//
+//                    (new Repository)
+//                        ->save(
+//                            Meta::make($field['rules'] ?? [])
+//                                ->setOwner('sv_fields', $field['id'], 'rules')
+//                        );
+//                }
+//            }
+//        }
     }
 
     protected function mapFieldType()

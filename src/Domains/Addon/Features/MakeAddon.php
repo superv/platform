@@ -6,7 +6,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\Addon\Events\MakingAddonEvent;
 use SuperV\Platform\Domains\Addon\Jobs\CreateAddonPaths;
 use SuperV\Platform\Domains\Addon\Jobs\MakeAddonModel;
-use SuperV\Platform\Domains\Addon\Jobs\WriteAddonFiles;
+use SuperV\Platform\Domains\Addon\Jobs\CreateAddonFiles;
 
 class MakeAddon
 {
@@ -38,7 +38,7 @@ class MakeAddon
 
         $this->dispatch(new CreateAddonPaths($model));
 
-        $this->dispatch(new WriteAddonFiles($model));
+        $this->dispatch(new CreateAddonFiles($model));
 
         MakingAddonEvent::dispatch($model);
 

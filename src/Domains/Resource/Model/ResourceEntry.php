@@ -14,7 +14,7 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 
-class ResourceEntry implements Watcher, Morphable
+class ResourceEntry implements Watcher
 {
     /** @var Resource */
     protected $resource;

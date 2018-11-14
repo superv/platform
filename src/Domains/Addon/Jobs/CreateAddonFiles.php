@@ -7,7 +7,7 @@ use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Support\Parser;
 
-class WriteAddonFiles
+class CreateAddonFiles
 {
     /** @var \SuperV\Platform\Domains\Addon\AddonModel */
     private $model;

@@ -34,6 +34,6 @@ class CreateAddonPaths
         $filesystem->makeDirectory("{$path}/database/migrations", 0755, true, true);
 
         $filesystem->makeDirectory("{$path}/tests", 0755, true, true);
-        $filesystem->makeDirectory("{$path}/tests/".$this->model->shortName(), 0755, true, true);
+        $filesystem->makeDirectory("{$path}/tests/".studly_case($this->model->shortName()), 0755, true, true);
     }
 }

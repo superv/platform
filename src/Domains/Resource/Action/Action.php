@@ -6,16 +6,15 @@ use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
 class Action
 {
-    /** @var string */
+    /**
+     * Unique name of the action
+     *
+     * @var string
+     */
     protected $name;
 
     /** @var string */
     protected $title;
-
-    public function __construct(string $name)
-    {
-        $this->name = $name;
-    }
 
     public function compose(ResourceEntry $entry): array
     {
@@ -36,8 +35,13 @@ class Action
         return $this->title ?? ucwords($this->name);
     }
 
-    public static function make(string $name): self
+    public static function make(?string $name = null): self
     {
-        return new static($name);
+        $action = new static;
+        if ($name) {
+            $action->name = $name;
+        }
+
+        return $action;
     }
 }
