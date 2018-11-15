@@ -5,18 +5,16 @@ namespace Tests\Platform\Domains\Resource\Action;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Action\Builder;
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
-use SuperV\Platform\Support\Negotiator\Providing;
-use SuperV\Platform\Support\Negotiator\Requirement;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-interface RequiresActionTestEntry extends Requirement
+interface AcceptsActionTestEntry
 {
-    public function setEntry(ActionTestEntry $entry);
+    public function acceptActionTestEntry(ActionTestEntry $entry);
 }
 
-interface ProvidesActionTestEntry extends Providing
+interface ProvidesActionTestEntry
 {
-    public function getEntry();
+    public function provideActionTestEntry();
 }
 
 class ActionTest extends ResourceTestCase
@@ -42,7 +40,7 @@ class ActionTest extends ResourceTestCase
 
 class TestPage implements ProvidesActionTestEntry
 {
-    public function getEntry()
+    public function provideActionTestEntry()
     {
         return new ActionTestEntry('test_page_entry');
     }
@@ -58,7 +56,7 @@ class ActionTestEntry
     }
 }
 
-class EntryAction extends Action implements RequiresActionTestEntry
+class EntryAction extends Action implements AcceptsActionTestEntry
 {
     protected $name = 'edit';
 
@@ -76,7 +74,7 @@ class EntryAction extends Action implements RequiresActionTestEntry
         );
     }
 
-    public function setEntry(ActionTestEntry $entry)
+    public function acceptActionTestEntry(ActionTestEntry $entry)
     {
         $this->entryName = $entry->name;
     }

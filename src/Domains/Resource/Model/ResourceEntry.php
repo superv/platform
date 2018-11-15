@@ -9,11 +9,12 @@ use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
+use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry as ResourceEntryContract;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 
-class ResourceEntry implements Watcher
+class ResourceEntry implements ResourceEntryContract, Watcher
 {
     /** @var Resource */
     protected $resource;
@@ -26,6 +27,8 @@ class ResourceEntry implements Watcher
     protected $handle;
 
     protected $entryId;
+
+    protected $entryData;
 
     protected $config;
 
@@ -44,34 +47,6 @@ class ResourceEntry implements Watcher
     public function exists()
     {
         return $this->getEntry() && $this->getEntry()->exists;
-    }
-
-    public function __sleep()
-    {
-        if ($this->entry) {
-            if ($this->entry->exists) {
-                $this->entryId = $this->entry->id;
-            }
-        }
-
-        return array_keys(array_except(get_object_vars($this), ['entry']));
-    }
-
-    public function __wakeup()
-    {
-        if (! $this->handle) {
-            return;
-        }
-
-//        $resource = Resource::of($this->getHandle());
-
-        if (! $this->entryId) {
-            $this->entry = static::newInstance($this->getHandle())->getEntry();
-
-            return;
-        }
-
-        $this->entry = Resource::of($this->getHandle())->find($this->entryId)->getEntry();
     }
 
     public function setAttribute($key, $value)
@@ -163,12 +138,41 @@ class ResourceEntry implements Watcher
         return $this->entry->{$key};
     }
 
-    public function getOwnerType()
+    public function __sleep()
     {
-        return $this->getHandle();
+        if ($this->entry) {
+            if ($this->entry->exists) {
+                $this->entryId = $this->entry->id;
+            } else {
+                $this->entryData = $this->entry->toArray();
+            }
+        }
+
+        return array_keys(array_except(get_object_vars($this), ['entry']));
     }
 
-    public function getOwnerId()
+    public function __wakeup()
+    {
+        if (! $this->handle) {
+            return;
+        }
+
+//        $resource = Resource::of($this->getHandle());
+
+        if (! $this->entryId) {
+            $instance = static::newInstance($this->getHandle())->getEntry();
+            if (is_array($this->entryData)) {
+                $instance->fill($this->entryData);
+            }
+            $this->entry = $instance;
+
+            return;
+        }
+
+        $this->entry = Resource::of($this->getHandle())->find($this->entryId)->getEntry();
+    }
+
+    public function getId()
     {
         return $this->id();
     }
@@ -204,7 +208,7 @@ class ResourceEntry implements Watcher
         PlatformException::fail("Can not fake, resource not found");
     }
 
-    public static function newInstance($handle): ResourceEntry
+    public static function newInstance($handle): ResourceEntryContract
     {
         if (is_string($handle)) {
             return new static(ResourceEntryModel::make($handle));

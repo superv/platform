@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Database\Model\Repository;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -57,18 +58,17 @@ class MorphOneTest extends ResourceTestCase
         $user = $this->parent->fake();
         $tag = $user->tag()->make(['label' => 'blue']);
         $this->assertNotNull($tag);
-        $tag->save();
 
         $relation = $this->parent->getRelation('tag');
         $this->assertInstanceOf(ProvidesForm::class, $relation);
-        $this->assertInstanceOf(NeedsEntry::class, $relation);
-        $relation->setEntry($user);
+        $this->assertInstanceOf(AcceptsParentResourceEntry::class, $relation);
+        $relation->acceptParentResourceEntry($user);
 
         /** @var Form $form */
         $form = $relation->makeForm();
         $this->assertInstanceOf(Form::class, $form);
         $this->assertNull($form->getField('user'));
-
+        $this->assertNull($form->getField('label')->getValue());
     }
 
     /** @test */

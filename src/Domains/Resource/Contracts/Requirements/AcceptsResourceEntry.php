@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Contracts\Requirements;
 
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-interface RequiresResourceEntry
+interface AcceptsResourceEntry
 {
-    public function setResourceEntry(ResourceEntry $entry);
+    public function acceptResourceEntry(ResourceEntry $entry);
 }

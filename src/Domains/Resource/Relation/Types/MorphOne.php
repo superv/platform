@@ -6,12 +6,10 @@ use Illuminate\Database\Eloquent\Relations\MorphOne as EloquentMorphOne;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
-use SuperV\Platform\Domains\Resource\Form\Jobs\BuildFormDeprecated;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
+use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry as ConcreteResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class MorphOne extends Relation implements ProvidesForm, MakesEntry
@@ -22,18 +20,20 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry
 
         return new EloquentMorphOne(
             $relatedEntryInstance->newQuery(),
-            $this->getParentEntry(),
+            $this->parentResourceEntry->getEntry(),
             $morphName.'_type',
             $morphName.'_id',
-            $this->getParentEntry()->getKeyName()
+            $this->parentResourceEntry->getEntry()->getKeyName()
         );
     }
 
     protected function getRelatedEntry(): ?ResourceEntry
     {
         if ($entry = $this->newQuery()->getResults()) {
-            return ResourceEntry::make($entry);
+            return ConcreteResourceEntry::make($entry);
         }
+
+        return null;
     }
 
     public function makeForm(): Form
@@ -44,7 +44,6 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry
             ->addGroup($relatedEntry->getHandle(), $relatedEntry, $relatedEntry->getResource())
             ->prebuild()
             ->getForm();
-
 
         return $form;
     }

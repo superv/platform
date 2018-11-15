@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
@@ -70,8 +71,8 @@ class ResourceFactory
                                               ->first();
 
                 $relation = (new RelationFactory)->make($relationEntry);
-                if ($entry && $relation instanceof NeedsEntry) {
-                    $relation->setEntry($entry);
+                if ($entry && $relation instanceof AcceptsParentResourceEntry) {
+                    $relation->acceptParentResourceEntry($entry);
                 }
 
                 return $relation;

@@ -4,10 +4,10 @@ namespace SuperV\Platform\Domains\Resource\Action;
 
 use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\MustBeInitialized;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\RequiresResourceEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class DeleteEntryAction extends Action implements RequiresResourceEntry, MustBeInitialized
+class DeleteEntryAction extends Action implements AcceptsResourceEntry, MustBeInitialized
 {
     protected $name = 'delete';
 
@@ -16,7 +16,7 @@ class DeleteEntryAction extends Action implements RequiresResourceEntry, MustBeI
     /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
     protected $entry;
 
-    public function setResourceEntry(ResourceEntry $entry)
+    public function acceptResourceEntry(ResourceEntry $entry)
     {
         $this->entry = $entry;
     }

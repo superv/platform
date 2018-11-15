@@ -3,12 +3,11 @@
 namespace SuperV\Platform\Domains\Resource\Action;
 
 use Closure;
-use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Contracts\MustBeInitialized;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\RequiresResourceEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class EditEntryAction extends Action implements RequiresResourceEntry, MustBeInitialized
+class EditEntryAction extends Action implements AcceptsResourceEntry, MustBeInitialized
 {
     protected $name = 'edit';
 
@@ -18,7 +17,7 @@ class EditEntryAction extends Action implements RequiresResourceEntry, MustBeIni
     protected $entry;
 
 
-    public function setResourceEntry(ResourceEntry $entry)
+    public function acceptResourceEntry(ResourceEntry $entry)
     {
         $this->entry = $entry;
     }

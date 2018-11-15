@@ -101,7 +101,7 @@ class TableRow implements ProvidesResourceEntry
                     });
     }
 
-    public function getResourceEntry(): ResourceEntry
+    public function provideResourceEntry(): ResourceEntry
     {
         return $this->entry;
     }

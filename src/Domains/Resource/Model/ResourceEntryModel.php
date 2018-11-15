@@ -6,6 +6,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Database\Model\Repository;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
@@ -53,8 +54,9 @@ class ResourceEntryModel extends Entry implements Watcher
         }
 
         $relation = RelationBuilder::resolveFromRelationEntry($relation);
-
-        $relation->setParentEntry(new ResourceEntry($this));
+        if ($relation instanceof AcceptsParentResourceEntry) {
+            $relation->acceptParentResourceEntry(new ResourceEntry($this));
+        }
 
         return $relation;
     }

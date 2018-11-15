@@ -7,5 +7,5 @@ use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
 interface ProvidesResourceEntry
 {
-    public function getResourceEntry(): ResourceEntry;
+    public function provideResourceEntry(): ResourceEntry;
 }

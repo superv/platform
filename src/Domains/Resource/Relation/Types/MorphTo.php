@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Relation\Types;
 
 use Illuminate\Database\Eloquent\Relations\MorphTo as EloquentMorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class MorphTo extends Relation
@@ -16,7 +16,7 @@ class MorphTo extends Relation
 
         return new EloquentMorphTo(
             $relatedEntryInstance->newQuery(),
-            $this->getParentEntry(),
+            $this->parentResourceEntry->getEntry(),
             $this->config->getForeignKey(),
             $ownerKey,
             $type,

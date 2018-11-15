@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource\Relation\Types;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -54,20 +55,24 @@ class HasOneTest extends ResourceTestCase
     function test__makes_form()
     {
         $user = $this->parent->fake();
-        $profile = $user->profile()->make(['address' => 'otherland']);
+        $profile = $user->profile()->make();
         $this->assertNotNull($profile);
 
         /** @var \SuperV\Platform\Domains\Resource\Relation\Types\HasOne $relation */
-        $relation = $this->parent->getRelation('profile');
+        $relation = $this->parent->getRelation('profile', $user);
         $this->assertInstanceOf(ProvidesForm::class, $relation);
-        $this->assertInstanceOf(NeedsEntry::class, $relation);
-        $relation->setEntry($user);
+        $this->assertInstanceOf(AcceptsParentResourceEntry::class, $relation);
+        $relation->acceptParentResourceEntry($user);
 
         /** @var Form $form */
         $form = $relation->makeForm();
         $this->assertInstanceOf(Form::class, $form);
         $this->assertNull($form->getField('user'));
         $this->assertEquals(1, $form->getFields()->count());
+
+        $relatedEntry = $form->getWatcher('t_profiles')->getEntry();
+        $this->assertEquals($profile->user_id, $relatedEntry->user_id);
+
     }
 }
 

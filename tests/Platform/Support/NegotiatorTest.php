@@ -3,28 +3,26 @@
 namespace Tests\Platform\Support;
 
 use SuperV\Platform\Support\Negotiator\Negotiator;
-use SuperV\Platform\Support\Negotiator\Providing;
-use SuperV\Platform\Support\Negotiator\Requirement;
 use Tests\Platform\TestCase;
 
-interface RequiresPlane extends Requirement
+interface AcceptsPlane
 {
-    public function setPlane($plane);
+    public function acceptPlane($plane);
 }
 
-interface RequiresMoney extends Requirement
+interface AcceptsMoney
 {
-    public function setMoney($money);
+    public function acceptMoney($money);
 }
 
-interface ProvidesPlane extends Providing
+interface ProvidesPlane
 {
-    public function getPlane();
+    public function providePlane();
 }
 
-interface ProvidesMoney extends Providing
+interface ProvidesMoney
 {
-    public function getMoney();
+    public function provideMoney();
 }
 
 class NegotiatorTest extends TestCase
@@ -47,36 +45,31 @@ class NegotiatorTest extends TestCase
     }
 }
 
-class ConcreteRequirer implements RequiresPlane, ProvidesMoney
+class ConcreteRequirer implements AcceptsPlane, ProvidesMoney
 {
     public $plane;
 
-    public function setPlane($plane)
+    public function acceptPlane($plane)
     {
         $this->plane = $plane;
     }
 
-    public function getMoney()
+    public function provideMoney()
     {
         return '123';
     }
 }
 
-class ConcreteProvider implements ProvidesPlane, RequiresMoney
+class ConcreteProvider implements ProvidesPlane, AcceptsMoney
 {
     public $money;
 
-    public function getProvidings(): array
-    {
-        return [RequiresPlane::class];
-    }
-
-    public function getPlane()
+    public function providePlane()
     {
         return 'Boink 404';
     }
 
-    public function setMoney($money)
+    public function acceptMoney($money)
     {
         $this->money = $money;
     }

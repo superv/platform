@@ -4,29 +4,28 @@ namespace SuperV\Platform\Domains\Resource\Relation\Types;
 
 use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
-use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
-class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEntry
+class HasMany extends Relation implements ProvidesTable, ProvidesQuery
 {
     protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation
     {
         if (! $localKey = $this->config->getLocalKey()) {
-            if ($this->resourceEntry) {
-                $entry = $this->resourceEntry->getEntry();
+            if ($this->parentResourceEntry) {
+                $entry = $this->parentResourceEntry->getEntry();
                 $localKey = $entry->getKeyName();
             }
         }
 
         return new EloquentHasMany(
             $relatedEntryInstance->newQuery(),
-            $this->getParentEntry(),
+            $this->parentResourceEntry->getEntry(),
             $this->config->getForeignKey(),
             $localKey ?? 'id'
         );
@@ -56,4 +55,5 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery, NeedsEnt
 
         return $config;
     }
+
 }

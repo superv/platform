@@ -3,11 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Relation;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Relation\Types\HasMany;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\Table\Table;
 use Tests\Platform\Domains\Resource\Fixtures\TestPost;
 use Tests\Platform\Domains\Resource\Fixtures\TestRole;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -91,41 +87,6 @@ class RelationsTest extends ResourceTestCase
         ], $relation->getConfig()->toArray());
     }
 
-
-    /** @test */
-    function creates_table_from_has_many()
-    {
-        $usersResource = $this->create('t_users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->hasMany('t_posts', 'posts', 't_user_id');
-        });
-        $posts = $this->create('t_posts', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->belongsTo('t_users', 't_user');
-        });
-
-        $userEntry = ResourceEntry::fake($usersResource);
-
-        ResourceEntry::fake($posts, ['t_user_id' => $userEntry->id()], 5);
-        ResourceEntry::fake($posts, ['t_user_id' => 999], 3); // these should be excluded
-
-        $relation = $usersResource->getRelation('posts', $userEntry);
-        $this->assertInstanceOf(ProvidesTable::class, $relation);
-        $this->assertInstanceOf(HasMany::class, $relation);
-
-         /** @var \SuperV\Platform\Domains\Resource\Table\TableConfig $tableConfig */
-        $tableConfig = $relation->makeTableConfig();
-        // t_user column is not needed there
-        $this->assertEquals(1, $tableConfig->getFields()->count());
-
-        $table = Table::config($tableConfig)->build();
-        $allPost = \DB::table('t_posts')->get();
-
-        $this->assertEquals(8, $allPost->count());
-        $this->assertEquals(5, $table->getRows()->count());
-    }
 
     /** @test */
     function saves_pivot_columns_even_if_pivot_table_is_created_before()
