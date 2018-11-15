@@ -23,22 +23,6 @@ class AddonModel extends Model
     }
 
     /**
-     * @param $slug
-     *
-     * @return self
-     */
-    public static function bySlug($slug) {
-
-        return static::query()->where('slug', $slug)->first();
-    }
-
-    public static function allKeyBySlug()
-    {
-
-        return static::query()->enabled()->get()->keyBy('slug');
-    }
-
-    /**
      * @return string
      */
     public function addonClass()
@@ -63,7 +47,8 @@ class AddonModel extends Model
         return studly_case($this->shortSlug());
     }
 
-    public function scopeEnabled($query) {
+    public function scopeEnabled($query)
+    {
         $query->where('enabled', true);
     }
 
@@ -75,5 +60,19 @@ class AddonModel extends Model
     public function getRealPath()
     {
         return base_path($this->getRelativePath());
+    }
+
+    /**
+     * @param $slug
+     * @return self
+     */
+    public static function bySlug($slug)
+    {
+        return static::query()->where('slug', $slug)->first();
+    }
+
+    public static function allKeyBySlug()
+    {
+        return static::query()->enabled()->get()->keyBy('slug');
     }
 }

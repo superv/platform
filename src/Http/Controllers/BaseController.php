@@ -44,14 +44,14 @@ class BaseController extends Controller
         $this->route = $this->request->route();
     }
 
-    public static function at($method)
-    {
-        return get_called_class().'@'.$method;
-    }
-
     /** @return FeatureBus */
     protected function bus()
     {
         return app(FeatureBus::class);
+    }
+
+    public static function at($method)
+    {
+        return get_called_class().'@'.$method;
     }
 }

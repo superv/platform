@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
-use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
@@ -41,8 +40,8 @@ class ResourceFactory
         };
     }
 
-    protected function getRelationsProvider() {
-
+    protected function getRelationsProvider()
+    {
         return function () {
             return $this->model->getResourceRelations()
                                ->map(function (RelationModel $relation) {
@@ -64,7 +63,7 @@ class ResourceFactory
             'handle'            => $this->model->getSlug(),
 //            'fields'            => $this->getFieldsProvider(),
             'relations'         => $this->getRelationsProvider(),
-            'relation_provider' => function (string $name, ?ResourceEntry $entry = null)  {
+            'relation_provider' => function (string $name, ?ResourceEntry $entry = null) {
                 $relationEntry = RelationModel::query()
                                               ->where('resource_id', $this->model->id)
                                               ->where('name', $name)

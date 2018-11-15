@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Database\Events;
 
-
 use Illuminate\Foundation\Events\Dispatchable;
 
 class TableInsertEvent

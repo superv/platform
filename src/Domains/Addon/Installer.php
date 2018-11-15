@@ -252,5 +252,4 @@ class Installer
 
         return $key ? array_get($this->composerJson, $key) : $this->composerJson;
     }
-
 }

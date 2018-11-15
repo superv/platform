@@ -4,7 +4,6 @@ namespace SuperV\Platform\Domains\Resource\Support;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
-use SuperV\Platform\Support\Meta\MetaModel;
 
 class Blueprints
 {
@@ -56,7 +55,6 @@ class Blueprints
 
         $table->text('rules')->nullable();
         $table->text('config')->nullable();
-
 
         $table->timestamps();
     }

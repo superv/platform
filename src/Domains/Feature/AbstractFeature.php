@@ -22,6 +22,7 @@ abstract class AbstractFeature implements Feature
 
     /**
      * Validated feature request
+     *
      * @var array
      */
     protected $validated;
@@ -38,11 +39,6 @@ abstract class AbstractFeature implements Feature
         return $this;
     }
 
-    public function getParam($key, $default = null)
-    {
-        return $this->params->get($key, $default);
-    }
-
     public function setParam($key, $value)
     {
         if (method_exists($this, 'set'.studly_case($key))) {
@@ -52,6 +48,16 @@ abstract class AbstractFeature implements Feature
         }
 
         $this->params->put($key, $value);
+    }
+
+    public function getResponseData()
+    {
+        return [];
+    }
+
+    public function getParam($key, $default = null)
+    {
+        return $this->params->get($key, $default);
     }
 
     public function __call($name, $arguments)
@@ -68,11 +74,6 @@ abstract class AbstractFeature implements Feature
         }
 
         throw new \InvalidArgumentException('Unknown method '.$name);
-    }
-
-    public function getResponseData()
-    {
-        return [];
     }
 
 //    /**

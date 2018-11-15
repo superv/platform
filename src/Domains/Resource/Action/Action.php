@@ -22,7 +22,6 @@ class Action implements ActionContract
 
     protected $payload;
 
-
     protected function __construct() { }
 
     public function compose(): array
@@ -31,7 +30,6 @@ class Action implements ActionContract
             'name'  => $this->getName(),
             'title' => $this->getTitle(),
         ]);
-
 
         $this->fire('composed');
 

@@ -55,5 +55,4 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery
 
         return $config;
     }
-
 }

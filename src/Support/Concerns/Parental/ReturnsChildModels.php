@@ -12,7 +12,7 @@ trait ReturnsChildModels
     {
         $model = isset($attributes[$this->getInhertanceColumn()])
             ? $this->getChildModel($attributes)
-            : new static(((array) $attributes));
+            : new static(((array)$attributes));
 
         $model->exists = $exists;
 
@@ -25,9 +25,9 @@ trait ReturnsChildModels
 
     public function newFromBuilder($attributes = [], $connection = null)
     {
-        $model = $this->newInstance((array) $attributes, true);
+        $model = $this->newInstance((array)$attributes, true);
 
-        $model->setRawAttributes((array) $attributes, true);
+        $model->setRawAttributes((array)$attributes, true);
 
         $model->setConnection($connection ?: $this->getConnectionName());
 
@@ -56,8 +56,15 @@ trait ReturnsChildModels
         return parent::hasMany($related, $foreignKey = null, $localKey = null);
     }
 
-    public function belongsToMany($related, $table = null, $foreignPivotKey = null, $relatedPivotKey = null, $parentKey = null, $relatedKey = null, $relation = null)
-    {
+    public function belongsToMany(
+        $related,
+        $table = null,
+        $foreignPivotKey = null,
+        $relatedPivotKey = null,
+        $parentKey = null,
+        $relatedKey = null,
+        $relation = null
+    ) {
         $instance = $this->newRelatedInstance($related);
 
         if (is_null($table) && $instance->hasParentModel) {

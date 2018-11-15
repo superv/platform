@@ -38,8 +38,8 @@ class Template
      */
     public function __construct(Factory $view, Filesystem $files)
     {
-        $this->view        = $view;
-        $this->files       = $files;
+        $this->view = $view;
+        $this->files = $files;
     }
 
     /**
@@ -52,19 +52,19 @@ class Template
      */
     public function render($template, array $payload = [])
     {
-        $view = 'support/parsed/' . md5($template);
+        $view = 'support/parsed/'.md5($template);
         $path = storage_path($view);
 
-        if (!$this->files->isDirectory($directory = dirname($path))) {
+        if (! $this->files->isDirectory($directory = dirname($path))) {
             $this->files->makeDirectory($directory, 0777, true);
         }
 
-        if (!$this->files->exists($path . '.twig')) {
-            $this->files->put($path . '.twig', $template);
+        if (! $this->files->exists($path.'.twig')) {
+            $this->files->put($path.'.twig', $template);
         }
 
         $this->view->addNamespace('storage', storage_path());
 
-        return $this->view->make('storage::' . $view, $payload);
+        return $this->view->make('storage::'.$view, $payload);
     }
 }

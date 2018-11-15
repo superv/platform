@@ -7,6 +7,4 @@ use SuperV\Platform\Support\Dispatchable;
 class ExtendResourceJob
 {
     use Dispatchable;
-
-
 }

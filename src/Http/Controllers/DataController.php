@@ -22,7 +22,6 @@ class DataController extends BaseController
         ];
     }
 
-
     public function nav()
     {
         $portNav = Current::port()->getNavigationSlug();

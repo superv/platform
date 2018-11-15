@@ -40,6 +40,28 @@ class Platform extends Addon
         PlatformBootedEvent::dispatch();
     }
 
+    public function path($prefix = null)
+    {
+        $path = realpath(__DIR__.'/../');
+
+        return $path.($prefix ? '/'.$prefix : '');
+    }
+
+    public function realPath($prefix = null)
+    {
+        return $this->path($prefix);
+    }
+
+    public function slug()
+    {
+        return 'platform';
+    }
+
+    public function namespace()
+    {
+        return "SuperV\\Platform";
+    }
+
     public function config($key, $default = null)
     {
         return config("superv.{$key}", $default);
@@ -64,19 +86,7 @@ class Platform extends Addon
         return $this;
     }
 
-    public function path($prefix = null)
-    {
-        $path = realpath(__DIR__.'/../');
-
-        return $path.($prefix ? '/'.$prefix : '');
-    }
-
     public function fullPath($prefix = null)
-    {
-        return $this->path($prefix);
-    }
-
-    public function realPath($prefix = null)
     {
         return $this->path($prefix);
     }
@@ -86,12 +96,7 @@ class Platform extends Addon
         return $this;
     }
 
-    public function slug()
-    {
-        return 'platform';
-    }
-
-    public function isInstalled():bool
+    public function isInstalled(): bool
     {
         return config('superv.installed') === true;
     }
@@ -99,11 +104,6 @@ class Platform extends Addon
     public function postInstall(Closure $callback)
     {
         $this->on('installed', $callback);
-    }
-
-    public function namespace()
-    {
-        return "SuperV\\Platform";
     }
 }
 

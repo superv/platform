@@ -32,6 +32,16 @@ abstract class AbstractFeatureRequest implements Request
         return $this;
     }
 
+    public function getParam($key, $default = null)
+    {
+        return array_get($this->params, $key, $default);
+    }
+
+    public function toArray()
+    {
+        return $this->params->toArray();
+    }
+
     public function validate($input, $rules)
     {
         if (method_exists($input, 'toArray')) {
@@ -58,11 +68,6 @@ abstract class AbstractFeatureRequest implements Request
         return $validated;
     }
 
-    public function getParam($key, $default = null)
-    {
-        return array_get($this->params, $key, $default);
-    }
-
     public function throwValidationError($message, $key = 0)
     {
         throw (new ValidationException())->setErrors([$key => $message]);
@@ -78,7 +83,7 @@ abstract class AbstractFeatureRequest implements Request
         if (! is_array($key)) {
             $this->feature->setParam($as ?? $key, $this->getParam($key));
         } else {
-            foreach($key as $k) {
+            foreach ($key as $k) {
                 $this->transfer($k);
             }
         }
@@ -96,10 +101,5 @@ abstract class AbstractFeatureRequest implements Request
         }
 
         throw new \InvalidArgumentException('Unknown method '.$name);
-    }
-
-    public function toArray()
-    {
-        return $this->params->toArray();
     }
 }

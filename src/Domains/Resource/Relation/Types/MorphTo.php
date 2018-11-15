@@ -11,8 +11,8 @@ class MorphTo extends Relation
 {
     protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation
     {
-        $ownerKey = $this->config->getName() . '_id';
-        $type = $this->config->getName() . '_type';
+        $ownerKey = $this->config->getName().'_id';
+        $type = $this->config->getName().'_type';
 
         return new EloquentMorphTo(
             $relatedEntryInstance->newQuery(),

@@ -9,6 +9,5 @@ interface Morphable
 //    public function setOwnerType(string $type);
 
     public function getOwnerId();
-
 //    public function setOwnerId($id);
 }

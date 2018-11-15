@@ -93,6 +93,21 @@ class Blueprint extends LaravelBlueprint
         }
     }
 
+    /**
+     * Specify an index for the table.
+     *
+     * @param  string|array $columns
+     * @param  string       $name
+     * @param  string|null  $algorithm
+     * @return \Illuminate\Support\Fluent
+     */
+    public function index($columns, $name = null, $algorithm = null)
+    {
+        $indexName = $name ?? md5(uniqid());
+
+        return $this->indexCommand('index', $columns, $indexName, $algorithm);
+    }
+
     public function tableName()
     {
         return $this->table;
@@ -121,21 +136,6 @@ class Blueprint extends LaravelBlueprint
         }
     }
 
-    /**
-     * Specify an index for the table.
-     *
-     * @param  string|array $columns
-     * @param  string       $name
-     * @param  string|null  $algorithm
-     * @return \Illuminate\Support\Fluent
-     */
-    public function index($columns, $name = null, $algorithm = null)
-    {
-        $indexName = $name ?? md5(uniqid());
-
-        return $this->indexCommand('index', $columns, $indexName, $algorithm);
-    }
-
     public function getPostBuildCallbacks()
     {
         return $this->postBuildCallbacks;
@@ -143,7 +143,7 @@ class Blueprint extends LaravelBlueprint
 
     public function applyPostBuildCallbacks()
     {
-        $this->postBuildCallbacks->map(function(Closure $callback) {
+        $this->postBuildCallbacks->map(function (Closure $callback) {
             $callback($this);
         });
     }

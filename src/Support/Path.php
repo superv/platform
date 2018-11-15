@@ -11,7 +11,7 @@ class Path
      * @param $namespaceBasePath
      * @param $checkPath
      */
-    public static function parseClass($namespace, $namespaceBasePath, $checkPath):string
+    public static function parseClass($namespace, $namespaceBasePath, $checkPath): string
     {
         return $namespace.'\\'.str_replace([$namespaceBasePath.'/', '.php', '/'], ['', '', '\\'], $checkPath);
     }

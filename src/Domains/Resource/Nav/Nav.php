@@ -9,6 +9,7 @@ use SuperV\Platform\Exceptions\PlatformException;
 class Nav
 {
     use ForwardsCalls;
+
     /**
      * @var Section
      */
@@ -52,7 +53,6 @@ class Nav
 
     public function compose()
     {
-
         return $this->entry->compose();
         $sections = $this->entry->children()->with('children')->get();
 
@@ -85,9 +85,10 @@ class Nav
 
     public static function get(string $handle): Nav
     {
-        if (!$entry = Section::get($handle)) {
-            throw new PlatformException('Nav not found : ' . $handle);
+        if (! $entry = Section::get($handle)) {
+            throw new PlatformException('Nav not found : '.$handle);
         }
+
         return new static($entry);
     }
 
@@ -95,9 +96,9 @@ class Nav
     {
         return new static(Section::createFromString($handle));
     }
+
     public static function createFromArray(array $array): Section
     {
         return Section::createFromArray($array);
     }
-
 }

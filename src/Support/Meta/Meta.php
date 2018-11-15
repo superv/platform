@@ -167,11 +167,6 @@ class Meta implements ArrayAccess, BelongsToEntry
         $this->setOwner($entry);
     }
 
-    public function id(): ?int
-    {
-        return $this->id;
-    }
-
     /**
      * @param int $id
      */
@@ -183,6 +178,11 @@ class Meta implements ArrayAccess, BelongsToEntry
     public function uuid(): ?string
     {
         return $this->uuid;
+    }
+
+    public function id(): ?int
+    {
+        return $this->id;
     }
 
     public static function make($data = [], ?string $uuid = null): self

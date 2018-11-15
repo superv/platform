@@ -266,7 +266,8 @@ abstract class FieldType implements NeedsEntry
         return null;
     }
 
-    public function getPresentingCallback(): ?Closure {
+    public function getPresentingCallback(): ?Closure
+    {
         return null;
     }
 

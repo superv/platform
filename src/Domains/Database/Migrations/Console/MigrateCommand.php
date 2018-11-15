@@ -30,7 +30,6 @@ class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateComm
     protected function getMigrationPaths()
     {
         if ($this->option('scope')) {
-
             if ($path = Scopes::path($this->option('scope'))) {
                 return [$path];
             }

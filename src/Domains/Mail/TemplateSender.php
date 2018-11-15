@@ -24,19 +24,6 @@ class TemplateSender
     }
 
     /**
-     * @param $slug
-     * @return static
-     */
-    public static function template($slug)
-    {
-        if (! $template = app(MailTemplate::class)->query()->where('slug', $slug)->first()) {
-            throw new \Exception("Template with slug [{$slug}] could not be found");
-        }
-
-        return new static($template);
-    }
-
-    /**
      * @param mixed $params
      * @return TemplateSender
      */
@@ -100,5 +87,18 @@ class TemplateSender
     public function getBcc()
     {
         return $this->bcc ?: $this->template->bcc;
+    }
+
+    /**
+     * @param $slug
+     * @return static
+     */
+    public static function template($slug)
+    {
+        if (! $template = app(MailTemplate::class)->query()->where('slug', $slug)->first()) {
+            throw new \Exception("Template with slug [{$slug}] could not be found");
+        }
+
+        return new static($template);
     }
 }

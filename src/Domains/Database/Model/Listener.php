@@ -22,7 +22,7 @@ class Listener
                 $table = trim($parts[2], '"');
 
                 TableInsertEvent::dispatch($table);
-            } elseif(true || $operation === 'update') {
+            } elseif (true || $operation === 'update') {
                 $table = trim($parts[1], '"');
 
 //                info('paer', $parts);

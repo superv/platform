@@ -10,15 +10,15 @@ namespace SuperV\Platform\Domains\Database\Schema;
  */
 class Schema
 {
-    /** @var \SuperV\Platform\Domains\Database\Schema\Blueprint  */
+    public $justRun;
+
+    /** @var \SuperV\Platform\Domains\Database\Schema\Blueprint */
     protected $resource;
 
     /** @var \SuperV\Platform\Domains\Database\Schema\Builder */
     protected $builder;
 
     protected $columns;
-
-    public $justRun;
 
     public function __construct()
     {
@@ -29,14 +29,6 @@ class Schema
                 return new Blueprint($table, $callback, $this);
             });
         }
-    }
-
-    public static function run($table, $callback)
-    {
-        $schema = new static;
-        $schema->justRun = true;
-
-        return call_user_func_array([$schema, 'create'], [$table, $callback]);
     }
 
     public function __call($name, $arguments)
@@ -52,13 +44,21 @@ class Schema
         throw new \InvalidArgumentException('Method not found: '.$name);
     }
 
-    public static function __callStatic($name, $arguments)
-    {
-        return call_user_func_array([new static, $name], $arguments);
-    }
-
     public function builder()
     {
         return $this->builder;
+    }
+
+    public static function run($table, $callback)
+    {
+        $schema = new static;
+        $schema->justRun = true;
+
+        return call_user_func_array([$schema, 'create'], [$table, $callback]);
+    }
+
+    public static function __callStatic($name, $arguments)
+    {
+        return call_user_func_array([new static, $name], $arguments);
     }
 }

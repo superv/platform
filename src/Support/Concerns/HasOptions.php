@@ -9,19 +9,19 @@ trait HasOptions
     /** @var Collection */
     protected $options;
 
-    public function setOptions(Collection $options)
-    {
-        $this->options = $options;
-
-        return $this;
-    }
-
     /**
      * @return Collection
      */
     public function getOptions()
     {
         return $this->options;
+    }
+
+    public function setOptions(Collection $options)
+    {
+        $this->options = $options;
+
+        return $this;
     }
 
     /**

@@ -76,7 +76,7 @@ class Navigation implements SectionBag, HasGuardableItems
                         $section = Section::make($section);
                     } elseif ($section instanceof HasSection) {
                         $section = $section::getSection();
-                    } elseif (!$section instanceof Section) {
+                    } elseif (! $section instanceof Section) {
                         return null; // invalid section
                     }
                     $section->parent($this->slug);
@@ -87,7 +87,7 @@ class Navigation implements SectionBag, HasGuardableItems
                 })
             ->filter()
             ->guard()
-            ->map(function(Section $section) {
+            ->map(function (Section $section) {
                 return $section->build();
             })
             ->all();

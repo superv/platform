@@ -9,11 +9,11 @@ use SuperV\Platform\Support\Parser;
 
 class CreateAddonFiles
 {
-    /** @var \SuperV\Platform\Domains\Addon\AddonModel */
-    private $model;
-
     /** @var Filesystem */
     protected $filesystem;
+
+    /** @var \SuperV\Platform\Domains\Addon\AddonModel */
+    private $model;
 
     public function __construct(AddonModel $model)
     {

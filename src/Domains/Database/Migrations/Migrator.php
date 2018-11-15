@@ -30,15 +30,6 @@ class Migrator extends BaseMigrator
         return parent::getMigrationFiles($paths);
     }
 
-    public function setScope($scope)
-    {
-        $this->repository->setScope($scope);
-
-        $this->scope = $scope;
-
-        return $this;
-    }
-
     protected function runUp($file, $batch, $pretend)
     {
         if ($scope = Scopes::key(pathinfo($file, PATHINFO_DIRNAME))) {
@@ -59,5 +50,14 @@ class Migrator extends BaseMigrator
             Current::setMigrationScope(null);
         }
         parent::runMigration($migration, $method);
+    }
+
+    public function setScope($scope)
+    {
+        $this->repository->setScope($scope);
+
+        $this->scope = $scope;
+
+        return $this;
     }
 }

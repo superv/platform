@@ -17,7 +17,6 @@ class PortDetector
         if ($portSlug = $this->detectFor($request->getHttpHost(), $request->getRequestUri())) {
             PortDetectedEvent::dispatch(Hub::get($portSlug));
         }
-
     }
 
     public function detectFor($httpHost, $requestUri)

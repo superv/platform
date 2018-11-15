@@ -15,11 +15,6 @@ class FieldConfig
         $this->fieldName = $fieldName;
     }
 
-    public static function field($fieldName): self
-    {
-        return new static($fieldName);
-    }
-
     public function getFieldName(): string
     {
         return $this->fieldName;
@@ -47,5 +42,10 @@ class FieldConfig
     public function getConfig(): array
     {
         return $this->config;
+    }
+
+    public static function field($fieldName): self
+    {
+        return new static($fieldName);
     }
 }

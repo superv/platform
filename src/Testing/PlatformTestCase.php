@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Testing;
 
-
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Addon\Installer;
@@ -43,6 +42,6 @@ class PlatformTestCase extends TestCase
 
         $this->setUpMacros();
 
-        $this->loadFactoriesUsing($this->app, __DIR__ .'/../../tests/database/factories');
+        $this->loadFactoriesUsing($this->app, __DIR__.'/../../tests/database/factories');
     }
 }

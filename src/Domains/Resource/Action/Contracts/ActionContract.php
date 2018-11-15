@@ -9,5 +9,4 @@ interface ActionContract
     public function getTitle();
 
     public function compose(): array;
-
 }

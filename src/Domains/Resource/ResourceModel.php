@@ -20,11 +20,6 @@ class ResourceModel extends Entry implements ProvidesFields
 
     protected $casts = ['config' => 'array'];
 
-    public function uuid()
-    {
-        return $this->uuid;
-    }
-
     public function nav()
     {
         return $this->hasOne(Section::class, 'resource_id');
@@ -108,6 +103,11 @@ class ResourceModel extends Entry implements ProvidesFields
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    public function uuid()
+    {
+        return $this->uuid;
     }
 
     public static function withModel($model): ?self

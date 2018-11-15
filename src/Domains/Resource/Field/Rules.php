@@ -39,7 +39,7 @@ class Rules
             if (is_bool($value)) {
                 $rules[] = $key;
             } else {
-                $rules[] = $key.':'. ($params ? sv_parse($value, $params) : $value);
+                $rules[] = $key.':'.($params ? sv_parse($value, $params) : $value);
             }
         }
 
@@ -49,7 +49,6 @@ class Rules
     public static function of(FieldType $field)
     {
         return static::make($field->makeRules());
-
     }
 
     public static function make(array $rules): self

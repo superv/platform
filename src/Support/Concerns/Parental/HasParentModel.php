@@ -9,25 +9,6 @@ trait HasParentModel
 {
     public $hasParentModel = true;
 
-    public static function bootHasParentModel()
-    {
-        static::creating(function ($model) {
-            if ($model->parentHasReturnsChildModelsTrait()) {
-                $model->forceFill(
-                    [$model->getInhertanceColumn() => $model->classToAlias(get_class($model))]
-                );
-            }
-        });
-
-        static::addGlobalScope(function ($query) {
-            $instance = new static;
-
-            if ($instance->parentHasReturnsChildModelsTrait()) {
-                $query->where($instance->getInhertanceColumn(), $instance->classToAlias(get_class($instance)));
-            }
-        });
-    }
-
     public function parentHasReturnsChildModelsTrait()
     {
         return $this->returnsChildModels ?? false;
@@ -73,5 +54,24 @@ trait HasParentModel
         static $parentClassName;
 
         return $parentClassName ?: $parentClassName = (new ReflectionClass($this))->getParentClass()->getName();
+    }
+
+    public static function bootHasParentModel()
+    {
+        static::creating(function ($model) {
+            if ($model->parentHasReturnsChildModelsTrait()) {
+                $model->forceFill(
+                    [$model->getInhertanceColumn() => $model->classToAlias(get_class($model))]
+                );
+            }
+        });
+
+        static::addGlobalScope(function ($query) {
+            $instance = new static;
+
+            if ($instance->parentHasReturnsChildModelsTrait()) {
+                $query->where($instance->getInhertanceColumn(), $instance->classToAlias(get_class($instance)));
+            }
+        });
     }
 }

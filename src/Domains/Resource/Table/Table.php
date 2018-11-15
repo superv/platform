@@ -7,7 +7,6 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
 use SuperV\Platform\Support\Concerns\HasOptions;
 

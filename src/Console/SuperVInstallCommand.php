@@ -16,7 +16,6 @@ class SuperVInstallCommand extends Command
         $this->call('migrate', ['--force' => true]);
         $this->call('migrate', ['--scope' => 'platform', '--force' => true]);
 
-
         $this->setEnv('SV_INSTALLED=true');
 
 //        $this->call('vendor:publish', ['--tag' => 'superv.config']);

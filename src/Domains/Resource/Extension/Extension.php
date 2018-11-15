@@ -25,10 +25,10 @@ class Extension
 
     public function __invoke(string $class)
     {
-        if (!class_exists($class)) {
+        if (! class_exists($class)) {
             throw new PlatformException("Extension class not found: [{$class}]");
         }
-        $extender =  app($class);
+        $extender = app($class);
         static::extend($extender->extends(), $extender);
 
         if ($extender instanceof ObservesSaving) {

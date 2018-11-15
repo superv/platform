@@ -49,7 +49,7 @@ class Number extends FieldType implements NeedsDatabaseColumn
     public function getDatabaseColumns($fieldName, $fieldConfig)
     {
         return [
-            ['name' => $fieldName, 'type' => $fieldConfig['type']]
+            ['name' => $fieldName, 'type' => $fieldConfig['type']],
         ];
     }
 }

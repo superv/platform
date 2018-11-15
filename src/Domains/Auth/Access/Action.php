@@ -8,13 +8,13 @@ class Action extends Entry
 {
     protected $table = 'auth_actions';
 
-    public static function withSlug($slug)
-    {
-        return static::where('slug', $slug)->first();
-    }
-
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    public static function withSlug($slug)
+    {
+        return static::where('slug', $slug)->first();
     }
 }

@@ -4,9 +4,9 @@ namespace SuperV\Platform\Domains\Addon\Features;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\Addon\Events\MakingAddonEvent;
+use SuperV\Platform\Domains\Addon\Jobs\CreateAddonFiles;
 use SuperV\Platform\Domains\Addon\Jobs\CreateAddonPaths;
 use SuperV\Platform\Domains\Addon\Jobs\MakeAddonModel;
-use SuperV\Platform\Domains\Addon\Jobs\CreateAddonFiles;
 
 class MakeAddon
 {

@@ -51,7 +51,6 @@ class UserRegistrar
      * Set the request data
      *
      * @param array $request
-     *
      * @return $this
      */
     public function setRequest(array $request)

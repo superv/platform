@@ -93,14 +93,15 @@ trait HasActions
             return false;
         }
 
-        if (in_array('*', $this->getAllowedActions()))
+        if (in_array('*', $this->getAllowedActions())) {
             return true;
+        }
 
         if ($this->matchAction($action, $this->getAllowedActions())) {
             return true;
         }
 
-        if ($this->matchAction($action .'.*', $this->getAllowedActions())) {
+        if ($this->matchAction($action.'.*', $this->getAllowedActions())) {
             return true;
         }
 
@@ -114,7 +115,7 @@ trait HasActions
 
     public function canOrFail($action)
     {
-        if (!$this->can($action)) {
+        if (! $this->can($action)) {
             AuthorizationFailedException::actionFailed($action);
         }
     }
@@ -142,7 +143,7 @@ trait HasActions
      */
     protected function matchAction($action, $actions): bool
     {
-        return in_array($action, $actions)  || $this->matchWild($actions, $action);
+        return in_array($action, $actions) || $this->matchWild($actions, $action);
     }
 
     /**

@@ -14,7 +14,6 @@ class PlatformUserProvider extends EloquentUserProvider
      * Retrieve a user by the given credentials.
      *
      * @param  array $credentials
-     *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function retrieveByCredentials(array $credentials)
@@ -43,7 +42,6 @@ class PlatformUserProvider extends EloquentUserProvider
      * Retrieve a user by their unique identifier.
      *
      * @param  mixed $identifier
-     *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function retrieveById($identifier)
@@ -74,7 +72,7 @@ class PlatformUserProvider extends EloquentUserProvider
         if ($port = \Platform::port()) {
             if ($roles = $port->roles()) {
                 $roles = Role::query()->whereIn('slug', $roles)->pluck('id')->all();
-                $query->whereHas('roles', function(Builder $query) use ($roles) {
+                $query->whereHas('roles', function (Builder $query) use ($roles) {
                     $query->whereIn('role_id', $roles);
                 });
             }

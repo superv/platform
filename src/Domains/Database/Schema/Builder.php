@@ -13,7 +13,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
      */
     protected $schema;
 
-    /** @var \SuperV\Platform\Domains\Resource\ResourceBlueprint  */
+    /** @var \SuperV\Platform\Domains\Resource\ResourceBlueprint */
     protected $resource;
 
     public function __construct(Connection $connection, Schema $schema)
@@ -38,7 +38,6 @@ class Builder extends \Illuminate\Database\Schema\Builder
     public function table($table, Closure $callback)
     {
         $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($callback) {
-
             $callback($blueprint, $this->resource);
         }));
     }

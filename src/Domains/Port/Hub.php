@@ -29,6 +29,7 @@ class Hub
             $port = resolve($port);
         }
         $this->ports->push($port);
+
         return $port;
     }
 

@@ -40,7 +40,7 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
     /**
      * Send the password reset notification.
      *
-     * @param  string  $token
+     * @param  string $token
      * @return void
      */
     public function sendPasswordResetNotification($token)
@@ -53,8 +53,18 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
         $this->update(['password' => bcrypt($newPassword)]);
     }
 
-    public function verifyPassword($checkPassword) {
+    public function createProfile(array $attributes)
+    {
+        return $this->profile()->create($attributes);
+    }
 
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    public function verifyPassword($checkPassword)
+    {
         return \Hash::check($checkPassword, $this->password);
     }
 
@@ -66,11 +76,6 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
     public function profile()
     {
         return $this->hasOne(Profile::class);
-    }
-
-    public function createProfile(array $attributes)
-    {
-        return $this->profile()->create($attributes);
     }
 
     /**
@@ -91,11 +96,7 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
     public function getJWTCustomClaims()
     {
         return [];
-        return ['port' => optional(Current::port())->slug()];
-    }
 
-    public function getEmail()
-    {
-        return $this->email;
+        return ['port' => optional(Current::port())->slug()];
     }
 }

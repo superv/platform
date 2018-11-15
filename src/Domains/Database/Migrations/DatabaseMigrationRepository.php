@@ -96,7 +96,6 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
 
     /**
      * @param \Illuminate\Database\Query\Builder $query
-     *
      * @return \Illuminate\Database\Query\Builder
      */
     protected function filterScope($query)

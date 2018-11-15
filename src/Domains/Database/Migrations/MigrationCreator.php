@@ -11,18 +11,6 @@ class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
         return \Platform::fullPath('resources/stubs');
     }
 
-    /**
-     * @param mixed $scope
-     *
-     * @return MigrationCreator
-     */
-    public function setScope($scope)
-    {
-        $this->scope = $scope;
-
-        return $this;
-    }
-
     protected function populateStub($name, $stub, $table)
     {
         $stub = parent::populateStub($name, $stub, $table);
@@ -30,5 +18,16 @@ class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
         $scope = $this->scope ? "protected \$scope = '{$this->scope}';" : "";
 
         return str_replace('{scope}', $scope, $stub);
+    }
+
+    /**
+     * @param mixed $scope
+     * @return MigrationCreator
+     */
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
+
+        return $this;
     }
 }

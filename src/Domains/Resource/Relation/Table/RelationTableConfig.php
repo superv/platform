@@ -26,7 +26,6 @@ class RelationTableConfig extends TableConfig
         $this->setFieldsProvider($resource);
         $this->setTitle($this->relation->getName());
 
-
         return parent::build();
     }
 

@@ -41,11 +41,6 @@ class MediaOptions
         return $this->visibility;
     }
 
-    public static function one($label = null)
-    {
-        return new static($label);
-    }
-
     /**
      * @param string $path
      * @return MediaOptions
@@ -116,5 +111,10 @@ class MediaOptions
         $this->disk = $disk;
 
         return $this;
+    }
+
+    public static function one($label = null)
+    {
+        return new static($label);
     }
 }

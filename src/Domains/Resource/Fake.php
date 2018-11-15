@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Faker\Generator;
-use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
@@ -37,7 +36,6 @@ class Fake
         $this->faker = app(Generator::class);
 
         $this->resource->getFields()->map(function ($field) {
-
             if ($field instanceof FieldModel) {
                 $field = FieldFactory::createFromEntry($field);
             }

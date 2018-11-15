@@ -57,11 +57,6 @@ class MailSender
         return $view;
     }
 
-    public static function make()
-    {
-        return resolve(self::class);
-    }
-
     protected function buildView(): array
     {
         return [
@@ -131,5 +126,10 @@ class MailSender
         $this->bcc = $bcc;
 
         return $this;
+    }
+
+    public static function make()
+    {
+        return resolve(self::class);
     }
 }

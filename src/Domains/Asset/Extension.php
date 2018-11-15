@@ -22,7 +22,7 @@ class Extension extends \Twig_Extension
             new Twig_SimpleFunction(
                 'app_env',
                 function ($environment = null) {
-                    if (!$environment) {
+                    if (! $environment) {
                         return app()->environment();
                     }
 

@@ -28,17 +28,6 @@ class Response implements Responsable
         return response()->json($this->toArray(), $this->statusCode);
     }
 
-    /** @return array */
-    public function toArray()
-    {
-        $toArray = ['status' => $this->status];
-
-        array_set_if($this->data, $toArray, 'data', $this->data);
-        array_set_if($this->error, $toArray, 'error', $this->error);
-
-        return $toArray;
-    }
-
     public function getData($key = null)
     {
         if ($key) {
@@ -55,19 +44,6 @@ class Response implements Responsable
     public function setData($data)
     {
         $this->data = $data;
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $error
-     * @return Response
-     */
-    public function setError($error)
-    {
-        $this->status = 'error';
-
-        $this->error = is_array($error) ? ['list' => $error] : ['description' => $error];
 
         return $this;
     }
@@ -102,5 +78,29 @@ class Response implements Responsable
     public function getError()
     {
         return $this->error;
+    }
+
+    /**
+     * @param mixed $error
+     * @return Response
+     */
+    public function setError($error)
+    {
+        $this->status = 'error';
+
+        $this->error = is_array($error) ? ['list' => $error] : ['description' => $error];
+
+        return $this;
+    }
+
+    /** @return array */
+    public function toArray()
+    {
+        $toArray = ['status' => $this->status];
+
+        array_set_if($this->data, $toArray, 'data', $this->data);
+        array_set_if($this->error, $toArray, 'error', $this->error);
+
+        return $toArray;
     }
 }

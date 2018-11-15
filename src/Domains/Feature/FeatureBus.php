@@ -3,8 +3,8 @@
 namespace SuperV\Platform\Domains\Feature;
 
 use Illuminate\Contracts\Support\Responsable;
-use SuperV\Platform\Exceptions\ValidationException;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Exceptions\ValidationException;
 use SuperV\Platform\Support\Composer\Composer;
 
 class FeatureBus implements Responsable
@@ -24,16 +24,6 @@ class FeatureBus implements Responsable
     {
         $this->input = new Collection(request()->all());
         $this->response = $response;
-    }
-
-    /**
-     * @param       $featureClass
-     * @param array $input
-     * @return \SuperV\Platform\Domains\Feature\Feature
-     */
-    public static function make($featureClass, array $input)
-    {
-        return app(self::class)->setRequest($input)->handle($featureClass)->getFeature();
     }
 
     /** @return self */
@@ -193,5 +183,15 @@ class FeatureBus implements Responsable
         $composed = (new Composer())->compose($this->feature->getResponseData());
 
         $this->response->setData($composed);
+    }
+
+    /**
+     * @param       $featureClass
+     * @param array $input
+     * @return \SuperV\Platform\Domains\Feature\Feature
+     */
+    public static function make($featureClass, array $input)
+    {
+        return app(self::class)->setRequest($input)->handle($featureClass)->getFeature();
     }
 }

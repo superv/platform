@@ -16,6 +16,7 @@ class File extends FieldType
     public function makeRules()
     {
         $rules = [];
+
         return Rules::make($rules)->merge(parent::makeRules())->get();
     }
 

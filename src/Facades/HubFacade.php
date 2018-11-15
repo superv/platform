@@ -9,6 +9,6 @@ class HubFacade extends Facade
 {
     protected static function getFacadeAccessor()
     {
-       return Hub::class;
+        return Hub::class;
     }
 }

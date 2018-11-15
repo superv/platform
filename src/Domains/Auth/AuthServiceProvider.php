@@ -3,20 +3,20 @@
 namespace SuperV\Platform\Domains\Auth;
 
 use Auth;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Auth\Console\AssignRoleCommand;
 use SuperV\Platform\Domains\Auth\Console\CreateUserCommand;
 use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Providers\BaseServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Tymon\JWTAuth\Providers\LaravelServiceProvider;
 
 class AuthServiceProvider extends BaseServiceProvider
 {
     protected $commands = [
         CreateUserCommand::class,
-        AssignRoleCommand::class
+        AssignRoleCommand::class,
     ];
 
     public function register()
@@ -82,7 +82,7 @@ class AuthServiceProvider extends BaseServiceProvider
         });
 
         Relation::morphMap([
-           'SuperV\Platform\Domains\Auth\User'
+            'SuperV\Platform\Domains\Auth\User',
         ]);
     }
 

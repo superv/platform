@@ -10,5 +10,4 @@ class Textarea extends FieldType implements NeedsDatabaseColumn
     {
         return array_merge(['hide.table' => true], parent::getConfig());
     }
-
 }

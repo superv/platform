@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Support;
 
-
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\UrlGenerator;
@@ -68,17 +67,6 @@ class Parser
         return $this->toArray($this->mergeDefaultData($data));
     }
 
-    protected function toArray(array $data)
-    {
-        foreach ($data as $key => &$value) {
-            if (is_object($value) && $value instanceof Arrayable) {
-                $value = $value->toArray();
-            }
-        }
-
-        return $data;
-    }
-
     protected function mergeDefaultData(array $data)
     {
         $url = $this->urlData();
@@ -128,4 +116,14 @@ class Parser
         return $request;
     }
 
+    protected function toArray(array $data)
+    {
+        foreach ($data as $key => &$value) {
+            if (is_object($value) && $value instanceof Arrayable) {
+                $value = $value->toArray();
+            }
+        }
+
+        return $data;
+    }
 }

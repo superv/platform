@@ -32,21 +32,9 @@ class HasOne extends Relation implements ProvidesForm
         return null;
     }
 
-//    protected function newRelatedInstance(): ?ResourceEntry
-//    {
-//        if ($model = $this->config->getRelatedModel()) {
-//            return new ConcreteResourceEntry(new $model);
-//        } elseif ($table = $this->config->getRelatedResource()) {
-//            return ConcreteResourceEntry::newInstance($table);
-//        }
-//
-//        throw new PlatformException('Related resource/model not found');
-//    }
-
     public function makeForm(): Form
     {
         $relatedEntry = $this->getRelatedEntry() ?? ConcreteResourceEntry::make($this->newQuery()->make());
-
 
         $form = (new FormBuilder)
             ->addGroup($relatedEntry->getHandle(), $relatedEntry, $relatedEntry->getResource())

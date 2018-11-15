@@ -8,13 +8,46 @@ use Ramsey\Uuid\Uuid;
 
 class EntryModel extends Model
 {
+    public static $rules;
+
     protected $guarded = [];
 
     protected $onCreate;
 
     protected $hasUUID;
 
-    public static $rules;
+    public function getId()
+    {
+        return $this->getKey();
+    }
+
+    public function flushCache()
+    {
+    }
+
+    /**
+     * @param Closure $callback
+     * @return EntryModel
+     */
+    public function onCreate(Closure $callback)
+    {
+        $this->onCreate = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOnCreateCallback()
+    {
+        return $this->onCreate;
+    }
+
+    public function compose()
+    {
+        return $this->toArray();
+    }
 
     public static function rulesSometimes()
     {
@@ -61,38 +94,4 @@ class EntryModel extends Model
             });
         }
     }
-
-    public function getId()
-    {
-        return $this->getKey();
-    }
-
-    public function flushCache()
-    {
-    }
-
-    /**
-     * @param Closure $callback
-     * @return EntryModel
-     */
-    public function onCreate(Closure $callback)
-    {
-        $this->onCreate = $callback;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getOnCreateCallback()
-    {
-        return $this->onCreate;
-    }
-
-    public function compose()
-    {
-        return $this->toArray();
-    }
-
 }

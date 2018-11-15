@@ -45,8 +45,8 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
     protected function registerCreator()
     {
         $this->app->singleton('migration.creator', function ($app) {
-             return new MigrationCreator($app['files']);
-         });
+            return new MigrationCreator($app['files']);
+        });
     }
 
     protected function extendConsoleCommands(): void

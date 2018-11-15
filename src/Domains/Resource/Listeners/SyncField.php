@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
-use Current;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
@@ -10,8 +9,6 @@ use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Jobs\CreatePivotTable;
 use SuperV\Platform\Domains\Resource\ResourceModel;
-use SuperV\Platform\Support\Meta\Meta;
-use SuperV\Platform\Support\Meta\Repository;
 
 class SyncField
 {
@@ -150,7 +147,6 @@ class SyncField
 
         if ($this->resourceEntry->hasField($fieldName)) {
             $field = $this->resourceEntry->getField($fieldName);
-
         } else {
             $field = $this->resourceEntry->createField($fieldName);
         }

@@ -10,5 +10,4 @@ trait Dispatchable
     {
         return app(Dispatcher::class)->dispatch(new static(...func_get_args()));
     }
-
 }

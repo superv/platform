@@ -18,5 +18,4 @@ class AddonBootedEvent
     {
         $this->addon = $addon;
     }
-
 }

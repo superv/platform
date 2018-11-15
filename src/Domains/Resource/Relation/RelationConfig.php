@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Relation;
 
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Support\Concerns\Hydratable;
 

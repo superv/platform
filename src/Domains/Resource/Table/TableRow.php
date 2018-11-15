@@ -3,10 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Table;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Database\Model\Entry;
-use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Action\Builder;
-use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
 use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;

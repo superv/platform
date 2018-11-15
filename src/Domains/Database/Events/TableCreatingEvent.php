@@ -23,7 +23,7 @@ class TableCreatingEvent extends BaseEvent
      */
     public $scope;
 
-    /** @var \SuperV\Platform\Domains\Resource\ResourceBlueprint  */
+    /** @var \SuperV\Platform\Domains\Resource\ResourceBlueprint */
     public $resourceBlueprint;
 
     public function __construct($table, Collection $columns, ResourceBlueprint $blueprint, $scope)

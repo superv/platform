@@ -1,13 +1,13 @@
 <?php
 
 use Illuminate\Container\Container;
+use Illuminate\Support\Collection;
 use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
 use SuperV\Modules\Nucleo\Domains\UI\SvComponent;
 use SuperV\Modules\Nucleo\Domains\UI\SvTab;
 use SuperV\Modules\Nucleo\Domains\UI\SvTabs;
 use SuperV\Platform\Domains\Feature\FeatureBus;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
-use Illuminate\Support\Collection;
 use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;

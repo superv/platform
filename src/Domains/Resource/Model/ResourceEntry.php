@@ -45,6 +45,31 @@ class ResourceEntry implements ResourceEntryContract, Watcher
         return $this->entry;
     }
 
+    public function getResource(): \SuperV\Platform\Domains\Resource\Resource
+    {
+        if (! $this->resource) {
+            $this->resource = Resource::of($this->getHandle());
+        }
+
+        return $this->resource;
+    }
+
+    public function id()
+    {
+        return $this->getEntry()->getKey();
+    }
+
+    public static function newInstance($handle): ResourceEntryContract
+    {
+        if (is_string($handle)) {
+            return new static(ResourceEntryModel::make($handle));
+        }
+
+        if (($resource = $handle) instanceof Resource) {
+            return new static(ResourceEntryModel::make($resource->getHandle()), $resource);
+        }
+    }
+
     public function exists()
     {
         return $this->getEntry() && $this->getEntry()->exists;
@@ -68,15 +93,6 @@ class ResourceEntry implements ResourceEntryContract, Watcher
     public function getHandle(): string
     {
         return $this->handle;
-    }
-
-    public function getResource(): \SuperV\Platform\Domains\Resource\Resource
-    {
-        if (! $this->resource) {
-            $this->resource = Resource::of($this->getHandle());
-        }
-
-        return $this->resource;
     }
 
     public function getLabel()
@@ -180,11 +196,6 @@ class ResourceEntry implements ResourceEntryContract, Watcher
         $this->entry = Resource::of($this->getHandle())->find($this->entryId)->getEntry();
     }
 
-    public function id()
-    {
-        return $this->getEntry()->getKey();
-    }
-
     public static function make($entry, ?Resource $resource = null): self
     {
         return new static($entry, $resource);
@@ -210,16 +221,5 @@ class ResourceEntry implements ResourceEntryContract, Watcher
         }
 
         PlatformException::fail("Can not fake, resource not found");
-    }
-
-    public static function newInstance($handle): ResourceEntryContract
-    {
-        if (is_string($handle)) {
-            return new static(ResourceEntryModel::make($handle));
-        }
-
-        if (($resource = $handle) instanceof Resource) {
-            return new static(ResourceEntryModel::make($resource->getHandle()), $resource);
-        }
     }
 }

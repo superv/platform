@@ -12,6 +12,8 @@ use SuperV\Platform\Support\Template;
 
 class Asset
 {
+    protected $paths = [];
+
     private $collections = [];
 
     /**
@@ -28,8 +30,6 @@ class Asset
      * @var \Illuminate\Routing\UrlGenerator
      */
     private $url;
-
-    protected $paths = [];
 
     public function __construct(Filesystem $files, UrlGenerator $url, Request $request)
     {
@@ -154,7 +154,7 @@ class Asset
             $this->publish($path, $collection, $filters);
         }
 
-        $path .= '?v=' . filemtime(public_path(trim($path, '/\\')));
+        $path .= '?v='.filemtime(public_path(trim($path, '/\\')));
 
         return $path;
     }
@@ -174,17 +174,16 @@ class Asset
         $hint = pathinfo($collection, PATHINFO_EXTENSION);
 
         if ($hint == 'css') {
-                 try {
-                     $contents = app(Template::class)
-                         ->render($contents)
-                         ->render();
-                 } catch (\Exception $e) {
-                     if (env('APP_DEBUG')) {
-                         dd($e->getMessage());
-                     }
-                 }
-             }
-
+            try {
+                $contents = app(Template::class)
+                    ->render($contents)
+                    ->render();
+            } catch (\Exception $e) {
+                if (env('APP_DEBUG')) {
+                    dd($e->getMessage());
+                }
+            }
+        }
 
         $this->files->put($path, $contents);
     }

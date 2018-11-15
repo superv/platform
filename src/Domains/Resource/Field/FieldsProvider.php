@@ -28,5 +28,4 @@ class FieldsProvider
             return FieldFactory::createFromEntry($field);
         });
     }
-
 }

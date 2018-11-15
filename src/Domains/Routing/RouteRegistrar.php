@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Routing;
 
+use Hub;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
-use Hub;
 use SuperV\Platform\Domains\Port\Port;
 
 class RouteRegistrar

@@ -33,7 +33,7 @@ class AddonNavigationCollector implements Collector
     {
         $this->addons->map(function (Addon $addon) use ($slug) {
             $menu = config($addon->slug().'::navigation.'.$slug);
-            if ($menu && !empty($menu)) {
+            if ($menu && ! empty($menu)) {
                 $this->sections->put($addon->slug(), collect($menu));
             }
         });

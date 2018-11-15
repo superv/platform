@@ -2,11 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
-use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
@@ -15,6 +13,7 @@ class Group
 {
     /** @var string */
     protected $handle;
+
     /**
      * @var Watcher
      */
@@ -52,8 +51,8 @@ class Group
         }
         $this->types = collect();
 
-        $this->fields = $this->fields->filter(function(Field $field) {
-            return  !in_array($field->getName(), $this->skipFields);
+        $this->fields = $this->fields->filter(function (Field $field) {
+            return ! in_array($field->getName(), $this->skipFields);
         })->values();
 
         $this->fields = $this->fields

@@ -20,7 +20,7 @@ class CreateResource
         $entry = ResourceModel::create(array_filter(
             [
                 'slug'   => $event->table,
-                'handle'   => $event->table,
+                'handle' => $event->table,
                 'model'  => $resource->model,
                 'config' => $resource->config($event->table, $event->columns),
                 'addon'  => $event->scope,
@@ -32,14 +32,13 @@ class CreateResource
                 Section::createFromString($handle = $nav.'.'.$event->table);
                 $section = Section::get($handle);
                 $section->update([
-                    'url' => 'sv/res/' . $event->table ,
-                    'title' => $resource->label,
-                    'handle' => str_slug($resource->label, '_')
+                    'url'    => 'sv/res/'.$event->table,
+                    'title'  => $resource->label,
+                    'handle' => str_slug($resource->label, '_'),
                 ]);
-
             } elseif (is_array($nav)) {
-                if (!isset($nav['url'])) {
-                    $nav['url'] = 'sv/res/' . $event->table;
+                if (! isset($nav['url'])) {
+                    $nav['url'] = 'sv/res/'.$event->table;
                 }
                 Section::createFromArray($nav);
             }

@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Relation;
 
 use SuperV\Platform\Domains\Database\Model\Entry;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class RelationFactory

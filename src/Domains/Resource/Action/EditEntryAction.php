@@ -16,7 +16,6 @@ class EditEntryAction extends Action implements AcceptsResourceEntry, MustBeInit
     /** @var \SuperV\Platform\Domains\Database\Model\Entry */
     protected $entry;
 
-
     public function acceptResourceEntry(ResourceEntry $entry)
     {
         $this->entry = $entry;

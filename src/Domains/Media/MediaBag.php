@@ -5,9 +5,9 @@ namespace SuperV\Platform\Domains\Media;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\File\File;
 
 class MediaBag

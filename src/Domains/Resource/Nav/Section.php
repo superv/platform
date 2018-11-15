@@ -19,8 +19,8 @@ class Section extends Entry
         return array_filter([
             'title'    => $this->title,
             'handle'   => $this->handle,
-            'icon'   => $this->icon,
-            'url'   => $this->url,
+            'icon'     => $this->icon,
+            'url'      => $this->url,
             'sections' => $this->children()
                                ->with('children')
                                ->get()

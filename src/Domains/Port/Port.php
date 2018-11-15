@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Port;
 
-use Platform;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class Port
@@ -68,7 +67,7 @@ class Port
 
     public function root()
     {
-        return $this->hostname() . ($this->prefix ? '/'.$this->prefix : '');
+        return $this->hostname().($this->prefix ? '/'.$this->prefix : '');
     }
 
     /**

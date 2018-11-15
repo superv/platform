@@ -8,7 +8,7 @@ use SuperV\Platform\Providers\BaseServiceProvider;
 class AssetServiceProvider extends BaseServiceProvider
 {
     protected $_singletons = [
-        Asset::class => Asset::class
+        Asset::class => Asset::class,
     ];
 
     public function register()
@@ -16,9 +16,9 @@ class AssetServiceProvider extends BaseServiceProvider
         $this->registerSingletons($this->_singletons);
 
         $this->registerListeners([
-            ThemeActivatedEvent::class => function(ThemeActivatedEvent $event) {
-                app(Asset::class)->addPath('theme', $event->theme->path. '/public');
-            }
+            ThemeActivatedEvent::class => function (ThemeActivatedEvent $event) {
+                app(Asset::class)->addPath('theme', $event->theme->path.'/public');
+            },
         ]);
     }
 }

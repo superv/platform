@@ -113,33 +113,34 @@ class Field
     {
         $class = FieldType::resolveClass($this->type);
         $fieldType = new $class([
-            'type'  => $this->getType(),
-            'name'  => $this->getName(),
-            'label' => $this->getLabel(),
-            'config' => $this->config,
-            'rules' => $this->rules,
+            'type'     => $this->getType(),
+            'name'     => $this->getName(),
+            'label'    => $this->getLabel(),
+            'config'   => $this->config,
+            'rules'    => $this->rules,
             'required' => $this->required,
-            'unique' => $this->unique,
+            'unique'   => $this->unique,
 
         ]);
 
-        if ($this->watcher)
-        $fieldType->setEntry($this->watcher);
+        if ($this->watcher) {
+            $fieldType->setEntry($this->watcher);
+        }
 
         return $fieldType;
     }
 
     public function tmp_makeRules()
     {
-            $rules = array_filter($this->rules ?? []);
-            if ($this->isUnique()) {
-                $rules[] = 'unique:'.$this->getResourceTable().','.$this->getName().',{entry.id},id';
-            }
-            if ($this->isRequired()) {
-                $rules[] = 'required';
-            }
+        $rules = array_filter($this->rules ?? []);
+        if ($this->isUnique()) {
+            $rules[] = 'unique:'.$this->getResourceTable().','.$this->getName().',{entry.id},id';
+        }
+        if ($this->isRequired()) {
+            $rules[] = 'required';
+        }
 
-            return $rules;
+        return $rules;
     }
 
     public function getValue()

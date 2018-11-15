@@ -56,12 +56,14 @@ trait FiresCallbacks
      */
     public function hasCallback($trigger)
     {
-        return  isset($this->callbacks[$trigger]);
+        return isset($this->callbacks[$trigger]);
     }
 
     public function getCallback($trigger): ?Closure
     {
-        if (!$this->hasCallback($trigger)) return null;
+        if (! $this->hasCallback($trigger)) {
+            return null;
+        }
 
         return $this->callbacks[$trigger][0];
     }
