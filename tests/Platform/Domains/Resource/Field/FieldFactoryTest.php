@@ -5,8 +5,6 @@ namespace Tests\Platform\Domains\Resource\Field;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Field\Jobs\AttachTypeToField;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FieldFactoryTest extends ResourceTestCase
@@ -21,12 +19,11 @@ class FieldFactoryTest extends ResourceTestCase
         $this->assertEquals('title', $field->getName());
         $this->assertEquals('text', $field->getType());
 
-        $fieldType = FieldType::fromField($field);
-        $fieldType->setAccessor(function($value) { return str_slug($value); });
-        AttachTypeToField::dispatch($fieldType, $field);
+        $fieldType = $field->resolveType();
+        $fieldType->setAccessor(function ($value) { return str_slug($value); });
+        $field->build();
 
         $field->setValue('SuperV Platform');
         $this->assertEquals('superv-platform', $field->getValue());
-
     }
 }
