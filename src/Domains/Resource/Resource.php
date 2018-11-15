@@ -166,12 +166,6 @@ class Resource implements ProvidesFields, ProvidesQuery
         return $self->fields->map(function (ResourceEntryModel $fieldEntry) {
             return FieldFactory::createFromArray($fieldEntry->toArray());
         });
-
-//        if ($this->fields instanceof Closure) {
-//            $this->fields = ($this->fields)();
-//        }
-//
-//        return $this->fields;
     }
 
     public function getFieldType($name): ?FieldType

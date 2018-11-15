@@ -87,11 +87,6 @@ abstract class FieldType implements NeedsEntry
         return true;
     }
 
-    public function buildForView($query)
-    {
-        return $this;
-    }
-
     public function build(): self
     {
         return $this;
@@ -127,21 +122,10 @@ abstract class FieldType implements NeedsEntry
         return $this->type;
     }
 //
-//    public function getFieldEntry(): ?FieldModel
+//    public function mergeConfig(array $config)
 //    {
-//        return null;
+//        $this->config = array_merge($this->config, $config);
 //    }
-//
-//    public function hasFieldEntry(): bool
-//    {
-//        return false;
-////        return $this->fieldEntry && $this->fieldEntry->exists;
-//    }
-
-    public function mergeConfig(array $config)
-    {
-        $this->config = array_merge($this->config, $config);
-    }
 
     public function getRules(): array
     {
@@ -203,11 +187,6 @@ abstract class FieldType implements NeedsEntry
         return ! is_null($this->entry);
     }
 
-    public function presentValue()
-    {
-        return $this->getValue();
-    }
-
     public function getValue()
     {
         if (! $this->hasEntry()) {
@@ -239,10 +218,6 @@ abstract class FieldType implements NeedsEntry
         return $this->getValue();
     }
 
-    public function setValueFromRequest(Request $request)
-    {
-        return $this->setValue($request->__get($this->getColumnName()));
-    }
 
     public function hasAccessor()
     {
@@ -266,18 +241,10 @@ abstract class FieldType implements NeedsEntry
         return null;
     }
 
-    public function getPresentingCallback(): ?Closure
+    public function getPresenter(): ?Closure
     {
         return null;
     }
-
-//    public static function make($name): self
-//    {
-//        return static::fromEntry(new FieldModel([
-//            'name' => $name,
-//            'type' => strtolower(class_basename(get_called_class())),
-//        ]));
-//    }
 
     public static function resolveType(FieldModel $fieldEntry): FieldType
     {
