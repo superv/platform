@@ -72,6 +72,11 @@ abstract class FieldType implements NeedsEntry
 
     protected $hasColumn = true;
 
+    public function __construct(array $attributes = [])
+    {
+        $this->hydrate($attributes);
+    }
+
     public function hasColumn(): bool
     {
         return $this->hasColumn;
@@ -121,17 +126,17 @@ abstract class FieldType implements NeedsEntry
     {
         return $this->type;
     }
-
-    public function getFieldEntry(): ?FieldModel
-    {
-        return null;
-    }
-
-    public function hasFieldEntry(): bool
-    {
-        return false;
-//        return $this->fieldEntry && $this->fieldEntry->exists;
-    }
+//
+//    public function getFieldEntry(): ?FieldModel
+//    {
+//        return null;
+//    }
+//
+//    public function hasFieldEntry(): bool
+//    {
+//        return false;
+////        return $this->fieldEntry && $this->fieldEntry->exists;
+//    }
 
     public function mergeConfig(array $config)
     {
@@ -269,13 +274,13 @@ abstract class FieldType implements NeedsEntry
         return null;
     }
 
-    public static function make($name): self
-    {
-        return static::fromEntry(new FieldModel([
-            'name' => $name,
-            'type' => strtolower(class_basename(get_called_class())),
-        ]));
-    }
+//    public static function make($name): self
+//    {
+//        return static::fromEntry(new FieldModel([
+//            'name' => $name,
+//            'type' => strtolower(class_basename(get_called_class())),
+//        ]));
+//    }
 
     public static function resolveType(FieldModel $fieldEntry): FieldType
     {
@@ -293,24 +298,24 @@ abstract class FieldType implements NeedsEntry
 
         return $fieldType;
     }
+//
+//    public static function fromEntry(FieldModel $fieldEntry): self
+//    {
+//        $class = FieldType::resolveClass($fieldEntry->getType());
+//
+//        $field = new $class($fieldEntry);
+//
+//        $field->hydrate($fieldEntry->toArray());
+//        $field->setRules($fieldEntry->getRules()); // @TODO: refactor, very problematic
+//
+//        return $field;
+//    }
 
-    public static function fromEntry(FieldModel $fieldEntry): self
-    {
-        $class = FieldType::resolveClass($fieldEntry->getType());
-
-        $field = new $class($fieldEntry);
-
-        $field->hydrate($fieldEntry->toArray());
-        $field->setRules($fieldEntry->getRules()); // @TODO: refactor, very problematic
-
-        return $field;
-    }
-
-    public static function resolve($type)
+    public static function resolve($type): FieldType
     {
         $class = static::resolveClass($type);
 
-        return new $class(new FieldModel);
+        return new $class;
     }
 
     public static function resolveClass($type)

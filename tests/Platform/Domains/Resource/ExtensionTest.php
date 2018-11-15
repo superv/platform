@@ -122,7 +122,7 @@ class TestUserResourceExtension implements ResourceExtension, ObservesSaving, Ob
         return [
             'name',
             FieldConfig::field('age')->mergeRules(['min:18', 'max:150']),
-            Textarea::make('bio'),
+//            Textarea::make('bio'),
         ];
     }
 

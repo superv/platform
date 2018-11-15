@@ -18,36 +18,36 @@ class FieldModel extends ResourceEntryModel
         'unique'     => 'bool',
         'searchable' => 'bool',
     ];
+//
+//    public function setDefaultValue($value)
+//    {
+//        if ($value) {
+//            $this->setConfigValue('default_value', $value);
+//        }
+//    }
 
-    public function setDefaultValue($value)
-    {
-        if ($value) {
-            $this->setConfigValue('default_value', $value);
-        }
-    }
-
-    public function setConfigValue($key, $value)
-    {
-        $config = $this->getConfig();
-        $config[$key] = $value;
-
-        $this->config = $config;
-    }
+//    public function setConfigValue($key, $value)
+//    {
+//        $config = $this->getConfig();
+//        $config[$key] = $value;
+//
+//        $this->config = $config;
+//    }
 
     public function getConfig()
     {
         return $this->config ?? [];
     }
-
-    public function getResourceEntry()
-    {
-        return $this->resourceEntry;
-    }
-
-    public function resourceEntry()
-    {
-        return $this->belongsTo(ResourceModel::class, 'resource_id');
-    }
+//
+//    public function getResourceEntry()
+//    {
+//        return $this->resourceEntry;
+//    }
+//
+//    public function resourceEntry()
+//    {
+//        return $this->belongsTo(ResourceModel::class, 'resource_id');
+//    }
 
     public function getColumnType()
     {
@@ -86,25 +86,12 @@ class FieldModel extends ResourceEntryModel
 
     public function getRules()
     {
-        $rules = array_filter($this->rules ?? []);
-        if ($this->isUnique()) {
-            $rules[] = 'unique:'.$this->getResourceTable().','.$this->getName().',{entry.id},id';
-        }
-        if ($this->isRequired()) {
-            $rules[] = 'required';
-        }
-
-        return $rules;
+        return $this->rules;
     }
 
     public function isUnique(): bool
     {
         return (bool)$this->unique;
-    }
-
-    public function getResourceTable()
-    {
-        return $this->getResourceEntry()->getSlug();
     }
 
     public function getName()

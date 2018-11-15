@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Faker\Generator;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 
@@ -37,10 +38,14 @@ class Fake
 
         $this->resource->getFields()->map(function ($field) {
 
-            if ($field instanceof Field) {
-                $field = FieldModel::withUuid($field->uuid());
+            if ($field instanceof FieldModel) {
+                $field = FieldFactory::createFromEntry($field);
             }
-            $fieldType = FieldType::fromEntry($field);
+//            if ($field instanceof Field) {
+//                $field = FieldModel::withUuid($field->uuid());
+//            }
+            $fieldType = $field->resolveType();
+//            $fieldType = FieldType::fromEntry($field);
 
             if ($fieldType->visible() && $fieldType->hasColumn()) {
                 $this->attributes[$fieldType->getColumnName()] = $this->fake($fieldType);

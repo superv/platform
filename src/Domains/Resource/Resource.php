@@ -180,12 +180,14 @@ class Resource implements ProvidesFields, ProvidesQuery
     {
         $field = $this->getField($name);
 
+        return $field->resolveType($name);
+
         $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid()));
 
         return $fieldType;
     }
 
-    public function getField($name)
+    public function getField($name): ?Field
     {
         return $this->getFields()->first(function ($field) use ($name) { return $field->getName() === $name; });
     }

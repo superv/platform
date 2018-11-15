@@ -108,10 +108,16 @@ class ResourceEntry implements ResourceEntryContract, Watcher
 
     public function getFieldType(string $name): ?FieldType
     {
-        $fieldType = FieldType::fromEntry(FieldModel::withUuid($this->getField($name)->uuid()));
-        $fieldType->setEntry($this);
+        $field = $this->getField($name);
 
-        return $fieldType;
+        $fieldType = $field->resolveType();
+
+        return $fieldType->setEntry($this);
+
+//        $fieldType = FieldType::fromEntry(FieldModel::withUuid($this->getField($name)->uuid()));
+//        $fieldType->setEntry($this);
+//
+//        return $fieldType;
     }
 
     public function newQuery()
@@ -182,6 +188,7 @@ class ResourceEntry implements ResourceEntryContract, Watcher
         return new static($entry, $resource);
     }
 
+    /** @return \SuperV\Platform\Domains\Resource\Model\ResourceEntry|\Illuminate\Support\Collection */
     public static function fake($resource, array $overrides = [], int $number = 1)
     {
         if (is_string($resource)) {

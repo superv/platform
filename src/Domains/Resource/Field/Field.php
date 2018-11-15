@@ -9,7 +9,6 @@ use SuperV\Platform\Support\Concerns\Hydratable;
 
 /**
  * Class Field
- *
  * No closures allowed here..
  *
  * @package SuperV\Platform\Domains\Resource\Field
@@ -53,6 +52,12 @@ class Field
      */
     protected $watcher;
 
+    protected $rules;
+
+    protected $unique;
+
+    protected $required;
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
@@ -64,6 +69,16 @@ class Field
         $this->uuid = $this->uuid ?? uuid();
 
         $this->value = new FieldValue($this);
+
+//        $rules = array_filter($this->rules ?? []);
+
+        if ($this->unique) {
+            $this->rules[] = 'unique:{resource.handle},'.$this->getName().',{entry.id},id';
+        }
+        if ($this->required) {
+            $this->rules[] = 'required';
+        }
+
     }
 
     public function value(): FieldValue
@@ -73,7 +88,35 @@ class Field
 
     public function resolveType(): FieldType
     {
-        return FieldType::resolve($this->type);
+        $class = FieldType::resolveClass($this->type);
+        $fieldType = new $class([
+            'type'  => $this->getType(),
+            'name'  => $this->getName(),
+            'label' => $this->getLabel(),
+            'config' => $this->config,
+            'rules' => $this->rules,
+            'required' => $this->required,
+            'unique' => $this->unique,
+
+        ]);
+
+        if ($this->watcher)
+        $fieldType->setEntry($this->watcher);
+
+        return $fieldType;
+    }
+
+    public function tmp_makeRules()
+    {
+            $rules = array_filter($this->rules ?? []);
+            if ($this->isUnique()) {
+                $rules[] = 'unique:'.$this->getResourceTable().','.$this->getName().',{entry.id},id';
+            }
+            if ($this->isRequired()) {
+                $rules[] = 'required';
+            }
+
+            return $rules;
     }
 
     public function getValue()
@@ -144,11 +187,6 @@ class Field
         ]);
     }
 
-    public function uuid(): string
-    {
-        return $this->uuid;
-    }
-
     public function isVisible(): bool
     {
         return $this->visible;
@@ -159,5 +197,10 @@ class Field
         $this->visible = $visible;
 
         return $this;
+    }
+
+    public function uuid(): string
+    {
+        return $this->uuid;
     }
 }

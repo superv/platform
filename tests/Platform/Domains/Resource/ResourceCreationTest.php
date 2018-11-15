@@ -169,7 +169,7 @@ class ResourceCreationTest extends ResourceTestCase
         $slugField = $resource->getFieldType('slug');
         $this->assertTrue($slugField->isUnique());
 
-        $this->assertArraySubset(['unique:test_users,slug,{entry.id},id'], $slugField->getRules());
+        $this->assertArraySubset(['unique:{resource.handle},slug,{entry.id},id'], $slugField->getRules());
     }
 
     /** @test */
