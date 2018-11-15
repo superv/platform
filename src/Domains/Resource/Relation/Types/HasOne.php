@@ -39,7 +39,7 @@ class HasOne extends Relation implements ProvidesForm
         $form = (new FormBuilder)
             ->addGroup($relatedEntry->getHandle(), $relatedEntry, $relatedEntry->getResource())
             ->removeField($this->parentResourceEntry->getResource()->getResourceKey())
-            ->prebuild()
+            ->sleep()
             ->getForm();
 
         return $form;

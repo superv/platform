@@ -42,7 +42,7 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry
 
         $form = (new FormBuilder)
             ->addGroup($relatedEntry->getHandle(), $relatedEntry, $relatedEntry->getResource())
-            ->prebuild()
+            ->sleep()
             ->getForm();
 
         return $form;

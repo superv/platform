@@ -43,6 +43,27 @@ class File extends FieldType
         return $this->config;
     }
 
+    public function getMutator(): ?Closure
+    {
+        return function ($requestFile) {
+            $this->requestFile = $requestFile;
+            function (){
+                if (! $this->requestFile) {
+                    return null;
+                }
+
+                $media = $this->makeMediaBag()
+                              ->addFromUploadedFile($this->requestFile, $this->getConfigAsMediaOptions());
+
+                if ($media) {
+                    $this->setConfigValue('url', $media->url());
+                }
+
+                return $media;
+            };
+        };
+    }
+
     public function setValue($requestFile): ?Closure
     {
         $this->requestFile = $requestFile;

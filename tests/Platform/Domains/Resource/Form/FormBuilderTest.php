@@ -16,7 +16,7 @@ class FormBuilderTest extends ResourceTestCase
     {
         $form = (new FormBuilder)
             ->addFields($fields = $this->makeFields())
-            ->prebuild()
+            ->sleep()
             ->getForm();
 
         $this->assertNotNull($form->uuid());
@@ -38,8 +38,8 @@ class FormBuilderTest extends ResourceTestCase
         $fields = $this->makeFields();
 
         $form = (new FormBuilder)
-            ->addGroup('test_user', new TestUser(['name' => 'Omar', 'age' => 33]), $fields)
-            ->prebuild()
+            ->addGroup('default', new TestUser(['name' => 'Omar', 'age' => 33]), $fields)
+            ->sleep()
             ->getForm();
 
         $this->assertEquals('Omar', $form->getField('name')->compose()['value']);
@@ -49,9 +49,9 @@ class FormBuilderTest extends ResourceTestCase
     function test__removes_field()
     {
         $form = (new FormBuilder)
-            ->addGroup('test_user', new TestUser(['name' => 'Omar', 'age' => 33]), $this->makeFields())
+            ->addGroup('default', new TestUser(['name' => 'Omar', 'age' => 33]), $this->makeFields())
             ->removeField('name')
-            ->prebuild()
+            ->sleep()
             ->getForm();
 
         $this->assertEquals(1, $form->getFields()->count());

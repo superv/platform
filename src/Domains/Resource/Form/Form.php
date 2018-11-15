@@ -4,17 +4,22 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldsProvider;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class Form
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Field\Field[]
+     * @var \SuperV\Platform\Domains\Resource\Field\Field[]|Collection
      */
     protected $fields;
+
+    /** @var \SuperV\Platform\Domains\Resource\Form\Group[]|Collection */
+    protected $groups;
 
     /**
      * @var string
@@ -45,6 +50,7 @@ class Form
 
     public function __construct(array $fields = [])
     {
+        $this->groups = collect();
         $this->fields = collect($fields);
         $this->uuid = uuid();
         $this->url = sv_url('sv/forms/'.$this->uuid);
@@ -71,7 +77,7 @@ class Form
         $this->ensureBooted();
 
         $this->getFields()->map(function (Field $field) {
-            $field->setValue($this->request->__get($field->getName()));
+            $field->updateValue($this->request->__get($field->getName()));
         });
 
         $this->notifyWatchers($this);
@@ -79,20 +85,38 @@ class Form
         return $this;
     }
 
+    public function wakeup()
+    {
+        foreach($this->watchers as $handle => $watcher) {
+            $this->fields[$handle]->map(function (Field $field) use ($watcher) {
+                $field->setWatcher($watcher);
+                $field->build();
+            });
+        }
+
+    }
+
     public function setRequest(Request $request)
     {
         $this->request = $request;
     }
 
-    public function addGroups(Collection $groups)
+    public function mergeFields(Collection $fields, $watcher, string $handle = 'default')
     {
-        $groups->map(function (Group $group) {
-            $this->fields = $this->fields->merge($group->getFields());
-            if ($group->getWatcher()) {
-                $this->addWatcher($group->getHandle(), $group->getWatcher());
+        $this->fields->put($handle, $fields);
+
+        if ($watcher) {
+            if ($watcher instanceof Entry) {
+                $watcher = new ResourceEntry($watcher);
             }
-        });
+            $this->addWatcher($handle, $watcher);
+
+            $fields->map(function (Field $field) use ($watcher) {
+                $field->setValue($watcher->getAttribute($field->getName()));
+            });
+        }
     }
+
 
     public function addWatcher($handle, Watcher $watcher)
     {
@@ -126,22 +150,22 @@ class Form
         return [
             'url'    => $this->getUrl(),
             'method' => $this->getMethod(),
-            'fields' => $this->getFields()->map->compose()->all(),
+            'fields' => $this->fields->flatten(1)->map->compose()->all(),
         ];
     }
 
     public function getFields(): Collection
     {
-        return $this->fields;
+        return $this->fields->flatten(1);
     }
 
-    public function getField(string $name): ?Field
+    public function getField(string $name, $group = 'default'): ?Field
     {
-        return $this->getFields()
-                    ->first(
-                        function (Field $field) use ($name) {
-                            return $field->getName() === $name;
-                        });
+        return $this->fields->get($group)
+                            ->first(
+                                function (Field $field) use ($name) {
+                                    return $field->getName() === $name;
+                                });
     }
 
     public function getUrl(): string
@@ -154,7 +178,7 @@ class Form
         return $this->method;
     }
 
-    public function cache()
+    public function sleep()
     {
         cache()->forever($this->cacheKey($this->uuid()), serialize($this));
     }
@@ -186,7 +210,7 @@ class Form
         return static::cacheKeyPrefix().':'.$uuid;
     }
 
-    public static function wakeup($uuid): ?self
+    public static function fromCache($uuid): ?self
     {
         if ($form = cache(static::cacheKey($uuid))) {
             return unserialize($form);

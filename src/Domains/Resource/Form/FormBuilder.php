@@ -3,10 +3,12 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class FormBuilder
@@ -26,8 +28,6 @@ class FormBuilder
      */
     protected $groups;
 
-    protected $prebuilt = false;
-
     protected $skipFields = [];
 
     public function __construct(?Form $formy = null)
@@ -36,36 +36,46 @@ class FormBuilder
         $this->groups = collect();
     }
 
-    public function prebuild(): self
+    public function sleep(): self
     {
-        if ($this->prebuilt) {
-            PlatformException::fail('Form is already prebuilt');
-        }
+//        $this->groups->map(function (Group $group) {
+//                $group->setSkipFields($this->skipFields);
+//                $group->build();
+//            });
 
-        $this->prebuilt = true;
+//        $this->form->addGroups($this->groups);
+//        $this->form->setGroups($this->groups);
 
-        $this->groups->map(function (Group $group) {
-            $group->setSkipFields($this->skipFields);
-            $group->build();
-        });
+        $this->form->sleep();
 
-        $this->form->addGroups($this->groups);
+        return $this;
+    }
 
-        $this->form->cache();
+
+    public function build(): self
+    {
+        $this->form->boot();
 
         return $this;
     }
 
     public function addGroup(string $handle, Watcher $watcher = null, $fields): FormBuilder
     {
-        $this->groups->push(new Group($handle, $watcher, $this->provideFields($fields)));
+        $fields = $this->provideFields($fields);
+
+        $this->form->mergeFields($fields, $watcher, $handle);
+
+
+
+//        $this->groups->push(new Group($handle, $watcher, $fields));
 
         return $this;
     }
 
     public function addFields($fields): FormBuilder
     {
-        $this->groups->push(new NullWatcherGroup($this->provideFields($fields)));
+        $this->form->mergeFields(collect($fields), null, 'default');
+//        $this->groups->push(new NullWatcherGroup($this->provideFields($fields)));
 
         return $this;
     }
@@ -94,21 +104,12 @@ class FormBuilder
         return $this;
     }
 
-    public function build(): self
-    {
-        $this->form->boot();
-
-        return $this;
-    }
 
     public function getForm(): Form
     {
         return $this->form;
     }
 
-    /**
-     * @return \Illuminate\Support\Collection
-     */
     public function makeFields()
     {
         $fields = $this->groups ?? $this->provider->provideFields();
@@ -144,7 +145,9 @@ class FormBuilder
 
     public static function wakeup($uuid): self
     {
-        $form = Form::wakeup($uuid);
+        $form = Form::fromCache($uuid);
+
+        $form->wakeup();
 
         return new static($form);
     }

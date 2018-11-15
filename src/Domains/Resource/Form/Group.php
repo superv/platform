@@ -46,28 +46,21 @@ class Group
 
     public function build()
     {
-        if ($this->watcher instanceof Entry) {
-            $this->watcher = new ResourceEntry($this->watcher);
-        }
-        $this->types = collect();
+//        if ($this->watcher instanceof Entry) {
+//            $this->watcher = new ResourceEntry($this->watcher);
+//        }
 
         $this->fields = $this->fields->filter(function (Field $field) {
             return ! in_array($field->getName(), $this->skipFields);
         })->values();
-
+//
         $this->fields = $this->fields
-            ->map(function ($field) {
-//                if (! $field instanceof Field) {
-//                    throw new Exception('aaaaa');
-//                    $field = FieldFactory::createFromEntry($field);
-//                }
+            ->map(function (Field $field) {
 
                 if ($this->watcher) {
                     $field->setWatcher($this->watcher);
                     $field->setValueFromWatcher();
                 }
-
-                $this->types->push($type = FieldType::fromField($field));
 
                 return $field;
             });

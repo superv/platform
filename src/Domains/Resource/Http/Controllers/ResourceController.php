@@ -61,7 +61,7 @@ class ResourceController extends BaseApiController
                 $this->resource()->newEntryInstance(),
                 $this->resource()->getFields()
             )
-            ->prebuild()
+            ->sleep()
             ->getForm();
 
         $page = SvPage::make('')->addBlock(
@@ -85,7 +85,7 @@ class ResourceController extends BaseApiController
                 $fields = $this->resource()->getFields()
 //                $fields = ResourceModel::withSlug($this->resource()->getHandle())
             )
-            ->prebuild()
+            ->sleep()
             ->getForm();
 
         // main edit form

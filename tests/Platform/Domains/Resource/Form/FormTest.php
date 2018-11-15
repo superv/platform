@@ -2,8 +2,13 @@
 
 namespace Tests\Platform\Domains\Resource\Form;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -27,8 +32,8 @@ class FormTest extends ResourceTestCase
     function test__saves_form()
     {
         $builder = (new FormBuilder)
-            ->addFields($fields = $this->makeFields())
-            ->prebuild();
+            ->addGroup('default', null, $fields = $this->makeFields())
+            ->sleep();
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
@@ -36,15 +41,15 @@ class FormTest extends ResourceTestCase
                            ->getForm()
                            ->save();
 
-        $this->assertEquals('Omar', $form->getField('name')->value()->get());
-        $this->assertEquals(33, $form->getField('age')->value()->get());
+        $this->assertEquals('Omar', $form->getField('name')->getValue());
+        $this->assertEquals(33, $form->getField('age')->getValue());
     }
 
     function test__saves_entry()
     {
         $builder = (new FormBuilder)
-            ->addGroup('test_user', $user = new TestUser, $this->makeFields())
-            ->prebuild();
+            ->addGroup('default', $user = new TestUser, $this->makeFields())
+            ->sleep();
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
@@ -52,10 +57,10 @@ class FormTest extends ResourceTestCase
                            ->getForm()
                            ->save();
 
-        $this->assertEquals('Omar', $form->getField('name')->value()->get());
-        $this->assertEquals(33, $form->getField('age')->value()->get());
+        $this->assertEquals('Omar', $form->getField('name')->getValue());
+        $this->assertEquals(33, $form->getField('age')->getValue());
 
-        $user = $form->getWatcher('test_user');
+        $user = $form->getWatcher('default');
         $this->assertEquals('Omar', $user->name);
         $this->assertEquals(33, $user->age);
         $this->assertTrue($user->wasRecentlyCreated);
@@ -65,7 +70,7 @@ class FormTest extends ResourceTestCase
     {
         $form = (new FormBuilder)
             ->addGroup('user', $user = new TestUser, $this->makeFields())
-            ->prebuild()
+            ->sleep()
             ->getForm();
         $this->assertEquals($user, $form->getWatcher('user'));
     }
@@ -74,7 +79,7 @@ class FormTest extends ResourceTestCase
     {
         $form = (new FormBuilder)
             ->addGroup('test_user', $user = new TestUser, $this->makeFields())
-            ->prebuild()
+            ->sleep()
             ->getForm();
 
         $response = $this->postJsonUser($form->getUrl(), [
@@ -98,7 +103,7 @@ class FormTest extends ResourceTestCase
         $builder = (new FormBuilder)
             ->addGroup('test_user', $this->users->newEntryInstance(), $this->users)
             ->addGroup('test_post', $posts->newEntryInstance(), $posts)
-            ->prebuild();
+            ->sleep();
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest([
@@ -110,8 +115,8 @@ class FormTest extends ResourceTestCase
                            ->getForm()
                            ->save();
 
-        $this->assertEquals('Omar', $form->getField('name')->value()->get());
-        $this->assertEquals("Khalifa", $form->getField('title')->value()->get());
+        $this->assertEquals('Omar', $form->getField('name', 'test_user')->getValue());
+        $this->assertEquals("Khalifa", $form->getField('title', 'test_post')->getValue());
 
         $user = $form->getWatcher('test_user');
         $this->assertEquals('Omar', $user->name);
@@ -126,7 +131,7 @@ class FormTest extends ResourceTestCase
     {
         $builder = (new FormBuilder)
             ->addGroup('test_user', $user = new TestUser, ResourceFactory::make('test_users'))
-            ->prebuild();
+            ->sleep();
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
@@ -149,4 +154,49 @@ class FormTest extends ResourceTestCase
             FieldFactory::createFromArray(['name' => 'age', 'type' => 'number']),
         ];
     }
+
+    public function makeField(array $params): Field
+    {
+        return FieldFactory::createFromArray($params);
+    }
+
+    function test__save_handles_fields_without_columns()
+    {
+        $fields = [
+            $textField = $this->makeField(['name' => 'name', 'type' => 'text']),
+            $fileField = $this->makeField(['name' => 'avatar', 'type' => 'file']),
+        ];
+        $builder = (new FormBuilder)
+            ->addGroup('default', new FormTestUser, $fields)
+            ->sleep();
+
+        $form = FormBuilder::wakeup($builder->uuid())
+                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'avatar' => new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png')]))
+                           ->build()
+                           ->getForm();
+
+        $form->getField('avatar')->setFieldTypeResolver(function () {
+            return new TestFileFieldType;
+        });
+
+        $form->save();
+
+    }
+}
+
+class FormTestUser extends Model implements Watcher
+{
+    public $timestamps = false;
+
+    protected $guarded = [];
+
+    public function setAttribute($key, $value)
+    {
+        parent::setAttribute($key, $value);
+    }
+}
+
+class TestFileFieldType extends FieldType
+{
+    protected $hasColumn = false;
 }

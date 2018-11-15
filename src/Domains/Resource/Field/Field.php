@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
+use Closure;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -61,6 +62,18 @@ class Field
 
     protected $alterQueryCallback;
 
+    /**
+     * tmp. TODO.ali: remove this
+     *
+     * @var
+     */
+    protected $fieldType;
+
+    /**
+     * @var \Closure
+     */
+    protected $fieldTypeResolver;
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
@@ -70,10 +83,6 @@ class Field
     protected function boot()
     {
         $this->uuid = $this->uuid ?? uuid();
-
-        $this->value = new FieldValue($this);
-
-//        $rules = array_filter($this->rules ?? []);
 
         if ($this->unique) {
             $this->rules[] = 'unique:{resource.handle},'.$this->getName().',{entry.id},id';
@@ -91,28 +100,29 @@ class Field
             $this->alterQueryCallback = $fieldType->alterQueryCallback();
         }
 
-        if ($fieldType->hasAccessor()) {
-            $this->on('accessing', $fieldType->getAccessor());
-        }
+        $this->on('accessing', $fieldType->getAccessor());
 
-        if ($presenting = $fieldType->getPresentingCallback()) {
-            $this->on('presenting', $presenting);
-        }
+        $this->on('mutating', $fieldType->getMutator());
+
+        $this->on('presenting', $fieldType->getPresenter());
 
         $this->setVisible($fieldType->visible());
 
         return $this;
     }
 
-    public function value(): FieldValue
-    {
-        return $this->value;
-    }
-
     public function resolveType(): FieldType
     {
+        if ($this->fieldType) {
+            return $this->fieldType;
+        }
+
+        if ($resolver = $this->fieldTypeResolver) {
+            return $this->fieldType = $resolver($this);
+        }
+
         $class = FieldType::resolveClass($this->type);
-        $fieldType = new $class([
+        $this->fieldType = new $class([
             'type'     => $this->getType(),
             'name'     => $this->getName(),
             'label'    => $this->getLabel(),
@@ -124,44 +134,37 @@ class Field
         ]);
 
         if ($this->watcher) {
-            $fieldType->setEntry($this->watcher);
+//            $fieldType->setEntry($this->watcher);
         }
 
-        return $fieldType;
-    }
-
-    public function tmp_makeRules()
-    {
-        $rules = array_filter($this->rules ?? []);
-        if ($this->isUnique()) {
-            $rules[] = 'unique:'.$this->getResourceTable().','.$this->getName().',{entry.id},id';
-        }
-        if ($this->isRequired()) {
-            $rules[] = 'required';
-        }
-
-        return $rules;
+        return $this->fieldType;
     }
 
     public function getValue()
     {
-        $value = $this->value->get();
-
         if ($this->hasCallback('accessing')) {
             $callback = $this->getCallback('accessing');
 
-            return $callback($value);
+            return $callback($this->value);
         }
 
-        return $value;
+        return $this->value;
     }
 
     public function setValue($value)
     {
-        $this->value->set($value);
+        $this->value = $value;
+    }
 
+    public function updateValue($value)
+    {
+        if ($mutator = $this->resolveType()->getMutator()) {
+            $value = $mutator($value);
+        }
+
+        $this->setValue($value);
         if ($this->watcher) {
-            $this->watcher->setAttribute($this->getName(), $this->value->get());
+            $this->watcher->setAttribute($this->getName(), $value);
         }
     }
 
@@ -177,12 +180,6 @@ class Field
         $this->watcher = null;
 
         return $this;
-    }
-
-    public function setValueFromWatcher()
-    {
-        $value = $this->watcher->getAttribute($this->getName());
-        $this->setValue($value);
     }
 
     public function getType(): string
@@ -203,11 +200,12 @@ class Field
     public function compose(): array
     {
         return array_filter([
-            'type'  => $this->getType(),
-            'uuid'  => $this->uuid(),
-            'name'  => $this->getName(),
-            'label' => $this->getLabel(),
-            'value' => $this->getValue(),
+            'type'   => $this->getType(),
+            'uuid'   => $this->uuid(),
+            'name'   => $this->getName(),
+            'label'  => $this->getLabel(),
+            'value'  => $this->getValue(),
+            'config' => $this->config,
         ]);
     }
 
@@ -226,6 +224,14 @@ class Field
     public function getAlterQueryCallback()
     {
         return $this->alterQueryCallback;
+    }
+
+    /**
+     * @param \Closure $fieldTypeResolver
+     */
+    public function setFieldTypeResolver(\Closure $fieldTypeResolver): void
+    {
+        $this->fieldTypeResolver = $fieldTypeResolver;
     }
 
     public function uuid(): string

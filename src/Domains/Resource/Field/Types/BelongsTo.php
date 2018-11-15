@@ -19,7 +19,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
         return $this;
     }
 
-    public function getPresentingCallback(): ?Closure
+    public function getPresenter(): ?Closure
     {
         return function (?ResourceEntry $relatedEntry) {
             return $relatedEntry ? $relatedEntry->getLabel() : null;
