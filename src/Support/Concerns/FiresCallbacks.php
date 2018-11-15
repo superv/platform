@@ -8,8 +8,12 @@ trait FiresCallbacks
 {
     protected $callbacks = [];
 
-    public function on($trigger, Closure $callback)
+    public function on($trigger, ?Closure $callback)
     {
+        if (is_null($callback)) { // to avoid ifs in parent
+            return $this;
+        }
+
         if (! isset($this->callbacks[$trigger])) {
             $this->callbacks[$trigger] = [];
         }
