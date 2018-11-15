@@ -16,7 +16,7 @@ class ResourceConfigTest extends ResourceTestCase
             $resource->resourceKey('user');
         });
 
-        $this->assertEquals('user', $res->resourceKey());
+        $this->assertEquals('user', $res->getResourceKey());
     }
     /** @test */
     function builds_label_from_table_name()
@@ -26,7 +26,7 @@ class ResourceConfigTest extends ResourceTestCase
         });
 
         $this->assertEquals('Customers', Resource::of('customers')->getLabel());
-        $this->assertEquals('Customer', Resource::of('customers')->singularLabel());
+        $this->assertEquals('Customer', Resource::of('customers')->getSingularLabel());
     }
 
     /** @test */
@@ -40,7 +40,7 @@ class ResourceConfigTest extends ResourceTestCase
         });
 
         $this->assertEquals('SuperV Customers', Resource::of('customers')->getLabel());
-        $this->assertEquals('Customer', Resource::of('customers')->singularLabel());
+        $this->assertEquals('Customer', Resource::of('customers')->getSingularLabel());
     }
 
     /** @test */
@@ -77,15 +77,15 @@ class ResourceConfigTest extends ResourceTestCase
     function guesses_entry_label_from_string_columns()
     {
         $this->makeResource('A_users', ['name']);
-        $this->assertEquals('{name}', Resource::of('A_users')->entryLabelTemplate());
+        $this->assertEquals('{name}', Resource::of('A_users')->getEntryLabelTemplate());
 
         $this->makeResource('B_users', ['address', 'age:integer', 'title']);
-        $this->assertEquals('{title}', Resource::of('B_users')->entryLabelTemplate());
+        $this->assertEquals('{title}', Resource::of('B_users')->getEntryLabelTemplate());
 
         $this->makeResource('C_users', ['height:decimal', 'age:integer', 'address']);
-        $this->assertEquals('{address}', Resource::of('C_users')->entryLabelTemplate());
+        $this->assertEquals('{address}', Resource::of('C_users')->getEntryLabelTemplate());
 
         $this->makeResource('customers', ['height:decimal', 'age:integer']);
-        $this->assertEquals('Customer #{id}', Resource::of('customers')->entryLabelTemplate());
+        $this->assertEquals('Customer #{id}', Resource::of('customers')->getEntryLabelTemplate());
     }
 }

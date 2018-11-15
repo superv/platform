@@ -157,10 +157,6 @@ abstract class FieldType implements NeedsEntry
 
     public function makeRules()
     {
-//        if (! $entry = $this->getEntry()) {
-//            throw new PlatformException('Can not make rules without an entry');
-//        }
-
         $rules = [];
         foreach ($this->rules as $rule) {
             if (starts_with($rule, 'unique:')) {

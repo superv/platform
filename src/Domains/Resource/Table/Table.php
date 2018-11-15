@@ -6,11 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Field\Jobs\AttachTypeToField;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
+use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
@@ -53,6 +50,11 @@ class Table
 //            $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid())); // @TODO.ali: aga bu nedir???
 //            AttachTypeToField::dispatch($fieldType, $field);
 //            $fieldType->buildForView($this->getQuery());
+            $field->build();
+
+            if ($callback = $field->getAlterQueryCallback()) {
+                $callback($this->getQuery());
+            }
 
             return $field;
         });

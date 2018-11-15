@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -58,6 +59,8 @@ class Field
 
     protected $required;
 
+    protected $alterQueryCallback;
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
@@ -78,7 +81,27 @@ class Field
         if ($this->required) {
             $this->rules[] = 'required';
         }
+    }
 
+    public function build(): self
+    {
+        $fieldType = $this->resolveType();
+
+        if ($fieldType instanceof AltersTableQuery) {
+            $this->alterQueryCallback = $fieldType->alterQueryCallback();
+        }
+
+        if ($fieldType->hasAccessor()) {
+            $this->on('accessing', $fieldType->getAccessor());
+        }
+
+        if ($presenting = $fieldType->getPresentingCallback()) {
+            $this->on('presenting', $presenting);
+        }
+
+        $this->setVisible($fieldType->visible());
+
+        return $this;
     }
 
     public function value(): FieldValue
@@ -197,6 +220,11 @@ class Field
         $this->visible = $visible;
 
         return $this;
+    }
+
+    public function getAlterQueryCallback()
+    {
+        return $this->alterQueryCallback;
     }
 
     public function uuid(): string

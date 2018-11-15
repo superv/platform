@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
+use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Fake;
 use SuperV\Platform\Domains\Resource\Field\Field;
@@ -100,6 +101,7 @@ class ResourceEntry implements ResourceEntryContract, Watcher
     {
         $field = $this->getResource()->getField($name);
         if ($field instanceof FieldModel) {
+            throw new Exception('olmamaliii');
             $field = FieldFactory::createFromEntry($field);
         }
 

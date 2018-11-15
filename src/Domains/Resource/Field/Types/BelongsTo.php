@@ -8,21 +8,15 @@ use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 
-class BelongsTo extends FieldType implements NeedsDatabaseColumn
+class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQuery
 {
     public function build(): FieldType
     {
         $this->buildOptions();
 
         return $this;
-    }
-
-    public function buildForView($query)
-    {
-        $query->with($this->getName());
-
-        return parent::buildForView($query);
     }
 
     public function getPresentingCallback(): ?Closure
@@ -89,5 +83,15 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         $this->setConfigValue('options', $options);
 
         $this->setConfigValue('placeholder', 'Choose a '.$this->entry->getHandle());
+    }
+
+    public function alterQuery($query)
+    {
+        $query->with($this->getName());
+    }
+
+    public function alterQueryCallback(): Closure
+    {
+        return function ($query) { $this->alterQuery($query); };
     }
 }

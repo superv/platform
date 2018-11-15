@@ -71,7 +71,7 @@ class ResourceController extends BaseApiController
         );
 
         $page->hydrate([
-            'title' => 'Create new '.$this->resource->singularLabel(),
+            'title' => 'Create new '.$this->resource->getSingularLabel(),
         ]);
         $page->build();
 

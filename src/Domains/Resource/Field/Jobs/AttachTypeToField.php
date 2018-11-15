@@ -31,13 +31,11 @@ class AttachTypeToField
         if ($this->fieldType->hasAccessor()) {
             $this->field->on('accessing', $this->fieldType->getAccessor());
         }
+
         if ($presenting = $this->fieldType->getPresentingCallback()) {
             $this->field->on('presenting', $presenting);
         }
 
         $this->field->setVisible($this->fieldType->visible());
-
-//                    ->setColumnName($this->fieldType->getColumnName())
-//                    ->setHasDatabaseColumn($this->fieldType instanceof NeedsDatabaseColumn);
     }
 }

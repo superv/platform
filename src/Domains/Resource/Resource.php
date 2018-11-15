@@ -180,11 +180,7 @@ class Resource implements ProvidesFields, ProvidesQuery
     {
         $field = $this->getField($name);
 
-        return $field->resolveType($name);
-
-        $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid()));
-
-        return $fieldType;
+        return $field->resolveType();
     }
 
     public function getField($name): ?Field
@@ -223,17 +219,17 @@ class Resource implements ProvidesFields, ProvidesQuery
         return $this->getConfigValue('label');
     }
 
-    public function singularLabel()
+    public function getSingularLabel()
     {
         return $this->getConfigValue('singular_label', str_singular($this->getConfigValue('label')));
     }
 
-    public function resourceKey()
+    public function getResourceKey()
     {
         return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
     }
 
-    public function entryLabelTemplate()
+    public function getEntryLabelTemplate()
     {
         return $this->getConfigValue('entry_label');
     }
