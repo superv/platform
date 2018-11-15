@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Model;
 
 use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Fake;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
@@ -129,13 +130,11 @@ class ResourceEntry implements ResourceEntryContract, Watcher
         $field = $this->getField($name);
 
         $fieldType = $field->resolveType();
+        if ($fieldType instanceof AcceptsEntry) {
+            $fieldType->acceptEntry($this);
+        }
 
-        return $fieldType->setEntry($this);
-
-//        $fieldType = FieldType::fromEntry(FieldModel::withUuid($this->getField($name)->uuid()));
-//        $fieldType->setEntry($this);
-//
-//        return $fieldType;
+        return $fieldType;
     }
 
     public function newQuery()

@@ -5,13 +5,17 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 
-class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQuery
+class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQuery, AcceptsEntry
 {
+    /** @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract */
+    protected $entry;
+
     public function build(): FieldType
     {
         $this->buildOptions();
@@ -69,7 +73,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
 
             // If parent exists, make sure we get the
             // current related entry in the list
-            if ($this->entryExists()) {
+            if ($this->entry->exists) {
                 $query->orWhere($query->getModel()->getQualifiedKeyName(), $this->getEntry()->getAttribute($this->getName()));
             }
         } else {
@@ -93,5 +97,10 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
     public function alterQueryCallback(): Closure
     {
         return function ($query) { $this->alterQuery($query); };
+    }
+
+    public function acceptEntry(EntryContract $entry)
+    {
+        $this->entry = $entry;
     }
 }

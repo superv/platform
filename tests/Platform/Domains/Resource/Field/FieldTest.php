@@ -14,7 +14,6 @@ class FieldTest extends ResourceTestCase
     {
         $field = FieldFactory::createFromArray(['name' => 'display_name', 'type' => 'text']);
         $this->assertNotNull($field->uuid());
-        $this->assertInstanceOf(FieldValue::class, $field->value());
     }
 
     function test__compose()

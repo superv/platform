@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Faker\Generator;
+use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
@@ -45,7 +46,7 @@ class Fake
             $fieldType = $field->resolveType();
 //            $fieldType = FieldType::fromEntry($field);
 
-            if ($fieldType->visible() && $fieldType->hasColumn()) {
+            if ($fieldType->visible() && !$fieldType instanceof DoesNotInteractWithTable) {
                 $this->attributes[$fieldType->getColumnName()] = $this->fake($fieldType);
             }
         })->filter()->toAssoc()->all();

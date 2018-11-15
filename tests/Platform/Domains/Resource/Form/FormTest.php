@@ -4,7 +4,9 @@ namespace Tests\Platform\Domains\Resource\Form;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
@@ -160,18 +162,19 @@ class FormTest extends ResourceTestCase
         return FieldFactory::createFromArray($params);
     }
 
-    function test__save_handles_fields_without_columns()
+    function test__save_handles_fields_mutating_callbacks()
     {
         $fields = [
             $textField = $this->makeField(['name' => 'name', 'type' => 'text']),
+            $ageField = $this->makeField(['name' => 'age', 'type' => 'number']),
             $fileField = $this->makeField(['name' => 'avatar', 'type' => 'file']),
         ];
         $builder = (new FormBuilder)
-            ->addGroup('default', new FormTestUser, $fields)
+            ->addGroup('default', $testUser = new FormTestUser, $fields)
             ->sleep();
 
         $form = FormBuilder::wakeup($builder->uuid())
-                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'avatar' => new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png')]))
+                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33, 'avatar' => new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png')]))
                            ->build()
                            ->getForm();
 
@@ -181,11 +184,17 @@ class FormTest extends ResourceTestCase
 
         $form->save();
 
+        $this->assertNull($testUser->avatar);
+
+        $this->assertEquals(1, Media::count());
+
     }
 }
 
-class FormTestUser extends Model implements Watcher
+class FormTestUser extends Model implements Watcher, EntryContract
 {
+    protected $table = 'test_users';
+
     public $timestamps = false;
 
     protected $guarded = [];
@@ -193,6 +202,11 @@ class FormTestUser extends Model implements Watcher
     public function setAttribute($key, $value)
     {
         parent::setAttribute($key, $value);
+    }
+
+    public function id()
+    {
+        return $this->getKey();
     }
 }
 

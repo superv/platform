@@ -3,8 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
-use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Rules;
@@ -13,7 +11,7 @@ use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-abstract class FieldType implements NeedsEntry
+abstract class FieldType
 {
     use Hydratable;
     use HasConfig;
@@ -24,8 +22,8 @@ abstract class FieldType implements NeedsEntry
      */
     protected $resource;
 
-    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
-    protected $entry;
+//    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
+//    protected $entry;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\Field\Field
@@ -144,18 +142,15 @@ abstract class FieldType implements NeedsEntry
         $rules = [];
         foreach ($this->rules as $rule) {
             if (starts_with($rule, 'unique:')) {
-                $str = ($this->hasEntry() && $this->entryExists()) ? $this->getEntry()->id() : 'NULL';
-                $rule = str_replace('{entry.id}', $str, $rule);
+//                $str = ($this->hasEntry() && $this->entryExists()) ? $this->getEntry()->id() : 'NULL';
+//                $rule = str_replace('{entry.id}', $str, $rule);
             }
             $rules[] = $rule;
         }
 
         if (! $this->isRequired()) {
             $rules[] = 'nullable';
-        } elseif (! $this->entryExists()) {
-//            $rules[] = 'sometimes';
         }
-
         return $rules;
     }
 
@@ -165,27 +160,27 @@ abstract class FieldType implements NeedsEntry
 //        $this->rules = array_merge($this->rules, $rules);
     }
 
-    public function getEntry(): ?ResourceEntryModel
-    {
-        return $this->entry ? $this->entry->getEntry() : null;
-    }
-
-    public function setEntry(\SuperV\Platform\Domains\Resource\Model\ResourceEntry $entry): FieldType
-    {
-        $this->entry = $entry;
-
-        return $this;
-    }
-
-    public function entryExists()
-    {
-        return optional($this->entry)->exists();
-    }
-
-    public function hasEntry()
-    {
-        return ! is_null($this->entry);
-    }
+//    public function getEntry(): ?ResourceEntryModel
+//    {
+//        return $this->entry ? $this->entry->getEntry() : null;
+//    }
+//
+//    public function setEntry(\SuperV\Platform\Domains\Resource\Model\ResourceEntry $entry): FieldType
+//    {
+//        $this->entry = $entry;
+//
+//        return $this;
+//    }
+//
+//    public function entryExists()
+//    {
+//        return optional($this->entry)->exists();
+//    }
+//
+//    public function hasEntry()
+//    {
+//        return ! is_null($this->entry);
+//    }
 
     public function getValue()
     {

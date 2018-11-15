@@ -3,13 +3,18 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
+use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Rules;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class File extends FieldType
+class File extends FieldType implements DoesNotInteractWithTable, AcceptsEntry
 {
-    protected $hasColumn = false;
+    /** @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract */
+    protected $entry;
 
     protected $requestFile;
 
@@ -32,7 +37,7 @@ class File extends FieldType
 
     public function getConfig(): array
     {
-        if ($entry = $this->getEntry()) {
+        if ($entry = $this->entry) {
             $media = $this->makeMediaBag()->media()->where('label', $this->getName())->latest()->first();
 
             if ($media) {
@@ -47,7 +52,8 @@ class File extends FieldType
     {
         return function ($requestFile) {
             $this->requestFile = $requestFile;
-            function (){
+
+            return function () {
                 if (! $this->requestFile) {
                     return null;
                 }
@@ -86,7 +92,9 @@ class File extends FieldType
 
     protected function makeMediaBag(): MediaBag
     {
-        return new MediaBag($this->getEntry(), $this->getName());
+        $entry = $this->entry instanceof ResourceEntry ? $this->entry->getEntry() : $this->entry;
+
+        return new MediaBag($entry, $this->getName());
     }
 
     protected function getConfigAsMediaOptions()
@@ -95,5 +103,10 @@ class File extends FieldType
                            ->disk($this->getConfigValue('disk', 'local'))
                            ->path($this->getConfigValue('path'))
                            ->visibility($this->getConfigValue('visibility', 'private'));
+    }
+
+    public function acceptEntry(EntryContract $entry)
+    {
+        $this->entry = $entry;
     }
 }

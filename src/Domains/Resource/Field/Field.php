@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -100,6 +101,10 @@ class Field
             $this->alterQueryCallback = $fieldType->alterQueryCallback();
         }
 
+        if ($this->watcher && $fieldType instanceof AcceptsEntry) {
+             $fieldType->acceptEntry($this->watcher);
+         }
+
         $this->on('accessing', $fieldType->getAccessor());
 
         $this->on('mutating', $fieldType->getMutator());
@@ -133,10 +138,6 @@ class Field
 
         ]);
 
-        if ($this->watcher) {
-//            $fieldType->setEntry($this->watcher);
-        }
-
         return $this->fieldType;
     }
 
@@ -151,22 +152,24 @@ class Field
         return $this->value;
     }
 
-    public function setValue($value)
+    public function setValue($value, $notify = true)
     {
-        $this->value = $value;
-    }
-
-    public function updateValue($value)
-    {
-        if ($mutator = $this->resolveType()->getMutator()) {
+        $fieldType = $this->resolveType();
+        if ($mutator = $fieldType->getMutator()) {
             $value = $mutator($value);
+
+            if ($value instanceof Closure) {
+                return $value;
+            }
         }
 
-        $this->setValue($value);
-        if ($this->watcher) {
+        $this->value = $value;
+
+        if ($notify && $this->watcher && !$fieldType instanceof DoesNotInteractWithTable) {
             $this->watcher->setAttribute($this->getName(), $value);
         }
     }
+
 
     public function setWatcher(Watcher $watcher)
     {

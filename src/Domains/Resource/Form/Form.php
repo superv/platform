@@ -2,9 +2,12 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Entry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldsProvider;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
@@ -48,6 +51,8 @@ class Form
 
     protected $watchers = [];
 
+    protected $postSaveCallbacks = [];
+
     public function __construct(array $fields = [])
     {
         $this->groups = collect();
@@ -77,46 +82,43 @@ class Form
         $this->ensureBooted();
 
         $this->getFields()->map(function (Field $field) {
-            $field->updateValue($this->request->__get($field->getName()));
+            $this->postSaveCallbacks[] = $field->setValue($this->request->__get($field->getName()));
         });
 
         $this->notifyWatchers($this);
+
+        collect($this->postSaveCallbacks)->filter()->map(function (Closure $callback) {
+            $callback();
+        });
 
         return $this;
     }
 
     public function wakeup()
     {
-        foreach($this->watchers as $handle => $watcher) {
+        foreach ($this->watchers as $handle => $watcher) {
             $this->fields[$handle]->map(function (Field $field) use ($watcher) {
                 $field->setWatcher($watcher);
                 $field->build();
             });
         }
-
     }
 
-    public function setRequest(Request $request)
-    {
-        $this->request = $request;
-    }
-
-    public function mergeFields(Collection $fields, $watcher, string $handle = 'default')
+    public function mergeFields(Collection $fields, ?Watcher $watcher, string $handle = 'default')
     {
         $this->fields->put($handle, $fields);
 
         if ($watcher) {
-            if ($watcher instanceof Entry) {
-                $watcher = new ResourceEntry($watcher);
-            }
+//            if ($watcher instanceof Entry) {
+//                $watcher = new ResourceEntry($watcher);
+//            }
             $this->addWatcher($handle, $watcher);
 
             $fields->map(function (Field $field) use ($watcher) {
-                $field->setValue($watcher->getAttribute($field->getName()));
+                $field->setValue($watcher->getAttribute($field->getName()), false);
             });
         }
     }
-
 
     public function addWatcher($handle, Watcher $watcher)
     {
@@ -139,6 +141,11 @@ class Form
         collect($this->watchers)->map(function (Watcher $watcher) use ($params) {
             $watcher->save();
         });
+    }
+
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
     }
 
     //

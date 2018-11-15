@@ -37,7 +37,7 @@ class HasOne extends Relation implements ProvidesForm
         $relatedEntry = $this->getRelatedEntry() ?? ConcreteResourceEntry::make($this->newQuery()->make());
 
         $form = (new FormBuilder)
-            ->addGroup($relatedEntry->getHandle(), $relatedEntry, $relatedEntry->getResource())
+            ->addGroup('default', $relatedEntry, $relatedEntry->getResource())
             ->removeField($this->parentResourceEntry->getResource()->getResourceKey())
             ->sleep()
             ->getForm();
