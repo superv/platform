@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Jobs;
 
-use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Support\Dispatchable;
@@ -36,8 +35,9 @@ class AttachTypeToField
             $this->field->on('presenting', $presenting);
         }
 
-        $this->field->setVisible($this->fieldType->visible())
-                    ->setColumnName($this->fieldType->getColumnName())
-                    ->setHasDatabaseColumn($this->fieldType instanceof NeedsDatabaseColumn);
+        $this->field->setVisible($this->fieldType->visible());
+
+//                    ->setColumnName($this->fieldType->getColumnName())
+//                    ->setHasDatabaseColumn($this->fieldType instanceof NeedsDatabaseColumn);
     }
 }

@@ -8,6 +8,7 @@ use SuperV\Modules\Nucleo\Domains\UI\SvCard;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\Jobs\BuildFormDeprecated;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
@@ -98,8 +99,8 @@ class ResourceController extends BaseApiController
         $this->resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesForm; })
                        ->map(function (ProvidesForm $formProvider) use ($tabs) {
-                           if ($formProvider instanceof NeedsEntry) {
-                               $formProvider->setEntry($this->entry);
+                           if ($formProvider instanceof AcceptsParentResourceEntry) {
+                               $formProvider->acceptParentResourceEntry($this->entry);
                            }
                            $form = $formProvider->makeForm();
 
@@ -110,8 +111,8 @@ class ResourceController extends BaseApiController
         $this->resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesTable; })
                        ->map(function (ProvidesTable $tableProvider) use ($tabs) {
-                           if ($tableProvider instanceof NeedsEntry) {
-                               $tableProvider->setEntry($this->entry);
+                           if ($tableProvider instanceof AcceptsParentResourceEntry) {
+                               $tableProvider->acceptParentResourceEntry($this->entry);
                            }
                            $config = $tableProvider->makeTableConfig();
 

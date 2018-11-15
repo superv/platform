@@ -172,11 +172,6 @@ class ResourceEntry implements ResourceEntryContract, Watcher
         $this->entry = Resource::of($this->getHandle())->find($this->entryId)->getEntry();
     }
 
-    public function getId()
-    {
-        return $this->id();
-    }
-
     public function id()
     {
         return $this->getEntry()->getKey();

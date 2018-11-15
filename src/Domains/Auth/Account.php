@@ -16,7 +16,7 @@ class Account extends Model implements AccountContract, \SuperV\Platform\Domains
         return $this->hasMany(config('superv.auth.user.model'));
     }
 
-    public function getId()
+    public function id()
     {
         return $this->id;
     }

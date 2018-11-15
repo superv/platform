@@ -2,13 +2,15 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
-use Closure;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 /**
- * Class Field  IMMUTABLE!!!!!!!!
+ * Class Field
+ *
+ * No closures allowed here..
  *
  * @package SuperV\Platform\Domains\Resource\Field
  */
@@ -46,24 +48,15 @@ class Field
     /** @var boolean */
     protected $visible = true;
 
-    /** @var Closure */
-    protected $accessor;
-
     /**
      * @var \SuperV\Platform\Domains\Resource\Field\Watcher
      */
     protected $watcher;
 
-    /** @var boolean */
-    protected $hasDatabaseColumn;
-
-    protected $columnName;
-
-    protected $sid;
-
-    protected function __construct()
+    public function __construct(array $attributes = [])
     {
-        $this->sid = md5(uniqid());
+        $this->hydrate($attributes);
+        $this->boot();
     }
 
     protected function boot()
@@ -76,6 +69,11 @@ class Field
     public function value(): FieldValue
     {
         return $this->value;
+    }
+
+    public function resolveType(): FieldType
+    {
+        return FieldType::resolve($this->type);
     }
 
     public function getValue()
@@ -151,18 +149,6 @@ class Field
         return $this->uuid;
     }
 
-    public function getColumnName(): string
-    {
-        return $this->columnName;
-    }
-
-    public function setColumnName($columnName)
-    {
-        $this->columnName = $columnName;
-
-        return $this;
-    }
-
     public function isVisible(): bool
     {
         return $this->visible;
@@ -173,37 +159,5 @@ class Field
         $this->visible = $visible;
 
         return $this;
-    }
-
-    public function hasDatabaseColumn(): bool
-    {
-        return $this->hasDatabaseColumn;
-    }
-
-    public function setHasDatabaseColumn($doesIt)
-    {
-        $this->hasDatabaseColumn = $doesIt;
-
-        return $this;
-    }
-
-    public static function make(array $params): self
-    {
-        $field = new static;
-        $config = array_pull($params, 'config');
-        $rules = array_pull($params, 'rules');
-
-        // @TODO:fix
-        if (is_string($config)) {
-            $params['config'] = json_decode($config, true);
-        }
-        if (is_string($rules)) {
-            $params['rules'] = json_decode($rules, true);
-        }
-
-        $field->hydrate($params);
-        $field->boot();
-
-        return $field;
     }
 }

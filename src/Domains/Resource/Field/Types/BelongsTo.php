@@ -11,7 +11,6 @@ use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class BelongsTo extends FieldType implements NeedsDatabaseColumn
 {
-
     public function build(): FieldType
     {
         $this->buildOptions();
@@ -31,6 +30,32 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         return function (?ResourceEntry $relatedEntry) {
             return $relatedEntry ? $relatedEntry->getLabel() : null;
         };
+    }
+
+    public function setValue($value): ?Closure
+    {
+        if ($value instanceof EntryContract) {
+            $value = $value->id();
+        }
+
+        return parent::setValue($value);
+    }
+
+    public function getColumnName(): ?string
+    {
+        return $this->getName().'_id';
+    }
+
+    public function getAccessor(): ?Closure
+    {
+        return function ($value) {
+            return (int)$value;
+        };
+    }
+
+    public function getMutator(): ?Closure
+    {
+        return $this->getAccessor();
     }
 
     /**
@@ -64,31 +89,5 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         $this->setConfigValue('options', $options);
 
         $this->setConfigValue('placeholder', 'Choose a '.$this->entry->getHandle());
-    }
-
-    public function setValue($value): ?Closure
-    {
-        if ($value instanceof EntryContract) {
-            $value = $value->getId();
-        }
-
-        return parent::setValue($value);
-    }
-
-    public function getColumnName(): ?string
-    {
-        return $this->getName().'_id';
-    }
-
-    public function getAccessor(): ?Closure
-    {
-        return function ($value) {
-            return (int)$value;
-        };
-    }
-
-    public function getMutator(): ?Closure
-    {
-        return $this->getAccessor();
     }
 }

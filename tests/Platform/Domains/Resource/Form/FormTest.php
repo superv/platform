@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Form;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -145,8 +145,8 @@ class FormTest extends ResourceTestCase
     public function makeFields(): array
     {
         return [
-            Field::make(['name' => 'name', 'type' => 'text']),
-            Field::make(['name' => 'age', 'type' => 'number']),
+            FieldFactory::createFromArray(['name' => 'name', 'type' => 'text']),
+            FieldFactory::createFromArray(['name' => 'age', 'type' => 'number']),
         ];
     }
 }

@@ -17,18 +17,34 @@ class FieldFactory
 
     protected function create(): Field
     {
-        return Field::make($this->params);
-    }
+        $config = array_pull($this->params, 'config');
+        $rules = array_pull($this->params, 'rules');
 
-    public function fromEntry(FieldModel $fieldEntry): Field
-    {
-        $this->params = $fieldEntry->toArray();
-        return $this->create();
+        // @TODO:fix
+        if (is_string($config)) {
+            $this->params['config'] = json_decode($config, true);
+        }
+        if (is_string($rules)) {
+            $this->params['rules'] = json_decode($rules, true);
+        }
+
+        return new Field($this->params);
     }
 
     public static function createFromEntry(FieldModel $entry): Field
     {
-        return (new static)->fromEntry($entry);
+        $factory = new static;
+        $factory->params = $entry->toArray();
+
+        return $factory->create();
+    }
+
+    public static function createFromArray(array $params): Field
+    {
+        $factory = new static;
+        $factory->params = $params;
+
+        return $factory->create();
     }
 
 }

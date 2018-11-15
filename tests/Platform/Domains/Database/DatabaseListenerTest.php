@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Database;
 
 use Event;
-use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Database\Events\TableInsertEvent;
 use SuperV\Platform\Domains\Database\Events\TableUpdateEvent;
@@ -36,7 +35,7 @@ class DatabaseListenerTest extends TestCase
 
         Event::assertDispatched(TableUpdateEvent::class,
             function(TableUpdateEvent $event) use ($pick) {
-            return $event->table === 'pickles' && $event->rowId === $pick->getEntry()->getId();
+            return $event->table === 'pickles' && $event->rowId === $pick->getEntry()->id();
         });
 
     }

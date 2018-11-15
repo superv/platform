@@ -159,7 +159,7 @@ abstract class FieldType implements NeedsEntry
         $rules = [];
         foreach ($this->rules as $rule) {
             if (starts_with($rule, 'unique:')) {
-                $str = ($this->hasEntry() && $this->entryExists()) ? $this->getEntry()->getId() : 'NULL';
+                $str = ($this->hasEntry() && $this->entryExists()) ? $this->getEntry()->id() : 'NULL';
                 $rule = str_replace('{entry.id}', $str, $rule);
             }
             $rules[] = $rule;

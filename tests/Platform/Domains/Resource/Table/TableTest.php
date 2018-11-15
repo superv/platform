@@ -2,11 +2,11 @@
 
 namespace Tests\Platform\Domains\Resource\Table;
 
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
 use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
-use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -22,44 +22,13 @@ class TableTest extends ResourceTestCase
     /** @var \SuperV\Platform\Domains\Resource\Table\TableConfig */
     protected $config;
 
-    protected function setUp()
+    function test__builds_table_config()
     {
-        parent::setUp();
+        $this->makeGroupResource();
+        $this->makeUserResource();
+        $this->makeTableConfig();
 
-        Schema::create('t_groups', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title')->entryLabel();
-        });
-
-        $this->groups = Resource::of('t_groups');
-        $this->groups->create(['id' => 50, 'title' => 'Users']);
-        $this->groups->create(['id' => 123, 'title' => 'Admins']);
-
-        Schema::create('t_users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->integer('age');
-            $table->text('bio')->hide('table');
-
-//            $table->text('bio')->visibility(function (Visibility $visibility) {
-//                $visibility->hideIf()->scopeIs('table');
-//            });
-
-            $table->belongsTo('t_groups', 'group')->nullable();
-        });
-
-        $this->users = Resource::of('t_users');
-
-        $this->config = new TableConfig();
-        $this->config->setFieldsProvider($this->users);
-        $this->config->setQueryProvider($this->users);
-        $this->config->setActions([EditEntryAction::class, DeleteEntryAction::class]);
-        $this->config->build();
-    }
-
-    /** @test */
-    function builds_table_config()
-    {
+        $this->assertTrue($this->config->isBuilt());
         $this->assertEquals(sv_url('sv/tables/'.$this->config->uuid()), $this->config->getUrl());
         $this->assertEquals(3, $this->config->getFields()->count());
 
@@ -70,16 +39,16 @@ class TableTest extends ResourceTestCase
         $this->assertEquals(['label' => 'Name', 'name' => 'name'], $columns->get('name'));
     }
 
-    /** @test */
-    function builds_table_rows()
+    function test__builds_table_rows_with_resource_entry_models()
     {
+        $this->makeGroupResource();
+        $this->makeUserResource();
+        $this->makeTableConfig();
+
         $fakeA = $this->users->fake(['group_id' => 123]);
+        $this->users->fake([], 3);
 
-        [$fakeB, $fakeC, $fakeD] = $this->users->fake([], 3);
-        $table = Table::config($this->config)->build();
-
-        $this->assertTrue($this->config->isBuilt());
-        $this->assertTrue($table->isBuilt());
+        $table = $this->config->makeTable();
 
         $this->assertEquals(4, $table->getRows()->count());
         $this->assertEquals([
@@ -95,8 +64,6 @@ class TableTest extends ResourceTestCase
             ['name' => 'delete', 'title' => 'Delete', 'url' => $fakeA->route('delete')],
         ], $rowActions);
 
-        $this->withoutExceptionHandling();
-
         $configArray = $this->config->compose();
 
         $response = $this->getJsonUser($this->users->route('index'));
@@ -105,4 +72,60 @@ class TableTest extends ResourceTestCase
         $response = $this->getJsonUser('sv/tables/'.$this->config->uuid());
         $this->assertEquals($table->compose(), $response->decodeResponseJson('data'));
     }
+
+    function test__builds_table_rows_with_base_entry_models()
+    {
+        $this->users = $this->create('t_users',
+            function (Blueprint $table, ResourceBlueprint $resource) {
+                $resource->resourceKey('user');
+                $resource->model(TestUser::class);
+                $table->increments('id');
+                $table->string('name');
+            });
+
+        $this->makeTableConfig();
+        $this->users->fake([], 3);
+
+        $table = $this->config->makeTable();
+        $rows = $table->getRows();
+        $this->assertEquals(3, $rows->count());
+    }
+
+    protected function makeTableConfig(): void
+    {
+        $this->config = new TableConfig();
+        $this->config->setFieldsProvider($this->users);
+        $this->config->setQueryProvider($this->users);
+        $this->config->setActions([EditEntryAction::class, DeleteEntryAction::class]);
+        $this->config->build();
+    }
+
+    protected function makeGroupResource(): void
+    {
+        $this->groups = $this->create('t_groups', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title')->entryLabel();
+        });
+
+        $this->groups->create(['id' => 50, 'title' => 'Users']);
+        $this->groups->create(['id' => 123, 'title' => 'Admins']);
+    }
+
+    protected function makeUserResource(): void
+    {
+        $this->users = $this->create('t_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->integer('age');
+            $table->text('bio')->hide('table');
+            $table->nullableBelongsTo('t_groups', 'group');
+        });
+    }
+}
+
+class TestUser extends Entry
+{
+    public $timestamps = false;
+
+    protected $table = 't_users';
 }

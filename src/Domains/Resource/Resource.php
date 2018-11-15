@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
@@ -165,7 +166,7 @@ class Resource implements ProvidesFields, ProvidesQuery
                                ->first();
 
         return $self->fields->map(function (ResourceEntryModel $fieldEntry) {
-            return Field::make($fieldEntry->toArray());
+            return FieldFactory::createFromArray($fieldEntry->toArray());
         });
 
 //        if ($this->fields instanceof Closure) {

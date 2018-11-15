@@ -3,14 +3,15 @@
 namespace SuperV\Platform\Domains\Resource\Table;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Jobs\AttachTypeToField;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
+use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
 class Table
@@ -34,75 +35,59 @@ class Table
     /** @var array */
     protected $pagination;
 
-    protected $built = false;
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider
+     */
+    protected $provider;
 
-    public function __construct()
+    public function __construct(DataProvider $provider)
     {
         $this->options = collect();
         $this->rows = collect();
+        $this->provider = $provider;
     }
 
     public function build(): self
     {
-        $query = $this->config->newQuery();
-
-        $this->fields = $this->config->getFields()->map(function (Field $field) use ($query) {
-            $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid()));
-            AttachTypeToField::dispatch($fieldType, $field);
-            $fieldType->buildForView($query);
+        $this->fields = $this->config->getFields()->map(function (Field $field) {
+//            $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid())); // @TODO.ali: aga bu nedir???
+//            AttachTypeToField::dispatch($fieldType, $field);
+//            $fieldType->buildForView($this->getQuery());
 
             return $field;
         });
 
-        $this->fetchEntries($query)
-             ->map(function (ResourceEntryModel $entry) {
-                 $row = new TableRow($this, ResourceEntry::make($entry));
-                 $this->rows->push($row->build());
-             });
+        $entries = $this->fetch();
 
-        $this->built = true;
+        $this->rows = $this->buildRows($entries);
 
         return $this;
     }
 
-    protected function fetchEntries($query)
+    protected function buildRows(Collection $entries)
     {
-        /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
-        $paginator = $query->paginate($this->getOption('limit', 10));
-        $countBefore = $paginator->getCollection()->count();
-        $entries = $paginator->getCollection();
+        $rows = collect();
+        $entries->map(
+            function (EntryContract $entry) use ($rows) {
+                $row = new TableRow($this, ResourceEntry::make($entry));
+                $rows->push($row->build());
+            });
 
-        // Repaginate if guard filtered some of the entries..
-        // Not ideal but should do the trick for now
-        if ($countBefore !== $entries->count()) {
-            $paginator = new LengthAwarePaginator(
-                $entries,
-                $paginator->total() - ($countBefore - $entries->count()),
-                $paginator->perPage(),
-                $paginator->currentPage()
-            );
-        }
-
-        $this->pagination = $paginator->toArray();
-
-        unset($this->pagination['data']);
-
-        return $entries;
+        return $rows;
     }
 
-    public function getRows(): Collection
+    /**
+     * @param $query
+     */
+    protected function fetch(): Collection
     {
-        return $this->rows;
-    }
+        $this->provider->setQuery($this->getQuery());
+        $this->provider->setRowsPerPage($this->getOption('limit', 10));
+        $this->provider->fetch();
 
-    public function getFields(): Collection
-    {
-        return $this->fields;
-    }
+        $this->pagination = $this->provider->getPagination();
 
-    public function getActions(): Collection
-    {
-        return $this->config->getActions();
+        return $this->provider->getEntries();
     }
 
     public function url()
@@ -127,9 +112,28 @@ class Table
         return $this;
     }
 
-    public function isBuilt(): bool
+    public function getRows(): Collection
     {
-        return $this->built;
+        return $this->rows;
+    }
+
+    public function getFields(): Collection
+    {
+        return $this->fields;
+    }
+
+    public function getActions(): Collection
+    {
+        return $this->config->getActions();
+    }
+
+    public function getQuery()
+    {
+        if (! $this->query) {
+            $this->query = $this->config->newQuery();
+        }
+
+        return $this->query;
     }
 
     public function setQuery($query): Table
@@ -146,6 +150,6 @@ class Table
 
     public static function config(TableConfig $config): self
     {
-        return app(self::class)->setConfig($config);
+        return (new Table(new EloquentDataProvider))->setConfig($config);
     }
 }

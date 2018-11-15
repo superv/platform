@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Resource\Form;
 
 use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -63,8 +64,8 @@ class FormBuilderTest extends ResourceTestCase
     public function makeFields(): array
     {
         return [
-            Field::make(['name' => 'name', 'type' => 'text']),
-            Field::make(['name' => 'age', 'type' => 'number']),
+            FieldFactory::createFromArray(['name' => 'name', 'type' => 'text']),
+            FieldFactory::createFromArray(['name' => 'age', 'type' => 'number']),
         ];
     }
 }

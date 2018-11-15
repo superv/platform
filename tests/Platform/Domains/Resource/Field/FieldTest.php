@@ -2,17 +2,17 @@
 
 namespace Tests\Platform\Domains\Resource\Field;
 
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldValue;
+use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FieldTest extends ResourceTestCase
 {
-    /** @test */
-    function instantiates()
+    function test__factory()
     {
-        $field = Field::make(['name' => 'display_name', 'type' => 'text']);
+        $field = FieldFactory::createFromArray(['name' => 'display_name', 'type' => 'text']);
         $this->assertNotNull($field->uuid());
         $this->assertInstanceOf(FieldValue::class, $field->value());
 
@@ -24,11 +24,10 @@ class FieldTest extends ResourceTestCase
         ], $field->compose());
     }
 
-    /** @test */
-    function notify_watchers()
+    function test__notify_watchers()
     {
         $entry = new TestEntry();
-        $field = Field::make(['name' => 'name', 'type' => 'text']);
+        $field = FieldFactory::createFromArray(['name' => 'name', 'type' => 'text']);
 
         $field->setWatcher($entry);
         $field->setValue('Omar');
@@ -37,6 +36,14 @@ class FieldTest extends ResourceTestCase
         $field->removeWatcher();
         $field->setValue('Hattab');
         $this->assertEquals('Omar', $entry->name);
+    }
+
+    function test__field_type()
+    {
+        $field = FieldFactory::createFromArray(['name' => 'name', 'type' => 'text']);
+
+        $this->assertInstanceOf(Text::class, $field->resolveType());
+
     }
 }
 

@@ -93,6 +93,16 @@ class TableConfig
         ];
     }
 
+    public function makeTable($build = true): Table
+    {
+        $table = Table::config($this);
+        if (! $build) {
+            return $table;
+        }
+
+        return $table->build();
+    }
+
     public function getUrl()
     {
         return $this->url;
