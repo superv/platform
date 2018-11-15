@@ -15,12 +15,22 @@ class FieldTest extends ResourceTestCase
         $field = FieldFactory::createFromArray(['name' => 'display_name', 'type' => 'text']);
         $this->assertNotNull($field->uuid());
         $this->assertInstanceOf(FieldValue::class, $field->value());
+    }
+
+    function test__compose()
+    {
+        $field = FieldFactory::createFromArray([
+            'name'   => 'email',
+            'type'   => 'text',
+            'config' => ['foo'],
+        ]);
 
         $this->assertEquals([
             'type'  => 'text',
             'uuid'  => $field->uuid(),
-            'name'  => 'display_name',
-            'label' => 'Display Name',
+            'name'  => 'email',
+            'label' => 'Email',
+            'config' => ['foo']
         ], $field->compose());
     }
 
@@ -43,7 +53,6 @@ class FieldTest extends ResourceTestCase
         $field = FieldFactory::createFromArray(['name' => 'name', 'type' => 'text']);
 
         $this->assertInstanceOf(Text::class, $field->resolveType());
-
     }
 }
 
