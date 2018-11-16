@@ -69,6 +69,8 @@ class TestCase extends OrchestraTestCase
 
             (new PlatformServiceProvider($this->app))->boot();
         }
+
+//        define('SV_TEST_BASE', $this->basePath());
     }
 
     protected function makeTmpDirectory(): void
@@ -139,7 +141,7 @@ class TestCase extends OrchestraTestCase
         });
     }
 
-    protected function basePath($path = null)
+    public function basePath($path = null)
     {
         return __DIR__.($path ? '/'.$path : '');
     }

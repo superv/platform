@@ -195,8 +195,6 @@ class FormTest extends ResourceTestCase
         $user = $this->users->create(['name' => 'Omar', 'age' => 123]);
 
         $response = $this->getJsonUser($user->route('edit'));
-        $response->assertOk();
-
         $props = $response->decodeResponseJson('data.props.page.blocks.0.props.tabs.0.block.props');
         $this->assertEquals(['url', 'method', 'fields'], array_keys($props));
         $this->assertEquals(2, count($props['fields']));

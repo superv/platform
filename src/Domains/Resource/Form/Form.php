@@ -66,11 +66,12 @@ class Form
             $this->addGroup($group['provider'], $group['watcher'], $handle);
         }
 
-
         foreach ($this->watchers as $handle => $watcher) {
             $this->fields[$handle]->map(function (Field $field) use ($watcher) {
                 $field->setWatcher($watcher);
                 $field->build();
+
+                $field->initValue($watcher->getAttribute($field->getColumnName()));
             });
         }
     }
@@ -78,7 +79,7 @@ class Form
     public function save(): self
     {
         $this->getFields()->map(function (Field $field) {
-            $this->postSaveCallbacks[] = $field->setValue($this->request->__get($field->getName()));
+            $this->postSaveCallbacks[] = $field->setValue($this->request->__get($field->getColumnName()));
         });
 
         $this->notifyWatchers($this);
@@ -140,9 +141,9 @@ class Form
             $this->addWatcher($handle, $watcher);
 
             // bunu boota al
-            $fields->map(function (Field $field) use ($watcher) {
-                $field->initValue($watcher->getAttribute($field->getName()));
-            });
+//            $fields->map(function (Field $field) use ($watcher) {
+//                $field->initValue($watcher->getAttribute($field->getColumnName()));
+//            });
         }
     }
 

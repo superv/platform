@@ -119,7 +119,8 @@ class Resource implements ProvidesFields, ProvidesQuery
             return null;
         }
 
-        return ResourceEntry::make($entry, $this->fresh());
+//        return ResourceEntry::make($entry, $this->fresh());
+        return ResourceEntry::make($entry, $this);
     }
 
     public function count(): int

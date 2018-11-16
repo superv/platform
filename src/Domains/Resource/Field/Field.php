@@ -39,6 +39,8 @@ class Field
      */
     protected $name;
 
+    protected $columnName;
+
     /**
      * @var string
      */
@@ -87,7 +89,7 @@ class Field
         $this->uuid = $this->uuid ?? uuid();
 
         if ($this->unique) {
-            $this->rules[] = 'unique:{resource.handle},'.$this->getName().',{entry.id},id';
+            $this->rules[] = 'unique:{resource.handle},'.$this->getColumnName().',{entry.id},id';
         }
         if ($this->required) {
             $this->rules[] = 'required';
@@ -118,6 +120,8 @@ class Field
 
         $this->setVisible($fieldType->visible());
 
+        $this->columnName = $fieldType->getColumnName();
+
         return $this;
     }
 
@@ -126,7 +130,7 @@ class Field
         $composition = new Composition([
             'type'   => $this->getType(),
             'uuid'   => $this->uuid(),
-            'name'   => $this->getName(),
+            'name'   => $this->getColumnName(),
             'label'  => $this->getLabel(),
             'value'  => $this->getValue(),
             'config' => $this->config,
@@ -190,7 +194,7 @@ class Field
         $this->value = $value;
 
         if ($notify && $this->watcher && ! $fieldType instanceof DoesNotInteractWithTable) {
-            $this->watcher->setAttribute($this->getName(), $value);
+            $this->watcher->setAttribute($this->getColumnName(), $value);
         }
     }
 
@@ -248,6 +252,11 @@ class Field
     public function setFieldTypeResolver(Closure $fieldTypeResolver): void
     {
         $this->fieldTypeResolver = $fieldTypeResolver;
+    }
+
+    public function getColumnName()
+    {
+        return $this->columnName ?? $this->getName();
     }
 
     public function uuid(): string

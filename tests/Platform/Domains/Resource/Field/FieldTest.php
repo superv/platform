@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
-use SuperV\Platform\Domains\Resource\Field\FieldValue;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -19,17 +18,18 @@ class FieldTest extends ResourceTestCase
     function test__compose()
     {
         $field = FieldFactory::createFromArray([
-            'name'   => 'email',
-            'type'   => 'text',
-            'config' => ['foo'],
+            'name'        => 'email',
+            'column_name' => 'email_id',
+            'type'        => 'text',
+            'config'      => ['foo'],
         ]);
 
         $this->assertEquals([
-            'type'  => 'text',
-            'uuid'  => $field->uuid(),
-            'name'  => 'email',
-            'label' => 'Email',
-            'config' => ['foo']
+            'type'   => 'text',
+            'uuid'   => $field->uuid(),
+            'name'   => 'email_id',
+            'label'  => 'Email',
+            'config' => ['foo'],
         ], $field->compose()->get());
     }
 

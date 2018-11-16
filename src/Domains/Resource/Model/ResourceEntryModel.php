@@ -16,29 +16,29 @@ use SuperV\Platform\Domains\Resource\Resource;
 
 class ResourceEntryModel extends Entry implements Watcher
 {
-    protected $__form;
+//    protected $__form;
+//
+//    public function getForm(): Form
+//    {
+//        return $this->__form;
+//    }
+//
+//    public function setForm($_form): self
+//    {
+//        $this->__form = $_form;
+//
+//        return $this;
+//    }
 
-    public function getForm(): Form
-    {
-        return $this->__form;
-    }
-
-    public function setForm($_form): self
-    {
-        $this->__form = $_form;
-
-        return $this;
-    }
-
-    /**
-     * Wrap the entry model with parent resource
-     *
-     * @return Resource
-     */
-    public function wrap(): Resource
-    {
-        return Resource::of($this->getTable(), false)->setEntry($this);
-    }
+//    /**
+//     * Wrap the entry model with parent resource
+//     *
+//     * @return Resource
+//     */
+//    public function wrap(): Resource
+//    {
+//        return Resource::of($this->getTable(), false)->setEntry($this);
+//    }
 
     public function getRelationshipFromConfig($name)
     {
@@ -132,6 +132,10 @@ class ResourceEntryModel extends Entry implements Watcher
     protected static function boot()
     {
         parent::boot();
+
+        static::retrieved(function(ResourceEntryModel $entry) {
+            ;
+        });
 
 //        static::saving(function(ResourceEntryModel $entry) {
 //            EntrySavingEvent::dispatch($entry);

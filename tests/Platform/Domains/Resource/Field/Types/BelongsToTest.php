@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\BelongsTo;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
+use Tests\Platform\TestCase;
 
 class BelongsToTest extends ResourceTestCase
 {
@@ -48,7 +50,6 @@ class BelongsToTest extends ResourceTestCase
             ['value' => 100, 'text' => 'Users'],
             ['value' => 110, 'text' => 'Admins'],
         ], $belongsTo->compose()->get('config.options'));
-
     }
 
     function test__presenter()
