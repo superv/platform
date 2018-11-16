@@ -39,7 +39,7 @@ class FormTest extends ResourceTestCase
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                           ->getForm()
+                           ->makeForm()
                            ->save();
 
         $this->assertEquals('Omar', $form->getField('name')->getValue());
@@ -54,7 +54,7 @@ class FormTest extends ResourceTestCase
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                           ->getForm()
+                           ->makeForm()
                            ->save();
 
         $this->assertEquals('Omar', $form->getField('name')->getValue());
@@ -71,7 +71,7 @@ class FormTest extends ResourceTestCase
         $form = (new FormBuilder)
             ->addGroup('user', $user = new TestUser, $this->makeFields())
             ->sleep()
-            ->getForm();
+            ->makeForm();
         $this->assertEquals($user, $form->getWatcher('user'));
     }
 
@@ -80,7 +80,7 @@ class FormTest extends ResourceTestCase
         $form = (new FormBuilder)
             ->addGroup('test_user', $user = new TestUser, $this->makeFields())
             ->sleep()
-            ->getForm();
+            ->makeForm();
 
         $response = $this->postJsonUser($form->getUrl(), [
             'name' => 'Omar bin Hattab',
@@ -111,7 +111,7 @@ class FormTest extends ResourceTestCase
                                'title' => 'Khalifa',
                                'age'   => 33,
                            ]))
-                           ->getForm()
+                           ->makeForm()
                            ->save();
 
         $this->assertEquals('Omar', $form->getField('name', 'test_user')->getValue());
@@ -134,7 +134,7 @@ class FormTest extends ResourceTestCase
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                           ->getForm();
+                           ->makeForm();
 
         $form->save();
 
@@ -143,6 +143,22 @@ class FormTest extends ResourceTestCase
         $this->assertEquals('Omar', $user->name);
         $this->assertEquals(33, $user->age);
         $this->assertTrue($user->wasRecentlyCreated);
+    }
+
+
+    function test__removes_field()
+    {
+        $form = (new FormBuilder)
+            ->addGroup('default', new TestUser(['name' => 'Omar', 'age' => 33]), $this->makeFields())
+            ->removeField('name')
+            ->sleep()
+            ->makeForm();
+
+        $this->assertEquals(1, $form->getFields()->count());
+        $this->assertNull($form->getField('name'));
+
+        // make sure to get values after filter
+        $this->assertEquals($form->getFields()->values(), $form->getFields());
     }
 
     public function makeFields(): array
@@ -171,7 +187,7 @@ class FormTest extends ResourceTestCase
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33, 'avatar' => new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png')]))
-                           ->getForm();
+                           ->makeForm();
 
         $form->getField('avatar')->setFieldTypeResolver(function () {
             return new TestFileFieldType;

@@ -69,7 +69,7 @@ class HasOneTest extends ResourceTestCase
         $this->assertNull($form->getField('user'));
         $this->assertEquals(1, $form->getFields()->count());
 
-        $relatedEntry = $form->getWatcher('t_profiles')->getEntry();
+        $relatedEntry = $form->getWatcher('default')->getEntry();
         $this->assertEquals($profile->user_id, $relatedEntry->user_id);
 
     }

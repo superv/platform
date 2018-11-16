@@ -17,7 +17,7 @@ class FormBuilderTest extends ResourceTestCase
         $form = (new FormBuilder)
             ->addFields($fields = $this->makeFields())
             ->sleep()
-            ->getForm();
+            ->makeForm();
 
         $this->assertNotNull($form->uuid());
         $this->assertNotNull(FormBuilder::wakeup($form->uuid()));
@@ -40,25 +40,10 @@ class FormBuilderTest extends ResourceTestCase
         $form = (new FormBuilder)
             ->addGroup('default', new TestUser(['name' => 'Omar', 'age' => 33]), $fields)
             ->sleep()
-            ->getForm();
+            ->makeForm();
 
         $this->assertEquals('Omar', $form->getField('name')->compose()['value']);
         $this->assertEquals(33, $form->getField('age')->compose()['value']);
-    }
-
-    function test__removes_field()
-    {
-        $form = (new FormBuilder)
-            ->addGroup('default', new TestUser(['name' => 'Omar', 'age' => 33]), $this->makeFields())
-            ->removeField('name')
-            ->sleep()
-            ->getForm();
-
-        $this->assertEquals(1, $form->getFields()->count());
-        $this->assertNull($form->getField('name'));
-
-        // make sure to get values after filter
-        $this->assertEquals($form->getFields()->values(), $form->getFields());
     }
 
     public function makeFields(): array

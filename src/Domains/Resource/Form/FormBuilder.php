@@ -38,6 +38,14 @@ class FormBuilder
         return $this;
     }
 
+    public function makeForm(): Form
+    {
+        $this->form->removeFields($this->skipFields);
+
+        return $this->form;
+    }
+
+
     public function addGroup(string $handle, Watcher $watcher = null, $fields): FormBuilder
     {
         $fields = $this->provideFields($fields);
@@ -74,12 +82,6 @@ class FormBuilder
 
         return $this;
     }
-
-    public function getForm(): Form
-    {
-        return $this->form;
-    }
-
     protected function provideFields($fields)
     {
         if ($fields instanceof ProvidesFields) {

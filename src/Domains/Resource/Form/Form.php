@@ -44,6 +44,8 @@ class Form
      */
     protected $request;
 
+    protected $skipFields = [];
+    
     protected $watchers = [];
 
     protected $postSaveCallbacks = [];
@@ -92,6 +94,15 @@ class Form
                 $field->setValue($watcher->getAttribute($field->getName()), false);
             });
         }
+    }
+
+    public function removeFields(array $skipFields)
+    {
+       $this->fields = $this->fields->map(function(Collection $fields) use ($skipFields) {
+            return $fields->filter(function(Field $field) use ($skipFields) {
+                return !in_array($field->getName(), $skipFields);
+            });
+        });
     }
 
     public function addWatcher($handle, Watcher $watcher)

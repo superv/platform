@@ -11,7 +11,7 @@ class FormsController extends BaseApiController
     {
         $form = FormBuilder::wakeup($uuid)
                            ->setRequest($this->request)
-                           ->getForm();
+                           ->makeForm();
         $form->save();
 
         return response()->json([]);

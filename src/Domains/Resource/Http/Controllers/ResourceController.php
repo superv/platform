@@ -62,7 +62,7 @@ class ResourceController extends BaseApiController
                 $this->resource()->getFields()
             )
             ->sleep()
-            ->getForm();
+            ->makeForm();
 
         $page = SvPage::make('')->addBlock(
             SvBlock::make('sv-form-v2')->setProps($form->compose())
@@ -86,7 +86,7 @@ class ResourceController extends BaseApiController
 //                $fields = ResourceModel::withSlug($this->resource()->getHandle())
             )
             ->sleep()
-            ->getForm();
+            ->makeForm();
 
         // main edit form
         $editorTab = SvBlock::make('sv-form-v2')->setProps($form->compose());
