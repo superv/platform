@@ -8,11 +8,9 @@ use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Database\Model\Repository;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
-use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
-use SuperV\Platform\Domains\Resource\Resource;
 
 class ResourceEntryModel extends Entry implements Watcher
 {
@@ -133,7 +131,7 @@ class ResourceEntryModel extends Entry implements Watcher
     {
         parent::boot();
 
-        static::retrieved(function(ResourceEntryModel $entry) {
+        static::retrieved(function (ResourceEntryModel $entry) {
             ;
         });
 

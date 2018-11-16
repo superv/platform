@@ -31,9 +31,9 @@ class Repository implements \SuperV\Platform\Domains\Database\Model\Repository
                     $metaEntry = $this->metas->create(['uuid' => $meta->uuid()]);
                 }
 
-                $meta->setId($metaEntry->id());
+                $meta->setId($metaEntry->getId());
             }
-            $metaEntryId = $metaEntry->id();
+            $metaEntryId = $metaEntry->getId();
             $meta = $meta->compose();
         }
 
@@ -61,7 +61,7 @@ class Repository implements \SuperV\Platform\Domains\Database\Model\Repository
             }
 
             if (is_array($value)) {
-                $this->save($value, $item->id());
+                $this->save($value, $item->getId());
             }
         }
     }

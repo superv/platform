@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Database\Model\Contracts;
 
 interface EntryContract
 {
-    public function id();
+    public function getId();
 
     public function getAttribute($key);
 

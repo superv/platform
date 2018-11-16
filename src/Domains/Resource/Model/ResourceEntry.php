@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
-use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Fake;
@@ -53,7 +52,7 @@ class ResourceEntry implements ResourceEntryContract, Watcher
         return $this->resource;
     }
 
-    public function id()
+    public function getId()
     {
         return $this->getEntry()->getKey();
     }
@@ -69,11 +68,6 @@ class ResourceEntry implements ResourceEntryContract, Watcher
         }
     }
 
-    public function exists()
-    {
-        return $this->getEntry() && $this->getEntry()->exists;
-    }
-
     public function setAttribute($key, $value)
     {
         $this->getEntry()->setAttribute($key, $value);
@@ -82,6 +76,11 @@ class ResourceEntry implements ResourceEntryContract, Watcher
     public function getAttribute($key)
     {
         return $this->getEntry()->getAttribute($key);
+    }
+
+    public function exists()
+    {
+        return $this->getEntry() && $this->getEntry()->exists;
     }
 
     public function save()
@@ -105,10 +104,10 @@ class ResourceEntry implements ResourceEntryContract, Watcher
     {
         $base = 'sv/res/'.$this->getHandle();
         if ($route === 'edit') {
-            return $base.'/'.$this->id().'/edit';
+            return $base.'/'.$this->getId().'/edit';
         }
         if ($route === 'delete') {
-            return $base.'/'.$this->id().'/delete';
+            return $base.'/'.$this->getId().'/delete';
         }
     }
 

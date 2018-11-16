@@ -39,9 +39,9 @@ class Entry extends Model implements Morphable, EntryContract
         return $this->getKey();
     }
 
-    public function id()
+    public function getId()
     {
-        return $this->id;
+        return $this->attributes['id'] ?? null;
     }
 
     /**

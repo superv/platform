@@ -3,11 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
 class Group
 {
@@ -56,7 +53,6 @@ class Group
 //
         $this->fields = $this->fields
             ->map(function (Field $field) {
-
                 if ($this->watcher) {
                     $field->setWatcher($this->watcher);
                     $field->setValueFromWatcher();

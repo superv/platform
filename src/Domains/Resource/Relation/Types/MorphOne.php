@@ -41,8 +41,8 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry
         $relatedEntry = $this->getRelatedEntry() ?? $this->newRelatedInstance();
 
         $form = FormConfig::make()
-            ->addGroup($relatedEntry->getResource(), $relatedEntry)
-            ->makeForm();
+                          ->addGroup($relatedEntry->getResource(), $relatedEntry)
+                          ->makeForm();
 
         return $form;
     }

@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldsProvider;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 
 class Form
@@ -62,7 +61,7 @@ class Form
 
     protected function boot()
     {
-        foreach($this->config->getGroups() as $handle => $group) {
+        foreach ($this->config->getGroups() as $handle => $group) {
             $this->addGroup($group['provider'], $group['watcher'], $handle);
         }
 
@@ -235,7 +234,6 @@ class Form
     {
         return $this->watchers[$handle];
     }
-
 
     public function uuid(): string
     {

@@ -92,7 +92,7 @@ class BelongsToTestUser extends Model implements EntryContract
 
     protected $guarded = [];
 
-    public function id()
+    public function getId()
     {
         return $this->getKey();
     }

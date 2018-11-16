@@ -156,7 +156,7 @@ class FormTester extends Assert
         $this->assertDatabaseHas('media', [
             'label'      => 'avatar',
             'owner_type' => 't_users',
-            'owner_id'   => $entry->id(),
+            'owner_id'   => $entry->getId(),
         ]);
     }
 }

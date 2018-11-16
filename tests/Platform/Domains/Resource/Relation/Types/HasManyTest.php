@@ -27,7 +27,7 @@ class HasManyTest extends ResourceTestCase
 //        $userEntry = ResourceEntry::fake($users);
         $userEntry = $users->fake();
 
-        $posts->fake(['t_user_id' => $userEntry->id()], 5);
+        $posts->fake(['t_user_id' => $userEntry->getId()], 5);
         $posts->fake(['t_user_id' => 999], 3); // these should be excluded
 
         /** @var \SuperV\Platform\Domains\Resource\Relation\Types\HasMany $relation */

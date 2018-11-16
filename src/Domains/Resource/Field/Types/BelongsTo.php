@@ -25,6 +25,39 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
         return $this;
     }
 
+    public function getPresenter(): ?Closure
+    {
+        return function (?ResourceEntry $relatedEntry) {
+            return $relatedEntry ? $relatedEntry->getLabel() : null;
+        };
+    }
+
+    public function setValue($value): ?Closure
+    {
+        if ($value instanceof EntryContract) {
+            $value = $value->getId();
+        }
+
+        return parent::setValue($value);
+    }
+
+    public function getColumnName(): ?string
+    {
+        return $this->getName().'_id';
+    }
+
+    public function getAccessor(): ?Closure
+    {
+        return function ($value) {
+            return (int)$value;
+        };
+    }
+
+    public function getMutator(): ?Closure
+    {
+        return $this->getAccessor();
+    }
+
     public function alterComposition(Composition $composition)
     {
         $relationConfig = RelationConfig::create($this->type, $this->config);
@@ -51,39 +84,6 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
 
         $composition->replace('config.options', $options);
         $composition->replace('config.placeholder', 'Choose a '.$this->entry->getHandle());
-    }
-
-    public function getPresenter(): ?Closure
-    {
-        return function (?ResourceEntry $relatedEntry) {
-            return $relatedEntry ? $relatedEntry->getLabel() : null;
-        };
-    }
-
-    public function setValue($value): ?Closure
-    {
-        if ($value instanceof EntryContract) {
-            $value = $value->id();
-        }
-
-        return parent::setValue($value);
-    }
-
-    public function getColumnName(): ?string
-    {
-        return $this->getName().'_id';
-    }
-
-    public function getAccessor(): ?Closure
-    {
-        return function ($value) {
-            return (int)$value;
-        };
-    }
-
-    public function getMutator(): ?Closure
-    {
-        return $this->getAccessor();
     }
 
     /**

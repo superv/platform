@@ -90,7 +90,7 @@ class MorphOneTest extends ResourceTestCase
         $this->assertInstanceOf(TestProfile::class, $profile);
 
         $this->assertEquals('Admin', $profile->entry->title);
-        $this->assertEquals($user->id(), $profile->entry->owner_id);
+        $this->assertEquals($user->getId(), $profile->entry->owner_id);
         $this->assertEquals($user->getEntry()->getMorphClass(), $profile->entry->owner_type);
     }
 }

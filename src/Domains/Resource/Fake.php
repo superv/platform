@@ -5,8 +5,6 @@ namespace SuperV\Platform\Domains\Resource;
 use Faker\Generator;
 use Illuminate\Http\UploadedFile;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 
 class Fake
@@ -72,7 +70,7 @@ class Fake
         $relatedResource = ResourceFactory::make($field->getConfigValue('related_resource'));
 
         if ($relatedResource->count() === 0) {
-            $relatedResource->fake([], rand(2,10));
+            $relatedResource->fake([], rand(2, 10));
         }
 
         return $relatedResource->newQuery()->inRandomOrder()->value('id');
@@ -80,7 +78,7 @@ class Fake
 
     protected function fakeFile(FieldType $field)
     {
-        return new UploadedFile(SV_TEST_BASE. '/__fixtures__/square.png', 'square.png');
+        return new UploadedFile(SV_TEST_BASE.'/__fixtures__/square.png', 'square.png');
     }
 
     protected function fakeText(FieldType $field)

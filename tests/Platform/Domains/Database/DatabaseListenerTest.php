@@ -35,7 +35,7 @@ class DatabaseListenerTest extends TestCase
 
         Event::assertDispatched(TableUpdateEvent::class,
             function(TableUpdateEvent $event) use ($pick) {
-            return $event->table === 'pickles' && $event->rowId === $pick->getEntry()->id();
+            return $event->table === 'pickles' && $event->rowId === $pick->getEntry()->getId();
         });
 
     }

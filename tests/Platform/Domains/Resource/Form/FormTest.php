@@ -311,7 +311,7 @@ class FormTestUser extends Model implements Watcher, EntryContract
 
     protected $guarded = [];
 
-    public function id()
+    public function getId()
     {
         return $this->getKey();
     }
