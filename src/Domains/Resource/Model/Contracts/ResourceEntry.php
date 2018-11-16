@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\Resource;
 
 interface ResourceEntry extends EntryContract
 {
-    public static function newInstance($handle): ResourceEntry;
+    public static function newInstance(string $handle): ResourceEntry;
 
     public function getEntry(): EntryContract;
 

@@ -3,14 +3,20 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Closure;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
+use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Form
 {
+    use FiresCallbacks;
+
     /**
      * @var \SuperV\Platform\Domains\Resource\Field\Field[]|Collection
      */
@@ -39,8 +45,6 @@ class Form
      */
     protected $request;
 
-    protected $skipFields = [];
-
     protected $watchers = [];
 
     protected $postSaveCallbacks = [];
@@ -67,10 +71,12 @@ class Form
 
         foreach ($this->watchers as $handle => $watcher) {
             $this->fields[$handle]->map(function (Field $field) use ($watcher) {
+                if (in_array($field->getName(), $this->config->getHiddenFields())) {
+                    $field->hide();
+                }
                 $field->setWatcher($watcher);
+                $field->setValueFromWatcher();
                 $field->build();
-
-                $field->initValue($watcher->getAttribute($field->getColumnName()));
             });
         }
     }
@@ -78,12 +84,17 @@ class Form
     public function save(): self
     {
         $this->getFields()->map(function (Field $field) {
-            $this->postSaveCallbacks[] = $field->setValue($this->request->__get($field->getColumnName()));
+            if ($field->isHidden()) return;
+
+            $requestValue = $this->request->__get($field->getColumnName());
+            if ($callback = $field->setValue($requestValue)) {
+                $this->postSaveCallbacks[] = $callback;
+            }
         });
 
         $this->notifyWatchers($this);
 
-        collect($this->postSaveCallbacks)->filter()->map(function (Closure $callback) {
+        collect($this->postSaveCallbacks)->map(function (Closure $callback) {
             $callback();
         });
 
@@ -120,15 +131,20 @@ class Form
         return $this;
     }
 
-    public function compose(): array
+    public function compose(): Composition
     {
-        return [
+        $composition = new Composition([
             'url'    => $this->getUrl(),
             'method' => $this->getMethod(),
             'fields' => $this->getFields()
+                             ->filter(function (Field $field) { return ! $field->isHidden(); })
                              ->map(function (Field $field) { return $field->compose()->get(); })
+                             ->values()
                              ->all(),
-        ];
+        ]);
+        $this->fire('composed', ['form' => $this, 'composition' => $composition]);
+
+        return $composition;
     }
 
     public function mergeFields($fields, ?Watcher $watcher, string $handle = 'default')
@@ -138,26 +154,23 @@ class Form
 
         if ($watcher) {
             $this->addWatcher($handle, $watcher);
-
-            // bunu boota al
-//            $fields->map(function (Field $field) use ($watcher) {
-//                $field->initValue($watcher->getAttribute($field->getColumnName()));
-//            });
         }
     }
 
-    public function removeField(string $name)
+    public function hideField(string $fieldName): self
     {
-        return $this->removeFields([$name]);
+        if (! $field = $this->getField($fieldName)) {
+            throw new Exception('Field not found: '.$fieldName);
+        }
+
+        $field->hide();
+
+        return $this;
     }
 
-    public function removeFields(array $skipFields)
+    public function hideFields(array $fields): self
     {
-        $this->fields = $this->fields->map(function (Collection $fields) use ($skipFields) {
-            return $fields->filter(function (Field $field) use ($skipFields) {
-                return ! in_array($field->getName(), $skipFields);
-            });
-        });
+        collect($fields)->map(function ($fieldName) { $this->hideField($fieldName); });
 
         return $this;
     }
@@ -189,6 +202,9 @@ class Form
         return $this;
     }
 
+    /**
+     * @return \SuperV\Platform\Domains\Resource\Field\Field[]|Collection
+     */
     public function getFields(): Collection
     {
         return $this->fields->flatten(1);
@@ -213,23 +229,6 @@ class Form
         return $this->method;
     }
 
-    public function sleep()
-    {
-        cache()->forever($this->cacheKey($this->uuid()), serialize($this));
-
-        return $this;
-    }
-
-    protected function washFace()
-    {
-//        foreach ($this->watchers as $handle => $watcher) {
-//            $this->fields[$handle]->map(function (Field $field) use ($watcher) {
-//                $field->setWatcher($watcher);
-//                $field->build();
-//            });
-//        }
-    }
-
     public function getWatcher(?string $handle = 'default')
     {
         return $this->watchers[$handle];
@@ -238,28 +237,6 @@ class Form
     public function uuid(): string
     {
         return $this->config->uuid();
-    }
-
-    public static function cacheKeyPrefix()
-    {
-        return 'sv:forms';
-    }
-
-    public static function cacheKey(string $uuid): string
-    {
-        return static::cacheKeyPrefix().':'.$uuid;
-    }
-
-    public static function wakeup($uuid): ?self
-    {
-        /** @var \SuperV\Platform\Domains\Resource\Form\Form $form */
-        if ($form = cache(static::cacheKey($uuid))) {
-            return unserialize($form);
-        }
-
-        $form->washFace();
-
-        return null;
     }
 
     public static function make(FormConfig $config): Form

@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
-use SuperV\Platform\Domains\Resource\Form\Jobs\BuildFormDeprecated;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
@@ -58,7 +57,7 @@ class ResourceController extends BaseApiController
         $form = FormConfig::make()
                           ->addGroup(
                               $this->resource()->getFields(),
-                              $this->resource()->newEntryInstance(),
+                              $this->resource()->newResourceEntryInstance(),
                               $this->resource()->getHandle()
                           )
                           ->sleep()

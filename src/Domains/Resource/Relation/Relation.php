@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry as ResourceEntryContract;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -50,8 +51,13 @@ abstract class Relation implements AcceptsParentResourceEntry
     {
         if ($model = $this->config->getRelatedModel()) {
             return new ResourceEntry(new $model);
-        } elseif ($table = $this->config->getRelatedResource()) {
-            return ResourceEntry::newInstance($table);
+        } elseif ($handle = $this->config->getRelatedResource()) {
+            return Resource::of($handle)->newResourceEntryInstance();
+//            $resource = ResourceFactory::make($resourceHandle);
+//            if ($model = $resource->config('model')) {
+//                return new ResourceEntry(new $model);
+//            }
+//          return   Resource::of($resourceHandle)->newEntryInstance();
         }
 
         throw new PlatformException('Related resource/model not found');

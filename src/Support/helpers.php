@@ -240,9 +240,9 @@ function str_unslug(string $slug)
     return ucwords(str_replace('_', ' ', $slug));
 }
 
-function str_prefix(?string $str, $prefix)
+function str_prefix(?string $str, $prefix, $glue = '.')
 {
-    return is_null($str) ? $str : "{$prefix}.{$str}";
+    return is_null($str) ? $str : "{$prefix}{$glue}{$str}";
 }
 
 /** @return SvTabs */

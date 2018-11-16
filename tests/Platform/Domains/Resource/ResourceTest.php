@@ -13,7 +13,7 @@ class ResourceTest extends ResourceTestCase
     {
         $resource = $this->makeResource('test_users');
 
-        $entry = $resource->newEntryInstance();
+        $entry = $resource->newResourceEntryInstance();
 
         $this->assertInstanceOf(ResourceEntryModel::class, $entry->getEntry());
         $this->assertEquals('test_users', $entry->getTable());
@@ -28,7 +28,7 @@ class ResourceTest extends ResourceTestCase
             $resource->model(TestResourceModel::class);
         });
 
-        $entry = $resource->newEntryInstance();
+        $entry = $resource->newResourceEntryInstance();
         $this->assertInstanceOf(TestResourceModel::class, $entry->getEntry());
         $this->assertInstanceOf(TestResourceModel::class, $resource->fake()->getEntry());
         $this->assertEquals('test_resource_models', $entry->getTable());

@@ -38,6 +38,9 @@ class FormTest extends ResourceTestCase
 
         $config = FormConfig::make();
         $config->addGroup($fields, $watcher, 'default')->sleep();
+        $config->hideField('age');
+
+        $this->assertEquals(['age'], $config->getHiddenFields());
 
         $config = FormConfig::wakeup($config->uuid());
         $this->assertNotNull($config);
@@ -67,7 +70,7 @@ class FormTest extends ResourceTestCase
                 $form->getField('name')->compose()->get(),
                 $form->getField('age')->compose()->get(),
             ],
-        ], $form->compose());
+        ], $form->compose()->get());
     }
 
     function test_makes_create_form_without_sleep_wakeup()
@@ -84,7 +87,7 @@ class FormTest extends ResourceTestCase
                 $form->getField('name')->compose()->get(),
                 $form->getField('age')->compose()->get(),
             ],
-        ], $form->compose());
+        ], $form->compose()->get());
     }
 
     function test_makes_update_form()
@@ -118,6 +121,32 @@ class FormTest extends ResourceTestCase
 
         $this->assertEquals('Omar', $form->getField('name')->getValue());
         $this->assertEquals(33, $form->getField('age')->getValue());
+    }
+
+    function test__hidden_fields()
+    {
+        $config = FormConfig::make()
+                            ->addGroup(
+                                $fields = $this->makeFields(),
+                                $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
+                            )
+            ->hideField('name')
+                            ->sleep();
+
+        $form = FormConfig::wakeup($config->uuid())
+                          ->makeForm()
+                          ->setRequest($this->makePostRequest(['name' => 'Ali', 'age' => 99]))
+                          ->save();
+
+        $nameField = $form->getField('name');
+        $this->assertTrue($nameField->isHidden());
+
+        $this->assertEquals('Omar', $nameField->getValue());
+        $this->assertEquals(99, $form->getField('age')->getValue());
+
+        $composedFields = $form->compose()->get('fields');
+        $this->assertEquals(1, count($composedFields));
+        $this->assertEquals(array_values($composedFields), $composedFields);
     }
 
     function test__saves_entry()
@@ -200,10 +229,10 @@ class FormTest extends ResourceTestCase
         $this->assertEquals(2, count($props['fields']));
 
         $response = $this->postJsonUser($props['url'], [
-              'name' => 'Omar bin Hattab',
-              'age'  => 33,
-          ]);
-          $response->assertOk();
+            'name' => 'Omar bin Hattab',
+            'age'  => 33,
+        ]);
+        $response->assertOk();
 
         $user = $this->users->first();
         $this->assertEquals('Omar bin Hattab', $user->name);
@@ -218,8 +247,8 @@ class FormTest extends ResourceTestCase
         });
 
         $config = FormConfig::make()
-                            ->addGroup($this->users, $this->users->newEntryInstance(), 'test_user')
-                            ->addGroup($posts, $posts->newEntryInstance(), 'test_post')
+                            ->addGroup($this->users, $this->users->newResourceEntryInstance(), 'test_user')
+                            ->addGroup($posts, $posts->newResourceEntryInstance(), 'test_post')
                             ->sleep();
 
         $form = FormConfig::wakeup($config->uuid())->makeForm()
@@ -240,23 +269,6 @@ class FormTest extends ResourceTestCase
         $post = $form->getWatcher('test_post');
         $this->assertEquals('Khalifa', $post->title);
         $this->assertTrue($post->wasRecentlyCreated);
-    }
-
-    function test__removes_field()
-    {
-        $config = FormConfig::make()
-                            ->addGroup($fields = $this->makeFields(), $user = new FormTestUser)
-                            ->sleep();
-
-        $form = FormConfig::wakeup($config->uuid())
-                          ->makeForm()
-                          ->removeFields(['name']);
-
-        $this->assertEquals(1, $form->getFields()->count());
-        $this->assertNull($form->getField('name'));
-
-        // make sure to get values after filter
-        $this->assertEquals($form->getFields()->values(), $form->getFields());
     }
 
     function test__save_handles_fields_mutating_callbacks()

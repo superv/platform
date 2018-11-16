@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field;
 use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Composition;
@@ -18,7 +19,7 @@ use SuperV\Platform\Support\Concerns\Hydratable;
  *
  * @package SuperV\Platform\Domains\Resource\Field
  */
-class Field
+class Field implements FieldContract
 {
     use Hydratable;
     use FiresCallbacks;
@@ -82,6 +83,10 @@ class Field
     /** @var \SuperV\Platform\Support\Composition */
     protected $composition;
 
+    protected $flags = [];
+
+    protected $built = false;
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
@@ -102,7 +107,9 @@ class Field
 
     public function build(): self
     {
-        $fieldType = $this->resolveType();
+        $this->built = true;
+
+        $fieldType = $this->fieldType();
 
         if ($fieldType instanceof AltersTableQuery) {
             $this->alterQueryCallback = $fieldType->alterQueryCallback();
@@ -114,13 +121,9 @@ class Field
 
         $this->on('accessing', $fieldType->getAccessor());
 
-        $this->on('mutating', $fieldType->getMutator());
-
         $this->on('presenting', $fieldType->getPresenter());
 
-        $this->setVisible($fieldType->visible());
-
-        $this->columnName = $fieldType->getColumnName();
+//        $this->setVisibility($fieldType->visible());
 
         return $this;
     }
@@ -136,7 +139,7 @@ class Field
             'config' => $this->config,
         ]);
 
-        $fieldType = $this->resolveType();
+        $fieldType = $this->fieldType();
         if ($fieldType instanceof AltersFieldComposition) {
             $fieldType->alterComposition($composition);
         }
@@ -144,7 +147,7 @@ class Field
         return $composition;
     }
 
-    public function resolveType(): FieldType
+    public function fieldType(): FieldType
     {
         if ($this->fieldType) {
             return $this->fieldType;
@@ -182,8 +185,11 @@ class Field
 
     public function setValue($value, $notify = true)
     {
-        $fieldType = $this->resolveType();
-        if ($mutator = $fieldType->getMutator()) {
+        if ($this->isHidden()) {
+            return null;
+        }
+
+        if ($mutator = $this->fieldType()->getMutator()) {
             $value = $mutator($value);
 
             if ($value instanceof Closure) {
@@ -193,14 +199,14 @@ class Field
 
         $this->value = $value;
 
-        if ($notify && $this->watcher && ! $fieldType instanceof DoesNotInteractWithTable) {
+        if ($notify && $this->watcher && ! $this->fieldType() instanceof DoesNotInteractWithTable) {
             $this->watcher->setAttribute($this->getColumnName(), $value);
         }
     }
 
-    public function initValue($value)
+    public function setValueFromWatcher()
     {
-        $this->setValue($value, false);
+        $this->value = $this->watcher->getAttribute($this->getColumnName());
     }
 
     public function setWatcher(Watcher $watcher)
@@ -227,6 +233,21 @@ class Field
         return $this->name;
     }
 
+    public function getColumnName()
+    {
+        return $this->fieldType()->getColumnName();
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->getFlag('hidden');
+    }
+
+    public function doesNotInteractWithTable()
+    {
+        return $this->fieldType() instanceof DoesNotInteractWithTable;
+    }
+
     public function getLabel(): string
     {
         return $this->label ?? str_unslug($this->name);
@@ -234,14 +255,12 @@ class Field
 
     public function isVisible(): bool
     {
-        return $this->visible;
+        return ! $this->isHidden();
     }
 
-    public function setVisible(bool $visible): Field
+    public function setVisibility(bool $visible): Field
     {
-        $this->visible = $visible;
-
-        return $this;
+        return $this->setFlag('hidden', ! $visible);
     }
 
     public function getAlterQueryCallback()
@@ -254,9 +273,21 @@ class Field
         $this->fieldTypeResolver = $fieldTypeResolver;
     }
 
-    public function getColumnName()
+    public function hide(bool $value = true)
     {
-        return $this->columnName ?? $this->getName();
+        return $this->setFlag('hidden', $value);
+    }
+
+    public function setFlag(string $flag, bool $value): self
+    {
+        $this->flags[$flag] = $value;
+
+        return $this;
+    }
+
+    public function getFlag(string $flag, $default = false): bool
+    {
+        return $this->flags[$flag] ?? $default;
     }
 
     public function uuid(): string

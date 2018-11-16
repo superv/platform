@@ -57,15 +57,9 @@ class ResourceEntry implements ResourceEntryContract, Watcher
         return $this->getEntry()->getKey();
     }
 
-    public static function newInstance($handle): ResourceEntryContract
+    public static function newInstance(string $handle): ResourceEntryContract
     {
-        if (is_string($handle)) {
-            return new static(ResourceEntryModel::make($handle));
-        }
-
-        if (($resource = $handle) instanceof Resource) {
-            return new static(ResourceEntryModel::make($resource->getHandle()), $resource);
-        }
+        return Resource::of($handle)->newResourceEntryInstance();
     }
 
     public function setAttribute($key, $value)
@@ -122,7 +116,7 @@ class ResourceEntry implements ResourceEntryContract, Watcher
     {
         $field = $this->getField($name);
 
-        $fieldType = $field->resolveType();
+        $fieldType = $field->fieldType();
         if ($fieldType instanceof AcceptsEntry) {
             $fieldType->acceptEntry($this);
         }
@@ -173,10 +167,8 @@ class ResourceEntry implements ResourceEntryContract, Watcher
             return;
         }
 
-//        $resource = Resource::of($this->getHandle());
-
         if (! $this->entryId) {
-            $instance = static::newInstance($this->getHandle())->getEntry();
+            $instance = $this->getResource()->newResourceEntryInstance()->getEntry();
             if (is_array($this->entryData)) {
                 $instance->fill($this->entryData);
             }

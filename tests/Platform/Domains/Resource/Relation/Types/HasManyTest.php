@@ -30,6 +30,9 @@ class HasManyTest extends ResourceTestCase
         $posts->fake(['t_user_id' => $userEntry->getId()], 5);
         $posts->fake(['t_user_id' => 999], 3); // these should be excluded
 
+        $allPosts = \DB::table('t_posts')->get();
+
+
         /** @var \SuperV\Platform\Domains\Resource\Relation\Types\HasMany $relation */
         $relation = $users->getRelation('posts', $userEntry);
         $this->assertInstanceOf(ProvidesTable::class, $relation);
@@ -41,9 +44,8 @@ class HasManyTest extends ResourceTestCase
         $this->assertEquals(1, $tableConfig->getFields()->count());
 
         $table = Table::config($tableConfig)->build();
-        $allPost = \DB::table('t_posts')->get();
 
-        $this->assertEquals(8, $allPost->count());
+        $this->assertEquals(8, $allPosts->count());
         $this->assertEquals(5, $table->getRows()->count());
     }
 }

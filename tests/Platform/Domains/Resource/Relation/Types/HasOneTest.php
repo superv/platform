@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\Testing\FormTester;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class HasOneTest extends ResourceTestCase
@@ -66,11 +67,14 @@ class HasOneTest extends ResourceTestCase
         /** @var Form $form */
         $form = $relation->makeForm();
         $this->assertInstanceOf(Form::class, $form);
-        $this->assertNull($form->getField('user'));
-        $this->assertEquals(1, $form->getFields()->count());
+        $this->assertEquals(2, $form->getFields()->count());
+        $this->assertFalse($form->getField('user')->isVisible());
 
-        $relatedEntry = $form->getWatcher('default')->getEntry();
-        $this->assertEquals($profile->user_id, $relatedEntry->user_id);
+        $relatedEntry = $form->getWatcher()->getEntry();
+        $this->assertEquals($user->id, $relatedEntry->user_id);
+
+        $this->withoutExceptionHandling();
+        (new FormTester($this->basePath()))->test($form);
 
     }
 }

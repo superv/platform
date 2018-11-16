@@ -12,6 +12,10 @@ class FormConfig
 
     protected $groups = [];
 
+    protected $hiddenFields = [];
+
+    protected $sleeping = false;
+
     protected function __construct()
     {
         $this->boot();
@@ -34,11 +38,24 @@ class FormConfig
     {
         cache()->forever($this->cacheKey($this->uuid()), serialize($this));
 
+        $this->sleeping = true;
+
+        return $this;
+    }
+
+    public function hideField(string $fieldName): self
+    {
+        $this->hiddenFields[] = $fieldName;
+
         return $this;
     }
 
     public function makeForm(): Form
     {
+        if (! $this->sleeping) {
+            $this->sleep();
+        }
+
         return Form::make($this);
     }
 
@@ -50,6 +67,11 @@ class FormConfig
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    public function getHiddenFields(): array
+    {
+        return $this->hiddenFields;
     }
 
     public function uuid(): string

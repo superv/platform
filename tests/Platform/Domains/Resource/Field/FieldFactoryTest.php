@@ -19,7 +19,7 @@ class FieldFactoryTest extends ResourceTestCase
         $this->assertEquals('title', $field->getName());
         $this->assertEquals('text', $field->getType());
 
-        $fieldType = $field->resolveType();
+        $fieldType = $field->fieldType();
         $fieldType->setAccessor(function ($value) { return str_slug($value); });
         $field->build();
 

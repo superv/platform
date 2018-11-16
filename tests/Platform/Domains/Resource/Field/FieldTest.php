@@ -19,7 +19,6 @@ class FieldTest extends ResourceTestCase
     {
         $field = FieldFactory::createFromArray([
             'name'        => 'email',
-            'column_name' => 'email_id',
             'type'        => 'text',
             'config'      => ['foo'],
         ]);
@@ -27,7 +26,7 @@ class FieldTest extends ResourceTestCase
         $this->assertEquals([
             'type'   => 'text',
             'uuid'   => $field->uuid(),
-            'name'   => 'email_id',
+            'name'   => 'email',
             'label'  => 'Email',
             'config' => ['foo'],
         ], $field->compose()->get());
@@ -51,7 +50,7 @@ class FieldTest extends ResourceTestCase
     {
         $field = FieldFactory::createFromArray(['name' => 'name', 'type' => 'text']);
 
-        $this->assertInstanceOf(Text::class, $field->resolveType());
+        $this->assertInstanceOf(Text::class, $field->fieldType());
     }
 }
 

@@ -38,7 +38,7 @@ class FileTest extends ResourceTestCase
         $field = $fake->getField('avatar');
         $field->build();
 
-        $fieldType = $field->resolveType();
+        $fieldType = $field->fieldType();
 
         $this->assertInstanceOf(File::class, $fieldType);
         $this->assertEquals('file', $fieldType->getType());

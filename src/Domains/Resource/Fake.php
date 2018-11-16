@@ -4,8 +4,8 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Faker\Generator;
 use Illuminate\Http\UploadedFile;
-use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
+use SuperV\Platform\Domains\Resource\Field\Field;
 
 class Fake
 {
@@ -25,35 +25,29 @@ class Fake
     /** @var array */
     protected $attributes = [];
 
-    public function __construct(Resource $resource, array $overrides = [])
+    public function __construct()
+    {
+        $this->faker = app(Generator::class);
+    }
+
+    public function __invoke(Resource $resource, array $overrides = [])
     {
         $this->resource = $resource;
         $this->overrides = $overrides;
-    }
 
-    public function __invoke()
-    {
-        $this->faker = app(Generator::class);
-
-        $this->resource->getFields()->map(function ($field) {
-//            if ($field instanceof FieldModel) {
-//                $field = FieldFactory::createFromEntry($field);
-//            }
-//            if ($field instanceof Field) {
-//                $field = FieldModel::withUuid($field->uuid());
-//            }
-            $fieldType = $field->resolveType();
-//            $fieldType = FieldType::fromEntry($field);
-
-            if ($fieldType->visible() && ! $fieldType instanceof DoesNotInteractWithTable) {
-                $this->attributes[$fieldType->getColumnName()] = $this->fake($fieldType);
-            }
-        })->filter()->toAssoc()->all();
+        $resource->getFields()
+                 ->map(function (FieldContract $field) {
+                     if (! $field->isHidden() && ! $field->doesNotInteractWithTable()) {
+                         $this->attributes[$field->getColumnName()] = $this->fake($field);
+                     }
+                 })->filter()
+                 ->toAssoc()
+                 ->all();
 
         return array_filter_null($this->attributes);
     }
 
-    protected function fake(FieldType $field)
+    protected function fake(FieldContract $field)
     {
         if ($value = array_get($this->overrides, $field->getColumnName())) {
             return $value;
@@ -65,25 +59,27 @@ class Fake
         return $this->faker->text;
     }
 
-    protected function fakeBelongsTo(FieldType $field)
+    protected function fakeBelongsTo($field)
     {
         $relatedResource = ResourceFactory::make($field->getConfigValue('related_resource'));
 
-        if ($relatedResource->count() === 0) {
+        if ($relatedResource->count() < 5) {
             $relatedResource->fake([], rand(2, 10));
         }
 
         return $relatedResource->newQuery()->inRandomOrder()->value('id');
     }
 
-    protected function fakeFile(FieldType $field)
+    protected function fakeFile()
     {
         return new UploadedFile(SV_TEST_BASE.'/__fixtures__/square.png', 'square.png');
     }
 
-    protected function fakeText(FieldType $field)
+    protected function fakeText(FieldContract $field)
     {
-        if ($fake = $this->faker->__get(camel_case($field->getName()))) {
+        $fieldName = $field->getName();
+
+        if (! in_array($fieldName, ['label']) && $fake = $this->faker->__get(camel_case($fieldName))) {
             return $fake;
         }
 
@@ -95,7 +91,7 @@ class Fake
         return $this->faker->text;
     }
 
-    protected function fakeNumber(FieldType $field)
+    protected function fakeNumber($field)
     {
         if ($field->getConfigValue('type') === 'decimal') {
             $max = $field->getConfigValue('total', 5) - 2;
@@ -116,9 +112,14 @@ class Fake
         return $this->faker->boolean;
     }
 
-    protected function fakeDatetime(FieldType $field)
+    protected function fakeDatetime($field)
     {
         return $field->getConfigValue('time') ? $this->faker->dateTime : $this->faker->date();
+    }
+
+    public static function field(Field $field)
+    {
+        return (new static)->fake($field);
     }
 
     public static function create(Resource $resource, array $overrides = [])
@@ -128,6 +129,6 @@ class Fake
 
     public static function make(Resource $resource, array $overrides = [])
     {
-        return (new static($resource, $overrides))();
+        return (new static())($resource, $overrides);
     }
 }

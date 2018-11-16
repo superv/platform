@@ -16,6 +16,8 @@ use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
+use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry as ResourceEntryContract;
+
 class Resource implements ProvidesFields, ProvidesQuery
 {
     use Hydratable;
@@ -87,19 +89,23 @@ class Resource implements ProvidesFields, ProvidesQuery
         return $this;
     }
 
-    public function newEntryInstance()
+    public function newResourceEntryInstance(): ResourceEntryContract
     {
         if ($model = $this->getConfigValue('model')) {
-            return new ResourceEntry(new $model);
+            // Custom Entry Model
+            $entry = new $model;
+        } else {
+            // Anonymous Entry Model
+            $entry = ResourceEntryModel::make($this->getHandle());
         }
 
-        return ResourceEntry::newInstance($this);
+        return new ResourceEntry($entry, $this);
     }
 
     public function create(array $attributes = []): ResourceEntry
     {
 //        $entry = ResourceEntryModel::make($this->getHandle())->create($attributes);
-        $entry = $this->newEntryInstance()->create($attributes);
+        $entry = $this->newResourceEntryInstance()->create($attributes);
 
         return ResourceEntry::make($entry, $this->fresh());
     }
@@ -173,7 +179,7 @@ class Resource implements ProvidesFields, ProvidesQuery
     {
         $field = $this->getField($name);
 
-        return $field->resolveType();
+        return $field->fieldType();
     }
 
     public function getField($name): ?Field
@@ -239,7 +245,7 @@ class Resource implements ProvidesFields, ProvidesQuery
 
     public function newQuery()
     {
-        return $this->newEntryInstance()->newQuery();
+        return $this->newResourceEntryInstance()->newQuery();
     }
 
     public function __sleep()
