@@ -49,7 +49,6 @@ class FormTest extends ResourceTestCase
         $form = $config->makeForm();
         $this->assertInstanceOf(Form::class, $form);
         $this->assertEquals(2, $form->getFields()->count());
-//        $this->assertEquals($fields, $form->getFields()->all());
         $this->assertEquals($watcher, $form->getWatcher());
         $this->assertEquals($config->uuid(), $form->uuid());
     }

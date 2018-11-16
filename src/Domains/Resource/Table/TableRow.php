@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\Builder;
 use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\Field;
@@ -85,18 +84,7 @@ class TableRow implements ProvidesResourceEntry
                     ->map(function (Field $field) {
                         $value = $this->entry->getAttribute($field->getName());
 
-//                        if ($field->hasCallback('presenting')) {
-//                            if ($value instanceof EntryContract) {
-//                                $value = ResourceEntry::make($value);
-//                            }
-//
-//                            $field->present($value);
-//
-//                            $callback = $field->getCallback('presenting');
-//                            $value = $callback($value);
-//                        }
-
-                        $this->setValue($field->getName(),   $field->present($value));
+                        $this->setValue($field->getName(), $field->present($value));
                     });
     }
 
