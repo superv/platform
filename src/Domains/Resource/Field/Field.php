@@ -243,6 +243,11 @@ class Field implements FieldContract
         return $this->getFlag('hidden');
     }
 
+    public function isUnique()
+    {
+        return $this->unique;
+    }
+
     public function doesNotInteractWithTable()
     {
         return $this->fieldType() instanceof DoesNotInteractWithTable;

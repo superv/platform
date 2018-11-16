@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesRoute;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
@@ -183,7 +184,7 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
         return $field->fieldType();
     }
 
-    public function getField($name): ?Field
+    public function getField($name): ?FieldContract
     {
         return $this->getFields()->first(function ($field) use ($name) { return $field->getName() === $name; });
     }

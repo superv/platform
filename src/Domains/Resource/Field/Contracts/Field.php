@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 
 interface Field
@@ -20,9 +21,13 @@ interface Field
 
     public function isHidden();
 
+    public function isUnique();
+
     public function doesNotInteractWithTable();
 
     public function compose();
 
     public function hide();
+
+    public function fieldType(): FieldType;
 }
