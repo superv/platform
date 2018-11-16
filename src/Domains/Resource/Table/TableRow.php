@@ -85,16 +85,18 @@ class TableRow implements ProvidesResourceEntry
                     ->map(function (Field $field) {
                         $value = $this->entry->getAttribute($field->getName());
 
-                        if ($field->hasCallback('presenting')) {
-                            if ($value instanceof EntryContract) {
-                                $value = ResourceEntry::make($value);
-                            }
+//                        if ($field->hasCallback('presenting')) {
+//                            if ($value instanceof EntryContract) {
+//                                $value = ResourceEntry::make($value);
+//                            }
+//
+//                            $field->present($value);
+//
+//                            $callback = $field->getCallback('presenting');
+//                            $value = $callback($value);
+//                        }
 
-                            $callback = $field->getCallback('presenting');
-                            $value = $callback($value);
-                        }
-
-                        $this->setValue($field->getName(), $value);
+                        $this->setValue($field->getName(),   $field->present($value));
                     });
     }
 

@@ -36,7 +36,6 @@ class FileTest extends ResourceTestCase
 
         $fake = $res->fake();
         $field = $fake->getField('avatar');
-        $field->build();
 
         $fieldType = $field->fieldType();
 

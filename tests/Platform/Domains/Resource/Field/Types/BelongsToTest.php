@@ -44,7 +44,6 @@ class BelongsToTest extends ResourceTestCase
         });
 
         $belongsTo = $users->fake(['group_id' => 100])->getField('group');
-        $belongsTo->build();
 
         $this->assertEquals('group_id', $belongsTo->getColumnName());
         $this->assertEquals([

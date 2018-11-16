@@ -3,10 +3,12 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -105,29 +107,6 @@ class Field implements FieldContract
 
     protected function boot() { }
 
-    public function build(): self
-    {
-        $this->built = true;
-
-        $fieldType = $this->fieldType();
-
-        if ($fieldType instanceof AltersTableQuery) {
-            $this->alterQueryCallback = $fieldType->alterQueryCallback();
-        }
-
-        if ($this->watcher && $fieldType instanceof AcceptsEntry) {
-            $fieldType->acceptEntry($this->watcher);
-        }
-
-        $this->on('accessing', $fieldType->getAccessor());
-
-        $this->on('presenting', $fieldType->getPresenter());
-
-//        $this->setVisibility($fieldType->visible());
-
-        return $this;
-    }
-
     public function compose(): Composition
     {
         $composition = new Composition([
@@ -147,6 +126,19 @@ class Field implements FieldContract
         return $composition;
     }
 
+    public function present($value)
+    {
+        if ($value instanceof EntryContract) {
+            $value = ResourceEntry::make($value);
+        }
+
+        if ($presenter = $this->fieldType()->getPresenter()) {
+              $value = $presenter($value);
+          }
+
+          return $value;
+    }
+
     public function fieldType(): FieldType
     {
         if ($this->fieldType) {
@@ -154,31 +146,39 @@ class Field implements FieldContract
         }
 
         if ($resolver = $this->fieldTypeResolver) {
-            return $this->fieldType = $resolver($this);
+            $this->fieldType = $resolver($this);
+        } else {
+            $class = FieldType::resolveClass($this->type);
+            $this->fieldType = new $class([
+                'type'     => $this->getType(),
+                'name'     => $this->getName(),
+                'label'    => $this->getLabel(),
+                'config'   => $this->config,
+                'rules'    => $this->rules,
+                'required' => $this->required,
+                'unique'   => $this->unique,
+
+            ]);
         }
 
-        $class = FieldType::resolveClass($this->type);
-        $this->fieldType = new $class([
-            'type'     => $this->getType(),
-            'name'     => $this->getName(),
-            'label'    => $this->getLabel(),
-            'config'   => $this->config,
-            'rules'    => $this->rules,
-            'required' => $this->required,
-            'unique'   => $this->unique,
-
-        ]);
+        if ($this->watcher && $this->fieldType instanceof AcceptsEntry) {
+            $this->fieldType->acceptEntry($this->watcher);
+        }
 
         return $this->fieldType;
     }
 
     public function getValue()
     {
-        if ($this->hasCallback('accessing')) {
-            $callback = $this->getCallback('accessing');
-
-            return $callback($this->value);
+        if ($accessor = $this->fieldType()->getAccessor()) {
+            return $accessor($this->value);
         }
+
+//        if ($this->hasCallback('accessing')) {
+//            $callback = $this->getCallback('accessing');
+//
+//            return $callback($this->value);
+//        }
 
         return $this->value;
     }
@@ -265,6 +265,10 @@ class Field implements FieldContract
 
     public function getAlterQueryCallback()
     {
+        if ($this->fieldType() instanceof AltersTableQuery) {
+            return $this->fieldType()->alterQueryCallback();
+        }
+
         return $this->alterQueryCallback;
     }
 

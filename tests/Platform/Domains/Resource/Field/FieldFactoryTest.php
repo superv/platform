@@ -21,7 +21,6 @@ class FieldFactoryTest extends ResourceTestCase
 
         $fieldType = $field->fieldType();
         $fieldType->setAccessor(function ($value) { return str_slug($value); });
-        $field->build();
 
         $field->setValue('SuperV Platform');
         $this->assertEquals('superv-platform', $field->getValue());

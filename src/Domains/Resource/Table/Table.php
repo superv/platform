@@ -46,7 +46,6 @@ class Table
     public function build(): self
     {
         $this->fields = $this->config->getFields()->map(function (Field $field) {
-            $field->build();
 
             if ($callback = $field->getAlterQueryCallback()) {
                 $callback($this->getQuery());

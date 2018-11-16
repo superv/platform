@@ -76,7 +76,6 @@ class Form
                 }
                 $field->setWatcher($watcher);
                 $field->setValueFromWatcher();
-                $field->build();
             });
         }
     }
