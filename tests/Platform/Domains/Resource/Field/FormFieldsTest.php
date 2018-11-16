@@ -5,7 +5,10 @@ namespace Tests\Platform\Domains\Resource\Field;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase;
 use Illuminate\Http\UploadedFile;
 use PHPUnit\Framework\Assert;
+use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Media\MediaBag;
+use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Fake;
 use SuperV\Platform\Domains\Resource\Resource;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -41,9 +44,12 @@ class FormFieldsTest extends ResourceTestCase
             $table->increments('id');
             $table->string('name')->entryLabel();
             $table->unsignedInteger('age');
-            $table->file('avatar');
+            $table->file('avatar')->config(['disk' => 'fakedisk']);
             $table->belongsTo('t_groups', 'group');
         });
+
+        //upload
+        Storage::fake('fakedisk');
     }
 
     function test__create_form_with_all_field_types()
@@ -90,14 +96,26 @@ class FormTester extends Assert
     {
         $fake = $this->resource->fake();
 
+        $avatarFile = (new MediaBag($fake->getEntry(), 'avatar'))->addFromUploadedFile(
+            new UploadedFile($testCase->basePath('__fixtures__/square.png'), 'square.png'),
+            MediaOptions::one('avatar')->disk('fakedisk')
+        );
+
         $response = $testCase->getJsonUser($fake->route('edit'));
         $props = $response->decodeResponseJson($this->propsKeys['edit']);
         $testCase->assertEquals(['url', 'method', 'fields'], array_keys($props));
 
-        foreach ($props['fields'] as $field) {
+        $fields = $props['fields'];
+
+        foreach ($fields as $field) {
             $value = $field['value'] ?? null;
-            if ($value !== $fake->{$field['name']}) {
-                $testCase->fail('Failed to asset equals field value for: '.$field['name']);
+            $fieldName = $field['name'];
+            if ($fieldName === 'avatar') {
+                $this->assertEquals([
+                    'url' => $avatarFile->url()
+                ], $field['config']);
+            } elseif ($value !== $fake->{$fieldName}) {
+                $testCase->fail('Failed to asset equals field value for: '.$fieldName);
             }
         }
 

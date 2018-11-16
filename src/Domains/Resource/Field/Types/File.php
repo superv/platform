@@ -7,11 +7,13 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
+use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Support\Composition;
 
-class File extends FieldType implements DoesNotInteractWithTable, AcceptsEntry
+class File extends FieldType implements DoesNotInteractWithTable, AcceptsEntry, AltersFieldComposition
 {
     /** @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract */
     protected $entry;
@@ -70,26 +72,6 @@ class File extends FieldType implements DoesNotInteractWithTable, AcceptsEntry
         };
     }
 
-    public function setValue($requestFile): ?Closure
-    {
-        $this->requestFile = $requestFile;
-
-        return function () use ($requestFile) {
-            if (! $requestFile) {
-                return null;
-            }
-
-            $media = $this->makeMediaBag()
-                          ->addFromUploadedFile($requestFile, $this->getConfigAsMediaOptions());
-
-            if ($media) {
-                $this->setConfigValue('url', $media->url());
-            }
-
-            return $media;
-        };
-    }
-
     protected function makeMediaBag(): MediaBag
     {
         $entry = $this->entry instanceof ResourceEntry ? $this->entry->getEntry() : $this->entry;
@@ -108,5 +90,12 @@ class File extends FieldType implements DoesNotInteractWithTable, AcceptsEntry
     public function acceptEntry(EntryContract $entry)
     {
         $this->entry = $entry;
+    }
+
+    public function alterComposition(Composition $composition)
+    {
+        $config = $this->getConfig();
+
+        $composition->replace('config', array_except($config, ['disk', 'path', 'visibility']));
     }
 }
