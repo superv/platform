@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
+use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesRoute;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
@@ -18,7 +19,7 @@ use SuperV\Platform\Support\Concerns\Hydratable;
 
 use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry as ResourceEntryContract;
 
-class Resource implements ProvidesFields, ProvidesQuery
+class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
 {
     use Hydratable;
     use HasConfig;
@@ -294,5 +295,17 @@ class Resource implements ProvidesFields, ProvidesQuery
     public static function of($handle): self
     {
         return ResourceFactory::make($handle);
+    }
+
+    public function provideRoute(string $name)
+    {
+        $base = 'sv/res/'.$this->getHandle();
+        if ($name === 'create') {
+            return $base.'/create';
+        }
+
+        if ($name === 'index') {
+            return $base;
+        }
     }
 }

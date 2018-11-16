@@ -25,27 +25,79 @@ interface ProvidesMoney
     public function provideMoney();
 }
 
+interface ProvidesRoute
+{
+    public function provideRoute(string $name);
+}
+
+interface AcceptsRouteProvider
+{
+    public function acceptRouteProvider(ProvidesRoute $routeProvider);
+}
+
 class NegotiatorTest extends TestCase
 {
-    function test__handshakes_requirer_with_provider()
+    function test__gets_value_from_provider_sets_to_acceptor()
     {
-        $provider = new ConcreteProvider;
-        $requirer = new ConcreteRequirer;
+        $provider = new SolidProvider;
+        $acceptor = new SolidAcceptor;
 
-        $this->assertNull($requirer->plane);
+        $this->assertNull($acceptor->plane);
         $this->assertNull($provider->money);
 
-        (new Negotiator())->handshake([
-            $provider,
-            $requirer,
-        ]);
+        Negotiator::deal($provider, $acceptor);
 
-        $this->assertEquals('Boink 404', $requirer->plane);
+        $this->assertEquals('Boink 404', $acceptor->plane);
         $this->assertEquals('123', $provider->money);
+    }
+
+    function test__set_provider_to_provider_acceptor()
+    {
+        $provider = new SolidRouteProvider;
+        $acceptor = new SolidRouteProviderAcceptor('edit');
+        $this->assertNull($acceptor->getRouteUrl());
+
+        Negotiator::deal($provider, $acceptor);
+
+        $this->assertEquals($provider->provideRoute('edit'), $acceptor->getRouteUrl());
+
     }
 }
 
-class ConcreteRequirer implements AcceptsPlane, ProvidesMoney
+class SolidRouteProviderAcceptor implements AcceptsRouteProvider
+{
+    /**
+     * @var string
+     */
+    protected $name;
+
+    protected $routeUrl;
+
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
+    public function acceptRouteProvider(ProvidesRoute $routeProvider)
+    {
+        $this->routeUrl = $routeProvider->provideRoute($this->name);
+    }
+
+    public function getRouteUrl()
+    {
+        return $this->routeUrl;
+    }
+}
+
+class SolidRouteProvider implements ProvidesRoute
+{
+    public function provideRoute(string $name)
+    {
+        return 'sv/routes/'.$name;
+    }
+}
+
+class SolidAcceptor implements AcceptsPlane, ProvidesMoney
 {
     public $plane;
 
@@ -60,7 +112,7 @@ class ConcreteRequirer implements AcceptsPlane, ProvidesMoney
     }
 }
 
-class ConcreteProvider implements ProvidesPlane, AcceptsMoney
+class SolidProvider implements ProvidesPlane, AcceptsMoney
 {
     public $money;
 

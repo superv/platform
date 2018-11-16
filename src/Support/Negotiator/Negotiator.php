@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Support\Negotiator;
 
 use ReflectionClass;
+use stdClass;
 
 class Negotiator
 {
@@ -25,7 +26,7 @@ class Negotiator
         $this->strategies = collect();
     }
 
-    public function handshake(array $parties)
+    public function handshake($parties)
     {
         collect($parties)->map(function ($party) { $this->scan($party); });
 
@@ -50,9 +51,13 @@ class Negotiator
 
     protected function negotiate($acceptor, $meta, $provider)
     {
-        $acceptor->{static::ACCEPT.$meta}(
-            $provider->{static::PROVIDE.$meta}()
-        );
+        if (ends_with($meta, 'Provider')) {
+            $acceptor->{static::ACCEPT.$meta}($provider);
+        } else {
+            $acceptor->{static::ACCEPT.$meta}(
+                $provider->{static::PROVIDE.$meta}()
+            );
+        }
     }
 
     /**
@@ -67,17 +72,10 @@ class Negotiator
             if (starts_with($basename = class_basename($interface), self::PROVIDES)) {
                 $meta = str_replace_first(self::PROVIDES, '', $basename);
                 $this->providers[$meta] = $party;
-//                $this->providers[$interface] = [
-//                    'provider' => $party,
-//                    'meta'     => str_replace_first(self::PROVIDES, '', $basename),
-//                ];
+                $this->providers[$meta.'Provider'] = $party;
             } elseif (starts_with($basename = class_basename($interface), self::ACCEPTS)) {
                 $meta = str_replace_first(self::ACCEPTS, '', $basename);
                 $this->acceptors[$meta] = $party;
-//                $this->acceptors[$interface] = [
-//                    'acceptor' => $party,
-//                    'meta'     => str_replace_first(self::ACCEPTS, '', $basename),
-//                ];
             }
         }
     }
@@ -107,10 +105,10 @@ class Negotiator
         return $this->strategies[$requirement];
     }
 
-    private static function getFirstMethod($class)
+    public static function deal($parties)
     {
-        $reflection = new ReflectionClass($class);
+        $parties = is_array($parties) ? $parties : func_get_args();
 
-        return $reflection->getMethods()[0]->getName();
+        (new static)->handshake($parties);
     }
 }

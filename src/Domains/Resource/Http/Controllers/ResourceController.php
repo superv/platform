@@ -5,15 +5,18 @@ namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 use SuperV\Modules\Nucleo\Domains\UI\Page\SvPage;
 use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
 use SuperV\Modules\Nucleo\Domains\UI\SvCard;
+use SuperV\Platform\Domains\Resource\Action\CreateEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsRouteProvider;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Http\Controllers\BaseApiController;
+use SuperV\Platform\Support\Negotiator\Negotiator;
 
 class ResourceController extends BaseApiController
 {
@@ -27,6 +30,13 @@ class ResourceController extends BaseApiController
     {
         $this->resource();
 
+        $createAction = CreateEntryAction::make();
+//        if ($createAction instanceof AcceptsRouteProvider) {
+//            $createAction->acceptRouteProvider($this->resource());
+//        }
+
+        (new Negotiator)->handshake($createAction, $this->resource);
+
         $config = new TableConfig();
         $config->setFieldsProvider($this->resource);
         $config->setQueryProvider($this->resource);
@@ -38,9 +48,12 @@ class ResourceController extends BaseApiController
         $page = SvPage::make('')->addBlock($card);
         $page->hydrate([
                 'title' => $this->resource->getLabel(),
+                'actions' => [$createAction]
             ]
         );
         $page->build();
+
+        dd($page);
 
         return sv_compose($page);
     }
