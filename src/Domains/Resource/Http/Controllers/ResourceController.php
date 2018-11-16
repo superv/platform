@@ -8,7 +8,7 @@ use SuperV\Modules\Nucleo\Domains\UI\SvCard;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Form\Jobs\BuildFormDeprecated;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -55,14 +55,14 @@ class ResourceController extends BaseApiController
 
     public function create()
     {
-        $form = (new FormBuilder)
-            ->addGroup(
-                $this->resource()->getHandle(),
-                $this->resource()->newEntryInstance(),
-                $this->resource()->getFields()
-            )
-            ->sleep()
-            ->makeForm();
+        $form = FormConfig::make()
+                          ->addGroup(
+                              $this->resource()->getFields(),
+                              $this->resource()->newEntryInstance(),
+                              $this->resource()->getHandle()
+                          )
+                          ->sleep()
+                          ->makeForm();
 
         $page = SvPage::make('')->addBlock(
             SvBlock::make('sv-form-v2')->setProps($form->compose())
@@ -78,15 +78,14 @@ class ResourceController extends BaseApiController
 
     public function edit()
     {
-        $form = (new FormBuilder)
-            ->addGroup(
-                $handle = $this->resource()->getHandle(),
-                $entry = $this->entry,
-                $fields = $this->resource()->getFields()
-//                $fields = ResourceModel::withSlug($this->resource()->getHandle())
-            )
-            ->sleep()
-            ->makeForm();
+        $form = FormConfig::make()
+                          ->addGroup(
+                              $fields = $this->resource()->getFields(),
+                              $entry = $this->entry,
+                              $handle = $this->resource()->getHandle()
+                          )
+                          ->sleep()
+                          ->makeForm();
 
         // main edit form
         $editorTab = SvBlock::make('sv-form-v2')->setProps($form->compose());

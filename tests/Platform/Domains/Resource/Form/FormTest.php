@@ -11,8 +11,8 @@ use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FormTest extends ResourceTestCase
@@ -24,23 +24,97 @@ class FormTest extends ResourceTestCase
     {
         parent::setUp();
 
-        $this->users = $this->create('test_users', function (Blueprint $table) {
+        $this->users = $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->unsignedInteger('age');
         });
     }
 
+    function test__config()
+    {
+        $fields = $this->makeFields();
+        $watcher = new FormTestUser(['name' => 'Omar', 'age' => 33]);
+
+        $config = FormConfig::make();
+        $config->addGroup($fields, $watcher, 'default')->sleep();
+
+        $config = FormConfig::wakeup($config->uuid());
+        $this->assertNotNull($config);
+        $this->assertEquals(sv_url('sv/forms/'.$config->uuid()), $config->getUrl());
+
+        $form = $config->makeForm();
+        $this->assertInstanceOf(Form::class, $form);
+        $this->assertEquals(2, $form->getFields()->count());
+//        $this->assertEquals($fields, $form->getFields()->all());
+        $this->assertEquals($watcher, $form->getWatcher());
+        $this->assertEquals($config->uuid(), $form->uuid());
+    }
+
+    function test_makes_create_form()
+    {
+        $config = FormConfig::make()
+                            ->addGroup($fields = $this->makeFields())
+                            ->sleep();
+
+        $form = FormConfig::wakeup($config->uuid())->makeForm();
+
+        $this->assertEquals($fields, $form->getFields()->all());
+        $this->assertEquals([
+            'url'    => sv_url('sv/forms/'.$form->uuid()),
+            'method' => 'post',
+            'fields' => [
+                $form->getField('name')->compose()->get(),
+                $form->getField('age')->compose()->get(),
+            ],
+        ], $form->compose());
+    }
+
+    function test_makes_create_form_without_sleep_wakeup()
+    {
+        $form = FormConfig::make()
+                          ->addGroup($fields = $this->makeFields())
+                          ->makeForm();
+
+        $this->assertEquals($fields, $form->getFields()->all());
+        $this->assertEquals([
+            'url'    => sv_url('sv/forms/'.$form->uuid()),
+            'method' => 'post',
+            'fields' => [
+                $form->getField('name')->compose()->get(),
+                $form->getField('age')->compose()->get(),
+            ],
+        ], $form->compose());
+    }
+
+    function test_makes_update_form()
+    {
+        $config = FormConfig::make()
+                            ->addGroup(
+                                $fields = $this->makeFields(),
+                                $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
+                            )
+                            ->sleep();
+
+        $form = FormConfig::wakeup($config->uuid())->makeForm();
+
+        $this->assertEquals('Omar', $form->getField('name')->compose()->get('value'));
+        $this->assertEquals(33, $form->getField('age')->compose()->get('value'));
+    }
+
     function test__saves_form()
     {
-        $builder = (new FormBuilder)
-            ->addGroup('default', null, $fields = $this->makeFields())
-            ->sleep();
+        $config = FormConfig::make()
+                            ->addGroup(
+                                $fields = $this->makeFields(),
+                                $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
+                            )
+                            ->sleep();
 
-        $form = FormBuilder::wakeup($builder->uuid())
-                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                           ->makeForm()
-                           ->save();
+        $form = FormConfig::wakeup($config->uuid())
+                          ->makeForm()
+                          ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
+                          ->save();
 
         $this->assertEquals('Omar', $form->getField('name')->getValue());
         $this->assertEquals(33, $form->getField('age')->getValue());
@@ -48,14 +122,14 @@ class FormTest extends ResourceTestCase
 
     function test__saves_entry()
     {
-        $builder = (new FormBuilder)
-            ->addGroup('default', $user = new TestUser, $this->makeFields())
-            ->sleep();
+        $config = FormConfig::make()
+                            ->addGroup($fields = $this->makeFields(), $user = new FormTestUser)
+                            ->sleep();
 
-        $form = FormBuilder::wakeup($builder->uuid())
-                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                           ->makeForm()
-                           ->save();
+        $form = FormConfig::wakeup($config->uuid())->makeForm();
+
+        $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
+             ->save();
 
         $this->assertEquals('Omar', $form->getField('name')->getValue());
         $this->assertEquals(33, $form->getField('age')->getValue());
@@ -68,19 +142,22 @@ class FormTest extends ResourceTestCase
 
     function test__returns_watcher()
     {
-        $form = (new FormBuilder)
-            ->addGroup('user', $user = new TestUser, $this->makeFields())
-            ->sleep()
-            ->makeForm();
+        $config = FormConfig::make()
+                            ->addGroup($fields = $this->makeFields(), $user = new FormTestUser, 'user')
+                            ->sleep();
+
+        $form = FormConfig::wakeup($config->uuid())->makeForm();
+
         $this->assertEquals($user, $form->getWatcher('user'));
     }
 
     function test__posts_form()
     {
-        $form = (new FormBuilder)
-            ->addGroup('test_user', $user = new TestUser, $this->makeFields())
-            ->sleep()
-            ->makeForm();
+        $config = FormConfig::make()
+                            ->addGroup($fields = $this->makeFields(), $user = new FormTestUser)
+                            ->sleep();
+
+        $form = FormConfig::wakeup($config->uuid())->makeForm();
 
         $response = $this->postJsonUser($form->getUrl(), [
             'name' => 'Omar bin Hattab',
@@ -88,9 +165,51 @@ class FormTest extends ResourceTestCase
         ]);
         $response->assertOk();
 
-        $user = TestUser::first();
+        $user = FormTestUser::first();
         $this->assertEquals('Omar bin Hattab', $user->name);
         $this->assertEquals(99, $user->age);
+    }
+
+    function test__resource_create_over_http()
+    {
+        $response = $this->getJsonUser($this->users->route('create'));
+        $response->assertOk();
+
+        $props = $response->decodeResponseJson('data.props.page.blocks.0.props');
+        $this->assertEquals(['url', 'method', 'fields'], array_keys($props));
+        $this->assertEquals(2, count($props['fields']));
+
+        $response = $this->postJsonUser($props['url'], [
+            'name' => 'Omar',
+            'age'  => 33,
+        ]);
+        $response->assertOk();
+
+        $user = $this->users->first();
+        $this->assertEquals('Omar', $user->name);
+        $this->assertEquals(33, $user->age);
+    }
+
+    function test__resource_edit_over_http()
+    {
+        $user = $this->users->create(['name' => 'Omar', 'age' => 123]);
+
+        $response = $this->getJsonUser($user->route('edit'));
+        $response->assertOk();
+
+        $props = $response->decodeResponseJson('data.props.page.blocks.0.props.tabs.0.block.props');
+        $this->assertEquals(['url', 'method', 'fields'], array_keys($props));
+        $this->assertEquals(2, count($props['fields']));
+
+        $response = $this->postJsonUser($props['url'], [
+              'name' => 'Omar bin Hattab',
+              'age'  => 33,
+          ]);
+          $response->assertOk();
+
+        $user = $this->users->first();
+        $this->assertEquals('Omar bin Hattab', $user->name);
+        $this->assertEquals(33, $user->age);
     }
 
     function test__saves_multiple_entries()
@@ -100,19 +219,18 @@ class FormTest extends ResourceTestCase
             $table->string('title');
         });
 
-        $builder = (new FormBuilder)
-            ->addGroup('test_user', $this->users->newEntryInstance(), $this->users)
-            ->addGroup('test_post', $posts->newEntryInstance(), $posts)
-            ->sleep();
+        $config = FormConfig::make()
+                            ->addGroup($this->users, $this->users->newEntryInstance(), 'test_user')
+                            ->addGroup($posts, $posts->newEntryInstance(), 'test_post')
+                            ->sleep();
 
-        $form = FormBuilder::wakeup($builder->uuid())
-                           ->setRequest($this->makePostRequest([
-                               'name'  => 'Omar',
-                               'title' => 'Khalifa',
-                               'age'   => 33,
-                           ]))
-                           ->makeForm()
-                           ->save();
+        $form = FormConfig::wakeup($config->uuid())->makeForm()
+                          ->setRequest($this->makePostRequest([
+                              'name'  => 'Omar',
+                              'title' => 'Khalifa',
+                              'age'   => 33,
+                          ]))
+                          ->save();
 
         $this->assertEquals('Omar', $form->getField('name', 'test_user')->getValue());
         $this->assertEquals("Khalifa", $form->getField('title', 'test_post')->getValue());
@@ -126,52 +244,21 @@ class FormTest extends ResourceTestCase
         $this->assertTrue($post->wasRecentlyCreated);
     }
 
-    function test__where_are_the_field_types()
-    {
-        $builder = (new FormBuilder)
-            ->addGroup('test_user', $user = new TestUser, ResourceFactory::make('test_users'))
-            ->sleep();
-
-        $form = FormBuilder::wakeup($builder->uuid())
-                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                           ->makeForm();
-
-        $form->save();
-
-        $user = $form->getWatcher('test_user');
-
-        $this->assertEquals('Omar', $user->name);
-        $this->assertEquals(33, $user->age);
-        $this->assertTrue($user->wasRecentlyCreated);
-    }
-
-
     function test__removes_field()
     {
-        $form = (new FormBuilder)
-            ->addGroup('default', new TestUser(['name' => 'Omar', 'age' => 33]), $this->makeFields())
-            ->removeField('name')
-            ->sleep()
-            ->makeForm();
+        $config = FormConfig::make()
+                            ->addGroup($fields = $this->makeFields(), $user = new FormTestUser)
+                            ->sleep();
+
+        $form = FormConfig::wakeup($config->uuid())
+                          ->makeForm()
+                          ->removeFields(['name']);
 
         $this->assertEquals(1, $form->getFields()->count());
         $this->assertNull($form->getField('name'));
 
         // make sure to get values after filter
         $this->assertEquals($form->getFields()->values(), $form->getFields());
-    }
-
-    public function makeFields(): array
-    {
-        return [
-            FieldFactory::createFromArray(['name' => 'name', 'type' => 'text']),
-            FieldFactory::createFromArray(['name' => 'age', 'type' => 'number']),
-        ];
-    }
-
-    public function makeField(array $params): Field
-    {
-        return FieldFactory::createFromArray($params);
     }
 
     function test__save_handles_fields_mutating_callbacks()
@@ -181,13 +268,17 @@ class FormTest extends ResourceTestCase
             $ageField = $this->makeField(['name' => 'age', 'type' => 'number']),
             $fileField = $this->makeField(['name' => 'avatar', 'type' => 'file']),
         ];
-        $builder = (new FormBuilder)
-            ->addGroup('default', $testUser = new FormTestUser, $fields)
-            ->sleep();
 
-        $form = FormBuilder::wakeup($builder->uuid())
-                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33, 'avatar' => new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png')]))
-                           ->makeForm();
+        $config = FormConfig::make()
+                            ->addGroup($fields, $testUser = new FormTestUser)
+                            ->sleep();
+
+        $file = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
+        $form = FormConfig::wakeup($config->uuid())
+                          ->makeForm()
+                          ->setRequest($this->makePostRequest(['name'   => 'Omar',
+                                                               'age'    => 33,
+                                                               'avatar' => $file]));
 
         $form->getField('avatar')->setFieldTypeResolver(function () {
             return new TestFileFieldType;
@@ -198,22 +289,29 @@ class FormTest extends ResourceTestCase
         $this->assertNull($testUser->avatar);
 
         $this->assertEquals(1, Media::count());
+    }
 
+    protected function makeFields(): array
+    {
+        return [
+            FieldFactory::createFromArray(['name' => 'name', 'type' => 'text']),
+            FieldFactory::createFromArray(['name' => 'age', 'type' => 'number']),
+        ];
+    }
+
+    protected function makeField(array $params): Field
+    {
+        return FieldFactory::createFromArray($params);
     }
 }
 
 class FormTestUser extends Model implements Watcher, EntryContract
 {
-    protected $table = 'test_users';
-
     public $timestamps = false;
 
-    protected $guarded = [];
+    protected $table = 't_users';
 
-    public function setAttribute($key, $value)
-    {
-        parent::setAttribute($key, $value);
-    }
+    protected $guarded = [];
 
     public function id()
     {

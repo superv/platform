@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Form;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldsProvider;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
@@ -45,12 +46,33 @@ class Form
 
     protected $postSaveCallbacks = [];
 
-    public function __construct(array $fields = [])
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Form\FormConfig
+     */
+    protected $config;
+
+    protected function __construct(FormConfig $config)
     {
+        $this->config = $config;
         $this->groups = collect();
-        $this->fields = collect($fields);
-        $this->uuid = uuid();
-        $this->url = sv_url('sv/forms/'.$this->uuid);
+        $this->fields = collect();
+
+        $this->boot();
+    }
+
+    protected function boot()
+    {
+        foreach($this->config->getGroups() as $handle => $group) {
+            $this->addGroup($group['provider'], $group['watcher'], $handle);
+        }
+
+
+        foreach ($this->watchers as $handle => $watcher) {
+            $this->fields[$handle]->map(function (Field $field) use ($watcher) {
+                $field->setWatcher($watcher);
+                $field->build();
+            });
+        }
     }
 
     public function save(): self
@@ -66,38 +88,6 @@ class Form
         });
 
         return $this;
-    }
-
-    public function wakeup()
-    {
-        foreach ($this->watchers as $handle => $watcher) {
-            $this->fields[$handle]->map(function (Field $field) use ($watcher) {
-                $field->setWatcher($watcher);
-                $field->build();
-            });
-        }
-    }
-
-    public function mergeFields(Collection $fields, ?Watcher $watcher, string $handle = 'default')
-    {
-        $this->fields->put($handle, $fields);
-
-        if ($watcher) {
-            $this->addWatcher($handle, $watcher);
-
-            $fields->map(function (Field $field) use ($watcher) {
-                $field->initValue($watcher->getAttribute($field->getName()));
-            });
-        }
-    }
-
-    public function removeFields(array $skipFields)
-    {
-        $this->fields = $this->fields->map(function (Collection $fields) use ($skipFields) {
-            return $fields->filter(function (Field $field) use ($skipFields) {
-                return ! in_array($field->getName(), $skipFields);
-            });
-        });
     }
 
     public function addWatcher($handle, Watcher $watcher)
@@ -123,9 +113,11 @@ class Form
         });
     }
 
-    public function setRequest(Request $request)
+    public function setRequest(Request $request): self
     {
         $this->request = $request;
+
+        return $this;
     }
 
     public function compose(): array
@@ -137,6 +129,64 @@ class Form
                              ->map(function (Field $field) { return $field->compose()->get(); })
                              ->all(),
         ];
+    }
+
+    public function mergeFields($fields, ?Watcher $watcher, string $handle = 'default')
+    {
+        $fields = $this->provideFields($fields);
+        $this->fields->put($handle, $fields);
+
+        if ($watcher) {
+            $this->addWatcher($handle, $watcher);
+
+            // bunu boota al
+            $fields->map(function (Field $field) use ($watcher) {
+                $field->initValue($watcher->getAttribute($field->getName()));
+            });
+        }
+    }
+
+    public function removeField(string $name)
+    {
+        return $this->removeFields([$name]);
+    }
+
+    public function removeFields(array $skipFields)
+    {
+        $this->fields = $this->fields->map(function (Collection $fields) use ($skipFields) {
+            return $fields->filter(function (Field $field) use ($skipFields) {
+                return ! in_array($field->getName(), $skipFields);
+            });
+        });
+
+        return $this;
+    }
+
+    public function addFields($fields): self
+    {
+        $this->mergeFields($fields, null, 'default');
+
+        return $this;
+    }
+
+    protected function provideFields($fields)
+    {
+        if ($fields instanceof ProvidesFields) {
+            $fields = $fields->provideFields();
+        }
+
+        if (is_array($fields)) {
+            $fields = collect($fields);
+        }
+
+        return $fields;
+    }
+
+    public function addGroup($fieldsProvider, Watcher $watcher = null, string $handle = 'default'): self
+    {
+        $this->mergeFields($fieldsProvider, $watcher, $handle);
+
+        return $this;
     }
 
     public function getFields(): Collection
@@ -155,7 +205,7 @@ class Form
 
     public function getUrl(): string
     {
-        return $this->url;
+        return $this->config->getUrl();
     }
 
     public function getMethod(): string
@@ -166,16 +216,29 @@ class Form
     public function sleep()
     {
         cache()->forever($this->cacheKey($this->uuid()), serialize($this));
+
+        return $this;
     }
 
-    public function getWatcher($handle)
+    protected function washFace()
+    {
+//        foreach ($this->watchers as $handle => $watcher) {
+//            $this->fields[$handle]->map(function (Field $field) use ($watcher) {
+//                $field->setWatcher($watcher);
+//                $field->build();
+//            });
+//        }
+    }
+
+    public function getWatcher(?string $handle = 'default')
     {
         return $this->watchers[$handle];
     }
 
+
     public function uuid(): string
     {
-        return $this->uuid;
+        return $this->config->uuid();
     }
 
     public static function cacheKeyPrefix()
@@ -188,19 +251,20 @@ class Form
         return static::cacheKeyPrefix().':'.$uuid;
     }
 
-    public static function fromCache($uuid): ?self
+    public static function wakeup($uuid): ?self
     {
+        /** @var \SuperV\Platform\Domains\Resource\Form\Form $form */
         if ($form = cache(static::cacheKey($uuid))) {
             return unserialize($form);
         }
 
+        $form->washFace();
+
         return null;
     }
 
-    public static function of(FieldsProvider $provider): Form
+    public static function make(FormConfig $config): Form
     {
-        $form = (new static($provider->provide()));
-
-        return $form;
+        return new static($config);
     }
 }

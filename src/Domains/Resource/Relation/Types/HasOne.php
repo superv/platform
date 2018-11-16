@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne as EloquentHasOne;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry as ConcreteResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
@@ -36,11 +36,10 @@ class HasOne extends Relation implements ProvidesForm
     {
         $relatedEntry = $this->getRelatedEntry() ?? ConcreteResourceEntry::make($this->newQuery()->make());
 
-        $form = (new FormBuilder)
-            ->addGroup('default', $relatedEntry, $relatedEntry->getResource())
-            ->removeField($this->parentResourceEntry->getResource()->getResourceKey())
-            ->sleep()
-            ->makeForm();
+        $form = FormConfig::make()
+            ->addGroup($relatedEntry->getResource(), $relatedEntry)
+            ->makeForm()
+            ->removeField($this->parentResourceEntry->getResource()->getResourceKey());
 
         return $form;
     }

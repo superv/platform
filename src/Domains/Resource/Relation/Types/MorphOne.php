@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry as ConcreteResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
@@ -40,9 +40,8 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry
     {
         $relatedEntry = $this->getRelatedEntry() ?? $this->newRelatedInstance();
 
-        $form = (new FormBuilder)
-            ->addGroup('default', $relatedEntry, $relatedEntry->getResource())
-            ->sleep()
+        $form = FormConfig::make()
+            ->addGroup($relatedEntry->getResource(), $relatedEntry)
             ->makeForm();
 
         return $form;

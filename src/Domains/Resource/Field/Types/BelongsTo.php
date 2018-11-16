@@ -25,7 +25,6 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
         return $this;
     }
 
-
     public function alterComposition(Composition $composition)
     {
         $relationConfig = RelationConfig::create($this->type, $this->config);
@@ -39,7 +38,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
             // If parent exists, make sure we get the
             // current related entry in the list
             if ($this->entry->exists) {
-                $query->orWhere($query->getModel()->getQualifiedKeyName(), $this->getEntry()->getAttribute($this->getName()));
+                $query->orWhere($query->getModel()->getQualifiedKeyName(), $this->entry->getAttribute($this->getName()));
             }
         } else {
             $query->get();
