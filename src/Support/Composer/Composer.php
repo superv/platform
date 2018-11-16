@@ -1,6 +1,8 @@
 <?php namespace SuperV\Platform\Support\Composer;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Contracts\Arrayable;
 
 class Composer
 {
@@ -16,13 +18,39 @@ class Composer
 
     public function compose($data)
     {
+        //
+        // How should I compose a string?
+        //
         if (is_string($data)) {
             return $data;
         }
-        if ($data instanceof Composable) {
-            return $this->compose($data->compose($this->params));
+
+        if ($data instanceof Arrayable) {
+            $data = $data->toArray();
         }
 
+        //
+        // I know this..
+        //
+        if ($data instanceof Composable) {
+            $composed = $data->compose($this->params);
+            return $this->compose($composed);
+        }
+
+        //
+        // Collections..
+        //
+        if ($data instanceof Collection) {
+            $data->transform(function ($item) {
+                return $this->compose($item);
+            });
+
+            return $data;
+        }
+
+        //
+        // Arrays or wannabes..
+        //
         if (is_array($data)) {
             foreach ($data as $key => &$value) {
                 $value = $this->compose($value);
@@ -31,14 +59,11 @@ class Composer
             return $data;
         }
 
-        if ($data instanceof Collection || $data instanceof \Illuminate\Support\Collection) {
-            $data->transform(function ($item) {
-                return $this->compose($item);
-            });
 
-            return $data;
-        }
 
+        //
+        // It's getting harder.. Objects..
+        //
         if (is_object($data)) {
             /**
              * Search  nearby composers of the Class

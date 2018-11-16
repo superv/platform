@@ -3,10 +3,11 @@
 namespace SuperV\Platform\Domains\Resource\Action;
 
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
+use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-class Action implements ActionContract
+class Action implements ActionContract, Composable
 {
     use FiresCallbacks;
 
@@ -29,7 +30,7 @@ class Action implements ActionContract
     {
     }
 
-    public function compose(): Composition
+    public function compose(array $params = [])
     {
         $composition = new Composition([
             'name'  => $this->getName(),

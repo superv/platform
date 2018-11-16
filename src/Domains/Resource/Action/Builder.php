@@ -18,7 +18,7 @@ class Builder
 
     public function compose(): array
     {
-        (new Negotiator)->handshake($this->contexts);
+        Negotiator::deal($this->contexts);
 
         return $this->action->compose()->get();
     }
