@@ -44,11 +44,6 @@ class Form
      */
     protected $request;
 
-    /**
-     * @var bool
-     */
-    protected $booted = false;
-
     protected $watchers = [];
 
     protected $postSaveCallbacks = [];
@@ -61,26 +56,8 @@ class Form
         $this->url = sv_url('sv/forms/'.$this->uuid);
     }
 
-    public function boot()
-    {
-        if ($this->booted) {
-            PlatformException::fail("Form already booted");
-        }
-
-        $this->booted = true;
-
-        // Make field type and tell them to watch the fields
-//        $this->getFields()->map(function (Field $field) {
-////            FieldType::fromField($field);
-//        });
-//
-
-    }
-
     public function save(): self
     {
-        $this->ensureBooted();
-
         $this->getFields()->map(function (Field $field) {
             $this->postSaveCallbacks[] = $field->setValue($this->request->__get($field->getName()));
         });
@@ -109,9 +86,6 @@ class Form
         $this->fields->put($handle, $fields);
 
         if ($watcher) {
-//            if ($watcher instanceof Entry) {
-//                $watcher = new ResourceEntry($watcher);
-//            }
             $this->addWatcher($handle, $watcher);
 
             $fields->map(function (Field $field) use ($watcher) {
@@ -147,10 +121,6 @@ class Form
     {
         $this->request = $request;
     }
-
-    //
-    //      <!---  M U T A T O R   M E T H O D S   E N D S  H E R E  --->
-    //
 
     public function compose(): array
     {
@@ -188,13 +158,6 @@ class Form
     public function sleep()
     {
         cache()->forever($this->cacheKey($this->uuid()), serialize($this));
-    }
-
-    public function ensureBooted(): void
-    {
-        if (! $this->booted) {
-            PlatformException::fail('Form is not booted yet.');
-        }
     }
 
     public function getWatcher($handle)

@@ -39,7 +39,6 @@ class FormTest extends ResourceTestCase
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                           ->build()
                            ->getForm()
                            ->save();
 
@@ -55,7 +54,6 @@ class FormTest extends ResourceTestCase
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                           ->build()
                            ->getForm()
                            ->save();
 
@@ -113,7 +111,6 @@ class FormTest extends ResourceTestCase
                                'title' => 'Khalifa',
                                'age'   => 33,
                            ]))
-                           ->build()
                            ->getForm()
                            ->save();
 
@@ -137,7 +134,6 @@ class FormTest extends ResourceTestCase
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                           ->build()
                            ->getForm();
 
         $form->save();
@@ -175,7 +171,6 @@ class FormTest extends ResourceTestCase
 
         $form = FormBuilder::wakeup($builder->uuid())
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33, 'avatar' => new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png')]))
-                           ->build()
                            ->getForm();
 
         $form->getField('avatar')->setFieldTypeResolver(function () {

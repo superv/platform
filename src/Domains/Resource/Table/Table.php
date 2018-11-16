@@ -46,9 +46,6 @@ class Table
     public function build(): self
     {
         $this->fields = $this->config->getFields()->map(function (Field $field) {
-//            $fieldType = FieldType::fromEntry(FieldModel::withUuid($field->uuid())); // @TODO.ali: aga bu nedir???
-//            AttachTypeToField::dispatch($fieldType, $field);
-//            $fieldType->buildForView($this->getQuery());
             $field->build();
 
             if ($callback = $field->getAlterQueryCallback()) {

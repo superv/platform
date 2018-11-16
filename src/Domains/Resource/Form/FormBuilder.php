@@ -3,13 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
-use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Exceptions\PlatformException;
 
 class FormBuilder
 {
@@ -38,23 +33,7 @@ class FormBuilder
 
     public function sleep(): self
     {
-//        $this->groups->map(function (Group $group) {
-//                $group->setSkipFields($this->skipFields);
-//                $group->build();
-//            });
-
-//        $this->form->addGroups($this->groups);
-//        $this->form->setGroups($this->groups);
-
         $this->form->sleep();
-
-        return $this;
-    }
-
-
-    public function build(): self
-    {
-        $this->form->boot();
 
         return $this;
     }
@@ -65,17 +44,12 @@ class FormBuilder
 
         $this->form->mergeFields($fields, $watcher, $handle);
 
-
-
-//        $this->groups->push(new Group($handle, $watcher, $fields));
-
         return $this;
     }
 
     public function addFields($fields): FormBuilder
     {
         $this->form->mergeFields(collect($fields), null, 'default');
-//        $this->groups->push(new NullWatcherGroup($this->provideFields($fields)));
 
         return $this;
     }
@@ -85,9 +59,6 @@ class FormBuilder
         $this->skipFields[] = $name;
 
         return $this;
-//        $this->fields = $this->fields->filter(function(Field $field) use ($name) {
-//            return $field->getName() !== $name;
-//        })->values();
     }
 
     public function setRequest(Request $request): self
@@ -104,25 +75,9 @@ class FormBuilder
         return $this;
     }
 
-
     public function getForm(): Form
     {
         return $this->form;
-    }
-
-    public function makeFields()
-    {
-        $fields = $this->groups ?? $this->provider->provideFields();
-
-        $fields = $fields->map(function ($field) {
-            if ($field instanceof Field) {
-                return $field;
-            }
-
-            return FieldFactory::createFromEntry($field);
-        });
-
-        return $fields;
     }
 
     protected function provideFields($fields)
