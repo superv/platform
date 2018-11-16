@@ -2,12 +2,11 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use Closure;
-use SuperV\Platform\Domains\Resource\Contracts\MustBeInitialized;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Support\Composition;
 
-class DeleteEntryAction extends Action implements AcceptsResourceEntry, MustBeInitialized
+class DeleteEntryAction extends Action implements AcceptsResourceEntry
 {
     protected $name = 'delete';
 
@@ -16,18 +15,17 @@ class DeleteEntryAction extends Action implements AcceptsResourceEntry, MustBeIn
     /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
     protected $entry;
 
+    protected function boot()
+    {
+        parent::boot();
+
+        $this->on('composed', function (Composition $composition) {
+            $composition->replace('url', $this->entry->route('delete'));
+        });
+    }
+
     public function acceptResourceEntry(ResourceEntry $entry)
     {
         $this->entry = $entry;
-    }
-
-    public function merge()
-    {
-        $this->payload['url'] = $this->entry->route('delete');
-    }
-
-    public function init()
-    {
-        $this->on('composed', Closure::fromCallable([$this, 'merge']));
     }
 }

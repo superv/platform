@@ -330,7 +330,7 @@ class RelationConfig
         return (new static($type));
     }
 
-    public static function create($type, array $data)
+    public static function create($type, array $data): RelationConfig
     {
         return (new static(new RelationType($type)))->hydrate($data);
     }

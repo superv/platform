@@ -5,14 +5,9 @@ namespace SuperV\Platform\Domains\Resource\Form;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Database\Model\Entry;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldsProvider;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Exceptions\PlatformException;
 
 class Form
 {
@@ -45,7 +40,7 @@ class Form
     protected $request;
 
     protected $skipFields = [];
-    
+
     protected $watchers = [];
 
     protected $postSaveCallbacks = [];
@@ -91,16 +86,16 @@ class Form
             $this->addWatcher($handle, $watcher);
 
             $fields->map(function (Field $field) use ($watcher) {
-                $field->setValue($watcher->getAttribute($field->getName()), false);
+                $field->initValue($watcher->getAttribute($field->getName()));
             });
         }
     }
 
     public function removeFields(array $skipFields)
     {
-       $this->fields = $this->fields->map(function(Collection $fields) use ($skipFields) {
-            return $fields->filter(function(Field $field) use ($skipFields) {
-                return !in_array($field->getName(), $skipFields);
+        $this->fields = $this->fields->map(function (Collection $fields) use ($skipFields) {
+            return $fields->filter(function (Field $field) use ($skipFields) {
+                return ! in_array($field->getName(), $skipFields);
             });
         });
     }
@@ -138,7 +133,9 @@ class Form
         return [
             'url'    => $this->getUrl(),
             'method' => $this->getMethod(),
-            'fields' => $this->fields->flatten(1)->map->compose()->all(),
+            'fields' => $this->getFields()
+                             ->map(function (Field $field) { return $field->compose()->get(); })
+                             ->all(),
         ];
     }
 

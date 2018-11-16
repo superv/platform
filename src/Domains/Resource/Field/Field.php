@@ -4,8 +4,10 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
+use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
+use SuperV\Platform\Support\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -75,14 +77,13 @@ class Field
      */
     protected $fieldTypeResolver;
 
+    /** @var \SuperV\Platform\Support\Composition */
+    protected $composition;
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
-        $this->boot();
-    }
 
-    protected function boot()
-    {
         $this->uuid = $this->uuid ?? uuid();
 
         if ($this->unique) {
@@ -91,7 +92,11 @@ class Field
         if ($this->required) {
             $this->rules[] = 'required';
         }
+
+        $this->boot();
     }
+
+    protected function boot() { }
 
     public function build(): self
     {
@@ -102,8 +107,8 @@ class Field
         }
 
         if ($this->watcher && $fieldType instanceof AcceptsEntry) {
-             $fieldType->acceptEntry($this->watcher);
-         }
+            $fieldType->acceptEntry($this->watcher);
+        }
 
         $this->on('accessing', $fieldType->getAccessor());
 
@@ -114,6 +119,25 @@ class Field
         $this->setVisible($fieldType->visible());
 
         return $this;
+    }
+
+    public function compose(): Composition
+    {
+        $composition = new Composition([
+            'type'   => $this->getType(),
+            'uuid'   => $this->uuid(),
+            'name'   => $this->getName(),
+            'label'  => $this->getLabel(),
+            'value'  => $this->getValue(),
+            'config' => $this->config,
+        ]);
+
+        $fieldType = $this->resolveType();
+        if ($fieldType instanceof AltersFieldComposition) {
+            $fieldType->alterComposition($composition);
+        }
+
+        return $composition;
     }
 
     public function resolveType(): FieldType
@@ -165,11 +189,15 @@ class Field
 
         $this->value = $value;
 
-        if ($notify && $this->watcher && !$fieldType instanceof DoesNotInteractWithTable) {
+        if ($notify && $this->watcher && ! $fieldType instanceof DoesNotInteractWithTable) {
             $this->watcher->setAttribute($this->getName(), $value);
         }
     }
 
+    public function initValue($value)
+    {
+        $this->setValue($value, false);
+    }
 
     public function setWatcher(Watcher $watcher)
     {
@@ -200,18 +228,6 @@ class Field
         return $this->label ?? str_unslug($this->name);
     }
 
-    public function compose(): array
-    {
-        return array_filter([
-            'type'   => $this->getType(),
-            'uuid'   => $this->uuid(),
-            'name'   => $this->getName(),
-            'label'  => $this->getLabel(),
-            'value'  => $this->getValue(),
-            'config' => $this->config,
-        ]);
-    }
-
     public function isVisible(): bool
     {
         return $this->visible;
@@ -229,10 +245,7 @@ class Field
         return $this->alterQueryCallback;
     }
 
-    /**
-     * @param \Closure $fieldTypeResolver
-     */
-    public function setFieldTypeResolver(\Closure $fieldTypeResolver): void
+    public function setFieldTypeResolver(Closure $fieldTypeResolver): void
     {
         $this->fieldTypeResolver = $fieldTypeResolver;
     }

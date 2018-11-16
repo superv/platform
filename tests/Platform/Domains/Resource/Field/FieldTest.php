@@ -30,7 +30,7 @@ class FieldTest extends ResourceTestCase
             'name'  => 'email',
             'label' => 'Email',
             'config' => ['foo']
-        ], $field->compose());
+        ], $field->compose()->get());
     }
 
     function test__notify_watchers()

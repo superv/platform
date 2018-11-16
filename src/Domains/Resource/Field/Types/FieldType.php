@@ -6,7 +6,6 @@ use Closure;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Rules;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -73,7 +72,11 @@ abstract class FieldType
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
+
+        $this->boot();
     }
+
+    protected function boot() { }
 
     public function hasColumn(): bool
     {
@@ -119,11 +122,6 @@ abstract class FieldType
     {
         return $this->type;
     }
-//
-//    public function mergeConfig(array $config)
-//    {
-//        $this->config = array_merge($this->config, $config);
-//    }
 
     public function getRules(): array
     {
@@ -151,6 +149,7 @@ abstract class FieldType
         if (! $this->isRequired()) {
             $rules[] = 'nullable';
         }
+
         return $rules;
     }
 
@@ -159,28 +158,6 @@ abstract class FieldType
         $this->rules = Rules::make($this->rules)->merge($rules)->get();
 //        $this->rules = array_merge($this->rules, $rules);
     }
-
-//    public function getEntry(): ?ResourceEntryModel
-//    {
-//        return $this->entry ? $this->entry->getEntry() : null;
-//    }
-//
-//    public function setEntry(\SuperV\Platform\Domains\Resource\Model\ResourceEntry $entry): FieldType
-//    {
-//        $this->entry = $entry;
-//
-//        return $this;
-//    }
-//
-//    public function entryExists()
-//    {
-//        return optional($this->entry)->exists();
-//    }
-//
-//    public function hasEntry()
-//    {
-//        return ! is_null($this->entry);
-//    }
 
     public function getValue()
     {
@@ -212,7 +189,6 @@ abstract class FieldType
     {
         return $this->getValue();
     }
-
 
     public function hasAccessor()
     {
@@ -257,18 +233,6 @@ abstract class FieldType
 
         return $fieldType;
     }
-//
-//    public static function fromEntry(FieldModel $fieldEntry): self
-//    {
-//        $class = FieldType::resolveClass($fieldEntry->getType());
-//
-//        $field = new $class($fieldEntry);
-//
-//        $field->hydrate($fieldEntry->toArray());
-//        $field->setRules($fieldEntry->getRules()); // @TODO: refactor, very problematic
-//
-//        return $field;
-//    }
 
     public static function resolve($type): FieldType
     {

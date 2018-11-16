@@ -29,15 +29,29 @@ class BelongsToTest extends ResourceTestCase
         $this->assertEquals('belongs_to', $belongsTo->getType());
         $this->assertEquals('t_groups', $belongsTo->getConfigValue('related_resource'));
         $this->assertEquals('group_id', $belongsTo->getConfigValue('foreign_key'));
+    }
 
+    function test__compose()
+    {
+        $this->makeGroupResource();
+
+        $users = $this->create('t_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name')->entryLabel();
+            $table->belongsTo('t_groups', 'group');
+        });
+
+        $belongsTo = $users->fake(['group_id' => 100])->getField('group');
         $belongsTo->build();
+
         $this->assertEquals([
             ['value' => 100, 'text' => 'Users'],
             ['value' => 110, 'text' => 'Admins'],
-        ], $belongsTo->getConfigValue('options'));
+        ], $belongsTo->compose()->get('config.options'));
+
     }
 
-    function test__presenting_callback()
+    function test__presenter()
     {
         $this->makeGroupResource();
         $users = $this->create('t_users',

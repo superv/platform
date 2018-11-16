@@ -20,7 +20,7 @@ class Builder
     {
         (new Negotiator)->handshake($this->contexts);
 
-        return $this->action->compose();
+        return $this->action->compose()->get();
     }
 
     public function addContext($context)

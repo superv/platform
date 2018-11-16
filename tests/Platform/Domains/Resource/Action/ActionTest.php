@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource\Action;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Action\Builder;
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
+use SuperV\Platform\Support\Composition;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 interface AcceptsActionTestEntry
@@ -31,7 +32,7 @@ class ActionTest extends ResourceTestCase
         $composer->addContext($page = new TestPage);
 
         $this->assertEquals([
-            'name'  => 'edit',
+            'name' => 'edit',
             'title' => 'Edit Entry',
             'entry' => 'test_page_entry',
         ], $composer->compose());
@@ -64,14 +65,13 @@ class EntryAction extends Action implements AcceptsActionTestEntry
 
     protected $entryName;
 
-    public function compose(): array
+    protected function boot()
     {
-        return array_merge(
-            parent::compose(),
-            [
-                'entry' => $this->entryName
-            ]
-        );
+        parent::boot();
+
+        $this->on('composed', function (Composition $composition) {
+            $composition->replace('entry', $this->entryName);
+        });
     }
 
     public function acceptActionTestEntry(ActionTestEntry $entry)

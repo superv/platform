@@ -117,10 +117,6 @@ class ResourceEntry implements ResourceEntryContract, Watcher
     public function getField(string $name): ?Field
     {
         $field = $this->getResource()->getField($name);
-        if ($field instanceof FieldModel) {
-            throw new Exception('olmamaliii');
-            $field = FieldFactory::createFromEntry($field);
-        }
 
         return $field->setWatcher($this);
     }

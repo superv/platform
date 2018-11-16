@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Action;
 
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
-use SuperV\Platform\Domains\Resource\Contracts\MustBeInitialized;
+use SuperV\Platform\Support\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Action implements ActionContract
@@ -20,20 +20,25 @@ class Action implements ActionContract
     /** @var string */
     protected $title;
 
-    protected $payload;
-
-    protected function __construct() { }
-
-    public function compose(): array
+    protected function __construct()
     {
-        $this->payload = array_filter_null([
+        $this->boot();
+    }
+
+    protected function boot()
+    {
+    }
+
+    public function compose(): Composition
+    {
+        $composition = new Composition([
             'name'  => $this->getName(),
             'title' => $this->getTitle(),
         ]);
 
-        $this->fire('composed');
+        $this->fire('composed', ['composition' => $composition]);
 
-        return $this->payload;
+        return $composition;
     }
 
     public function getName(): string
@@ -51,10 +56,6 @@ class Action implements ActionContract
         $action = new static;
         if ($name) {
             $action->name = $name;
-        }
-
-        if ($action instanceof MustBeInitialized) {
-            $action->init();
         }
 
         return $action;

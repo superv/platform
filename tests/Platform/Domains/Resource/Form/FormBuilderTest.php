@@ -26,8 +26,8 @@ class FormBuilderTest extends ResourceTestCase
             'url'    => sv_url('sv/forms/'.$form->uuid()),
             'method' => 'post',
             'fields' => [
-                $form->getField('name')->compose(),
-                $form->getField('age')->compose(),
+                $form->getField('name')->compose()->get(),
+                $form->getField('age')->compose()->get(),
             ],
         ], $form->compose());
     }
@@ -42,8 +42,8 @@ class FormBuilderTest extends ResourceTestCase
             ->sleep()
             ->makeForm();
 
-        $this->assertEquals('Omar', $form->getField('name')->compose()['value']);
-        $this->assertEquals(33, $form->getField('age')->compose()['value']);
+        $this->assertEquals('Omar', $form->getField('name')->compose()->get('value'));
+        $this->assertEquals(33, $form->getField('age')->compose()->get('value'));
     }
 
     public function makeFields(): array
