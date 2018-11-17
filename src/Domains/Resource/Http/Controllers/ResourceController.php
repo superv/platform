@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
-use SuperV\Modules\Nucleo\Domains\UI\Page\SvPage;
 use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
 use SuperV\Modules\Nucleo\Domains\UI\SvCard;
 use SuperV\Platform\Domains\Resource\Action\CreateEntryAction;
@@ -14,6 +13,7 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
+use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 use SuperV\Platform\Support\Negotiator\Negotiator;
 
@@ -30,10 +30,6 @@ class ResourceController extends BaseApiController
         $this->resource();
 
         $createAction = CreateEntryAction::make();
-//        if ($createAction instanceof AcceptsRouteProvider) {
-//            $createAction->acceptRouteProvider($this->resource());
-//        }
-
         Negotiator::deal($createAction, $this->resource);
 
         $config = new TableConfig();
@@ -44,15 +40,11 @@ class ResourceController extends BaseApiController
             SvBlock::make('sv-table-v2')->setProps($config->build()->compose())
         );
 
-        $page = SvPage::make('')->addBlock($card);
-        $page->hydrate([
-                'title'   => $this->resource->getLabel(),
-                'actions' => [$createAction],
-            ]
-        );
-        $page->build();
+        $page = Page::make($this->resource->getLabel());
+        $page->addBlock($card);
+        $page->setActions([$createAction->makeComponent()]);
 
-        return (sv_compose($page));
+        return ['data' => sv_compose($page->makeComponent())];
     }
 
     public function table($uuid)
@@ -70,19 +62,15 @@ class ResourceController extends BaseApiController
                               $this->resource()->newResourceEntryInstance(),
                               $this->resource()->getHandle()
                           )
-                          ->sleep()
+                          ->hibernate()
                           ->makeForm();
 
-        $page = SvPage::make('')->addBlock(
+        $page = Page::make('Create new '.$this->resource->getSingularLabel());
+        $page->addBlock(
             SvBlock::make('sv-form-v2')->setProps($form->compose())
         );
 
-        $page->hydrate([
-            'title' => 'Create new '.$this->resource->getSingularLabel(),
-        ]);
-        $page->build();
-
-        return sv_compose($page);
+        return ['data' => sv_compose($page->makeComponent())];
     }
 
     public function edit()
@@ -93,7 +81,7 @@ class ResourceController extends BaseApiController
                               $entry = $this->entry,
                               $handle = $this->resource()->getHandle()
                           )
-                          ->sleep()
+                          ->hibernate()
                           ->makeForm();
 
         // main edit form
@@ -129,16 +117,10 @@ class ResourceController extends BaseApiController
                            return $tabs->addTab(sv_tab($config->getTitle(), $card));
                        });
 
-        $page = SvPage::make()->addBlock($tabs);
+        $page = Page::make($entry->getLabel());
+        $page->addBlock($tabs);
 
-        $page->hydrate([
-            'title'   => $entry->getLabel(),
-            'actions' => ['create'],
-        ]);
-
-        $page->build();
-
-        return sv_compose($page);
+        return ['data' => sv_compose($page->makeComponent())];
     }
 
     /** @return \SuperV\Platform\Domains\Resource\Resource */

@@ -2,6 +2,8 @@
 
 use SuperV\Platform\Domains\Resource\Http\Controllers\FormsController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
+use SuperV\Platform\Domains\UI\Http\Controllers\ComponentController;
+use SuperV\Platform\Domains\UI\Http\Controllers\PageController;
 use SuperV\Platform\Http\Controllers\AuthController;
 use SuperV\Platform\Http\Controllers\DataController;
 
@@ -22,4 +24,8 @@ return [
     'GET@'.'sv/res/{resource}/create'    => ResourceController::at('create'),
     'GET@'.'sv/res/{resource}/{id}/edit' => ResourceController::at('edit'),
     'GET@'.'sv/tables/{uuid}'            => ResourceController::at('table'),
+
+    'sv/cmp/{uuid}' => ComponentController::at('wakeup'),
+
+    'sv/pag/{uuid}' => PageController::at('get')
 ];

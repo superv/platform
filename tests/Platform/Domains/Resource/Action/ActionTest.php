@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource\Action;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Action\Builder;
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
+use SuperV\Platform\Domains\UI\Components\ActionComponent;
 use SuperV\Platform\Support\Composition;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -24,6 +25,20 @@ class ActionTest extends ResourceTestCase
     {
         $action = Action::make('some');
         $this->assertInstanceOf(ActionContract::class, $action);
+    }
+
+    function test__makes_component()
+    {
+        $action = Action::make('create');
+
+        $component = $action->makeComponent();
+        $this->assertInstanceOf(ActionComponent::class, $component);
+
+        $this->assertEquals([
+            'component' => 'sv-action',
+            'uuid'      => $component->uuid(),
+            'props'     => $component->getProps(),
+        ], $component->compose());
     }
 
     function test__composer_negotiation()

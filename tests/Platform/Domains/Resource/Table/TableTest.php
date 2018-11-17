@@ -67,7 +67,7 @@ class TableTest extends ResourceTestCase
         $configArray = $this->config->compose();
 
         $response = $this->getJsonUser($this->users->route('index'));
-        $this->assertEquals(array_get($configArray, 'config.meta.columns'), $response->decodeResponseJson('data.props.page.blocks.0.props.block.props.config.meta.columns'));
+        $this->assertEquals(array_get($configArray, 'config.meta.columns'), $response->decodeResponseJson('data.props.blocks.0.props.block.props.config.meta.columns'));
 
         $response = $this->getJsonUser('sv/tables/'.$this->config->uuid());
         $this->assertEquals($table->compose(), $response->decodeResponseJson('data'));

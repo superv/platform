@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Action;
 
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
+use SuperV\Platform\Domains\UI\Components\ActionComponent;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -21,6 +22,8 @@ class Action implements ActionContract, Composable
     /** @var string */
     protected $title;
 
+    protected $uuid;
+
     protected function __construct()
     {
         $this->boot();
@@ -28,7 +31,13 @@ class Action implements ActionContract, Composable
 
     protected function boot()
     {
+        $this->uuid = uuid();
     }
+
+    public function makeComponent() {
+        return ActionComponent::from($this);
+    }
+
 
     public function compose(array $params = [])
     {
@@ -50,6 +59,11 @@ class Action implements ActionContract, Composable
     public function getTitle(): string
     {
         return $this->title ?? ucwords($this->name);
+    }
+
+    public function uuid(): string
+    {
+        return $this->uuid;
     }
 
     public static function make(?string $name = null): self

@@ -37,7 +37,7 @@ class FormTest extends ResourceTestCase
         $watcher = new FormTestUser(['name' => 'Omar', 'age' => 33]);
 
         $config = FormConfig::make();
-        $config->addGroup($fields, $watcher, 'default')->sleep();
+        $config->addGroup($fields, $watcher, 'default')->hibernate();
         $config->hideField('age');
 
         $this->assertEquals(['age'], $config->getHiddenFields());
@@ -57,7 +57,7 @@ class FormTest extends ResourceTestCase
     {
         $config = FormConfig::make()
                             ->addGroup($fields = $this->makeFields())
-                            ->sleep();
+                            ->hibernate();
 
         $form = FormConfig::wakeup($config->uuid())->makeForm();
 
@@ -96,7 +96,7 @@ class FormTest extends ResourceTestCase
                                 $fields = $this->makeFields(),
                                 $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
                             )
-                            ->sleep();
+                            ->hibernate();
 
         $form = FormConfig::wakeup($config->uuid())->makeForm();
 
@@ -111,7 +111,7 @@ class FormTest extends ResourceTestCase
                                 $fields = $this->makeFields(),
                                 $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
                             )
-                            ->sleep();
+                            ->hibernate();
 
         $form = FormConfig::wakeup($config->uuid())
                           ->makeForm()
@@ -130,7 +130,7 @@ class FormTest extends ResourceTestCase
                                 $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
                             )
             ->hideField('name')
-                            ->sleep();
+                            ->hibernate();
 
         $form = FormConfig::wakeup($config->uuid())
                           ->makeForm()
@@ -152,7 +152,7 @@ class FormTest extends ResourceTestCase
     {
         $config = FormConfig::make()
                             ->addGroup($fields = $this->makeFields(), $user = new FormTestUser)
-                            ->sleep();
+                            ->hibernate();
 
         $form = FormConfig::wakeup($config->uuid())->makeForm();
 
@@ -172,7 +172,7 @@ class FormTest extends ResourceTestCase
     {
         $config = FormConfig::make()
                             ->addGroup($fields = $this->makeFields(), $user = new FormTestUser, 'user')
-                            ->sleep();
+                            ->hibernate();
 
         $form = FormConfig::wakeup($config->uuid())->makeForm();
 
@@ -183,7 +183,7 @@ class FormTest extends ResourceTestCase
     {
         $config = FormConfig::make()
                             ->addGroup($fields = $this->makeFields(), $user = new FormTestUser)
-                            ->sleep();
+                            ->hibernate();
 
         $form = FormConfig::wakeup($config->uuid())->makeForm();
 
@@ -203,7 +203,7 @@ class FormTest extends ResourceTestCase
         $response = $this->getJsonUser($this->users->route('create'));
         $response->assertOk();
 
-        $props = $response->decodeResponseJson('data.props.page.blocks.0.props');
+        $props = $response->decodeResponseJson('data.props.blocks.0.props');
         $this->assertEquals(['url', 'method', 'fields'], array_keys($props));
         $this->assertEquals(2, count($props['fields']));
 
@@ -223,7 +223,7 @@ class FormTest extends ResourceTestCase
         $user = $this->users->create(['name' => 'Omar', 'age' => 123]);
 
         $response = $this->getJsonUser($user->route('edit'));
-        $props = $response->decodeResponseJson('data.props.page.blocks.0.props.tabs.0.block.props');
+        $props = $response->decodeResponseJson('data.props.blocks.0.props.tabs.0.block.props');
         $this->assertEquals(['url', 'method', 'fields'], array_keys($props));
         $this->assertEquals(2, count($props['fields']));
 
@@ -248,7 +248,7 @@ class FormTest extends ResourceTestCase
         $config = FormConfig::make()
                             ->addGroup($this->users, $this->users->newResourceEntryInstance(), 'test_user')
                             ->addGroup($posts, $posts->newResourceEntryInstance(), 'test_post')
-                            ->sleep();
+                            ->hibernate();
 
         $form = FormConfig::wakeup($config->uuid())->makeForm()
                           ->setRequest($this->makePostRequest([
@@ -280,7 +280,7 @@ class FormTest extends ResourceTestCase
 
         $config = FormConfig::make()
                             ->addGroup($fields, $testUser = new FormTestUser)
-                            ->sleep();
+                            ->hibernate();
 
         $file = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
         $form = FormConfig::wakeup($config->uuid())

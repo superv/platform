@@ -26,8 +26,8 @@ class FormTester extends Assert
     protected $app;
 
     protected $propsKeys = [
-        'create' => 'data.props.page.blocks.0.props',
-        'edit'   => 'data.props.page.blocks.0.props.tabs.0.block.props',
+        'create' => 'data.props.blocks.0.props',
+        'edit'   => 'data.props.blocks.0.props.tabs.0.block.props',
     ];
 
     /**

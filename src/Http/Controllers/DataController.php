@@ -3,16 +3,10 @@
 namespace SuperV\Platform\Http\Controllers;
 
 use Current;
-use SuperV\Platform\Domains\Navigation\Navigation;
 use SuperV\Platform\Domains\Resource\Nav\Nav;
 
-class DataController extends BaseController
+class DataController extends BaseApiController
 {
-    public function __construct()
-    {
-        $this->middleware('auth:superv-api');
-    }
-
     public function init()
     {
         return [
@@ -33,14 +27,4 @@ class DataController extends BaseController
         ];
     }
 
-    public function navold(Navigation $nav)
-    {
-        $portNav = Current::port()->getNavigationSlug();
-
-        return [
-            'data' => $portNav ? [
-                'navigation' => $nav->slug($portNav)->get(),
-            ] : ['message' => 'Current port has no navigation'],
-        ];
-    }
 }
