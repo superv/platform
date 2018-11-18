@@ -2,9 +2,11 @@
 
 namespace SuperV\Platform\Domains\UI\Components;
 
+use SuperV\Platform\Contracts\Bootable;
 use SuperV\Platform\Domains\UI\Page\Page;
+use SuperV\Platform\Support\Composition;
 
-class PageComponent extends BaseUIComponent
+class PageComponent extends BaseUIComponent implements Bootable
 {
     protected $name = 'sv-page';
 
@@ -28,6 +30,13 @@ class PageComponent extends BaseUIComponent
     public function uuid(): string
     {
         return $this->page->uuid();
+    }
+
+    public function boot()
+    {
+        $this->on('composed', function(Composition $composition) {
+           $composition->replace('class', ['w-full']) ;
+        });
     }
 
     public static function from(Page $page): self

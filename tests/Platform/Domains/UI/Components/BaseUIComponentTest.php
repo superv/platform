@@ -21,6 +21,25 @@ class BaseUIComponentTest extends TestCase
         $this->assertInstanceOf(Hibernatable::class, $component);
     }
 
+    function test__compose()
+    {
+        $component = TestComponent::make();
+        $component->addClass('w-full')
+                  ->addClass('relative');
+
+        $this->assertEquals(
+            ['w-full', 'relative'],
+            $component->getClasses())
+        ;
+
+        $this->assertEquals([
+            'component' => 'sv-test',
+            'uuid'      => $component->uuid(),
+            'props'     => $component->getProps(),
+            'class'     => $component->getClasses(),
+        ], $component->compose());
+    }
+
     function test__responds_over_http()
     {
         $component = TestComponent::make();
@@ -38,9 +57,8 @@ class BaseUIComponentTest extends TestCase
     }
 }
 
-class TestComponent extends BaseUIComponent {
-
-
+class TestComponent extends BaseUIComponent
+{
     public function uuid(): string
     {
         return 'abc-123';

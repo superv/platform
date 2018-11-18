@@ -41,6 +41,7 @@ class PageTest extends TestCase
                 'actions' => ['action a', 'action b'],
                 'blocks'  => ['block a', 'block b'],
             ],
+            'class' => ['w-full']
         ], $component->compose());
     }
 
