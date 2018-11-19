@@ -14,13 +14,9 @@ class CreateEntryAction extends Action implements AcceptsRouteProvider
 
     protected $routeUrl;
 
-    protected function boot()
+    public function onComposed(Composition $composition)
     {
-        parent::boot();
-
-        $this->on('composed', function (Composition $composition) {
-            $composition->replace('url', $this->routeUrl);
-        });
+        $composition->replace('url', $this->routeUrl);
     }
 
     public function acceptRouteProvider(ProvidesRoute $routeProvider)

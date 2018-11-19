@@ -5,9 +5,12 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\UI\Components\TableComponent;
+use SuperV\Platform\Support\Composition;
 
 class TableConfig
 {
@@ -30,7 +33,12 @@ class TableConfig
     /**
      * @var Collection
      */
-    protected $actions;
+    protected $contextActions;
+
+    /**
+     * @var Collection
+     */
+    protected $rowActions;
 
     protected $url;
 
@@ -42,23 +50,29 @@ class TableConfig
     /** @var \SuperV\Platform\Domains\Resource\Contracts\ProvidesFields */
     protected $fieldsProvider;
 
+    /** @var \SuperV\Platform\Domains\Context\Context */
+    protected $context;
+
     public function build(): self
     {
         $this->uuid = Str::uuid();
-//
-//        $this->fields = $this->fieldsProvider->provideFields()
-//                                             ->map(function (Field $field) {
-//                                                 if ($field->getConfigValue('hide.table') === true) {
-//                                                     return null;
-//                                                 }
-//
-//                                                 return $field;
-//                                             })
-//                                             ->filter();
 
-        $this->actions = $this->actions ? collect($this->actions) : collect([EditEntryAction::class]);
+        $this->contextActions = collect($this->contextActions ?? [])
+            ->map(function ($action) {
+                /** @var \SuperV\Platform\Domains\Resource\Action\Action $action */
+                if (is_string($action)) {
+                    $action = $action::make();
+                }
 
-        // build Url
+                if ($this->context) {
+                    $this->context->add($action)->apply();
+                }
+
+                return $action->makeComponent();
+            });
+
+        $this->rowActions = collect($this->rowActions ?? [EditEntryAction::class]);
+
         $this->url = sv_url('sv/tables/'.$this->uuid());
 
         $this->built = true;
@@ -66,6 +80,11 @@ class TableConfig
         $this->cache();
 
         return $this;
+    }
+
+    public function makeComponent()
+    {
+        return TableComponent::from($this);
     }
 
     public function newQuery()
@@ -79,8 +98,11 @@ class TableConfig
             throw new Exception('Table Config is not built yet');
         }
 
-        return [
+        $composition = new Composition([
             'config' => [
+                'context' => [
+                    'actions' => $this->contextActions,
+                ],
                 'meta'    => [
                     'columns' => $this->getFields()
                                       ->map(function ($field) {
@@ -88,9 +110,11 @@ class TableConfig
                                       })
                                       ->all(),
                 ],
-                'dataUrl' => $this->getUrl(),
+                'dataUrl' => $this->getDataUrl(),
             ],
-        ];
+        ]);
+
+        return $composition;
     }
 
     public function makeTable($build = true): Table
@@ -105,7 +129,7 @@ class TableConfig
 
     public function getUrl()
     {
-        return $this->url;
+        return $this->url.'/config';
     }
 
     public function setUrl($url)
@@ -113,6 +137,11 @@ class TableConfig
         $this->url = $url;
 
         return $this;
+    }
+
+    public function getDataUrl()
+    {
+        return $this->url.'/data';
     }
 
     public function removeColumn(string $name)
@@ -136,14 +165,14 @@ class TableConfig
                                     ->filter();
     }
 
-    public function getActions(): ?Collection
+    public function getRowActions(): ?Collection
     {
-        return $this->actions;
+        return $this->rowActions;
     }
 
-    public function setActions($actions): TableConfig
+    public function setRowActions($rowActions): TableConfig
     {
-        $this->actions = $actions;
+        $this->rowActions = $rowActions;
 
         return $this;
     }
@@ -170,7 +199,7 @@ class TableConfig
         return 'sv:tables:'.$this->uuid();
     }
 
-    public function setQueryProvider(ProvidesQuery $queryProvider): TableConfig
+    public function setQueryProvider(ProvidesQuery $queryProvider): self
     {
         $this->queryProvider = $queryProvider;
 
@@ -190,9 +219,28 @@ class TableConfig
         $this->title = $title;
     }
 
-    public function setFieldsProvider($fieldsProvider)
+    public function setFieldsProvider($fieldsProvider): self
     {
         $this->fieldsProvider = $fieldsProvider;
+
+        return $this;
+    }
+
+    public function getContextActions(): Collection
+    {
+        return $this->contextActions;
+    }
+
+    public function setContextActions($contextActions)
+    {
+        $this->contextActions = $contextActions;
+
+        return $this;
+    }
+
+    public function setContext(Context $context)
+    {
+        $this->context = $context;
 
         return $this;
     }

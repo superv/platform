@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Support\Negotiator;
+namespace SuperV\Platform\Domains\Context;
 
 class Negotiator
 {
@@ -28,22 +28,10 @@ class Negotiator
         collect($parties)->map(function ($party) { $this->scan($party); });
 
         foreach ($this->acceptors as $meta => $acceptor) {
-            if ($provider = $this->providers[$meta]) {
+            if ($provider = $this->providers[$meta] ?? null) {
                 $this->negotiate($acceptor, $meta, $provider);
             }
         }
-
-//        $this->makeStrategies();
-
-//        foreach ($this->strategies as $requirement => $providing) {
-//            $providingMethod = static::getFirstMethod($providing);
-//            $provider = $this->providers[$providing];
-//            $value = $provider->{$providingMethod}();
-//
-//            $requirementMethod = static::getFirstMethod($requirement);
-//            $requirer = $this->acceptors[$requirement];
-//            $requirer->{$requirementMethod}($value);
-//        }
     }
 
     protected function negotiate($acceptor, $meta, $provider)

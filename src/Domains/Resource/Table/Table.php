@@ -89,7 +89,7 @@ class Table
 
     public function url()
     {
-        return $this->config->getUrl();
+        return $this->config->getDataUrl();
     }
 
     public function compose(): array
@@ -121,7 +121,7 @@ class Table
 
     public function getActions(): Collection
     {
-        return $this->config->getActions();
+        return $this->config->getRowActions();
     }
 
     public function getQuery()

@@ -14,14 +14,19 @@ class DeleteEntryAction extends Action implements AcceptsResourceEntry
 
     /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
     protected $entry;
+//
+//    protected function boot()
+//    {
+//        parent::boot();
+//
+//        $this->on('composed', function (Composition $composition) {
+//            $composition->replace('url', $this->entry->route('delete'));
+//        });
+//    }
 
-    protected function boot()
+    public function onComposed(Composition $composition)
     {
-        parent::boot();
-
-        $this->on('composed', function (Composition $composition) {
-            $composition->replace('url', $this->entry->route('delete'));
-        });
+        $composition->replace('url', $this->entry->route('delete'));
     }
 
     public function acceptResourceEntry(ResourceEntry $entry)

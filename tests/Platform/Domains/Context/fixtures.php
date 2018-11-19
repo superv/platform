@@ -1,9 +1,6 @@
 <?php
 
-namespace Tests\Platform\Support;
-
-use SuperV\Platform\Support\Negotiator\Negotiator;
-use Tests\Platform\TestCase;
+namespace Tests\Platform\Domains\Context;
 
 interface AcceptsPlane
 {
@@ -33,35 +30,6 @@ interface ProvidesRoute
 interface AcceptsRouteProvider
 {
     public function acceptRouteProvider(ProvidesRoute $routeProvider);
-}
-
-class NegotiatorTest extends TestCase
-{
-    function test__gets_value_from_provider_sets_to_acceptor()
-    {
-        $provider = new SolidProvider;
-        $acceptor = new SolidAcceptor;
-
-        $this->assertNull($acceptor->plane);
-        $this->assertNull($provider->money);
-
-        Negotiator::deal($provider, $acceptor);
-
-        $this->assertEquals('Boink 404', $acceptor->plane);
-        $this->assertEquals('123', $provider->money);
-    }
-
-    function test__set_provider_to_provider_acceptor()
-    {
-        $provider = new SolidRouteProvider;
-        $acceptor = new SolidRouteProviderAcceptor('edit');
-        $this->assertNull($acceptor->getRouteUrl());
-
-        Negotiator::deal($provider, $acceptor);
-
-        $this->assertEquals($provider->provideRoute('edit'), $acceptor->getRouteUrl());
-
-    }
 }
 
 class SolidRouteProviderAcceptor implements AcceptsRouteProvider
@@ -101,6 +69,8 @@ class SolidAcceptor implements AcceptsPlane, ProvidesMoney
 {
     public $plane;
 
+    public $money;
+
     public function acceptPlane($plane)
     {
         $this->plane = $plane;
@@ -108,7 +78,7 @@ class SolidAcceptor implements AcceptsPlane, ProvidesMoney
 
     public function provideMoney()
     {
-        return '123';
+        return $this->money;
     }
 }
 
@@ -116,9 +86,11 @@ class SolidProvider implements ProvidesPlane, AcceptsMoney
 {
     public $money;
 
+    public $plane;
+
     public function providePlane()
     {
-        return 'Boink 404';
+        return $this->plane;
     }
 
     public function acceptMoney($money)
@@ -126,6 +98,3 @@ class SolidProvider implements ProvidesPlane, AcceptsMoney
         $this->money = $money;
     }
 }
-
-
-

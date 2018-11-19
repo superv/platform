@@ -1,9 +1,11 @@
 <?php
 
-use SuperV\Platform\Domains\Resource\Http\Controllers\FormsController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\ActionController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\FormController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
-use SuperV\Platform\Domains\UI\Http\Controllers\ComponentController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\TableController;
 use SuperV\Platform\Domains\UI\Http\Controllers\PageController;
+use SuperV\Platform\Domains\UI\Http\Controllers\WakeupController;
 use SuperV\Platform\Http\Controllers\AuthController;
 use SuperV\Platform\Http\Controllers\DataController;
 
@@ -18,14 +20,13 @@ return [
         return 'SuperV Platform @'.Current::port()->slug();
     },
 
-    'ANY@'.'sv/forms/{form}' => FormsController::at('post'),
-
     'GET@'.'sv/res/{resource}'           => ResourceController::at('index'),
     'GET@'.'sv/res/{resource}/create'    => ResourceController::at('create'),
     'GET@'.'sv/res/{resource}/{id}/edit' => ResourceController::at('edit'),
-    'GET@'.'sv/tables/{uuid}'            => ResourceController::at('table'),
-
-    'sv/cmp/{uuid}' => ComponentController::at('wakeup'),
-
-    'sv/pag/{uuid}' => PageController::at('get')
+    'ANY@'.'sv/forms/{form}'             => FormController::at('post'),
+    'GET@'.'sv/tables/{uuid}/config'     => TableController::at('config'),
+    'GET@'.'sv/tables/{uuid}/data'       => TableController::at('data'),
+    'GET@'.'sv/wake/{uuid}'              => WakeupController::at('get'),
+    'GET@'.'sv/act/{uuid}'               => ActionController::at('get'),
+    'GET@'.'sv/pag/{uuid}'               => PageController::at('get'),
 ];

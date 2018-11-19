@@ -18,7 +18,7 @@ class Composition implements Arrayable
 
     public function __construct(?array $params = [])
     {
-        $this->params = array_filter_null($params);
+        $this->params = $params;
     }
 
     public function replace($key, $value)
@@ -29,7 +29,7 @@ class Composition implements Arrayable
     public function get($key = null)
     {
         if (is_null($key)) {
-            return $this->params;
+            return array_filter($this->params);
         }
 
         return array_get($this->params, $key);

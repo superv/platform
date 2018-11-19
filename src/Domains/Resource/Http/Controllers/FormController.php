@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
-class FormsController extends BaseApiController
+class FormController extends BaseApiController
 {
     public function post($uuid)
     {

@@ -53,14 +53,14 @@ abstract class Relation implements AcceptsParentResourceEntry
             return new ResourceEntry(new $model);
         } elseif ($handle = $this->config->getRelatedResource()) {
             return Resource::of($handle)->newResourceEntryInstance();
-//            $resource = ResourceFactory::make($resourceHandle);
-//            if ($model = $resource->config('model')) {
-//                return new ResourceEntry(new $model);
-//            }
-//          return   Resource::of($resourceHandle)->newEntryInstance();
         }
 
         throw new PlatformException('Related resource/model not found');
+    }
+
+    public function getRelatedResource(): Resource
+    {
+        return Resource::of($this->config->getRelatedResource());
     }
 
     public function getName(): string

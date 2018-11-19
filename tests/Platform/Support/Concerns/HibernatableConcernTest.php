@@ -32,10 +32,4 @@ class TestBear implements Hibernatable
         return ['doo' => 'fun'];
     }
 
-    public function getHandle(): string
-    {
-        return 'cmp';// "<-- yanlis";
-    }
-
-
 }

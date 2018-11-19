@@ -4,10 +4,10 @@ namespace Tests\Platform\Domains\Resource\Table;
 
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\Action\CreateEntryAction;
 use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
 use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
-use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -26,16 +26,22 @@ class TableTest extends ResourceTestCase
     {
         $this->makeGroupResource();
         $this->makeUserResource();
-        $this->makeTableConfig();
+//        $this->makeTableConfig();
+        $this->config = new TableConfig();
+        $this->config->setFieldsProvider($this->users);
+        $this->config->setQueryProvider($this->users);
+        $this->config->setRowActions([EditEntryAction::class, DeleteEntryAction::class]);
+        $this->config->setContextActions([CreateEntryAction::class]);
+        $this->config->build();
 
         $this->assertTrue($this->config->isBuilt());
-        $this->assertEquals(sv_url('sv/tables/'.$this->config->uuid()), $this->config->getUrl());
+        $this->assertEquals(sv_url('sv/tables/'.$this->config->uuid().'/data'), $this->config->getDataUrl());
         $this->assertEquals(3, $this->config->getFields()->count());
 
-        $configArray = $this->config->compose();
-        $this->assertEquals($this->config->getUrl(), array_get($configArray, 'config.dataUrl'));
+        $composition = $this->config->compose();
+        $this->assertEquals($this->config->getDataUrl(), $composition->get('config.dataUrl'));
 
-        $columns = collect(array_get($configArray, 'config.meta.columns'))->keyBy('name');
+        $columns = collect($composition->get('config.meta.columns'))->keyBy('name');
         $this->assertEquals(['label' => 'Name', 'name' => 'name'], $columns->get('name'));
     }
 
@@ -64,12 +70,15 @@ class TableTest extends ResourceTestCase
             ['name' => 'delete', 'title' => 'Delete', 'url' => $fakeA->route('delete')],
         ], $rowActions);
 
-        $configArray = $this->config->compose();
+        $composition = $this->config->compose();
 
         $response = $this->getJsonUser($this->users->route('index'));
-        $this->assertEquals(array_get($configArray, 'config.meta.columns'), $response->decodeResponseJson('data.props.blocks.0.props.block.props.config.meta.columns'));
+        $this->assertEquals(
+            $composition->get('config.meta.columns'),
+            $response->decodeResponseJson('data.props.blocks.0.props.block.props.config.meta.columns')
+        );
 
-        $response = $this->getJsonUser('sv/tables/'.$this->config->uuid());
+        $response = $this->getJsonUser($this->config->getDataUrl());
         $this->assertEquals($table->compose(), $response->decodeResponseJson('data'));
     }
 
@@ -96,7 +105,7 @@ class TableTest extends ResourceTestCase
         $this->config = new TableConfig();
         $this->config->setFieldsProvider($this->users);
         $this->config->setQueryProvider($this->users);
-        $this->config->setActions([EditEntryAction::class, DeleteEntryAction::class]);
+        $this->config->setRowActions([EditEntryAction::class, DeleteEntryAction::class]);
         $this->config->build();
     }
 

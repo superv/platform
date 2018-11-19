@@ -26,18 +26,13 @@ class Action implements ActionContract, Composable
 
     protected function __construct()
     {
-        $this->boot();
-    }
-
-    protected function boot()
-    {
         $this->uuid = uuid();
     }
 
-    public function makeComponent() {
+    public function makeComponent()
+    {
         return ActionComponent::from($this);
     }
-
 
     public function compose(array $params = [])
     {

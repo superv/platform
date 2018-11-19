@@ -15,13 +15,18 @@ class EditEntryAction extends Action implements AcceptsResourceEntry
     /** @var \SuperV\Platform\Domains\Database\Model\Entry */
     protected $entry;
 
-    protected function boot()
-    {
-        parent::boot();
+//    protected function boot()
+//    {
+//        parent::boot();
+//
+//        $this->on('composed', function (Composition $composition) {
+//            $composition->replace('url', $this->entry->route('edit'));
+//        });
+//    }
 
-        $this->on('composed', function (Composition $composition) {
-            $composition->replace('url', $this->entry->route('edit'));
-        });
+    public function onComposed(Composition $composition)
+    {
+        $composition->replace('url', $this->entry->route('edit'));
     }
 
     public function acceptResourceEntry(ResourceEntry $entry)

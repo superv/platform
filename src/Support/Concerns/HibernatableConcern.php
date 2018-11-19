@@ -11,7 +11,7 @@ trait HibernatableConcern
      */
     public function hibernate(): string
     {
-        $url = sprintf('sv/%s/%s', $this->getHandle(), uuid());
+        $url = sprintf('sv/wake/%s', uuid());
 
         cache()->forever($url, serialize($this));
 

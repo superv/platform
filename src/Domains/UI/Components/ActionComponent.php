@@ -27,6 +27,16 @@ class ActionComponent extends BaseUIComponent
         return $this->action->uuid();
     }
 
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
     public static function from(Action $action): self
     {
         $static = new static;

@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Support\Negotiator\Negotiator;
+use SuperV\Platform\Domains\Context\Negotiator;
 
 class Builder
 {

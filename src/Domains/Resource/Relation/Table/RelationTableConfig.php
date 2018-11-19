@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Relation\Table;
 
+use SuperV\Platform\Domains\Resource\Action\AttachEntryAction;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
@@ -22,8 +23,12 @@ class RelationTableConfig extends TableConfig
     public function build(): TableConfig
     {
         $resource = Resource::of($this->relation->getConfig()->getRelatedResource());
+
+        $attachAction = AttachEntryAction::make()->setRelation($this->relation);
+
         $this->setQueryProvider($resource);
         $this->setFieldsProvider($resource);
+        $this->setContextActions([$attachAction]);
         $this->setTitle($this->relation->getName());
 
         return parent::build();

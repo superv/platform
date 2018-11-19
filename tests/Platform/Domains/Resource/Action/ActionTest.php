@@ -47,7 +47,7 @@ class ActionTest extends ResourceTestCase
         $composer->addContext($page = new TestPage);
 
         $this->assertEquals([
-            'name' => 'edit',
+            'name'  => 'edit',
             'title' => 'Edit Entry',
             'entry' => 'test_page_entry',
         ], $composer->compose());
@@ -80,13 +80,9 @@ class EntryAction extends Action implements AcceptsActionTestEntry
 
     protected $entryName;
 
-    protected function boot()
+    public function onComposed(Composition $composition)
     {
-        parent::boot();
-
-        $this->on('composed', function (Composition $composition) {
-            $composition->replace('entry', $this->entryName);
-        });
+        $composition->replace('entry', $this->entryName);
     }
 
     public function acceptActionTestEntry(ActionTestEntry $entry)

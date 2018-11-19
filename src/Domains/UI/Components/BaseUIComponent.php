@@ -22,11 +22,6 @@ abstract class BaseUIComponent implements UIComponent, Composable, Hibernatable
 
     abstract public function getProps(): array;
 
-    public function __construct()
-    {
-        Booter::boot($this);
-    }
-
     public function addClass(string $class)
     {
         $this->classes[] = $class;

@@ -4,6 +4,8 @@ namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
 use SuperV\Modules\Nucleo\Domains\UI\SvCard;
+use SuperV\Platform\Domains\Context\Context;
+use SuperV\Platform\Domains\Context\Negotiator;
 use SuperV\Platform\Domains\Resource\Action\CreateEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
@@ -15,7 +17,6 @@ use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Http\Controllers\BaseApiController;
-use SuperV\Platform\Support\Negotiator\Negotiator;
 
 class ResourceController extends BaseApiController
 {
@@ -35,6 +36,7 @@ class ResourceController extends BaseApiController
         $config = new TableConfig();
         $config->setFieldsProvider($this->resource);
         $config->setQueryProvider($this->resource);
+        $config->setContext(new Context($this->resource));
 
         $card = SvCard::make()->block(
             SvBlock::make('sv-table-v2')->setProps($config->build()->compose())
