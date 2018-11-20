@@ -80,7 +80,6 @@ class TableRow implements ProvidesResourceEntry
                         $action = $actionClass::make();
                         Negotiator::deal($this, $action);
                         $this->actions[] = $action->makeComponent()->compose();
-//                        $this->actions[] = (new Builder($actionClass))->addContext($this)->compose();
                     });
     }
 
@@ -88,9 +87,11 @@ class TableRow implements ProvidesResourceEntry
     {
         $this->table->getFields()
                     ->map(function (Field $field) {
-                        $value = $this->entry->getAttribute($field->getName());
+//                        $value = $this->entry->getAttribute($field->getName());
+//                        $this->setValue($field->getName(), $field->present($value));
 
-                        $this->setValue($field->getName(), $field->present($value));
+                        $value = $field->present($this->entry);
+                        $this->setValue($field->getName(), $value);
                     });
     }
 

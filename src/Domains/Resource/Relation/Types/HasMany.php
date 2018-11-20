@@ -35,8 +35,8 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery
     {
         $config = new TableConfig();
         $relatedResource = ResourceFactory::make($this->getConfig()->getRelatedResource());
-        $config->setFieldsProvider($relatedResource);
-        $config->setQueryProvider($this);
+        $config->setFields($relatedResource);
+        $config->setQuery($this);
         $config->setTitle($this->getName());
 
         $config->build();

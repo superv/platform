@@ -2,11 +2,11 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\UI\Components\TableComponent;
@@ -14,8 +14,6 @@ use SuperV\Platform\Support\Composition;
 
 class TableConfig
 {
-    public $query;
-
     protected $uuid;
 
     /**
@@ -47,21 +45,28 @@ class TableConfig
 
     protected $built = false;
 
-    /** @var \SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery */
-    protected $queryProvider;
+    protected $query;
 
     protected $queryParams;
 
-    /** @var \SuperV\Platform\Domains\Resource\Contracts\ProvidesFields */
-    protected $fieldsProvider;
+    protected $fields;
 
     /** @var \SuperV\Platform\Domains\Context\Context */
     protected $context;
 
-    public function build(): self
+    public function __construct()
+    {
+        $this->boot();
+    }
+
+    protected function boot()
     {
         $this->uuid = Str::uuid();
+        $this->url = sv_url('sv/tables/'.$this->uuid());
+    }
 
+    public function build($cache = true): self
+    {
         $this->contextActions = collect($this->contextActions ?? [])
             ->map(function ($action) {
                 /** @var \SuperV\Platform\Domains\Resource\Action\Action $action */
@@ -78,11 +83,9 @@ class TableConfig
 
         $this->rowActions = collect($this->rowActions ?? [EditEntryAction::class]);
 
-        $this->url = sv_url('sv/tables/'.$this->uuid());
-
-        $this->built = true;
-
-        $this->cache();
+        if ($cache) {
+            $this->cache();
+        }
 
         return $this;
     }
@@ -94,15 +97,15 @@ class TableConfig
 
     public function newQuery()
     {
-        return $this->queryProvider->newQuery();
+        if ($this->query instanceof ProvidesQuery) {
+            return $this->query->newQuery();
+        }
+
+        return $this->query;
     }
 
     public function compose()
     {
-        if (! $this->isBuilt()) {
-            throw new Exception('Table Config is not built yet');
-        }
-
         $composition = new Composition([
             'config' => [
                 'context' => [
@@ -163,18 +166,20 @@ class TableConfig
 
     public function getFields(): Collection
     {
-        return $this->fieldsProvider->provideFields()
-                                    ->map(function (Field $field) {
-                                        if ($field->getConfigValue('hide.table') === true) {
-                                            return null;
-                                        }
-                                        if (in_array($field->getName(), $this->hiddenFields)) {
-                                            return null;
-                                        }
+        $fields = $this->fields instanceof ProvidesFields ? $this->fields->provideFields() : $this->fields;
 
-                                        return $field;
-                                    })
-                                    ->filter();
+        return $fields
+            ->map(function (Field $field) {
+                if ($field->getConfigValue('hide.table') === true) {
+                    return null;
+                }
+                if (in_array($field->getName(), $this->hiddenFields)) {
+                    return null;
+                }
+
+                return $field;
+            })
+            ->filter();
     }
 
     public function getRowActions(): ?Collection
@@ -189,18 +194,6 @@ class TableConfig
         return $this;
     }
 
-    public function isBuilt(): bool
-    {
-        return $this->built;
-    }
-
-    protected function validate(): void
-    {
-        if ($this->isBuilt()) {
-            throw new Exception('Config is already built');
-        }
-    }
-
     public function cache()
     {
         cache()->forever($this->cacheKey(), serialize($this));
@@ -211,9 +204,9 @@ class TableConfig
         return 'sv:tables:'.$this->uuid();
     }
 
-    public function setQueryProvider(ProvidesQuery $queryProvider): self
+    public function setQuery($query): self
     {
-        $this->queryProvider = $queryProvider;
+        $this->query = $query;
 
         return $this;
     }
@@ -231,9 +224,9 @@ class TableConfig
         $this->title = $title;
     }
 
-    public function setFieldsProvider($fieldsProvider): self
+    public function setFields($fields): self
     {
-        $this->fieldsProvider = $fieldsProvider;
+        $this->fields = $fields;
 
         return $this;
     }

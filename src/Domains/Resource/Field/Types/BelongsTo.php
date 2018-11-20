@@ -27,8 +27,12 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
 
     public function getPresenter(): ?Closure
     {
-        return function (?ResourceEntry $relatedEntry) {
-            return $relatedEntry ? $relatedEntry->getLabel() : null;
+        return function (EntryContract $entry) {
+            if ($relatedEntry = $entry->{$this->getName()}) {
+                if ($relatedEntry instanceof EntryContract) {
+                    return ResourceEntry::make($relatedEntry)->getLabel();
+                }
+            }
         };
     }
 

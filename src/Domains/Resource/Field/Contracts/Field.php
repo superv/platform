@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
+use Closure;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
 
@@ -30,4 +31,6 @@ interface Field
     public function hide();
 
     public function fieldType(): FieldType;
+
+    public function onPresenting(Closure $callback);
 }

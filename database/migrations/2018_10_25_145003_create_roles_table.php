@@ -28,7 +28,7 @@ class CreateRolesTable extends Migration
             $table->morphs('owner');
             $table->unsignedInteger('action_id');
 
-            $table->string('provision');
+            $table->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
             $table->timestamps();
         });
     }

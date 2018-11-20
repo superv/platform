@@ -28,13 +28,12 @@ class TableTest extends ResourceTestCase
         $this->makeUserResource();
 //        $this->makeTableConfig();
         $this->config = new TableConfig();
-        $this->config->setFieldsProvider($this->users);
-        $this->config->setQueryProvider($this->users);
+        $this->config->setFields($this->users);
+        $this->config->setQuery($this->users);
         $this->config->setRowActions([EditEntryAction::class, DeleteEntryAction::class]);
         $this->config->setContextActions([CreateEntryAction::class]);
         $this->config->build();
 
-        $this->assertTrue($this->config->isBuilt());
         $this->assertEquals(sv_url('sv/tables/'.$this->config->uuid().'/data'), $this->config->getDataUrl());
         $this->assertEquals(3, $this->config->getFields()->count());
 
@@ -111,8 +110,8 @@ class TableTest extends ResourceTestCase
     protected function makeTableConfig(): void
     {
         $this->config = new TableConfig();
-        $this->config->setFieldsProvider($this->users);
-        $this->config->setQueryProvider($this->users);
+        $this->config->setFields($this->users);
+        $this->config->setQuery($this->users);
         $this->config->setRowActions([EditEntryAction::class, DeleteEntryAction::class]);
         $this->config->build();
     }

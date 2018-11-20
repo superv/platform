@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\BelongsTo;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
-use Tests\Platform\TestCase;
 
 class BelongsToTest extends ResourceTestCase
 {
@@ -69,7 +69,7 @@ class BelongsToTest extends ResourceTestCase
         $callback = $belongsTo->getPresenter();
         $this->assertInstanceOf(Closure::class, $callback);
 
-        $this->assertEquals($fakeUser->name, $callback($fakeUser));
+        $this->assertEquals('Users', $callback($fakeUser));
     }
 
     protected function makeGroupResource(): void
@@ -95,5 +95,14 @@ class BelongsToTestUser extends Model implements EntryContract
     public function getId()
     {
         return $this->getKey();
+    }
+
+    public function group()
+    {
+        $relation = Resource::of('t_users')->getRelation('group');
+
+        $relation->acceptParentResourceEntry(ResourceEntry::make($this));
+
+        return $relation->newQuery();
     }
 }

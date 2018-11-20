@@ -13,7 +13,6 @@ use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourc
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Domains\UI\Page\Page;
@@ -31,8 +30,8 @@ class ResourceController extends BaseApiController
         Negotiator::deal($createAction, $this->resource);
 
         $config = new TableConfig();
-        $config->setFieldsProvider($this->resource);
-        $config->setQueryProvider($this->resource);
+        $config->setFields($this->resource);
+        $config->setQuery($this->resource);
         $config->setContext(new Context($this->resource));
 
         $card = SvCard::make()->block(
@@ -66,7 +65,7 @@ class ResourceController extends BaseApiController
 
         $page = Page::make('Create new '.$this->resource->getSingularLabel());
         $page->addBlock(
-            SvBlock::make('sv-form-v2')->setProps($form->compose())
+            SvBlock::make('sv-form')->setProps($form->compose())
         );
 
         return ['data' => sv_compose($page->makeComponent())];
@@ -84,7 +83,7 @@ class ResourceController extends BaseApiController
                           ->makeForm();
 
         // main edit form
-        $editorTab = SvBlock::make('sv-form-v2')->setProps($form->compose());
+        $editorTab = SvBlock::make('sv-form')->setProps($form->compose());
 
         $tabs = sv_tabs()->addTab(sv_tab('Edit', $editorTab)->autoFetch());
 
@@ -97,23 +96,26 @@ class ResourceController extends BaseApiController
                            }
                            $form = $formProvider->makeForm();
 
-                           return $tabs->addTab(sv_tab($formProvider->getFormTitle(), SvBlock::make('sv-form-v2')->setProps($form->compose())));
+                           return $tabs->addTab(sv_tab($formProvider->getFormTitle(), SvBlock::make('sv-form')->setProps($form->compose())));
                        });
 
         // make tables
         $this->resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesTable; })
-                       ->map(function (ProvidesTable $tableProvider) use ($tabs) {
-                           if ($tableProvider instanceof AcceptsParentResourceEntry) {
-                               $tableProvider->acceptParentResourceEntry($this->entry);
-                           }
-                           $config = $tableProvider->makeTableConfig();
+                       ->map(function (Relation $relation) use ($tabs) {
 
-                           $card = SvCard::make()->block(
-                               SvBlock::make('sv-table')->setProps($config->compose())
-                           );
+                           $card = SvBlock::make('sv-loader')->setProps([
+                               'url' => sv_url(
+                                   sprintf(
+                                       'sv/res/%s/%s/%s/table',
+                                       $this->resource->getHandle(),
+                                       $this->entry->getId(),
+                                       $relation->getName()
+                                   )
+                               ),
+                           ]);
 
-                           return $tabs->addTab(sv_tab($config->getTitle(), $card));
+                           return $tabs->addTab(sv_tab( $relation->getName(), $card));
                        });
 
         $page = Page::make($entry->getLabel());
@@ -121,24 +123,4 @@ class ResourceController extends BaseApiController
 
         return ['data' => sv_compose($page->makeComponent())];
     }
-//
-//    /** @return \SuperV\Platform\Domains\Resource\Resource */
-//    protected function resource()
-//    {
-//        if ($this->resource) {
-//            return $this->resource;
-//        }
-//        $resource = request()->route()->parameter('resource');
-//        $this->resource = ResourceFactory::make(str_replace('-', '_', $resource));
-//
-//        if (! $this->resource) {
-//            throw new \Exception("Resource not found [{$resource}]");
-//        }
-//
-//        if ($id = request()->route()->parameter('id')) {
-//            $this->entry = $this->resource()->find($id);
-//        }
-//
-//        return $this->resource;
-//    }
 }

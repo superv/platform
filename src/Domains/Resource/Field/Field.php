@@ -87,8 +87,6 @@ class Field implements FieldContract
 
     protected $flags = [];
 
-    protected $built = false;
-
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
@@ -126,17 +124,9 @@ class Field implements FieldContract
         return $composition;
     }
 
-    public function present($value)
+    public function onPresenting(Closure $callback)
     {
-        if ($value instanceof EntryContract) {
-            $value = ResourceEntry::make($value);
-        }
-
-        if ($presenter = $this->fieldType()->getPresenter()) {
-              $value = $presenter($value);
-          }
-
-          return $value;
+        $this->on('presenting', $callback);
     }
 
     public function fieldType(): FieldType
@@ -166,6 +156,25 @@ class Field implements FieldContract
         }
 
         return $this->fieldType;
+    }
+
+    public function present($value)
+    {
+        if ($callback = $this->getCallback('presenting')) {
+            return $callback($value);
+        }
+
+        if ($presenter = $this->fieldType()->getPresenter()) {
+            return $presenter($value);
+        }
+
+        if ($value instanceof EntryContract) {
+//            $value = ResourceEntry::make($value);
+
+            return $value->getAttribute($this->getName());
+        }
+
+        return $value;
     }
 
     public function getValue()
@@ -216,13 +225,6 @@ class Field implements FieldContract
         return $this;
     }
 
-    public function removeWatcher()
-    {
-        $this->watcher = null;
-
-        return $this;
-    }
-
     public function getType(): string
     {
         return $this->type;
@@ -253,6 +255,18 @@ class Field implements FieldContract
         return $this->fieldType() instanceof DoesNotInteractWithTable;
     }
 
+    public function hide(bool $value = true)
+    {
+        return $this->setFlag('hidden', $value);
+    }
+
+    public function removeWatcher()
+    {
+        $this->watcher = null;
+
+        return $this;
+    }
+
     public function getLabel(): string
     {
         return $this->label ?? str_unslug($this->name);
@@ -280,11 +294,6 @@ class Field implements FieldContract
     public function setFieldTypeResolver(Closure $fieldTypeResolver): void
     {
         $this->fieldTypeResolver = $fieldTypeResolver;
-    }
-
-    public function hide(bool $value = true)
-    {
-        return $this->setFlag('hidden', $value);
     }
 
     public function setFlag(string $flag, bool $value): self

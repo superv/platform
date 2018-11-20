@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\Watcher;
+use SuperV\Platform\Domains\UI\Components\FormComponent;
 use SuperV\Platform\Support\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
@@ -143,6 +144,12 @@ class Form
         $this->fire('composed', ['form' => $this, 'composition' => $composition]);
 
         return $composition;
+    }
+
+
+    public function makeComponent()
+    {
+        return FormComponent::from($this);
     }
 
     public function mergeFields($fields, ?Watcher $watcher, string $handle = 'default')

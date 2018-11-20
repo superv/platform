@@ -3,7 +3,10 @@
 namespace SuperV\Platform\Domains\Resource\Action;
 
 use SuperV\Platform\Contracts\Hibernatable;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Composition;
 use SuperV\Platform\Support\Concerns\HibernatableConcern;
 
@@ -20,13 +23,34 @@ class AttachEntryAction extends Action implements Hibernatable
 
     public function makeComponent()
     {
-        return parent::makeComponent()->setName('sv-attach-entry-action');
+        return parent::makeComponent()
+                     ->setName('sv-attach-entry-action');
+    }
+
+    protected function getPivotForm()
+    {
+        if ($pivotColumns = $this->relation->getConfig()->getPivotColumns()) {
+            $pivotResource = Resource::of($this->relation->getConfig()->getPivotTable());
+
+            $pivotFields = $pivotResource->getFields()
+                                         ->filter(function(Field $field) use ($pivotColumns) {
+                                             return in_array($field->getColumnName(), $pivotColumns);
+                                         })
+                                         ->values()->all();
+
+            $form = FormConfig::make()
+                              ->addGroup($pivotFields)
+                              ->makeForm();
+
+            return $form->compose()->get('fields');
+        }
     }
 
     public function onComposed(Composition $composition)
     {
         $composition->replace('lookup-url', sv_url($this->getLookupUrl()));
         $composition->replace('attach-url', sv_url($this->getAttachUrl()));
+        $composition->replace('pivot-fields', $this->getPivotForm());
     }
 
     public function getLookupUrl()

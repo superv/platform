@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
+use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Http\Controllers\BaseApiController;
@@ -11,21 +12,51 @@ class RelationController extends BaseApiController
 {
     use ResolvesResource;
 
-    /** @var \SuperV\Platform\Domains\Resource\Relation\Relation */
-    protected $relation;
-
-    protected function relation()
+    protected function resolveRelation(): Relation
     {
-        $this->relation = $this->resource()->getRelation($this->route->parameter('relation'));
+        $relation = $this->resource()->getRelation($this->route->parameter('relation'));
+        if ($this->entry) {
+            $relation->acceptParentResourceEntry($this->entry);
+        }
 
-        return $this->relation;
+        return $relation;
+    }
+
+    public function table()
+    {
+        /** @var TableConfig $config */
+        $config = $this->resolveRelation()->makeTableConfig();
+
+        if ($this->request->get('data')) {
+            return ['data' => Table::config($config)->build()->compose()];
+        } else {
+            return ['data' => $config->makeComponent()->compose()];
+        }
+    }
+
+    public function tableData()
+    {
     }
 
     public function attach()
     {
         $this->resource();
         $relationName = $this->route->parameter('relation');
-        $res = $this->entry->{$relationName}()->syncWithoutDetaching($this->request->get('items'));
+        $items = $this->request->get('items');
+        if ($pivotColumns = $this->resolveRelation()->getConfig()->getPivotColumns()) {
+            $formData = $this->request->get('form_data');
+
+            $items = [];
+            foreach ($this->request->get('items') as $item) {
+                $pivotData = [];
+                foreach ($pivotColumns as $column) {
+                    $pivotData[$column] = array_get($formData, $column);
+                }
+                $items[$item] = $pivotData;
+            }
+        }
+
+        $res = $this->entry->{$relationName}()->syncWithoutDetaching($items);
 
         return $res;
     }
@@ -43,7 +74,7 @@ class RelationController extends BaseApiController
         $config->build();
         $table = Table::config($config);
 
-        $relation = $this->relation();
+        $relation = $this->resolveRelation();
 
         /** @var \Illuminate\Database\Eloquent\Builder $query */
         $query = $relation->getRelatedResource()->newQuery();
@@ -70,39 +101,11 @@ class RelationController extends BaseApiController
      */
     protected function getLookupTableConfig(): \SuperV\Platform\Domains\Resource\Table\TableConfig
     {
-        $relatedResource = $this->relation()->getRelatedResource();
+        $relatedResource = $this->resolveRelation()->getRelatedResource();
         $config = new TableConfig();
-        $config->setFieldsProvider($relatedResource);
+        $config->setFields($relatedResource);
         $config->setDataUrl(url()->current().'/data');
 
         return $config;
     }
 }
-
-//        $config->setQueryProvider($relatedResource);
-
-//        $relationConfig = $relation->getConfig();
-//        $config->setQueryParams([
-//            'joins'  => [
-//                [
-//                    'table'    => $relationConfig->getPivotTable(),
-//                    'first'    => $relationConfig->getPivotTable().'.'.$relationConfig->getPivotRelatedKey(),
-//                    'operator' => '=',
-//                    'second'   => $relatedResource->getHandle().'.id',
-//                    'type'     => 'inner',
-//                ],
-//            ],
-//            'wheres' => [
-//                [
-//                    'column'   => $relationConfig->getPivotTable().'.'.$relationConfig->getPivotForeignKey(),
-//                    'operator' => '!=',
-//                    'value'    => $this->entry->getId(),
-//                ],
-//                [
-//                    'column'   => $relationConfig->getPivotTable().'.owner_type',
-//                    'operator' => '!=',
-//                    'value'    => $this->entry->getHandle(),
-//                    'boolean' => 'or'
-//                ],
-//            ],
-//        ]);

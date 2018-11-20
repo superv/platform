@@ -33,8 +33,8 @@ class MultipleSelectAction extends Action
 
         $relatedResource = $this->relation->getRelatedResource();
         $config = new TableConfig();
-        $config->setFieldsProvider($relatedResource);
-        $config->setQueryProvider($relatedResource);
+        $config->setFields($relatedResource);
+        $config->setQuery($relatedResource);
 
         $config->build();
 
@@ -45,8 +45,8 @@ class MultipleSelectAction extends Action
     {
         $relatedResource = $this->relation->getRelatedResource();
         $config = new TableConfig();
-        $config->setFieldsProvider($relatedResource);
-        $config->setQueryProvider($relatedResource);
+        $config->setFields($relatedResource);
+        $config->setQuery($relatedResource);
 
         return $config->build()->makeComponent()->compose();
     }
