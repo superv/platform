@@ -17,11 +17,12 @@ class TableData
     public function toArray()
     {
         return [
-            'rows' => $this->table->getRows()
-                                  ->map(function (TableRow $row) {
-                                      return $row->compose();
-                                  })
-                                  ->all(),
+            'rows'       => $this->table->getRows()
+                                        ->map(function (TableRow $row) {
+                                            return $row->compose();
+                                        })
+                                        ->all(),
+            'pagination' => $this->table->getPagination(),
         ];
     }
 }

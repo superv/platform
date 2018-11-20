@@ -26,7 +26,6 @@ class RelationTableConfig extends TableConfig
 
         $attachAction = AttachEntryAction::make()->setRelation($this->relation);
 
-        $this->setQueryProvider($resource);
         $this->setFieldsProvider($resource);
         $this->setContextActions([$attachAction]);
         $this->setTitle($this->relation->getName());

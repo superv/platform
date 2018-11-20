@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
+use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Table;
@@ -20,11 +21,7 @@ use SuperV\Platform\Http\Controllers\BaseApiController;
 
 class ResourceController extends BaseApiController
 {
-    /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $resource;
-
-    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
-    protected $entry;
+    use ResolvesResource;
 
     public function index()
     {
@@ -39,7 +36,7 @@ class ResourceController extends BaseApiController
         $config->setContext(new Context($this->resource));
 
         $card = SvCard::make()->block(
-            SvBlock::make('sv-table-v2')->setProps($config->build()->compose())
+            SvBlock::make('sv-table')->setProps($config->build()->compose())
         );
 
         $page = Page::make($this->resource->getLabel());
@@ -113,7 +110,7 @@ class ResourceController extends BaseApiController
                            $config = $tableProvider->makeTableConfig();
 
                            $card = SvCard::make()->block(
-                               SvBlock::make('sv-table-v2')->setProps($config->compose())
+                               SvBlock::make('sv-table')->setProps($config->compose())
                            );
 
                            return $tabs->addTab(sv_tab($config->getTitle(), $card));
@@ -124,24 +121,24 @@ class ResourceController extends BaseApiController
 
         return ['data' => sv_compose($page->makeComponent())];
     }
-
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
-    protected function resource()
-    {
-        if ($this->resource) {
-            return $this->resource;
-        }
-        $resource = request()->route()->parameter('resource');
-        $this->resource = ResourceFactory::make(str_replace('-', '_', $resource));
-
-        if (! $this->resource) {
-            throw new \Exception("Resource not found [{$resource}]");
-        }
-
-        if ($id = request()->route()->parameter('id')) {
-            $this->entry = $this->resource()->find($id);
-        }
-
-        return $this->resource;
-    }
+//
+//    /** @return \SuperV\Platform\Domains\Resource\Resource */
+//    protected function resource()
+//    {
+//        if ($this->resource) {
+//            return $this->resource;
+//        }
+//        $resource = request()->route()->parameter('resource');
+//        $this->resource = ResourceFactory::make(str_replace('-', '_', $resource));
+//
+//        if (! $this->resource) {
+//            throw new \Exception("Resource not found [{$resource}]");
+//        }
+//
+//        if ($id = request()->route()->parameter('id')) {
+//            $this->entry = $this->resource()->find($id);
+//        }
+//
+//        return $this->resource;
+//    }
 }

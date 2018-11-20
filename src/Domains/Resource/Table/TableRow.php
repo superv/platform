@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
+use SuperV\Platform\Domains\Context\Negotiator;
+use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Action\Builder;
 use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\Field;
@@ -74,7 +76,11 @@ class TableRow implements ProvidesResourceEntry
     {
         $this->table->getActions()
                     ->map(function ($actionClass) {
-                        $this->actions[] = (new Builder($actionClass))->addContext($this)->compose();
+                        /** @var Action $action */
+                        $action = $actionClass::make();
+                        Negotiator::deal($this, $action);
+                        $this->actions[] = $action->makeComponent()->compose();
+//                        $this->actions[] = (new Builder($actionClass))->addContext($this)->compose();
                     });
     }
 

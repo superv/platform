@@ -4,7 +4,6 @@ namespace SuperV\Platform\Domains\Resource\Action;
 
 use SuperV\Platform\Contracts\Hibernatable;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Support\Composition;
 use SuperV\Platform\Support\Concerns\HibernatableConcern;
 
@@ -21,35 +20,33 @@ class AttachEntryAction extends Action implements Hibernatable
 
     public function makeComponent()
     {
-        return parent::makeComponent()->setName('sv-multiple-select');
+        return parent::makeComponent()->setName('sv-attach-entry-action');
     }
 
     public function onComposed(Composition $composition)
     {
-//        $url = sprintf('sv/act/%s', uuid());
-//
-//        cache()->forever($url, serialize($this));
-
-//        $composition->replace('url', sv_url($url));
-
-        $relatedResource = $this->relation->getRelatedResource();
-        $config = new TableConfig();
-        $config->setFieldsProvider($relatedResource);
-        $config->setQueryProvider($relatedResource);
-
-        $config->build();
-
-        $composition->replace('url', sv_url($config->getUrl()));
+        $composition->replace('lookup-url', sv_url($this->getLookupUrl()));
+        $composition->replace('attach-url', sv_url($this->getAttachUrl()));
     }
 
-    public function getLookupTable()
+    public function getLookupUrl()
     {
-        $relatedResource = $this->relation->getRelatedResource();
-        $config = new TableConfig();
-        $config->setFieldsProvider($relatedResource);
-        $config->setQueryProvider($relatedResource);
+        return sprintf(
+            'sv/res/%s/%s/%s/lookup',
+            $this->relation->getParentResourceHandle(),
+            $this->relation->getParentResourceEntry()->getId(),
+            $this->relation->getName()
+        );
+    }
 
-        return $config->build()->makeComponent()->compose();
+    public function getAttachUrl()
+    {
+        return sprintf(
+            'sv/res/%s/%s/%s/attach',
+            $this->relation->getParentResourceHandle(),
+            $this->relation->getParentResourceEntry()->getId(),
+            $this->relation->getName()
+        );
     }
 
     public function setRelation(Relation $relation): AttachEntryAction

@@ -4,13 +4,14 @@ namespace SuperV\Platform\Domains\Resource\Relation\Types;
 
 use Illuminate\Database\Eloquent\Relations\MorphToMany as EloquentMorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\Table\RelationTableConfig;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
-class MorphToMany extends Relation implements ProvidesTable
+class MorphToMany extends Relation implements ProvidesTable, ProvidesQuery
 {
     protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation
     {

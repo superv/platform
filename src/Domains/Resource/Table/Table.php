@@ -46,7 +46,6 @@ class Table
     public function build(): self
     {
         $this->fields = $this->config->getFields()->map(function (Field $field) {
-
             if ($callback = $field->getAlterQueryCallback()) {
                 $callback($this->getQuery());
             }
@@ -130,6 +129,8 @@ class Table
             $this->query = $this->config->newQuery();
         }
 
+        $this->applyQueryParams();
+
         return $this->query;
     }
 
@@ -138,6 +139,32 @@ class Table
         $this->query = $query;
 
         return $this;
+    }
+
+    protected function applyQueryParams()
+    {
+        if (! $params = $this->config->getQueryParams()) {
+            return;
+        }
+
+        foreach (array_get($params, 'joins', []) as $join) {
+            $this->query->join(
+                $join['table'], $join['first'], $join['operator'], $join['second'], $join['type']
+            );
+        }
+        foreach (array_get($params, 'wheres', []) as $where) {
+            $this->query->where(
+                $where['column'],
+                $where['operator'],
+                $where['value'],
+                $where['boolean'] ?? 'and'
+            );
+        }
+    }
+
+    public function getPagination(): array
+    {
+        return $this->pagination;
     }
 
     public function uuid()

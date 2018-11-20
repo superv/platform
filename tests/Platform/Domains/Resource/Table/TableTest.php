@@ -45,6 +45,14 @@ class TableTest extends ResourceTestCase
         $this->assertEquals(['label' => 'Name', 'name' => 'name'], $columns->get('name'));
     }
 
+    function test__config_can_set_custom_data_url()
+    {
+        $this->config = new TableConfig;
+        $this->config->setDataUrl('sv/custom/url');
+
+        $this->assertEquals('sv/custom/url', $this->config->getDataUrl());
+    }
+
     function test__builds_table_rows_with_resource_entry_models()
     {
         $this->makeGroupResource();

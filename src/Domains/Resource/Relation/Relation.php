@@ -58,6 +58,7 @@ abstract class Relation implements AcceptsParentResourceEntry
         throw new PlatformException('Related resource/model not found');
     }
 
+    /** @return \SuperV\Platform\Domains\Resource\Resource; */
     public function getRelatedResource(): Resource
     {
         return Resource::of($this->config->getRelatedResource());
@@ -81,6 +82,16 @@ abstract class Relation implements AcceptsParentResourceEntry
     public function getConfig(): RelationConfig
     {
         return $this->config;
+    }
+
+    public function getParentResourceEntry(): \SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry
+    {
+        return $this->parentResourceEntry;
+    }
+
+    public function getParentResourceHandle(): string
+    {
+        return $this->parentResourceEntry->getHandle();
     }
 
     public static function fromEntry(Entry $entry): self

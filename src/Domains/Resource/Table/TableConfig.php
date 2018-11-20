@@ -42,10 +42,15 @@ class TableConfig
 
     protected $url;
 
+    /** @var string */
+    protected $dataUrl;
+
     protected $built = false;
 
     /** @var \SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery */
     protected $queryProvider;
+
+    protected $queryParams;
 
     /** @var \SuperV\Platform\Domains\Resource\Contracts\ProvidesFields */
     protected $fieldsProvider;
@@ -141,7 +146,14 @@ class TableConfig
 
     public function getDataUrl()
     {
-        return $this->url.'/data';
+        return $this->dataUrl ?? $this->url.'/data';
+    }
+
+    public function setDataUrl(string $dataUrl): TableConfig
+    {
+        $this->dataUrl = $dataUrl;
+
+        return $this;
     }
 
     public function removeColumn(string $name)
@@ -243,6 +255,19 @@ class TableConfig
         $this->context = $context;
 
         return $this;
+    }
+
+    public function getQueryParams()
+    {
+        return $this->queryParams;
+    }
+
+    /**
+     * @param mixed $queryParams
+     */
+    public function setQueryParams($queryParams): void
+    {
+        $this->queryParams = $queryParams;
     }
 
     public function uuid()

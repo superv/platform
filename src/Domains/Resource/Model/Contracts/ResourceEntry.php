@@ -12,4 +12,6 @@ interface ResourceEntry extends EntryContract
     public function getEntry(): EntryContract;
 
     public function getResource(): Resource;
+
+    public function getHandle(): string;
 }

@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
 class TableComponent extends BaseUIComponent
 {
-    protected $name = 'sv-table-v2';
+    protected $name = 'sv-table';
 
     /** @var \SuperV\Platform\Domains\Resource\Table\TableConfig */
     protected $config;
