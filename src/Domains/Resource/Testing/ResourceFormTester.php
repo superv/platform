@@ -109,7 +109,8 @@ class ResourceFormTester extends Assert
      */
     protected function getCreateForm(): array
     {
-        $response = $this->getJsonUser($this->resource->route('create'));
+        $route = $this->resource->route('create');
+        $response = $this->getJsonUser($route);
         $response->assertOk();
 
         $props = $response->decodeResponseJson($this->propsKeys['create']);

@@ -27,42 +27,35 @@ class TableTest extends ResourceTestCase
         $this->makeGroupResource();
         $this->makeUserResource();
 
-        $this->config = new TableConfig();
-        $this->config->setFields($this->users);
-        $this->config->setQuery($this->users);
-        $this->config->setRowActions([EditEntryAction::class, DeleteEntryAction::class]);
-        $this->config->setContextActions([CreateEntryAction::class]);
-        $this->config->build();
+        $config = TableConfig::make()
+                                   ->setDataUrl('url/to/table/data')
+                                   ->setFields($this->users)
+                                   ->setQuery($this->users)
+                                   ->setRowActions([EditEntryAction::class, DeleteEntryAction::class])
+                                   ->setContextActions([CreateEntryAction::class])
+                                   ->build();
 
-        $this->assertEquals(sv_url('sv/tables/'.$this->config->uuid().'/data'), $this->config->getDataUrl());
-        $this->assertEquals(3, $this->config->getFields()->count());
+        $this->assertEquals(3, $config->getFields()->count());
 
-        $composition = $this->config->compose();
-        $this->assertEquals($this->config->getDataUrl(), $composition->get('config.dataUrl'));
+        $composition = $config->compose();
+        $this->assertEquals($config->getDataUrl(), $composition->get('config.dataUrl'));
 
         $columns = collect($composition->get('config.meta.columns'))->keyBy('name');
         $this->assertEquals(['label' => 'Name', 'name' => 'name'], $columns->get('name'));
-    }
-
-    function test__config_can_set_custom_data_url()
-    {
-        $this->config = new TableConfig;
-        $this->config->setDataUrl('sv/custom/url');
-
-        $this->assertEquals('sv/custom/url', $this->config->getDataUrl());
     }
 
     function test__builds_table_rows_with_resource_entry_models()
     {
         $this->makeGroupResource();
         $this->makeUserResource();
-        $this->makeTableConfig();
+        $config = $this->makeTableConfig();
 
         $fakeA = $this->users->fake(['group_id' => 123]);
         $this->users->fake([], 3);
 
-        $table = $this->config->makeTable();
+        $table = $config->makeTable();
 
+        // row values
         $this->assertEquals(4, $table->getRows()->count());
         $this->assertEquals([
             'id'    => $fakeA->id,
@@ -71,22 +64,33 @@ class TableTest extends ResourceTestCase
             'group' => 'Admins',
         ], $table->getRows()->get(0)->getValues());
 
+        // rows actions
         $rowActions = $table->getRows()->first()->getActions();
-        $this->assertEquals([
-            ['name' => 'edit', 'title' => 'Edit', 'url' => $fakeA->route('edit')],
-            ['name' => 'delete', 'title' => 'Delete', 'url' => $fakeA->route('delete')],
-        ], $rowActions);
-
-        $composition = $this->config->compose();
-
-        $response = $this->getJsonUser($this->users->route('index'));
         $this->assertEquals(
-            $composition->get('config.meta.columns'),
+            ['name' => 'edit', 'title' => 'Edit', 'url' => $fakeA->route('edit')],
+            $rowActions[0]['props']
+        );
+        $this->assertEquals(
+            ['name' => 'delete', 'title' => 'Delete', 'url' => $fakeA->route('delete')],
+            $rowActions[1]['props']
+        );
+
+        // over http
+        $this->withoutExceptionHandling();
+        $response = $this->getJsonUser($this->users->route('index'));
+        $response->assertOk();
+
+        $configResponse = $response->decodeResponseJson('data.props.blocks.0.props.block.props.config');
+
+        $this->assertEquals(
+            $config->compose()->get('config.meta.columns'),
             $response->decodeResponseJson('data.props.blocks.0.props.block.props.config.meta.columns')
         );
 
-        $response = $this->getJsonUser($this->config->getDataUrl());
-        $this->assertEquals($table->compose(), $response->decodeResponseJson('data'));
+//        $dataUrl = $configResponse['dataUrl'];
+//        $response = $this->getJsonUser($dataUrl, ['data' => 1]);
+//
+//        $this->assertEquals($table->compose(), $response->decodeResponseJson('data.rows'));
     }
 
     function test__builds_table_rows_with_base_entry_models()
@@ -99,21 +103,23 @@ class TableTest extends ResourceTestCase
                 $table->string('name');
             });
 
-        $this->makeTableConfig();
+        $config = $this->makeTableConfig();
         $this->users->fake([], 3);
 
-        $table = $this->config->makeTable();
+        $table = $config->makeTable();
         $rows = $table->getRows();
         $this->assertEquals(3, $rows->count());
     }
 
-    protected function makeTableConfig(): void
+    protected function makeTableConfig(): TableConfig
     {
-        $this->config = new TableConfig();
-        $this->config->setFields($this->users);
-        $this->config->setQuery($this->users);
-        $this->config->setRowActions([EditEntryAction::class, DeleteEntryAction::class]);
-        $this->config->build();
+        return TableConfig::make()
+                          ->setDataUrl('url/to/table/data')
+                          ->setFields($this->users)
+                          ->setQuery($this->users)
+                          ->setRowActions([EditEntryAction::class, DeleteEntryAction::class])
+                          ->setContextActions([CreateEntryAction::class])
+                          ->build();
     }
 
     protected function makeGroupResource(): void

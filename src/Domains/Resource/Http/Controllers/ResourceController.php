@@ -24,32 +24,32 @@ class ResourceController extends BaseApiController
 
     public function index()
     {
-        $this->resolveResource();
+        $uri = url()->current();
+        $resource = $this->resolveResource();
 
         $createAction = CreateEntryAction::make();
-        Negotiator::deal($createAction, $this->resource);
+        Negotiator::deal($createAction, $resource);
 
-        $config = new TableConfig();
-        $config->setFields($this->resource);
-        $config->setQuery($this->resource);
-        $config->setContext(new Context($this->resource));
+        $config = TableConfig::make()
+                             ->setDataUrl(url()->current().'/data')
+                             ->setFields($resource)
+                             ->setQuery($resource)
+                             ->setContext(new Context($resource))
+                             ->build();
+
+        if ($this->route->parameter('data')) {
+            return ['data' => Table::config($config)->build()->compose()];
+        }
 
         $card = SvCard::make()->block(
-            SvBlock::make('sv-table')->setProps($config->build()->compose())
+            SvBlock::make('sv-table')->setProps($config->compose())
         );
 
-        $page = Page::make($this->resource->getLabel());
+        $page = Page::make($resource->getLabel());
         $page->addBlock($card);
         $page->setActions([$createAction->makeComponent()]);
 
         return ['data' => sv_compose($page->makeComponent())];
-    }
-
-    public function table($uuid)
-    {
-        $config = TableConfig::fromCache($uuid);
-
-        return ['data' => Table::config($config)->build()->compose()];
     }
 
     public function create()
@@ -143,15 +143,15 @@ class ResourceController extends BaseApiController
     {
         $this->resolveResource();
 
-        $form = FormConfig::make()
-                          ->setUrl($this->entry->route('update'))
-                          ->addGroup(
-                              $fields = $this->resolveResource()->getFields(),
-                              $entry = $this->entry,
-                              $handle = $this->resolveResource()->getHandle()
-                          )
-                          ->makeForm()->setRequest($this->request)
-                          ->save();
+        FormConfig::make()
+                  ->setUrl($this->entry->route('update'))
+                  ->addGroup(
+                      $fields = $this->resolveResource()->getFields(),
+                      $entry = $this->entry,
+                      $handle = $this->resolveResource()->getHandle()
+                  )
+                  ->makeForm()->setRequest($this->request)
+                  ->save();
 
         return response()->json([]);
     }

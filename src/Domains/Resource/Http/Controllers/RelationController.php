@@ -27,7 +27,7 @@ class RelationController extends BaseApiController
         /** @var TableConfig $config */
         $config = $this->resolveRelation()->makeTableConfig();
 
-        if ($this->request->get('data')) {
+        if ($this->route->parameter('data')) {
             return ['data' => Table::config($config)->build()->compose()];
         } else {
             return ['data' => sv_compose($config->makeComponent()->addClass('sv-card')->compose())];
@@ -63,20 +63,17 @@ class RelationController extends BaseApiController
         $relationName = $this->route->parameter('relation');
         $res = $this->entry->{$relationName}()->detach($this->request->get('item'));
 
-             return $res;
+        return $res;
     }
 
     public function lookup()
     {
         $config = $this->getLookupTableConfig();
 
-        return ['data' => $config->build()->makeComponent()->compose()];
-    }
+        if (! $this->route->parameter('data')) {
+            return ['data' => $config->makeComponent()->compose()];
+        }
 
-    public function lookupData()
-    {
-        $config = $this->getLookupTableConfig();
-        $config->build();
         $table = Table::config($config);
 
         $relation = $this->resolveRelation();
@@ -103,6 +100,7 @@ class RelationController extends BaseApiController
         $config = new TableConfig();
         $config->setFields($relatedResource);
         $config->setDataUrl(url()->current().'/data');
+        $config->build();
 
         return $config;
     }

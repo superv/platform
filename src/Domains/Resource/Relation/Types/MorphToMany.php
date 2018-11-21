@@ -65,7 +65,7 @@ class MorphToMany extends Relation implements ProvidesTable, ProvidesQuery
 
         $config->setTitle($this->getName());
         $config->build(false);
-        $config->setDataUrl(url()->current().'?data=1');
+        $config->setDataUrl(url()->current().'/data');
 
         return $config;
     }

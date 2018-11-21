@@ -38,8 +38,6 @@ class TableConfig
      */
     protected $rowActions;
 
-    protected $url;
-
     /** @var string */
     protected $dataUrl;
 
@@ -56,16 +54,10 @@ class TableConfig
 
     public function __construct()
     {
-        $this->boot();
-    }
-
-    protected function boot()
-    {
         $this->uuid = Str::uuid();
-        $this->url = sv_url('sv/tables/'.$this->uuid());
     }
 
-    public function build($cache = true): self
+    public function build(): self
     {
         $this->contextActions = collect($this->contextActions ?? [])
             ->map(function ($action) {
@@ -90,10 +82,6 @@ class TableConfig
 
                   return $action;
               });
-
-        if ($cache) {
-            $this->cache();
-        }
 
         return $this;
     }
@@ -143,21 +131,9 @@ class TableConfig
         return $table->build();
     }
 
-    public function getUrl()
-    {
-        return $this->url.'/config';
-    }
-
-    public function setUrl($url)
-    {
-        $this->url = $url;
-
-        return $this;
-    }
-
     public function getDataUrl()
     {
-        return $this->dataUrl ?? $this->url.'/data';
+        return $this->dataUrl;
     }
 
     public function setDataUrl(string $dataUrl): TableConfig
@@ -190,9 +166,9 @@ class TableConfig
             ->filter();
     }
 
-    public function getRowActions(): ?Collection
+    public function getRowActions(): Collection
     {
-        return $this->rowActions;
+        return $this->rowActions ?? collect();
     }
 
     public function setRowActions($rowActions): TableConfig
@@ -200,16 +176,6 @@ class TableConfig
         $this->rowActions = $rowActions;
 
         return $this;
-    }
-
-    public function cache()
-    {
-        cache()->forever($this->cacheKey(), serialize($this));
-    }
-
-    public function cacheKey(): string
-    {
-        return 'sv:tables:'.$this->uuid();
     }
 
     public function setQuery($query): self
@@ -276,14 +242,9 @@ class TableConfig
         return $this->uuid;
     }
 
-    public static function fromCache($uuid): ?TableConfig
+    public static function make(): self
     {
-        if ($config = cache('sv:tables:'.$uuid)) {
-            $config = unserialize($config);
-
-            return $config;
-        }
-
-        return null;
+        return new static;
     }
+
 }

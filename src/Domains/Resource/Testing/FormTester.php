@@ -63,8 +63,10 @@ class FormTester extends Assert
         }
 
 //        dd($form->getWatcher()->toArray(), $fields, $post);
-        $response = $this->postJsonUser($form->getUrl(), $post);
-        $response->assertOk();
+//        $response = $this->postJsonUser($form->getUrl(), $post);
+//        $response->assertOk();
+
+        $form->setRequest($this->makePostRequest('', $post))->save();
 
         $entry = $form->getWatcher()->newQuery()->first();
 

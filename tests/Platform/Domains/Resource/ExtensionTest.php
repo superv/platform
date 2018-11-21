@@ -51,7 +51,6 @@ class ExtensionTest extends ResourceTestCase
     function gets_before_saving()
     {
         $res = $this->makeResource('t_users', ['name', 'age:integer']);
-        $res->build();
 
         Extension::register(TestUserResourceExtension::class);
         $ext = Resource::of('t_users');
