@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Auth\Access\Guard\Guardable;
  * Trait HasRoles
  *
  * @property \Illuminate\Database\Eloquent\Collection $roles
- * @package SuperV\Modules\Guard\Concerns
  */
 trait HasActions
 {

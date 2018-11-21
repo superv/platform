@@ -2,10 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
@@ -28,15 +27,32 @@ class ResourceFactory
         $this->handle = $handle;
     }
 
+    protected function getFieldsProviderXXX()
+    {
+        return function () {
+            $self = ResourceFactory::make('sv_resources')
+                                   ->newQuery()
+                                   ->with('fields')
+                                   ->where('handle', $this->model->getHandle())
+                                   ->first();
+
+            return $self->fields->map(function (ResourceEntryModel $fieldEntry) {
+                return FieldFactory::createFromArray($fieldEntry->toArray());
+            });
+        };
+    }
+
     protected function getFieldsProvider()
     {
         return function () {
-            return $this->model->getFields()
+            $fields = $this->model->getFields()
                                ->map(function (FieldModel $fieldEntry) {
                                    $field = FieldFactory::createFromEntry($fieldEntry);
 
                                    return $field;
                                });
+
+            return $fields ?? collect();
         };
     }
 
@@ -55,28 +71,30 @@ class ResourceFactory
 
     protected function get()
     {
-        if (! $this->model = ResourceModel::withSlug($this->handle)) {
+        if (! $this->model = ResourceModel::withHandle($this->handle)) {
             throw new PlatformException("Resource model entry not found for [{$this->handle}]");
         }
 
-        return array_merge($this->model->toArray(), [
-            'handle'            => $this->model->getSlug(),
-//            'fields'            => $this->getFieldsProvider(),
-            'relations'         => $this->getRelationsProvider(),
-            'relation_provider' => function (string $name, ?ResourceEntry $entry = null) {
-                $relationEntry = RelationModel::query()
-                                              ->where('resource_id', $this->model->id)
-                                              ->where('name', $name)
-                                              ->first();
-
-                $relation = (new RelationFactory)->make($relationEntry);
-                if ($entry && $relation instanceof AcceptsParentResourceEntry) {
-                    $relation->acceptParentResourceEntry($entry);
-                }
-
-                return $relation;
-            },
+        $attributes = array_merge($this->model->toArray(), [
+            'handle'    => $this->model->getHandle(),
+            'fields'    => $this->getFieldsProvider(),
+            'relations' => $this->getRelationsProvider(),
+//            'relation_provider' => function (string $name, ?ResourceEntry $entry = null) {
+//                $relationEntry = RelationModel::query()
+//                                              ->where('resource_id', $this->model->id)
+//                                              ->where('name', $name)
+//                                              ->first();
+//
+//                $relation = (new RelationFactory)->make($relationEntry);
+//                if ($entry && $relation instanceof AcceptsParentResourceEntry) {
+//                    $relation->acceptParentResourceEntry($entry);
+//                }
+//
+//                return $relation;
+//            },
         ]);
+
+        return $attributes;
     }
 
     public static function attributesFor(string $handle): array

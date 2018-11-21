@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource;
 
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaved;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaving;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ResourceExtension;
@@ -11,19 +12,25 @@ use SuperV\Platform\Domains\Resource\Field\FieldConfig;
 use SuperV\Platform\Domains\Resource\Field\Types\Number;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
+use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Resource;
 
-class ExtensionTest
+class ExtensionTest extends ResourceTestCase
 {
     /** @test */
     function overrides_fields()
     {
-        $res = $this->makeResource('t_users', ['name', 'age:integer']);
-        $res->build();
+        $this->create('t_users',
+            function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->unsignedInteger('age');
+            });
 
         Extension::register(TestUserResourceExtension::class);
-        $ext = Resource::of('t_users');
+
+        $extended = Resource::of('t_users');
 
         $this->assertNotEquals($res->getFields(), $ext->getFields());
 
@@ -88,13 +95,23 @@ class ExtensionTest
     }
 }
 
-class TestUserResourceExtension implements ResourceExtension, ObservesSaving, ObservesSaved
+class TestUserResourceExtension implements ResourceExtension
 {
+    /** @var array */
+    protected $called = [];
+
     /** @var array */
     public static $callbacks = [];
 
-    /** @var array */
-    protected $called = [];
+    public function extends(): string
+    {
+        return 't_users';
+    }
+
+
+    public function extend(Resource $resource)
+    {
+    }
 
     public function isCalled($event)
     {
@@ -117,17 +134,4 @@ class TestUserResourceExtension implements ResourceExtension, ObservesSaving, Ob
         }
     }
 
-    public function fields()
-    {
-        return [
-            'name',
-            FieldConfig::field('age')->mergeRules(['min:18', 'max:150']),
-//            Textarea::make('bio'),
-        ];
-    }
-
-    public function extends()
-    {
-        return 't_users';
-    }
 }

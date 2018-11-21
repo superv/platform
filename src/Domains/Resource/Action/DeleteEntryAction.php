@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Action;
 
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
 use SuperV\Platform\Support\Composition;
 
 class DeleteEntryAction extends Action implements AcceptsResourceEntry

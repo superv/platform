@@ -7,18 +7,17 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesRoute;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry as ResourceEntryContract;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
-
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry as ResourceEntryContract;
 
 class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
 {
@@ -84,11 +83,6 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
-    }
-
-    public function build()
-    {
-        return $this;
     }
 
     public function newResourceEntryInstance(): ResourceEntryContract
@@ -166,15 +160,20 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
 
     public function getFields(): Collection
     {
-        $self = ResourceFactory::make('sv_resources')
-                               ->newQuery()
-                               ->with('fields')
-                               ->where('handle', $this->getHandle())
-                               ->first();
+        if ($this->fields instanceof Closure) {
+            $this->fields = ($this->fields)();
+        }
 
-        return $self->fields->map(function (ResourceEntryModel $fieldEntry) {
-            return FieldFactory::createFromArray($fieldEntry->toArray());
-        });
+        return $this->fields ?? collect();
+//        $self = ResourceFactory::make('sv_resources')
+//                               ->newQuery()
+//                               ->with('fields')
+//                               ->where('handle', $this->getHandle())
+//                               ->first();
+//
+//        return $self->fields->map(function (ResourceEntryModel $fieldEntry) {
+//            return FieldFactory::createFromArray($fieldEntry->toArray());
+//        });
     }
 
     public function getFieldType($name): ?FieldType
@@ -191,17 +190,6 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
 
     public function getRelations(): Collection
     {
-//        $self = ResourceFactory::make('sv_resources')
-//                               ->newQuery()
-//                               ->with('relations')
-//                               ->where('handle', $this->getHandle())
-//                               ->first();
-//
-//        return $self->relations->map(function (ResourceEntryModel $relationEntry) {
-//            return RelationFactory::resolveFromRelationEntry($relationEntry);
-//        })
-//                               ->keyBy(function (Relation $relation) { return $relation->getName(); });
-//
         if ($this->relations instanceof Closure) {
             $this->relations = ($this->relations)();
         }
@@ -211,8 +199,13 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
 
     public function getRelation($name, ?ResourceEntry $entry = null): ?Relation
     {
-//        return $this->getRelations()->get($name);
-        return ($this->relationProvider)($name, $entry);
+        $relation = $this->getRelations()->get($name);
+        if ($entry && $relation instanceof AcceptsParentResourceEntry) {
+            $relation->acceptParentResourceEntry($entry);
+        }
+
+        return $relation;
+//        return ($this->relationProvider)($name, $entry);
     }
 
     public function getLabel()
@@ -270,6 +263,18 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
         $this->hydrate(ResourceFactory::attributesFor($this->getHandle()));
     }
 
+    public function provideRoute(string $name)
+    {
+        $base = 'sv/res/'.$this->getHandle();
+        if ($name === 'create') {
+            return $base.'/create';
+        }
+
+        if ($name === 'index') {
+            return $base;
+        }
+    }
+
     public function uuid(): string
     {
         return $this->uuid;
@@ -282,7 +287,7 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
 
     public static function modelOf($handle)
     {
-        if (! $resourceEntry = ResourceModel::withSlug($handle)) {
+        if (! $resourceEntry = ResourceModel::withHandle($handle)) {
             throw new PlatformException("Resource model not found with handle [{$handle}]");
         }
 
@@ -290,23 +295,11 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
             return new $model;
         }
 
-        return ResourceEntryModel::make($resourceEntry->getSlug());
+        return ResourceEntryModel::make($resourceEntry->getHandle());
     }
 
     public static function of($handle): self
     {
         return ResourceFactory::make($handle);
-    }
-
-    public function provideRoute(string $name)
-    {
-        $base = 'sv/res/'.$this->getHandle();
-        if ($name === 'create') {
-            return $base.'/create';
-        }
-
-        if ($name === 'index') {
-            return $base;
-        }
     }
 }

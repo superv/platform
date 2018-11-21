@@ -100,9 +100,9 @@ class ResourceModel extends Entry implements ProvidesFields
         return $this->addon;
     }
 
-    public function getSlug()
+    public function getHandle()
     {
-        return $this->slug;
+        return $this->handle;
     }
 
     public function uuid()
@@ -115,11 +115,11 @@ class ResourceModel extends Entry implements ProvidesFields
         return static::query()->where('model', $model)->first();
     }
 
-    public static function withSlug($table): ?self
+    public static function withHandle($table): ?self
     {
         return static::fromCache($table);
 
-        return static::query()->where('slug', $table)->first();
+        return static::query()->where('handle', $table)->first();
     }
 
     public static function fromCache($handle)

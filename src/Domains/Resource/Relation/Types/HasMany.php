@@ -39,7 +39,8 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery
         $config->setQuery($this);
         $config->setTitle($this->getName());
 
-        $config->build();
+        $config->build(false);
+        $config->setDataUrl(url()->current().'?data=1');
 
         $belongsTo = $config->getFields()->first(function (Field $field) {
             if ($field->getType() !== 'belongs_to') {

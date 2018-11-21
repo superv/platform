@@ -256,7 +256,7 @@ class RelationConfig
             return $this->relatedModel($related);
         }
 
-        if ($resource = ResourceModel::withSlug($related)) {
+        if ($resource = ResourceModel::withHandle($related)) {
             if ($model = $resource->getConfigValue('model')) {
                 $this->relatedModel($model);
             }

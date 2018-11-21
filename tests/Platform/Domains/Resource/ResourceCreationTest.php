@@ -25,7 +25,7 @@ class ResourceCreationTest extends ResourceTestCase
         });
 
         $this->assertDatabaseHas('sv_resources', ['slug' => 'test_users']);
-        $resource = ResourceModel::withSlug('test_users');
+        $resource = ResourceModel::withHandle('test_users');
         $this->assertNotNull($resource);
         $this->assertNotNull($resource->uuid());
         $this->assertEquals('platform', $resource->getAddon());
@@ -38,7 +38,7 @@ class ResourceCreationTest extends ResourceTestCase
             $resource->model(TestUser::class);
         });
 
-        $this->assertEquals(TestUser::class, ResourceModel::withSlug('test_users')->getModelClass());
+        $this->assertEquals(TestUser::class, ResourceModel::withHandle('test_users')->getModelClass());
         $this->assertInstanceOf(TestUser::class, Resource::of('test_users')->newResourceEntryInstance()->getEntry());
     }
 
@@ -84,7 +84,7 @@ class ResourceCreationTest extends ResourceTestCase
             $table->select('status')->options(['closed' => 'Closed', 'open' => 'Open'])->default('open');
         });
 
-        $resource = ResourceModel::withSlug('test_users');
+        $resource = ResourceModel::withHandle('test_users');
 
         $statusField = $resource->getField('status');
         $this->assertEquals('string', $statusField->getColumnType());
@@ -103,7 +103,7 @@ class ResourceCreationTest extends ResourceTestCase
         Schema::table('test_users', function (Blueprint $table) {
             $table->string('name')->change()->rules(['min:16', 'max:64']);
         });
-        $resource = ResourceModel::withSlug('test_users');
+        $resource = ResourceModel::withHandle('test_users');
         $nameField = $resource->getField('name');
 
         $this->assertArrayContains(['min:16', 'max:64'], $nameField->getRules());
@@ -174,7 +174,7 @@ class ResourceCreationTest extends ResourceTestCase
             $table->string('title')->default('User');
         });
 
-        $resource = ResourceModel::withSlug('test_users');
+        $resource = ResourceModel::withHandle('test_users');
         $this->assertEquals('User', $resource->getField('title')->getDefaultValue());
     }
 }

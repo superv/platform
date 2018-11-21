@@ -66,7 +66,7 @@ trait ResourceTestHelpers
 
             $resourceBlueprint->fill($resource);
         });
-        $resource = ResourceModel::withSlug($slug);
+        $resource = ResourceModel::withHandle($slug);
 
         return $resource;
     }

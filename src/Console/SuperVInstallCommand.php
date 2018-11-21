@@ -24,7 +24,7 @@ class SuperVInstallCommand extends Command
 
         $this->comment("SuperV installed..! \n");
 
-        $this->call('addon:install', ['slug' => 'superv.modules.nucleo']);
+//        $this->call('addon:install', ['slug' => 'superv.modules.nucleo']);
 //        $this->call('addon:install', ['slug' => 'superv.modules.guard']);
     }
 

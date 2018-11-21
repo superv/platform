@@ -9,7 +9,7 @@ class DeleteField
 {
     public function handle(ColumnDroppedEvent $event)
     {
-        if (! $resourceEntry = ResourceModel::withSlug($event->table)) {
+        if (! $resourceEntry = ResourceModel::withHandle($event->table)) {
             return;
         }
 
