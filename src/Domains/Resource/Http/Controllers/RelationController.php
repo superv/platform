@@ -30,12 +30,8 @@ class RelationController extends BaseApiController
         if ($this->request->get('data')) {
             return ['data' => Table::config($config)->build()->compose()];
         } else {
-            return ['data' => $config->makeComponent()->compose()];
+            return ['data' => sv_compose($config->makeComponent()->addClass('sv-card')->compose())];
         }
-    }
-
-    public function tableData()
-    {
     }
 
     public function attach()
@@ -59,6 +55,15 @@ class RelationController extends BaseApiController
         $res = $this->entry->{$relationName}()->syncWithoutDetaching($items);
 
         return $res;
+    }
+
+    public function detach()
+    {
+        $this->resource();
+        $relationName = $this->route->parameter('relation');
+        $res = $this->entry->{$relationName}()->detach($this->request->get('item'));
+
+             return $res;
     }
 
     public function lookup()
@@ -86,13 +91,6 @@ class RelationController extends BaseApiController
         $table->setQuery($query);
 
         return ['data' => $table->build()->compose()];
-    }
-
-    public function detach()
-    {
-        $relatedId = $this->route->parameter('related');
-
-        $this->makeBuilder()->newQuery()->detach($relatedId);
     }
 
     /**

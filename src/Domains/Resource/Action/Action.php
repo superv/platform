@@ -61,7 +61,8 @@ class Action implements ActionContract, Composable
         return $this->uuid;
     }
 
-    public static function make(?string $name = null): self
+    /** @return static */
+    public static function make(?string $name = null)
     {
         $action = new static;
         if ($name) {

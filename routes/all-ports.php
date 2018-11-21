@@ -21,8 +21,8 @@ return [
         return 'SuperV Platform @'.Current::port()->slug();
     },
     'POST@'.'sv/res/{resource}/{id}/{relation}/attach'     => RelationController::at('attach'),
+    'POST@'.'sv/res/{resource}/{id}/{relation}/detach'     => RelationController::at('detach'),
     'GET@'.'sv/res/{resource}/{id}/{relation}/table'       => RelationController::at('table'),
-    'GET@'.'sv/res/{resource}/{id}/{relation}/table/data'  => RelationController::at('tableData'),
     'GET@'.'sv/res/{resource}/{id}/{relation}/lookup'      => RelationController::at('lookup'),
     'GET@'.'sv/res/{resource}/{id}/{relation}/lookup/data' => RelationController::at('lookupData'),
     'GET@'.'sv/res/{resource}'                             => ResourceController::at('index'),

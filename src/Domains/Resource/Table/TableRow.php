@@ -4,8 +4,8 @@ namespace SuperV\Platform\Domains\Resource\Table;
 
 use SuperV\Platform\Domains\Context\Negotiator;
 use SuperV\Platform\Domains\Resource\Action\Action;
-use SuperV\Platform\Domains\Resource\Action\Builder;
 use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesResourceEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
@@ -75,10 +75,10 @@ class TableRow implements ProvidesResourceEntry
     protected function composeActions(): void
     {
         $this->table->getActions()
-                    ->map(function ($actionClass) {
-                        /** @var Action $action */
-                        $action = $actionClass::make();
-                        Negotiator::deal($this, $action);
+                    ->map(function (Action $action) {
+                        if ($action instanceof AcceptsResourceEntry) {
+                            $action->acceptResourceEntry($this->provideResourceEntry());
+                        }
                         $this->actions[] = $action->makeComponent()->compose();
                     });
     }
@@ -87,9 +87,6 @@ class TableRow implements ProvidesResourceEntry
     {
         $this->table->getFields()
                     ->map(function (Field $field) {
-//                        $value = $this->entry->getAttribute($field->getName());
-//                        $this->setValue($field->getName(), $field->present($value));
-
                         $value = $field->present($this->entry);
                         $this->setValue($field->getName(), $value);
                     });

@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Contracts\Requirements;
 
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
 
 interface AcceptsResourceEntry
 {

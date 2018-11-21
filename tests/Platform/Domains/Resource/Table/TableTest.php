@@ -26,7 +26,7 @@ class TableTest extends ResourceTestCase
     {
         $this->makeGroupResource();
         $this->makeUserResource();
-//        $this->makeTableConfig();
+
         $this->config = new TableConfig();
         $this->config->setFields($this->users);
         $this->config->setQuery($this->users);

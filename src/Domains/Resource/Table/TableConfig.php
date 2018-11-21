@@ -81,7 +81,15 @@ class TableConfig
                 return $action->makeComponent();
             });
 
-        $this->rowActions = collect($this->rowActions ?? [EditEntryAction::class]);
+        $this->rowActions = collect($this->rowActions ?? [EditEntryAction::class])
+            ->map(function ($action) {
+                  /** @var \SuperV\Platform\Domains\Resource\Action\Action $action */
+                  if (is_string($action)) {
+                      $action = $action::make();
+                  }
+
+                  return $action;
+              });
 
         if ($cache) {
             $this->cache();

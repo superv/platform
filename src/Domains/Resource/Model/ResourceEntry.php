@@ -27,7 +27,7 @@ class ResourceEntry implements ResourceEntryContract, Watcher
 
     protected $entryId;
 
-    protected $entryData;
+    protected $entryArray;
 
     protected $config;
 
@@ -154,7 +154,7 @@ class ResourceEntry implements ResourceEntryContract, Watcher
             if ($this->entry->exists) {
                 $this->entryId = $this->entry->id;
             } else {
-                $this->entryData = $this->entry->toArray();
+                $this->entryArray = $this->entry->toArray();
             }
         }
 
@@ -169,8 +169,8 @@ class ResourceEntry implements ResourceEntryContract, Watcher
 
         if (! $this->entryId) {
             $instance = $this->getResource()->newResourceEntryInstance()->getEntry();
-            if (is_array($this->entryData)) {
-                $instance->fill($this->entryData);
+            if (is_array($this->entryArray)) {
+                $instance->fill($this->entryArray);
             }
             $this->entry = $instance;
 
