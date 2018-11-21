@@ -14,7 +14,7 @@ trait ResolvesResource
 
 
     /** @return \SuperV\Platform\Domains\Resource\Resource */
-    protected function resource()
+    protected function resolveResource()
     {
         if ($this->resource) {
             return $this->resource;
@@ -27,7 +27,7 @@ trait ResolvesResource
         }
 
         if ($id = request()->route()->parameter('id')) {
-            $this->entry = $this->resource()->find($id);
+            $this->entry = $this->resource->find($id);
         }
 
         return $this->resource;

@@ -224,7 +224,7 @@ class Form
                                 });
     }
 
-    public function getUrl(): string
+    public function getUrl()
     {
         return $this->config->getUrl();
     }

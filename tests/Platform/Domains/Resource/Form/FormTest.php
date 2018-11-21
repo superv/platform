@@ -36,51 +36,28 @@ class FormTest extends ResourceTestCase
         $fields = $this->makeFields();
         $watcher = new FormTestUser(['name' => 'Omar', 'age' => 33]);
 
-        $config = FormConfig::make();
-        $config->addGroup($fields, $watcher, 'default')->hibernate();
-        $config->hideField('age');
-
-        $this->assertEquals(['age'], $config->getHiddenFields());
-
-        $config = FormConfig::wakeup($config->uuid());
-        $this->assertNotNull($config);
-        $this->assertEquals(sv_url('sv/forms/'.$config->uuid()), $config->getUrl());
+        $config = FormConfig::make()
+                            ->addGroup($fields, $watcher, 'default')
+                            ->hideField('age');
 
         $form = $config->makeForm();
         $this->assertInstanceOf(Form::class, $form);
         $this->assertEquals(2, $form->getFields()->count());
         $this->assertEquals($watcher, $form->getWatcher());
-        $this->assertEquals($config->uuid(), $form->uuid());
+        $this->assertEquals(['age'], $config->getHiddenFields());
     }
 
     function test_makes_create_form()
     {
         $config = FormConfig::make()
-                            ->addGroup($fields = $this->makeFields())
-                            ->hibernate();
+                            ->setUrl(sv_url('url/to/form'))
+                            ->addGroup($fields = $this->makeFields());
 
-        $form = FormConfig::wakeup($config->uuid())->makeForm();
-
-        $this->assertEquals($fields, $form->getFields()->all());
-        $this->assertEquals([
-            'url'    => sv_url('sv/forms/'.$form->uuid()),
-            'method' => 'post',
-            'fields' => [
-                $form->getField('name')->compose()->get(),
-                $form->getField('age')->compose()->get(),
-            ],
-        ], $form->compose()->get());
-    }
-
-    function test_makes_create_form_without_sleep_wakeup()
-    {
-        $form = FormConfig::make()
-                          ->addGroup($fields = $this->makeFields())
-                          ->makeForm();
+        $form = $config->makeForm();
 
         $this->assertEquals($fields, $form->getFields()->all());
         $this->assertEquals([
-            'url'    => sv_url('sv/forms/'.$form->uuid()),
+            'url'    => sv_url('url/to/form'),
             'method' => 'post',
             'fields' => [
                 $form->getField('name')->compose()->get(),
@@ -91,14 +68,12 @@ class FormTest extends ResourceTestCase
 
     function test_makes_update_form()
     {
-        $config = FormConfig::make()
-                            ->addGroup(
-                                $fields = $this->makeFields(),
-                                $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
-                            )
-                            ->hibernate();
-
-        $form = FormConfig::wakeup($config->uuid())->makeForm();
+        $form = FormConfig::make()
+                          ->addGroup(
+                              $fields = $this->makeFields(),
+                              $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
+                          )
+                          ->makeForm();
 
         $this->assertEquals('Omar', $form->getField('name')->compose()->get('value'));
         $this->assertEquals(33, $form->getField('age')->compose()->get('value'));
@@ -106,14 +81,11 @@ class FormTest extends ResourceTestCase
 
     function test__saves_form()
     {
-        $config = FormConfig::make()
-                            ->addGroup(
-                                $fields = $this->makeFields(),
-                                $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
-                            )
-                            ->hibernate();
-
-        $form = FormConfig::wakeup($config->uuid())
+        $form = FormConfig::make()
+                          ->addGroup(
+                              $fields = $this->makeFields(),
+                              $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
+                          )
                           ->makeForm()
                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
                           ->save();
@@ -124,15 +96,13 @@ class FormTest extends ResourceTestCase
 
     function test__hidden_fields()
     {
-        $config = FormConfig::make()
-                            ->addGroup(
-                                $fields = $this->makeFields(),
-                                $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
-                            )
-            ->hideField('name')
-                            ->hibernate();
-
-        $form = FormConfig::wakeup($config->uuid())
+        $form = FormConfig::make()
+                          ->setUrl('url/to/form')
+                          ->addGroup(
+                              $fields = $this->makeFields(),
+                              $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
+                          )
+                          ->hideField('name')
                           ->makeForm()
                           ->setRequest($this->makePostRequest(['name' => 'Ali', 'age' => 99]))
                           ->save();
@@ -150,14 +120,10 @@ class FormTest extends ResourceTestCase
 
     function test__saves_entry()
     {
-        $config = FormConfig::make()
-                            ->addGroup($fields = $this->makeFields(), $user = new FormTestUser)
-                            ->hibernate();
-
-        $form = FormConfig::wakeup($config->uuid())->makeForm();
-
-        $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-             ->save();
+        $form = FormConfig::make()
+                          ->addGroup($fields = $this->makeFields(), $user = new FormTestUser)
+                          ->makeForm()->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
+                          ->save();
 
         $this->assertEquals('Omar', $form->getField('name')->getValue());
         $this->assertEquals(33, $form->getField('age')->getValue());
@@ -170,32 +136,11 @@ class FormTest extends ResourceTestCase
 
     function test__returns_watcher()
     {
-        $config = FormConfig::make()
-                            ->addGroup($fields = $this->makeFields(), $user = new FormTestUser, 'user')
-                            ->hibernate();
-
-        $form = FormConfig::wakeup($config->uuid())->makeForm();
+        $form = FormConfig::make()
+                          ->addGroup($fields = $this->makeFields(), $user = new FormTestUser, 'user')
+                          ->makeForm();
 
         $this->assertEquals($user, $form->getWatcher('user'));
-    }
-
-    function test__posts_form()
-    {
-        $config = FormConfig::make()
-                            ->addGroup($fields = $this->makeFields(), $user = new FormTestUser)
-                            ->hibernate();
-
-        $form = FormConfig::wakeup($config->uuid())->makeForm();
-
-        $response = $this->postJsonUser($form->getUrl(), [
-            'name' => 'Omar bin Hattab',
-            'age'  => 99,
-        ]);
-        $response->assertOk();
-
-        $user = FormTestUser::first();
-        $this->assertEquals('Omar bin Hattab', $user->name);
-        $this->assertEquals(99, $user->age);
     }
 
     function test__resource_create_over_http()
@@ -220,6 +165,8 @@ class FormTest extends ResourceTestCase
 
     function test__resource_edit_over_http()
     {
+        $this->withoutExceptionHandling();
+
         $user = $this->users->create(['name' => 'Omar', 'age' => 123]);
 
         $response = $this->getJsonUser($user->route('edit'));
@@ -245,12 +192,10 @@ class FormTest extends ResourceTestCase
             $table->string('title');
         });
 
-        $config = FormConfig::make()
-                            ->addGroup($this->users, $this->users->newResourceEntryInstance(), 'test_user')
-                            ->addGroup($posts, $posts->newResourceEntryInstance(), 'test_post')
-                            ->hibernate();
-
-        $form = FormConfig::wakeup($config->uuid())->makeForm()
+        $form = FormConfig::make()
+                          ->addGroup($this->users, $this->users->newResourceEntryInstance(), 'test_user')
+                          ->addGroup($posts, $posts->newResourceEntryInstance(), 'test_post')
+                          ->makeForm()
                           ->setRequest($this->makePostRequest([
                               'name'  => 'Omar',
                               'title' => 'Khalifa',
@@ -278,12 +223,10 @@ class FormTest extends ResourceTestCase
             $fileField = $this->makeField(['name' => 'avatar', 'type' => 'file']),
         ];
 
-        $config = FormConfig::make()
-                            ->addGroup($fields, $testUser = new FormTestUser)
-                            ->hibernate();
-
         $file = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
-        $form = FormConfig::wakeup($config->uuid())
+
+        $form = FormConfig::make()
+                          ->addGroup($fields, $testUser = new FormTestUser)
                           ->makeForm()
                           ->setRequest($this->makePostRequest(['name'   => 'Omar',
                                                                'age'    => 33,

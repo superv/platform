@@ -100,6 +100,9 @@ class ResourceEntry implements ResourceEntryContract, Watcher
         if ($route === 'edit') {
             return $base.'/'.$this->getId().'/edit';
         }
+        if ($route === 'update') {
+            return $base.'/'.$this->getId();
+        }
         if ($route === 'delete') {
             return $base.'/'.$this->getId().'/delete';
         }

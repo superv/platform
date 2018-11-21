@@ -24,7 +24,7 @@ class ResourceController extends BaseApiController
 
     public function index()
     {
-        $this->resource();
+        $this->resolveResource();
 
         $createAction = CreateEntryAction::make();
         Negotiator::deal($createAction, $this->resource);
@@ -55,12 +55,12 @@ class ResourceController extends BaseApiController
     public function create()
     {
         $form = FormConfig::make()
+                          ->setUrl($this->resolveResource()->route('store'))
                           ->addGroup(
-                              $this->resource()->getFields(),
-                              $this->resource()->newResourceEntryInstance(),
-                              $this->resource()->getHandle()
+                              $this->resolveResource()->getFields(),
+                              $this->resolveResource()->newResourceEntryInstance(),
+                              $this->resolveResource()->getHandle()
                           )
-                          ->hibernate()
                           ->makeForm();
 
         $page = Page::make('Create new '.$this->resource->getSingularLabel());
@@ -71,15 +71,31 @@ class ResourceController extends BaseApiController
         return ['data' => sv_compose($page->makeComponent())];
     }
 
+    public function store()
+    {
+        FormConfig::make()
+                  ->addGroup(
+                      $this->resolveResource()->getFields(),
+                      $this->resolveResource()->newResourceEntryInstance(),
+                      $this->resolveResource()->getHandle()
+                  )
+                  ->makeForm()
+                  ->setRequest($this->request)
+                  ->save();
+
+        return response()->json([]);
+    }
+
     public function edit()
     {
+        $this->resolveResource();
         $form = FormConfig::make()
+                          ->setUrl($this->entry->route('update'))
                           ->addGroup(
-                              $fields = $this->resource()->getFields(),
+                              $fields = $this->resolveResource()->getFields(),
                               $entry = $this->entry,
-                              $handle = $this->resource()->getHandle()
+                              $handle = $this->resolveResource()->getHandle()
                           )
-                          ->hibernate()
                           ->makeForm();
 
         // main edit form
@@ -103,7 +119,6 @@ class ResourceController extends BaseApiController
         $this->resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesTable; })
                        ->map(function (Relation $relation) use ($tabs) {
-
                            $card = SvBlock::make('sv-loader')->setProps([
                                'url' => sv_url(
                                    sprintf(
@@ -115,12 +130,29 @@ class ResourceController extends BaseApiController
                                ),
                            ]);
 
-                           return $tabs->addTab(sv_tab( $relation->getName(), $card));
+                           return $tabs->addTab(sv_tab($relation->getName(), $card));
                        });
 
         $page = Page::make($entry->getLabel());
         $page->addBlock($tabs);
 
         return ['data' => sv_compose($page->makeComponent())];
+    }
+
+    public function update()
+    {
+        $this->resolveResource();
+
+        $form = FormConfig::make()
+                          ->setUrl($this->entry->route('update'))
+                          ->addGroup(
+                              $fields = $this->resolveResource()->getFields(),
+                              $entry = $this->entry,
+                              $handle = $this->resolveResource()->getHandle()
+                          )
+                          ->makeForm()->setRequest($this->request)
+                          ->save();
+
+        return response()->json([]);
     }
 }

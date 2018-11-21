@@ -148,7 +148,7 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
             return $base.'/create';
         }
 
-        if ($route === 'index') {
+        if ($route === 'index' || $route === 'store') {
             return $base;
         }
     }
