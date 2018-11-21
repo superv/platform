@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use SuperV\Platform\Domains\Resource\Field\Watcher;
-use SuperV\Platform\Support\Concerns\Hydratable;
 
 class FormConfig
 {
@@ -13,10 +12,6 @@ class FormConfig
 
     /** @var string */
     protected $url;
-
-    public function __construct()
-    {
-    }
 
     public function addGroup($fieldsProvider, Watcher $watcher = null, string $handle = 'default'): self
     {

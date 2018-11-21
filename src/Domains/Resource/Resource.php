@@ -243,25 +243,6 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
         return $this->newResourceEntryInstance()->newQuery();
     }
 
-    public function __sleep()
-    {
-        if ($this->relations instanceof Closure) {
-            $this->relations = null;
-        }
-
-        if ($this->fields instanceof Closure) {
-            $this->fields = null;
-        }
-
-        $this->relationProvider = null;
-
-        return array_diff(array_keys(get_object_vars($this)), []);
-    }
-
-    public function __wakeup()
-    {
-        $this->hydrate(ResourceFactory::attributesFor($this->getHandle()));
-    }
 
     public function provideRoute(string $name)
     {
