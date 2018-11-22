@@ -14,6 +14,10 @@ interface Field
 
     public function getColumnName();
 
+    public function getConfigValue($key, $default = null);
+
+    public function setConfigValue($key, $value = null);
+
     public function setValue($value);
 
     public function setWatcher(Watcher $watcher);

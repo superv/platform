@@ -151,6 +151,4 @@ class TestUser extends Entry
     public $timestamps = false;
 
     protected $table = 't_users';
-
-
 }

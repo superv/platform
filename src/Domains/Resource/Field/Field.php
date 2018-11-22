@@ -31,7 +31,7 @@ class Field implements FieldContract
     /**
      * @var string
      */
-    protected $type;
+    protected $type = 'text';
 
     /**
      * @var string
@@ -307,6 +307,14 @@ class Field implements FieldContract
     public function getFlag(string $flag, $default = false): bool
     {
         return $this->flags[$flag] ?? $default;
+    }
+
+    /**
+     * @param string $label
+     */
+    public function setLabel(string $label): void
+    {
+        $this->label = $label;
     }
 
     public function uuid(): string

@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesColumns;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Field;
@@ -150,13 +151,16 @@ class TableConfig
 
     public function getFields(): Collection
     {
-        $fields = $this->fields instanceof ProvidesFields ? $this->fields->provideFields() : $this->fields;
+        $fields = $this->fields instanceof ProvidesColumns ? $this->fields->provideColumns() : $this->fields;
 
         return $fields
             ->map(function (Field $field) {
-                if ($field->getConfigValue('hide.table') === true) {
-                    return null;
-                }
+//                if ($field->getConfigValue('table.show') !== true) {
+//                    return null;
+//                }
+//                if ($field->getConfigValue('hide.table') === true) {
+//                    return null;
+//                }
                 if (in_array($field->getName(), $this->hiddenFields)) {
                     return null;
                 }
