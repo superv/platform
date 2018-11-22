@@ -59,6 +59,7 @@ class Form
         $this->config = $config;
         $this->groups = collect();
         $this->fields = collect();
+        $this->uuid = uuid();
 
         $this->boot();
     }
@@ -241,7 +242,7 @@ class Form
 
     public function uuid(): string
     {
-        return $this->config->uuid();
+        return $this->uuid;
     }
 
     public static function make(FormConfig $config): Form

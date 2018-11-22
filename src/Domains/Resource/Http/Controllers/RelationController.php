@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
+use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Table\Table;
@@ -20,6 +21,17 @@ class RelationController extends BaseApiController
         }
 
         return $relation;
+    }
+
+    public function request()
+    {
+        $relation = $this->resolveRelation();
+
+        if ($relation instanceof HandlesRequests) {
+            $relation->handleRequest($this->request);
+        }
+
+        return ['status' => 'ok'];
     }
 
     public function table()

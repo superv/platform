@@ -2,8 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
-use SuperV\Modules\Nucleo\Domains\UI\SvBlock;
-use SuperV\Modules\Nucleo\Domains\UI\SvCard;
 use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Context\Negotiator;
 use SuperV\Platform\Domains\Resource\Action\CreateEntryAction;
@@ -15,6 +13,7 @@ use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
+use SuperV\Platform\Domains\UI\Nucleo\SvBlock;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
@@ -24,7 +23,6 @@ class ResourceController extends BaseApiController
 
     public function index()
     {
-        $uri = url()->current();
         $resource = $this->resolveResource();
 
         $createAction = CreateEntryAction::make();
@@ -41,12 +39,8 @@ class ResourceController extends BaseApiController
             return ['data' => Table::config($config)->build()->compose()];
         }
 
-        $card = SvCard::make()->block(
-            SvBlock::make('sv-table')->setProps($config->compose())
-        );
-
         $page = Page::make($resource->getLabel());
-        $page->addBlock($card);
+        $page->addBlock($config->makeComponent()->addClass('sv-card')->compose());
         $page->setActions([$createAction->makeComponent()]);
 
         return ['data' => sv_compose($page->makeComponent())];
@@ -64,9 +58,7 @@ class ResourceController extends BaseApiController
                           ->makeForm();
 
         $page = Page::make('Create new '.$this->resource->getSingularLabel());
-        $page->addBlock(
-            SvBlock::make('sv-form')->setProps($form->compose())
-        );
+        $page->addBlock($form->makeComponent()->compose());
 
         return ['data' => sv_compose($page->makeComponent())];
     }

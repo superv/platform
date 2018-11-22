@@ -19,6 +19,7 @@ return [
     'platform'                                                => function () {
         return 'SuperV Platform @'.Current::port()->slug();
     },
+    'POST@'.'sv/res/{resource}/{id}/rel/{relation}'           => RelationController::at('request'),
     'POST@'.'sv/res/{resource}/{id}/{relation}/attach'        => RelationController::at('attach'),
     'POST@'.'sv/res/{resource}/{id}/{relation}/detach'        => RelationController::at('detach'),
     'GET@'.'sv/res/{resource}/{id}/{relation}/table/{data?}'  => RelationController::at('table'),
