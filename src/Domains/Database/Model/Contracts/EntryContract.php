@@ -8,4 +8,5 @@ interface EntryContract extends Watcher
 
     public function getTable();
 
+    public function toArray();
 }

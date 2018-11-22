@@ -35,14 +35,14 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery
     {
         $config = new TableConfig();
         $relatedResource = ResourceFactory::make($this->getConfig()->getRelatedResource());
-        $config->setFields($relatedResource);
+        $config->setColumns($relatedResource);
         $config->setQuery($this);
         $config->setTitle($this->getName());
 
-        $config->build(false);
+        $config->build();
         $config->setDataUrl(url()->current().'/data');
 
-        $belongsTo = $config->getFields()->first(function (Field $field) {
+        $belongsTo = $config->getColumns()->first(function (Field $field) {
             if ($field->getType() !== 'belongs_to') {
                 return null;
             }
@@ -52,7 +52,7 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery
 
             return $field;
         });
-        $config->removeColumn($belongsTo->getName());
+        $config->hideColumn($belongsTo->getName());
 
         return $config;
     }

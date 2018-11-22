@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesEntry;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
 
 class TableRow implements ProvidesEntry
 {
@@ -83,11 +83,30 @@ class TableRow implements ProvidesEntry
 
     protected function setColumnValues(): void
     {
-        $this->table->getFields()
-                    ->map(function (Field $field) {
-                        $value = $field->present($this->entry);
-                        $this->setValue($field->getName(), $value);
+        $this->table->getColumns()
+                    ->map(function (Column $column) {
+
+
+                        if ($callback = $column->getPresenter()) {
+//                            $value = $callback($this->entry);
+                            $value = app()->call($callback, ['entry' => $this->entry]);
+                        } else {
+                            $value = $this->getValueFromEntry($column->getName());
+                        }
+
+                        $this->setValue($column->getName(), $value);
                     });
+    }
+
+    protected function getValueFromEntry($name)
+    {
+//        if (str_contains($name, '.')) {
+//            [$relation, $field] = explode('.', $name);
+//
+//            return optional($this->entry->{$relation})->getAttribute($field);
+//        }
+
+        return $this->entry->getAttribute($name);
     }
 
     public function provideEntry(): EntryContract

@@ -8,7 +8,8 @@ use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesColumns;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
 use SuperV\Platform\Domains\UI\Components\TableComponent;
 use SuperV\Platform\Support\Composition;
 
@@ -26,28 +27,21 @@ class TableConfig
     /**
      * @var array
      */
-    protected $hiddenFields = [];
+    protected $hiddenColumns = [];
 
-    /**
-     * @var Collection
-     */
+    /** @var \Illuminate\Support\Collection */
     protected $contextActions;
 
-    /**
-     * @var Collection
-     */
+    /** @var \Illuminate\Support\Collection */
     protected $rowActions;
 
     /** @var string */
     protected $dataUrl;
 
-    protected $built = false;
-
     protected $query;
 
-    protected $queryParams;
-
-    protected $fields;
+    /** @var \Illuminate\Support\Collection */
+    protected $columns;
 
     /** @var \SuperV\Platform\Domains\Context\Context */
     protected $context;
@@ -86,27 +80,6 @@ class TableConfig
         return $this;
     }
 
-    public function makeComponent()
-    {
-        return TableComponent::from($this);
-    }
-
-    public function newQuery()
-    {
-        if ($this->query instanceof ProvidesQuery) {
-            return $this->query->newQuery();
-        }
-
-        return $this->query;
-    }
-
-    public function setQuery($query): self
-    {
-        $this->query = $query;
-
-        return $this;
-    }
-
     public function compose()
     {
         $composition = new Composition([
@@ -115,9 +88,9 @@ class TableConfig
                     'actions' => $this->contextActions,
                 ],
                 'meta'    => [
-                    'columns' => $this->getFields()
-                                      ->map(function ($field) {
-                                          return ['label' => $field->getLabel(), 'name' => $field->getName()];
+                    'columns' => $this->getColumns()
+                                      ->map(function (Column $column) {
+                                          return ['label' => $column->getLabel(), 'name' => $column->getName()];
                                       })
                                       ->all(),
                 ],
@@ -172,35 +145,54 @@ class TableConfig
         $this->title = $title;
     }
 
-    public function removeColumn(string $name)
+    public function hideColumn(string $name)
     {
-        $this->hiddenFields[] = $name;
+        $this->hiddenColumns[] = $name;
     }
 
-    public function getFields(): Collection
+    public function getColumns(): Collection
     {
-        $fields = $this->fields instanceof ProvidesColumns ? $this->fields->provideColumns() : $this->fields;
+        if ($this->columns instanceof ProvidesColumns) {
+            $this->columns = $this->columns->provideColumns();
+        }
 
-        return $fields
-            ->map(function (Field $field) {
-//                if ($field->getConfigValue('table.show') !== true) {
-//                    return null;
-//                }
-//                if ($field->getConfigValue('hide.table') === true) {
-//                    return null;
-//                }
-                if (in_array($field->getName(), $this->hiddenFields)) {
+        if (is_array($this->columns)) {
+            $this->columns = collect($this->columns);
+        }
+
+        return $this->columns
+            ->map(function (Column $column) {
+                if (in_array($column->getName(), $this->hiddenColumns)) {
                     return null;
                 }
 
-                return $field;
+                return $column;
             })
             ->filter();
     }
 
-    public function setFields($fields): self
+    public function setColumns($columns): self
     {
-        $this->fields = $fields;
+        $this->columns = $columns;
+
+        return $this;
+    }
+
+    public function addColumn($column)
+    {
+        if ($column instanceof Field) {
+            $column = TableColumn::fromField($column);
+        }
+        $this->columns->put($column->getName(), $column);
+
+        return $this;
+    }
+
+    public function addColumns($columns)
+    {
+        collect($columns)->map(function ($column) {
+            $this->addColumn($column);
+        });
 
         return $this;
     }
@@ -224,17 +216,25 @@ class TableConfig
         return $this;
     }
 
-    public function getQueryParams()
+    public function makeComponent()
     {
-        return $this->queryParams;
+        return TableComponent::from($this);
     }
 
-    /**
-     * @param mixed $queryParams
-     */
-    public function setQueryParams($queryParams): void
+    public function newQuery()
     {
-        $this->queryParams = $queryParams;
+        if ($this->query instanceof ProvidesQuery) {
+            return $this->query->newQuery();
+        }
+
+        return $this->query;
+    }
+
+    public function setQuery($query): self
+    {
+        $this->query = $query;
+
+        return $this;
     }
 
     public function uuid()

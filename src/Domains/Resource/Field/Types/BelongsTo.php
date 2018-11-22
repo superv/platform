@@ -126,7 +126,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
         $query->with($this->getName());
     }
 
-    public function alterQueryCallback(): Closure
+    public function getAlterQueryCallback(): Closure
     {
         return function ($query) { $this->alterQuery($query); };
     }

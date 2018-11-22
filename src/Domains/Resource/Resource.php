@@ -4,10 +4,12 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Closure;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesColumns;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesTableConfig;
 use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesRoute;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
@@ -16,11 +18,13 @@ use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Domains\Resource\Table\TableColumn;
+use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, ProvidesColumns
+class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, ProvidesColumns, ProvidesTableConfig
 {
     use Hydratable;
     use HasConfig;
@@ -76,10 +80,8 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, Provides
 
     protected $entryLabel;
 
-    /**
-     * @var boolean
-     */
-    protected $built = false;
+    /** @var \SuperV\Platform\Domains\Resource\Table\TableConfig */
+    protected $tableConfig;
 
     public function __construct(array $attributes = [])
     {
@@ -161,28 +163,6 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, Provides
         }
 
         return $this->fields->keyBy(function (FieldContract $field) { return $field->getName(); });
-    }
-
-    public function provideColumns(): Collection
-    {
-        if ($this->columns) {
-            return $this->columns;
-        }
-
-        $labelField = FieldFactory::createFromArray(['name' => 'label', 'label' => $this->getSingularLabel()]);
-        $labelField->onPresenting(function ($entry) {
-            return sv_parse($this->getConfigValue('entry_label'), $entry->toArray());
-        });
-
-        $this->columns = collect()->put('label', $labelField)->merge(
-            $this->getFields()->filter(
-                function (FieldContract $field) {
-                    return $field->getConfigValue('table.show') === true;
-                }
-            )
-        );
-
-        return $this->columns;
     }
 
     public function provideFields(): Collection
@@ -271,6 +251,61 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, Provides
         if ($name === 'index') {
             return $base;
         }
+    }
+
+    public function provideColumns(): Collection
+    {
+        if ($this->columns) {
+            return $this->columns;
+        }
+
+        $labelColumn = TableColumn::make('label')
+                                  ->setLabel($this->getSingularLabel())
+                                  ->setTemplate($this->getConfigValue('entry_label'));
+
+        $this->columns = collect()->put('label', $labelColumn)
+                                  ->merge(
+                                      $this->getFields()
+                                           ->map(function (FieldContract $field) {
+                                               if ($field->getConfigValue('table.show') === true) {
+                                                   return TableColumn::fromField($field);
+                                               }
+
+                                               return null;
+                                           })
+                                           ->filter()
+                                  );
+
+        return $this->columns;
+
+        $labelField = FieldFactory::createFromArray(['name' => 'label', 'label' => $this->getSingularLabel()]);
+        $labelField->onPresenting(function ($entry) {
+            return sv_parse($this->getConfigValue('entry_label'), $entry->toArray());
+        });
+
+        $this->columns = collect()->put('label', $labelField)->merge(
+            $this->getFields()->filter(
+                function (FieldContract $field) {
+                    return $field->getConfigValue('table.show') === true;
+                }
+            )
+        );
+
+        return $this->columns;
+    }
+
+    public function provideTableConfig(): TableConfig
+    {
+        if ($this->tableConfig) {
+            return $this->tableConfig;
+        }
+
+        return $this->tableConfig = TableConfig::make()
+                                               ->setDataUrl(url()->current().'/data')
+                                               ->setColumns($this->provideColumns())
+                                               ->setQuery($this)
+                                               ->setContext(new Context($this))
+                                               ->build();
     }
 
     public function uuid(): string

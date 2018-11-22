@@ -57,7 +57,7 @@ class MorphToMany extends Relation implements ProvidesTable, ProvidesQuery
         }
 
         $config = new TableConfig;
-        $config->setFields($fields);
+        $config->setColumns($fields);
         $config->setQuery($this->newQuery());
 
         $config->setRowActions([DetachEntryAction::make()->setRelation($this)]);

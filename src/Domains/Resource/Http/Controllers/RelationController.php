@@ -110,7 +110,7 @@ class RelationController extends BaseApiController
     {
         $relatedResource = $this->resolveRelation()->getRelatedResource();
         $config = new TableConfig();
-        $config->setFields($relatedResource);
+        $config->setColumns($relatedResource);
         $config->setDataUrl(url()->current().'/data');
         $config->build();
 

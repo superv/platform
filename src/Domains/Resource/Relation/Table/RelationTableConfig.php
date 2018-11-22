@@ -42,7 +42,7 @@ class RelationTableConfig extends TableConfig
 
         $attachAction = AttachEntryAction::make()->setRelation($this->relation);
 
-        $this->setFields($fields);
+        $this->setColumns($fields);
         $this->setContextActions([$attachAction]);
         $this->setTitle($this->relation->getName());
 

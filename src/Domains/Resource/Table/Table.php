@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
 use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
@@ -25,7 +25,7 @@ class Table
     protected $rows;
 
     /** @var \SuperV\Platform\Domains\Resource\Field\Field[]|\Illuminate\Support\Collection */
-    protected $fields;
+    protected $columns;
 
     /** @var array */
     protected $pagination;
@@ -44,12 +44,12 @@ class Table
 
     public function build(): self
     {
-        $this->fields = $this->config->getFields()->map(function (Field $field) {
-            if ($callback = $field->getAlterQueryCallback()) {
+        $this->columns = $this->config->getColumns()->map(function (Column $column) {
+            if ($callback = $column->getAlterQueryCallback()) {
                 $callback($this->getQuery());
             }
 
-            return $field;
+            return $column;
         });
 
         $entries = $this->fetch();
@@ -112,9 +112,9 @@ class Table
         return $this->rows;
     }
 
-    public function getFields(): Collection
+    public function getColumns(): Collection
     {
-        return $this->fields;
+        return $this->columns;
     }
 
     public function getActions(): Collection
@@ -128,8 +128,6 @@ class Table
             $this->query = $this->config->newQuery();
         }
 
-        $this->applyQueryParams();
-
         return $this->query;
     }
 
@@ -138,27 +136,6 @@ class Table
         $this->query = $query;
 
         return $this;
-    }
-
-    protected function applyQueryParams()
-    {
-        if (! $params = $this->config->getQueryParams()) {
-            return;
-        }
-
-        foreach (array_get($params, 'joins', []) as $join) {
-            $this->query->join(
-                $join['table'], $join['first'], $join['operator'], $join['second'], $join['type']
-            );
-        }
-        foreach (array_get($params, 'wheres', []) as $where) {
-            $this->query->where(
-                $where['column'],
-                $where['operator'],
-                $where['value'],
-                $where['boolean'] ?? 'and'
-            );
-        }
     }
 
     public function getPagination(): array

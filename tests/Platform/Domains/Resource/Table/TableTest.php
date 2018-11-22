@@ -29,13 +29,13 @@ class TableTest extends ResourceTestCase
 
         $config = TableConfig::make()
                                    ->setDataUrl('url/to/table/data')
-                                   ->setFields($this->users)
+                                   ->setColumns($this->users)
                                    ->setQuery($this->users)
                                    ->setRowActions([EditEntryAction::class, DeleteEntryAction::class])
                                    ->setContextActions([CreateEntryAction::class])
                                    ->build();
 
-        $this->assertEquals(3, $config->getFields()->count());
+        $this->assertEquals(3, $config->getColumns()->count());
 
         $composition = $config->compose();
         $this->assertEquals($config->getDataUrl(), $composition->get('config.dataUrl'));
@@ -116,7 +116,7 @@ class TableTest extends ResourceTestCase
     {
         return TableConfig::make()
                           ->setDataUrl('url/to/table/data')
-                          ->setFields($this->users)
+                          ->setColumns($this->users)
                           ->setQuery($this->users)
                           ->setRowActions([EditEntryAction::class, DeleteEntryAction::class])
                           ->setContextActions([CreateEntryAction::class])

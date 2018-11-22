@@ -41,7 +41,7 @@ class HasManyTest extends ResourceTestCase
         /** @var \SuperV\Platform\Domains\Resource\Table\TableConfig $tableConfig */
         $tableConfig = $relation->makeTableConfig();
         // t_user column is not needed there
-        $this->assertEquals(1, $tableConfig->getFields()->count());
+        $this->assertEquals(1, $tableConfig->getColumns()->count());
 
         $table = Table::config($tableConfig)->build();
 

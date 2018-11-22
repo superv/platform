@@ -8,5 +8,5 @@ interface AltersTableQuery
 {
     public function alterQuery($query);
 
-    public function alterQueryCallback(): Closure;
+    public function getAlterQueryCallback(): Closure;
 }

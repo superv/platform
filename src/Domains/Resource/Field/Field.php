@@ -175,17 +175,32 @@ class Field implements FieldContract
         return $value;
     }
 
+    public function getLabel(): string
+    {
+        return $this->label ?? str_unslug($this->name);
+    }
+
+    public function setLabel(string $label): FieldContract
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public function getAlterQueryCallback()
+    {
+        if ($this->fieldType() instanceof AltersTableQuery) {
+            return $this->fieldType()->alterQueryCallback();
+        }
+
+        return $this->alterQueryCallback;
+    }
+
     public function getValue()
     {
         if ($accessor = $this->fieldType()->getAccessor()) {
             return $accessor($this->value);
         }
-
-//        if ($this->hasCallback('accessing')) {
-//            $callback = $this->getCallback('accessing');
-//
-//            return $callback($this->value);
-//        }
 
         return $this->value;
     }
@@ -265,19 +280,6 @@ class Field implements FieldContract
         return $this;
     }
 
-    public function getLabel(): string
-    {
-        return $this->label ?? str_unslug($this->name);
-    }
-
-    /**
-     * @param string $label
-     */
-    public function setLabel(string $label): void
-    {
-        $this->label = $label;
-    }
-
     public function isVisible(): bool
     {
         return ! $this->isHidden();
@@ -286,15 +288,6 @@ class Field implements FieldContract
     public function setVisibility(bool $visible): Field
     {
         return $this->setFlag('hidden', ! $visible);
-    }
-
-    public function getAlterQueryCallback()
-    {
-        if ($this->fieldType() instanceof AltersTableQuery) {
-            return $this->fieldType()->alterQueryCallback();
-        }
-
-        return $this->alterQueryCallback;
     }
 
     public function setFieldTypeResolver(Closure $fieldTypeResolver): void

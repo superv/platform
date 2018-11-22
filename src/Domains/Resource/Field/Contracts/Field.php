@@ -10,9 +10,13 @@ interface Field
 {
     public function getName();
 
-    public function getType();
-
     public function getColumnName();
+
+    public function getLabel(): string;
+
+    public function setLabel(string $label): Field;
+
+    public function getType();
 
     public function getConfigValue($key, $default = null);
 
