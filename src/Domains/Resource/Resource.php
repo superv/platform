@@ -5,20 +5,22 @@ namespace SuperV\Platform\Domains\Resource;
 use Closure;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesColumns;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesRoute;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
+class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, ProvidesColumns
 {
     use Hydratable;
     use HasConfig;
@@ -38,17 +40,17 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
     protected $uuid;
 
     /**
-     * @var \Illuminate\Support\Collection
+     * @var Collection
      */
     protected $fields;
 
     /**
-     * @var \Illuminate\Support\Collection
+     * @var Collection
      */
-    protected $freshFields;
+    protected $columns;
 
     /**
-     * @var \Illuminate\Support\Collection
+     * @var Collection
      */
     protected $relations;
 
@@ -148,18 +150,44 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
         }
     }
 
-    public function provideFields(): Collection
-    {
-        return $this->getFields();
-    }
-
     public function getFields(): Collection
     {
         if ($this->fields instanceof Closure) {
             $this->fields = ($this->fields)();
         }
 
-        return $this->fields ?? collect();
+        if (! $this->fields) {
+            return collect();
+        }
+
+        return $this->fields->keyBy(function (FieldContract $field) { return $field->getName(); });
+    }
+
+    public function provideColumns(): Collection
+    {
+        if ($this->columns) {
+            return $this->columns;
+        }
+
+        $labelField = FieldFactory::createFromArray(['name' => 'label', 'label' => $this->getSingularLabel()]);
+        $labelField->onPresenting(function ($entry) {
+            return sv_parse($this->getConfigValue('entry_label'), $entry->toArray());
+        });
+
+        $this->columns = collect()->put('label', $labelField)->merge(
+            $this->getFields()->filter(
+                function (FieldContract $field) {
+                    return $field->getConfigValue('table.show') === true;
+                }
+            )
+        );
+
+        return $this->columns;
+    }
+
+    public function provideFields(): Collection
+    {
+        return $this->getFields();
     }
 
     public function getFieldType($name): ?FieldType

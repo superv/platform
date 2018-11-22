@@ -28,19 +28,11 @@ class ExtensionTest extends ResourceTestCase
 
         $extended = Resource::of('t_users');
 
-        $this->assertNotEquals($res->getFields(), $ext->getFields());
+        $nameField = $extended->getField('name');
 
-        $this->assertEquals(3, $ext->provideFields()->count());
-        $this->assertInstanceOf(Text::class, $ext->getFieldType('name'));
+        $this->assertTrue($nameField->getConfigValue('extended'));
 
-        $age = $ext->getFieldType('age');
-        $this->assertInstanceOf(Number::class, $age);
-        $this->assertEquals($res->getFieldType('age')->getFieldEntry(), $age->getFieldEntry());
-        $this->assertEquals(['integer', 'required', 'min:18', 'max:150'], $age->makeRules());
 
-        $bio = $ext->getFieldType('bio');
-        $this->assertInstanceOf(Textarea::class, $bio);
-        $this->assertEquals('textarea', $bio->getType());
     }
 
     /** @test */
@@ -105,6 +97,7 @@ class TestUserResourceExtension implements ResourceExtension
 
     public function extend(Resource $resource)
     {
+        $resource->getField('name')->setConfigValue('extended', true);
     }
 
     public function isCalled($event)

@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Extension;
 use Illuminate\Events\Dispatcher;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaved;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaving;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ResourceExtension;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -44,7 +45,7 @@ class Extension
         }
     }
 
-    public static function get($slug)
+    public static function get($slug): ?ResourceExtension
     {
         return static::$map[$slug] ?? null;
     }
