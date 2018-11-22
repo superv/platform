@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -170,8 +169,6 @@ class Field implements FieldContract
         }
 
         if ($value instanceof EntryContract) {
-//            $value = ResourceEntry::make($value);
-
             return $value->getAttribute($this->getName());
         }
 
@@ -273,6 +270,14 @@ class Field implements FieldContract
         return $this->label ?? str_unslug($this->name);
     }
 
+    /**
+     * @param string $label
+     */
+    public function setLabel(string $label): void
+    {
+        $this->label = $label;
+    }
+
     public function isVisible(): bool
     {
         return ! $this->isHidden();
@@ -307,14 +312,6 @@ class Field implements FieldContract
     public function getFlag(string $flag, $default = false): bool
     {
         return $this->flags[$flag] ?? $default;
-    }
-
-    /**
-     * @param string $label
-     */
-    public function setLabel(string $label): void
-    {
-        $this->label = $label;
     }
 
     public function uuid(): string

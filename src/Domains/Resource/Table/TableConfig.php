@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesColumns;
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\UI\Components\TableComponent;
@@ -76,13 +75,13 @@ class TableConfig
 
         $this->rowActions = collect($this->rowActions ?? [EditEntryAction::class])
             ->map(function ($action) {
-                  /** @var \SuperV\Platform\Domains\Resource\Action\Action $action */
-                  if (is_string($action)) {
-                      $action = $action::make();
-                  }
+                /** @var \SuperV\Platform\Domains\Resource\Action\Action $action */
+                if (is_string($action)) {
+                    $action = $action::make();
+                }
 
-                  return $action;
-              });
+                return $action;
+            });
 
         return $this;
     }
@@ -99,6 +98,13 @@ class TableConfig
         }
 
         return $this->query;
+    }
+
+    public function setQuery($query): self
+    {
+        $this->query = $query;
+
+        return $this;
     }
 
     public function compose()
@@ -122,12 +128,9 @@ class TableConfig
         return $composition;
     }
 
-    public function makeTable($build = true): Table
+    public function makeTable(): Table
     {
         $table = Table::config($this);
-        if (! $build) {
-            return $table;
-        }
 
         return $table->build();
     }
@@ -142,6 +145,31 @@ class TableConfig
         $this->dataUrl = $dataUrl;
 
         return $this;
+    }
+
+    public function getRowActions(): Collection
+    {
+        return $this->rowActions ?? collect();
+    }
+
+    public function setRowActions($rowActions): TableConfig
+    {
+        $this->rowActions = $rowActions;
+
+        return $this;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
     }
 
     public function removeColumn(string $name)
@@ -168,38 +196,6 @@ class TableConfig
                 return $field;
             })
             ->filter();
-    }
-
-    public function getRowActions(): Collection
-    {
-        return $this->rowActions ?? collect();
-    }
-
-    public function setRowActions($rowActions): TableConfig
-    {
-        $this->rowActions = $rowActions;
-
-        return $this;
-    }
-
-    public function setQuery($query): self
-    {
-        $this->query = $query;
-
-        return $this;
-    }
-
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     */
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
     }
 
     public function setFields($fields): self
@@ -250,5 +246,4 @@ class TableConfig
     {
         return new static;
     }
-
 }
