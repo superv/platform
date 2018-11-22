@@ -3,8 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\Watcher;
 
 class Group
 {
@@ -12,7 +12,7 @@ class Group
     protected $handle;
 
     /**
-     * @var Watcher
+     * @var \SuperV\Platform\Domains\Database\Model\Contracts\Watcher
      */
     protected $watcher;
 

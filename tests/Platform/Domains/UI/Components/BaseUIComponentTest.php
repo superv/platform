@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\UI\Component;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Contracts\Hibernatable;
 use SuperV\Platform\Domains\UI\Components\BaseUIComponent;
 use SuperV\Platform\Domains\UI\Components\UIComponent;
 use SuperV\Platform\Support\Composer\Composable;
@@ -18,7 +17,6 @@ class BaseUIComponentTest extends TestCase
         $component = TestComponent::make();
         $this->assertInstanceOf(UIComponent::class, $component);
         $this->assertInstanceOf(Composable::class, $component);
-        $this->assertInstanceOf(Hibernatable::class, $component);
     }
 
     function test__compose()

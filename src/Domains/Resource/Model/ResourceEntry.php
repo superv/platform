@@ -2,96 +2,58 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use SuperV\Platform\Domains\Database\Model\Entry;
+use SuperV\Platform\Domains\Database\Model\MakesEntry;
+use SuperV\Platform\Domains\Database\Model\Repository;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
-use SuperV\Platform\Domains\Resource\Fake;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentEntry;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Field\Watcher;
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry as ResourceEntryContract;
+use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
+use SuperV\Platform\Domains\Resource\Relation\RelationFactory as RelationBuilder;
+use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Exceptions\PlatformException;
 
-class ResourceEntry implements ResourceEntryContract, Watcher
+class ResourceEntry extends Entry
 {
-    /** @var Resource */
+    /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
 
-    /**
-     * @var ResourceEntryModel
-     */
-    protected $entry;
-
-    protected $handle;
-
-    protected $entryId;
-
-    protected $entryArray;
-
-    protected $config;
-
-    public function __construct($entry, ?Resource $resource = null)
+    public function getRelationshipFromConfig($name)
     {
-        $this->entry = $entry;
-        $this->handle = $this->entry->getTable();
-        $this->resource = $resource;
+        if ($relation = $this->resolveRelation($name)) {
+            return $relation->newQuery();
+        }
     }
 
-    public function getEntry(): EntryContract
+    protected function resolveRelation($name)
     {
-        return $this->entry;
+        if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
+            return null;
+        }
+
+        $relation = RelationBuilder::resolveFromRelationEntry($relation);
+        if ($relation instanceof AcceptsParentEntry) {
+            $relation->acceptParentEntry($this);
+        }
+
+        return $relation;
     }
 
-    public function getResource(): \SuperV\Platform\Domains\Resource\Resource
+    public function getResource(): Resource
     {
         if (! $this->resource) {
-            $this->resource = Resource::of($this->getHandle());
+            $this->resource = ResourceFactory::make($this->getHandle());
         }
 
         return $this->resource;
     }
 
-    public function getId()
-    {
-        return $this->getEntry()->getKey();
-    }
-
-    public static function newInstance(string $handle): ResourceEntryContract
-    {
-        return Resource::of($handle)->newResourceEntryInstance();
-    }
-
-    public function setAttribute($key, $value)
-    {
-        $this->getEntry()->setAttribute($key, $value);
-    }
-
-    public function getAttribute($key)
-    {
-        return $this->getEntry()->getAttribute($key);
-    }
-
-    public function exists()
-    {
-        return $this->getEntry() && $this->getEntry()->exists;
-    }
-
-    public function save()
-    {
-        return $this->getEntry()->save();
-    }
-
     public function getHandle(): string
     {
-        return $this->handle;
-    }
-
-    public function getLabel()
-    {
-        $label = $this->getResource()->getConfigValue('entry_label');
-
-        return sv_parse($label, $this->getEntry()->toArray());
+        return $this->getTable();
     }
 
     public function route($route)
@@ -127,86 +89,114 @@ class ResourceEntry implements ResourceEntryContract, Watcher
         return $fieldType;
     }
 
-    public function newQuery()
+    public function getLabel()
     {
-        return $this->entry->newQuery();
+        $label = $this->getResource()->getConfigValue('entry_label');
+
+        return sv_parse($label, $this->toArray());
     }
 
     public function __call($name, $arguments)
     {
-        if (method_exists($this, $name)) {
-            return call_user_func_array([$this, $name], $arguments);
+        if (starts_with($name, 'get')) {
+            $relationName = snake_case(str_replace_first('get', '', $name));
+            if ($relation = $this->resolveRelation($relationName)) {
+                if ($targetModel = $relation->getConfig()->getTargetModel()) {
+                    /** @var \SuperV\Platform\Domains\Database\Model\Entry $relatedEntry */
+                    if ($relatedEntry = $relation->newQuery()->getResults()->first()) {
+                        $targetModelInstance = new $targetModel;
+
+                        if ($targetModelInstance instanceof Repository) {
+                            return $targetModelInstance->resolve($relatedEntry, $this);
+                        }
+                    }
+                }
+            }
+        } elseif (starts_with($name, 'make')) {
+            $relationName = snake_case(str_replace_first('make', '', $name));
+            if ($relation = $this->resolveRelation($relationName)) {
+                if ($targetModel = $relation->getConfig()->getTargetModel()) {
+                    /** @var \SuperV\Platform\Domains\Database\Model\Entry $relatedEntry */
+                    if ($relation instanceof MakesEntry) {
+                        if ($relatedEntry = $relation->make($arguments)) {
+                            $targetModelInstance = new $targetModel;
+
+                            if ($targetModelInstance instanceof Repository) {
+                                return $targetModelInstance->make($relatedEntry, $this);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        if ($this->entry instanceof ResourceEntryModel &&
-            $relation = $this->entry->getRelationshipFromConfig($name)) {
+        if ($relation = $this->getRelationshipFromConfig($name)) {
             return $relation;
         }
 
-        return call_user_func_array([$this->entry, $name], $arguments);
+        return parent::__call($name, $arguments);
     }
 
-    public function __get($key)
+    /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param  \Illuminate\Database\Query\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
+    public function newEloquentBuilder($query)
     {
-        return $this->entry->{$key};
+        return new Builder($query);
     }
 
-    public function __sleep()
+    /**
+     * Get a new query builder instance for the connection.
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
+    protected function newBaseQueryBuilder()
     {
-        if ($this->entry) {
-            if ($this->entry->exists) {
-                $this->entryId = $this->entry->id;
-            } else {
-                $this->entryArray = $this->entry->toArray();
-            }
-        }
+        $connection = $this->getConnection();
 
-        return array_keys(array_except(get_object_vars($this), ['entry']));
+        return new QueryBuilder(
+            $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
+        );
     }
 
-    public function __wakeup()
+    protected static function boot()
     {
-        if (! $this->handle) {
-            return;
-        }
+        parent::boot();
 
-        if (! $this->entryId) {
-            $instance = $this->getResource()->newResourceEntryInstance()->getEntry();
-            if (is_array($this->entryArray)) {
-                $instance->fill($this->entryArray);
-            }
-            $this->entry = $instance;
+        static::retrieved(function (ResourceEntry $entry) {
+            ;
+        });
 
-            return;
-        }
+//        static::saving(function(ResourceEntryModel $entry) {
+//            EntrySavingEvent::dispatch($entry);
+//        });
 
-        $this->entry = Resource::of($this->getHandle())->find($this->entryId)->getEntry();
+        static::saved(function (ResourceEntry $entry) {
+            EntrySavedEvent::dispatch($entry);
+        });
     }
 
-    public static function make($entry, ?Resource $resource = null): self
+    public static function make($resourceHandle)
     {
-        return new static($entry, $resource);
-    }
+        $model = new class extends ResourceEntry
+        {
+            public $timestamps = false;
 
-    /** @return \SuperV\Platform\Domains\Resource\Model\ResourceEntry|\Illuminate\Support\Collection */
-    public static function fake($resource, array $overrides = [], int $number = 1)
-    {
-        if (is_string($resource)) {
-            $resource = ResourceFactory::make($resource);
-        }
-
-        if ($resource instanceof Resource) {
-            if ($number > 1) {
-                return collect(range(1, $number))
-                    ->map(function () use ($resource, $overrides) {
-                        return static::fake($resource, $overrides, 1);
-                    })
-                    ->all();
+            public function setTable($table)
+            {
+                return $this->table = $table;
             }
 
-            return Fake::create($resource, $overrides);
-        }
+            public function getMorphClass()
+            {
+                return $this->getTable();
+            }
+        };
+        $model->setTable($resourceHandle);
 
-        PlatformException::fail("Can not fake, resource not found");
+        return $model;
     }
 }

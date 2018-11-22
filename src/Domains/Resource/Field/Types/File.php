@@ -10,7 +10,6 @@ use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Rules;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Support\Composition;
 
 class File extends FieldType implements DoesNotInteractWithTable, AcceptsEntry, AltersFieldComposition
@@ -74,9 +73,7 @@ class File extends FieldType implements DoesNotInteractWithTable, AcceptsEntry, 
 
     protected function makeMediaBag(): MediaBag
     {
-        $entry = $this->entry instanceof ResourceEntry ? $this->entry->getEntry() : $this->entry;
-
-        return new MediaBag($entry, $this->getName());
+        return new MediaBag($this->entry, $this->getName());
     }
 
     protected function getConfigAsMediaOptions()

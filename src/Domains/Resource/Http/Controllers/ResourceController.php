@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Context\Negotiator;
 use SuperV\Platform\Domains\Resource\Action\CreateEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
@@ -58,7 +58,7 @@ class ResourceController extends BaseApiController
                           ->setUrl($this->resolveResource()->route('store'))
                           ->addGroup(
                               $this->resolveResource()->getFields(),
-                              $this->resolveResource()->newResourceEntryInstance(),
+                              $this->resolveResource()->newEntryInstance(),
                               $this->resolveResource()->getHandle()
                           )
                           ->makeForm();
@@ -76,7 +76,7 @@ class ResourceController extends BaseApiController
         FormConfig::make()
                   ->addGroup(
                       $this->resolveResource()->getFields(),
-                      $this->resolveResource()->newResourceEntryInstance(),
+                      $this->resolveResource()->newEntryInstance(),
                       $this->resolveResource()->getHandle()
                   )
                   ->makeForm()
@@ -107,8 +107,8 @@ class ResourceController extends BaseApiController
         $this->resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesForm; })
                        ->map(function (ProvidesForm $formProvider) use ($tabs) {
-                           if ($formProvider instanceof AcceptsParentResourceEntry) {
-                               $formProvider->acceptParentResourceEntry($this->entry);
+                           if ($formProvider instanceof AcceptsParentEntry) {
+                               $formProvider->acceptParentEntry($this->entry);
                            }
                            $form = $formProvider->makeForm();
 

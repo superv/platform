@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\BelongsTo;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -63,8 +62,8 @@ class BelongsToTest extends ResourceTestCase
                 $table->belongsTo('t_groups', 'group');
             });
 
-        $fakeUser = $users->fake(['group_id' => 100]);
-        $belongsTo = $fakeUser->getFieldType('group');
+        $fakeUser = BelongsToTestUser::create(['name' => 'J', 'group_id' => 100]);
+        $belongsTo = $users->getFieldType('group');
 
         $callback = $belongsTo->getPresenter();
         $this->assertInstanceOf(Closure::class, $callback);
@@ -101,7 +100,7 @@ class BelongsToTestUser extends Model implements EntryContract
     {
         $relation = Resource::of('t_users')->getRelation('group');
 
-        $relation->acceptParentResourceEntry(ResourceEntry::make($this));
+        $relation->acceptParentEntry($this);
 
         return $relation->newQuery();
     }

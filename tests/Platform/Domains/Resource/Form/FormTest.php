@@ -5,12 +5,12 @@ namespace Tests\Platform\Domains\Resource\Form;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Field\Watcher;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -193,8 +193,8 @@ class FormTest extends ResourceTestCase
         });
 
         $form = FormConfig::make()
-                          ->addGroup($this->users, $this->users->newResourceEntryInstance(), 'test_user')
-                          ->addGroup($posts, $posts->newResourceEntryInstance(), 'test_post')
+                          ->addGroup($this->users, $this->users->newEntryInstance(), 'test_user')
+                          ->addGroup($posts, $posts->newEntryInstance(), 'test_post')
                           ->makeForm()
                           ->setRequest($this->makePostRequest([
                               'name'  => 'Omar',

@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Support\Meta;
 
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class MetaModel extends ResourceEntryModel
+class MetaModel extends ResourceEntry
 {
     protected $table = 'sv_meta';
 }

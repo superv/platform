@@ -39,7 +39,7 @@ class ResourceCreationTest extends ResourceTestCase
         });
 
         $this->assertEquals(TestUser::class, ResourceModel::withHandle('test_users')->getModelClass());
-        $this->assertInstanceOf(TestUser::class, Resource::of('test_users')->newResourceEntryInstance()->getEntry());
+        $this->assertInstanceOf(TestUser::class, Resource::of('test_users')->newEntryInstance());
     }
 
     function test__creates_field_when_a_database_column_is_created()

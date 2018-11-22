@@ -7,26 +7,26 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry as ConcreteResourceEntry;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Domains\Resource\Resource;
 
 class HasOne extends Relation implements ProvidesForm
 {
-    protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation
+    protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
     {
         return new EloquentHasOne(
             $relatedEntryInstance->newQuery(),
-            $this->parentResourceEntry->getEntry(),
+            $this->parentEntry,
             $this->config->getForeignKey(),
             $this->config->getLocalKey() ?? 'id'
         );
     }
 
-    protected function getRelatedEntry(): ?ResourceEntry
+    protected function getRelatedEntry(): ?EntryContract
     {
         if ($entry = $this->newQuery()->getResults()) {
-            return ConcreteResourceEntry::make($entry);
+            return $entry;
         }
 
         return null;
@@ -34,11 +34,11 @@ class HasOne extends Relation implements ProvidesForm
 
     public function makeForm(): Form
     {
-        $relatedEntry = $this->getRelatedEntry() ?? ConcreteResourceEntry::make($this->newQuery()->make());
+        $relatedEntry = $this->getRelatedEntry() ?? $this->newQuery()->make();
 
-        $parentBelongsToFieldName = $this->parentResourceEntry->getResource()->getResourceKey();
+        $parentBelongsToFieldName = Resource::of($this->parentEntry)->getResourceKey();
         $form = FormConfig::make()
-                          ->addGroup($relatedEntry->getResource(), $relatedEntry)
+                          ->addGroup(Resource::of($relatedEntry), $relatedEntry)
                           ->hideField($parentBelongsToFieldName)
                           ->makeForm();
 

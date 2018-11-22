@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 class ResourceTest extends ResourceTestCase
@@ -13,24 +13,24 @@ class ResourceTest extends ResourceTestCase
     {
         $resource = $this->makeResource('test_users');
 
-        $entry = $resource->newResourceEntryInstance();
+        $entry = $resource->newEntryInstance();
 
-        $this->assertInstanceOf(ResourceEntryModel::class, $entry->getEntry());
-        $this->assertEquals('test_users', $entry->getTable());
+        $this->assertInstanceOf(ResourceEntry::class, $entry);
+        $this->assertEquals('test_users', $entry->getHandle());
     }
 
     /** @test */
     function instantiates_entries_using_provided_model()
     {
-        $resource =  $this->create('test_resource_models', function (Blueprint $table, ResourceBlueprint $resource) {
+        $resource = $this->create('test_resource_models', function (Blueprint $table, ResourceBlueprint $resource) {
             $table->increments('id');
 
             $resource->model(TestResourceModel::class);
         });
 
-        $entry = $resource->newResourceEntryInstance();
-        $this->assertInstanceOf(TestResourceModel::class, $entry->getEntry());
-        $this->assertInstanceOf(TestResourceModel::class, $resource->fake()->getEntry());
+        $entry = $resource->newEntryInstance();
+        $this->assertInstanceOf(TestResourceModel::class, $entry);
+        $this->assertInstanceOf(TestResourceModel::class, $resource->fake());
         $this->assertEquals('test_resource_models', $entry->getTable());
     }
 
@@ -40,11 +40,12 @@ class ResourceTest extends ResourceTestCase
         $res->fake([], 3);
 
         $this->assertEquals(3, $res->count());
-
     }
 }
 
-class TestResourceModel extends ResourceEntryModel {
-        protected $table = 'test_resource_models';
-        public $timestamps = false;
+class TestResourceModel extends ResourceEntry
+{
+    protected $table = 'test_resource_models';
+
+    public $timestamps = false;
 }

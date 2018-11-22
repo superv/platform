@@ -14,7 +14,7 @@ class ValidateSavingEntry
      */
     protected $validator;
 
-    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntryModel */
+    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
     protected $entry;
 
     public function __construct(Validator $validator)

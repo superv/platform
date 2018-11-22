@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 class Builder extends \Illuminate\Database\Eloquent\Builder
 {
-    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntryModel */
+    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
     protected $model;
 
     /**
@@ -49,7 +49,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder
     /**
      * Get the model instance being queried.
      *
-     * @return  \SuperV\Platform\Domains\Resource\Model\ResourceEntryModel|static
+     * @return  \SuperV\Platform\Domains\Resource\Model\ResourceEntry|static
      */
     public function getModel()
     {

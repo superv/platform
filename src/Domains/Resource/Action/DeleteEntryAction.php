@@ -2,34 +2,25 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Support\Composition;
 
-class DeleteEntryAction extends Action implements AcceptsResourceEntry
+class DeleteEntryAction extends Action implements AcceptsEntry
 {
     protected $name = 'delete';
 
     protected $title = 'Delete';
 
-    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
+    /** @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract */
     protected $entry;
-//
-//    protected function boot()
-//    {
-//        parent::boot();
-//
-//        $this->on('composed', function (Composition $composition) {
-//            $composition->replace('url', $this->entry->route('delete'));
-//        });
-//    }
 
     public function onComposed(Composition $composition)
     {
-        $composition->replace('url', $this->entry->route('delete'));
+        $composition->replace('url', sprintf('sv/res/%s/%s/delete', $this->entry->getTable(), $this->entry->getId()));
     }
 
-    public function acceptResourceEntry(ResourceEntry $entry)
+    public function acceptEntry(EntryContract $entry)
     {
         $this->entry = $entry;
     }

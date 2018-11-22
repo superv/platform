@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field;
+namespace SuperV\Platform\Domains\Database\Model\Contracts;
 
 interface Watcher
 {

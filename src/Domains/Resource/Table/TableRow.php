@@ -2,14 +2,13 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
-use SuperV\Platform\Domains\Context\Negotiator;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\Action;
-use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesResourceEntry;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsResourceEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class TableRow implements ProvidesResourceEntry
+class TableRow implements ProvidesEntry
 {
     /**
      * @var \SuperV\Platform\Domains\Resource\Table\Table
@@ -17,14 +16,13 @@ class TableRow implements ProvidesResourceEntry
     protected $table;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Resource
+     * @var array
      */
-    protected $resource;
-
-    /** @var array */
     protected $values = [];
 
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $actions = [];
 
     /**
@@ -32,7 +30,7 @@ class TableRow implements ProvidesResourceEntry
      */
     protected $entry;
 
-    public function __construct(Table $table, ResourceEntry $entry)
+    public function __construct(Table $table, EntryContract $entry)
     {
         $this->table = $table;
         $this->entry = $entry;
@@ -76,8 +74,8 @@ class TableRow implements ProvidesResourceEntry
     {
         $this->table->getActions()
                     ->map(function (Action $action) {
-                        if ($action instanceof AcceptsResourceEntry) {
-                            $action->acceptResourceEntry($this->provideResourceEntry());
+                        if ($action instanceof AcceptsEntry) {
+                            $action->acceptEntry($this->provideEntry());
                         }
                         $this->actions[] = $action->makeComponent()->compose();
                     });
@@ -92,7 +90,7 @@ class TableRow implements ProvidesResourceEntry
                     });
     }
 
-    public function provideResourceEntry(): ResourceEntry
+    public function provideEntry(): EntryContract
     {
         return $this->entry;
     }

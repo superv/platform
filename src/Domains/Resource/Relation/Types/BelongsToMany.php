@@ -8,22 +8,22 @@ use SuperV\Platform\Domains\Resource\Action\AttachEntryAction;
 use SuperV\Platform\Domains\Resource\Action\DetachEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
 class BelongsToMany extends Relation implements ProvidesTable
 {
-    protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation
+    protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
     {
         return new EloquentBelongsToMany(
             $relatedEntryInstance->newQuery(),
-            $this->parentResourceEntry->getEntry(),
+            $this->parentEntry,
             $this->config->getPivotTable(),
             $this->config->getPivotForeignKey(),
             $this->config->getPivotRelatedKey(),
-            $this->parentResourceEntry->getEntry()->getKeyName(),
+            $this->parentEntry->getKeyName(),
             $relatedEntryInstance->getKeyName()
         );
     }

@@ -2,22 +2,22 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Support\Composition;
-use SuperV\Platform\Support\Concerns\HibernatableConcern;
 
-class DetachEntryAction extends Action implements AcceptsResourceEntry
+class DetachEntryAction extends Action implements AcceptsEntry
 {
-    use HibernatableConcern;
-
     protected $name = 'detach';
 
     protected $title = 'Detach';
 
     /** @var \SuperV\Platform\Domains\Resource\Relation\Relation */
     protected $relation;
+
+    /** @var EntryContract */
+    protected $entry;
 
     public function makeComponent()
     {
@@ -37,7 +37,7 @@ class DetachEntryAction extends Action implements AcceptsResourceEntry
         return sprintf(
             'sv/res/%s/%s/%s/detach',
             $this->relation->getParentResourceHandle(),
-            $this->relation->getParentResourceEntry()->getId(),
+            $this->relation->getParentEntry()->getId(),
             $this->relation->getName(),
             $this->entry->id
         );
@@ -50,10 +50,7 @@ class DetachEntryAction extends Action implements AcceptsResourceEntry
         return $this;
     }
 
-    /** @var \SuperV\Platform\Domains\Database\Model\Entry */
-    protected $entry;
-
-    public function acceptResourceEntry(ResourceEntry $entry)
+    public function acceptEntry(EntryContract $entry)
     {
         $this->entry = $entry;
     }

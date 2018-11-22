@@ -4,14 +4,14 @@ namespace SuperV\Platform\Domains\Resource\Model\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
 class EntrySavingEvent
 {
     use Dispatchable;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Model\ResourceEntryModel
+     * @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry
      */
     public $entry;
 
@@ -20,7 +20,7 @@ class EntrySavingEvent
      */
     public $form;
 
-    public function __construct(ResourceEntryModel $entry, array $params = [])
+    public function __construct(ResourceEntry $entry, array $params = [])
     {
         $this->entry = $entry;
         $this->form = $params['form'] ?? null;

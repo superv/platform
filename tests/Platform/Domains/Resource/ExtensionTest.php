@@ -3,17 +3,13 @@
 namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaved;
-use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaving;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ResourceExtension;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Extension\RegisterExtensionsInPath;
-use SuperV\Platform\Domains\Resource\Field\FieldConfig;
 use SuperV\Platform\Domains\Resource\Field\Types\Number;
 use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class ExtensionTest extends ResourceTestCase
@@ -56,12 +52,12 @@ class ExtensionTest extends ResourceTestCase
         $ext = Resource::of('t_users');
         $user = $ext->createFake(['age => 40']); // rules set in extension
 
-        TestUserResourceExtension::$callbacks['saving'] = function (ResourceEntryModel $entry) {
+        TestUserResourceExtension::$callbacks['saving'] = function (ResourceEntry $entry) {
             $this->assertEquals(100, $entry->age);
 
             return $entry->age = $entry->age + 1;
         };
-        TestUserResourceExtension::$callbacks['saved'] = function (ResourceEntryModel $entry) {
+        TestUserResourceExtension::$callbacks['saved'] = function (ResourceEntry $entry) {
             return $entry->age = $entry->age + 1;
         };
         $user->age = 100;
@@ -107,7 +103,6 @@ class TestUserResourceExtension implements ResourceExtension
         return 't_users';
     }
 
-
     public function extend(Resource $resource)
     {
     }
@@ -117,7 +112,7 @@ class TestUserResourceExtension implements ResourceExtension
         return array_has($this->called, $event);
     }
 
-    public function saving(ResourceEntryModel $entry)
+    public function saving(ResourceEntry $entry)
     {
         if ($saving = array_get(static::$callbacks, 'saving')) {
             $saving($entry);
@@ -125,12 +120,11 @@ class TestUserResourceExtension implements ResourceExtension
         }
     }
 
-    public function saved(ResourceEntryModel $entry)
+    public function saved(ResourceEntry $entry)
     {
         if ($saved = array_get(static::$callbacks, 'saved')) {
             $saved($entry);
             $this->called[] = 'saved';
         }
     }
-
 }

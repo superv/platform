@@ -7,8 +7,8 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Composition;
@@ -29,9 +29,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
     {
         return function (EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}) {
-                if ($relatedEntry instanceof EntryContract) {
-                    return ResourceEntry::make($relatedEntry)->getLabel();
-                }
+                return Resource::of($relatedEntry)->getLabelOfEntry($relatedEntry);
             }
         };
     }

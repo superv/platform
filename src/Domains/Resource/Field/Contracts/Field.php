@@ -3,8 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
 use Closure;
+use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Field\Watcher;
 
 interface Field
 {

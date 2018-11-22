@@ -8,29 +8,29 @@ use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry as ConcreteResourceEntry;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Domains\Resource\Resource;
 
 class MorphOne extends Relation implements ProvidesForm, MakesEntry
 {
-    protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation
+    protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
     {
         $morphName = $this->config->getMorphName();
 
         return new EloquentMorphOne(
             $relatedEntryInstance->newQuery(),
-            $this->parentResourceEntry->getEntry(),
+            $this->parentEntry,
             $morphName.'_type',
             $morphName.'_id',
-            $this->parentResourceEntry->getEntry()->getKeyName()
+            $this->parentEntry->getKeyName()
         );
     }
 
-    protected function getRelatedEntry(): ?ResourceEntry
+    protected function getRelatedEntry(): ?EntryContract
     {
         if ($entry = $this->newQuery()->getResults()) {
-            return ConcreteResourceEntry::make($entry);
+            return $entry;
         }
 
         return null;
@@ -38,10 +38,10 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry
 
     public function makeForm(): Form
     {
-        $relatedEntry = $this->getRelatedEntry() ?? ConcreteResourceEntry::make($this->newQuery()->make());
+        $relatedEntry = $this->getRelatedEntry() ?? $this->newQuery()->make();
 
         $form = FormConfig::make()
-                          ->addGroup($relatedEntry->getResource(), $relatedEntry)
+                          ->addGroup(Resource::of($relatedEntry), $relatedEntry)
                           ->makeForm();
 
         return $form;
@@ -56,7 +56,7 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry
      * Create and return an un-saved instance of the related model.
      *
      * @param  array $attributes
-     * @return \SuperV\Platform\Domains\Database\Model\Entry
+     * @return \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract
      */
     public function make(array $attributes = [])
     {

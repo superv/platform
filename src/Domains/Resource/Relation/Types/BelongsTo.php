@@ -4,17 +4,17 @@ namespace SuperV\Platform\Domains\Resource\Relation\Types;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentBelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentEntry;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
-class BelongsTo extends Relation implements AcceptsParentResourceEntry
+class BelongsTo extends Relation implements AcceptsParentEntry
 {
-    protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation
+    protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
     {
         return new EloquentBelongsTo(
             $relatedEntryInstance->newQuery(),
-            $this->parentResourceEntry->getEntry(),
+            $this->parentEntry,
             $this->config->getForeignKey(),
             'id',
             $this->getName()

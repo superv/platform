@@ -4,16 +4,15 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Closure;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesRoute;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry as ResourceEntryContract;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
@@ -59,7 +58,7 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
     protected $relationProvider;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Model\ResourceEntryModel
+     * @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry
      */
     protected $entry;
 
@@ -85,44 +84,40 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
         $this->hydrate($attributes);
     }
 
-    public function newResourceEntryInstance(): ResourceEntryContract
+    public function newEntryInstance()
     {
         if ($model = $this->getConfigValue('model')) {
             // Custom Entry Model
             $entry = new $model;
         } else {
             // Anonymous Entry Model
-            $entry = ResourceEntryModel::make($this->getHandle());
+            $entry = ResourceEntry::make($this->getHandle());
         }
 
-        return new ResourceEntry($entry, $this);
+        return $entry;
     }
 
-    public function create(array $attributes = []): ResourceEntry
+    public function create(array $attributes = []): EntryContract
     {
-//        $entry = ResourceEntryModel::make($this->getHandle())->create($attributes);
-        $entry = $this->newResourceEntryInstance()->create($attributes);
-
-        return ResourceEntry::make($entry, $this->fresh());
+        return $this->newEntryInstance()->create($attributes);
     }
 
-    public function find($id): ?ResourceEntry
+    public function find($id): ?EntryContract
     {
         if (! $entry = $this->newQuery()->find($id)) {
             return null;
         }
 
-        return ResourceEntry::make($entry, $this->fresh());
+        return $entry;
     }
 
-    public function first(): ?ResourceEntry
+    public function first(): ?EntryContract
     {
         if (! $entry = $this->newQuery()->first()) {
             return null;
         }
 
-//        return ResourceEntry::make($entry, $this->fresh());
-        return ResourceEntry::make($entry, $this);
+        return $entry;
     }
 
     public function count(): int
@@ -135,10 +130,10 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
         return static::of($this->getHandle());
     }
 
-    /** @return \SuperV\Platform\Domains\Resource\Model\ResourceEntry|array */
+    /** @return \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract|array */
     public function fake(array $overrides = [], int $number = 1)
     {
-        return ResourceEntry::fake($this, $overrides, $number);
+        return ResourceEntryFake::make($this, $overrides, $number);
     }
 
     public function route($route)
@@ -165,15 +160,6 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
         }
 
         return $this->fields ?? collect();
-//        $self = ResourceFactory::make('sv_resources')
-//                               ->newQuery()
-//                               ->with('fields')
-//                               ->where('handle', $this->getHandle())
-//                               ->first();
-//
-//        return $self->fields->map(function (ResourceEntryModel $fieldEntry) {
-//            return FieldFactory::createFromArray($fieldEntry->toArray());
-//        });
     }
 
     public function getFieldType($name): ?FieldType
@@ -197,20 +183,24 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
         return $this->relations;
     }
 
-    public function getRelation($name, ?ResourceEntry $entry = null): ?Relation
+    public function getRelation($name, ?EntryContract $entry = null): ?Relation
     {
         $relation = $this->getRelations()->get($name);
-        if ($entry && $relation instanceof AcceptsParentResourceEntry) {
-            $relation->acceptParentResourceEntry($entry);
+        if ($entry && $relation instanceof AcceptsParentEntry) {
+            $relation->acceptParentEntry($entry);
         }
 
         return $relation;
-//        return ($this->relationProvider)($name, $entry);
     }
 
     public function getLabel()
     {
         return $this->getConfigValue('label');
+    }
+
+    public function getLabelOfEntry(EntryContract $entry)
+    {
+        return sv_parse($this->getConfigValue('entry_label'), $entry->toArray());
     }
 
     public function getSingularLabel()
@@ -240,9 +230,8 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
 
     public function newQuery()
     {
-        return $this->newResourceEntryInstance()->newQuery();
+        return $this->newEntryInstance()->newQuery();
     }
-
 
     public function provideRoute(string $name)
     {
@@ -276,11 +265,15 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute
             return new $model;
         }
 
-        return ResourceEntryModel::make($resourceEntry->getHandle());
+        return ResourceEntry::make($resourceEntry->getHandle());
     }
 
     public static function of($handle): self
     {
+        if ($handle instanceof EntryContract) {
+            $handle = $handle->getTable();
+        }
+
         return ResourceFactory::make($handle);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Tests\Platform\Domains\Resource\Fixtures;
 
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class TestUser extends ResourceEntryModel
+class TestUser extends ResourceEntry
 {
     protected $table = 'test_users';
 }

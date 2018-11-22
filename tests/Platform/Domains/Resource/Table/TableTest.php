@@ -80,13 +80,13 @@ class TableTest extends ResourceTestCase
         $response = $this->getJsonUser($this->users->route('index'));
         $response->assertOk();
 
-        $configResponse = $response->decodeResponseJson('data.props.blocks.0.props.block.props.config');
 
         $this->assertEquals(
             $config->compose()->get('config.meta.columns'),
             $response->decodeResponseJson('data.props.blocks.0.props.block.props.config.meta.columns')
         );
 
+//        $configResponse = $response->decodeResponseJson('data.props.blocks.0.props.block.props.config');
 //        $dataUrl = $configResponse['dataUrl'];
 //        $response = $this->getJsonUser($dataUrl, ['data' => 1]);
 //
@@ -104,11 +104,12 @@ class TableTest extends ResourceTestCase
             });
 
         $config = $this->makeTableConfig();
-        $this->users->fake([], 3);
+        TestUser::create(['name' => 'A']);
+        TestUser::create(['name' => 'B']);
 
         $table = $config->makeTable();
         $rows = $table->getRows();
-        $this->assertEquals(3, $rows->count());
+        $this->assertEquals(2, $rows->count());
     }
 
     protected function makeTableConfig(): TableConfig
@@ -150,4 +151,6 @@ class TestUser extends Entry
     public $timestamps = false;
 
     protected $table = 't_users';
+
+
 }

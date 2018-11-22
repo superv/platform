@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Extension\Contracts;
 
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
 interface ObservesSaved
 {
-    public function saved(ResourceEntryModel $entry);
+    public function saved(ResourceEntry $entry);
 }

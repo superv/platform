@@ -5,12 +5,9 @@ namespace SuperV\Platform\Domains\Resource\Action;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Support\Composition;
-use SuperV\Platform\Support\Concerns\HibernatableConcern;
 
 class MultipleSelectAction extends Action
 {
-    use HibernatableConcern;
-
     protected $name = 'select_multiple';
 
     protected $title = 'Attach New';
@@ -25,12 +22,6 @@ class MultipleSelectAction extends Action
 
     public function onComposed(Composition $composition)
     {
-//        $url = sprintf('sv/act/%s', uuid());
-//
-//        cache()->forever($url, serialize($this));
-
-//        $composition->replace('url', sv_url($url));
-
         $relatedResource = $this->relation->getRelatedResource();
         $config = new TableConfig();
         $config->setFields($relatedResource);
@@ -51,7 +42,7 @@ class MultipleSelectAction extends Action
         return $config->build()->makeComponent()->compose();
     }
 
-    public function setRelation(Relation $relation): AttachEntryAction
+    public function setRelation(Relation $relation): self
     {
         $this->relation = $relation;
 

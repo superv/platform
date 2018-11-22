@@ -2,17 +2,13 @@
 
 namespace SuperV\Platform\Domains\UI\Components;
 
-use SuperV\Platform\Contracts\Hibernatable;
-use SuperV\Platform\Support\Booter;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
-use SuperV\Platform\Support\Concerns\HibernatableConcern;
 
-abstract class BaseUIComponent implements UIComponent, Composable, Hibernatable
+abstract class BaseUIComponent implements UIComponent, Composable
 {
     use FiresCallbacks;
-    use HibernatableConcern;
 
     protected $props = [];
 

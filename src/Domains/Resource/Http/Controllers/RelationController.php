@@ -16,7 +16,7 @@ class RelationController extends BaseApiController
     {
         $relation = $this->resolveResource()->getRelation($this->route->parameter('relation'));
         if ($this->entry) {
-            $relation->acceptParentResourceEntry($this->entry);
+            $relation->acceptParentEntry($this->entry);
         }
 
         return $relation;

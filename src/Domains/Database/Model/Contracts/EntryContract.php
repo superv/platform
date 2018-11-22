@@ -2,11 +2,10 @@
 
 namespace SuperV\Platform\Domains\Database\Model\Contracts;
 
-interface EntryContract
+interface EntryContract extends Watcher
 {
     public function getId();
 
-    public function getAttribute($key);
+    public function getTable();
 
-    public function setAttribute($key, $value);
 }

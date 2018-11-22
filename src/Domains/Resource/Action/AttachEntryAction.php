@@ -2,18 +2,14 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Contracts\Hibernatable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Composition;
-use SuperV\Platform\Support\Concerns\HibernatableConcern;
 
-class AttachEntryAction extends Action implements Hibernatable
+class AttachEntryAction extends Action
 {
-    use HibernatableConcern;
-
     protected $name = 'attach';
 
     protected $title = 'Attach New';
@@ -58,7 +54,7 @@ class AttachEntryAction extends Action implements Hibernatable
         return sprintf(
             'sv/res/%s/%s/%s/lookup',
             $this->relation->getParentResourceHandle(),
-            $this->relation->getParentResourceEntry()->getId(),
+            $this->relation->getParentEntry()->getId(),
             $this->relation->getName()
         );
     }
@@ -68,7 +64,7 @@ class AttachEntryAction extends Action implements Hibernatable
         return sprintf(
             'sv/res/%s/%s/%s/attach',
             $this->relation->getParentResourceHandle(),
-            $this->relation->getParentResourceEntry()->getId(),
+            $this->relation->getParentEntry()->getId(),
             $this->relation->getName()
         );
     }

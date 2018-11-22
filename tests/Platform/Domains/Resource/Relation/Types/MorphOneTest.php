@@ -2,11 +2,12 @@
 
 namespace Tests\Platform\Domains\Resource\Relation\Types;
 
+use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Model\Repository;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\Testing\FormTester;
@@ -73,8 +74,8 @@ class MorphOneTest extends ResourceTestCase
         /** @var \SuperV\Platform\Domains\Resource\Relation\Types\MorphOne $relation */
         $relation = $this->parent->getRelation('tag');
         $this->assertInstanceOf(ProvidesForm::class, $relation);
-        $this->assertInstanceOf(AcceptsParentResourceEntry::class, $relation);
-        $relation->acceptParentResourceEntry($user);
+        $this->assertInstanceOf(AcceptsParentEntry::class, $relation);
+        $relation->acceptParentEntry($user);
 
         /** @var Form $form */
         $form = $relation->makeForm();
@@ -82,7 +83,7 @@ class MorphOneTest extends ResourceTestCase
         $this->assertNull($form->getField('user'));
         $this->assertNull($form->getField('label')->getValue());
 
-        $relatedEntry = $form->getWatcher()->getEntry();
+        $relatedEntry = $form->getWatcher();
         $this->assertEquals($user->getId(), $relatedEntry->owner_id);
         $this->assertEquals($user->getHandle(), $relatedEntry->owner_type);
 
@@ -100,11 +101,11 @@ class MorphOneTest extends ResourceTestCase
 
         /** @var \SuperV\Platform\Domains\Resource\Relation\Types\MorphOne $relation */
         $relation = $this->parent->getRelation('tac');
-        $relation->acceptParentResourceEntry($user);
+        $relation->acceptParentEntry($user);
 
         /** @var Form $form */
         $form = $relation->makeForm();
-        $relatedEntry = $form->getWatcher()->getEntry();
+        $relatedEntry = $form->getWatcher();
         $this->assertInstanceOf(TestTac::class, $relatedEntry);
 
         $this->assertEquals($user->getId(), $relatedEntry->owner_id);
@@ -135,11 +136,11 @@ class MorphOneTest extends ResourceTestCase
 
         $this->assertEquals('Admin', $profile->entry->title);
         $this->assertEquals($user->getId(), $profile->entry->owner_id);
-        $this->assertEquals($user->getEntry()->getMorphClass(), $profile->entry->owner_type);
+        $this->assertEquals($user->getMorphClass(), $profile->entry->owner_type);
     }
 }
 
-class TestTac extends Entry
+class TestTac extends Entry implements Watcher
 {
     protected $table = 't_tacs';
 

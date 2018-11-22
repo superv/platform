@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Resource\Relation\Types;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\Testing\FormTester;
@@ -61,8 +61,8 @@ class HasOneTest extends ResourceTestCase
         /** @var \SuperV\Platform\Domains\Resource\Relation\Types\HasOne $relation */
         $relation = $this->parent->getRelation('profile', $user);
         $this->assertInstanceOf(ProvidesForm::class, $relation);
-        $this->assertInstanceOf(AcceptsParentResourceEntry::class, $relation);
-        $relation->acceptParentResourceEntry($user);
+        $this->assertInstanceOf(AcceptsParentEntry::class, $relation);
+        $relation->acceptParentEntry($user);
 
         /** @var Form $form */
         $form = $relation->makeForm();
@@ -70,7 +70,7 @@ class HasOneTest extends ResourceTestCase
         $this->assertEquals(2, $form->getFields()->count());
         $this->assertFalse($form->getField('user')->isVisible());
 
-        $relatedEntry = $form->getWatcher()->getEntry();
+        $relatedEntry = $form->getWatcher();
         $this->assertEquals($user->id, $relatedEntry->user_id);
 
         $this->withoutExceptionHandling();

@@ -7,25 +7,25 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
 class HasMany extends Relation implements ProvidesTable, ProvidesQuery
 {
-    protected function newRelationQuery(ResourceEntry $relatedEntryInstance): EloquentRelation
+    protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
     {
         if (! $localKey = $this->config->getLocalKey()) {
-            if ($this->parentResourceEntry) {
-                $entry = $this->parentResourceEntry->getEntry();
+            if ($this->parentEntry) {
+                $entry = $this->parentEntry;
                 $localKey = $entry->getKeyName();
             }
         }
 
         return new EloquentHasMany(
             $relatedEntryInstance->newQuery(),
-            $this->parentResourceEntry->getEntry(),
+            $this->parentEntry,
             $this->config->getForeignKey(),
             $localKey ?? 'id'
         );

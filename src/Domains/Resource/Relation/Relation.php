@@ -3,15 +3,14 @@
 namespace SuperV\Platform\Domains\Resource\Relation;
 
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Entry;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry as ResourceEntryContract;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-abstract class Relation implements AcceptsParentResourceEntry
+abstract class Relation implements AcceptsParentEntry
 {
     use Hydratable;
 
@@ -21,17 +20,17 @@ abstract class Relation implements AcceptsParentResourceEntry
     /** @var \SuperV\Platform\Domains\Resource\Relation\RelationType */
     protected $type;
 
-    /** @var \SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry */
-    protected $parentResourceEntry;
+    /** @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract */
+    protected $parentEntry;
 
     /** @var RelationConfig */
     protected $config;
 
-    abstract protected function newRelationQuery(ResourceEntryContract $relatedEntryInstance): EloquentRelation;
+    abstract protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation;
 
-    public function acceptParentResourceEntry(ResourceEntryContract $entry)
+    public function acceptParentEntry(EntryContract $entry)
     {
-        $this->parentResourceEntry = $entry;
+        $this->parentEntry = $entry;
     }
 
     public function newQuery(): EloquentRelation
@@ -47,12 +46,12 @@ abstract class Relation implements AcceptsParentResourceEntry
         return $query;
     }
 
-    protected function newRelatedInstance(): ?ResourceEntryContract
+    protected function newRelatedInstance(): ?EntryContract
     {
         if ($model = $this->config->getRelatedModel()) {
-            return new ResourceEntry(new $model);
+            return new $model;
         } elseif ($handle = $this->config->getRelatedResource()) {
-            return Resource::of($handle)->newResourceEntryInstance();
+            return Resource::of($handle)->newEntryInstance();
         }
 
         throw new PlatformException('Related resource/model not found');
@@ -84,14 +83,14 @@ abstract class Relation implements AcceptsParentResourceEntry
         return $this->config;
     }
 
-    public function getParentResourceEntry(): \SuperV\Platform\Domains\Resource\Model\Contracts\ResourceEntry
+    public function getParentEntry()
     {
-        return $this->parentResourceEntry;
+        return $this->parentEntry;
     }
 
     public function getParentResourceHandle(): string
     {
-        return $this->parentResourceEntry->getHandle();
+        return $this->parentEntry->getHandle();
     }
 
     public static function fromEntry(Entry $entry): self

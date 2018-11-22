@@ -133,7 +133,7 @@ class ResourceFormTester extends Assert
      */
     protected function addTestFileToFake($fake): \SuperV\Platform\Domains\Media\Media
     {
-        $avatarFile = (new MediaBag($fake->getEntry(), 'avatar'))->addFromUploadedFile(
+        $avatarFile = (new MediaBag($fake, 'avatar'))->addFromUploadedFile(
             $this->getTestFile(),
             MediaOptions::one('avatar')->disk('fakedisk')
         );

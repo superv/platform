@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryModel;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
@@ -36,7 +36,7 @@ class ResourceFactory
                                    ->where('handle', $this->model->getHandle())
                                    ->first();
 
-            return $self->fields->map(function (ResourceEntryModel $fieldEntry) {
+            return $self->fields->map(function (ResourceEntry $fieldEntry) {
                 return FieldFactory::createFromArray($fieldEntry->toArray());
             });
         };
