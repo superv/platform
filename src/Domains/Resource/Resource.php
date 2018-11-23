@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Closure;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesColumns;
@@ -24,7 +25,7 @@ use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, ProvidesColumns, ProvidesTableConfig
+class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRoute, ProvidesColumns, ProvidesTableConfig
 {
     use Hydratable;
     use HasConfig;
@@ -147,7 +148,7 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, Provides
         }
 
         if ($route === 'update') {
-            return $base. '/'. $entry->getId(). '/update';
+            return $base.'/'.$entry->getId().'/update';
         }
     }
 
@@ -315,6 +316,19 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, Provides
     public function id(): int
     {
         return $this->id;
+    }
+
+    /**
+     * Get the instance as an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'uuid' => $this->uuid,
+            'handle' => $this->getHandle(),
+        ];
     }
 
     public static function modelOf($handle)

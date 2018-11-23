@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\UI\Components;
 
+use Illuminate\Contracts\Support\Responsable;
+use SuperV\Platform\Domains\UI\Components\Concerns\StyleHelper;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -9,14 +11,24 @@ use SuperV\Platform\Support\Concerns\FiresCallbacks;
 abstract class BaseUIComponent implements UIComponent, Composable
 {
     use FiresCallbacks;
+    use StyleHelper;
 
-    protected $props = [];
+    protected $props;
 
     protected $classes = [];
 
+
     abstract public function getName(): string;
 
-    abstract public function getProps(): array;
+    public function __construct(array $props = [])
+    {
+        $this->props = new Props;
+    }
+
+    public function getProps(): Props
+    {
+        return $this->props;
+    }
 
     public function addClass(string $class)
     {

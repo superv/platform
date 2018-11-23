@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\UI\Component;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Contracts\Hibernatable;
 use SuperV\Platform\Domains\UI\Components\BaseUIComponent;
+use SuperV\Platform\Domains\UI\Components\Props;
 use SuperV\Platform\Domains\UI\Components\UIComponent;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Concerns\HibernatableConcern;
@@ -19,6 +20,8 @@ class BaseUIComponentTest extends TestCase
         $component = TestComponent::make();
         $this->assertInstanceOf(UIComponent::class, $component);
         $this->assertInstanceOf(Composable::class, $component);
+
+        $this->assertInstanceOf(Props::class, $component->getProps());
     }
 
     function test__compose()
@@ -71,8 +74,8 @@ class TestComponent extends BaseUIComponent implements Hibernatable
         return 'sv-test';
     }
 
-    public function getProps(): array
+    public function getProps(): Props
     {
-        return ['test' => 'cmp'];
+        return $this->props->merge(['test' => 'cmp']);
     }
 }

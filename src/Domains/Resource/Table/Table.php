@@ -2,15 +2,19 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
 use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
+use SuperV\Platform\Domains\UI\Components\TableComponent;
+use SuperV\Platform\Domains\UI\Components\UIComponent;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
-class Table implements Composable
+class Table implements Composable, ProvidesUIComponent, Responsable
 {
     use HasOptions;
 
@@ -152,8 +156,36 @@ class Table implements Composable
         return $this->config->uuid();
     }
 
+
+    public function makeComponent(): UIComponent
+    {
+        return TableComponent::from($this);
+    }
+
+    /**
+     * Create an HTTP response that represents the object.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function toResponse($request)
+    {
+        return response()->json([
+            'data' => sv_compose($this, $this->makeTokens()),
+        ]);
+    }
+
+    /**
+     * @return array
+     */
+    protected function makeTokens(): array
+    {
+        return [];
+    }
+
+
     public static function config(TableConfig $config): self
     {
-        return (new Table(new EloquentDataProvider))->setConfig($config);
+        return app(Table::class)->setConfig($config);
     }
 }

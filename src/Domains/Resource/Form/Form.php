@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\UI\Components\FormComponent;
+use SuperV\Platform\Domains\UI\Components\UIComponent;
 use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
@@ -148,7 +149,7 @@ class Form
     }
 
 
-    public function makeComponent()
+    public function makeComponent(): UIComponent
     {
         return FormComponent::from($this);
     }

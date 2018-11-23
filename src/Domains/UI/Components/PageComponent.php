@@ -9,26 +9,16 @@ class PageComponent extends BaseUIComponent
 {
     protected $name = 'sv-page';
 
-    /** @var Page */
-    protected $page;
+    protected $uuid;
 
     public function getName(): string
     {
         return $this->name;
     }
 
-    public function getProps(): array
-    {
-        return [
-            'meta'    => $this->page->getMeta(),
-            'actions' => $this->page->getActions(),
-            'blocks'  => $this->page->getBlocks(),
-        ];
-    }
-
     public function uuid(): string
     {
-        return $this->page->uuid();
+        return $this->uuid;
     }
 
     public function onComposed(Composition $composition)
@@ -39,7 +29,12 @@ class PageComponent extends BaseUIComponent
     public static function from(Page $page): self
     {
         $static = new static;
-        $static->page = $page;
+        $static->uuid = $page->uuid();
+        $static->props->merge([
+            'meta'    => $page->getMeta(),
+            'actions' => $page->getActions(),
+            'blocks'  => $page->getBlocks(),
+        ]);
 
         return $static;
     }

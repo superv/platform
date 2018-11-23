@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Action;
 
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
+use SuperV\Platform\Domains\UI\Components\UIComponent;
 use SuperV\Platform\Support\Composer\Composition;
 
 class MultipleSelectAction extends Action
@@ -15,7 +16,7 @@ class MultipleSelectAction extends Action
     /** @var \SuperV\Platform\Domains\Resource\Relation\Relation */
     protected $relation;
 
-    public function makeComponent()
+    public function makeComponent(): UIComponent
     {
         return parent::makeComponent()->setName('sv-remote-action');
     }

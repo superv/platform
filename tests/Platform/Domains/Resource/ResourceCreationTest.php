@@ -158,7 +158,7 @@ class ResourceCreationTest extends ResourceTestCase
         $this->assertTrue($slugField->isUnique());
 
         $rules = $slugField->getRules();
-        $this->assertArraySubset(['unique:{resource.handle},slug,{entry.id},id'], $rules);
+        $this->assertArraySubset(['unique:{res.handle},slug,{entry.id},id'], $rules);
     }
 
     function test__marks_searchable_columns()

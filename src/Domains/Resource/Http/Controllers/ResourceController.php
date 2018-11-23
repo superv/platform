@@ -52,7 +52,7 @@ class ResourceController extends BaseApiController
     {
         $this->resolveResource();
         $form = FormConfig::make()
-                          ->setUrl($this->resource->route('update', $this->entry))
+                          ->setUrl($this->entry->route('update'))
                           ->addGroup(
                               $fields = $this->resolveResource()->getFields(),
                               $entry = $this->entry,

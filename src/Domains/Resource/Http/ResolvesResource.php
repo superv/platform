@@ -12,7 +12,6 @@ trait ResolvesResource
     /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
     protected $entry;
 
-
     /** @return \SuperV\Platform\Domains\Resource\Resource */
     protected function resolveResource()
     {
@@ -31,5 +30,16 @@ trait ResolvesResource
         }
 
         return $this->resource;
+    }
+
+    /** @return \SuperV\Platform\Domains\Resource\Relation\Relation */
+    protected function resolveRelation()
+    {
+        $relation = $this->resolveResource()->getRelation($this->route->parameter('relation'));
+        if ($this->entry) {
+            $relation->acceptParentEntry($this->entry);
+        }
+
+        return $relation;
     }
 }

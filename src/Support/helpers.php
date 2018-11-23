@@ -3,6 +3,7 @@
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Feature\FeatureBus;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
 use SuperV\Platform\Domains\UI\Nucleo\SvBlock;
 use SuperV\Platform\Domains\UI\Nucleo\SvComponent;
@@ -203,6 +204,18 @@ function sv_compose($data, $tokens = null)
     return (new Composer($tokens))->compose($data);
 }
 
+function sv_compose_ui($data)
+{
+    if ($data instanceof ProvidesUIComponent) {
+        $component = $data->makeComponent();
+
+        dd($component);
+    }
+    $objVars = get_object_vars($data);
+
+    dd($data, $objVars);
+}
+
 function sv_parse($target, array $data)
 {
     return app(Parser::class)->parse($target, $data);
@@ -281,13 +294,13 @@ function wrap_collect($obj)
 
 function wrap_array($obj)
 {
+    if (is_array($obj)) {
+        return $obj;
+    }
+
     if (is_null($obj)) {
         return [];
     }
 
-    if (is_string($obj)) {
-        return [$obj];
-    }
-
-    return (array)$obj;
+    return [$obj];
 }

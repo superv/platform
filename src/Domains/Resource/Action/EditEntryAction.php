@@ -31,6 +31,6 @@ class EditEntryAction extends Action
 
     protected function makeUrl()
     {
-        return 'sv/res/{resource.handle}/{entry.id}/edit';
+        return 'sv/res/{res.handle}/{entry.id}/edit';
     }
 }

@@ -163,28 +163,6 @@ class FormTest extends ResourceTestCase
         $this->assertEquals(33, $user->age);
     }
 
-    function test__resource_edit_over_http()
-    {
-        $this->withoutExceptionHandling();
-
-        $user = $this->users->create(['name' => 'Omar', 'age' => 123]);
-
-        $response = $this->getJsonUser($user->route('edit'));
-        $props = $response->decodeResponseJson('data.props.blocks.0.props.tabs.0.block.props');
-        $this->assertEquals(['url', 'method', 'fields'], array_keys($props));
-        $this->assertEquals(2, count($props['fields']));
-
-        $response = $this->postJsonUser($props['url'], [
-            'name' => 'Omar bin Hattab',
-            'age'  => 33,
-        ]);
-        $response->assertOk();
-
-        $user = $this->users->first();
-        $this->assertEquals('Omar bin Hattab', $user->name);
-        $this->assertEquals(33, $user->age);
-    }
-
     function test__saves_multiple_entries()
     {
         $posts = $this->create('test_posts', function (Blueprint $table) {

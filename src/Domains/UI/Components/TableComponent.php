@@ -2,34 +2,32 @@
 
 namespace SuperV\Platform\Domains\UI\Components;
 
-use SuperV\Platform\Domains\Resource\Table\TableConfig;
+use SuperV\Platform\Domains\Resource\Table\Table;
+use SuperV\Platform\Support\Composer\Composition;
 
 class TableComponent extends BaseUIComponent
 {
     protected $name = 'sv-table';
 
-    /** @var \SuperV\Platform\Domains\Resource\Table\TableConfig */
-    protected $config;
+    /** @var \SuperV\Platform\Domains\Resource\Table\Table */
+    protected $table;
 
     public function getName(): string
     {
         return $this->name;
     }
 
-    public function getProps(): array
-    {
-        return $this->config->compose()->get();
-    }
-
     public function uuid(): string
     {
-        return $this->config->uuid();
+        return $this->table->getConfig()->uuid();
     }
 
-    public static function from(TableConfig $config): self
+    public static function from(Table $table): self
     {
         $static = new static;
-        $static->config = $config;
+        $static->table = $table;
+        $static->props->merge($table->getConfig()->compose()->get());
+        $static->card();
 
         return $static;
     }

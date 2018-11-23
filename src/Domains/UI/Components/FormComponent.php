@@ -16,7 +16,7 @@ class FormComponent extends BaseUIComponent
         return $this->name;
     }
 
-    public function getProps(): array
+    public function getProps(): Props
     {
         return $this->form->compose()->get();
     }

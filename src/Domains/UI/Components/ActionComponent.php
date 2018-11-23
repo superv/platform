@@ -17,9 +17,9 @@ class ActionComponent extends BaseUIComponent
         return $this->name;
     }
 
-    public function getProps(): array
+    public function getProps(): Props
     {
-        return $this->action->compose()->get();
+        return $this->props->merge($this->action->compose()->get());
     }
 
     public function uuid(): string

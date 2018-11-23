@@ -38,11 +38,12 @@ class RelationController extends BaseApiController
     {
         /** @var TableConfig $config */
         $config = $this->resolveRelation()->makeTableConfig();
+        $table = Table::config($config);
 
         if ($this->route->parameter('data')) {
-            return ['data' => Table::config($config)->build()->compose()];
+            return $table->build();
         } else {
-            return ['data' => sv_compose($config->makeComponent()->addClass('sv-card')->compose())];
+            return ['data' => sv_compose($table->makeComponent()->compose())];
         }
     }
 
@@ -76,44 +77,5 @@ class RelationController extends BaseApiController
         $res = $this->entry->{$relationName}()->detach($this->request->get('item'));
 
         return $res;
-    }
-
-    public function lookup()
-    {
-        $config = $this->getLookupTableConfig();
-
-        if (! $this->route->parameter('data')) {
-            return ['data' => $config->makeComponent()->compose()];
-        }
-
-        $table = Table::config($config);
-
-        $relation = $this->resolveRelation();
-
-        /** @var \Illuminate\Database\Eloquent\Builder $query */
-        $query = $relation->getRelatedResource()->newQuery();
-
-        $alreadyAttachedItems = $this->entry->{$relation->getName()}()
-                                            ->pluck($relation->getRelatedResource()->getHandle().'.id');
-
-        $query->whereNotIn($query->getModel()->getKeyName(), $alreadyAttachedItems);
-        $table->setQuery($query);
-
-        return ['data' => $table->build()->compose()];
-    }
-
-    /**
-     * @return \SuperV\Platform\Domains\Resource\Table\TableConfig
-     * @throws \Exception
-     */
-    protected function getLookupTableConfig(): \SuperV\Platform\Domains\Resource\Table\TableConfig
-    {
-        $relatedResource = $this->resolveRelation()->getRelatedResource();
-        $config = new TableConfig();
-        $config->setColumns($relatedResource);
-        $config->setDataUrl(url()->current().'/data');
-        $config->build();
-
-        return $config;
     }
 }

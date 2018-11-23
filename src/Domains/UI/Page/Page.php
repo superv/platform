@@ -2,9 +2,12 @@
 
 namespace SuperV\Platform\Domains\UI\Page;
 
+use Illuminate\Contracts\Support\Responsable;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\UI\Components\PageComponent;
+use SuperV\Platform\Domains\UI\Components\UIComponent;
 
-class Page
+class Page implements ProvidesUIComponent, Responsable
 {
     protected $uuid;
 
@@ -13,6 +16,10 @@ class Page
     protected $blocks = [];
 
     protected $actions = [];
+
+    protected $tokens;
+
+    protected $component;
 
     protected function __construct(string $title)
     {
@@ -23,6 +30,40 @@ class Page
     protected function boot()
     {
         $this->uuid = uuid();
+    }
+
+    public function build($tokens)
+    {
+        $this->tokens = $tokens;
+
+        $this->component = $this->makeComponent();
+
+        $this->component->getProps()->transform(function ($prop) {
+            if (is_array($prop)) {
+                foreach ($prop as $key => $value) {
+                    if ($value instanceof ProvidesUIComponent) {
+                        $prop[$key] = $value->makeComponent();
+                    }
+                }
+            }
+
+            return $prop;
+        });
+
+        return $this;
+    }
+
+    /**
+     * Create an HTTP response that represents the object.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function toResponse($request)
+    {
+        return response()->json([
+            'data' => sv_compose($this->component, $this->tokens),
+        ]);
     }
 
     public function addBlock($block)
@@ -44,7 +85,7 @@ class Page
         return $this->blocks;
     }
 
-    public function makeComponent(): PageComponent
+    public function makeComponent(): UIComponent
     {
         return PageComponent::from($this);
     }
@@ -61,19 +102,21 @@ class Page
         return $this;
     }
 
-    public function getUrl()
-    {
-        return 'sv/pag/'.$this->uuid();
-    }
-
     public function getActions(): array
     {
         return $this->actions;
     }
 
-    public function setActions(array $actions): Page
+    public function setActions($actions): Page
     {
         $this->actions = $actions;
+
+        return $this;
+    }
+
+    public function addAction($action)
+    {
+        $this->actions[] = $action;
 
         return $this;
     }
@@ -88,3 +131,4 @@ class Page
         return new static($title);
     }
 }
+

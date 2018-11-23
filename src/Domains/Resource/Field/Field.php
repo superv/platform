@@ -94,7 +94,7 @@ class Field implements FieldContract
         $this->uuid = $this->uuid ?? uuid();
 
         if ($this->unique) {
-            $this->rules[] = 'unique:{resource.handle},'.$this->getColumnName().',{entry.id},id';
+            $this->rules[] = 'unique:{res.handle},'.$this->getColumnName().',{entry.id},id';
         }
         if ($this->required) {
             $this->rules[] = 'required';

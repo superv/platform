@@ -216,11 +216,6 @@ class TableConfig
         return $this;
     }
 
-    public function makeComponent()
-    {
-        return TableComponent::from($this);
-    }
-
     public function newQuery()
     {
         if ($this->query instanceof ProvidesQuery) {

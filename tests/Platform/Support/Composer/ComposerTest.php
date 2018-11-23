@@ -26,8 +26,8 @@ class ComposerTest extends TestCase
 
     function test__childrens()
     {
-        $action = new TestComposable('action', ['url' => '{resource}/{entry}'], ['entry' => 123]);
-        $parent = new TestComposable('parent', ['context' => '{context}',
+        $action = new TestComposable(['url' => '{resource}/{entry}'], ['entry' => 123]);
+        $parent = new TestComposable(['context' => '{context}',
                                                 'action'  => $action], ['resource' => 'users']);
 
         $composed = sv_compose($parent, ['context' => 'table']);
@@ -42,9 +42,9 @@ class ComposerTest extends TestCase
 
     function test__childrens_two_level()
     {
-        $tic = new TestComposable('', ['url' => '{parent}/tics/{id}'], ['id' => 123]);
-        $tac = new TestComposable('', ['url' => '{parent}/tacs/{id}'], ['id' => 456]);
-        $parent = new TestComposable('', ['owner' => '{owner}', 'tic' => $tic, 'tac' => $tac], ['parent' => 'abc']);
+        $tic = new TestComposable(['url' => '{parent}/tics/{id}'], ['id' => 123]);
+        $tac = new TestComposable(['url' => '{parent}/tacs/{id}'], ['id' => 456]);
+        $parent = new TestComposable(['owner' => '{owner}', 'tic' => $tic, 'tac' => $tac], ['parent' => 'abc']);
 
         $composed = sv_compose($parent, ['owner' => 'tdd']);
 
@@ -69,13 +69,11 @@ class TestComposable implements Composable
      */
     public $tokens;
 
-    public $name;
 
-    public function __construct($name, array $data, array $tokens = [])
+    public function __construct(array $data, array $tokens = [])
     {
         $this->data = $data;
         $this->tokens = $tokens;
-        $this->name = $name;
     }
 
     public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
