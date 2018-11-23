@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Support;
+namespace SuperV\Platform\Support\Composer;
 
 use SuperV\Platform\Contracts\Arrayable;
 
@@ -9,12 +9,17 @@ use SuperV\Platform\Contracts\Arrayable;
  *
  * @package SuperV\Platform\Support
  */
-class Composition implements Arrayable
+class Composition implements Arrayable, Composable
 {
     /**
      * @var array|null
      */
     protected $params;
+
+    /**
+     * @var array|null
+     */
+    protected $tokens;
 
     public function __construct(?array $params = [])
     {
@@ -35,6 +40,11 @@ class Composition implements Arrayable
         return array_get($this->params, $key);
     }
 
+    public function setTokens(array $tokens)
+    {
+        $this->tokens = $tokens;
+    }
+
     /**
      * Get the instance as an array.
      *
@@ -43,5 +53,10 @@ class Composition implements Arrayable
     public function toArray()
     {
         return $this->get();
+    }
+
+    public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
+    {
+        return $this->toArray();
     }
 }

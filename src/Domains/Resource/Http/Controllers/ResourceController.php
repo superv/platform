@@ -2,15 +2,12 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
-use SuperV\Platform\Domains\Context\Negotiator;
-use SuperV\Platform\Domains\Resource\Action\CreateEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Domains\UI\Nucleo\SvBlock;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Http\Controllers\BaseApiController;
@@ -18,27 +15,6 @@ use SuperV\Platform\Http\Controllers\BaseApiController;
 class ResourceController extends BaseApiController
 {
     use ResolvesResource;
-
-    public function index()
-    {
-        $resource = $this->resolveResource();
-
-        $config = $resource->provideTableConfig();
-
-        if ($this->route->parameter('data')) {
-            return ['data' => Table::config($config)->build()->compose()];
-        }
-
-        $page = Page::make($resource->getLabel());
-        $page->addBlock($config->makeComponent()->addClass('sv-card')->compose());
-
-        $createAction = CreateEntryAction::make();
-        $createAction->acceptRouteProvider($resource);
-
-        $page->setActions([$createAction->makeComponent()]);
-
-        return ['data' => sv_compose($page->makeComponent())];
-    }
 
     public function create()
     {
@@ -76,7 +52,7 @@ class ResourceController extends BaseApiController
     {
         $this->resolveResource();
         $form = FormConfig::make()
-                          ->setUrl($this->entry->route('update'))
+                          ->setUrl($this->resource->route('update', $this->entry))
                           ->addGroup(
                               $fields = $this->resolveResource()->getFields(),
                               $entry = $this->entry,

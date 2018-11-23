@@ -11,7 +11,7 @@ use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 
 class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQuery, AltersFieldComposition, AcceptsEntry
 {

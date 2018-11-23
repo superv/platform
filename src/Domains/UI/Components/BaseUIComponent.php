@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\UI\Components;
 
 use SuperV\Platform\Support\Composer\Composable;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 abstract class BaseUIComponent implements UIComponent, Composable
@@ -25,7 +25,7 @@ abstract class BaseUIComponent implements UIComponent, Composable
         return $this;
     }
 
-    public function compose(array $params = [])
+    public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
         $composition = new Composition([
             'component' => $this->getName(),

@@ -22,4 +22,6 @@ interface Column
     public function getAlterQueryCallback();
 
     public function present(EntryContract $entry);
+
+    public function getConfigValue($key);
 }

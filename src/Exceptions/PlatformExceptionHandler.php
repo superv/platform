@@ -47,6 +47,15 @@ class PlatformExceptionHandler extends ExceptionHandler
             return $exception->toResponse();
         }
 
+
+
+        return response()->json([
+            'error' => [
+                'description' => $exception->getMessage(),
+                'stack'       => $exception->getTrace(),
+            ],
+        ], 500);
+
         return parent::render($request, $exception);
     }
 

@@ -12,6 +12,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\Table\TableColumn;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
 class MorphToMany extends Relation implements ProvidesTable, ProvidesQuery
@@ -56,8 +57,10 @@ class MorphToMany extends Relation implements ProvidesTable, ProvidesQuery
             $fields = $fields->merge($pivotFields);
         }
 
+        $columns = $fields->map(function (Field $field) { return TableColumn::fromField($field); });
+
         $config = new TableConfig;
-        $config->setColumns($fields);
+        $config->setColumns($columns);
         $config->setQuery($this->newQuery());
 
         $config->setRowActions([DetachEntryAction::make()->setRelation($this)]);

@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\UI\Components;
 
 use SuperV\Platform\Domains\UI\Page\Page;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 
 class PageComponent extends BaseUIComponent
 {

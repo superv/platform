@@ -1,22 +1,30 @@
 <?php namespace SuperV\Platform\Support\Composer;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Arrayable;
 
 class Composer
 {
     /**
-     * @var array
+     * @var \SuperV\Platform\Support\Composer\Tokens
      */
-    private $params;
+    protected $tokens;
 
-    public function __construct($params = [])
+    public function __construct($tokens = [])
     {
-        $this->params = $params;
+        $this->tokens = $tokens instanceof Tokens ? $tokens : new Tokens($tokens);
     }
 
     public function compose($data)
+    {
+        $composed = $this->__compose($data);
+
+        $parsed = sv_parse($composed, $this->tokens->get());
+
+        return $parsed;
+    }
+
+    public function __compose($data)
     {
         //
         // How should I compose a string?
@@ -33,7 +41,8 @@ class Composer
         // I know this..
         //
         if ($data instanceof Composable) {
-            $composed = $data->compose($this->params);
+            $composed = $data->compose($this->tokens);
+
             return $this->compose($composed);
         }
 
@@ -41,11 +50,16 @@ class Composer
         // Collections..
         //
         if ($data instanceof Collection) {
-            $data->transform(function ($item) {
+            return $data->map(function ($item) {
                 return $this->compose($item);
             });
 
-            return $data;
+
+//            $data->transform(function ($item) {
+//                return $this->compose($item);
+//            });
+//
+//            return $data;
         }
 
         //
@@ -59,8 +73,6 @@ class Composer
             return $data;
         }
 
-
-
         //
         // It's getting harder.. Objects..
         //
@@ -69,19 +81,19 @@ class Composer
              * Search  nearby composers of the Class
              */
             if (class_exists($class = get_class($data).'Composer')) {
-                return $this->compose((new $class($data))->compose($this->params));
+                return $this->compose((new $class($data))->compose($this->tokens));
             }
 
             /**
              * Search  nearby composers of the Interface
              */
-            if ($interfaces = class_implements($data)) {
-                foreach ($interfaces as $interface) {
-                    if (class_exists($class = $interface.'Composer')) {
-                        return $this->compose((new $class($data))->compose($this->params));
-                    }
-                }
-            }
+//            if ($interfaces = class_implements($data)) {
+//                foreach ($interfaces as $interface) {
+//                    if (class_exists($class = $interface.'Composer')) {
+//                        return $this->compose((new $class($data))->compose($this->params));
+//                    }
+//                }
+//            }
 
             /**
              * Search in Port Composers
@@ -92,7 +104,7 @@ class Composer
                     $shortClassName = end($parts);
                     $composerClass = $composersNamespace."\\".$shortClassName."Composer";
                     if (class_exists($composerClass)) {
-                        return $this->compose((new $composerClass($data))->compose($this->params));
+                        return $this->compose((new $composerClass($data))->compose($this->tokens));
                     }
                 }
             }

@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -82,7 +82,7 @@ class Field implements FieldContract
      */
     protected $fieldTypeResolver;
 
-    /** @var \SuperV\Platform\Support\Composition */
+    /** @var \SuperV\Platform\Support\Composer\Composition */
     protected $composition;
 
     protected $flags = [];

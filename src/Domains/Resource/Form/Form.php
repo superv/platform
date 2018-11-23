@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\UI\Components\FormComponent;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Form

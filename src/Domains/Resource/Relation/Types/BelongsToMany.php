@@ -4,13 +4,14 @@ namespace SuperV\Platform\Domains\Resource\Relation\Types;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentBelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\AttachEntryAction;
 use SuperV\Platform\Domains\Resource\Action\DetachEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\Table\TableColumn;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
 class BelongsToMany extends Relation implements ProvidesTable
@@ -54,8 +55,10 @@ class BelongsToMany extends Relation implements ProvidesTable
             $fields = $fields->merge($pivotFields);
         }
 
+        $columns = $fields->map(function (Field $field) { return TableColumn::fromField($field); });
+
         $config = new TableConfig;
-        $config->setColumns($fields);
+        $config->setColumns($columns);
         $config->setQuery($this->newQuery());
 
         $config->setRowActions([DetachEntryAction::make()->setRelation($this)]);

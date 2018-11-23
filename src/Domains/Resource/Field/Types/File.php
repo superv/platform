@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Rules;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 
 class File extends FieldType implements DoesNotInteractWithTable, AcceptsEntry, AltersFieldComposition
 {

@@ -2,26 +2,35 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 
-class EditEntryAction extends Action implements AcceptsEntry
+class EditEntryAction extends Action
 {
     protected $name = 'edit';
 
     protected $title = 'Edit';
 
-    /** @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract */
-    protected $entry;
+    protected $url;
 
     public function onComposed(Composition $composition)
     {
-        $composition->replace('url', sprintf('sv/res/%s/%s/edit', $this->entry->getTable(), $this->entry->getId()));
+        $composition->replace('url', $this->getUrl());
     }
 
-    public function acceptEntry(EntryContract $entry)
+    public function getUrl()
     {
-        $this->entry = $entry;
+        return $this->url ?? $this->makeUrl();
+    }
+
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    protected function makeUrl()
+    {
+        return 'sv/res/{resource.handle}/{entry.id}/edit';
     }
 }

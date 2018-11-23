@@ -135,7 +135,7 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, Provides
         return ResourceEntryFake::make($this, $overrides, $number);
     }
 
-    public function route($route)
+    public function route($route, ?EntryContract $entry = null)
     {
         $base = 'sv/res/'.$this->getHandle();
         if ($route === 'create') {
@@ -144,6 +144,10 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, Provides
 
         if ($route === 'index' || $route === 'store') {
             return $base;
+        }
+
+        if ($route === 'update') {
+            return $base. '/'. $entry->getId(). '/update';
         }
     }
 

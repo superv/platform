@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Action;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 
 class DetachEntryAction extends Action implements AcceptsEntry
 {

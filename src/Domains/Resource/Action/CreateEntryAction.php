@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Action;
 
 use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesRoute;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsRouteProvider;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 
 class CreateEntryAction extends Action implements AcceptsRouteProvider
 {

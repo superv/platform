@@ -80,7 +80,7 @@ class SvComponent implements Composable, Responsable, Guardable
     {
     }
 
-    public function compose(array $params = [])
+    public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
         $id = substr(md5(uniqid()), 0, 8);
 

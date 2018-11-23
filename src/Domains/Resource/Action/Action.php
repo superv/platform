@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Action;
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
 use SuperV\Platform\Domains\UI\Components\ActionComponent;
 use SuperV\Platform\Support\Composer\Composable;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Action implements ActionContract, Composable
@@ -34,7 +34,7 @@ class Action implements ActionContract, Composable
         return ActionComponent::from($this);
     }
 
-    public function compose(array $params = [])
+    public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
         $composition = new Composition([
             'name'  => $this->getName(),

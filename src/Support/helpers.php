@@ -198,9 +198,9 @@ function sv_relative_path($path)
     return (new RelativePath(base_path()))->get($path);
 }
 
-function sv_compose($data)
+function sv_compose($data, $tokens = null)
 {
-    return (new Composer())->compose($data);
+    return (new Composer($tokens))->compose($data);
 }
 
 function sv_parse($target, array $data)
@@ -268,4 +268,26 @@ function sv_block($url = null)
     }
 
     return SvBlock::make()->url($url);
+}
+
+function wrap_collect($obj)
+{
+    if ($obj instanceof Collection) {
+        return $obj;
+    }
+
+    return collect($obj);
+}
+
+function wrap_array($obj)
+{
+    if (is_null($obj)) {
+        return [];
+    }
+
+    if (is_string($obj)) {
+        return [$obj];
+    }
+
+    return (array)$obj;
 }

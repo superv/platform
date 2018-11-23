@@ -7,9 +7,10 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
 use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
+use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
-class Table
+class Table implements Composable
 {
     use HasOptions;
 
@@ -90,9 +91,12 @@ class Table
         return $this->config->getDataUrl();
     }
 
-    public function compose(): array
+    public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
-        return (new TableData($this))->toArray();
+        return [
+            'rows'       => $this->getRows(),
+            'pagination' => $this->getPagination(),
+        ];
     }
 
     public function getConfig(): TableConfig

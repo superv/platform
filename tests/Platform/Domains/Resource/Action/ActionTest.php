@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Action\Builder;
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
 use SuperV\Platform\Domains\UI\Components\ActionComponent;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 interface AcceptsActionTestEntry

@@ -27,7 +27,7 @@ class TestBear implements Hibernatable
 {
     use HibernatableConcern;
 
-    public function compose(array $params = [])
+    public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
         return ['doo' => 'fun'];
     }

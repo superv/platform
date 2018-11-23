@@ -4,5 +4,5 @@ namespace SuperV\Platform\Support\Composer;
 
 interface Composable
 {
-    public function compose(array $params = []);
+    public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null);
 }

@@ -11,7 +11,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
 use SuperV\Platform\Domains\UI\Components\TableComponent;
-use SuperV\Platform\Support\Composition;
+use SuperV\Platform\Support\Composer\Composition;
 
 class TableConfig
 {
@@ -122,7 +122,7 @@ class TableConfig
 
     public function getRowActions(): Collection
     {
-        return $this->rowActions ?? collect();
+        return wrap_collect($this->rowActions);
     }
 
     public function setRowActions($rowActions): TableConfig

@@ -4,11 +4,11 @@ namespace SuperV\Platform\Domains\Resource\Table;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\Action;
-use SuperV\Platform\Domains\Resource\Contracts\Providings\ProvidesEntry;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
+use SuperV\Platform\Support\Composer\Composable;
+use SuperV\Platform\Support\Composer\Composition;
 
-class TableRow implements ProvidesEntry
+class TableRow implements Composable
 {
     /**
      * @var \SuperV\Platform\Domains\Resource\Table\Table
@@ -42,8 +42,6 @@ class TableRow implements ProvidesEntry
 
         $this->setColumnValues();
 
-        $this->composeActions();
-
         return $this;
     }
 
@@ -62,31 +60,20 @@ class TableRow implements ProvidesEntry
         return $this->actions;
     }
 
-    public function compose()
+    public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
-        return [
+        $composer = new Composition([
             'values'  => $this->values,
-            'actions' => $this->actions,
-        ];
-    }
+            'actions' => $this->table->getActions()->map(function(Action $action) { return $action->makeComponent(); }),
+        ]);
 
-    protected function composeActions(): void
-    {
-        $this->table->getActions()
-                    ->map(function (Action $action) {
-                        if ($action instanceof AcceptsEntry) {
-                            $action->acceptEntry($this->provideEntry());
-                        }
-                        $this->actions[] = $action->makeComponent()->compose();
-                    });
+        return sv_compose($composer, ['entry' => $this->entry]);
     }
 
     protected function setColumnValues(): void
     {
         $this->table->getColumns()
                     ->map(function (Column $column) {
-
-
                         if ($callback = $column->getPresenter()) {
 //                            $value = $callback($this->entry);
                             $value = app()->call($callback, ['entry' => $this->entry]);
@@ -107,10 +94,5 @@ class TableRow implements ProvidesEntry
 //        }
 
         return $this->entry->getAttribute($name);
-    }
-
-    public function provideEntry(): EntryContract
-    {
-        return $this->entry;
     }
 }
