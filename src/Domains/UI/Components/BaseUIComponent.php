@@ -22,12 +22,17 @@ abstract class BaseUIComponent implements UIComponent, Composable
 
     public function __construct(array $props = [])
     {
-        $this->props = new Props;
+        $this->props = new Props($props);
     }
 
     public function getProps(): Props
     {
         return $this->props;
+    }
+
+    public function getProp($key)
+    {
+        return $this->props->get($key);
     }
 
     public function addClass(string $class)

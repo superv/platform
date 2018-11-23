@@ -15,6 +15,11 @@ class Props implements Composable
         $this->props = $props;
     }
 
+    public function get($key)
+    {
+        return array_get($this->props, $key);
+    }
+
     public function merge(array $props)
     {
         $this->props = array_merge($this->props, $props);

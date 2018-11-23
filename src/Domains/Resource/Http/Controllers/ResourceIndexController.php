@@ -24,6 +24,6 @@ class ResourceIndexController extends BaseApiController
         $page->addBlock($table);
         $page->addAction(CreateEntryAction::make());
 
-       return  $page->build(['res' => $resource->toArray()]);
+        return $page->build(['res' => $resource->toArray()]);
     }
 }

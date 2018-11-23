@@ -45,6 +45,7 @@ class MorphToMany extends Relation implements ProvidesTable, ProvidesQuery
                                          })
                                          ->map(function (Field $field) {
                                              $field->onPresenting(function ($value) use ($field) {
+                                                 dump($value);
                                                  if (is_object($value) && $pivot = $value->pivot) {
                                                      return $pivot->{$field->getColumnName()};
                                                  }
