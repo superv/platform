@@ -129,11 +129,6 @@ class Resource implements ProvidesFields, ProvidesQuery, ProvidesRoute, Provides
         return $this->newQuery()->count();
     }
 
-    public function fresh(): self
-    {
-        return static::of($this->getHandle());
-    }
-
     /** @return \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract|array */
     public function fake(array $overrides = [], int $number = 1)
     {

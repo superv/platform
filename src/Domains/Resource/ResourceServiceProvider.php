@@ -8,11 +8,14 @@ use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Listeners\CreateResource;
 use SuperV\Platform\Domains\Resource\Listeners\DeleteField;
 use SuperV\Platform\Domains\Resource\Listeners\RegisterExtensions;
 use SuperV\Platform\Domains\Resource\Listeners\SyncField;
 use SuperV\Platform\Domains\Resource\Listeners\ValidateSavingEntry;
+use SuperV\Platform\Domains\Resource\Model\Events\EntryRetrievedEvent;
+use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
 use SuperV\Platform\Providers\BaseServiceProvider;
 
@@ -26,6 +29,26 @@ class ResourceServiceProvider extends BaseServiceProvider
         AddonBootedEvent::class   => RegisterExtensions::class,
         EntrySavingEvent::class   => ValidateSavingEntry::class,
     ];
+
+    public function register()
+    {
+        parent::register();
+        app('events')->listen('eloquent.saving:*', function ($event, $payload) {
+            if (($entry = $payload[0]) instanceof EntryContract) {
+                EntrySavingEvent::dispatch($entry);
+            }
+        });
+        app('events')->listen('eloquent.saved:*', function ($event, $payload) {
+            if (($entry = $payload[0]) instanceof EntryContract) {
+                EntrySavedEvent::dispatch($entry);
+            }
+        });
+        app('events')->listen('eloquent.retrieved:*', function ($event, $payload) {
+            if (($entry = $payload[0]) instanceof EntryContract) {
+                EntryRetrievedEvent::dispatch($entry);
+            }
+        });
+    }
 
     public function boot()
     {

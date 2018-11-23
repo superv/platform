@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Model\Events;
 use Illuminate\Foundation\Events\Dispatchable;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 
-class EntrySavingEvent
+class EntryRetrievedEvent
 {
     use Dispatchable;
 

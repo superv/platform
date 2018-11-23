@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Extension\Contracts;
 
-interface ResourceExtension
+interface ExtendsResource
 {
     public function extend(\SuperV\Platform\Domains\Resource\Resource $resource);
 

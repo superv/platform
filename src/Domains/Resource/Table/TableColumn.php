@@ -109,6 +109,10 @@ class TableColumn implements Column
             $column->alterQueryCallback = $fieldType->getAlterQueryCallback();
         }
 
+        if ($presenter = $fieldType->getPresenter()) {
+            $column->presenter = $presenter;
+        }
+
         return $column;
     }
 }

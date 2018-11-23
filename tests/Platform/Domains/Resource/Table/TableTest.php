@@ -139,9 +139,9 @@ class TableTest extends ResourceTestCase
         $this->users = $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->integer('age');
+            $table->integer('age')->showOnIndex();
             $table->text('bio')->hide('table');
-            $table->nullableBelongsTo('t_groups', 'group');
+            $table->nullableBelongsTo('t_groups', 'group')->showOnIndex();
         });
     }
 }

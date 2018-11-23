@@ -80,9 +80,7 @@ class ResourceFactory
     {
         $resource = new Resource(static::attributesFor($handle));
 
-        if ($extension = Extension::get($resource->getHandle())) {
-            $extension->extend($resource);
-        }
+        Extension::extend($resource);
 
         return $resource;
     }

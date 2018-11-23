@@ -3,18 +3,18 @@
 namespace SuperV\Platform\Domains\Resource\Model\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 
 class EntrySavedEvent
 {
     use Dispatchable;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry
+     * @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract
      */
     public $entry;
 
-    public function __construct(ResourceEntry $entry)
+    public function __construct(EntryContract $entry)
     {
         $this->entry = $entry;
     }

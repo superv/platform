@@ -2,28 +2,22 @@
 
 namespace Tests\Platform\Domains\Resource;
 
-use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Extension\Contracts\ResourceExtension;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsMatchingResources;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsMultipleResources;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsResource;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesRetrieved;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaved;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaving;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Extension\RegisterExtensionsInPath;
-use SuperV\Platform\Domains\Resource\Field\Types\Number;
-use SuperV\Platform\Domains\Resource\Field\Types\Text;
-use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class ExtensionTest extends ResourceTestCase
 {
-    /** @test */
-    function overrides_fields()
+    function test__extends_resource()
     {
-        $this->create('t_users',
-            function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('name');
-                $table->unsignedInteger('age');
-            });
-
+        $this->makeResource('t_users');
         Extension::register(TestUserResourceExtension::class);
 
         $extended = Resource::of('t_users');
@@ -31,39 +25,73 @@ class ExtensionTest extends ResourceTestCase
         $nameField = $extended->getField('name');
 
         $this->assertTrue($nameField->getConfigValue('extended'));
-
-
     }
 
-    /** @test */
-    function gets_before_saving()
+    function test__extends_multiple_resources_with_pattern()
     {
-        $res = $this->makeResource('t_users', ['name', 'age:integer']);
+        $this->makeResource('test_users');
+        $this->makeResource('test_posts');
+        $this->makeResource('t_forms');
 
-        Extension::register(TestUserResourceExtension::class);
-        $ext = Resource::of('t_users');
-        $user = $ext->createFake(['age => 40']); // rules set in extension
+        Extension::register(TestMultipleResourcesPatternExtension::class);
 
-        TestUserResourceExtension::$callbacks['saving'] = function (ResourceEntry $entry) {
-            $this->assertEquals(100, $entry->age);
+        $users = Resource::of('test_users');
+        $posts = Resource::of('test_posts');
+        $forms = Resource::of('t_forms');
 
-            return $entry->age = $entry->age + 1;
-        };
-        TestUserResourceExtension::$callbacks['saved'] = function (ResourceEntry $entry) {
-            return $entry->age = $entry->age + 1;
-        };
-        $user->age = 100;
-        $user->save();
-
-        // object at current pointer is incremented twice
-        $this->assertEquals(102, $user->age);
-
-        // since the last one was after saving, it is not persisted
-        $this->assertEquals(101, $user->fresh()->age);
+        $this->assertTrue($users->getConfigValue('extended'));
+        $this->assertTrue($posts->getConfigValue('extended'));
+        $this->assertNotTrue($forms->getConfigValue('extended'));
     }
 
-    /** @test */
-    function registers_extensions_from_path()
+    function test__extends_multiple_resources_with_array()
+    {
+        $this->makeResource('test_users');
+        $this->makeResource('test_posts');
+        $this->makeResource('t_forms');
+
+        Extension::register(TestMultipleResourcesArrayExtension::class);
+
+        $users = Resource::of('test_users');
+        $posts = Resource::of('test_posts');
+        $forms = Resource::of('t_forms');
+
+        $this->assertTrue($users->getConfigValue('extended'));
+        $this->assertTrue($posts->getConfigValue('extended'));
+        $this->assertNotTrue($forms->getConfigValue('extended'));
+    }
+
+    function test__observes_retrieved()
+    {
+        $this->makeResource('t_users');
+        Extension::register(TestUserResourceExtension::class);
+
+        $user = Resource::of('t_users')->fake();
+
+        $this->assertEquals($user->fresh(), TestUserResourceExtension::$called['retrieved']);
+    }
+
+    function test__observes_saving()
+    {
+        $this->makeResource('t_users');
+        Extension::register(TestUserResourceExtension::class);
+
+        $user = Resource::of('t_users')->fake();
+
+        $this->assertEquals($user, TestUserResourceExtension::$called['saving']);
+    }
+
+    function test__observes_saved()
+    {
+        $this->makeResource('t_users');
+        Extension::register(TestUserResourceExtension::class);
+
+        $user = Resource::of('t_users')->fake();
+
+        $this->assertEquals($user, TestUserResourceExtension::$called['saved']);
+    }
+
+    function test__registers_extensions_from_path()
     {
         RegisterExtensionsInPath::dispatch(
             __DIR__.'/Fixtures/Extensions',
@@ -71,7 +99,6 @@ class ExtensionTest extends ResourceTestCase
         );
 
         $this->assertNotNull(Extension::get('test_a'));
-//        $this->assertNotNull(Extension::get('test_b'));
     }
 
     protected function tearDown()
@@ -82,13 +109,39 @@ class ExtensionTest extends ResourceTestCase
     }
 }
 
-class TestUserResourceExtension implements ResourceExtension
+class TestMultipleResourcesPatternExtension implements ExtendsMultipleResources
 {
-    /** @var array */
-    protected $called = [];
+    public function pattern()
+    {
+        return 'test_*';
+    }
 
-    /** @var array */
-    public static $callbacks = [];
+    public function __call($name, $arguments)
+    {
+        if (starts_with($name, 'extend')) {
+            return   $arguments[0]->setConfigValue('extended', true);
+        }
+    }
+}
+
+class TestMultipleResourcesArrayExtension implements ExtendsMultipleResources
+{
+    public function pattern()
+    {
+        return ['test_users', 'test_posts'];
+    }
+
+    public function __call($name, $arguments)
+    {
+        if (starts_with($name, 'extend')) {
+            return   $arguments[0]->setConfigValue('extended', true);
+        }
+    }
+}
+
+class TestUserResourceExtension implements ExtendsResource, ObservesRetrieved, ObservesSaving, ObservesSaved
+{
+    public static $called = [];
 
     public function extends(): string
     {
@@ -100,24 +153,18 @@ class TestUserResourceExtension implements ResourceExtension
         $resource->getField('name')->setConfigValue('extended', true);
     }
 
-    public function isCalled($event)
+    public function retrieved(EntryContract $entry)
     {
-        return array_has($this->called, $event);
+        static::$called['retrieved'] = $entry;
     }
 
-    public function saving(ResourceEntry $entry)
+    public function saving(EntryContract $entry)
     {
-        if ($saving = array_get(static::$callbacks, 'saving')) {
-            $saving($entry);
-            $this->called[] = 'saving';
-        }
+        static::$called['saving'] = $entry;
     }
 
-    public function saved(ResourceEntry $entry)
+    public function saved(EntryContract $entry)
     {
-        if ($saved = array_get(static::$callbacks, 'saved')) {
-            $saved($entry);
-            $this->called[] = 'saved';
-        }
+        static::$called['saved'] = $entry;
     }
 }

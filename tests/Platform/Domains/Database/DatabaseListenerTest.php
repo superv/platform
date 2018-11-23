@@ -31,11 +31,11 @@ class DatabaseListenerTest extends TestCase
             return $event->table === 'pickles' ;
         });
 
-        $pick->getEntry()->setAttribute('name', 'pixel')->save();
+        $pick->setAttribute('name', 'pixel')->save();
 
         Event::assertDispatched(TableUpdateEvent::class,
             function(TableUpdateEvent $event) use ($pick) {
-            return $event->table === 'pickles' && $event->rowId === $pick->getEntry()->getId();
+            return $event->table === 'pickles' && $event->rowId === $pick->getId();
         });
 
     }

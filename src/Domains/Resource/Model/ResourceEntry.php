@@ -10,7 +10,6 @@ use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Domains\Resource\Resource;
@@ -160,23 +159,6 @@ class ResourceEntry extends Entry
         return new QueryBuilder(
             $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
         );
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::retrieved(function (ResourceEntry $entry) {
-            ;
-        });
-
-//        static::saving(function(ResourceEntryModel $entry) {
-//            EntrySavingEvent::dispatch($entry);
-//        });
-
-        static::saved(function (ResourceEntry $entry) {
-            EntrySavedEvent::dispatch($entry);
-        });
     }
 
     public static function make($resourceHandle)

@@ -44,18 +44,4 @@ class PageTest extends TestCase
             'class' => ['w-full']
         ], $component->compose());
     }
-
-    function test__provides_component_over_http()
-    {
-        $page = Page::make('Users Index Page')->addBlock('block');
-
-        $component = $page->makeComponent();
-        $response = $this->getJsonUser($component->hibernate());
-        $response->assertOk();
-
-        $this->assertEquals(
-            $page->makeComponent()->compose(),
-            $response->decodeResponseJson('data')
-        );
-    }
 }

@@ -73,6 +73,15 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this->config ?? [];
     }
 
+    public function showOnIndex()
+    {
+        $config = $this->config;
+        $config['table.show'] = true;
+        $this->config = $config;
+
+        return $this;
+    }
+
     public function getRules()
     {
         if (! $this->rules) {

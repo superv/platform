@@ -24,12 +24,8 @@ class ValidateSavingEntry
 
     public function handle(EntrySavingEvent $event)
     {
-//        $this->entry = $event->entry;
-        $form = $event->form ?? $event->entry->wrap()->build(); // bu ne yaa
 
-//        $resource = $this->entry->getResource();
-//        $resource = $this->entry->wrap()->build();
-
+        return;
         $rules = $form->provideFields()->map(function (FieldType $field) {
             if (! $field->hasFieldEntry()) {
                 return null;
