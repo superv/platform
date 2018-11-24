@@ -19,12 +19,9 @@ class Form
     use FiresCallbacks;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Field\Field[]|Collection
+     * @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field[]|Collection
      */
     protected $fields;
-
-    /** @var \SuperV\Platform\Domains\Resource\Form\Group[]|Collection */
-    protected $groups;
 
     /**
      * @var string
@@ -58,7 +55,6 @@ class Form
     protected function __construct(FormConfig $config)
     {
         $this->config = $config;
-        $this->groups = collect();
         $this->fields = collect();
         $this->uuid = uuid();
 
@@ -148,7 +144,6 @@ class Form
         return $composition;
     }
 
-
     public function makeComponent(): UIComponent
     {
         return FormComponent::from($this);
@@ -210,7 +205,7 @@ class Form
     }
 
     /**
-     * @return \SuperV\Platform\Domains\Resource\Field\Field[]|Collection
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field[]|Collection
      */
     public function getFields(): Collection
     {

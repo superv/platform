@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Resource\Action;
 
 use SuperV\Platform\Domains\Resource\Action\Action;
-use SuperV\Platform\Domains\Resource\Action\Builder;
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
 use SuperV\Platform\Domains\UI\Components\ActionComponent;
 use SuperV\Platform\Support\Composer\Composition;
@@ -39,18 +38,6 @@ class ActionTest extends ResourceTestCase
             'uuid'      => $component->uuid(),
             'props'     => $component->getProps(),
         ], $component->compose());
-    }
-
-    function test__composer_negotiation()
-    {
-        $composer = new Builder($action = EntryAction::make('entry'));
-        $composer->addContext($page = new TestPage);
-
-        $this->assertEquals([
-            'name'  => 'edit',
-            'title' => 'Edit Entry',
-            'entry' => 'test_page_entry',
-        ], $composer->compose());
     }
 }
 

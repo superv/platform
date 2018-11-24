@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Contracts\Providings;
+namespace SuperV\Platform\Domains\Resource\Contracts;
 
 interface ProvidesRoute
 {

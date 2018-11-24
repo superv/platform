@@ -29,7 +29,7 @@ class Table implements Composable, ProvidesUIComponent, Responsable
     /** @var \SuperV\Platform\Domains\Resource\Table\TableRow|\Illuminate\Support\Collection */
     protected $rows;
 
-    /** @var \SuperV\Platform\Domains\Resource\Field\Field[]|\Illuminate\Support\Collection */
+    /** @var \SuperV\Platform\Domains\Resource\Table\Contracts\Column[]|\Illuminate\Support\Collection */
     protected $columns;
 
     /** @var array */

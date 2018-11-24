@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -15,19 +15,6 @@ abstract class FieldType
     use Hydratable;
     use HasConfig;
     use FiresCallbacks;
-
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Resource
-     */
-    protected $resource;
-
-//    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
-//    protected $entry;
-
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Field\Field
-     */
-    protected $field;
 
     /**
      * @var string
@@ -59,9 +46,6 @@ abstract class FieldType
      * @var array
      */
     protected $config = [];
-
-    /** @var \SuperV\Platform\Domains\Resource\Field\FieldValue */
-    protected $value;
 
     protected $accessor;
 

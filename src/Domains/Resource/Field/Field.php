@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field;
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
-use SuperV\Platform\Domains\Resource\Contracts\Requirements\AcceptsEntry;
+use SuperV\Platform\Domains\Resource\Contracts\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
@@ -49,9 +49,6 @@ class Field implements FieldContract
      */
     protected $label;
 
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Field\FieldValue
-     */
     protected $value;
 
     /** @var boolean */
