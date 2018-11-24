@@ -41,4 +41,6 @@ interface Field
     public function fieldType(): FieldType;
 
     public function onPresenting(Closure $callback);
+
+    public function getPresenter();
 }

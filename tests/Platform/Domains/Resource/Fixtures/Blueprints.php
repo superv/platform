@@ -1,0 +1,72 @@
+<?php
+
+namespace Tests\Platform\Domains\Resource\Fixtures;
+
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
+
+class Blueprints
+{
+    use ResourceTestHelpers;
+
+    /** @return Resource */
+    public function users()
+    {
+        $users = $this->create('t_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->unsignedInteger('age')->showOnIndex();
+            $table->belongsTo('t_groups', 'group')->showOnIndex();
+
+            $table->morphToMany('t_roles', 'roles', 'owner', 'assigned_roles', 'role');
+
+            $table->morphToMany('t_actions', 'actions', 'owner', 'assigned_actions', 'action',
+                function (Blueprint $pivotTable) {
+                    $pivotTable->string('provision');
+                });
+        });
+
+        return $users;
+    }
+
+    /** @return Resource */
+    public function roles()
+    {
+        $this->create('t_roles', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('role')->unique();
+        });
+    }
+
+    /** @return Resource */
+    public function actions()
+    {
+       $actions = $this->create('t_actions', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('action')->unique();
+        });
+
+        $actions->create(['action' => 'create']);
+        $actions->create(['action' => 'view']);
+        $actions->create(['action' => 'edit']);
+        $actions->create(['action' => 'update']);
+        $actions->create(['action' => 'delete']);
+
+    }
+
+    /** @return Resource */
+    public function groups()
+    {
+        $groups = $this->create('t_groups', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title');
+        });
+
+        $groups->create(['id' => 1, 'title' => 'Users']);
+        $groups->create(['id' => 2, 'title' => 'Clients']);
+        $groups->create(['id' => 3, 'title' => 'Admins']);
+
+        return $groups;
+    }
+}

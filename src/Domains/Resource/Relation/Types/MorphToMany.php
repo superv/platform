@@ -45,7 +45,6 @@ class MorphToMany extends Relation implements ProvidesTable, ProvidesQuery
                                          })
                                          ->map(function (Field $field) {
                                              $field->onPresenting(function ($value) use ($field) {
-                                                 dump($value);
                                                  if (is_object($value) && $pivot = $value->pivot) {
                                                      return $pivot->{$field->getColumnName()};
                                                  }
@@ -53,12 +52,14 @@ class MorphToMany extends Relation implements ProvidesTable, ProvidesQuery
 
                                              return $field;
                                          })
-                                         ->values()->all();
+                                         ->all();
 
             $fields = $fields->merge($pivotFields);
         }
 
-        $columns = $fields->map(function (Field $field) { return TableColumn::fromField($field); });
+        $columns = $fields->map(function (Field $field) {
+            return TableColumn::fromField($field);
+        });
 
         $config = new TableConfig;
         $config->setColumns($columns);

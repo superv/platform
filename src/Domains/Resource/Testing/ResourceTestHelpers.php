@@ -9,9 +9,24 @@ use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
+use Tests\Platform\Domains\Resource\Fixtures\Blueprints;
+use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 
 trait ResourceTestHelpers
 {
+    protected function getPageFromUrl($url)
+    {
+        $response = $this->getJsonUser($url);
+        $response->assertOk();
+
+        return HelperComponent::from($response->decodeResponseJson('data'));
+    }
+
+    protected function schema()
+    {
+        return new Blueprints;
+    }
+
     /** @return \SuperV\Platform\Domains\Resource\Resource */
     protected function create($table, Closure $callback = null)
     {

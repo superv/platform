@@ -27,7 +27,10 @@ return [
     'POST@'.'sv/res/{resource}/{id}/{relation}/attach' => RelationController::at('attach'),
     'POST@'.'sv/res/{resource}/{id}/{relation}/detach' => RelationController::at('detach'),
 
-    'GET@'.'sv/res/{resource}/{id}/{relation}/table/{data?}' => RelationIndexController::class,
+    'sv/res/{resource}/{id}/{relation}/table/{data?}' => [
+        'as'   => 'relation.index',
+        'uses' => RelationIndexController::class,
+    ],
 
     'sv/res/{resource}/{id}/{relation}/lookup/{data?}' => LookupController::class,
 

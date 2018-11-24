@@ -105,8 +105,8 @@ trait CreatesRelations
         $related,
         $relationName,
         $morphName,
-        $pivotTable = null,
-        $pivotRelatedKey = null,
+        $pivotTable,
+        $pivotRelatedKey,
         Closure $pivotColumns = null
     ) {
         return $this->addColumn(null, $relationName, ['nullable' => true])

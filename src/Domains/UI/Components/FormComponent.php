@@ -18,7 +18,7 @@ class FormComponent extends BaseUIComponent
 
     public function getProps(): Props
     {
-        return $this->form->compose()->get();
+        return $this->props->merge($this->form->compose()->get());
     }
 
     public function uuid(): string

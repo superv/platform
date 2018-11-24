@@ -129,6 +129,11 @@ class Field implements FieldContract
         $this->on('presenting', $callback);
     }
 
+    public function getPresenter()
+    {
+        return $this->getCallback('presenting');
+    }
+
     public function fieldType(): FieldType
     {
         if ($this->fieldType) {

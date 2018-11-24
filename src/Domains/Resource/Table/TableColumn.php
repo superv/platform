@@ -91,7 +91,6 @@ class TableColumn implements Column
         return $this;
     }
 
-
     public static function make(string $name, ?string $label = null): Column
     {
         $column = new static;
@@ -112,11 +111,12 @@ class TableColumn implements Column
             $column->alterQueryCallback = $fieldType->getAlterQueryCallback();
         }
 
-        if ($presenter = $fieldType->getPresenter()) {
+        if ($presenter = $field->getPresenter()) {
+            $column->presenter = $presenter;
+        } elseif ($presenter = $fieldType->getPresenter()) {
             $column->presenter = $presenter;
         }
 
         return $column;
     }
-
 }
