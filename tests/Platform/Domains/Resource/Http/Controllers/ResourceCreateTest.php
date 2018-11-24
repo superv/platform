@@ -9,15 +9,21 @@ class ResourceCreateTest extends ResourceTestCase
 {
     function test__bsmllh()
     {
-        $roles = $this->schema()->roles();
+        $this->withExceptionHandling();
 
-        $post = ['title' => 'user'];
-        $response = $this->postJsonUser($this->getCreateRoute($roles), $post);
+        $users = $this->schema()->users();
+
+        $post = [
+            'name' => 'Ali',
+            'email' => 'ali@superv.io',
+            'group_id' => 1
+        ];
+        $response = $this->postJsonUser($this->getCreateRoute($users), $post);
         $response->assertOk();
 
-        $role = $roles->first();
+        $user = $users->first();
 
-        $this->assertEquals('user', $role->title);
+        $this->assertEquals('Ali', $user->name);
     }
 
     function test__validation()
@@ -25,13 +31,19 @@ class ResourceCreateTest extends ResourceTestCase
         $this->withExceptionHandling();
 
         $users = $this->schema()->users();
+        $users->fake(['email' => 'ali@superv.io']);
 
         $post = [
-            'name' => 'Ali',
-            'email' =>'ali@veli.com'
+            'name' => 'Ali Selcuk',
+            'email' =>'ali@superv.io'
         ];
         $response = $this->postJsonUser($this->getCreateRoute($users), $post);
         $response->assertStatus(422);
+
+       $this->assertEquals(
+           ['email', 'group_id'],
+           array_keys($response->decodeResponseJson('errors'))
+       );
     }
 
     /**

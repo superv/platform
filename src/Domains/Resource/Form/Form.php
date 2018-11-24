@@ -8,13 +8,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\UI\Components\FormComponent;
 use SuperV\Platform\Domains\UI\Components\UIComponent;
 use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-class Form
+class Form implements ProvidesUIComponent
 {
     use FiresCallbacks;
 

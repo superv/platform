@@ -52,7 +52,6 @@ class ResourceModel extends Entry implements ProvidesFields
 
     public function fields()
     {
-//        return ResourceFactory::make('sv_fields')->newQuery()->where('resource_id', $this->getKey());
         return $this->hasMany(FieldModel::class, 'resource_id');
     }
 
@@ -85,16 +84,6 @@ class ResourceModel extends Entry implements ProvidesFields
         return array_get($this->config, 'model');
     }
 
-    public function addonEntry()
-    {
-        return $this->belongsTo(AddonModel::class, 'addon_id');
-    }
-
-    public function getAddonEntry(): AddonModel
-    {
-        return $this->addonEntry;
-    }
-
     public function getAddon()
     {
         return $this->addon;
@@ -118,8 +107,6 @@ class ResourceModel extends Entry implements ProvidesFields
     public static function withHandle($table): ?self
     {
         return static::fromCache($table);
-
-        return static::query()->where('handle', $table)->first();
     }
 
     public static function fromCache($handle)

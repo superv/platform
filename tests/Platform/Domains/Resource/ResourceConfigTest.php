@@ -56,7 +56,7 @@ class ResourceConfigTest extends ResourceTestCase
 
         $entry = $res->fake(['first_name' => 'Nicola', 'last_name' => 'Tesla']);
 
-        $this->assertEquals('Tesla, Nicola', $entry->getLabel());
+        $this->assertEquals('Tesla, Nicola', $res->getEntryLabel($entry));
     }
 
     /** @test */
@@ -70,7 +70,7 @@ class ResourceConfigTest extends ResourceTestCase
 
         $entry = $res->fake();
 
-        $this->assertEquals($entry->getAttribute('last_name'), $entry->getLabel());
+        $this->assertEquals($entry->getAttribute('last_name'), $res->getEntryLabel($entry));
     }
 
     /** @test */

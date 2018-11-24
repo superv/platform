@@ -41,7 +41,8 @@ class ResourceEntry extends Entry
         return $relation;
     }
 
-    public function getResource(): Resource
+    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    public function getResource()
     {
         if (! $this->resource) {
             $this->resource = ResourceFactory::make($this->getHandle());
@@ -68,32 +69,25 @@ class ResourceEntry extends Entry
             return $base.'/'.$this->getId().'/delete';
         }
     }
-
+//
     public function getField(string $name): ?Field
     {
         $field = $this->getResource()->getField($name);
 
         return $field->setWatcher($this);
     }
-
-    public function getFieldType(string $name): ?FieldType
-    {
-        $field = $this->getField($name);
-
-        $fieldType = $field->fieldType();
-        if ($fieldType instanceof AcceptsEntry) {
-            $fieldType->acceptEntry($this);
-        }
-
-        return $fieldType;
-    }
-
-    public function getLabel()
-    {
-        $label = $this->getResource()->getConfigValue('entry_label');
-
-        return sv_parse($label, $this->toArray());
-    }
+//
+//    public function getFieldType(string $name): ?FieldType
+//    {
+//        $field = $this->getField($name);
+//
+//        $fieldType = $field->fieldType();
+//        if ($fieldType instanceof AcceptsEntry) {
+//            $fieldType->acceptEntry($this);
+//        }
+//
+//        return $fieldType;
+//    }
 
     public function __call($name, $arguments)
     {

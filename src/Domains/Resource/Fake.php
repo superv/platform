@@ -129,6 +129,6 @@ class Fake
 
     public static function make(Resource $resource, array $overrides = [])
     {
-        return (new static())($resource, $overrides);
+        return (new static())->__invoke($resource, $overrides);
     }
 }

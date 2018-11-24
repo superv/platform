@@ -17,11 +17,9 @@ class BooleanTest extends ResourceTestCase
         });
         $this->assertColumnExists($res->getHandle(), 'active');
 
-        $fieldType = $res->fake(['active' => 1])->getFieldType('active');
+        $fieldType = $res->getFieldType('active');
 
         $this->assertInstanceOf(Boolean::class, $fieldType);
         $this->assertEquals('boolean', $fieldType->getType());
-
-//        $this->assertSame(true, $fieldType->getValue());
     }
 }

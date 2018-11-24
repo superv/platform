@@ -42,7 +42,7 @@ class ResourceTest extends ResourceTestCase
             'name'  => ['required'],
             'email' => ['unique:t_users,email,NULL,id', 'required'],
             'bio'   => ['string'],
-            'group' => ['required'],
+            'group_id' => ['required'],
         ], $users->getRules());
 
         $user = $users->fake();

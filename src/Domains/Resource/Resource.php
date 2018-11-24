@@ -14,7 +14,6 @@ use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Table\TableColumn;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
-use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 

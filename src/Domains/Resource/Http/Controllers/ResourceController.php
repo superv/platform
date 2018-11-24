@@ -18,39 +18,25 @@ class ResourceController extends BaseApiController
 
     public function create()
     {
+        $resource = $this->resolveResource();
         $form = FormConfig::make()
-                          ->setUrl($this->resolveResource()->route('store'))
+                          ->setUrl($resource->route('store'))
                           ->addGroup(
-                              $this->resolveResource()->getFields(),
-                              $this->resolveResource()->newEntryInstance(),
-                              $this->resolveResource()->getHandle()
+                              $resource->getFields(),
+                              $resource->newEntryInstance(),
+                              $resource->getHandle()
                           )
                           ->makeForm();
 
-        $page = Page::make('Create new '.$this->resource->getSingularLabel());
-        $page->addBlock($form->makeComponent()->compose());
+        $page = Page::make('Create new '.$resource->getSingularLabel());
+        $page->addBlock($form);
 
-        return ['data' => sv_compose($page->makeComponent())];
-    }
-
-    public function store()
-    {
-        FormConfig::make()
-                  ->addGroup(
-                      $this->resolveResource()->getFields(),
-                      $this->resolveResource()->newEntryInstance(),
-                      $this->resolveResource()->getHandle()
-                  )
-                  ->makeForm()
-                  ->setRequest($this->request)
-                  ->save();
-
-        return response()->json([]);
+        return $page->build();
     }
 
     public function edit()
     {
-        $this->resolveResource();
+        $resource = $this->resolveResource();
         $form = FormConfig::make()
                           ->setUrl($this->entry->route('update'))
                           ->addGroup(
@@ -66,7 +52,7 @@ class ResourceController extends BaseApiController
         $tabs = sv_tabs()->addTab(sv_tab('Edit', $editorTab)->autoFetch());
 
         // make forms
-        $this->resource->getRelations()
+        $resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesForm; })
                        ->map(function (ProvidesForm $formProvider) use ($tabs) {
                            if ($formProvider instanceof AcceptsParentEntry) {
@@ -78,7 +64,7 @@ class ResourceController extends BaseApiController
                        });
 
         // make tables
-        $this->resource->getRelations()
+        $resource->getRelations()
                        ->filter(function (Relation $relation) { return $relation instanceof ProvidesTable; })
                        ->map(function (Relation $relation) use ($tabs) {
                            $card = SvBlock::make('sv-loader')->setProps([
@@ -95,9 +81,9 @@ class ResourceController extends BaseApiController
                            return $tabs->addTab(sv_tab($relation->getName(), $card));
                        });
 
-        $page = Page::make($entry->getLabel());
+        $page = Page::make('Edit '. $resource->getEntryLabel($this->entry));
         $page->addBlock($tabs);
 
-        return ['data' => sv_compose($page->makeComponent())];
+        return $page->build();
     }
 }

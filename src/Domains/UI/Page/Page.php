@@ -32,7 +32,7 @@ class Page implements ProvidesUIComponent, Responsable
         $this->uuid = uuid();
     }
 
-    public function build($tokens)
+    public function build($tokens = [])
     {
         $this->tokens = $tokens;
 

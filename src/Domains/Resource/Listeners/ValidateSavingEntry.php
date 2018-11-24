@@ -23,6 +23,7 @@ class ValidateSavingEntry
 
     public function handle(EntrySavingEvent $event)
     {
+        return;
         $this->entry = $event->entry;
 
         if (starts_with($this->entry->getTable(), 'sv_')) {
