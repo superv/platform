@@ -100,21 +100,4 @@ class ResourceController extends BaseApiController
 
         return ['data' => sv_compose($page->makeComponent())];
     }
-
-    public function update()
-    {
-        $this->resolveResource();
-
-        FormConfig::make()
-                  ->setUrl($this->entry->route('update'))
-                  ->addGroup(
-                      $fields = $this->resolveResource()->getFields(),
-                      $entry = $this->entry,
-                      $handle = $this->resolveResource()->getHandle()
-                  )
-                  ->makeForm()->setRequest($this->request)
-                  ->save();
-
-        return response()->json([]);
-    }
 }
