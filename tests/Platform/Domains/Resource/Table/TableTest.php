@@ -41,75 +41,9 @@ class TableTest extends ResourceTestCase
         $this->assertEquals($config->getDataUrl(), $composition->get('config.dataUrl'));
 
         $columns = collect($composition->get('config.meta.columns'))->keyBy('name');
-        $this->assertEquals(['label' => 'Name', 'name' => 'name'], $columns->get('name'));
-    }
-
-    function test__builds_table_rows_with_resource_entry_models()
-    {
-        $this->makeGroupResource();
-        $this->makeUserResource();
-        $config = $this->makeTableConfig();
-
-        $fakeA = $this->users->fake(['group_id' => 123]);
-        $this->users->fake([], 3);
-
-        $table = $config->makeTable();
-
-        // row values
-        $this->assertEquals(4, $table->getRows()->count());
-        $this->assertEquals([
-            'id'    => $fakeA->id,
-            'name'  => $fakeA->name,
-            'age'   => $fakeA->age,
-            'group' => 'Admins',
-        ], $table->getRows()->get(0)->getValues());
-
-        // rows actions
-        $rowActions = $table->getRows()->first()->getActions();
-        $this->assertEquals(
-            ['name' => 'edit', 'title' => 'Edit', 'url' => $fakeA->route('edit')],
-            $rowActions[0]['props']
-        );
-        $this->assertEquals(
-            ['name' => 'delete', 'title' => 'Delete', 'url' => $fakeA->route('delete')],
-            $rowActions[1]['props']
-        );
-
-        // over http
-        $this->withoutExceptionHandling();
-        $response = $this->getJsonUser($this->users->route('index'));
-        $response->assertOk();
 
 
-        $this->assertEquals(
-            $config->compose()->get('config.meta.columns'),
-            $response->decodeResponseJson('data.props.blocks.0.props.block.props.config.meta.columns')
-        );
-
-//        $configResponse = $response->decodeResponseJson('data.props.blocks.0.props.block.props.config');
-//        $dataUrl = $configResponse['dataUrl'];
-//        $response = $this->getJsonUser($dataUrl, ['data' => 1]);
-//
-//        $this->assertEquals($table->compose(), $response->decodeResponseJson('data.rows'));
-    }
-
-    function test__builds_table_rows_with_base_entry_models()
-    {
-        $this->users = $this->create('t_users',
-            function (Blueprint $table, ResourceBlueprint $resource) {
-                $resource->resourceKey('user');
-                $resource->model(TestUser::class);
-                $table->increments('id');
-                $table->string('name');
-            });
-
-        $config = $this->makeTableConfig();
-        TestUser::create(['name' => 'A']);
-        TestUser::create(['name' => 'B']);
-
-        $table = $config->makeTable();
-        $rows = $table->getRows();
-        $this->assertEquals(2, $rows->count());
+        $this->assertEquals(['label' => 'T User', 'name' => 'label'], $columns->get('label'));
     }
 
     protected function makeTableConfig(): TableConfig

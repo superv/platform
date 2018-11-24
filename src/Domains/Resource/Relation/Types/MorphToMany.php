@@ -51,8 +51,7 @@ class MorphToMany extends Relation implements ProvidesTable, ProvidesQuery
                                              });
 
                                              return $field;
-                                         })
-                                         ->all();
+                                         })->all();
 
             $fields = $fields->merge($pivotFields);
         }

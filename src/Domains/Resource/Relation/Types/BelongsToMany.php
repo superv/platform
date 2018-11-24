@@ -50,12 +50,14 @@ class BelongsToMany extends Relation implements ProvidesTable
 
                                              return $field;
                                          })
-                                         ->values()->all();
+                                         ->all();
 
             $fields = $fields->merge($pivotFields);
         }
 
-        $columns = $fields->map(function (Field $field) { return TableColumn::fromField($field); });
+        $columns = $fields->map(function (Field $field) {
+            return TableColumn::fromField($field);
+        });
 
         $config = new TableConfig;
         $config->setColumns($columns);
