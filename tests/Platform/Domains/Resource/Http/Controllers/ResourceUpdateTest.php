@@ -6,19 +6,55 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ResourceUpdateTest extends ResourceTestCase
 {
-    function test__bsmllh()
+    function test__updates_all_required()
     {
-        $users = $this->schema()->users();
+        $user = $this->schema()->users()->fake(['group_id' => 1]);
 
-        $user = $users->fake(['group_id' => 1]);
-
-        $this->withoutExceptionHandling();
-        $response = $this->postJsonUser($user->route('update'), ['name' => 'Ali']);
+        $post = [
+            'name' => 'Ali',
+            'email' => 'ali@superv.io',
+            'group_id' => 2
+        ];
+        $response = $this->postJsonUser($user->route('update'), $post);
         $response->assertOk();
 
         $user = $user->fresh();
 
         $this->assertEquals('Ali', $user->name);
+        $this->assertEquals('ali@superv.io', $user->email);
+        $this->assertEquals(2, $user->group_id);
+    }
+
+    function test__updates_some_required()
+    {
+        $user = $this->schema()->users()->fake();
+
+        $this->postJsonUser($user->route('update'), ['name' => 'Ali'])->assertOk();
+        $this->postJsonUser($user->route('update'), ['email' => 'ali@superv.io'])->assertOk();
+    }
+
+    function test__fails_on_unique_validation()
+    {
+        $this->withExceptionHandling();
+        $users = $this->schema()->users();
+        $users->fake(['email' => 'ali@superv.io']);
+
+        $user = $users->fake();
+        $response = $this->postJsonUser($user->route('update'), ['email' => 'ali@superv.io']);
+        $response->assertStatus(422);
+
+        $this->assertEquals(['email'], array_keys($response->decodeResponseJson('errors')));
+    }
+
+    function test__fails_on_nullable_validation()
+    {
+        $users = $this->schema()->users();
+        $user = $users->fake();
+
+        $response = $this->postJsonUser($user->route('update'), ['name' => null]);
+        $response->assertStatus(422);
+
+        $this->assertEquals(['name'], array_keys($response->decodeResponseJson('errors')));
     }
 }
 

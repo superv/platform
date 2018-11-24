@@ -23,7 +23,6 @@ class ValidateSavingEntry
 
     public function handle(EntrySavingEvent $event)
     {
-        return;
         $this->entry = $event->entry;
 
         if (starts_with($this->entry->getTable(), 'sv_')) {
@@ -40,7 +39,8 @@ class ValidateSavingEntry
 
         $rules = $resource->getRules($this->entry);
 
-        $data = $this->entry->exists ? $this->entry->getChanges() : $this->entry->toArray();
+//        $data = $this->entry->exists ? $this->entry->getDirty() : $this->entry->toArray();
+        $data = $this->entry->getAttributes();
 
         $this->validator->make($data, $rules, []);
     }

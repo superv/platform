@@ -32,6 +32,8 @@ interface Field
 
     public function isUnique();
 
+    public function isRequired();
+
     public function doesNotInteractWithTable();
 
     public function compose();

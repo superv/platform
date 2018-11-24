@@ -21,10 +21,11 @@ class Blueprints
             $table->email('email')->unique();
             $table->string('bio')->rules(['string'])->nullable();
             $table->unsignedInteger('age')->nullable()->showOnIndex();
+
+            $table->file('avatar')->config(['disk' => 'fakedisk']);
+
             $table->belongsTo('t_groups', 'group')->showOnIndex();
-
             $table->morphToMany('t_roles', 'roles', 'owner', 'assigned_roles', 'role');
-
             $table->morphToMany('t_actions', 'actions', 'owner', 'assigned_actions', 'action',
                 function (Blueprint $pivotTable) {
                     $pivotTable->string('provision');

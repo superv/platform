@@ -34,25 +34,34 @@ class ResourceTest extends ResourceTestCase
         $this->assertEquals('t_entries', $entry->getTable());
     }
 
-    function test__get_rules()
+    function test__get_creation_rules()
     {
         $users = $this->schema()->users();
 
         $this->assertEquals([
-            'name'  => ['required'],
-            'email' => ['unique:t_users,email,NULL,id', 'required'],
-            'bio'   => ['string'],
+            'name'     => ['max:255', 'required'],
+            'email'    => ['unique:t_users,email,NULL,id', 'required'],
+            'bio'      => ['string', 'max:255', 'nullable'],
             'group_id' => ['required'],
+            'age'      => ['integer', 'min:0', 'nullable'],
+            'avatar'   => ['nullable'],
         ], $users->getRules());
+    }
+
+    function test__get_update_rules()
+    {
+        $users = $this->schema()->users();
 
         $user = $users->fake();
 
-        $this->assertEquals(
-            ['unique:t_users,email,'.$user->getId().',id', 'required'],
-            $users->getRules($user)['email']
-        );
-
-
+        $this->assertEquals([
+            'name'     => ['max:255', 'sometimes', 'required'],
+            'email'    => ['unique:t_users,email,'.$user->getId().',id', 'sometimes', 'required'],
+            'bio'      => ['string', 'max:255', 'nullable'],
+            'group_id' => ['sometimes', 'required'],
+            'age'    => ['integer', 'min:0', 'nullable'],
+            'avatar' => ['nullable'],
+        ], $users->getRules($user));
     }
 
     function test__count()

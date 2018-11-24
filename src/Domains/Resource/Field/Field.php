@@ -90,13 +90,6 @@ class Field implements FieldContract
 
         $this->uuid = $this->uuid ?? uuid();
 
-        if ($this->unique) {
-            $this->rules[] = 'unique:{res.handle},'.$this->getColumnName().',{entry.id},id';
-        }
-        if ($this->required) {
-            $this->rules[] = 'required';
-        }
-
         $this->boot();
     }
 
@@ -240,6 +233,13 @@ class Field implements FieldContract
         return $this;
     }
 
+    public function removeWatcher()
+    {
+        $this->watcher = null;
+
+        return $this;
+    }
+
     public function getType(): string
     {
         return $this->type;
@@ -265,6 +265,11 @@ class Field implements FieldContract
         return $this->unique;
     }
 
+    public function isRequired()
+    {
+        return $this->required;
+    }
+
     public function doesNotInteractWithTable()
     {
         return $this->fieldType() instanceof DoesNotInteractWithTable;
@@ -273,13 +278,6 @@ class Field implements FieldContract
     public function hide(bool $value = true)
     {
         return $this->setFlag('hidden', $value);
-    }
-
-    public function removeWatcher()
-    {
-        $this->watcher = null;
-
-        return $this;
     }
 
     public function isVisible(): bool
@@ -316,6 +314,6 @@ class Field implements FieldContract
 
     public function getRules()
     {
-        return $this->rules;
+        return Rules::make(wrap_array($this->rules))->merge($this->fieldType()->makeRules())->get();
     }
 }

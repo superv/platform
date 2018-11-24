@@ -8,8 +8,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class NumberTest extends ResourceTestCase
 {
-    /** @test */
-    function type_number_integer()
+    function test_type_number_integer()
     {
         $res = $this->create(function (Blueprint $table) {
             $table->increments('id');
@@ -21,13 +20,12 @@ class NumberTest extends ResourceTestCase
 
         $this->assertInstanceOf(Number::class, $age);
         $this->assertEquals('number', $age->getType());
-        $this->assertEquals(['integer', 'min:0', 'required'], $age->makeRules());
+        $this->assertEquals(['integer', 'min:0', 'required'], $res->parseFieldRules('age'));
         $this->assertEquals('integer', $age->getConfigValue('type'));
         $this->assertTrue($age->getConfigValue('unsigned'));
     }
 
-    /** @test */
-    function type_number_decimal()
+    function test_type_number_decimal()
     {
         $res = $this->create(function (Blueprint $table) {
             $table->increments('id');
@@ -40,7 +38,7 @@ class NumberTest extends ResourceTestCase
         $this->assertInstanceOf(Number::class, $height);
         $this->assertEquals('number', $height->getType());
         $this->assertEquals('decimal', $height->getConfigValue('type'));
-        $this->assertEquals(['numeric', 'required'], $height->makeRules());
+        $this->assertEquals(['numeric', 'required'], $res->parseFieldRules('height'));
 
         $this->assertEquals(3, $height->getConfigValue('total'));
         $this->assertEquals(2, $height->getConfigValue('places'));

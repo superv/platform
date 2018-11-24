@@ -175,17 +175,47 @@ class Resource implements
 
     public function getRules(EntryContract $entry = null)
     {
-        $rules = $this->getFields()
-                      ->keyBy(function (Field $field) {
-                          return $field->getColumnName();
-                      })
-                      ->map(function (Field $field) {
-                          return $field->getRules();
-                      })
-                      ->filter()
-                      ->all();
+        return $this->getFields()
+                    ->keyBy(function (Field $field) {
+                        return $field->getColumnName();
+                    })
+                    ->map(function (Field $field) use ($entry) {
+                        return $this->parseFieldRules($field, $entry);
+                    })
+                    ->filter()
+                    ->all();
 
-        return sv_parse($rules, ['res' => $this->toArray(), 'entry' => $entry ? $entry->toArray() : ['id' => 'NULL']]);
+//        $tokens = [
+//            'res'      => $this->toArray(),
+//            'entry'    => $entry ? $entry->toArray() : ['id' => 'NULL'],
+//            'required' => $entry && $entry->exists ? 'sometimes|required' : 'required',
+//        ];
+//
+//        return sv_parse($rules, $tokens);
+    }
+
+    public function parseFieldRules($field, ?EntryContract $entry = null)
+    {
+        $field = is_string($field) ? $this->getField($field) : $field;
+
+        $rules = $field->getRules();
+
+        if ($field->isUnique()) {
+            $rules[] = sprintf(
+                'unique:%s,%s,%s,id',
+                $this->getHandle(),
+                $field->getColumnName(),
+                $entry ? $entry->getId() : 'NULL'
+            );
+        }
+        if ($field->isRequired()) {
+            if ($entry && $entry->exists) {
+                $rules[] = 'sometimes';
+            }
+            $rules[] = 'required';
+        }
+
+        return $rules;
     }
 
     public function getResourceKey()

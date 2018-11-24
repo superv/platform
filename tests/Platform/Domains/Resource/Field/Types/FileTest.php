@@ -12,7 +12,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 class FileTest extends ResourceTestCase
 {
 
-    function type_file_is_not_required_by_default()
+    function test_type_file_is_not_required_by_default()
     {
         $res = $this->create(null, function (Blueprint $table) {
             $table->increments('id');
