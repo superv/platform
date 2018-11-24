@@ -3,9 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Contracts\Validator;
-use SuperV\Platform\Domains\Resource\Field\Rules;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
+use SuperV\Platform\Domains\Resource\Resource;
 
 class ValidateSavingEntry
 {
@@ -26,20 +25,22 @@ class ValidateSavingEntry
     {
         $this->entry = $event->entry;
 
-        if (! $this->entry->exists) {
+        if (starts_with($this->entry->getTable(), 'sv_')) {
+            return;
+        }
+//
+//        if (! starts_with($this->entry->getTable(), 't_')) {
+//            return;
+//        }
+
+        if (! $resource = Resource::of($this->entry)) {
             return;
         }
 
-        $rules = [];
+        $rules = $resource->getRules($this->entry);
 
-        $data = [];
+        $data = $this->entry->exists ? $this->entry->getChanges() : $this->entry->toArray();
 
-        return;
-
-        $attributes = $form->provideFields()->map(function (FieldType $field) {
-            return [$field->getName(), $field->getLabel()];
-        })->toAssoc()->all();
-
-        $this->validator->make($data, $rules, [], $attributes);
+        $this->validator->make($data, $rules, []);
     }
 }

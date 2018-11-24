@@ -64,7 +64,7 @@ class ValidationException extends \Exception
     {
         return response()->json([
             'errors' => $this->errors,
-        ], 400);
+        ], 422);
     }
 
     public static function error($key, $message)
