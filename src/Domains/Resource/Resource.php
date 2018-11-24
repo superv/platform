@@ -4,15 +4,9 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Closure;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesColumns;
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesRoute;
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesTableConfig;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
@@ -24,10 +18,15 @@ use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRoute, ProvidesColumns, ProvidesTableConfig
+class Resource implements
+    Contracts\ProvidesFields,
+    Contracts\ProvidesQuery,
+    Contracts\ProvidesColumns,
+    Contracts\ProvidesTableConfig
 {
     use Hydratable;
     use HasConfig;
+    use LabelConcern;
 
     /**
      * Database id
@@ -68,17 +67,8 @@ class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRout
      */
     protected $entry;
 
-    protected $entryId;
-
-    protected $titleFieldId;
-
-    protected $model;
-
+    /** @var string */
     protected $handle;
-
-    protected $label;
-
-    protected $entryLabel;
 
     /** @var \SuperV\Platform\Domains\Resource\Table\TableConfig */
     protected $tableConfig;
@@ -186,43 +176,22 @@ class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRout
 
     public function getRules(EntryContract $entry = null)
     {
-        $rules =  $this->getFields()->map(
-            function (Field $field) {
-                return $field->getRules();
-            }
-        )->filter()->all();
+        $rules = $this->getFields()
+                      ->keyBy(function (Field $field) {
+                          return $field->getColumnName();
+                      })
+                      ->map(function (Field $field) {
+                          return $field->getRules();
+                      })
+                      ->filter()
+                      ->all();
 
         return sv_parse($rules, ['res' => $this->toArray(), 'entry' => $entry ? $entry->toArray() : ['id' => 'NULL']]);
-    }
-
-    public function getLabel()
-    {
-        return $this->getConfigValue('label');
-    }
-
-    public function getLabelOfEntry(EntryContract $entry)
-    {
-        return sv_parse($this->getConfigValue('entry_label'), $entry->toArray());
-    }
-
-    public function getSingularLabel()
-    {
-        return $this->getConfigValue('singular_label', str_singular($this->getConfigValue('label')));
     }
 
     public function getResourceKey()
     {
         return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
-    }
-
-    public function getEntryLabelTemplate()
-    {
-        return $this->getConfigValue('entry_label');
-    }
-
-    public function getSlug(): string
-    {
-        return $this->getHandle();
     }
 
     public function getHandle(): string
@@ -233,18 +202,6 @@ class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRout
     public function newQuery()
     {
         return $this->newEntryInstance()->newQuery();
-    }
-
-    public function provideRoute(string $name)
-    {
-        $base = 'sv/res/'.$this->getHandle();
-        if ($name === 'create') {
-            return $base.'/create';
-        }
-
-        if ($name === 'index') {
-            return $base;
-        }
     }
 
     public function provideColumns(): Collection
@@ -324,19 +281,6 @@ class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRout
             'uuid'   => $this->uuid,
             'handle' => $this->getHandle(),
         ];
-    }
-
-    public static function modelOf($handle)
-    {
-        if (! $resourceEntry = ResourceModel::withHandle($handle)) {
-            throw new PlatformException("Resource model not found with handle [{$handle}]");
-        }
-
-        if ($model = $resourceEntry->getConfigValue('model')) {
-            return new $model;
-        }
-
-        return ResourceEntry::make($resourceEntry->getHandle());
     }
 
     public static function of($handle): self

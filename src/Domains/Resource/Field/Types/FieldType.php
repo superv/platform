@@ -201,23 +201,6 @@ abstract class FieldType
         return null;
     }
 
-    public static function resolveType(FieldModel $fieldEntry): FieldType
-    {
-        $class = FieldType::resolveClass($fieldEntry->getType());
-
-        return $class::fromEntry($fieldEntry);
-    }
-
-    public static function fromField(Field $field)
-    {
-        $class = FieldType::resolveClass($field->getType());
-
-        /** @var \SuperV\Platform\Domains\Resource\Field\Types\FieldType $fieldType */
-        $fieldType = new $class;
-
-        return $fieldType;
-    }
-
     public static function resolve($type): FieldType
     {
         $class = static::resolveClass($type);
