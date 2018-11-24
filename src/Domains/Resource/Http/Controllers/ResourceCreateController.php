@@ -6,20 +6,19 @@ use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
-class ResourceUpdateController extends BaseApiController
+class ResourceCreateController extends BaseApiController
 {
     use ResolvesResource;
 
     public function __invoke()
     {
-       $resource = $this->resolveResource();
+        $resource = $this->resolveResource();
 
         FormConfig::make()
-                  ->setUrl($this->entry->route('update'))
                   ->addGroup(
-                      $fields = $resource->getFields(),
-                      $entry = $this->entry,
-                      $handle = $resource->getHandle()
+                      $resource->getFields(),
+                      $resource->newEntryInstance(),
+                      $resource->getHandle()
                   )
                   ->makeForm()
                   ->setRequest($this->request)

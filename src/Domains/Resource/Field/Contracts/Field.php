@@ -43,4 +43,6 @@ interface Field
     public function onPresenting(Closure $callback);
 
     public function getPresenter();
+
+    public function getRules();
 }

@@ -13,7 +13,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesRoute;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTableConfig;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
@@ -135,22 +135,6 @@ class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRout
         return ResourceEntryFake::make($this, $overrides, $number);
     }
 
-    public function route($route, ?EntryContract $entry = null)
-    {
-        $base = 'sv/res/'.$this->getHandle();
-        if ($route === 'create') {
-            return $base.'/create';
-        }
-
-        if ($route === 'index' || $route === 'store') {
-            return $base;
-        }
-
-        if ($route === 'update') {
-            return $base.'/'.$entry->getId().'/update';
-        }
-    }
-
     public function getFields(): Collection
     {
         if ($this->fields instanceof Closure) {
@@ -161,7 +145,7 @@ class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRout
             return collect();
         }
 
-        return $this->fields->keyBy(function (FieldContract $field) { return $field->getName(); });
+        return $this->fields->keyBy(function (Field $field) { return $field->getName(); });
     }
 
     public function provideFields(): Collection
@@ -176,7 +160,7 @@ class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRout
         return $field->fieldType();
     }
 
-    public function getField($name): ?FieldContract
+    public function getField($name): ?Field
     {
         return $this->getFields()->first(function ($field) use ($name) { return $field->getName() === $name; });
     }
@@ -198,6 +182,17 @@ class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRout
         }
 
         return $relation;
+    }
+
+    public function getRules(EntryContract $entry = null)
+    {
+        $rules =  $this->getFields()->map(
+            function (Field $field) {
+                return $field->getRules();
+            }
+        )->filter()->all();
+
+        return sv_parse($rules, ['res' => $this->toArray(), 'entry' => $entry ? $entry->toArray() : ['id' => 'NULL']]);
     }
 
     public function getLabel()
@@ -265,7 +260,7 @@ class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRout
         $this->columns = collect()->put('label', $labelColumn)
                                   ->merge(
                                       $this->getFields()
-                                           ->map(function (FieldContract $field) {
+                                           ->map(function (Field $field) {
                                                if ($field->getConfigValue('table.show') === true) {
                                                    return TableColumn::fromField($field);
                                                }
@@ -276,6 +271,22 @@ class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRout
                                   );
 
         return $this->columns;
+    }
+
+    public function route($route, ?EntryContract $entry = null)
+    {
+        $base = 'sv/res/'.$this->getHandle();
+        if ($route === 'create') {
+            return $base.'/create';
+        }
+
+        if ($route === 'index' || $route === 'store') {
+            return $base;
+        }
+
+        if ($route === 'update') {
+            return $base.'/'.$entry->getId().'/update';
+        }
     }
 
     public function provideTableConfig(): TableConfig
@@ -310,7 +321,7 @@ class Resource implements Arrayable, ProvidesFields, ProvidesQuery, ProvidesRout
     public function toArray()
     {
         return [
-            'uuid' => $this->uuid,
+            'uuid'   => $this->uuid,
             'handle' => $this->getHandle(),
         ];
     }

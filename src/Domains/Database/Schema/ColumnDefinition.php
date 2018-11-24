@@ -12,6 +12,7 @@ use SuperV\Platform\Domains\Resource\Visibility\Visibility;
  * @method ColumnDefinition nullable($value = true) Allow NULL values to be inserted into the column
  * @method ColumnDefinition ignore($value = true)
  * @method ColumnDefinition fieldType($type)
+ * @method ColumnDefinition rules(array $rules)
  * @method ColumnDefinition config(array $config)
  */
 class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition

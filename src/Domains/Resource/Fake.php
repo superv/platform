@@ -79,7 +79,7 @@ class Fake
     {
         $fieldName = $field->getName();
 
-        if (! in_array($fieldName, ['label']) && $fake = $this->faker->__get(camel_case($fieldName))) {
+        if (! in_array($fieldName, ['label', 'bio']) && $fake = $this->faker->__get(camel_case($fieldName))) {
             return $fake;
         }
 

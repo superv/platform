@@ -24,19 +24,17 @@ class ValidateSavingEntry
 
     public function handle(EntrySavingEvent $event)
     {
+        $this->entry = $event->entry;
+
+        if (! $this->entry->exists) {
+            return;
+        }
+
+        $rules = [];
+
+        $data = [];
 
         return;
-        $rules = $form->provideFields()->map(function (FieldType $field) {
-            if (! $field->hasFieldEntry()) {
-                return null;
-            }
-
-            return [$field->getName(), Rules::of($field)->get()];
-        })->filter()->toAssoc()->all();
-
-        $data = $form->provideFields()->map(function (FieldType $field) {
-            return [$field->getName(), $field->getValueForValidation()];
-        })->toAssoc()->all();
 
         $attributes = $form->provideFields()->map(function (FieldType $field) {
             return [$field->getName(), $field->getLabel()];

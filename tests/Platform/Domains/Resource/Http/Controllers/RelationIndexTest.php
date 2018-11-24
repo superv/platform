@@ -9,7 +9,6 @@ class RelationIndexTest extends ResourceTestCase
 {
     function test__index_listing_with_morph_to_many_relations()
     {
-        $this->schema()->groups();
         $users = $this->schema()->users();
         $this->schema()->actions();
 

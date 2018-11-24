@@ -13,10 +13,14 @@ class Blueprints
     /** @return Resource */
     public function users()
     {
+        $this->groups();
+
         $users = $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->unsignedInteger('age')->showOnIndex();
+            $table->email('email')->unique();
+            $table->string('bio')->rules(['string'])->nullable();
+            $table->unsignedInteger('age')->nullable()->showOnIndex();
             $table->belongsTo('t_groups', 'group')->showOnIndex();
 
             $table->morphToMany('t_roles', 'roles', 'owner', 'assigned_roles', 'role');
@@ -33,16 +37,16 @@ class Blueprints
     /** @return Resource */
     public function roles()
     {
-        $this->create('t_roles', function (Blueprint $table) {
+        return $this->create('t_roles', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('role')->unique();
+            $table->string('title')->unique();
         });
     }
 
     /** @return Resource */
     public function actions()
     {
-       $actions = $this->create('t_actions', function (Blueprint $table) {
+        $actions = $this->create('t_actions', function (Blueprint $table) {
             $table->increments('id');
             $table->string('action')->unique();
         });
@@ -52,7 +56,6 @@ class Blueprints
         $actions->create(['action' => 'edit']);
         $actions->create(['action' => 'update']);
         $actions->create(['action' => 'delete']);
-
     }
 
     /** @return Resource */

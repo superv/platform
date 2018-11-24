@@ -9,7 +9,6 @@ class ResourceIndexTest extends ResourceTestCase
 {
     function test__bsmllh()
     {
-        $this->schema()->groups();
         $users = $this->schema()->users();
 
         $userA = $users->fake(['group_id' => 1]);

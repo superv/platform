@@ -7,12 +7,12 @@ use SuperV\Platform\Domains\Resource\Relation\RelationConfig as Config;
 
 trait CreatesRelations
 {
-    public function nullableBelongsTo($related, $relation, $foreignKey = null, $ownerKey = null)
+    public function nullableBelongsTo($related, $relation, $foreignKey = null, $ownerKey = null): ColumnDefinition
     {
         return $this->belongsTo($related, $relation, $foreignKey, $ownerKey)->nullable();
     }
 
-    public function belongsTo($related, $relationName, $foreignKey = null, $ownerKey = null)
+    public function belongsTo($related, $relationName, $foreignKey = null, $ownerKey = null): ColumnDefinition
     {
         $this->addColumn(null, $relationName, ['nullable' => true])
              ->relation(
@@ -36,7 +36,7 @@ trait CreatesRelations
                     );
     }
 
-    public function hasOne($related, $relationName, $foreignKey, $localKey = null)
+    public function hasOne($related, $relationName, $foreignKey, $localKey = null): ColumnDefinition
     {
         return $this->addColumn(null, $relationName, ['nullable' => true])
                     ->relation(
@@ -48,7 +48,7 @@ trait CreatesRelations
                     );
     }
 
-    public function morphOne($related, $relationName, $morphName, $targetModel = null)
+    public function morphOne($related, $relationName, $morphName, $targetModel = null): ColumnDefinition
     {
         return $this->addColumn(null, $relationName, ['nullable' => true])
                     ->relation(
@@ -89,7 +89,7 @@ trait CreatesRelations
                     );
     }
 
-    public function hasMany($related, $relationName, $foreignKey, $localKey = null)
+    public function hasMany($related, $relationName, $foreignKey, $localKey = null): ColumnDefinition
     {
         return $this->addColumn(null, $relationName, ['nullable' => true])
                     ->relation(

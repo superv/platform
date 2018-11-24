@@ -81,7 +81,7 @@ class Form
     public function save(): self
     {
         $this->getFields()->map(function (Field $field) {
-            if ($field->isHidden()) return;
+            if ($field->isHidden() || !$this->request->has($field->getColumnName())) return;
 
             $requestValue = $this->request->__get($field->getColumnName());
             if ($callback = $field->setValue($requestValue)) {

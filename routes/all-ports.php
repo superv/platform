@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Resource\Http\Controllers\LookupController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\RelationController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\RelationIndexController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceCreateController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceIndexController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceUpdateController;
 use SuperV\Platform\Domains\UI\Http\Controllers\PageController;
@@ -36,12 +37,16 @@ return [
     'sv/res/{resource}/{id}/{relation}/lookup/{data?}' => LookupController::class,
 
     'GET@'.'sv/res/{resource}/create'    => ResourceController::at('create'),
-    'POST@'.'sv/res/{resource}'          => ResourceController::at('store'),
     'GET@'.'sv/res/{resource}/{id}/edit' => ResourceController::at('edit'),
 
     'POST@'.'sv/res/{resource}/{id}' => [
         'as'   => 'resource.update',
         'uses' => ResourceUpdateController::class,
+    ],
+
+    'POST@'.'sv/res/{resource}' => [
+        'as'   => 'resource.create',
+        'uses' => ResourceCreateController::class,
     ],
 
     'GET@'.'sv/res/{resource}/{data?}' => [

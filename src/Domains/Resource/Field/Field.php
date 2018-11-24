@@ -313,4 +313,9 @@ class Field implements FieldContract
     {
         return $this->uuid;
     }
+
+    public function getRules()
+    {
+        return $this->rules;
+    }
 }
