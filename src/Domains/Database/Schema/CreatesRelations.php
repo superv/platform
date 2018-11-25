@@ -89,14 +89,14 @@ trait CreatesRelations
                     );
     }
 
-    public function hasMany($related, $relationName, $foreignKey, $localKey = null): ColumnDefinition
+    public function hasMany($related, $relationName, $foreignKey = null, $localKey = null): ColumnDefinition
     {
         return $this->addColumn(null, $relationName, ['nullable' => true])
                     ->relation(
                         Config::hasMany()
                               ->relationName($relationName)
                               ->related($related)
-                              ->foreignKey($foreignKey)
+                              ->foreignKey($foreignKey ?? $this->getResourceBlueprint()->getResourceKey() . '_id')
                               ->localKey($localKey)
                     );
     }

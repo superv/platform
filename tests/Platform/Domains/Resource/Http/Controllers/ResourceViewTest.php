@@ -30,6 +30,12 @@ class ResourceViewTest extends ResourceTestCase
 
         $this->assertEquals(sv_compose($heading), $response->original['data']['props']['blocks'][0]);
     }
+
+    protected function tearDown()
+    {
+        Extension::unregister(TestUserResourceExtension::class);
+        parent::tearDown();
+    }
 }
 
 

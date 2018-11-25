@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Resource;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Fake;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
@@ -24,10 +25,10 @@ trait RepoConcern
             $entry = ResourceEntry::make($this->getHandle());
         }
 
-        $this->getFields()->map(function(Field $field) use ($entry) {
-           if ($value = $field->getConfigValue('default_value')) {
-               $entry->setAttribute($field->getColumnName(), $value);
-           }
+        $this->getFields()->map(function (Field $field) use ($entry) {
+            if ($value = $field->getConfigValue('default_value')) {
+                $entry->setAttribute($field->getColumnName(), $value);
+            }
         });
 
         return $entry;
@@ -65,5 +66,19 @@ trait RepoConcern
     public function fake(array $overrides = [], int $number = 1)
     {
         return ResourceEntryFake::make($this, $overrides, $number);
+    }
+
+    /** @return \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract|array */
+    public function fakeMake(array $overrides = [], int $number = 1)
+    {
+        if ($number > 1) {
+            return collect(range(1, $number))
+                ->map(function () use ($overrides) {
+                    return Fake::make($this, $overrides);
+                })
+                ->all();
+        }
+
+        return Fake::make($this, $overrides);
     }
 }

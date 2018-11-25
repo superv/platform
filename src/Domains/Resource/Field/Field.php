@@ -126,6 +126,10 @@ class Field implements FieldContract
 
     public function fieldType(): FieldType
     {
+        if ($this->watcher && $this->fieldType instanceof AcceptsEntry) {
+            $this->fieldType->acceptEntry($this->watcher);
+        }
+
         if ($this->fieldType) {
             return $this->fieldType;
         }
@@ -146,9 +150,9 @@ class Field implements FieldContract
             ]);
         }
 
-        if ($this->watcher && $this->fieldType instanceof AcceptsEntry) {
-            $this->fieldType->acceptEntry($this->watcher);
-        }
+//        if ($this->watcher && $this->fieldType instanceof AcceptsEntry) {
+//            $this->fieldType->acceptEntry($this->watcher);
+//        }
 
         return $this->fieldType;
     }

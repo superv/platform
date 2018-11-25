@@ -15,6 +15,13 @@ use Illuminate\Support\Fluent;
  */
 class ResourceBlueprint extends Fluent
 {
+    protected $table;
+
+    public function getResourceKey()
+    {
+        return $this->resourceKey ?? str_singular($this->table);
+    }
+
     public function fill(array $attributes = [])
     {
         foreach ($attributes as $key => $value) {
@@ -52,5 +59,12 @@ class ResourceBlueprint extends Fluent
         } else {
             $this->entryLabel(str_singular($this->label).' #{id}');
         }
+    }
+
+    public function setTable($table)
+    {
+        $this->table = $table;
+
+        return $this;
     }
 }

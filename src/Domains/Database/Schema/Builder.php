@@ -28,17 +28,17 @@ class Builder extends \Illuminate\Database\Schema\Builder
     {
         $mainBlueprint = $this->createBlueprint($table);
 
-        $this->build(tap($mainBlueprint, function ($blueprint) use ($callback) {
+        $this->build(tap($mainBlueprint, function ($blueprint) use ($table, $callback) {
             $blueprint->create();
 
-            $callback($blueprint, $this->resource);
+            $callback($blueprint, $this->resource->setTable($table));
         }));
     }
 
     public function table($table, Closure $callback)
     {
-        $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($callback) {
-            $callback($blueprint, $this->resource);
+        $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($table, $callback) {
+            $callback($blueprint, $this->resource->setTable($table));
         }));
     }
 

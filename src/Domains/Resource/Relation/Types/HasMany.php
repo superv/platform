@@ -4,9 +4,10 @@ namespace SuperV\Platform\Domains\Resource\Relation\Types;
 
 use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Action\ModalAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
@@ -32,14 +33,18 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery
 
     public function makeTableConfig(): TableConfig
     {
-        $config = new TableConfig();
-        $relatedResource = ResourceFactory::make($this->getConfig()->getRelatedResource());
-        $config->setColumns($relatedResource);
-        $config->setQuery($this);
-        $config->setTitle($this->getName());
+        $url = route('relation.create', ['resource' => $this->getParentResourceHandle(),
+                                         'id'       => $this->parentEntry->getId(),
+                                         'relation' => $this->getName()], false);
+        $action = ModalAction::make()->setModalUrl($url);
 
-        $config->build();
-        $config->setDataUrl(url()->current().'/data');
+        $config = TableConfig::make()
+                             ->setContextActions([$action])
+                             ->setColumns(ResourceFactory::make($this->getConfig()->getRelatedResource()))
+                             ->setQuery($this)
+                             ->setTitle($this->getName())
+                             ->build()
+                             ->setDataUrl(url()->current().'/data');
 
         return $config;
     }

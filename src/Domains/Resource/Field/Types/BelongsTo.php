@@ -85,7 +85,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
         })->all();
 
         $composition->replace('config.options', $options);
-        $composition->replace('config.placeholder', 'Choose a '.$this->entry->getHandle());
+        $composition->replace('config.placeholder', 'Choose a '.$relatedResource->getSingularLabel());
     }
 
     /**

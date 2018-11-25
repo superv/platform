@@ -4,6 +4,7 @@ use SuperV\Platform\Domains\Resource\Http\Controllers\ActionController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\FormController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\LookupController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\RelationController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\RelationCreateController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\RelationIndexController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceCreateController;
@@ -35,14 +36,24 @@ return [
         'uses' => RelationIndexController::class,
     ],
 
+    'sv/res/{resource}/{id}/{relation}/create' => [
+        'as'   => 'relation.create',
+        'uses' => RelationCreateController::at('create'),
+    ],
+
+    'POST@'.'sv/res/{resource}/{id}/{relation}' => [
+        'as'   => 'relation.store',
+        'uses' => RelationCreateController::at('store'),
+    ],
+
     'sv/res/{resource}/{id}/{relation}/lookup/{data?}' => LookupController::class,
 
     'GET@'.'sv/res/{resource}/create'    => ResourceController::at('create'),
     'GET@'.'sv/res/{resource}/{id}/edit' => ResourceController::at('edit'),
 
     'sv/res/{resource}/{id}/view' => [
-        'as' => 'resource.view',
-        'uses' => ResourceViewController::class
+        'as'   => 'resource.view',
+        'uses' => ResourceViewController::class,
     ],
 
     'POST@'.'sv/res/{resource}/{id}' => [

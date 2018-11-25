@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Resource\Fixtures;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
 
 class Blueprints
@@ -15,7 +16,9 @@ class Blueprints
     {
         $this->groups();
 
-        $users = $this->create('t_users', function (Blueprint $table) {
+        $users = $this->create('t_users', function (Blueprint $table, ResourceBlueprint $resource) {
+            $resource->resourceKey('user');
+
             $table->increments('id');
             $table->string('name');
             $table->email('email')->unique();
@@ -30,9 +33,22 @@ class Blueprints
                 function (Blueprint $pivotTable) {
                     $pivotTable->string('provision');
                 });
+
+            $table->hasMany('t_posts', 'posts');
         });
 
         return $users;
+    }
+
+    /** @return Resource */
+    public function posts()
+    {
+        return $this->create('t_posts', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title');
+
+            $table->belongsTo('t_users', 'user');
+        });
     }
 
     /** @return Resource */

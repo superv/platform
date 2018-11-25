@@ -141,9 +141,11 @@ class TableConfig
     /**
      * @param string $title
      */
-    public function setTitle(string $title): void
+    public function setTitle(string $title)
     {
         $this->title = $title;
+
+        return $this;
     }
 
     public function hideColumn(string $name)

@@ -39,7 +39,7 @@ class BaseUIComponentTest extends TestCase
             'component' => 'sv-test',
             'uuid'      => $component->uuid(),
             'props'     => $component->getProps(),
-            'class'     => $component->getClasses(),
+            'classes'     => implode(' ', $component->getClasses()),
         ], $component->compose());
     }
 

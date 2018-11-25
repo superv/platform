@@ -10,16 +10,20 @@ class ResourceConfigTest extends ResourceTestCase
 {
     function test__saves_resource_key()
     {
-        $res = $this->create('t_users', function (Blueprint $table , ResourceBlueprint $resource) {
+        $res = $this->create('t_users', function (Blueprint $table, ResourceBlueprint $resource) {
             $table->increments('id');
 
+            // default resource key is singular table name
+            $this->assertEquals('t_user', $resource->getResourceKey());
+
+            // but we can override it
             $resource->resourceKey('user');
         });
 
         $this->assertEquals('user', $res->getResourceKey());
     }
-    /** @test */
-    function builds_label_from_table_name()
+
+    function test__builds_label_from_table_name()
     {
         $this->create('customers', function (Blueprint $table) {
             $table->increments('id');
@@ -29,8 +33,7 @@ class ResourceConfigTest extends ResourceTestCase
         $this->assertEquals('Customer', Resource::of('customers')->getSingularLabel());
     }
 
-    /** @test */
-    function builds_label_from_given()
+    function test__builds_label_from_given()
     {
         $this->create('customers', function (Blueprint $table, ResourceBlueprint $resource) {
             $table->increments('id');
@@ -43,8 +46,7 @@ class ResourceConfigTest extends ResourceTestCase
         $this->assertEquals('Customer', Resource::of('customers')->getSingularLabel());
     }
 
-    /** @test */
-    function builds_label_for_resource_entry()
+    function test__builds_label_for_resource_entry()
     {
         $res = $this->create('customers', function (Blueprint $table, ResourceBlueprint $resource) {
             $table->increments('id');
@@ -59,8 +61,7 @@ class ResourceConfigTest extends ResourceTestCase
         $this->assertEquals('Tesla, Nicola', $res->getEntryLabel($entry));
     }
 
-    /** @test */
-    function makes_entry_label_from_marked_column()
+    function test__makes_entry_label_from_marked_column()
     {
         $res = $this->create('customers', function (Blueprint $table) {
             $table->increments('id');
@@ -73,8 +74,7 @@ class ResourceConfigTest extends ResourceTestCase
         $this->assertEquals($entry->getAttribute('last_name'), $res->getEntryLabel($entry));
     }
 
-    /** @test */
-    function guesses_entry_label_from_string_columns()
+    function test__guesses_entry_label_from_string_columns()
     {
         $this->makeResource('A_users', ['name']);
         $this->assertEquals('{name}', Resource::of('A_users')->getEntryLabelTemplate());

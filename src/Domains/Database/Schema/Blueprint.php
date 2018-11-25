@@ -13,6 +13,7 @@ use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Events\TableDroppedEvent;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 class Blueprint extends LaravelBlueprint
 {
@@ -65,7 +66,7 @@ class Blueprint extends LaravelBlueprint
         $this->columns = collect($this->columns)->keyBy('name');
 
         if ($this->creating()) {
-            TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->builder->resource(), Current::migrationScope());
+            TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->getResourceBlueprint(), Current::migrationScope());
         } else {
             $this->runDropOperations();
         }
@@ -75,7 +76,7 @@ class Blueprint extends LaravelBlueprint
                 if ($column->change) {
                     ColumnUpdatedEvent::dispatch($this->tableName(), $this, $column);
                 } else {
-                    ColumnCreatedEvent::dispatch($this->tableName(), $this, $column, $this->builder->resource()->model);
+                    ColumnCreatedEvent::dispatch($this->tableName(), $this, $column, $this->getResourceBlueprint()->model);
                 }
 
                 return $column->ignore ? null : $column;
@@ -123,6 +124,11 @@ class Blueprint extends LaravelBlueprint
     public function getColumnNames(): array
     {
         return sv_collect($this->getColumns())->pluck('name')->all();
+    }
+
+    public function getResourceBlueprint(): ResourceBlueprint
+    {
+        return $this->builder->resource();
     }
 
     public function runDropOperations(): void

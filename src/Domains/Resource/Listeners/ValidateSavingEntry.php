@@ -28,10 +28,6 @@ class ValidateSavingEntry
         if (starts_with($this->entry->getTable(), 'sv_')) {
             return;
         }
-//
-//        if (! starts_with($this->entry->getTable(), 't_')) {
-//            return;
-//        }
 
         if (! $resource = Resource::of($this->entry)) {
             return;
@@ -39,7 +35,6 @@ class ValidateSavingEntry
 
         $rules = $resource->getRules($this->entry);
 
-//        $data = $this->entry->exists ? $this->entry->getDirty() : $this->entry->toArray();
         $data = $this->entry->getAttributes();
 
         $this->validator->make($data, $rules, []);

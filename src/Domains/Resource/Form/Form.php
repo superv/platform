@@ -70,10 +70,12 @@ class Form implements ProvidesUIComponent
 
         foreach ($this->watchers as $handle => $watcher) {
             $this->fields[$handle]->map(function (Field $field) use ($watcher) {
-                if (in_array($field->getName(), $this->config->getHiddenFields())) {
+                $field->setWatcher($watcher);
+
+                if (in_array($field->getColumnName(), $this->config->getHiddenFields())) {
                     $field->hide();
                 }
-                $field->setWatcher($watcher);
+
                 $field->setValueFromWatcher();
             });
         }
