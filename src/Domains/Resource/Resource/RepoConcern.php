@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Resource;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
 
@@ -22,6 +23,12 @@ trait RepoConcern
             // Anonymous Entry Model
             $entry = ResourceEntry::make($this->getHandle());
         }
+
+        $this->getFields()->map(function(Field $field) use ($entry) {
+           if ($value = $field->getConfigValue('default_value')) {
+               $entry->setAttribute($field->getColumnName(), $value);
+           }
+        });
 
         return $entry;
     }
