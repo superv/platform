@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Action;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\UI\Components\UIComponent;
+use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composition;
 
 class DetachEntryAction extends Action implements AcceptsEntry
@@ -20,7 +20,7 @@ class DetachEntryAction extends Action implements AcceptsEntry
     /** @var EntryContract */
     protected $entry;
 
-    public function makeComponent(): UIComponent
+    public function makeComponent(): ComponentContract
     {
         return parent::makeComponent()
                      ->setName('sv-request-action');

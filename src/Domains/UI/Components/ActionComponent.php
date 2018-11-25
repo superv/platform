@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\UI\Components;
 
 use SuperV\Platform\Domains\Resource\Action\Action;
 
-class ActionComponent extends BaseUIComponent
+class ActionComponent extends BaseComponent
 {
     protected $name = 'sv-action';
 
@@ -22,7 +22,7 @@ class ActionComponent extends BaseUIComponent
         return $this->props->merge($this->action->compose()->get());
     }
 
-    public function uuid(): string
+    public function uuid()
     {
         return $this->action->uuid();
     }

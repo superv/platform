@@ -9,9 +9,10 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
+use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
+use SuperV\Platform\Domains\Resource\Resource\ResourceView;
 use SuperV\Platform\Domains\Resource\Table\TableColumn;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Support\Concerns\HasConfig;
@@ -26,6 +27,7 @@ class Resource implements
     use Hydratable;
     use HasConfig;
     use LabelConcern;
+    use RepoConcern;
 
     /**
      * Database id
@@ -64,7 +66,7 @@ class Resource implements
     /**
      * @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry
      */
-    protected $entry;
+    protected $entryss;
 
     /** @var string */
     protected $handle;
@@ -72,56 +74,28 @@ class Resource implements
     /** @var \SuperV\Platform\Domains\Resource\Table\TableConfig */
     protected $tableConfig;
 
+    /** @var Closure */
+    protected $viewResolver;
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
     }
 
-    public function newEntryInstance()
+    public function resolveViewUsing(Closure $closure)
     {
-        if ($model = $this->getConfigValue('model')) {
-            // Custom Entry Model
-            $entry = new $model;
-        } else {
-            // Anonymous Entry Model
-            $entry = ResourceEntry::make($this->getHandle());
+        $this->viewResolver = $closure;
+
+        return $this;
+    }
+
+    public function resolveView(?EntryContract $entry = null): ResourceView
+    {
+        if ($this->viewResolver) {
+            return ($this->viewResolver)($entry);
         }
 
-        return $entry;
-    }
-
-    public function create(array $attributes = []): EntryContract
-    {
-        return $this->newEntryInstance()->create($attributes);
-    }
-
-    public function find($id): ?EntryContract
-    {
-        if (! $entry = $this->newQuery()->find($id)) {
-            return null;
-        }
-
-        return $entry;
-    }
-
-    public function first(): ?EntryContract
-    {
-        if (! $entry = $this->newQuery()->first()) {
-            return null;
-        }
-
-        return $entry;
-    }
-
-    public function count(): int
-    {
-        return $this->newQuery()->count();
-    }
-
-    /** @return \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract|array */
-    public function fake(array $overrides = [], int $number = 1)
-    {
-        return ResourceEntryFake::make($this, $overrides, $number);
+        return new ResourceView($this, $entry);
     }
 
     public function getFields(): Collection
@@ -223,16 +197,6 @@ class Resource implements
         return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
     }
 
-    public function getHandle(): string
-    {
-        return $this->handle;
-    }
-
-    public function newQuery()
-    {
-        return $this->newEntryInstance()->newQuery();
-    }
-
     public function provideColumns(): Collection
     {
         if ($this->columns) {
@@ -270,8 +234,8 @@ class Resource implements
             return $base;
         }
 
-        if ($route === 'update') {
-            return $base.'/'.$entry->getId().'/update';
+        if ($route === 'view') {
+            return $base.'/'.$entry->getId().'/view';
         }
     }
 
@@ -287,6 +251,11 @@ class Resource implements
                                                ->setQuery($this)
                                                ->setContext(new Context($this))
                                                ->build();
+    }
+
+    public function getHandle(): string
+    {
+        return $this->handle;
     }
 
     public function uuid(): string

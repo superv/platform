@@ -4,9 +4,9 @@ namespace Tests\Platform\Domains\UI\Component;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Contracts\Hibernatable;
-use SuperV\Platform\Domains\UI\Components\BaseUIComponent;
+use SuperV\Platform\Domains\UI\Components\BaseComponent;
 use SuperV\Platform\Domains\UI\Components\Props;
-use SuperV\Platform\Domains\UI\Components\UIComponent;
+use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Concerns\HibernatableConcern;
 use Tests\Platform\TestCase;
@@ -18,7 +18,7 @@ class BaseUIComponentTest extends TestCase
     function test__construct()
     {
         $component = TestComponent::make();
-        $this->assertInstanceOf(UIComponent::class, $component);
+        $this->assertInstanceOf(ComponentContract::class, $component);
         $this->assertInstanceOf(Composable::class, $component);
 
         $this->assertInstanceOf(Props::class, $component->getProps());
@@ -45,11 +45,11 @@ class BaseUIComponentTest extends TestCase
 
 }
 
-class TestComponent extends BaseUIComponent implements Hibernatable
+class TestComponent extends BaseComponent implements Hibernatable
 {
     use HibernatableConcern;
 
-    public function uuid(): string
+    public function uuid()
     {
         return 'abc-123';
     }

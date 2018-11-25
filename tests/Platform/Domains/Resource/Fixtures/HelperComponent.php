@@ -2,9 +2,9 @@
 
 namespace Tests\Platform\Domains\Resource\Fixtures;
 
-use SuperV\Platform\Domains\UI\Components\BaseUIComponent;
+use SuperV\Platform\Domains\UI\Components\BaseComponent;
 
-class HelperComponent extends BaseUIComponent
+class HelperComponent extends BaseComponent
 {
     protected $name;
 
@@ -20,7 +20,7 @@ class HelperComponent extends BaseUIComponent
         return $this->name;
     }
 
-    public function uuid(): string
+    public function uuid()
     {
         return $this->uuid;
     }

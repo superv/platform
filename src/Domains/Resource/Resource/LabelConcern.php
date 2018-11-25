@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource;
+namespace SuperV\Platform\Domains\Resource\Resource;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 

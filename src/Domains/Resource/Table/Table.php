@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
 use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
 use SuperV\Platform\Domains\UI\Components\TableComponent;
-use SuperV\Platform\Domains\UI\Components\UIComponent;
+use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
@@ -157,7 +157,7 @@ class Table implements Composable, ProvidesUIComponent, Responsable
     }
 
 
-    public function makeComponent(): UIComponent
+    public function makeComponent(): ComponentContract
     {
         return TableComponent::from($this);
     }

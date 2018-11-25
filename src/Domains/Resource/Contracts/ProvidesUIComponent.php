@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Contracts;
 
-use SuperV\Platform\Domains\UI\Components\UIComponent;
+use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
 interface ProvidesUIComponent
 {
-    public function makeComponent(): UIComponent;
+    public function makeComponent(): ComponentContract;
 }

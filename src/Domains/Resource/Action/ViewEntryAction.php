@@ -4,11 +4,11 @@ namespace SuperV\Platform\Domains\Resource\Action;
 
 use SuperV\Platform\Support\Composer\Composition;
 
-class EditEntryAction extends Action
+class ViewEntryAction extends Action
 {
-    protected $name = 'edit';
+    protected $name = 'view';
 
-    protected $title = 'Edit';
+    protected $title = 'View';
 
     protected $url;
 
@@ -19,7 +19,7 @@ class EditEntryAction extends Action
 
     public function getUrl()
     {
-        return $this->url ??'sv/res/{res.handle}/{entry.id}/edit';
+        return $this->url ??'sv/res/{res.handle}/{entry.id}/view';
     }
 
     public function setUrl($url)

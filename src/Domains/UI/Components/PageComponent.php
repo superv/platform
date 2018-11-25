@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\UI\Components;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Support\Composer\Composition;
 
-class PageComponent extends BaseUIComponent
+class PageComponent extends BaseComponent
 {
     protected $name = 'sv-page';
 
@@ -16,7 +16,7 @@ class PageComponent extends BaseUIComponent
         return $this->name;
     }
 
-    public function uuid(): string
+    public function uuid()
     {
         return $this->uuid;
     }

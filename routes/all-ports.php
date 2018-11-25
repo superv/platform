@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceCreateController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceIndexController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceUpdateController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceViewController;
 use SuperV\Platform\Domains\UI\Http\Controllers\PageController;
 use SuperV\Platform\Domains\UI\Http\Controllers\WakeupController;
 use SuperV\Platform\Http\Controllers\AuthController;
@@ -38,6 +39,11 @@ return [
 
     'GET@'.'sv/res/{resource}/create'    => ResourceController::at('create'),
     'GET@'.'sv/res/{resource}/{id}/edit' => ResourceController::at('edit'),
+
+    'sv/res/{resource}/{id}/view' => [
+        'as' => 'resource.view',
+        'uses' => ResourceViewController::class
+    ],
 
     'POST@'.'sv/res/{resource}/{id}' => [
         'as'   => 'resource.update',

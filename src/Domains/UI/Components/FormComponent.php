@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\UI\Components;
 
 use SuperV\Platform\Domains\Resource\Form\Form;
 
-class FormComponent extends BaseUIComponent
+class FormComponent extends BaseComponent
 {
     protected $name = 'sv-form';
 
@@ -21,7 +21,7 @@ class FormComponent extends BaseUIComponent
         return $this->props->merge($this->form->compose()->get());
     }
 
-    public function uuid(): string
+    public function uuid()
     {
         return $this->form->uuid();
     }

@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
+use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesColumns;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -67,7 +68,7 @@ class TableConfig
                 return $action->makeComponent();
             });
 
-        $this->rowActions = collect($this->rowActions ?? [EditEntryAction::class])
+        $this->rowActions = collect($this->rowActions ?? [ViewEntryAction::class, EditEntryAction::class])
             ->map(function ($action) {
                 /** @var \SuperV\Platform\Domains\Resource\Action\Action $action */
                 if (is_string($action)) {

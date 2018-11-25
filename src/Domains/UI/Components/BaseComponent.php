@@ -2,37 +2,29 @@
 
 namespace SuperV\Platform\Domains\UI\Components;
 
-use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Domains\UI\Components\Concerns\StyleHelper;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-abstract class BaseUIComponent implements UIComponent, Composable
+abstract class BaseComponent implements ComponentContract, Composable
 {
     use FiresCallbacks;
     use StyleHelper;
 
     protected $props;
 
-    protected $classes = [];
+    protected $name;
 
+    protected $uuid;
+
+    protected $classes = [];
 
     abstract public function getName(): string;
 
     public function __construct(array $props = [])
     {
         $this->props = new Props($props);
-    }
-
-    public function getProps(): Props
-    {
-        return $this->props;
-    }
-
-    public function getProp($key)
-    {
-        return $this->props->get($key);
     }
 
     public function addClass(string $class)
@@ -42,13 +34,23 @@ abstract class BaseUIComponent implements UIComponent, Composable
         return $this;
     }
 
+    public function uuid()
+    {
+        return $this->uuid;
+    }
+
+    public function getProps(): Props
+    {
+        return $this->props;
+    }
+
     public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
         $composition = new Composition([
             'component' => $this->getName(),
             'uuid'      => $this->uuid(),
             'props'     => $this->getProps(),
-            'class'     => $this->getClasses(),
+            'classes'   => implode(' ', $this->getClasses()),
         ]);
 
         $this->fire('composed', ['composition' => $composition]);
@@ -66,8 +68,26 @@ abstract class BaseUIComponent implements UIComponent, Composable
         return $this->classes;
     }
 
-    public static function make(): self
+    public function getProp($key)
     {
-        return new static;
+        return $this->props->get($key);
+    }
+
+    public function setProp($key, $value): self
+    {
+        $this->props->set($key, $value);
+
+        return $this;
+    }
+
+    /** return @static */
+    public static function make($name = '')
+    {
+        $static = new static;
+        if ($name) {
+            $static->name = $name;
+        }
+
+        return $static;
     }
 }

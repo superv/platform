@@ -11,7 +11,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\UI\Components\FormComponent;
-use SuperV\Platform\Domains\UI\Components\UIComponent;
+use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
@@ -145,7 +145,7 @@ class Form implements ProvidesUIComponent
         return $composition;
     }
 
-    public function makeComponent(): UIComponent
+    public function makeComponent(): ComponentContract
     {
         return FormComponent::from($this);
     }

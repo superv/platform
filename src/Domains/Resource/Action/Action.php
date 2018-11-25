@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Action;
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\UI\Components\ActionComponent;
-use SuperV\Platform\Domains\UI\Components\UIComponent;
+use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -31,7 +31,7 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
         $this->uuid = uuid();
     }
 
-    public function makeComponent(): UIComponent
+    public function makeComponent(): ComponentContract
     {
         return ActionComponent::from($this);
     }

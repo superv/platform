@@ -5,13 +5,13 @@ namespace SuperV\Platform\Domains\UI\Page;
 use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\UI\Components\PageComponent;
-use SuperV\Platform\Domains\UI\Components\UIComponent;
+use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
 class Page implements ProvidesUIComponent, Responsable
 {
     protected $uuid;
 
-    protected $meta = [];
+    protected $meta = ['header' => true];
 
     protected $blocks = [];
 
@@ -85,7 +85,7 @@ class Page implements ProvidesUIComponent, Responsable
         return $this->blocks;
     }
 
-    public function makeComponent(): UIComponent
+    public function makeComponent(): ComponentContract
     {
         return PageComponent::from($this);
     }

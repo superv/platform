@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\UI\Components;
 use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Support\Composer\Composition;
 
-class TableComponent extends BaseUIComponent
+class TableComponent extends BaseComponent
 {
     protected $name = 'sv-table';
 
@@ -17,7 +17,7 @@ class TableComponent extends BaseUIComponent
         return $this->name;
     }
 
-    public function uuid(): string
+    public function uuid()
     {
         return $this->table->getConfig()->uuid();
     }
