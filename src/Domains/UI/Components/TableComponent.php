@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\UI\Components;
 
 use SuperV\Platform\Domains\Resource\Table\Table;
-use SuperV\Platform\Support\Composer\Composition;
 
 class TableComponent extends BaseComponent
 {

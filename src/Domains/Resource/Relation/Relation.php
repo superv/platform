@@ -93,6 +93,22 @@ abstract class Relation implements AcceptsParentEntry
         return $this->parentEntry->getHandle();
     }
 
+    public function route($name, EntryContract $entry)
+    {
+        return route('relation.'.$name,
+            [
+                'id'    => $entry->getId(),
+                'resource' => $entry->getTable(),
+                'relation' => $this->getName(),
+            ]
+        , false);
+    }
+
+    public function indexRoute(EntryContract $entry)
+    {
+        return $this->route('index', $entry);
+    }
+
     public static function fromEntry(Entry $entry): self
     {
         $relation = new static;

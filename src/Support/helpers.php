@@ -283,6 +283,11 @@ function sv_block($url = null)
     return SvBlock::make()->url($url);
 }
 
+function sv_loader($url)
+{
+    return SvBlock::make('sv-loader')->setProp('url', $url);
+}
+
 function wrap_collect($obj)
 {
     if ($obj instanceof Collection) {

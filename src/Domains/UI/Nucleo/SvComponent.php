@@ -14,7 +14,7 @@ class SvComponent implements Composable, Responsable, Guardable
 
     protected $id;
 
-    protected $name = 'sv-block';
+    protected $name = 'sv-block-----';
 
     protected $url;
 
@@ -174,7 +174,7 @@ class SvComponent implements Composable, Responsable, Guardable
 
     public function card()
     {
-        return $this->class('sv-card');
+        return $this->class('');
     }
 
     /**

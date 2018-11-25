@@ -10,7 +10,9 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
+use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Tokens;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -21,7 +23,7 @@ use SuperV\Platform\Support\Concerns\Hydratable;
  *
  * @package SuperV\Platform\Domains\Resource\Field
  */
-class Field implements FieldContract
+class Field implements FieldContract, Composable
 {
     use Hydratable;
     use FiresCallbacks;
@@ -95,7 +97,7 @@ class Field implements FieldContract
 
     protected function boot() { }
 
-    public function compose(): Composition
+    public function compose(Tokens $tokens = null)
     {
         $composition = new Composition([
             'type'   => $this->getType(),
@@ -223,6 +225,11 @@ class Field implements FieldContract
         if ($notify && $this->watcher && ! $this->fieldType() instanceof DoesNotInteractWithTable) {
             $this->watcher->setAttribute($this->getColumnName(), $value);
         }
+    }
+
+    public function hydrateFrom(EntryContract $entry)
+    {
+        $this->value = $entry->getAttribute($this->getColumnName());
     }
 
     public function setValueFromWatcher()

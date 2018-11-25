@@ -53,7 +53,7 @@ class PlatformExceptionHandler extends ExceptionHandler
                     'description' => $exception->getMessage(),
                     'stack'       => $exception->getTrace(),
                 ],
-            ], $exception->getCode());
+            ], 500);
         }
 
         return parent::render($request, $exception);

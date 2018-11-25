@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\UI\Components\PageComponent;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
+use SuperV\Platform\Domains\UI\Jobs\MakeComponentJob;
 
 class Page implements ProvidesUIComponent, Responsable
 {
@@ -36,19 +37,21 @@ class Page implements ProvidesUIComponent, Responsable
     {
         $this->tokens = $tokens;
 
-        $this->component = $this->makeComponent();
-
-        $this->component->getProps()->transform(function ($prop) {
-            if (is_array($prop)) {
-                foreach ($prop as $key => $value) {
-                    if ($value instanceof ProvidesUIComponent) {
-                        $prop[$key] = $value->makeComponent();
-                    }
-                }
-            }
-
-            return $prop;
-        });
+        $this->component = MakeComponentJob::dispatch($this);
+//
+//        $this->component = $this->makeComponent();
+//
+//        $this->component->getProps()->transform(function ($prop) {
+//            if (is_array($prop)) {
+//                foreach ($prop as $key => $value) {
+//                    if ($value instanceof ProvidesUIComponent) {
+//                        $prop[$key] = $value->makeComponent();
+//                    }
+//                }
+//            }
+//
+//            return $prop;
+//        });
 
         return $this;
     }

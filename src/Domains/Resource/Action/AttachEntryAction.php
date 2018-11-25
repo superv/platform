@@ -52,6 +52,8 @@ class AttachEntryAction extends Action
 
     public function getLookupUrl()
     {
+        return $this->relation->route('lookup', $this->relation->getParentEntry());
+
         return sprintf(
             'sv/res/%s/%s/%s/lookup',
             $this->relation->getParentResourceHandle(),
@@ -62,6 +64,8 @@ class AttachEntryAction extends Action
 
     public function getAttachUrl()
     {
+        return $this->relation->route('attach', $this->relation->getParentEntry());
+
         return sprintf(
             'sv/res/%s/%s/%s/attach',
             $this->relation->getParentResourceHandle(),

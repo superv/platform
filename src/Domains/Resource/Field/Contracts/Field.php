@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
 use Closure;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 
@@ -47,4 +48,6 @@ interface Field
     public function getPresenter();
 
     public function getRules();
+
+    public function hydrateFrom(EntryContract $entry);
 }

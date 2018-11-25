@@ -24,7 +24,7 @@ abstract class BaseComponent implements ComponentContract, Composable
 
     public function __construct(array $props = [])
     {
-        $this->props = new Props($props);
+        $this->setProps($props);
     }
 
     public function addClass(string $class)
@@ -42,6 +42,13 @@ abstract class BaseComponent implements ComponentContract, Composable
     public function getProps(): Props
     {
         return $this->props;
+    }
+
+    public function setProps($props)
+    {
+        $this->props = new Props($props);
+
+        return $this;
     }
 
     public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)

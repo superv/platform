@@ -27,29 +27,39 @@ return [
         return 'SuperV Platform @'.Current::port()->slug();
     },
 
-    'POST@'.'sv/res/{resource}/{id}/rel/{relation}'    => RelationController::at('request'),
-    'POST@'.'sv/res/{resource}/{id}/{relation}/attach' => RelationController::at('attach'),
-    'POST@'.'sv/res/{resource}/{id}/{relation}/detach' => RelationController::at('detach'),
+    'POST@'.'sv/res/{resource}/{id}/rel/{relation}'        => RelationController::at('request'),
 
-    'sv/res/{resource}/{id}/{relation}/table/{data?}' => [
-        'as'   => 'relation.index',
-        'uses' => RelationIndexController::class,
+    'POST@'.'sv/res/{resource}/{id}/rel/{relation}/attach' => [
+        'as'   => 'relation.attach',
+        'uses' => RelationController::at('attach'),
+    ],
+    'POST@'.'sv/res/{resource}/{id}/rel/{relation}/detach' => RelationController::at('detach'),
+
+    'sv/res/{resource}/{id}/rel/{relation}/lookup/{data?}' => [
+        'as'   => 'relation.lookup',
+        'uses' => LookupController::class,
     ],
 
-    'sv/res/{resource}/{id}/{relation}/create' => [
+    'sv/res/{resource}/{id}/rel/{relation}/create' => [
         'as'   => 'relation.create',
         'uses' => RelationCreateController::at('create'),
     ],
 
-    'POST@'.'sv/res/{resource}/{id}/{relation}' => [
+    'sv/res/{resource}/{id}/rel/{relation}/{data?}' => [
+        'as'   => 'relation.index',
+        'uses' => RelationIndexController::class,
+    ],
+
+    'POST@'.'sv/res/{resource}/{id}/rel/{relation}' => [
         'as'   => 'relation.store',
         'uses' => RelationCreateController::at('store'),
     ],
 
-    'sv/res/{resource}/{id}/{relation}/lookup/{data?}' => LookupController::class,
-
-    'GET@'.'sv/res/{resource}/create'    => ResourceController::at('create'),
-    'GET@'.'sv/res/{resource}/{id}/edit' => ResourceController::at('edit'),
+    /**
+     * Resource Management
+     */
+    'GET@'.'sv/res/{resource}/create'               => ResourceController::at('create'),
+    'GET@'.'sv/res/{resource}/{id}/edit'            => ResourceController::at('edit'),
 
     'sv/res/{resource}/{id}/view' => [
         'as'   => 'resource.view',

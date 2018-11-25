@@ -53,35 +53,27 @@ class ResourceController extends BaseApiController
 
         // make forms
         $resource->getRelations()
-                       ->filter(function (Relation $relation) { return $relation instanceof ProvidesForm; })
-                       ->map(function (ProvidesForm $formProvider) use ($tabs) {
-                           if ($formProvider instanceof AcceptsParentEntry) {
-                               $formProvider->acceptParentEntry($this->entry);
-                           }
-                           $form = $formProvider->makeForm();
+                 ->filter(function (Relation $relation) { return $relation instanceof ProvidesForm; })
+                 ->map(function (ProvidesForm $formProvider) use ($tabs) {
+                     if ($formProvider instanceof AcceptsParentEntry) {
+                         $formProvider->acceptParentEntry($this->entry);
+                     }
+                     $form = $formProvider->makeForm();
 
-                           return $tabs->addTab(sv_tab($formProvider->getFormTitle(), SvBlock::make('sv-form')->setProps($form->compose())));
-                       });
+                     return $tabs->addTab(sv_tab($formProvider->getFormTitle(), SvBlock::make('sv-form')->setProps($form->compose())));
+                 });
 
         // make tables
         $resource->getRelations()
-                       ->filter(function (Relation $relation) { return $relation instanceof ProvidesTable; })
-                       ->map(function (Relation $relation) use ($tabs) {
-                           $card = SvBlock::make('sv-loader')->setProps([
-                               'url' => sv_url(
-                                   sprintf(
-                                       'sv/res/%s/%s/%s/table',
-                                       $this->resource->getHandle(),
-                                       $this->entry->getId(),
-                                       $relation->getName()
-                                   )
-                               ),
-                           ]);
+                 ->filter(function (Relation $relation) { return $relation instanceof ProvidesTable; })
+                 ->map(function (Relation $relation) use ($tabs) {
 
-                           return $tabs->addTab(sv_tab($relation->getName(), $card));
-                       });
+                     $card = sv_loader($relation->indexRoute($this->entry));
 
-        $page = Page::make('Edit '. $resource->getEntryLabel($this->entry));
+                     return $tabs->addTab(sv_tab($relation->getName(), $card));
+                 });
+
+        $page = Page::make('Edit '.$resource->getEntryLabel($this->entry));
         $page->addBlock($tabs);
 
         return $page->build();
