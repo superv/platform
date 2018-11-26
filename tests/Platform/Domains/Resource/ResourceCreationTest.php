@@ -73,8 +73,8 @@ class ResourceCreationTest extends ResourceTestCase
             $table->string('email')->rules('email|unique');
         });
 
-        $this->assertArrayContains(['min:6', 'max:32'], $resource->getFieldType('name')->getRules());
-        $this->assertArrayContains(['email', 'unique'], $resource->getFieldType('email')->getRules());
+        $this->assertArrayContains(['min:6', 'max:32'], $resource->getField('name')->getRules());
+        $this->assertArrayContains(['email', 'unique'], $resource->getField('email')->getRules());
     }
 
     function test__saves_field_type()

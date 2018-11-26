@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Field\Types\BelongsTo;
+use SuperV\Platform\Domains\Resource\Field\Types\V2\BelongsTo;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -24,9 +24,8 @@ class BelongsToTest extends ResourceTestCase
         });
 
         $this->assertColumnExists('t_users', 'group_id');
-        $belongsTo = $users->getFieldType('group');
+        $belongsTo = $users->getField('group');
 
-        $this->assertInstanceOf(BelongsTo::class, $belongsTo);
         $this->assertEquals('belongs_to', $belongsTo->getType());
         $this->assertEquals('t_groups', $belongsTo->getConfigValue('related_resource'));
         $this->assertEquals('group_id', $belongsTo->getConfigValue('foreign_key'));
@@ -63,7 +62,7 @@ class BelongsToTest extends ResourceTestCase
             });
 
         $fakeUser = BelongsToTestUser::create(['name' => 'J', 'group_id' => 100]);
-        $belongsTo = $users->getFieldType('group');
+        $belongsTo = $users->getField('group');
 
         $callback = $belongsTo->getPresenter();
         $this->assertInstanceOf(Closure::class, $callback);

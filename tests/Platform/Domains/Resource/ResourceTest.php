@@ -41,7 +41,7 @@ class ResourceTest extends ResourceTestCase
         $this->assertEquals([
             'name'     => ['max:255', 'required'],
             'email'    => ['unique:t_users,email,NULL,id', 'required'],
-            'bio'      => ['string', 'max:255', 'nullable'],
+            'bio'      => ['max:255', 'string', 'nullable'],
             'group_id' => ['required'],
             'age'      => ['integer', 'min:0', 'nullable'],
             'avatar'   => ['nullable'],
@@ -57,10 +57,10 @@ class ResourceTest extends ResourceTestCase
         $this->assertEquals([
             'name'     => ['max:255', 'sometimes', 'required'],
             'email'    => ['unique:t_users,email,'.$user->getId().',id', 'sometimes', 'required'],
-            'bio'      => ['string', 'max:255', 'nullable'],
+            'bio'      => ['max:255', 'string', 'nullable'],
             'group_id' => ['sometimes', 'required'],
-            'age'    => ['integer', 'min:0', 'nullable'],
-            'avatar' => ['nullable'],
+            'age'      => ['integer', 'min:0', 'nullable'],
+            'avatar'   => ['nullable'],
         ], $users->getRules($user));
     }
 

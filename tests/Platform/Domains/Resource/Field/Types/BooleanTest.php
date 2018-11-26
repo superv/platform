@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Field\Types\Boolean;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class BooleanTest extends ResourceTestCase
@@ -17,9 +16,7 @@ class BooleanTest extends ResourceTestCase
         });
         $this->assertColumnExists($res->getHandle(), 'active');
 
-        $fieldType = $res->getFieldType('active');
-
-        $this->assertInstanceOf(Boolean::class, $fieldType);
-        $this->assertEquals('boolean', $fieldType->getType());
+        $field = $res->getField('active');
+        $this->assertEquals('boolean', $field->getType());
     }
 }

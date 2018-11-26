@@ -39,14 +39,16 @@ class RelationIndexTest extends ResourceTestCase
         $rows = $response->decodeResponseJson('data.rows');
         $this->assertEquals(5, count($rows));
 
-        $editAction = HelperComponent::from($rows[0]['actions'][1]);
+        $viewAction = HelperComponent::from($rows[0]['actions'][0]);
 
 
-        $this->assertEquals($userPosts->first()->route('edit'), $editAction->getProp('url'));
+        $this->assertEquals($userPosts->first()->route('view'), $viewAction->getProp('url'));
     }
 
     function test__index_listing_with_morph_to_many_relations()
     {
+        $this->withoutExceptionHandling();
+
         $users = $this->schema()->users();
         $this->schema()->actions();
 

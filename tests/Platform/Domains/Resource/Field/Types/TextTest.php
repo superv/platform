@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Field\Types\Text;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class TextTest extends ResourceTestCase
@@ -17,10 +16,10 @@ class TextTest extends ResourceTestCase
         });
         $this->assertColumnExists($res->getHandle(), 'name');
 
-        $fieldType = $res->getFieldType('name');
+        $field = $res->getField('name');
 
-        $this->assertInstanceOf(Text::class, $fieldType);
+        $this->assertEquals('text', $field->getType());
         $this->assertEquals(['max:255', 'required'], $res->parseFieldRules('name'));
-        $this->assertEquals('text', $fieldType->getType());
+        $this->assertEquals('text', $field->getType());
     }
 }

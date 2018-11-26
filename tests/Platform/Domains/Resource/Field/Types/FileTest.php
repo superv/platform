@@ -19,7 +19,7 @@ class FileTest extends ResourceTestCase
             $table->file('avatar');
         });
 
-        $avatar = $res->getFieldType('avatar');
+        $avatar = $res->getField('avatar');
         $this->assertFalse($avatar->isRequired());
     }
 
@@ -35,12 +35,11 @@ class FileTest extends ResourceTestCase
         $this->assertFalse(in_array('avatar', \Schema::getColumnListing($res->getHandle())));
 
         $fake = $res->fake();
+        /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field $field */
         $field = $fake->getField('avatar');
 
-        $fieldType = $field->fieldType();
 
-        $this->assertInstanceOf(File::class, $fieldType);
-        $this->assertEquals('file', $fieldType->getType());
+        $this->assertEquals('file', $field->getType());
         $this->assertEquals(['disk' => 'fakedisk'], $field->getConfig());
         $this->assertNull($field->getValue());
 
@@ -48,7 +47,7 @@ class FileTest extends ResourceTestCase
         Storage::fake('fakedisk');
 
         $uploadedFile = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
-        $callback = $field->setValue($uploadedFile);
+        $callback = $field->hydrateFromRequest($uploadedFile, $fake);
         $this->assertInstanceOf(Closure::class, $callback);
 
 //        $this->assertEquals($uploadedFile, $field->getValueForValidation());

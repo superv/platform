@@ -113,9 +113,11 @@ class TableColumn implements Column
 
         if ($presenter = $field->getPresenter()) {
             $column->presenter = $presenter;
-        } elseif ($presenter = $fieldType->getPresenter()) {
-            $column->presenter = $presenter;
         }
+
+//        elseif ($presenter = $fieldType->getPresenter()) {
+//            $column->presenter = $presenter;
+//        }
 
         return $column;
     }

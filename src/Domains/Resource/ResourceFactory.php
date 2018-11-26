@@ -32,7 +32,7 @@ class ResourceFactory
     {
         return function () {
             $fields = $this->model->getFields()
-                                  ->map(function (FieldModel $fieldEntry) {
+                                  ->map(function (FieldModel $fieldEntry)  {
                                       $field = FieldFactory::createFromEntry($fieldEntry);
 
                                       return $field;

@@ -53,6 +53,8 @@ class Form implements ProvidesUIComponent
      */
     protected $config;
 
+    protected $groups;
+
     protected function __construct(FormConfig $config)
     {
         $this->config = $config;
@@ -83,14 +85,30 @@ class Form implements ProvidesUIComponent
 
     public function save(): self
     {
-        $this->getFields()->map(function (Field $field) {
-            if ($field->isHidden() || !$this->request->has($field->getColumnName())) return;
+        foreach ($this->groups as $handle => $fields) {
+            $entry = $this->watchers[$handle] ?? null;
 
-            $requestValue = $this->request->__get($field->getColumnName());
-            if ($callback = $field->setValue($requestValue)) {
-                $this->postSaveCallbacks[] = $callback;
-            }
-        });
+            $fields->map(function (Field $field) use ($entry) {
+                if ($field->isHidden() || ! $this->request->has($field->getColumnName())) {
+                    return;
+                }
+
+                $requestValue = $this->request->__get($field->getColumnName());
+                if ($callback = $field->hydrateFromRequest($requestValue, $entry)) {
+                    $this->postSaveCallbacks[] = $callback;
+                }
+            });
+        }
+//        $this->getFields()->map(function (Field $field) {
+//            if ($field->isHidden() || ! $this->request->has($field->getColumnName())) {
+//                return;
+//            }
+//
+//            $requestValue = $this->request->__get($field->getColumnName());
+//            if ($callback = $field->setValue($requestValue)) {
+//                $this->postSaveCallbacks[] = $callback;
+//            }
+//        });
 
         $this->notifyWatchers($this);
 
@@ -206,6 +224,8 @@ class Form implements ProvidesUIComponent
 
     public function addGroup($fieldsProvider, Watcher $watcher = null, string $handle = 'default'): self
     {
+        $this->groups[$handle] = $this->provideFields($fieldsProvider);
+
         $this->mergeFields($fieldsProvider, $watcher, $handle);
 
         return $this;
@@ -233,6 +253,13 @@ class Form implements ProvidesUIComponent
         return $this->url ?? $this->config->getUrl();
     }
 
+    public function setUrl(string $url): Form
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
     public function getMethod(): string
     {
         return $this->method;
@@ -241,13 +268,6 @@ class Form implements ProvidesUIComponent
     public function getWatcher(?string $handle = 'default')
     {
         return $this->watchers[$handle];
-    }
-
-    public function setUrl(string $url): Form
-    {
-        $this->url = $url;
-
-        return $this;
     }
 
     public function uuid(): string

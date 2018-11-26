@@ -9,6 +9,9 @@ use SuperV\Platform\Domains\Resource\Contracts\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeOld;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Composition;
@@ -46,6 +49,15 @@ class Field implements FieldContract, Composable
 
     protected $columnName;
 
+    /** @var Closure */
+    protected $mutator;
+
+    /** @var Closure */
+    protected $accessor;
+
+    /** @var Closure */
+    protected $presenter;
+
     /**
      * @var string
      */
@@ -76,6 +88,10 @@ class Field implements FieldContract, Composable
      */
     protected $fieldType;
 
+    protected $fieldTypeV2;
+
+    protected $doesNotInteractWithTable;
+
     /**
      * @var \Closure
      */
@@ -85,6 +101,11 @@ class Field implements FieldContract, Composable
     protected $composition;
 
     protected $flags = [];
+
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Resource
+     */
+    protected $resource;
 
     public function __construct(array $attributes = [])
     {
@@ -123,11 +144,12 @@ class Field implements FieldContract, Composable
 
     public function getPresenter()
     {
-        return $this->getCallback('presenting');
+        return $this->getCallback('presenting') ?? $this->presenter;
     }
 
-    public function fieldType(): FieldType
+    public function fieldType()
     {
+        return $this->bindFieldType();
         if ($this->watcher && $this->fieldType instanceof AcceptsEntry) {
             $this->fieldType->acceptEntry($this->watcher);
         }
@@ -159,23 +181,6 @@ class Field implements FieldContract, Composable
         return $this->fieldType;
     }
 
-    public function present($value)
-    {
-        if ($callback = $this->getCallback('presenting')) {
-            return $callback($value);
-        }
-
-        if ($presenter = $this->fieldType()->getPresenter()) {
-            return $presenter($value);
-        }
-
-        if ($value instanceof EntryContract) {
-            return $value->getAttribute($this->getName());
-        }
-
-        return $value;
-    }
-
     public function getLabel(): string
     {
         return $this->label ?? str_unslug($this->name);
@@ -186,6 +191,52 @@ class Field implements FieldContract, Composable
         $this->label = $label;
 
         return $this;
+    }
+
+    public function bindFieldType()
+    {
+        $class = FieldTypeV2::resolveClass($this->type);
+
+        /** @var FieldTypeV2 $type */
+        $type = new $class($this);
+        $this->columnName = $type->getColumnName();
+        $this->mutator = method_exists($type, 'getMutator') ? $type->getMutator() : null;
+        $this->accessor = method_exists($type, 'getAccessor') ? $type->getAccessor() : null;
+        $this->presenter = method_exists($type, 'getPresenter') ? $type->getPresenter() : null;
+
+        $this->doesNotInteractWithTable = $type instanceof DoesNotInteractWithTable;
+
+        if (method_exists($type, 'makeRules')) {
+            if ($rules = $type->makeRules()) {
+                $this->rules = Rules::make($rules)->merge(wrap_array($this->rules))->get();
+            }
+        }
+        if (method_exists($type, 'mergeConfig')) {
+            if ($config = $type->mergeConfig()) {
+                $this->config = array_merge($this->config, $config);
+            }
+        }
+
+        $this->fieldTypeV2 = $type;
+
+        return $type;
+    }
+
+    public function present($value)
+    {
+        if ($callback = $this->getCallback('presenting')) {
+            return $callback($value);
+        }
+
+        if ($this->presenter) {
+            return ($this->presenter)($value);
+        }
+
+        if ($value instanceof EntryContract) {
+            return $value->getAttribute($this->getName());
+        }
+
+        return $value;
     }
 
     public function getAlterQueryCallback()
@@ -199,8 +250,8 @@ class Field implements FieldContract, Composable
 
     public function getValue()
     {
-        if ($accessor = $this->fieldType()->getAccessor()) {
-            return $accessor($this->value);
+        if ($this->accessor) {
+            return ($this->accessor)($this->value);
         }
 
         return $this->value;
@@ -212,8 +263,37 @@ class Field implements FieldContract, Composable
             return null;
         }
 
-        if ($mutator = $this->fieldType()->getMutator()) {
-            $value = $mutator($value);
+        if ($this->mutator) {
+            $value = ($this->mutator)($value);
+
+            if ($value instanceof Closure) {
+                return $value;
+            }
+        }
+
+//        elseif ($mutator = $this->fieldType()->getMutator()) {
+//            $value = $mutator($value);
+//
+//            if ($value instanceof Closure) {
+//                return $value;
+//            }
+//        }
+
+        $this->value = $value;
+
+        if ($notify && $this->watcher && ! $this->doesNotInteractWithTable) {
+            $this->watcher->setAttribute($this->getColumnName(), $value);
+        }
+    }
+
+    public function hydrateFromRequest($value, $entry = null)
+    {
+        if ($this->isHidden()) {
+            return null;
+        }
+
+        if ($this->mutator) {
+            $value = ($this->mutator)($value, $entry);
 
             if ($value instanceof Closure) {
                 return $value;
@@ -222,7 +302,7 @@ class Field implements FieldContract, Composable
 
         $this->value = $value;
 
-        if ($notify && $this->watcher && ! $this->fieldType() instanceof DoesNotInteractWithTable) {
+        if ($this->watcher && ! $this->doesNotInteractWithTable) {
             $this->watcher->setAttribute($this->getColumnName(), $value);
         }
     }
@@ -244,13 +324,6 @@ class Field implements FieldContract, Composable
         return $this;
     }
 
-    public function removeWatcher()
-    {
-        $this->watcher = null;
-
-        return $this;
-    }
-
     public function getType(): string
     {
         return $this->type;
@@ -263,7 +336,8 @@ class Field implements FieldContract, Composable
 
     public function getColumnName()
     {
-        return $this->fieldType()->getColumnName();
+        return $this->columnName ?? $this->name;
+//        return $this->fieldType()->getColumnName();
     }
 
     public function isHidden(): bool
@@ -283,12 +357,29 @@ class Field implements FieldContract, Composable
 
     public function doesNotInteractWithTable()
     {
+        return $this->doesNotInteractWithTable;
+
         return $this->fieldType() instanceof DoesNotInteractWithTable;
     }
 
     public function hide(bool $value = true)
     {
         return $this->setFlag('hidden', $value);
+    }
+
+    public function getRules()
+    {
+        return $this->rules;
+//        $fieldTypeRules = $this->fieldType()->makeRules();
+//
+//        return Rules::make(wrap_array($this->rules))->merge($fieldTypeRules)->get();
+    }
+
+    public function removeWatcher()
+    {
+        $this->watcher = null;
+
+        return $this;
     }
 
     public function isVisible(): bool
@@ -321,10 +412,5 @@ class Field implements FieldContract, Composable
     public function uuid(): string
     {
         return $this->uuid;
-    }
-
-    public function getRules()
-    {
-        return Rules::make(wrap_array($this->rules))->merge($this->fieldType()->makeRules())->get();
     }
 }

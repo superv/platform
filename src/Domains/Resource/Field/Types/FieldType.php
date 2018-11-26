@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
+use Exception;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Rules;
@@ -55,6 +56,7 @@ abstract class FieldType
 
     public function __construct(array $attributes = [])
     {
+        throw new Exception('dhdhd');
         $this->hydrate($attributes);
 
         $this->boot();
@@ -121,20 +123,7 @@ abstract class FieldType
 
     public function makeRules()
     {
-        $rules = [];
-        foreach ($this->rules as $rule) {
-            if (starts_with($rule, 'unique:')) {
-//                $str = ($this->hasEntry() && $this->entryExists()) ? $this->getEntry()->id() : 'NULL';
-//                $rule = str_replace('{entry.id}', $str, $rule);
-            }
-            $rules[] = $rule;
-        }
-
-        if (! $this->isRequired()) {
-            $rules[] = 'nullable';
-        }
-
-        return $rules;
+        return $this->rules;
     }
 
     public function mergeRules(array $rules)

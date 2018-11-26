@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
 use SuperV\Platform\Domains\Resource\Jobs\CreatePivotTable;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
@@ -90,7 +91,7 @@ class SyncField
             );
         }
 
-        $this->fieldType = FieldType::resolve($this->column->fieldType);
+        $this->fieldType = FieldTypeV2::resolve($this->column->fieldType);
     }
 
     protected function syncWithPDO()

@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Field\Types\Textarea;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class TextareaTest extends ResourceTestCase
@@ -17,11 +16,9 @@ class TextareaTest extends ResourceTestCase
         });
         $this->assertColumnExists($res->getHandle(), 'bio');
 
-        $fieldType = $res->getFieldType('bio');
+        $field = $res->getField('bio');
 
-        $this->assertInstanceOf(Textarea::class, $fieldType);
-        $this->assertEquals('textarea', $fieldType->getType());
-
-        $this->assertEquals(true, $fieldType->getConfigValue('hide.table'));
+        $this->assertEquals('textarea', $field->getType());
+        $this->assertEquals(true, $field->getConfigValue('hide.table'));
     }
 }

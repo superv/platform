@@ -16,9 +16,8 @@ class NumberTest extends ResourceTestCase
         });
         $this->assertColumnExists($res->getHandle(), 'age');
 
-        $age = $res->getFieldType('age');
+        $age = $res->getField('age');
 
-        $this->assertInstanceOf(Number::class, $age);
         $this->assertEquals('number', $age->getType());
         $this->assertEquals(['integer', 'min:0', 'required'], $res->parseFieldRules('age'));
         $this->assertEquals('integer', $age->getConfigValue('type'));
@@ -33,9 +32,8 @@ class NumberTest extends ResourceTestCase
         });
         $this->assertColumnExists($res->getHandle(), 'height');
 
-        $height = $res->getFieldType('height');
+        $height = $res->getField('height');
 
-        $this->assertInstanceOf(Number::class, $height);
         $this->assertEquals('number', $height->getType());
         $this->assertEquals('decimal', $height->getConfigValue('type'));
         $this->assertEquals(['numeric', 'required'], $res->parseFieldRules('height'));

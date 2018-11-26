@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
+use SuperV\Platform\Domains\Resource\Resource;
+
 class FieldFactory
 {
     /**
@@ -16,7 +18,10 @@ class FieldFactory
 
     protected function create(): Field
     {
-        return new Field($this->params);
+        $field = new Field($this->params);
+        $field->bindFieldType();
+
+        return $field;
     }
 
     public static function createFromEntry(FieldModel $entry): Field

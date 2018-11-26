@@ -6,13 +6,10 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Database\Model\Repository;
-use SuperV\Platform\Domains\Resource\Contracts\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class ResourceEntry extends Entry
@@ -59,35 +56,20 @@ class ResourceEntry extends Entry
     public function route($route)
     {
         $base = 'sv/res/'.$this->getHandle();
-        if ($route === 'edit') {
-            return $base.'/'.$this->getId().'/edit';
-        }
         if ($route === 'update') {
             return $base.'/'.$this->getId();
         }
-        if ($route === 'delete') {
-            return $base.'/'.$this->getId().'/delete';
+        if ($route === 'delete' || $route === 'edit' || $route === 'view') {
+            return $base.'/'.$this->getId().'/'.$route;
         }
     }
-//
+
     public function getField(string $name): ?Field
     {
         $field = $this->getResource()->getField($name);
 
         return $field->setWatcher($this);
     }
-//
-//    public function getFieldType(string $name): ?FieldType
-//    {
-//        $field = $this->getField($name);
-//
-//        $fieldType = $field->fieldType();
-//        if ($fieldType instanceof AcceptsEntry) {
-//            $fieldType->acceptEntry($this);
-//        }
-//
-//        return $fieldType;
-//    }
 
     public function __call($name, $arguments)
     {

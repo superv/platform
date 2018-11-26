@@ -116,7 +116,7 @@ class Resource implements
         return $this->getFields();
     }
 
-    public function getFieldType($name): ?FieldType
+    public function getFieldType($name)
     {
         $field = $this->getField($name);
 
@@ -158,14 +158,6 @@ class Resource implements
                     })
                     ->filter()
                     ->all();
-
-//        $tokens = [
-//            'res'      => $this->toArray(),
-//            'entry'    => $entry ? $entry->toArray() : ['id' => 'NULL'],
-//            'required' => $entry && $entry->exists ? 'sometimes|required' : 'required',
-//        ];
-//
-//        return sv_parse($rules, $tokens);
     }
 
     public function parseFieldRules($field, ?EntryContract $entry = null)
@@ -187,6 +179,9 @@ class Resource implements
                 $rules[] = 'sometimes';
             }
             $rules[] = 'required';
+        } else {
+            $rules[] = 'nullable';
+
         }
 
         return $rules;

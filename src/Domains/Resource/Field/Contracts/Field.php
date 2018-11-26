@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 
 interface Field
 {
@@ -18,6 +17,8 @@ interface Field
     public function setLabel(string $label): Field;
 
     public function getType();
+
+    public function getConfig();
 
     public function getConfigValue($key, $default = null);
 
@@ -41,7 +42,7 @@ interface Field
 
     public function hide();
 
-    public function fieldType(): FieldType;
+    public function fieldType();
 
     public function onPresenting(Closure $callback);
 
@@ -50,4 +51,6 @@ interface Field
     public function getRules();
 
     public function hydrateFrom(EntryContract $entry);
+
+    public function hydrateFromRequest($value, $entry);
 }
