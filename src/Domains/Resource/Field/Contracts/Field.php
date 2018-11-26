@@ -28,7 +28,7 @@ interface Field
 
     public function setWatcher(Watcher $watcher);
 
-    public function setEntry(EntryContract $entry);
+    public function setEntry(EntryContract $entry): self;
 
     public function getEntry(): EntryContract;
 

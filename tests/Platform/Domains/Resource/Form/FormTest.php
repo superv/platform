@@ -211,7 +211,9 @@ class FormTest extends ResourceTestCase
                                                                'age'    => 33,
                                                                'avatar' => $file]));
 
-        $form->getField('avatar')->setFieldTypeResolver(function () {
+        $field = $form->getField('avatar');
+        $field->setEntry($testUser)
+             ->setFieldTypeResolver(function () {
             return new TestFileFieldType;
         });
 

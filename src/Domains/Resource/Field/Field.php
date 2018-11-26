@@ -415,9 +415,11 @@ class Field implements FieldContract, Composable
         return $this->uuid;
     }
 
-    public function setEntry(EntryContract $entry): void
+    public function setEntry(EntryContract $entry): FieldContract
     {
         $this->entry = $entry;
+
+        return $this;
     }
 
     public function getEntry(): EntryContract

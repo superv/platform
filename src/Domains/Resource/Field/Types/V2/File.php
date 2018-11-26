@@ -37,15 +37,11 @@ class File extends FieldTypeV2 implements DoesNotInteractWithTable, AltersFieldC
 
     public function getMutator(): ?Closure
     {
-        if (! $this->field->hasEntry()) {
-            return null;
-        }
-
         return function ($requestFile) {
             $this->requestFile = $requestFile;
 
             return function () {
-                if (! $this->requestFile) {
+                if (! $this->requestFile || !$this->field->hasEntry()) {
                     return null;
                 }
 
