@@ -23,11 +23,11 @@ class RelationTableConfig extends TableConfig
 
     public function build(): TableConfig
     {
-        $resource = Resource::of($this->relation->getConfig()->getRelatedResource());
+        $resource = ResourceFactory::make($this->relation->getConfig()->getRelatedResource());
         $fields = $resource->getFields();
 
         if ($pivotColumns = $this->relation->getConfig()->getPivotColumns()) {
-            $pivotResource = Resource::of($this->relation->getConfig()->getPivotTable());
+            $pivotResource = ResourceFactory::make($this->relation->getConfig()->getPivotTable());
             $pivotFields = $pivotResource->getFields()
                                          ->filter(function (Field $field) use ($pivotColumns) {
                                              return in_array($field->getColumnName(), $pivotColumns);

@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -51,7 +52,7 @@ abstract class Relation implements AcceptsParentEntry
         if ($model = $this->config->getRelatedModel()) {
             return new $model;
         } elseif ($handle = $this->config->getRelatedResource()) {
-            return Resource::of($handle)->newEntryInstance();
+            return ResourceFactory::make($handle)->newEntryInstance();
         }
 
         throw new PlatformException('Related resource/model not found');
@@ -60,7 +61,7 @@ abstract class Relation implements AcceptsParentEntry
     /** @return \SuperV\Platform\Domains\Resource\Resource; */
     public function getRelatedResource(): Resource
     {
-        return Resource::of($this->config->getRelatedResource());
+        return ResourceFactory::make($this->config->getRelatedResource());
     }
 
     protected function getRelatedEntry(): ?EntryContract

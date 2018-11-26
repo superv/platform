@@ -5,8 +5,8 @@ namespace Tests\Platform\Domains\Resource;
 use Exception;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\Fixtures\TestUser;
 
@@ -39,7 +39,7 @@ class ResourceCreationTest extends ResourceTestCase
         });
 
         $this->assertEquals(TestUser::class, ResourceModel::withHandle('test_users')->getModelClass());
-        $this->assertInstanceOf(TestUser::class, Resource::of('test_users')->newEntryInstance());
+        $this->assertInstanceOf(TestUser::class, ResourceFactory::make('test_users')->newEntryInstance());
     }
 
     function test__creates_field_when_a_database_column_is_created()

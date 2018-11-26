@@ -31,12 +31,12 @@ class BelongsToMany extends Relation implements ProvidesTable
 
     public function makeTableConfig(): TableConfig
     {
-        $resource = Resource::of($this->getConfig()->getRelatedResource());
+        $resource = ResourceFactory::make($this->getConfig()->getRelatedResource());
 
         $fields = $resource->getFields();
 
         if ($pivotColumns = $this->getConfig()->getPivotColumns()) {
-            $pivotResource = Resource::of($this->getConfig()->getPivotTable());
+            $pivotResource = ResourceFactory::make($this->getConfig()->getPivotTable());
             $pivotFields = $pivotResource->getFields()
                                          ->filter(function (Field $field) use ($pivotColumns) {
                                              return in_array($field->getColumnName(), $pivotColumns);

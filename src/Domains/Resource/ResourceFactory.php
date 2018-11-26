@@ -86,8 +86,12 @@ class ResourceFactory
     }
 
     /** @return \SuperV\Platform\Domains\Resource\Resource */
-    public static function make(string $handle)
+    public static function make($handle)
     {
+        if ($handle instanceof EntryContract) {
+            $handle = $handle->getTable();
+        }
+
         $resource = new Resource(static::attributesFor($handle));
 
         Extension::extend($resource);

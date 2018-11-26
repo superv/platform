@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Composer\Composition;
@@ -30,7 +29,7 @@ class BelongsTo extends FieldTypeV2 implements NeedsDatabaseColumn, AltersTableQ
     {
         return function (EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}) {
-                return Resource::of($relatedEntry)->getEntryLabel($relatedEntry);
+                return ResourceFactory::make($relatedEntry)->getEntryLabel($relatedEntry);
             }
         };
     }

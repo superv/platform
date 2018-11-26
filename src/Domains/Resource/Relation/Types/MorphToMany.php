@@ -11,7 +11,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\TableColumn;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
 
@@ -33,12 +33,12 @@ class MorphToMany extends Relation implements ProvidesTable, ProvidesQuery
 
     public function makeTableConfig(): TableConfig
     {
-        $resource = Resource::of($this->getConfig()->getRelatedResource());
+        $resource = ResourceFactory::make($this->getConfig()->getRelatedResource());
 
         $fields = $resource->getFields();
 
         if ($pivotColumns = $this->getConfig()->getPivotColumns()) {
-            $pivotResource = Resource::of($this->getConfig()->getPivotTable());
+            $pivotResource = ResourceFactory::make($this->getConfig()->getPivotTable());
             $pivotFields = $pivotResource->getFields()
                                          ->filter(function (Field $field) use ($pivotColumns) {
                                              return in_array($field->getColumnName(), $pivotColumns);

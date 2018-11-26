@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Relation\Types;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\Fixtures\TestRole;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -20,7 +20,7 @@ class MorphToManyTest extends ResourceTestCase
             $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
         });
 
-        $users = Resource::of('t_users');
+        $users = ResourceFactory::make('t_users');
 
         $this->assertColumnDoesNotExist('t_users', 'roles');
         $this->assertColumnsExist('t_assigned_roles', ['id',

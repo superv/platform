@@ -56,7 +56,7 @@ class HasMany extends Relation implements ProvidesTable, ProvidesQuery, Provides
     public function makeForm(): Form
     {
         return FormConfig::make($this->newQuery()->make())
-                           ->hideField(Resource::of($this->parentEntry)->getResourceKey() .'_id')
+                           ->hideField(ResourceFactory::make($this->parentEntry)->getResourceKey() .'_id')
                            ->makeForm();
     }
 

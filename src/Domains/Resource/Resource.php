@@ -275,13 +275,4 @@ class Resource implements
             'handle' => $this->getHandle(),
         ];
     }
-
-    public static function of($handle): self
-    {
-        if ($handle instanceof EntryContract) {
-            $handle = $handle->getTable();
-        }
-
-        return ResourceFactory::make($handle);
-    }
 }

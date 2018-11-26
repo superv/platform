@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Relation;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\Fixtures\TestPost;
 use Tests\Platform\Domains\Resource\Fixtures\TestRole;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -44,7 +44,7 @@ class RelationsTest extends ResourceTestCase
             $table->hasMany(TestPost::class, 'posts', 'user_id', 'post_id');
         });
 
-        $users = Resource::of('t_users');
+        $users = ResourceFactory::make('t_users');
         $this->assertColumnDoesNotExist('t_users', 'posts');
 
         $relation = $users->getRelation('posts');
@@ -70,7 +70,7 @@ class RelationsTest extends ResourceTestCase
                 });
         });
 
-        $users = Resource::of('t_users');
+        $users = ResourceFactory::make('t_users');
 
         $this->assertColumnDoesNotExist('t_users', 'roles');
         $this->assertColumnsExist('t_user_roles', ['id', 'user_id', 'role_id', 'status', 'created_at', 'updated_at']);
@@ -99,7 +99,7 @@ class RelationsTest extends ResourceTestCase
             $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
         });
 
-        $users = Resource::of('t_users');
+        $users = ResourceFactory::make('t_users');
         $roles = $users->getRelation('roles');
         $this->assertEquals(['status'], $roles->getConfig()->getPivotColumns());
 
@@ -111,7 +111,7 @@ class RelationsTest extends ResourceTestCase
             $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
         });
 
-        $admins = Resource::of('t_admins');
+        $admins = ResourceFactory::make('t_admins');
         $roles = $admins->getRelation('roles');
         $this->assertEquals(['status'], $roles->getConfig()->getPivotColumns());
     }

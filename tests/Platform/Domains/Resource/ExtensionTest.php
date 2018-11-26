@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsMatchingResources;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Extension\RegisterExtensionsInPath;
-use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\Fixtures\Extension\TestMultipleResourcesArrayExtension;
 use Tests\Platform\Domains\Resource\Fixtures\Extension\TestMultipleResourcesPatternExtension;
 use Tests\Platform\Domains\Resource\Fixtures\Extension\TestUserResourceExtension;
@@ -17,7 +17,7 @@ class ExtensionTest extends ResourceTestCase
         $this->makeResource('t_users');
         Extension::register(TestUserResourceExtension::class);
 
-        $extended = Resource::of('t_users');
+        $extended = ResourceFactory::make('t_users');
 
         $nameField = $extended->getField('name');
 
@@ -32,9 +32,9 @@ class ExtensionTest extends ResourceTestCase
 
         Extension::register(TestMultipleResourcesPatternExtension::class);
 
-        $users = Resource::of('test_users');
-        $posts = Resource::of('test_posts');
-        $forms = Resource::of('t_forms');
+        $users = ResourceFactory::make('test_users');
+        $posts = ResourceFactory::make('test_posts');
+        $forms = ResourceFactory::make('t_forms');
 
         $this->assertTrue($users->getConfigValue('extended'));
         $this->assertTrue($posts->getConfigValue('extended'));
@@ -49,9 +49,9 @@ class ExtensionTest extends ResourceTestCase
 
         Extension::register(TestMultipleResourcesArrayExtension::class);
 
-        $users = Resource::of('test_users');
-        $posts = Resource::of('test_posts');
-        $forms = Resource::of('t_forms');
+        $users = ResourceFactory::make('test_users');
+        $posts = ResourceFactory::make('test_posts');
+        $forms = ResourceFactory::make('t_forms');
 
         $this->assertTrue($users->getConfigValue('extended'));
         $this->assertTrue($posts->getConfigValue('extended'));
@@ -63,7 +63,7 @@ class ExtensionTest extends ResourceTestCase
         $this->makeResource('t_users');
         Extension::register(TestUserResourceExtension::class);
 
-        $user = Resource::of('t_users')->fake();
+        $user = ResourceFactory::make('t_users')->fake();
 
         $this->assertEquals($user->fresh(), TestUserResourceExtension::$called['retrieved']);
     }
@@ -73,7 +73,7 @@ class ExtensionTest extends ResourceTestCase
         $this->makeResource('t_users');
         Extension::register(TestUserResourceExtension::class);
 
-        $user = Resource::of('t_users')->fake();
+        $user = ResourceFactory::make('t_users')->fake();
 
         $this->assertEquals($user, TestUserResourceExtension::$called['saving']);
     }
@@ -83,7 +83,7 @@ class ExtensionTest extends ResourceTestCase
         $this->makeResource('t_users');
         Extension::register(TestUserResourceExtension::class);
 
-        $user = Resource::of('t_users')->fake();
+        $user = ResourceFactory::make('t_users')->fake();
 
         $this->assertEquals($user, TestUserResourceExtension::$called['saved']);
     }

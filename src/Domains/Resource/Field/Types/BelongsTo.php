@@ -29,7 +29,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
     {
         return function (EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}) {
-                return Resource::of($relatedEntry)->getEntryLabel($relatedEntry);
+                return ResourceFactory::make($relatedEntry)->getEntryLabel($relatedEntry);
             }
         };
     }

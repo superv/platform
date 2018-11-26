@@ -3,8 +3,8 @@
 namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class ResourceConfigTest extends ResourceTestCase
 {
@@ -29,8 +29,8 @@ class ResourceConfigTest extends ResourceTestCase
             $table->increments('id');
         });
 
-        $this->assertEquals('Customers', Resource::of('customers')->getLabel());
-        $this->assertEquals('Customer', Resource::of('customers')->getSingularLabel());
+        $this->assertEquals('Customers', ResourceFactory::make('customers')->getLabel());
+        $this->assertEquals('Customer', ResourceFactory::make('customers')->getSingularLabel());
     }
 
     function test__builds_label_from_given()
@@ -42,8 +42,8 @@ class ResourceConfigTest extends ResourceTestCase
             $resource->singularLabel('Customer');
         });
 
-        $this->assertEquals('SuperV Customers', Resource::of('customers')->getLabel());
-        $this->assertEquals('Customer', Resource::of('customers')->getSingularLabel());
+        $this->assertEquals('SuperV Customers', ResourceFactory::make('customers')->getLabel());
+        $this->assertEquals('Customer', ResourceFactory::make('customers')->getSingularLabel());
     }
 
     function test__builds_label_for_resource_entry()
@@ -77,15 +77,15 @@ class ResourceConfigTest extends ResourceTestCase
     function test__guesses_entry_label_from_string_columns()
     {
         $this->makeResource('A_users', ['name']);
-        $this->assertEquals('{name}', Resource::of('A_users')->getEntryLabelTemplate());
+        $this->assertEquals('{name}', ResourceFactory::make('A_users')->getEntryLabelTemplate());
 
         $this->makeResource('B_users', ['address', 'age:integer', 'title']);
-        $this->assertEquals('{title}', Resource::of('B_users')->getEntryLabelTemplate());
+        $this->assertEquals('{title}', ResourceFactory::make('B_users')->getEntryLabelTemplate());
 
         $this->makeResource('C_users', ['height:decimal', 'age:integer', 'address']);
-        $this->assertEquals('{address}', Resource::of('C_users')->getEntryLabelTemplate());
+        $this->assertEquals('{address}', ResourceFactory::make('C_users')->getEntryLabelTemplate());
 
         $this->makeResource('customers', ['height:decimal', 'age:integer']);
-        $this->assertEquals('Customer #{id}', Resource::of('customers')->getEntryLabelTemplate());
+        $this->assertEquals('Customer #{id}', ResourceFactory::make('customers')->getEntryLabelTemplate());
     }
 }

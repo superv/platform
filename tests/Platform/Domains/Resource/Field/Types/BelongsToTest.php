@@ -6,9 +6,8 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Field\Types\V2\BelongsTo;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class BelongsToTest extends ResourceTestCase
@@ -97,7 +96,7 @@ class BelongsToTestUser extends Model implements EntryContract
 
     public function group()
     {
-        $relation = Resource::of('t_users')->getRelation('group');
+        $relation = ResourceFactory::make('t_users')->getRelation('group');
 
         $relation->acceptParentEntry($this);
 
