@@ -86,9 +86,14 @@ return [
         'uses' => ResourceCreateController::class,
     ],
 
-    'GET@'.'sv/res/{resource}/{data?}' => [
+    'GET@'.'sv/res/{resource}' => [
         'as'   => 'resource.index',
-        'uses' => ResourceIndexController::class,
+        'uses' => ResourceIndexController::at('page'),
+    ],
+
+    'GET@'.'sv/res/{resource}/table/{data?}' => [
+        'as'   => 'resource.index.table',
+        'uses' => ResourceIndexController::at('table'),
     ],
 
     'GET@'.'sv/wake/{uuid}' => WakeupController::at('get'),

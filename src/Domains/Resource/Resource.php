@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
@@ -173,7 +174,6 @@ class Resource implements
             $rules[] = 'required';
         } else {
             $rules[] = 'nullable';
-
         }
 
         return $rules;
@@ -182,6 +182,33 @@ class Resource implements
     public function getResourceKey()
     {
         return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
+    }
+
+    public function getTableFields(): Collection
+    {
+        $labelField = FieldFactory::createFromArray([
+            'type'      => 'text',
+            'name'      => 'label',
+            'label'     => $this->getSingularLabel(),
+            'presenter' => function (EntryContract $entry) {
+                return sv_parse($this->getConfigValue('entry_label'), $entry->toArray());
+            },
+
+        ]);
+
+     return collect()->put('label', $labelField)
+                                  ->merge(
+                                      $this->getFields()
+                                           ->map(function (Field $field) {
+                                               if ($field->getConfigValue('table.show') === true) {
+                                                   return $field;
+                                               }
+
+                                               return null;
+                                           })
+                                           ->filter()
+                                  );
+
     }
 
     public function provideColumns(): Collection
@@ -217,12 +244,16 @@ class Resource implements
             return $base.'/create';
         }
 
+        if ($route === 'index.table') {
+            return $base.'/table';
+        }
+
         if ($route === 'index' || $route === 'store') {
             return $base;
         }
 
         if ($route === 'view' || $route === 'edit') {
-            return $base.'/'.$entry->getId().'/' . $route;
+            return $base.'/'.$entry->getId().'/'.$route;
         }
     }
 

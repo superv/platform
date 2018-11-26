@@ -51,11 +51,17 @@ interface Field
 
     public function getAlterQueryCallback();
 
-    public function getPresenter();
-
     public function getRules();
 
     public function fillFromEntry(EntryContract $entry);
 
     public function resolveRequestToEntry(Request $request, EntryContract $entry);
+
+    public function resolveFromEntry(EntryContract $entry);
+
+    public function getAccessor();
+
+    public function getComposer();
+
+    public function getPresenter();
 }

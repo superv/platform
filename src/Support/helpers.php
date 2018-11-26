@@ -285,6 +285,10 @@ function sv_block($url = null)
 
 function sv_loader($url)
 {
+    if (! starts_with($url, 'http')) {
+        $url = sv_url($url);
+    }
+
     return SvBlock::make('sv-loader')->setProp('url', $url);
 }
 

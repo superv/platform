@@ -132,7 +132,7 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
 
     public function getPresenter()
     {
-        return $this->getCallback('presenting') ?? $this->presenter;
+        return  $this->presenter;
     }
 
     public function getLabel(): string
@@ -152,29 +152,6 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
         return $this->alterQueryCallback;
     }
 
-    public function composeForView(EntryContract $entry)
-    {
-        $value = $this->resolveFromEntry($entry);
-
-        if ($this->accessor) {
-            $value = app()->call($this->accessor, ['entry' => $entry, 'value' => $value, 'field' => $this]);
-        }
-
-        $composition = (new Composition([
-            'type'  => $this->getType(),
-            'uuid'  => $this->uuid(),
-            'name'  => $this->getColumnName(),
-            'label' => $this->getLabel(),
-            'value' => $value,
-        ]))->setFilterNull(false);
-
-        if ($this->composer) {
-            app()->call($this->composer, ['entry' => $entry, 'composition' => $composition]);
-        }
-
-        return $composition;
-    }
-
     public function bindFieldType()
     {
         $class = FieldTypeV2::resolveClass($this->type);
@@ -182,10 +159,10 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
         /** @var FieldTypeV2 $type */
         $type = new $class($this);
         $this->columnName = $type->getColumnName();
-        $this->mutator = method_exists($type, 'getMutator') ? $type->getMutator() : null;
-        $this->accessor = method_exists($type, 'getAccessor') ? $type->getAccessor() : null;
-        $this->composer = method_exists($type, 'getComposer') ? $type->getComposer() : null;
-        $this->presenter = method_exists($type, 'getPresenter') ? $type->getPresenter() : null;
+        $this->mutator = method_exists($type, 'getMutator') ? $type->getMutator() : $this->mutator;
+        $this->accessor = method_exists($type, 'getAccessor') ? $type->getAccessor() : $this->accessor;
+        $this->composer = method_exists($type, 'getComposer') ? $type->getComposer() : $this->composer;
+        $this->presenter = method_exists($type, 'getPresenter') ? $type->getPresenter() : $this->presenter;
 
         $this->doesNotInteractWithTable = $type instanceof DoesNotInteractWithTable;
         if ($type instanceof AltersTableQuery) {
@@ -355,6 +332,11 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
 //        return Rules::make(wrap_array($this->rules))->merge($fieldTypeRules)->get();
     }
 
+    public function resolveFromEntry(EntryContract $entry)
+    {
+        return $entry->getAttribute($this->getColumnName());
+    }
+
     public function removeWatcher()
     {
         $this->watcher = null;
@@ -384,11 +366,6 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
         return $this->flags[$flag] ?? $default;
     }
 
-    protected function resolveFromEntry(EntryContract $entry)
-    {
-        return $entry->getAttribute($this->getColumnName());
-    }
-
     public function uuid(): string
     {
         return $this->uuid;
@@ -409,5 +386,15 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
     public function hasEntry(): bool
     {
         return ! is_null($this->entry);
+    }
+
+    public function getAccessor()
+    {
+        return $this->accessor;
+    }
+
+    public function getComposer()
+    {
+        return $this->composer;
     }
 }

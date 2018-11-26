@@ -48,17 +48,17 @@ class BelongsTo extends FieldTypeV2 implements NeedsDatabaseColumn, AltersTableQ
         return $this->field->getName().'_id';
     }
 
-    public function getAccessor(): ?Closure
-    {
-        return function ($value) {
-            return (int)$value;
-        };
-    }
-
-    public function getMutator(): ?Closure
-    {
-        return $this->getAccessor();
-    }
+//    public function getAccessor(): ?Closure
+//    {
+//        return function ($value) {
+//            return (int)$value;
+//        };
+//    }
+//
+//    public function getMutator(): ?Closure
+//    {
+//        return $this->getAccessor();
+//    }
 
     public function getComposer(): ?Closure
     {

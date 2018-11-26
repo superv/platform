@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
@@ -61,24 +62,23 @@ class ResourceView implements ProvidesUIComponent
     protected function getActions()
     {
         $relationActions = $this->resource->getRelations()
-                              ->map(function (Relation $relation) {
-                                  if ($relation instanceof ProvidesTable) {
-                                      return [
-                                          'url'   => $relation->indexRoute($this->entry),
-                                          'title' => str_unslug($relation->getName()),
-                                      ];
-                                  } elseif ($relation instanceof ProvidesForm) {
-                                      return [
-                                          'url'   => $relation->route('edit', $this->entry),
-                                          'title' => str_unslug($relation->getName()),
-                                      ];
-                                  }
-                              })
-                              ->filter()->values()->all();
-
+                                          ->map(function (Relation $relation) {
+                                              if ($relation instanceof ProvidesTable) {
+                                                  return [
+                                                      'url'   => $relation->indexRoute($this->entry),
+                                                      'title' => str_unslug($relation->getName()),
+                                                  ];
+                                              } elseif ($relation instanceof ProvidesForm) {
+                                                  return [
+                                                      'url'   => $relation->route('edit', $this->entry),
+                                                      'title' => str_unslug($relation->getName()),
+                                                  ];
+                                              }
+                                          })
+                                          ->filter()->values()->all();
 
         return array_merge([
-            ['url' => $this->resource->route('edit', $this->entry), 'title' => 'Edit']
+            ['url' => $this->resource->route('edit', $this->entry), 'title' => 'Edit'],
         ], $relationActions);
     }
 
@@ -94,9 +94,7 @@ class ResourceView implements ProvidesUIComponent
                             ],
 
                             'fields' => $this->resource->getFields()->map(function (Field $field) {
-//                                $field->setEntry($this->entry);
-
-                                return $field->composeForView($this->entry);
+                                return (new FieldComposer($field))->forView($this->entry);
                             }),
 
                         ]);
