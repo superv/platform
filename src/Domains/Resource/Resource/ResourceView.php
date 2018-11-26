@@ -93,8 +93,10 @@ class ResourceView implements ProvidesUIComponent
                                 'actions'  => $this->getActions(),
                             ],
 
-                            'fields' => $this->resource->getFields()->each(function (Field $field) {
-                                $field->setEntry($this->entry);
+                            'fields' => $this->resource->getFields()->map(function (Field $field) {
+//                                $field->setEntry($this->entry);
+
+                                return $field->composeForView($this->entry);
                             }),
 
                         ]);

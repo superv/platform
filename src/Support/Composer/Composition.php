@@ -21,6 +21,8 @@ class Composition implements Arrayable, Composable
      */
     protected $tokens;
 
+    protected $filterNull = true;
+
     public function __construct(?array $params = [])
     {
         $this->params = $params;
@@ -34,7 +36,7 @@ class Composition implements Arrayable, Composable
     public function get($key = null)
     {
         if (is_null($key)) {
-            return array_filter($this->params);
+            return $this->filterNull ? array_filter($this->params) : $this->params;
         }
 
         return array_get($this->params, $key);
@@ -43,6 +45,13 @@ class Composition implements Arrayable, Composable
     public function setTokens(array $tokens)
     {
         $this->tokens = $tokens;
+    }
+
+    public function setFilterNull(bool $filterNull): Composition
+    {
+        $this->filterNull = $filterNull;
+
+        return $this;
     }
 
     /**

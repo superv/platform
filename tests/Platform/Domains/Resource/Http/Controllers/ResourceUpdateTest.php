@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use Storage;
-use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
+use SuperV\Platform\Domains\Media\Media;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ResourceUpdateTest extends ResourceTestCase
@@ -71,11 +71,11 @@ class ResourceUpdateTest extends ResourceTestCase
         $response = $this->postJsonUser($user->route('update'), ['avatar' => $this->makeUploadedFile()]);
         $response->assertOk();
 
+        $this->assertNotNull(Media::first());
 
         $view = $this->getResourceView($user);
         $avatar = $view->getProp('fields.avatar');
 
-        $this->assertNotNull($avatar['config']['url']);
     }
 }
 

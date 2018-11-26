@@ -4,8 +4,8 @@ namespace SuperV\Platform\Domains\Resource\Field\Types\V2;
 
 use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
-use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
+
 class Number extends FieldTypeV2 implements NeedsDatabaseColumn
 {
     public function getAccessor(): ?Closure
@@ -43,7 +43,7 @@ class Number extends FieldTypeV2 implements NeedsDatabaseColumn
             $rules[] = 'min:0';
         }
 
-       return $rules;
+        return $rules;
     }
 
     public function getDatabaseColumns($fieldName, $fieldConfig)

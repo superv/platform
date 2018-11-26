@@ -3,9 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
 use Closure;
+use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
-use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 interface Field
 {
@@ -35,8 +35,6 @@ interface Field
 
     public function hasEntry(): bool;
 
-    public function resolveFromEntry(EntryContract $entry);
-
     public function isHidden();
 
     public function isUnique();
@@ -57,5 +55,7 @@ interface Field
 
     public function getRules();
 
-    public function hydrateFromRequest($value, $entry);
+    public function fillFromEntry(EntryContract $entry);
+
+    public function resolveRequestToEntry(Request $request, EntryContract $entry);
 }

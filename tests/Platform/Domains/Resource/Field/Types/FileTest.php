@@ -47,7 +47,7 @@ class FileTest extends ResourceTestCase
         Storage::fake('fakedisk');
 
         $uploadedFile = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
-        $callback = $field->hydrateFromRequest($uploadedFile, $fake);
+        $callback = $field->resolveRequestToEntry($this->makePostRequest('', ['avatar' => $uploadedFile]), $fake);
         $this->assertInstanceOf(Closure::class, $callback);
 
 //        $this->assertEquals($uploadedFile, $field->getValueForValidation());

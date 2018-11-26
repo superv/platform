@@ -212,10 +212,7 @@ class FormTest extends ResourceTestCase
                                                                'avatar' => $file]));
 
         $field = $form->getField('avatar');
-        $field->setEntry($testUser)
-             ->setFieldTypeResolver(function () {
-            return new TestFileFieldType;
-        });
+        $field->setEntry($testUser);
 
         $form->save();
 

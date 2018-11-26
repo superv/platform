@@ -28,6 +28,11 @@ class Media extends Entry
         return url('storage/'.$this->filename);
     }
 
+    public function getUrl()
+    {
+        return $this->url();
+    }
+
     public function filePath()
     {
         return \Storage::disk($this->disk)->path($this->getBasename());

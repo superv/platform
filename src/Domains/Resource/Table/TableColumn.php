@@ -30,7 +30,6 @@ class TableColumn implements Column
             [$relation, $name] = explode('.', $this->name);
 
             $this->presenter = function (EntryContract $entry) use ($relation, $name) {
-//                dd($entry, $relation, $name);
                 if ($child = $entry->{$relation}) {
                     return $child->{$name};
                 }

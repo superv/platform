@@ -60,6 +60,15 @@ class BelongsTo extends FieldTypeV2 implements NeedsDatabaseColumn, AltersTableQ
         return $this->getAccessor();
     }
 
+    public function getComposer(): ?Closure
+    {
+        return function (Composition $composition, EntryContract $entry) {
+            if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
+                $composition->replace('value', ResourceFactory::make($relatedEntry)->getEntryLabel($relatedEntry));
+            }
+        };
+    }
+
     public function alterComposition(Composition $composition)
     {
         $relationConfig = RelationConfig::create($this->getType(), $this->getConfig());

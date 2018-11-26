@@ -78,7 +78,7 @@ class Form implements ProvidesUIComponent
                     $field->hide();
                 }
 
-                $field->resolveFromEntry($entry);
+                $field->fillFromEntry($entry);
             });
         }
     }
@@ -93,16 +93,18 @@ class Form implements ProvidesUIComponent
                     return;
                 }
 
-                $requestValue = $this->request->__get($field->getColumnName());
-                if ($callback = $field->hydrateFromRequest($requestValue, $entry)) {
-                    $this->postSaveCallbacks[] = $callback;
-                }
+                $this->postSaveCallbacks[] = $field->resolveRequestToEntry($this->request, $entry);
+
+//                $requestValue = $this->request->__get($field->getColumnName());
+//                if ($callback = $field->hydrateFromRequest($requestValue, $entry)) {
+//                    $this->postSaveCallbacks[] = $callback;
+//                }
             });
         }
 
         $this->notifyWatchers($this);
 
-        collect($this->postSaveCallbacks)->map(function (Closure $callback) {
+        collect($this->postSaveCallbacks)->filter()->map(function (Closure $callback) {
             $callback();
         });
 

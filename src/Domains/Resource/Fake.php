@@ -79,11 +79,11 @@ class Fake
     {
         $fieldName = $field->getName();
 
-        if (! in_array($fieldName, ['label', 'bio']) && $fake = $this->faker->__get(camel_case($fieldName))) {
+        if (in_array($fieldName, ['name', 'title', 'first_name', 'last_name']) && $fake = $this->faker->__get(camel_case($fieldName))) {
             return $fake;
         }
 
-        return $this->faker->text;
+        return $this->faker->word;
     }
 
     protected function fakeTextarea()

@@ -3,6 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types\V2;
 
 use Closure;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
@@ -35,31 +37,48 @@ class File extends FieldTypeV2 implements DoesNotInteractWithTable, AltersFieldC
         return $media->url();
     }
 
+    public function makeMediaBag(): MediaBag
+    {
+        return new MediaBag($this->field->getEntry(), $this->getName());
+    }
+
+    public function getMedia(EntryContract $entry, $label): ?Media
+    {
+        $bag = new MediaBag($entry, $label);
+
+        return $bag->media()->where('label', $label)->latest()->first();
+    }
+
+    public function getComposer(): ?Closure
+    {
+        return function (Composition $composition, EntryContract $entry) {
+            if ($media = $this->getMedia($entry, $this->getName())) {
+                $composition->replace('image_url', $media->getUrl());
+            }
+        };
+    }
+
     public function getMutator(): ?Closure
     {
-        return function ($requestFile) {
+        return function ($requestFile, EntryContract $entry) {
             $this->requestFile = $requestFile;
 
-            return function () {
-                if (! $this->requestFile || !$this->field->hasEntry()) {
+            return function () use ($entry) {
+                if (! $this->requestFile || ! $entry) {
                     return null;
                 }
 
-                $media = $this->makeMediaBag()
-                              ->addFromUploadedFile($this->requestFile, $this->getConfigAsMediaOptions());
+                $bag = new MediaBag($entry, $this->getName());
 
-                if ($media) {
-                    $this->field->setConfigValue('url', $media->url());
-                }
+                $media = $bag->addFromUploadedFile($this->requestFile, $this->getConfigAsMediaOptions());
+//
+//                if ($media) {
+//                    $this->field->setConfigValue('url', $media->url());
+//                }
 
                 return $media;
             };
         };
-    }
-
-    protected function makeMediaBag(): MediaBag
-    {
-        return new MediaBag($this->field->getEntry(), $this->getName());
     }
 
     protected function getConfigAsMediaOptions()

@@ -3,6 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
+use Illuminate\Http\Request;
+use SuperV\Platform\Contracts\FiresCallbacks as FiresCallbacksContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
@@ -15,7 +17,6 @@ use SuperV\Platform\Support\Composer\Tokens;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
-use SuperV\Platform\Contracts\FiresCallbacks as FiresCallbacksContract;
 
 /**
  * Class Field
@@ -56,6 +57,9 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
     protected $accessor;
 
     /** @var Closure */
+    protected $composer;
+
+    /** @var Closure */
     protected $presenter;
 
     /**
@@ -77,6 +81,8 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
     protected $required;
 
     protected $alterQueryCallback;
+
+    protected $alterCompositionCallback;
 
     protected $doesNotInteractWithTable;
 
@@ -112,9 +118,8 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
             'config' => $this->config,
         ]);
 
-        $fieldType = $this->fieldType();
-        if ($fieldType instanceof AltersFieldComposition) {
-            $fieldType->alterComposition($composition);
+        if ($this->alterCompositionCallback) {
+            ($this->alterCompositionCallback)($composition);
         }
 
         return $composition;
@@ -130,11 +135,6 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
         return $this->getCallback('presenting') ?? $this->presenter;
     }
 
-    public function fieldType()
-    {
-        return $this->bindFieldType();
-    }
-
     public function getLabel(): string
     {
         return $this->label ?? str_unslug($this->name);
@@ -147,6 +147,34 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
         return $this;
     }
 
+    public function getAlterQueryCallback()
+    {
+        return $this->alterQueryCallback;
+    }
+
+    public function composeForView(EntryContract $entry)
+    {
+        $value = $this->resolveFromEntry($entry);
+
+        if ($this->accessor) {
+            $value = app()->call($this->accessor, ['entry' => $entry, 'value' => $value, 'field' => $this]);
+        }
+
+        $composition = (new Composition([
+            'type'  => $this->getType(),
+            'uuid'  => $this->uuid(),
+            'name'  => $this->getColumnName(),
+            'label' => $this->getLabel(),
+            'value' => $value,
+        ]))->setFilterNull(false);
+
+        if ($this->composer) {
+            app()->call($this->composer, ['entry' => $entry, 'composition' => $composition]);
+        }
+
+        return $composition;
+    }
+
     public function bindFieldType()
     {
         $class = FieldTypeV2::resolveClass($this->type);
@@ -156,11 +184,18 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
         $this->columnName = $type->getColumnName();
         $this->mutator = method_exists($type, 'getMutator') ? $type->getMutator() : null;
         $this->accessor = method_exists($type, 'getAccessor') ? $type->getAccessor() : null;
+        $this->composer = method_exists($type, 'getComposer') ? $type->getComposer() : null;
         $this->presenter = method_exists($type, 'getPresenter') ? $type->getPresenter() : null;
 
         $this->doesNotInteractWithTable = $type instanceof DoesNotInteractWithTable;
         if ($type instanceof AltersTableQuery) {
             $this->alterQueryCallback = $type->getAlterQueryCallback();
+        }
+
+        if ($type instanceof AltersFieldComposition) {
+            $this->alterCompositionCallback = function (Composition $composition) use ($type) {
+                return $type->alterComposition($composition);
+            };
         }
 
         if (method_exists($type, 'makeRules')) {
@@ -192,11 +227,6 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
         }
 
         return $value;
-    }
-
-    public function getAlterQueryCallback()
-    {
-        return $this->alterQueryCallback;
     }
 
     public function getValue()
@@ -241,11 +271,13 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
         }
     }
 
-    public function hydrateFromRequest($value, $entry = null)
+    public function resolveRequestToEntry(Request $request, EntryContract $entry)
     {
-        if ($this->isHidden()) {
+        if (! $request->has($this->getColumnName())) {
             return null;
         }
+
+        $value = $request->__get($this->getColumnName());
 
         if ($this->mutator) {
             $value = ($this->mutator)($value, $entry);
@@ -255,16 +287,16 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
             }
         }
 
-        $this->value = $value;
-
-        if ($this->watcher && ! $this->doesNotInteractWithTable) {
-            $this->watcher->setAttribute($this->getColumnName(), $value);
+        if (! $this->doesNotInteractWithTable) {
+            $entry->setAttribute($this->getColumnName(), $value);
         }
+
+        $this->value = $value;
     }
 
-    public function resolveFromEntry(EntryContract $entry)
+    public function fillFromEntry(EntryContract $entry)
     {
-        $this->value = $entry->getAttribute($this->getColumnName());
+        $this->value = $this->resolveFromEntry($entry);
     }
 
     public function setWatcher(Watcher $watcher)
@@ -308,8 +340,6 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
     public function doesNotInteractWithTable()
     {
         return $this->doesNotInteractWithTable;
-
-        return $this->fieldType() instanceof DoesNotInteractWithTable;
     }
 
     public function hide(bool $value = true)
@@ -352,6 +382,11 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
     public function getFlag(string $flag, $default = false): bool
     {
         return $this->flags[$flag] ?? $default;
+    }
+
+    protected function resolveFromEntry(EntryContract $entry)
+    {
+        return $entry->getAttribute($this->getColumnName());
     }
 
     public function uuid(): string
