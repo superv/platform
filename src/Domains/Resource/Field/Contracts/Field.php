@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 interface Field
 {
@@ -48,9 +49,9 @@ interface Field
 
     public function hide();
 
-    public function fieldType();
-
     public function onPresenting(Closure $callback);
+
+    public function getAlterQueryCallback();
 
     public function getPresenter();
 

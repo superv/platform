@@ -44,7 +44,7 @@ class Form implements ProvidesUIComponent
      */
     protected $request;
 
-    protected $watchers = [];
+    protected $entries = [];
 
     protected $postSaveCallbacks = [];
 
@@ -70,15 +70,15 @@ class Form implements ProvidesUIComponent
             $this->addGroup($group['provider'], $group['watcher'], $handle);
         }
 
-        foreach ($this->watchers as $handle => $watcher) {
-            $this->fields[$handle]->map(function (Field $field) use ($watcher) {
-                $field->setWatcher($watcher);
+        foreach ($this->entries as $handle => $entry) {
+            $this->fields[$handle]->map(function (Field $field) use ($entry) {
+                $field->setWatcher($entry);
 
                 if (in_array($field->getColumnName(), $this->config->getHiddenFields())) {
                     $field->hide();
                 }
 
-                $field->resolveFromEntry($watcher);
+                $field->resolveFromEntry($entry);
             });
         }
     }
@@ -86,7 +86,7 @@ class Form implements ProvidesUIComponent
     public function save(): self
     {
         foreach ($this->groups as $handle => $fields) {
-            $entry = $this->watchers[$handle] ?? null;
+            $entry = $this->entries[$handle] ?? null;
 
             $fields->map(function (Field $field) use ($entry) {
                 if ($field->isHidden() || ! $this->request->has($field->getColumnName())) {
@@ -111,14 +111,14 @@ class Form implements ProvidesUIComponent
 
     public function addWatcher($handle, Watcher $watcher)
     {
-        $this->watchers[$handle] = $watcher;
+        $this->entries[$handle] = $watcher;
 
         return $this;
     }
 
     public function removeWatcher(Watcher $detach)
     {
-        $this->watchers = collect($this->watchers)->filter(function (Watcher $watcher) use ($detach) {
+        $this->entries = collect($this->entries)->filter(function (Watcher $watcher) use ($detach) {
             return $watcher !== $detach;
         })->filter()->values()->all();
 
@@ -127,7 +127,7 @@ class Form implements ProvidesUIComponent
 
     public function notifyWatchers($params = null)
     {
-        collect($this->watchers)->map(function (Watcher $watcher) use ($params) {
+        collect($this->entries)->map(function (Watcher $watcher) use ($params) {
             $watcher->save();
         });
     }
@@ -257,7 +257,7 @@ class Form implements ProvidesUIComponent
 
     public function getWatcher(?string $handle = 'default')
     {
-        return $this->watchers[$handle];
+        return $this->entries[$handle];
     }
 
     public function uuid(): string

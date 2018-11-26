@@ -5,11 +5,8 @@ namespace SuperV\Platform\Domains\Resource\Field;
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
-use SuperV\Platform\Domains\Resource\Contracts\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeOld;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Composer\Composable;
@@ -18,6 +15,7 @@ use SuperV\Platform\Support\Composer\Tokens;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
+use SuperV\Platform\Contracts\FiresCallbacks as FiresCallbacksContract;
 
 /**
  * Class Field
@@ -25,7 +23,7 @@ use SuperV\Platform\Support\Concerns\Hydratable;
  *
  * @package SuperV\Platform\Domains\Resource\Field
  */
-class Field implements FieldContract, Composable
+class Field implements FieldContract, Composable, FiresCallbacksContract
 {
     use Hydratable;
     use FiresCallbacks;
@@ -67,9 +65,6 @@ class Field implements FieldContract, Composable
 
     protected $value;
 
-    /** @var boolean */
-    protected $visible = true;
-
     /**
      * @var \SuperV\Platform\Domains\Database\Model\Contracts\Watcher
      */
@@ -83,21 +78,7 @@ class Field implements FieldContract, Composable
 
     protected $alterQueryCallback;
 
-    /**
-     * tmp. TODO.ali: remove this
-     *
-     * @var
-     */
-    protected $fieldType;
-
-    protected $fieldTypeV2;
-
     protected $doesNotInteractWithTable;
-
-    /**
-     * @var \Closure
-     */
-    protected $fieldTypeResolver;
 
     /** @var \SuperV\Platform\Support\Composer\Composition */
     protected $composition;
@@ -152,35 +133,6 @@ class Field implements FieldContract, Composable
     public function fieldType()
     {
         return $this->bindFieldType();
-        if ($this->watcher && $this->fieldType instanceof AcceptsEntry) {
-            $this->fieldType->acceptEntry($this->watcher);
-        }
-
-        if ($this->fieldType) {
-            return $this->fieldType;
-        }
-
-        if ($resolver = $this->fieldTypeResolver) {
-            $this->fieldType = $resolver($this);
-        } else {
-            $class = FieldType::resolveClass($this->type);
-            $this->fieldType = new $class([
-                'type'     => $this->getType(),
-                'name'     => $this->getName(),
-                'label'    => $this->getLabel(),
-                'config'   => $this->config,
-                'rules'    => $this->rules,
-                'required' => $this->required,
-                'unique'   => $this->unique,
-
-            ]);
-        }
-
-//        if ($this->watcher && $this->fieldType instanceof AcceptsEntry) {
-//            $this->fieldType->acceptEntry($this->watcher);
-//        }
-
-        return $this->fieldType;
     }
 
     public function getLabel(): string
@@ -207,6 +159,9 @@ class Field implements FieldContract, Composable
         $this->presenter = method_exists($type, 'getPresenter') ? $type->getPresenter() : null;
 
         $this->doesNotInteractWithTable = $type instanceof DoesNotInteractWithTable;
+        if ($type instanceof AltersTableQuery) {
+            $this->alterQueryCallback = $type->getAlterQueryCallback();
+        }
 
         if (method_exists($type, 'makeRules')) {
             if ($rules = $type->makeRules()) {
@@ -218,8 +173,6 @@ class Field implements FieldContract, Composable
                 $this->config = array_merge($this->config, $config);
             }
         }
-
-        $this->fieldTypeV2 = $type;
 
         return $type;
     }
@@ -243,10 +196,6 @@ class Field implements FieldContract, Composable
 
     public function getAlterQueryCallback()
     {
-        if ($this->fieldType() instanceof AltersTableQuery) {
-            return $this->fieldType()->alterQueryCallback();
-        }
-
         return $this->alterQueryCallback;
     }
 
@@ -393,11 +342,6 @@ class Field implements FieldContract, Composable
         return $this->setFlag('hidden', ! $visible);
     }
 
-    public function setFieldTypeResolver(Closure $fieldTypeResolver): void
-    {
-        $this->fieldTypeResolver = $fieldTypeResolver;
-    }
-
     public function setFlag(string $flag, bool $value): self
     {
         $this->flags[$flag] = $value;
@@ -429,6 +373,6 @@ class Field implements FieldContract, Composable
 
     public function hasEntry(): bool
     {
-        return !is_null($this->entry);
+        return ! is_null($this->entry);
     }
 }

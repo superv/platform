@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
 use SuperV\Platform\Support\Concerns\HasConfig;
 
@@ -65,6 +64,11 @@ class TableColumn implements Column
         return $this->alterQueryCallback;
     }
 
+    public function setAlterQueryCallback(?Closure $callback)
+    {
+        $this->alterQueryCallback = $callback;
+    }
+
     public function present(EntryContract $entry)
     {
         return $entry->getAttribute($this->getName());
@@ -84,7 +88,7 @@ class TableColumn implements Column
         return $this->presenter;
     }
 
-    public function setPresenter(Closure $callback): Column
+    public function setPresenter(?Closure $callback): Column
     {
         $this->presenter = $callback;
 
@@ -105,19 +109,8 @@ class TableColumn implements Column
     {
         $column = TableColumn::make($field->getName());
         $column->setLabel($field->getLabel());
-
-        $fieldType = $field->fieldType();
-        if ($fieldType instanceof AltersTableQuery) {
-            $column->alterQueryCallback = $fieldType->getAlterQueryCallback();
-        }
-
-        if ($presenter = $field->getPresenter()) {
-            $column->presenter = $presenter;
-        }
-
-//        elseif ($presenter = $fieldType->getPresenter()) {
-//            $column->presenter = $presenter;
-//        }
+        $column->setAlterQueryCallback($field->getAlterQueryCallback());
+        $column->setPresenter($field->getPresenter());
 
         return $column;
     }

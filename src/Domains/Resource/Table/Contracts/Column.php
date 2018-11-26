@@ -17,9 +17,11 @@ interface Column
 
     public function getPresenter();
 
-    public function setPresenter(Closure $callback): self;
+    public function setPresenter(?Closure $callback): self;
 
     public function getAlterQueryCallback();
+
+    public function setAlterQueryCallback(?Closure $callback);
 
     public function present(EntryContract $entry);
 

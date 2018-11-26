@@ -45,13 +45,6 @@ class FieldTest extends ResourceTestCase
         $field->setValue('Hattab');
         $this->assertEquals('Omar', $entry->name);
     }
-
-    function test__field_type()
-    {
-        $field = FieldFactory::createFromArray(['name' => 'name', 'type' => 'text']);
-
-        $this->assertInstanceOf(Text::class, $field->fieldType());
-    }
 }
 
 class TestEntry implements Watcher

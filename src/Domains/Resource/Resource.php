@@ -8,7 +8,6 @@ use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
@@ -114,13 +113,6 @@ class Resource implements
     public function provideFields(): Collection
     {
         return $this->getFields();
-    }
-
-    public function getFieldType($name)
-    {
-        $field = $this->getField($name);
-
-        return $field->fieldType();
     }
 
     public function getField($name): ?Field
