@@ -2,18 +2,22 @@
 
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
+use Storage;
+use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ResourceUpdateTest extends ResourceTestCase
 {
+    use ResponseHelper;
+
     function test__updates_all_required()
     {
         $user = $this->schema()->users()->fake(['group_id' => 1]);
 
         $post = [
-            'name' => 'Ali',
-            'email' => 'ali@superv.io',
-            'group_id' => 2
+            'name'     => 'Ali',
+            'email'    => 'ali@superv.io',
+            'group_id' => 2,
         ];
         $response = $this->postJsonUser($user->route('update'), $post);
         $response->assertOk();
@@ -55,6 +59,23 @@ class ResourceUpdateTest extends ResourceTestCase
         $response->assertStatus(422);
 
         $this->assertEquals(['name'], array_keys($response->decodeResponseJson('errors')));
+    }
+
+    function test__uploads_files()
+    {
+        Storage::fake('fakedisk');
+        $users = $this->schema()->users();
+        $user = $users->fake();
+
+        $this->withoutExceptionHandling();
+        $response = $this->postJsonUser($user->route('update'), ['avatar' => $this->makeUploadedFile()]);
+        $response->assertOk();
+
+
+        $view = $this->getResourceView($user);
+        $avatar = $view->getProp('fields.avatar');
+
+        $this->assertNotNull($avatar['config']['url']);
     }
 }
 

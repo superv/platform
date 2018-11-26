@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Http;
 
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
+use SuperV\Platform\Domains\Resource\Resource\EntryResource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 trait ResolvesResource
@@ -29,6 +30,9 @@ trait ResolvesResource
 
         if ($id = request()->route()->parameter('id')) {
             $this->entry = $this->resource->find($id);
+
+            // Recreate resource with entry injected (fields)
+            $this->resource = EntryResource::make($this->entry);
         }
 
         return $this->resource;

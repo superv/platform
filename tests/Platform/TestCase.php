@@ -3,6 +3,7 @@
 namespace Tests\Platform;
 
 use Hub;
+use Illuminate\Http\UploadedFile;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\Installer;
@@ -152,5 +153,9 @@ class TestCase extends OrchestraTestCase
     public function basePath($path = null)
     {
         return __DIR__.($path ? '/'.$path : '');
+    }
+
+    protected function makeUploadedFile($filename = 'square.png') {
+        return new UploadedFile($this->basePath('__fixtures__/'.$filename), $filename);
     }
 }

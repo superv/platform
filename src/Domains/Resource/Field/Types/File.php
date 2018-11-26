@@ -51,8 +51,9 @@ class File extends FieldType implements DoesNotInteractWithTable, AcceptsEntry, 
 
     public function getMutator(): ?Closure
     {
-        return function ($requestFile) {
+        return function ($requestFile, $entry) {
             $this->requestFile = $requestFile;
+            $this->entry = $entry;
 
             return function () {
                 if (! $this->requestFile) {

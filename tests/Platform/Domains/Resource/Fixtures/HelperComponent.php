@@ -29,7 +29,7 @@ class HelperComponent extends BaseComponent
     {
         $component = new self($array['props']);
         $component->name = $array['component'];
-        $component->uuid = $array['uuid'];
+        $component->uuid = $array['uuid'] ?? null;
 
         return $component;
     }

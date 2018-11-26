@@ -94,7 +94,7 @@ class ResourceView implements ProvidesUIComponent
                             ],
 
                             'fields' => $this->resource->getFields()->each(function (Field $field) {
-                                $field->hydrateFrom($this->entry);
+                                $field->setEntry($this->entry);
                             }),
 
                         ]);

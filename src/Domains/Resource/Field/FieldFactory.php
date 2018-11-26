@@ -2,8 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
-use SuperV\Platform\Domains\Resource\Resource;
-
 class FieldFactory
 {
     /**

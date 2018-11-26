@@ -28,7 +28,13 @@ interface Field
 
     public function setWatcher(Watcher $watcher);
 
-    public function setValueFromWatcher();
+    public function setEntry(EntryContract $entry);
+
+    public function getEntry(): EntryContract;
+
+    public function hasEntry(): bool;
+
+    public function resolveFromEntry(EntryContract $entry);
 
     public function isHidden();
 
@@ -49,8 +55,6 @@ interface Field
     public function getPresenter();
 
     public function getRules();
-
-    public function hydrateFrom(EntryContract $entry);
 
     public function hydrateFromRequest($value, $entry);
 }

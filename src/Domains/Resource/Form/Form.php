@@ -78,7 +78,7 @@ class Form implements ProvidesUIComponent
                     $field->hide();
                 }
 
-                $field->setValueFromWatcher();
+                $field->resolveFromEntry($watcher);
             });
         }
     }
@@ -99,16 +99,6 @@ class Form implements ProvidesUIComponent
                 }
             });
         }
-//        $this->getFields()->map(function (Field $field) {
-//            if ($field->isHidden() || ! $this->request->has($field->getColumnName())) {
-//                return;
-//            }
-//
-//            $requestValue = $this->request->__get($field->getColumnName());
-//            if ($callback = $field->setValue($requestValue)) {
-//                $this->postSaveCallbacks[] = $callback;
-//            }
-//        });
 
         $this->notifyWatchers($this);
 

@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
-use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 

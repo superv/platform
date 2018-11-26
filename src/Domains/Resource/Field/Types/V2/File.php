@@ -3,20 +3,15 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types\V2;
 
 use Closure;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
-use SuperV\Platform\Domains\Resource\Contracts\AcceptsEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
 use SuperV\Platform\Support\Composer\Composition;
 
-class File extends FieldTypeV2 implements DoesNotInteractWithTable, AcceptsEntry, AltersFieldComposition
+class File extends FieldTypeV2 implements DoesNotInteractWithTable, AltersFieldComposition
 {
-    /** @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract */
-    protected $entry;
-
     protected $requestFile;
 
     public function getValueForValidation()
@@ -31,22 +26,25 @@ class File extends FieldTypeV2 implements DoesNotInteractWithTable, AcceptsEntry
 
     public function getMediaUrl()
     {
-        if ($entry = $this->entry) {
-            $media = $this->makeMediaBag()->media()->where('label', $this->getName())->latest()->first();
+        $media = $this->makeMediaBag()->media()->where('label', $this->getName())->latest()->first();
 
-            if ($media) {
-               return $media->url();
-            }
+        if (! $media) {
+            return null;
         }
 
+        return $media->url();
     }
 
     public function getMutator(): ?Closure
     {
+        if (! $this->field->hasEntry()) {
+            return null;
+        }
+
         return function ($requestFile) {
             $this->requestFile = $requestFile;
 
-            return function ()  {
+            return function () {
                 if (! $this->requestFile) {
                     return null;
                 }
@@ -65,7 +63,7 @@ class File extends FieldTypeV2 implements DoesNotInteractWithTable, AcceptsEntry
 
     protected function makeMediaBag(): MediaBag
     {
-        return new MediaBag($this->entry, $this->getName());
+        return new MediaBag($this->field->getEntry(), $this->getName());
     }
 
     protected function getConfigAsMediaOptions()
@@ -76,15 +74,10 @@ class File extends FieldTypeV2 implements DoesNotInteractWithTable, AcceptsEntry
                            ->visibility($this->getConfigValue('visibility', 'private'));
     }
 
-    public function acceptEntry(EntryContract $entry)
-    {
-        $this->entry = $entry;
-    }
-
     public function alterComposition(Composition $composition)
     {
-
-        $composition->replace('config', ['url' => $this->getMediaUrl()]);
-//        $composition->replace('config', array_except($config, ['disk', 'path', 'visibility']));
+        if ($this->field->hasEntry()) {
+            $composition->replace('config', ['url' => $this->getMediaUrl()]);
+        }
     }
 }

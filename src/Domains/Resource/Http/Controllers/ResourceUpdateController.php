@@ -12,15 +12,10 @@ class ResourceUpdateController extends BaseApiController
 
     public function __invoke()
     {
-       $resource = $this->resolveResource();
+        $this->resolveResource();
 
-        FormConfig::make()
+        FormConfig::make($this->entry)
                   ->setUrl($this->entry->route('update'))
-                  ->addGroup(
-                      $fields = $resource->getFields(),
-                      $entry = $this->entry,
-                      $handle = $resource->getHandle()
-                  )
                   ->makeForm()
                   ->setRequest($this->request)
                   ->save();

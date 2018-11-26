@@ -11,7 +11,6 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeOld;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Composition;
@@ -36,6 +35,9 @@ class Field implements FieldContract, Composable
      * @var string
      */
     protected $type = 'text';
+
+    /** @var EntryContract */
+    protected $entry;
 
     /**
      * @var string
@@ -254,6 +256,10 @@ class Field implements FieldContract, Composable
             return ($this->accessor)($this->value);
         }
 
+        if ($this->entry) {
+            return $this->entry->getAttribute($this->getColumnName());
+        }
+
         return $this->value;
     }
 
@@ -307,14 +313,9 @@ class Field implements FieldContract, Composable
         }
     }
 
-    public function hydrateFrom(EntryContract $entry)
+    public function resolveFromEntry(EntryContract $entry)
     {
         $this->value = $entry->getAttribute($this->getColumnName());
-    }
-
-    public function setValueFromWatcher()
-    {
-        $this->value = $this->watcher->getAttribute($this->getColumnName());
     }
 
     public function setWatcher(Watcher $watcher)
@@ -412,5 +413,20 @@ class Field implements FieldContract, Composable
     public function uuid(): string
     {
         return $this->uuid;
+    }
+
+    public function setEntry(EntryContract $entry): void
+    {
+        $this->entry = $entry;
+    }
+
+    public function getEntry(): EntryContract
+    {
+        return $this->entry;
+    }
+
+    public function hasEntry(): bool
+    {
+        return !is_null($this->entry);
     }
 }
