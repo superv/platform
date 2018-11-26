@@ -2,7 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
+use SuperV\Platform\Domains\Resource\Resource;
 
 class FormConfig
 {
@@ -13,8 +15,19 @@ class FormConfig
     /** @var string */
     protected $url;
 
+    public function __construct($fieldsProvider = null)
+    {
+        if ($fieldsProvider) {
+            $this->addGroup($fieldsProvider);
+        }
+    }
+
     public function addGroup($fieldsProvider, Watcher $watcher = null, string $handle = 'default'): self
     {
+        if ($fieldsProvider instanceof EntryContract) {
+            $watcher = $fieldsProvider;
+            $fieldsProvider = Resource::of($fieldsProvider->getTable());
+        }
         $this->groups[$handle] = ['provider' => $fieldsProvider, 'watcher' => $watcher];
 
         return $this;
@@ -42,6 +55,11 @@ class FormConfig
         return $this->hiddenFields;
     }
 
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
     public function setUrl(string $url): FormConfig
     {
         $this->url = $url;
@@ -49,18 +67,8 @@ class FormConfig
         return $this;
     }
 
-    public function getUrl()
+    public static function make($fieldsProvider = null): FormConfig
     {
-        return $this->url;
-    }
-
-    public static function make(): FormConfig
-    {
-        return new static;
-    }
-
-    public static function getHandle(): string
-    {
-        return 'forms';
+        return new static($fieldsProvider);
     }
 }

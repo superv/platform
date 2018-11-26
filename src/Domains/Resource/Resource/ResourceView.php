@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Resource;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -59,14 +60,26 @@ class ResourceView implements ProvidesUIComponent
 
     protected function getActions()
     {
-        return $this->resource->getRelations()
-                              ->filter(function (Relation $relation) { return $relation instanceof ProvidesTable; })
+        $relationActions = $this->resource->getRelations()
                               ->map(function (Relation $relation) {
-                                  return [
-                                      'url'   => $relation->indexRoute($this->entry),
-                                      'title' => str_unslug($relation->getName()),
-                                  ];
-                              })->all();
+                                  if ($relation instanceof ProvidesTable) {
+                                      return [
+                                          'url'   => $relation->indexRoute($this->entry),
+                                          'title' => str_unslug($relation->getName()),
+                                      ];
+                                  } elseif ($relation instanceof ProvidesForm) {
+                                      return [
+                                          'url'   => $relation->route('edit', $this->entry),
+                                          'title' => str_unslug($relation->getName()),
+                                      ];
+                                  }
+                              })
+                              ->filter()->values()->all();
+
+
+        return array_merge([
+            ['url' => $this->resource->route('edit', $this->entry), 'title' => 'Edit']
+        ], $relationActions);
     }
 
     public function makeComponent(): ComponentContract

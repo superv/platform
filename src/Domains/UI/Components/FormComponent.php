@@ -4,17 +4,12 @@ namespace SuperV\Platform\Domains\UI\Components;
 
 use SuperV\Platform\Domains\Resource\Form\Form;
 
-class FormComponent extends BaseComponent
+class FormComponent extends Component
 {
     protected $name = 'sv-form';
 
     /** @var \SuperV\Platform\Domains\Resource\Form\Form */
     protected $form;
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
 
     public function getProps(): Props
     {

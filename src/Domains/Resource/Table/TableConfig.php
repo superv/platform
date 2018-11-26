@@ -68,7 +68,7 @@ class TableConfig
                 return $action->makeComponent();
             });
 
-        $this->rowActions = collect($this->rowActions ?? [ViewEntryAction::class, EditEntryAction::class])
+        $this->rowActions = collect($this->rowActions ?? [ViewEntryAction::class])
             ->map(function ($action) {
                 /** @var \SuperV\Platform\Domains\Resource\Action\Action $action */
                 if (is_string($action)) {

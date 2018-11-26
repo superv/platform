@@ -24,28 +24,10 @@ class HasOne extends Relation implements ProvidesForm, HandlesRequests
         );
     }
 
-    protected function getRelatedEntry(): ?EntryContract
-    {
-        if ($entry = $this->newQuery()->getResults()) {
-            return $entry;
-        }
-
-        return null;
-    }
-
     public function makeForm(): Form
     {
-        $relatedEntry = $this->getRelatedEntry() ?? $this->newQuery()->make();
-
-        return FormConfig::make()
-                         ->setUrl(sprintf(
-                             'sv/res/%s/%s/rel/%s',
-                             $this->getParentResourceHandle(),
-                             $this->parentEntry->getId(),
-                             $this->getName()
-                         ))
-                         ->addGroup(Resource::of($relatedEntry), $relatedEntry)
-                         ->hideField($parentBelongsToFieldName = Resource::of($this->parentEntry)->getResourceKey())
+        return FormConfig::make($this->getRelatedEntry())
+                         ->hideField(Resource::of($this->parentEntry)->getResourceKey() .'_id')
                          ->makeForm();
     }
 

@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Resource\Http\Controllers\LookupController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\RelationController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\RelationCreateController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\RelationIndexController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\RelationUpdateController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceCreateController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceIndexController;
@@ -27,13 +28,16 @@ return [
         return 'SuperV Platform @'.Current::port()->slug();
     },
 
-    'POST@'.'sv/res/{resource}/{id}/rel/{relation}'        => RelationController::at('request'),
+    'POST@'.'sv/res/{resource}/{id}/rel/{relation}' => RelationController::at('request'),
 
     'POST@'.'sv/res/{resource}/{id}/rel/{relation}/attach' => [
         'as'   => 'relation.attach',
         'uses' => RelationController::at('attach'),
     ],
-    'POST@'.'sv/res/{resource}/{id}/rel/{relation}/detach' => RelationController::at('detach'),
+    'POST@'.'sv/res/{resource}/{id}/rel/{relation}/detach' => [
+        'as'   => 'relation.attach',
+        'uses' => RelationController::at('detach'),
+    ],
 
     'sv/res/{resource}/{id}/rel/{relation}/lookup/{data?}' => [
         'as'   => 'relation.lookup',
@@ -44,16 +48,22 @@ return [
         'as'   => 'relation.create',
         'uses' => RelationCreateController::at('create'),
     ],
+    'POST@'.'sv/res/{resource}/{id}/rel/{relation}' => [
+        'as'   => 'relation.store',
+        'uses' => RelationCreateController::at('store'),
+    ],
+
+    'sv/res/{resource}/{id}/rel/{relation}/edit' => [
+        'as'   => 'relation.edit',
+        'uses' => RelationUpdateController::at('edit'),
+    ],
 
     'sv/res/{resource}/{id}/rel/{relation}/{data?}' => [
         'as'   => 'relation.index',
         'uses' => RelationIndexController::class,
     ],
 
-    'POST@'.'sv/res/{resource}/{id}/rel/{relation}' => [
-        'as'   => 'relation.store',
-        'uses' => RelationCreateController::at('store'),
-    ],
+
 
     /**
      * Resource Management

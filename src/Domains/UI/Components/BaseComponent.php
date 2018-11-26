@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\UI\Components;
 
+use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Domains\UI\Components\Concerns\StyleHelper;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Composition;

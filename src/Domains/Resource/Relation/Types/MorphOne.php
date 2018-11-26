@@ -28,27 +28,9 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequ
         );
     }
 
-    protected function getRelatedEntry(): ?EntryContract
-    {
-        if ($entry = $this->newQuery()->getResults()) {
-            return $entry;
-        }
-
-        return null;
-    }
-
     public function makeForm(): Form
     {
-        $relatedEntry = $this->getRelatedEntry() ?? $this->newQuery()->make();
-
-        return FormConfig::make()
-                         ->setUrl(sprintf(
-                             'sv/res/%s/%s/rel/%s',
-                             $this->getParentResourceHandle(),
-                             $this->parentEntry->getId(),
-                             $this->getName()
-                         ))
-                         ->addGroup(Resource::of($relatedEntry), $relatedEntry)
+        return FormConfig::make($this->getRelatedEntry())
                          ->makeForm();
     }
 

@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\UI\Components\FormComponent;
+use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -149,7 +149,11 @@ class Form implements ProvidesUIComponent
 
     public function makeComponent(): ComponentContract
     {
-        return FormComponent::from($this);
+        return Component::make('sv-form')
+                        ->setProps(
+                            $this->compose()->get()
+                        );
+//        return FormComponent::from($this);
     }
 
     public function mergeFields($fields, ?Watcher $watcher, string $handle = 'default')
@@ -226,7 +230,7 @@ class Form implements ProvidesUIComponent
 
     public function getUrl()
     {
-        return $this->config->getUrl();
+        return $this->url ?? $this->config->getUrl();
     }
 
     public function getMethod(): string
@@ -237,6 +241,13 @@ class Form implements ProvidesUIComponent
     public function getWatcher(?string $handle = 'default')
     {
         return $this->watchers[$handle];
+    }
+
+    public function setUrl(string $url): Form
+    {
+        $this->url = $url;
+
+        return $this;
     }
 
     public function uuid(): string

@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Http;
 
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 trait ResolvesResource
@@ -32,7 +34,9 @@ trait ResolvesResource
         return $this->resource;
     }
 
-    /** @return \SuperV\Platform\Domains\Resource\Relation\Relation */
+    /**
+     * @return \SuperV\Platform\Domains\Resource\Relation\Relation|ProvidesForm|ProvidesTable
+     */
     protected function resolveRelation()
     {
         $relation = $this->resolveResource()->getRelation($this->route->parameter('relation'));

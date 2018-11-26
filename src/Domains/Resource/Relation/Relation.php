@@ -63,6 +63,15 @@ abstract class Relation implements AcceptsParentEntry
         return Resource::of($this->config->getRelatedResource());
     }
 
+    protected function getRelatedEntry(): ?EntryContract
+    {
+        if ($entry = $this->newQuery()->first()) {
+            return $entry;
+        }
+
+        return $this->newQuery()->make();
+    }
+
     public function getName(): string
     {
         return $this->name;
