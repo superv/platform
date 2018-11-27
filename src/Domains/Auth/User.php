@@ -27,10 +27,6 @@ class User extends Entry implements
 
     protected $visible = ['id', 'email', 'name'];
 
-    protected $casts = [
-        'ports' => 'json',
-    ];
-
     public function getEmailForPasswordReset()
     {
         return $this->email;
@@ -101,5 +97,6 @@ class User extends Entry implements
 
     public function getId()
     {
+        return $this->getKey();
     }
 }

@@ -2,8 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\Resource\Table\ResourceTable;
+use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
 class RelationIndexController extends BaseApiController
@@ -14,13 +16,14 @@ class RelationIndexController extends BaseApiController
     {
         $relation = $this->resolveRelation();
 
-        $table->setResource($relation->getRelatedResource());
-        $table->setConfig($this->resolveRelation()->makeTableConfig());
+        if ($relation instanceof ProvidesTable) {
+            $table = $relation->makeTable();
+        }
 
         if ($this->route->parameter('data')) {
             return $table->build();
-        } else {
-            return ['data' => sv_compose($table->makeComponent())];
         }
+
+        return MakeComponentTree::dispatch($table)->withTokens(['res' => $relation->getRelatedResource()->toArray()]);
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
@@ -49,6 +50,12 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
     protected $actions = [];
 
+    protected $contextActions = [];
+
+    protected $dataUrl;
+
+    protected $mergeFields;
+
     public function __construct(DataProvider $provider)
     {
         $this->options = collect();
@@ -56,9 +63,16 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         $this->provider = $provider;
     }
 
+    public function mergeFields($fields)
+    {
+        $this->mergeFields = $fields;
+
+        return $this;
+    }
+
     public function build(): self
     {
-        $this->provider->setQuery($this->resource->newQuery());
+        $this->provider->setQuery($this->getQuery());
         $this->provider->setRowsPerPage($this->getOption('limit', 10));
         $this->provider->fetch();
 
@@ -68,23 +82,39 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
             function (EntryContract $entry) {
                 $fields = ResourceFactory::make($entry)
                                          ->getTableFields()
+                                         ->merge($this->copyMergeFields())
                                          ->map(function (Field $field) use ($entry) {
                                              return (new FieldComposer($field))->forTableRow($entry);
                                          })->values();
 
                 return [
-                    'id' => $entry->getId(),
-                    'fields' => $fields,
-                    'actions' => ['view']
+                    'id'      => $entry->getId(),
+                    'fields'  => $fields,
+                    'actions' => ['view'],
                 ];
             });
 
         return $this;
     }
 
+    protected function copyMergeFields()
+    {
+        return wrap_collect($this->mergeFields)
+            ->map(function (Field $field) {
+                return clone $field;
+            });
+    }
+
     public function addAction($action)
     {
         $this->actions[] = $action;
+
+        return $this;
+    }
+
+    public function addContextAction($action)
+    {
+        $this->contextActions[] = $action;
 
         return $this;
     }
@@ -115,13 +145,17 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
     public function getQuery()
     {
         if (! $this->query) {
-            $this->query = $this->config->newQuery();
+            $this->query = $this->resource->newQuery();
+        }
+
+        if ($this->query instanceof ProvidesQuery) {
+            return $this->query->newQuery();
         }
 
         return $this->query;
     }
 
-    public function setQuery($query): Table
+    public function setQuery($query): self
     {
         $this->query = $query;
 
@@ -149,13 +183,21 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
     {
         $composition = new Composition([
             'config' => [
-                'data_url'    => sv_url($this->resource->route('index.table').'/data'),
-                'fields'      => $this->resource->getTableFields()
-                                                ->map(function (Field $field) {
-                                                    return (new FieldComposer($field))->forTableConfig();
-                                                })
-                                                ->values(),
-                'row_actions' => collect($this->actions)->map(function ($action) {
+                'data_url'        => $this->dataUrl ?? sv_url($this->resource->route('index.table').'/data'),
+                'fields'          => $this->resource->getTableFields()
+                                                    ->merge($this->copyMergeFields())
+                                                    ->map(function (Field $field) {
+                                                        return (new FieldComposer($field))->forTableConfig();
+                                                    })
+                                                    ->values(),
+                'row_actions'     => collect($this->actions)->map(function ($action) {
+                    if (is_string($action)) {
+                        $action = $action::make();
+                    }
+
+                    return $action;
+                }),
+                'context_actions' => collect($this->contextActions)->map(function ($action) {
                     if (is_string($action)) {
                         $action = $action::make();
                     }
@@ -188,6 +230,13 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
     protected function makeTokens(): array
     {
         return [];
+    }
+
+    public function setDataUrl($dataUrl)
+    {
+        $this->dataUrl = $dataUrl;
+
+        return $this;
     }
 
     public function uuid()

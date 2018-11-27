@@ -125,16 +125,6 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
         return $composition;
     }
 
-    public function onPresenting(Closure $callback)
-    {
-        $this->on('presenting', $callback);
-    }
-
-    public function getPresenter()
-    {
-        return  $this->presenter;
-    }
-
     public function getLabel(): string
     {
         return $this->label ?? str_unslug($this->name);
@@ -396,5 +386,15 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
     public function getComposer()
     {
         return $this->composer;
+    }
+
+    public function setPresenter(Closure $callback)
+    {
+        $this->presenter = $callback;
+    }
+
+    public function getPresenter()
+    {
+        return  $this->presenter;
     }
 }

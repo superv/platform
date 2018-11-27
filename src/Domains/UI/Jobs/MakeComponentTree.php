@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Dispatchable;
 
-class MakeComponentJob
+class MakeComponentTree
 {
     use Dispatchable;
 

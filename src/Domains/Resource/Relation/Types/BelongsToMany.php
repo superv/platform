@@ -11,8 +11,10 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\TableColumn;
 use SuperV\Platform\Domains\Resource\Table\TableConfig;
+use SuperV\Platform\Domains\Resource\Table\TableV2;
 
 class BelongsToMany extends Relation implements ProvidesTable
 {
@@ -29,8 +31,20 @@ class BelongsToMany extends Relation implements ProvidesTable
         );
     }
 
-    public function makeTableConfig(): TableConfig
+    public function makeTable()
     {
+        return app(TableV2::class)
+            ->setResource($this->getRelatedResource())
+            ->setQuery($this)
+            ->addAction(DetachEntryAction::make()->setRelation($this))
+            ->setDataUrl(url()->current().'/data')
+            ->addContextAction(AttachEntryAction::make()->setRelation($this))
+            ->mergeFields($this->getPivotFields());
+    }
+
+    public function makeTableold()
+    {
+
         $resource = ResourceFactory::make($this->getConfig()->getRelatedResource());
 
         $fields = $resource->getFields();
@@ -42,7 +56,7 @@ class BelongsToMany extends Relation implements ProvidesTable
                                              return in_array($field->getColumnName(), $pivotColumns);
                                          })
                                          ->map(function (Field $field) {
-                                             $field->onPresenting(function ($value) use ($field) {
+                                             $field->setPresenter(function ($value) use ($field) {
                                                  if (is_object($value) && $pivot = $value->pivot) {
                                                      return $pivot->{$field->getColumnName()};
                                                  }

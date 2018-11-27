@@ -15,6 +15,7 @@ class Blueprints
     public function users()
     {
         $this->groups();
+        $this->roles();
 
         $users = $this->create('t_users', function (Blueprint $table, ResourceBlueprint $resource) {
             $resource->resourceKey('user');
@@ -28,7 +29,11 @@ class Blueprints
             $table->file('avatar')->config(['disk' => 'fakedisk']);
 
             $table->belongsTo('t_groups', 'group')->showOnIndex();
-            $table->morphToMany('t_roles', 'roles', 'owner', 'assigned_roles', 'role');
+            $table->belongsToMany('t_roles', 'roles', 'assigned_roles', 'user_id', 'role_id',
+                function (Blueprint $pivotTable) {
+                    $pivotTable->string('notes');
+                });
+
             $table->morphToMany('t_actions', 'actions', 'owner', 'assigned_actions', 'action',
                 function (Blueprint $pivotTable) {
                     $pivotTable->string('provision');
@@ -54,10 +59,15 @@ class Blueprints
     /** @return Resource */
     public function roles()
     {
-        return $this->create('t_roles', function (Blueprint $table) {
+        $roles = $this->create('t_roles', function (Blueprint $table, ResourceBlueprint $resource) {
+            $resource->resourceKey('role');
             $table->increments('id');
             $table->string('title')->unique();
         });
+
+        $roles->create(['id' => 1, 'title' => 'client']);
+        $roles->create(['id' => 2, 'title' => 'admin']);
+        $roles->create(['id' => 3, 'title' => 'root']);
     }
 
     /** @return Resource */

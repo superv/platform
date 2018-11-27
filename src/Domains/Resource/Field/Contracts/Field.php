@@ -47,8 +47,6 @@ interface Field
 
     public function hide();
 
-    public function onPresenting(Closure $callback);
-
     public function getAlterQueryCallback();
 
     public function getRules();
@@ -64,4 +62,6 @@ interface Field
     public function getComposer();
 
     public function getPresenter();
+
+    public function setPresenter(Closure $callback);
 }

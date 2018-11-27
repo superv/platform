@@ -5,14 +5,14 @@ namespace Tests\Platform\Domains\UI\Jobs;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
-use SuperV\Platform\Domains\UI\Jobs\MakeComponentJob;
+use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use Tests\Platform\TestCase;
 
 class MakeComponentJobTest extends TestCase
 {
     function test__bsmllh()
     {
-        $comp = MakeComponentJob::dispatch(new HeadingProvides);
+        $comp = MakeComponentTree::dispatch(new HeadingProvides);
 
         $this->assertInstanceOf(Component::class, $comp);
 

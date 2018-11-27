@@ -6,7 +6,7 @@ use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\UI\Components\PageComponent;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
-use SuperV\Platform\Domains\UI\Jobs\MakeComponentJob;
+use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 
 class Page implements ProvidesUIComponent, Responsable
 {
@@ -37,7 +37,7 @@ class Page implements ProvidesUIComponent, Responsable
     {
         $this->tokens = $tokens;
 
-        $this->component = MakeComponentJob::dispatch($this);
+        $this->component = MakeComponentTree::dispatch($this);
 //
 //        $this->component = $this->makeComponent();
 //

@@ -12,37 +12,101 @@ class RelationIndexTest extends ResourceTestCase
         $users = $this->schema()->users();
         $posts = $this->schema()->posts();
 
+        // seed the main user (parent)
+        //
         $userA = $users->fake();
-       $userPosts = $userA->posts()->createMany($posts->fakeMake([], 5));
+        $userPosts = $userA->posts()->createMany($posts->fakeMake([], 5));
 
+        // seed some other data, that should not be displayed
+        //
         $userB = $users->fake();
         $userB->posts()->createMany($posts->fakeMake([], 3));
+
+        // make sure we have 8 posts in total
+        //
         $this->assertEquals(8, $posts->count());
 
+        // get the relation table over http
+        //
         $url = route('relation.index', ['resource' => 't_users', 'id' => $userA->getId(), 'relation' => 'posts']);
-
         $response = $this->getJsonUser($url);
         $response->assertOk();
-
         $table = HelperComponent::from($response->decodeResponseJson('data'));
-        $this->assertEquals(1, count($table->getProp('config.context.actions')));
 
-        $action = HelperComponent::from($table->getProp('config.context.actions.0'));
+        // We should have 1 context action (Create New)
+        //
+        $this->assertEquals(1, count($table->getProp('config.context_actions')));
+        $action = HelperComponent::from($table->getProp('config.context_actions.0'));
 
+        // Check the actions url, should point to create new relation form
+        //
         $this->assertEquals(
             route('relation.create', ['resource' => 't_users', 'id' => $userA->getId(), 'relation' => 'posts']),
             sv_url($action->getProp('url')));
 
-        $response = $this->getJsonUser($table->getProp('config.dataUrl'));
+        // Now get the table data
+        //
+        $response = $this->getJsonUser($table->getProp('config.data_url'));
+        $response->assertOk();
+        $rows = $response->decodeResponseJson('data.rows');
+
+        // check row count
+        //
+        $this->assertEquals(5, count($rows));
+
+        // check the View Action Url
+        //
+        $viewAction = HelperComponent::from($table->getProp('config.row_actions.0'));
+        $firstPost = $userPosts->first();
+        $this->assertEquals($firstPost->route('view'), str_replace('{entry.id}', $firstPost->getId(), $viewAction->getProp('url')));
+    }
+
+    function test__index_listing_with_belongs_to_many_relations()
+    {
+        $this->withoutExceptionHandling();
+
+        $users = $this->schema()->users();
+
+        $userA = $users->fake();
+        $userA->roles()->attach([1 => ['notes' => 'note-1']]);
+        $userA->roles()->attach([2 => ['notes' => 'note-2']]);
+
+        $relation = $users->getRelation('roles', $userA);
+
+        $url = $relation->route('index', $userA);
+        $response = $this->getJsonUser($url);
+        $response->assertOk();
+
+        $table = HelperComponent::from($response->decodeResponseJson('data'));
+
+        //  Only two fields for this table,
+        //  role.title + pivot.notes
+        //
+        $fields = $table->getProp('config.fields');
+        $this->assertEquals(2, count($fields));
+
+        // We should have 1 context action (Attach)
+        //
+        $this->assertEquals(1, count($table->getProp('config.context_actions')));
+        $action = HelperComponent::from($table->getProp('config.context_actions.0'));
+
+        $this->assertEquals('sv-attach-entry-action', $action->getName());
+        $this->assertEquals(sv_url($relation->route('lookup', $userA)), $action->getProp('lookup-url'));
+        $this->assertEquals(sv_url($relation->route('attach', $userA)), $action->getProp('attach-url'));
+        $this->assertEquals('notes', $action->getProp('pivot-fields.0.name'));
+
+        $response = $this->getJsonUser($table->getProp('config.data_url'));
         $response->assertOk();
 
         $rows = $response->decodeResponseJson('data.rows');
-        $this->assertEquals(5, count($rows));
+        $this->assertEquals(2, count($rows));
 
-        $viewAction = HelperComponent::from($rows[0]['actions'][0]);
+        // first make sure we have the pivot fields on table
+        //
+        $this->assertNotNull($rows[0]['fields'][1] ?? null);
 
-
-        $this->assertEquals($userPosts->first()->route('view'), $viewAction->getProp('url'));
+        $this->assertEquals('note-1', $rows[0]['fields'][1]['value']);
+        $this->assertEquals('note-2', $rows[1]['fields'][1]['value']);
     }
 
     function test__index_listing_with_morph_to_many_relations()
@@ -58,21 +122,42 @@ class RelationIndexTest extends ResourceTestCase
         $userA->actions()->attach([2 => ['provision' => 'fail']]);
         $userA->actions()->attach([3 => ['provision' => 'fail']]);
 
-        $url = route('relation.index', ['resource' => 't_users', 'id' => $userA->getId(), 'relation' => 'actions']);
+        $relation = $users->getRelation('actions', $userA);
 
+        $url = $relation->route('index', $userA);
         $response = $this->getJsonUser($url);
         $response->assertOk();
 
         $table = HelperComponent::from($response->decodeResponseJson('data'));
 
-        $response = $this->getJsonUser($table->getProp('config.dataUrl'));
+        //  Only two fields for this table,
+        //  action.slug + pivot.provision
+        //
+        $fields = $table->getProp('config.fields');
+        $this->assertEquals(2, count($fields));
+
+        // We should have 1 context action (Attach)
+        //
+        $this->assertEquals(1, count($table->getProp('config.context_actions')));
+        $action = HelperComponent::from($table->getProp('config.context_actions.0'));
+
+        $this->assertEquals('sv-attach-entry-action', $action->getName());
+        $this->assertEquals(sv_url($relation->route('lookup', $userA)), $action->getProp('lookup-url'));
+        $this->assertEquals(sv_url($relation->route('attach', $userA)), $action->getProp('attach-url'));
+        $this->assertEquals('provision', $action->getProp('pivot-fields.0.name'));
+
+        $response = $this->getJsonUser($table->getProp('config.data_url'));
         $response->assertOk();
 
         $rows = $response->decodeResponseJson('data.rows');
         $this->assertEquals(3, count($rows));
 
-        $this->assertEquals('pass', $rows[0]['values']['provision']);
-        $this->assertEquals('fail', $rows[1]['values']['provision']);
-        $this->assertEquals('fail', $rows[2]['values']['provision']);
+        // first make sure we have the pivot fields on table
+        //
+        $this->assertNotNull($rows[0]['fields'][1] ?? null);
+
+        $this->assertEquals('pass', $rows[0]['fields'][1]['value']);
+        $this->assertEquals('fail', $rows[1]['fields'][1]['value']);
+        $this->assertEquals('fail', $rows[2]['fields'][1]['value']);
     }
 }
