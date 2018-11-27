@@ -12,7 +12,6 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -216,8 +215,7 @@ class FormTest extends ResourceTestCase
                                                                'age'    => 33,
                                                                'avatar' => $file]));
 
-        $field = $form->getField('avatar');
-        $field->setEntry($testUser);
+        $form->getField('avatar');
 
         $form->save();
 
@@ -254,7 +252,7 @@ class FormTestUser extends Model implements Watcher, EntryContract
     }
 }
 
-class TestFileFieldType extends FieldTypeV2
+class TestFileFieldType extends FieldType
 {
     protected $hasColumn = false;
 }

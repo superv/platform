@@ -1,17 +1,16 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types\V2;
+namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Composer\Composition;
 
-class BelongsTo extends FieldTypeV2 implements NeedsDatabaseColumn, AltersTableQuery
+class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQuery
 {
     public function getPresenter(): ?Closure
     {

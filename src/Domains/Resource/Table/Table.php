@@ -9,8 +9,8 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
 use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
-use SuperV\Platform\Domains\UI\Components\TableComponent;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
+use SuperV\Platform\Domains\UI\Components\TableComponent;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
@@ -151,12 +151,6 @@ class Table implements Composable, ProvidesUIComponent, Responsable
         return $this->pagination;
     }
 
-    public function uuid()
-    {
-        return $this->config->uuid();
-    }
-
-
     public function makeComponent(): ComponentContract
     {
         return TableComponent::from($this);
@@ -183,6 +177,10 @@ class Table implements Composable, ProvidesUIComponent, Responsable
         return [];
     }
 
+    public function uuid()
+    {
+        return $this->config->uuid();
+    }
 
     public static function config(TableConfig $config): self
     {

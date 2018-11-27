@@ -27,21 +27,32 @@ trait FiresCallbacks
     {
         $method = camel_case('on_'.$trigger);
 
+        // Call onQuerying..
+        //
         if (method_exists($this, $method)) {
             app()->call([$this, $method], $parameters);
         }
 
         foreach (array_get($this->callbacks, $trigger, []) as $callback) {
+            //  Class:class or Closure
+            //
             if (is_string($callback) || $callback instanceof \Closure) {
                 app()->call($callback, $parameters);
             }
 
+            // Class:class@handle
+            //
             if (method_exists($callback, 'handle')) {
                 app()->call([$callback, 'handle'], $parameters);
             }
         }
 
         return $this;
+    }
+
+    public function mergeCallbacks(array $callbacks)
+    {
+        $this->callbacks = array_merge($this->callbacks, $callbacks);
     }
 
     public function hasCallback($trigger)
@@ -56,5 +67,10 @@ trait FiresCallbacks
         }
 
         return $this->callbacks[$trigger][0];
+    }
+
+    public function getCallbacks(): array
+    {
+        return $this->callbacks;
     }
 }

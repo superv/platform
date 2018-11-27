@@ -25,15 +25,7 @@ interface Field
 
     public function setConfigValue($key, $value = null);
 
-//    public function setValue($value);
-
     public function setWatcher(Watcher $watcher);
-
-    public function setEntry(EntryContract $entry): self;
-
-    public function getEntry(): EntryContract;
-
-    public function hasEntry(): bool;
 
     public function isHidden();
 

@@ -1,12 +1,11 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types\V2;
+namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
 
-class Number extends FieldTypeV2 implements NeedsDatabaseColumn
+class Number extends FieldType implements NeedsDatabaseColumn
 {
     public function getAccessor(): ?Closure
     {

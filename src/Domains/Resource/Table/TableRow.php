@@ -63,8 +63,10 @@ class TableRow implements Composable
     public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
         $composer = new Composition([
-            'values'  => $this->values,
-            'actions' => $this->table->getActions()->map(function(Action $action) { return $action->makeComponent(); }),
+            'values' => $this->values,
+            'actions' => $this->table->getActions()->map(function (Action $action) {
+                return $action->makeComponent();
+            }),
         ]);
 
         return sv_compose($composer, ['entry' => $this->entry]);

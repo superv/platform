@@ -11,7 +11,6 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Resource;
 
 class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequests
 {

@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
@@ -19,6 +18,19 @@ class ResourceModel extends Entry implements ProvidesFields
     protected $guarded = [];
 
     protected $casts = ['config' => 'array'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (Model $model) {
+            $model->attributes['uuid'] = Str::orderedUuid()->toString();
+        });
+
+        static::deleting(function (ResourceModel $entry) {
+            $entry->fields->map->delete();
+        });
+    }
 
     public function nav()
     {
@@ -118,18 +130,5 @@ class ResourceModel extends Entry implements ProvidesFields
         });
 
         return $entry;
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function (Model $model) {
-            $model->attributes['uuid'] = Str::orderedUuid()->toString();
-        });
-
-        static::deleting(function (ResourceModel $entry) {
-            $entry->fields->map->delete();
-        });
     }
 }

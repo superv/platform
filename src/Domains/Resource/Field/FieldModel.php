@@ -34,9 +34,13 @@ class FieldModel extends ResourceEntry
 //        $this->config = $config;
 //    }
 
-    public function getConfig()
+    protected static function boot()
     {
-        return $this->config ?? [];
+        parent::boot();
+
+        static::creating(function (Model $model) {
+            $model->attributes['uuid'] = Str::orderedUuid()->toString();
+        });
     }
 //
 //    public function getResourceEntry()
@@ -48,6 +52,11 @@ class FieldModel extends ResourceEntry
 //    {
 //        return $this->belongsTo(ResourceModel::class, 'resource_id');
 //    }
+
+    public function getConfig()
+    {
+        return $this->config ?? [];
+    }
 
     public function getColumnType()
     {
@@ -115,15 +124,6 @@ class FieldModel extends ResourceEntry
     public function uuid()
     {
         return $this->uuid;
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function (Model $model) {
-            $model->attributes['uuid'] = Str::orderedUuid()->toString();
-        });
     }
 
     public static function withUuid($uuid): self

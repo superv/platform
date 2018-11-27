@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types\V2;
+namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
@@ -8,10 +8,9 @@ use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
 use SuperV\Platform\Support\Composer\Composition;
 
-class File extends FieldTypeV2 implements DoesNotInteractWithTable
+class File extends FieldType implements DoesNotInteractWithTable
 {
     protected $requestFile;
 
@@ -58,5 +57,4 @@ class File extends FieldTypeV2 implements DoesNotInteractWithTable
                            ->path($this->getConfigValue('path'))
                            ->visibility($this->getConfigValue('visibility', 'private'));
     }
-
 }

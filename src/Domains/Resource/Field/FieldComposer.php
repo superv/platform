@@ -35,11 +35,11 @@ class FieldComposer
         }
 
         $composition = (new Composition([
-            'type'   => $field->getType(),
-            'uuid'   => $field->uuid(),
-            'name'   => $field->getName(),
-            'label'  => $field->getLabel(),
-            'value'  => $value ?? null,
+            'type'  => $field->getType(),
+            'uuid'  => $field->uuid(),
+            'name'  => $field->getName(),
+            'label' => $field->getLabel(),
+            'value' => $value ?? null,
         ]))->setFilterNull(true);
 
         if ($composer = $field->getComposer()) {

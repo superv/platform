@@ -12,7 +12,6 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
 use SuperV\Platform\Domains\Resource\Resource\ResourceView;
-use SuperV\Platform\Domains\Resource\Table\TableColumn;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -184,19 +183,18 @@ class Resource implements
 
         ]);
 
-     return collect()->put('label', $labelField)
-                                  ->merge(
-                                      $this->getFields()
-                                           ->map(function (Field $field) {
-                                               if ($field->getConfigValue('table.show') === true) {
-                                                   return $field;
-                                               }
+        return collect()->put('label', $labelField)
+                        ->merge(
+                            $this->getFields()
+                                 ->map(function (Field $field) {
+                                     if ($field->getConfigValue('table.show') === true) {
+                                         return $field;
+                                     }
 
-                                               return null;
-                                           })
-                                           ->filter()
-                                  );
-
+                                     return null;
+                                 })
+                                 ->filter()
+                        );
     }
 
     public function route($route, ?EntryContract $entry = null)

@@ -15,6 +15,15 @@ class RelationModel extends Entry
         'config' => 'array',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function (Model $model) {
+            $model->attributes['uuid'] = Str::orderedUuid()->toString();
+        });
+    }
+
     public function resource()
     {
         return $this->belongsTo(ResourceModel::class, 'resource_id');
@@ -39,14 +48,5 @@ class RelationModel extends Entry
         });
 
         return $entry;
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function (Model $model) {
-            $model->attributes['uuid'] = Str::orderedUuid()->toString();
-        });
     }
 }

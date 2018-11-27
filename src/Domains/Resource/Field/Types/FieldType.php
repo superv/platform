@@ -3,9 +3,12 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-abstract class FieldTypeV2
+abstract class FieldType
 {
+    use FiresCallbacks;
+
     protected $columnName;
 
     /**
@@ -52,7 +55,7 @@ abstract class FieldTypeV2
 
     public static function resolveClass($type)
     {
-        $base = 'SuperV\Platform\Domains\Resource\Field\Types\V2';
+        $base = 'SuperV\Platform\Domains\Resource\Field\Types';
 
         /** @var \SuperV\Platform\Domains\Resource\Field\Types\FieldType $class */
         $class = $base."\\".studly_case($type);

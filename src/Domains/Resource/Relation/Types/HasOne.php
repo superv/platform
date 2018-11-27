@@ -27,7 +27,7 @@ class HasOne extends Relation implements ProvidesForm, HandlesRequests
     public function makeForm(): Form
     {
         return FormConfig::make($this->getRelatedEntry())
-                         ->hideField(ResourceFactory::make($this->parentEntry)->getResourceKey() .'_id')
+                         ->hideField(ResourceFactory::make($this->parentEntry)->getResourceKey().'_id')
                          ->makeForm();
     }
 

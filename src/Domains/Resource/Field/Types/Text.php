@@ -1,11 +1,10 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types\V2;
+namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
 
-class Text extends FieldTypeV2 implements NeedsDatabaseColumn
+class Text extends FieldType implements NeedsDatabaseColumn
 {
     public function makeRules()
     {

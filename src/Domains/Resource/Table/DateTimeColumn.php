@@ -2,8 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use Illuminate\Support\Carbon;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 
 class DateTimeColumn extends TableColumn
 {
