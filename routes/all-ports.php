@@ -34,8 +34,8 @@ return [
         'as'   => 'relation.attach',
         'uses' => RelationController::at('attach'),
     ],
-    'POST@'.'sv/res/{resource}/{id}/rel/{relation}/detach' => [
-        'as'   => 'relation.attach',
+    'POST@'.'sv/res/{resource}/{id}/rel/{relation}/detach/{related}' => [
+        'as'   => 'relation.detach',
         'uses' => RelationController::at('detach'),
     ],
 

@@ -74,7 +74,7 @@ class RelationController extends BaseApiController
     {
         $this->resolveResource();
         $relationName = $this->route->parameter('relation');
-        $res = $this->entry->{$relationName}()->detach($this->request->get('item'));
+        $res = $this->entry->{$relationName}()->detach($this->route->parameter('related'));
 
         return $res;
     }

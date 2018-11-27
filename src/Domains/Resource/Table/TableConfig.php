@@ -5,13 +5,11 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Context\Context;
-use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
 use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesColumns;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
-use SuperV\Platform\Domains\UI\Components\TableComponent;
 use SuperV\Platform\Support\Composer\Composition;
 
 class TableConfig

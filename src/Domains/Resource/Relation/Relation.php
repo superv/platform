@@ -105,15 +105,15 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         return $this->parentEntry->getHandle();
     }
 
-    public function route($name, EntryContract $entry)
+    public function route($name, EntryContract $entry, array $params = [])
     {
-        return route('relation.'.$name,
-            [
-                'id'       => $entry->getId(),
-                'resource' => $entry->getTable(),
-                'relation' => $this->getName(),
-            ]
-            , false);
+        $params = array_merge([
+            'id'       => $entry->getId(),
+            'resource' => $entry->getTable(),
+            'relation' => $this->getName(),
+        ], $params);
+
+        return route('relation.'.$name, $params, false);
     }
 
     public function indexRoute(EntryContract $entry)

@@ -17,7 +17,6 @@ class ResourceTable extends Table
         return $this;
     }
 
-
     /**
      * @return array
      */

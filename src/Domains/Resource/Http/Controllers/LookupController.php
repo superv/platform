@@ -3,41 +3,34 @@
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
-use SuperV\Platform\Domains\Resource\Table\Table;
-use SuperV\Platform\Domains\Resource\Table\TableConfig;
+use SuperV\Platform\Domains\Resource\Table\TableV2;
+use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
 class LookupController extends BaseApiController
 {
     use ResolvesResource;
 
-    public function __invoke()
+    public function __invoke(TableV2 $table)
     {
-        $resource = $this->resolveRelation()->getRelatedResource();
+        $relation = $this->resolveRelation();
+        $resource = $relation->getRelatedResource();
 
-        $config = new TableConfig();
-        $config->setColumns($resource);
-        $config->setDataUrl(url()->current().'/data');
-        $config->build();
+        $table->setResource($resource);
+        $table->setDataUrl(url()->current().'/data');
 
-        $table = Table::config($config);
+        if ($this->route->parameter('data')) {
+            /** @var \Illuminate\Database\Eloquent\Builder $query */
+            $query = $resource->newQuery();
+            $alreadyAttachedItems = $this->entry->{$relation->getName()}()
+                                                ->pluck($resource->getHandle().'.id');
 
-        if (! $this->route->parameter('data')) {
-            return ['data' => sv_compose($table->makeComponent())];
+            $query->whereNotIn($query->getModel()->getKeyName(), $alreadyAttachedItems);
+            $table->setQuery($query);
+
+            return $table->build();
         }
 
-        $relation = $this->resolveRelation();
-
-        /** @var \Illuminate\Database\Eloquent\Builder $query */
-        $query = $relation->getRelatedResource()->newQuery();
-
-        $alreadyAttachedItems = $this->entry->{$relation->getName()}()
-                                            ->pluck($relation->getRelatedResource()->getHandle().'.id');
-
-        $query->whereNotIn($query->getModel()->getKeyName(), $alreadyAttachedItems);
-        $table->setQuery($query);
-         $table->build();
-
-        return ['data' => sv_compose($table, ['res' => $resource->toArray()])];
+        return MakeComponentTree::dispatch($table)->withTokens(['res' => $resource->toArray()]);
     }
 }

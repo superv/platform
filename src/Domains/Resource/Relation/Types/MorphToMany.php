@@ -8,11 +8,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\AttachEntryAction;
 use SuperV\Platform\Domains\Resource\Action\DetachEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Domains\Resource\Table\TableColumn;
-use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Domains\Resource\Table\TableV2;
 
 class MorphToMany extends Relation implements ProvidesTable
@@ -41,6 +37,4 @@ class MorphToMany extends Relation implements ProvidesTable
             ->addContextAction(AttachEntryAction::make()->setRelation($this))
             ->mergeFields($this->getPivotFields());
     }
-
-
 }

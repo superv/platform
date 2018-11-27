@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composition;
 
-class DetachEntryAction extends Action implements AcceptsEntry
+class DetachEntryAction extends Action
 {
     protected $name = 'detach';
 
@@ -28,19 +28,14 @@ class DetachEntryAction extends Action implements AcceptsEntry
 
     public function onComposed(Composition $composition)
     {
-        $composition->replace('url', sv_url($this->getRequestUrl()));
-        $composition->replace('request', ['item' => '{entry.id}']);
+        $composition->replace('url', str_replace('entry.id', '{entry.id}', $this->getRequestUrl()));
         $composition->replace('on-complete', 'reload');
     }
 
     public function getRequestUrl()
     {
-        return sprintf(
-            'sv/res/%s/%s/%s/detach',
-            $this->relation->getParentResourceHandle(),
-            $this->relation->getParentEntry()->getId(),
-            $this->relation->getName()
-        );
+        return $this->relation->route('detach', $this->relation->getParentEntry(), ['related' => 'entry.id']);
+
     }
 
     public function setRelation(Relation $relation): self
