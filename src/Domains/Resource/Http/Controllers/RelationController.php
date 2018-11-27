@@ -4,24 +4,11 @@ namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
-use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Table\Table;
-use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
 class RelationController extends BaseApiController
 {
     use ResolvesResource;
-
-    protected function resolveRelation(): Relation
-    {
-        $relation = $this->resolveResource()->getRelation($this->route->parameter('relation'));
-        if ($this->entry) {
-            $relation->acceptParentEntry($this->entry);
-        }
-
-        return $relation;
-    }
 
     public function request()
     {
@@ -32,19 +19,6 @@ class RelationController extends BaseApiController
         }
 
         return ['status' => 'ok'];
-    }
-
-    public function table()
-    {
-        /** @var TableConfig $config */
-        $config = $this->resolveRelation()->makeTableConfig();
-        $table = Table::config($config);
-
-        if ($this->route->parameter('data')) {
-            return $table->build();
-        } else {
-            return ['data' => sv_compose($table->makeComponent()->compose())];
-        }
     }
 
     public function attach()

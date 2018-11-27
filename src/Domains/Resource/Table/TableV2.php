@@ -243,9 +243,4 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
     {
         return $this->config->uuid();
     }
-
-    public static function config(TableConfig $config): self
-    {
-        return app(Table::class)->setConfig($config);
-    }
 }

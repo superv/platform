@@ -4,7 +4,6 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Closure;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Context\Context;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -14,15 +13,12 @@ use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
 use SuperV\Platform\Domains\Resource\Resource\ResourceView;
 use SuperV\Platform\Domains\Resource\Table\TableColumn;
-use SuperV\Platform\Domains\Resource\Table\TableConfig;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class Resource implements
     Contracts\ProvidesFields,
-    Contracts\ProvidesQuery,
-    Contracts\ProvidesColumns,
-    Contracts\ProvidesTableConfig
+    Contracts\ProvidesQuery
 {
     use Hydratable;
     use HasConfig;
@@ -63,16 +59,8 @@ class Resource implements
      */
     protected $relationProvider;
 
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry
-     */
-    protected $entryss;
-
     /** @var string */
     protected $handle;
-
-    /** @var \SuperV\Platform\Domains\Resource\Table\TableConfig */
-    protected $tableConfig;
 
     /** @var Closure */
     protected $viewResolver;
@@ -211,32 +199,6 @@ class Resource implements
 
     }
 
-    public function provideColumns(): Collection
-    {
-        if ($this->columns) {
-            return $this->columns;
-        }
-
-        $labelColumn = TableColumn::make('label')
-                                  ->setLabel($this->getSingularLabel())
-                                  ->setTemplate($this->getConfigValue('entry_label'));
-
-        $this->columns = collect()->put('label', $labelColumn)
-                                  ->merge(
-                                      $this->getFields()
-                                           ->map(function (Field $field) {
-                                               if ($field->getConfigValue('table.show') === true) {
-                                                   return TableColumn::fromField($field);
-                                               }
-
-                                               return null;
-                                           })
-                                           ->filter()
-                                  );
-
-        return $this->columns;
-    }
-
     public function route($route, ?EntryContract $entry = null)
     {
         $base = 'sv/res/'.$this->getHandle();
@@ -255,20 +217,6 @@ class Resource implements
         if ($route === 'view' || $route === 'edit') {
             return $base.'/'.$entry->getId().'/'.$route;
         }
-    }
-
-    public function provideTableConfig(): TableConfig
-    {
-        if ($this->tableConfig) {
-            return $this->tableConfig;
-        }
-
-        return $this->tableConfig = TableConfig::make()
-                                               ->setDataUrl(url()->current().'/data')
-                                               ->setColumns($this->provideColumns())
-                                               ->setQuery($this)
-                                               ->setContext(new Context($this))
-                                               ->build();
     }
 
     public function getHandle(): string

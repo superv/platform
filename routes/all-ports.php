@@ -30,7 +30,7 @@ return [
 
     'POST@'.'sv/res/{resource}/{id}/rel/{relation}' => RelationController::at('request'),
 
-    'POST@'.'sv/res/{resource}/{id}/rel/{relation}/attach' => [
+    'POST@'.'sv/res/{resource}/{id}/rel/{relation}/attach'           => [
         'as'   => 'relation.attach',
         'uses' => RelationController::at('attach'),
     ],
@@ -44,7 +44,7 @@ return [
         'uses' => LookupController::class,
     ],
 
-    'sv/res/{resource}/{id}/rel/{relation}/create' => [
+    'sv/res/{resource}/{id}/rel/{relation}/create'  => [
         'as'   => 'relation.create',
         'uses' => RelationCreateController::at('create'),
     ],
@@ -62,8 +62,6 @@ return [
         'as'   => 'relation.index',
         'uses' => RelationIndexController::class,
     ],
-
-
 
     /**
      * Resource Management
