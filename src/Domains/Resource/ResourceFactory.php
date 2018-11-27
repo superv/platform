@@ -10,8 +10,6 @@ use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
-use SuperV\Platform\Domains\Resource\Resource\EntryResource;
-use SuperV\Platform\Exceptions\PlatformException;
 
 class ResourceFactory
 {
@@ -94,15 +92,6 @@ class ResourceFactory
         }
 
         $resource = new Resource(static::attributesFor($handle));
-
-        Extension::extend($resource);
-
-        return $resource;
-    }
-
-    public static function makeWithEntry(EntryContract $entry)
-    {
-        $resource = new EntryResource($entry, static::attributesFor($entry->getTable(), $entry));
 
         Extension::extend($resource);
 

@@ -23,8 +23,7 @@ class ResourceIndexTest extends ResourceTestCase
     {
         $users = $this->schema()->users();
 
-        $response = $this->getJsonUser($users->route('index.table'));
-        $response->assertOk();
+        $response = $this->getJsonUser($users->route('index.table'))->assertOk();
         $table = HelperComponent::from($response->decodeResponseJson('data'));
 
         $this->assertEquals(sv_url($users->route('index.table').'/data'), $table->getProp('config.data_url'));
@@ -57,8 +56,7 @@ class ResourceIndexTest extends ResourceTestCase
         $userA = $users->fake(['group_id' => 1]);
         $userB = $users->fake(['group_id' => 2]);
 
-        $response = $this->getJsonUser($users->route('index.table').'/data');
-        $response->assertOk();
+        $response = $this->getJsonUser($users->route('index.table').'/data')->assertOk();
 
         $rows = $response->decodeResponseJson('data.rows');
         $this->assertEquals(2, count($rows));

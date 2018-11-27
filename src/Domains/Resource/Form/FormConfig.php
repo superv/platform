@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
-use SuperV\Platform\Domains\Resource\Resource\EntryResource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class FormConfig
 {
@@ -26,7 +26,7 @@ class FormConfig
     {
         if ($fieldsProvider instanceof EntryContract) {
             $watcher = $fieldsProvider;
-            $fieldsProvider = EntryResource::make($fieldsProvider);
+            $fieldsProvider = ResourceFactory::make($fieldsProvider);
         }
         $this->groups[$handle] = ['provider' => $fieldsProvider, 'watcher' => $watcher];
 
