@@ -11,7 +11,6 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\AltersFieldComposition;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
 use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
-use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Composer\Tokens;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -24,7 +23,7 @@ use SuperV\Platform\Support\Concerns\Hydratable;
  *
  * @package SuperV\Platform\Domains\Resource\Field
  */
-class Field implements FieldContract, Composable, FiresCallbacksContract
+class Field implements FieldContract, FiresCallbacksContract
 {
     use Hydratable;
     use FiresCallbacks;
@@ -82,8 +81,6 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
 
     protected $alterQueryCallback;
 
-    protected $alterCompositionCallback;
-
     protected $doesNotInteractWithTable;
 
     /** @var \SuperV\Platform\Support\Composer\Composition */
@@ -106,24 +103,6 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
     }
 
     protected function boot() { }
-
-    public function compose(Tokens $tokens = null)
-    {
-        $composition = new Composition([
-            'type'   => $this->getType(),
-            'uuid'   => $this->uuid(),
-            'name'   => $this->getColumnName(),
-            'label'  => $this->getLabel(),
-            'value'  => $this->getValue(),
-            'config' => $this->config,
-        ]);
-
-        if ($this->alterCompositionCallback) {
-            ($this->alterCompositionCallback)($composition);
-        }
-
-        return $composition;
-    }
 
     public function getLabel(): string
     {
@@ -159,12 +138,6 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
             $this->alterQueryCallback = $type->getAlterQueryCallback();
         }
 
-        if ($type instanceof AltersFieldComposition) {
-            $this->alterCompositionCallback = function (Composition $composition) use ($type) {
-                return $type->alterComposition($composition);
-            };
-        }
-
         if (method_exists($type, 'makeRules')) {
             if ($rules = $type->makeRules()) {
                 $this->rules = Rules::make($rules)->merge(wrap_array($this->rules))->get();
@@ -179,37 +152,8 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
         return $type;
     }
 
-    public function present($value)
-    {
-        if ($callback = $this->getCallback('presenting')) {
-            return $callback($value);
-        }
 
-        if ($this->presenter) {
-            return ($this->presenter)($value);
-        }
-
-        if ($value instanceof EntryContract) {
-            return $value->getAttribute($this->getName());
-        }
-
-        return $value;
-    }
-
-    public function getValue()
-    {
-        if ($this->accessor) {
-            return ($this->accessor)($this->value);
-        }
-
-        if ($this->entry) {
-            return $this->entry->getAttribute($this->getColumnName());
-        }
-
-        return $this->value;
-    }
-
-    public function setValue($value, $notify = true)
+    public function setValueeee($value, $notify = true)
     {
         if ($this->isHidden()) {
             return null;
@@ -240,11 +184,14 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
 
     public function resolveRequestToEntry(Request $request, EntryContract $entry)
     {
-        if (! $request->has($this->getColumnName())) {
+        if (! $request->has($this->getName())
+            && ! $request->has($this->getColumnName())) {
             return null;
         }
 
-        $value = $request->__get($this->getColumnName());
+        if (! $value = $request->__get($this->getColumnName())) {
+            $value = $request->__get($this->getName());
+        }
 
         if ($this->mutator) {
             $value = ($this->mutator)($value, $entry);
@@ -395,6 +342,6 @@ class Field implements FieldContract, Composable, FiresCallbacksContract
 
     public function getPresenter()
     {
-        return  $this->presenter;
+        return $this->presenter;
     }
 }

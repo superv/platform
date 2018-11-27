@@ -6,7 +6,5 @@ use Closure;
 
 interface AltersTableQuery
 {
-    public function alterQuery($query);
-
     public function getAlterQueryCallback(): Closure;
 }

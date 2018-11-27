@@ -25,7 +25,7 @@ interface Field
 
     public function setConfigValue($key, $value = null);
 
-    public function setValue($value);
+//    public function setValue($value);
 
     public function setWatcher(Watcher $watcher);
 
@@ -42,8 +42,6 @@ interface Field
     public function isRequired();
 
     public function doesNotInteractWithTable();
-
-    public function compose();
 
     public function hide();
 

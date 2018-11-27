@@ -42,7 +42,6 @@ class FileTest extends ResourceTestCase
 
         $this->assertEquals('file', $field->getType());
         $this->assertEquals(['disk' => 'fakedisk'], $field->getConfig());
-        $this->assertNull($field->getValue());
 
         //upload
         Storage::fake('fakedisk');

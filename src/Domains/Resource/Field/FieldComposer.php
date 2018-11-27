@@ -18,7 +18,7 @@ class FieldComposer
         $this->field = $field;
     }
 
-    public function forForm(?EntryContract $entry)
+    public function forForm(?EntryContract $entry = null)
     {
         $field = $this->field;
 
@@ -29,19 +29,18 @@ class FieldComposer
                 $value = app()->call($accessor, ['entry' => $entry, 'value' => $value, 'field' => $field]);
             }
 
-            if ($presenter = $field->getPresenter()) {
-                $value = app()->call($presenter, ['entry' => $entry, 'value' => $value, 'field' => $field]);
-            }
+//            if ($presenter = $field->getPresenter()) {
+//                $value = app()->call($presenter, ['entry' => $entry, 'value' => $value, 'field' => $field]);
+//            }
         }
 
         $composition = (new Composition([
             'type'   => $field->getType(),
             'uuid'   => $field->uuid(),
-            'name'   => $field->getColumnName(),
+            'name'   => $field->getName(),
             'label'  => $field->getLabel(),
             'value'  => $value ?? null,
-            'config' => $field->getConfig(),
-        ]))->setFilterNull(false);
+        ]))->setFilterNull(true);
 
         if ($composer = $field->getComposer()) {
             app()->call($composer, ['entry' => $entry, 'composition' => $composition]);
@@ -98,6 +97,10 @@ class FieldComposer
 
         if ($accessor = $field->getAccessor()) {
             $value = app()->call($accessor, ['entry' => $entry, 'value' => $value, 'field' => $field]);
+        }
+
+        if ($presenter = $field->getPresenter()) {
+            $value = app()->call($presenter, ['entry' => $entry, 'value' => $value, 'field' => $field]);
         }
 
         $composition = (new Composition([

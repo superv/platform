@@ -2,10 +2,25 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types\V2;
 
+use Closure;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
+use SuperV\Platform\Support\Composer\Composition;
+
 class Select extends FieldTypeV2 implements NeedsDatabaseColumn
 {
+
+    public function getComposer(): ?Closure
+    {
+        return function (Composition $composition) {
+
+            if ($options = $this->field->getConfigValue('options')) {
+                $composition->replace('meta.options', $options);
+            }
+        };
+    }
+
     public function build(): FieldType
     {
         if (array_has($this->config, 'options')) {

@@ -90,16 +90,11 @@ class Form implements ProvidesUIComponent
             $entry = $this->entries[$handle] ?? null;
 
             $fields->map(function (Field $field) use ($entry) {
-                if ($field->isHidden() || ! $this->request->has($field->getColumnName())) {
+                if ($field->isHidden()) {
                     return;
                 }
 
                 $this->postSaveCallbacks[] = $field->resolveRequestToEntry($this->request, $entry);
-
-//                $requestValue = $this->request->__get($field->getColumnName());
-//                if ($callback = $field->hydrateFromRequest($requestValue, $entry)) {
-//                    $this->postSaveCallbacks[] = $callback;
-//                }
             });
         }
 
@@ -166,16 +161,6 @@ class Form implements ProvidesUIComponent
                         return array_filter(
                             (new FieldComposer($field))->forForm($this->entries[$handle] ?? null)->get()
                         );
-                    })
-            );
-        }
-        return $composed->values()->all();
-        foreach ($this->entries as $handle => $entry) {
-            $composed = $composed->merge(
-                $this->fields[$handle]
-                    ->filter(function (Field $field) { return ! $field->isHidden(); })
-                    ->map(function (Field $field) use ($entry) {
-                        return (new FieldComposer($field))->forForm($entry);
                     })
             );
         }
@@ -264,6 +249,15 @@ class Form implements ProvidesUIComponent
                                 function (Field $field) use ($name) {
                                     return $field->getName() === $name;
                                 });
+    }
+
+    public function composeField($field, $entry = null)
+    {
+        if (is_string($field)) {
+            $field = $this->getField($field);
+        }
+
+        return (new FieldComposer($field))->forForm($entry);
     }
 
     public function getUrl()

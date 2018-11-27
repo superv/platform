@@ -140,7 +140,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
                                  });
 
                                  return $field;
-                             })->all();
+                             });
     }
 
     public static function fromEntry(Entry $entry): self

@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldTypeV2;
@@ -60,9 +61,9 @@ class FormTest extends ResourceTestCase
             'url'    => sv_url('url/to/form'),
             'method' => 'post',
             'fields' => [
-                                        $form->getField('name')->compose()->get(),
-                                        $form->getField('age')->compose()->get(),
-                                    ],
+                $form->composeField('name')->get(),
+                $form->composeField('age')->get(),
+            ],
         ], sv_compose($form->compose()));
     }
 
@@ -75,8 +76,13 @@ class FormTest extends ResourceTestCase
                           )
                           ->makeForm();
 
-        $this->assertEquals('Omar', $form->getField('name')->compose()->get('value'));
-        $this->assertEquals(33, $form->getField('age')->compose()->get('value'));
+        $this->assertEquals('Omar', $this->getComposedValue($form->getField('name'), $testUser));
+        $this->assertEquals(33, $this->getComposedValue($form->getField('age'), $testUser));
+    }
+
+    protected function getComposedValue($field, $entry = null)
+    {
+        return (new FieldComposer($field))->forForm($entry)->get('value');
     }
 
     function test__saves_form()
@@ -90,8 +96,8 @@ class FormTest extends ResourceTestCase
                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
                           ->save();
 
-        $this->assertEquals('Omar', $form->getField('name')->getValue());
-        $this->assertEquals(33, $form->getField('age')->getValue());
+        $this->assertEquals('Omar', $form->composeField('name', $testUser)->get('value'));
+        $this->assertEquals(33, $form->composeField('age', $testUser)->get('value'));
     }
 
     function test__hidden_fields()
@@ -110,8 +116,8 @@ class FormTest extends ResourceTestCase
         $nameField = $form->getField('name');
         $this->assertTrue($nameField->isHidden());
 
-        $this->assertEquals('Omar', $nameField->getValue());
-        $this->assertEquals(99, $form->getField('age')->getValue());
+        $this->assertEquals('Omar', $form->composeField('name', $testUser)->get('value'));
+        $this->assertEquals(99, $form->composeField('age', $testUser)->get('value'));
 
         $composedFields = $form->compose()->get('fields');
         $this->assertEquals(1, count($composedFields));
@@ -121,12 +127,12 @@ class FormTest extends ResourceTestCase
     function test__saves_entry()
     {
         $form = FormConfig::make()
-                          ->addGroup($fields = $this->makeFields(), $user = new FormTestUser)
+                          ->addGroup($fields = $this->makeFields(), $testUser = new FormTestUser)
                           ->makeForm()->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
                           ->save();
 
-        $this->assertEquals('Omar', $form->getField('name')->getValue());
-        $this->assertEquals(33, $form->getField('age')->getValue());
+        $this->assertEquals('Omar', $form->composeField('name', $testUser)->get('value'));
+        $this->assertEquals(33, $form->composeField('age', $testUser)->get('value'));
 
         $user = $form->getWatcher('default');
         $this->assertEquals('Omar', $user->name);
@@ -171,8 +177,8 @@ class FormTest extends ResourceTestCase
         });
 
         $form = FormConfig::make()
-                          ->addGroup($this->users, $this->users->newEntryInstance(), 'test_user')
-                          ->addGroup($posts, $posts->newEntryInstance(), 'test_post')
+                          ->addGroup($this->users, $user = $this->users->newEntryInstance(), 'test_user')
+                          ->addGroup($posts,  $post = $posts->newEntryInstance(), 'test_post')
                           ->makeForm()
                           ->setRequest($this->makePostRequest([
                               'name'  => 'Omar',
@@ -181,8 +187,8 @@ class FormTest extends ResourceTestCase
                           ]))
                           ->save();
 
-        $this->assertEquals('Omar', $form->getField('name', 'test_user')->getValue());
-        $this->assertEquals("Khalifa", $form->getField('title', 'test_post')->getValue());
+        $this->assertEquals('Omar', $form->composeField($form->getField('name', 'test_user'), $user)->get('value'));
+        $this->assertEquals('Khalifa', $form->composeField($form->getField('title', 'test_post'), $post)->get('value'));
 
         $user = $form->getWatcher('test_user');
         $this->assertEquals('Omar', $user->name);

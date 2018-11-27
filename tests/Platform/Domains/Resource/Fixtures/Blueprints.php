@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource\Fixtures;
 
+use Closure;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
@@ -12,35 +13,40 @@ class Blueprints
     use ResourceTestHelpers;
 
     /** @return Resource */
-    public function users()
+    public function users(?Closure $callback = null)
     {
         $this->groups();
         $this->roles();
 
-        $users = $this->create('t_users', function (Blueprint $table, ResourceBlueprint $resource) {
-            $resource->resourceKey('user');
+        $users = $this->create('t_users',
+            function (Blueprint $table, ResourceBlueprint $resource) use ($callback) {
+                $resource->resourceKey('user');
 
-            $table->increments('id');
-            $table->string('name');
-            $table->email('email')->unique();
-            $table->string('bio')->rules(['string'])->nullable();
-            $table->unsignedInteger('age')->nullable()->showOnIndex();
+                $table->increments('id');
+                $table->string('name');
+                $table->email('email')->unique();
+                $table->string('bio')->rules(['string'])->nullable();
+                $table->unsignedInteger('age')->nullable()->showOnIndex();
 
-            $table->file('avatar')->config(['disk' => 'fakedisk']);
+                $table->file('avatar')->config(['disk' => 'fakedisk']);
 
-            $table->belongsTo('t_groups', 'group')->showOnIndex();
-            $table->belongsToMany('t_roles', 'roles', 'assigned_roles', 'user_id', 'role_id',
-                function (Blueprint $pivotTable) {
-                    $pivotTable->string('notes');
-                });
+                $table->belongsTo('t_groups', 'group')->showOnIndex();
+                $table->belongsToMany('t_roles', 'roles', 'assigned_roles', 'user_id', 'role_id',
+                    function (Blueprint $pivotTable) {
+                        $pivotTable->string('notes');
+                    });
 
-            $table->morphToMany('t_actions', 'actions', 'owner', 'assigned_actions', 'action',
-                function (Blueprint $pivotTable) {
-                    $pivotTable->string('provision');
-                });
+                $table->morphToMany('t_actions', 'actions', 'owner', 'assigned_actions', 'action',
+                    function (Blueprint $pivotTable) {
+                        $pivotTable->string('provision');
+                    });
 
-            $table->hasMany('t_posts', 'posts');
-        });
+                $table->hasMany('t_posts', 'posts');
+
+                if ($callback) {
+                    $callback($table);
+                }
+            });
 
         return $users;
     }

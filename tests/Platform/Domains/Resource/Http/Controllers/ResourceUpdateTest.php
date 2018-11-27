@@ -17,7 +17,7 @@ class ResourceUpdateTest extends ResourceTestCase
         $post = [
             'name'     => 'Ali',
             'email'    => 'ali@superv.io',
-            'group_id' => 2,
+            'group' => 2,
         ];
         $response = $this->postJsonUser($user->route('update'), $post);
         $response->assertOk();

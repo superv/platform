@@ -54,7 +54,6 @@ class Composer
                 return $this->compose($item);
             });
 
-
 //            $data->transform(function ($item) {
 //                return $this->compose($item);
 //            });
@@ -81,7 +80,8 @@ class Composer
              * Search  nearby composers of the Class
              */
             if (class_exists($class = get_class($data).'Composer')) {
-                return $this->compose((new $class($data))->compose($this->tokens));
+                if (array_key_exists(self::class, class_implements($class)))
+                    return $this->compose((new $class($data))->compose($this->tokens));
             }
 
             /**

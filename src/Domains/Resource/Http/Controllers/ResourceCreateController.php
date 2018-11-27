@@ -14,12 +14,7 @@ class ResourceCreateController extends BaseApiController
     {
         $resource = $this->resolveResource();
 
-        FormConfig::make()
-                  ->addGroup(
-                      $resource->getFields(),
-                      $resource->newEntryInstance(),
-                      $resource->getHandle()
-                  )
+        FormConfig::make($resource->newEntryInstance())
                   ->makeForm()
                   ->setRequest($this->request)
                   ->save();

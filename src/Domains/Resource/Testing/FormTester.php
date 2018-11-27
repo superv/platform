@@ -58,7 +58,7 @@ class FormTester extends Assert
                 continue;
             }
 
-            $fields[] = $field->compose();
+            $fields[] = $form->composeField($field);
             $post[$field->getColumnName()] = Fake::field($field);
         }
 

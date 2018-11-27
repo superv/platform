@@ -4,8 +4,7 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Faker\Generator;
 use Illuminate\Http\UploadedFile;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 
 class Fake
 {
@@ -36,7 +35,7 @@ class Fake
         $this->overrides = $overrides;
 
         $resource->getFields()
-                 ->map(function (FieldContract $field) {
+                 ->map(function (Field $field) {
                      if (! $field->isHidden() && ! $field->doesNotInteractWithTable()) {
                          $this->attributes[$field->getColumnName()] = $this->fake($field);
                      }
@@ -47,7 +46,7 @@ class Fake
         return array_filter_null($this->attributes);
     }
 
-    protected function fake(FieldContract $field)
+    protected function fake(Field $field)
     {
         if ($value = array_get($this->overrides, $field->getColumnName())) {
             return $value;
@@ -75,11 +74,14 @@ class Fake
         return new UploadedFile(SV_TEST_BASE.'/__fixtures__/square.png', 'square.png');
     }
 
-    protected function fakeText(FieldContract $field)
+    protected function fakeText(Field $field)
     {
         $fieldName = $field->getName();
 
-        if (in_array($fieldName, ['name', 'title', 'first_name', 'last_name']) && $fake = $this->faker->__get(camel_case($fieldName))) {
+        if (in_array($fieldName, ['name',
+                'title',
+                'first_name',
+                'last_name']) && $fake = $this->faker->__get(camel_case($fieldName))) {
             return $fake;
         }
 
@@ -91,7 +93,12 @@ class Fake
         return $this->faker->text;
     }
 
-    protected function fakeNumber($field)
+    protected function fakeSelect(Field $field)
+    {
+        return array_random(wrap_array($field->getConfigValue('options')));
+    }
+
+    protected function fakeNumber(Field $field)
     {
         if ($field->getConfigValue('type') === 'decimal') {
             $max = $field->getConfigValue('total', 5) - 2;
@@ -112,7 +119,7 @@ class Fake
         return $this->faker->boolean;
     }
 
-    protected function fakeDatetime($field)
+    protected function fakeDatetime(Field $field)
     {
         return $field->getConfigValue('time') ? $this->faker->dateTime : $this->faker->date();
     }
