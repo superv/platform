@@ -9,4 +9,6 @@ interface ComponentContract
     public function getProps(): Props;
 
     public function addClass(string $class);
+
+    public function withTokens(array $tokens): ComponentContract;
 }

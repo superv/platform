@@ -47,6 +47,8 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
      */
     protected $provider;
 
+    protected $actions = [];
+
     public function __construct(DataProvider $provider)
     {
         $this->options = collect();
@@ -64,14 +66,25 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
         $this->rows = $this->provider->getEntries()->map(
             function (EntryContract $entry) {
+                $fields = ResourceFactory::make($entry)
+                                         ->getTableFields()
+                                         ->map(function (Field $field) use ($entry) {
+                                             return (new FieldComposer($field))->forTableRow($entry);
+                                         })->values();
+
                 return [
-                    'fields' => ResourceFactory::make($entry)
-                                               ->getTableFields()
-                                               ->map(function (Field $field) use ($entry) {
-                                                   return (new FieldComposer($field))->forTableRow($entry);
-                                               })->values(),
+                    'id' => $entry->getId(),
+                    'fields' => $fields,
+                    'actions' => ['view']
                 ];
             });
+
+        return $this;
+    }
+
+    public function addAction($action)
+    {
+        $this->actions[] = $action;
 
         return $this;
     }
@@ -129,19 +142,26 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
     public function makeComponent(): ComponentContract
     {
-        return Component::make('sv-table')->setProps($this->composeConfig());
+        return Component::make('sv-table-v2')->setProps($this->composeConfig());
     }
 
     public function composeConfig()
     {
         $composition = new Composition([
             'config' => [
-                'data_url' => sv_url($this->resource->route('index.table').'/data'),
-                'fields'   => $this->resource->getTableFields()
-                                             ->map(function (Field $field) {
-                                                 return (new FieldComposer($field))->forTableConfig();
-                                             })
-                                             ->values(),
+                'data_url'    => sv_url($this->resource->route('index.table').'/data'),
+                'fields'      => $this->resource->getTableFields()
+                                                ->map(function (Field $field) {
+                                                    return (new FieldComposer($field))->forTableConfig();
+                                                })
+                                                ->values(),
+                'row_actions' => collect($this->actions)->map(function ($action) {
+                    if (is_string($action)) {
+                        $action = $action::make();
+                    }
+
+                    return $action;
+                }),
 
             ],
         ]);

@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -46,19 +47,28 @@ class ResourceIndexTest extends ResourceTestCase
 
         $response = $this->getJsonUser($users->route('index.table'));
         $response->assertOk();
-        $table =  HelperComponent::from($response->decodeResponseJson('data'));
+        $table = HelperComponent::from($response->decodeResponseJson('data'));
 
-        $this->assertEquals(sv_url($users->route('index.table') .'/data'), $table->getProp('config.data_url'));
+        $this->assertEquals(sv_url($users->route('index.table').'/data'), $table->getProp('config.data_url'));
 
         $fields = $table->getProp('config.fields');
         $this->assertEquals(3, count($fields));
-        foreach($fields as $key => $field) {
+        foreach ($fields as $key => $field) {
             $this->assertTrue(is_numeric($key));
+            $this->assertEquals([
+                'uuid',
+                'name',
+                'label',
+            ], array_keys($field));
+
+            $rowActions = $table->getProp('config.row_actions');
+            $this->assertEquals(1, count($rowActions));
 
             $this->assertEquals([
-                   'uuid', 'name',  'label'
-               ], array_keys($field));
-
+                'name' => 'view',
+                'title' => 'View',
+                'url' => 'sv/res/t_users/{entry.id}/view'
+            ], $rowActions[0]['props']);
         }
     }
 
@@ -69,31 +79,35 @@ class ResourceIndexTest extends ResourceTestCase
         $userA = $users->fake(['group_id' => 1]);
         $userB = $users->fake(['group_id' => 2]);
 
-        $response = $this->getJsonUser($users->route('index.table'). '/data');
+        $response = $this->getJsonUser($users->route('index.table').'/data');
         $response->assertOk();
 
         $rows = $response->decodeResponseJson('data.rows');
         $this->assertEquals(2, count($rows));
 
-        $this->assertEquals(3, count($rows[0]['fields']));
+        $rowA = $rows[0];
+        $this->assertEquals($userA->getId(), $rowA['id']);
 
-        foreach($rows[0]['fields'] as $key => $field) {
-            $this->assertTrue(is_numeric($key));
-            $this->assertEquals([
-                'type', 'name',  'value'
-            ], array_keys($field));
-        }
-        $this->assertEquals('text', $rows[0]['fields'][0]['type']);
-        $this->assertEquals('label', $rows[0]['fields'][0]['name']);
-        $this->assertEquals($users->getEntryLabel($userA), $rows[0]['fields'][0]['value']);
+        $label = $rowA['fields'][0];
+        $this->assertEquals(['type', 'name', 'value',], array_keys($label));
 
-        $this->assertEquals('number', $rows[0]['fields'][1]['type']);
-        $this->assertEquals('age', $rows[0]['fields'][1]['name']);
-        $this->assertSame((int)$userA->age, $rows[0]['fields'][1]['value']);
+        $this->assertEquals('text', $label['type']);
+        $this->assertEquals('label', $label['name']);
+        $this->assertEquals($users->getEntryLabel($userA), $label['value']);
 
-        $this->assertEquals('belongs_to', $rows[0]['fields'][2]['type']);
-        $this->assertEquals('group_id', $rows[0]['fields'][2]['name']);
-        $this->assertSame('Users', $rows[0]['fields'][2]['value']);
+        $age = $rowA['fields'][1];
+        $this->assertEquals('number', $age['type']);
+        $this->assertEquals('age', $age['name']);
+        $this->assertSame((int)$userA->age, $age['value']);
+
+        $group = $rowA['fields'][2];
+        $this->assertEquals('belongs_to', $group['type']);
+        $this->assertEquals('group_id', $group['name']);
+
+        $groups = sv_resource('t_groups');
+        $usersGroup = $groups->find(1);
+        $this->assertSame($usersGroup->title, $group['value']);
+        $this->assertEquals($groups->route('view', $usersGroup), $group['meta']['link']);
     }
 }
 

@@ -4,9 +4,11 @@ namespace SuperV\Platform\Domains\UI\Components;
 
 use Illuminate\Contracts\Support\Responsable;
 
-class Component extends BaseComponent implements Responsable
+class Component extends BaseComponent
 {
     protected $name;
+
+
 
     public function getName(): string
     {
@@ -19,8 +21,5 @@ class Component extends BaseComponent implements Responsable
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function toResponse($request)
-    {
-        return response()->json(['data' => sv_compose($this)]);
-    }
+
 }

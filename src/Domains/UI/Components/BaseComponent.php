@@ -8,7 +8,7 @@ use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-abstract class BaseComponent implements ComponentContract, Composable
+abstract class BaseComponent implements ComponentContract, Composable, Responsable
 {
     use FiresCallbacks;
     use StyleHelper;
@@ -20,6 +20,13 @@ abstract class BaseComponent implements ComponentContract, Composable
     protected $uuid;
 
     protected $classes = [];
+
+    /**
+     * Composer tokens
+     *
+     * @var array
+     */
+    protected $tokens = [];
 
     abstract public function getName(): string;
 
@@ -87,6 +94,19 @@ abstract class BaseComponent implements ComponentContract, Composable
 
         return $this;
     }
+
+    public function toResponse($request)
+    {
+        return response()->json(['data' => sv_compose($this, $this->tokens)]);
+    }
+
+    public function withTokens(array $tokens): ComponentContract
+    {
+        $this->tokens = $tokens;
+
+        return $this;
+    }
+
 
     /** return @static */
     public static function make($name = '')

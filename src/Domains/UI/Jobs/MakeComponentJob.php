@@ -38,12 +38,14 @@ class MakeComponentJob
 
     protected function scanProp($prop)
     {
-        if (is_array($prop)) {
+        if (is_array($prop) || is_iterable($prop)) {
             foreach ($prop as $key => $value) {
                 if ($value instanceof ProvidesUIComponent) {
                     $prop[$key] = self::dispatch($value);
                 } elseif ($value instanceof ComponentContract) {
                     $this->scanComponent($value);
+                } else {
+                    $prop[$key] = $this->scanProp($value);
                 }
             }
         }

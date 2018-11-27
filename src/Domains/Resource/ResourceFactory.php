@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
@@ -68,7 +69,7 @@ class ResourceFactory
     protected function get()
     {
         if (! $this->model = ResourceModel::withHandle($this->handle)) {
-            throw new PlatformException("Resource model entry not found for [{$this->handle}]");
+            throw new Exception("Resource model entry not found for [{$this->handle}]");
         }
 
         $attributes = array_merge($this->model->toArray(), [

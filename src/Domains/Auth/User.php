@@ -7,16 +7,15 @@ use Current;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use SuperV\Platform\Domains\Auth\Access\HasActions;
 use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-/**
- * @property mixed email
- */
-class User extends Model implements UserContract, AuthenticatableContract, JWTSubject, CanResetPasswordContract
+
+class User extends Entry implements
+    UserContract, AuthenticatableContract, JWTSubject, CanResetPasswordContract
 {
     use Authenticatable;
     use Notifiable;
@@ -98,5 +97,9 @@ class User extends Model implements UserContract, AuthenticatableContract, JWTSu
         return [];
 
         return ['port' => optional(Current::port())->slug()];
+    }
+
+    public function getId()
+    {
     }
 }

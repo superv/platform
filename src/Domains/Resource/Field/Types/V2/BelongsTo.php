@@ -48,23 +48,14 @@ class BelongsTo extends FieldTypeV2 implements NeedsDatabaseColumn, AltersTableQ
         return $this->field->getName().'_id';
     }
 
-//    public function getAccessor(): ?Closure
-//    {
-//        return function ($value) {
-//            return (int)$value;
-//        };
-//    }
-//
-//    public function getMutator(): ?Closure
-//    {
-//        return $this->getAccessor();
-//    }
 
     public function getComposer(): ?Closure
     {
         return function (Composition $composition, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
-                $composition->replace('value', ResourceFactory::make($relatedEntry)->getEntryLabel($relatedEntry));
+                $resource = ResourceFactory::make($relatedEntry);
+                $composition->replace('value', $resource->getEntryLabel($relatedEntry));
+                $composition->replace('meta.link', $resource->route('view', $relatedEntry));
             }
         };
     }
