@@ -27,19 +27,24 @@ class AttachEntryAction extends Action
     protected function getPivotForm()
     {
         if ($pivotColumns = $this->relation->getConfig()->getPivotColumns()) {
-            $pivotResource = ResourceFactory::make($this->relation->getConfig()->getPivotTable());
+//            $pivotResource = ResourceFactory::make($this->relation->getConfig()->getPivotTable());
+//
+//            $pivotFields = $pivotResource->getFields()
+//                                         ->filter(function(Field $field) use ($pivotColumns) {
+//                                             return in_array($field->getColumnName(), $pivotColumns);
+//                                         })
+//                                         ->values()->all();
 
-            $pivotFields = $pivotResource->getFields()
-                                         ->filter(function(Field $field) use ($pivotColumns) {
-                                             return in_array($field->getColumnName(), $pivotColumns);
-                                         })
-                                         ->values()->all();
+            $pivotFields = $this->relation->getPivotFields();
 
+            return $pivotFields;
             $form = FormConfig::make()
                               ->addGroup($pivotFields)
                               ->makeForm();
 
-            return $form->compose()->get('fields');
+            $composition = $form->compose();
+
+            return $composition->get('fields');
         }
     }
 

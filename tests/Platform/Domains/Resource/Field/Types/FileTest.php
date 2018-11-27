@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\UploadedFile;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\Types\File;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -56,7 +57,7 @@ class FileTest extends ResourceTestCase
         $media = $callback();
         $this->assertNotNull($media);
 
-        $this->assertNotNull( $field->compose()->get('config.url'));
+        $this->assertNotNull( (new FieldComposer($field))->forView($fake)->get('image_url'));
 
         $this->assertFileExists($media->filePath());
     }

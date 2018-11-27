@@ -121,7 +121,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         return $this->route('index', $entry);
     }
 
-    protected function getPivotFields()
+    public function getPivotFields()
     {
         if (! $pivotColumns = $this->getConfig()->getPivotColumns()) {
             return [];

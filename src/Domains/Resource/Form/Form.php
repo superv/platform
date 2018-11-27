@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composition;
@@ -146,15 +147,40 @@ class Form implements ProvidesUIComponent
         $composition = new Composition([
             'url'    => $this->getUrl(),
             'method' => $this->getMethod(),
-            'fields' => $this->getFields()
-                             ->filter(function (Field $field) { return ! $field->isHidden(); })
-                             ->map(function (Field $field) { return $field->compose()->get(); })
-                             ->values()
-                             ->all(),
+            'fields' => $this->composeFields(),
         ]);
         $this->fire('composed', ['form' => $this, 'composition' => $composition]);
 
         return $composition;
+    }
+
+    protected function composeFields()
+    {
+        $composed = collect();
+
+        foreach ($this->fields as $handle => $fields) {
+            $composed = $composed->merge(
+                $fields
+                    ->filter(function (Field $field) { return ! $field->isHidden(); })
+                    ->map(function (Field $field) use ($handle) {
+                        return array_filter(
+                            (new FieldComposer($field))->forForm($this->entries[$handle] ?? null)->get()
+                        );
+                    })
+            );
+        }
+        return $composed->values()->all();
+        foreach ($this->entries as $handle => $entry) {
+            $composed = $composed->merge(
+                $this->fields[$handle]
+                    ->filter(function (Field $field) { return ! $field->isHidden(); })
+                    ->map(function (Field $field) use ($entry) {
+                        return (new FieldComposer($field))->forForm($entry);
+                    })
+            );
+        }
+
+        return $composed->values()->all();
     }
 
     public function makeComponent(): ComponentContract

@@ -55,16 +55,15 @@ class FormTest extends ResourceTestCase
                             ->addGroup($fields = $this->makeFields());
 
         $form = $config->makeForm();
-
         $this->assertEquals($fields, $form->getFields()->all());
         $this->assertEquals([
             'url'    => sv_url('url/to/form'),
             'method' => 'post',
             'fields' => [
-                $form->getField('name')->compose()->get(),
-                $form->getField('age')->compose()->get(),
-            ],
-        ], $form->compose()->get());
+                                        $form->getField('name')->compose()->get(),
+                                        $form->getField('age')->compose()->get(),
+                                    ],
+        ], sv_compose($form->compose()));
     }
 
     function test_makes_update_form()

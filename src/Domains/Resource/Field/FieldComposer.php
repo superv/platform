@@ -18,6 +18,38 @@ class FieldComposer
         $this->field = $field;
     }
 
+    public function forForm(?EntryContract $entry)
+    {
+        $field = $this->field;
+
+        if ($entry) {
+            $value = $field->resolveFromEntry($entry);
+
+            if ($accessor = $field->getAccessor()) {
+                $value = app()->call($accessor, ['entry' => $entry, 'value' => $value, 'field' => $field]);
+            }
+
+            if ($presenter = $field->getPresenter()) {
+                $value = app()->call($presenter, ['entry' => $entry, 'value' => $value, 'field' => $field]);
+            }
+        }
+
+        $composition = (new Composition([
+            'type'   => $field->getType(),
+            'uuid'   => $field->uuid(),
+            'name'   => $field->getColumnName(),
+            'label'  => $field->getLabel(),
+            'value'  => $value ?? null,
+            'config' => $field->getConfig(),
+        ]))->setFilterNull(false);
+
+        if ($composer = $field->getComposer()) {
+            app()->call($composer, ['entry' => $entry, 'composition' => $composition]);
+        }
+
+        return $composition;
+    }
+
     public function forTableConfig()
     {
         $field = $this->field;
@@ -27,7 +59,6 @@ class FieldComposer
             'name'  => $field->getName(),
             'label' => $field->getLabel(),
         ]))->setFilterNull(false);
-
 
         return $composition;
     }
@@ -46,7 +77,6 @@ class FieldComposer
             $value = app()->call($presenter, ['entry' => $entry, 'value' => $value, 'field' => $field]);
         }
 
-
         $composition = (new Composition([
             'type'  => $field->getType(),
             'name'  => $field->getColumnName(),
@@ -54,13 +84,11 @@ class FieldComposer
         ]))->setFilterNull(false);
 
         if ($composer = $field->getComposer()) {
-             app()->call($composer, ['entry' => $entry, 'composition' => $composition]);
-         }
-
+            app()->call($composer, ['entry' => $entry, 'composition' => $composition]);
+        }
 
         return $composition;
     }
-
 
     public function forView(EntryContract $entry)
     {

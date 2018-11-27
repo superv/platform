@@ -176,7 +176,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
     public function makeComponent(): ComponentContract
     {
-        return Component::make('sv-table')->setProps($this->composeConfig());
+        return Component::make('sv-table')->card()->setProps($this->composeConfig());
     }
 
     public function composeConfig()
