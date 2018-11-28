@@ -12,8 +12,7 @@ class CurrentTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function returns_current_logged_in_user()
+    function test_returns_current_logged_in_user()
     {
         $user = User::query()->create([
             'account_id' => 1,
@@ -27,8 +26,15 @@ class CurrentTest extends TestCase
         $this->assertEquals($user->fresh(), Current::user());
     }
 
-    /** @test */
-    function returns_current_platform_port()
+    function test_request_path()
+    {
+        $this->setUpCustomPort('api.superv.io', 'v2');
+        $this->makeRequest('users');
+
+        $this->assertEquals('/users', Current::requestPath());
+    }
+
+    function test_returns_current_platform_port()
     {
         $this->setUpPort(['slug' => 'acp', 'hostname' => 'hostname.io']);
         PortDetectedEvent::dispatch($port = \Hub::get('acp'));
@@ -36,8 +42,7 @@ class CurrentTest extends TestCase
         $this->assertEquals($port, Current::port());
     }
 
-    /** @test */
-    function returns_current_url()
+    function test_returns_current_url()
     {
         $this->setUpPort(['slug' => 'acp', 'hostname' => 'localhost']);
         PortDetectedEvent::dispatch($port = \Hub::get('acp'));

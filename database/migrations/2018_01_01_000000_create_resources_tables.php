@@ -1,12 +1,12 @@
 <?php
 
 use Illuminate\Database\Schema\Blueprint as LaravelBlueprint;
+use Schema as LaravelSchema;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\Support\Blueprints;
-use Schema as LaravelSchema;
 
 class CreateResourcesTables extends Migration
 {
@@ -23,6 +23,9 @@ class CreateResourcesTables extends Migration
         });
         LaravelSchema::create('sv_navigation', function (LaravelBlueprint $table) {
             Blueprints::navigation($table);
+        });
+        LaravelSchema::create('sv_activities', function (LaravelBlueprint $table) {
+            Blueprints::activity($table);
         });
         LaravelSchema::create('sv_meta', function (LaravelBlueprint $table) {
             Blueprints::meta($table);
@@ -48,6 +51,11 @@ class CreateResourcesTables extends Migration
         Schema::run('sv_navigation', function (Blueprint $table, ResourceBlueprint $resource) {
             Blueprints::navigation($table, $resource);
         });
+
+        Schema::run('sv_activities', function (Blueprint $table, ResourceBlueprint $resource) {
+            Blueprints::activity($table, $resource);
+        });
+
         Schema::run('sv_meta', function (Blueprint $table, ResourceBlueprint $resource) {
             Blueprints::meta($table, $resource);
         });
@@ -62,6 +70,7 @@ class CreateResourcesTables extends Migration
         Schema::dropIfExists('sv_fields');
         Schema::dropIfExists('sv_relations');
         Schema::dropIfExists('sv_navigation');
+        Schema::dropIfExists('sv_activities');
         Schema::dropIfExists('sv_meta');
         Schema::dropIfExists('sv_meta_items');
     }

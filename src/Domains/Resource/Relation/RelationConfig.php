@@ -369,4 +369,9 @@ class RelationConfig
     {
         return static::make(RelationType::morphToMany());
     }
+
+    public static function morphMany(): self
+    {
+        return static::make(RelationType::morphMany());
+    }
 }

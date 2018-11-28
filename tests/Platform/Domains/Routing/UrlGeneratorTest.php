@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Routing;
 
+use Current;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
@@ -47,16 +48,4 @@ class UrlGeneratorTest extends TestCase
         $this->assertEquals('http://api.superv.io/users', URL::to('users'));
     }
 
-    protected function setUpCustomPort($hostname, $prefix = null)
-    {
-        $this->port = $this->setUpPort(['slug' => 'api', 'hostname' => $hostname, 'prefix' => $prefix]);
-        PortDetectedEvent::dispatch($this->port);
-    }
-
-    protected function makeRequest($path = null)
-    {
-        $this->app->extend('request', function () use ($path) {
-            return Request::create('http://'.$this->port->root().($path ? '/'.$path : ''));
-        });
-    }
 }

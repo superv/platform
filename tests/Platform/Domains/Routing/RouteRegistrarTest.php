@@ -70,7 +70,8 @@ class RouteRegistrarTest extends TestCase
     {
         $this->setUpPorts();
 
-        Route::get('key/kol', function() { return 'ok'; });
+
+        Route::get('key/kol', function () { return 'ok'; });
 
         $registrar = $this->app->make(RouteRegistrar::class);
         $registrar->globally()->register(['bar/foo' => 'BarController@foo']);
@@ -89,8 +90,9 @@ class RouteRegistrarTest extends TestCase
 
         $this->assertNotNull($routes['api.superv.iobar/foo']);
         $this->assertNotNull($routes['api.superv.iofoo/bar']);
-    }
 
+        $this->assertEquals(3, Hub::ports()->count());
+    }
 
     /** @test */
     function registers_ports_middlewares()

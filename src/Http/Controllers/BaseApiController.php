@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Http\Controllers;
 
+use SuperV\Platform\Domains\Resource\Http\Middleware\WatchActivity;
+
 class BaseApiController extends BaseController
 {
     public function __construct()
@@ -9,5 +11,6 @@ class BaseApiController extends BaseController
         parent::__construct();
 
         $this->middleware('auth:superv-api');
+        $this->middleware(WatchActivity::class);
     }
 }

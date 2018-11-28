@@ -2,13 +2,16 @@
 
 namespace Tests\Platform;
 
+use Current;
 use Hub;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Addon\Locator;
 use SuperV\Platform\Domains\Port\Port;
+use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\PlatformServiceProvider;
 use SuperV\Platform\Testing\TestHelpers;
 
@@ -78,8 +81,16 @@ class TestCase extends OrchestraTestCase
 
             (new PlatformServiceProvider($this->app))->boot();
         }
-
 //        define('SV_TEST_BASE', $this->basePath());
+    }
+
+    protected function tearDown()
+    {
+        if ($this->tmpDirectory) {
+            app('files')->deleteDirectory(__DIR__.'/../tmp');
+        }
+
+        parent::tearDown();
     }
 
     protected function makeTmpDirectory(): void
@@ -113,15 +124,6 @@ class TestCase extends OrchestraTestCase
         return $entry->resolveAddon();
     }
 
-    protected function tearDown()
-    {
-        if ($this->tmpDirectory) {
-            app('files')->deleteDirectory(__DIR__.'/../tmp');
-        }
-
-        parent::tearDown();
-    }
-
     protected function setUpPorts()
     {
         Hub::register(new class extends Port
@@ -150,12 +152,35 @@ class TestCase extends OrchestraTestCase
         });
     }
 
+    /**
+     * Setup and Activate a test port
+     *
+     * @param      $hostname
+     * @param null $prefix
+     * @return \SuperV\Platform\Domains\Port\Port
+     */
+    protected function setUpCustomPort($hostname, $prefix = null)
+    {
+        $port = $this->setUpPort(['slug' => 'api', 'hostname' => $hostname, 'prefix' => $prefix]);
+        PortDetectedEvent::dispatch($port);
+
+        return $port;
+    }
+
     public function basePath($path = null)
     {
         return __DIR__.($path ? '/'.$path : '');
     }
 
-    protected function makeUploadedFile($filename = 'square.png') {
+    protected function makeRequest($path = null)
+    {
+        $this->app->extend('request', function () use ($path) {
+            return Request::create('http://'.Current::port()->root().($path ? '/'.$path : ''));
+        });
+    }
+
+    protected function makeUploadedFile($filename = 'square.png')
+    {
         return new UploadedFile($this->basePath('__fixtures__/'.$filename), $filename);
     }
 }

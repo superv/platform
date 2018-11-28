@@ -109,6 +109,29 @@ class Blueprints
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
      */
+    public static function activity($table, ResourceBlueprint $resource = null)
+    {
+        $table->increments('id');
+        if ($table instanceof Blueprint) {
+            $resource->nav('acp.management.system');
+            $resource->label('Resource Activity');
+
+            $table->belongsTo('users', 'user')->showOnIndex();
+            $table->nullableMorphTo('entry')->showOnIndex();
+        } else {
+            $table->unsignedInteger('user_id');
+            $table->nullableMorphs('entry');
+        }
+
+        $table->string('activity')->entryLabel();
+//        $table->text('data');
+
+        $table->timestamp('created_at')->showOnIndex();
+    }
+
+    /**
+     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
+     */
     public static function meta($table, ResourceBlueprint $resource = null)
     {
         $table->increments('id');

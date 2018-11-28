@@ -89,6 +89,8 @@ class Blueprints
         $actions->create(['action' => 'edit']);
         $actions->create(['action' => 'update']);
         $actions->create(['action' => 'delete']);
+
+        return $actions;
     }
 
     /** @return Resource */

@@ -79,6 +79,7 @@ class ResourceIndexTest extends ResourceTestCase
         $group = $rowA['fields'][2];
         $this->assertEquals('belongs_to', $group['type']);
         $this->assertEquals('group_id', $group['name']);
+        $this->assertNull(array_get($group, 'meta.options'));
 
         $groups = sv_resource('t_groups');
         $usersGroup = $groups->find(1);

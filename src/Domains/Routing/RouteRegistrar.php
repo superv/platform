@@ -62,7 +62,7 @@ class RouteRegistrar
     {
         /** Register this route for every port available */
         if ($this->globally) {
-            $ports = Hub::ports()->push(new Port());
+            $ports = Hub::ports()->merge(new Port);
         } else {
             $ports = collect([$this->port]);
         }

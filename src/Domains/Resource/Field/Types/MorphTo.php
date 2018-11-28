@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Support\Composer\Composition;
 
-class BelongsTo extends FieldType implements NeedsDatabaseColumn
+class MorphTo extends FieldType
 {
     protected function presenter()
     {
@@ -28,10 +28,6 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         };
     }
 
-    public function getColumnName(): ?string
-    {
-        return $this->field->getName().'_id';
-    }
 
     protected function boot()
     {
@@ -42,20 +38,10 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         $this->on('view.composing', $this->composer());
 
         $this->on('table.presenting', $this->presenter());
-        $this->on('table.composing', $this->tableComposer());
+        $this->on('table.composing', $this->composer());
         $this->on('table.querying', function ($query) {
             $query->with($this->getName());
         });
-    }
-
-    protected function tableComposer() {
-
-        return function (Composition $composition, EntryContract $entry) {
-            if ($relatedEntry = $entry->{$this->getName()}) {
-                $resource = ResourceFactory::make($relatedEntry);
-                $composition->replace('meta.link', $resource->route('view', $relatedEntry));
-            }
-        };
     }
 
     protected function composer()

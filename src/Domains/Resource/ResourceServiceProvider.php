@@ -14,12 +14,13 @@ use SuperV\Platform\Providers\BaseServiceProvider;
 class ResourceServiceProvider extends BaseServiceProvider
 {
     protected $listeners = [
-        ColumnCreatedEvent::class            => Listeners\SyncField::class,
-        ColumnUpdatedEvent::class            => Listeners\SyncField::class,
-        ColumnDroppedEvent::class            => Listeners\DeleteField::class,
-        TableCreatingEvent::class            => Listeners\CreateResource::class,
-        AddonBootedEvent::class              => Listeners\RegisterExtensions::class,
-        Model\Events\EntrySavingEvent::class => Listeners\ValidateSavingEntry::class,
+        ColumnCreatedEvent::class             => Listeners\SyncField::class,
+        ColumnUpdatedEvent::class             => Listeners\SyncField::class,
+        ColumnDroppedEvent::class             => Listeners\DeleteField::class,
+        TableCreatingEvent::class             => Listeners\CreateResource::class,
+        AddonBootedEvent::class               => Listeners\RegisterExtensions::class,
+        Model\Events\EntrySavingEvent::class  => Listeners\ValidateSavingEntry::class,
+        Resource\ResourceActivityEvent::class => Listeners\RecordActivity::class,
     ];
 
     protected $_bindings = [

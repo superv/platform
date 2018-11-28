@@ -62,7 +62,7 @@ trait RepoConcern
         return $this->newQuery()->count();
     }
 
-    /** @return \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract|array */
+    /** @return  \SuperV\Platform\Domains\Resource\Model\ResourceEntry|array */
     public function fake(array $overrides = [], int $number = 1)
     {
         return ResourceEntryFake::make($this, $overrides, $number);

@@ -14,6 +14,8 @@ trait CreatesRelations
 
     public function belongsTo($related, $relationName, $foreignKey = null, $ownerKey = null): ColumnDefinition
     {
+        // relation
+        //
         $this->addColumn(null, $relationName, ['nullable' => true])
              ->relation(
                  Config::belongsTo()
@@ -23,6 +25,8 @@ trait CreatesRelations
                        ->ownerKey($ownerKey)
              );
 
+        // field
+        //
         return $this->unsignedInteger($foreignKey ?? $relationName.'_id')
                     ->fieldType('belongs_to')
                     ->fieldName($relationName)
@@ -60,13 +64,16 @@ trait CreatesRelations
                     );
     }
 
+    public function nullableMorphTo($relationName)
+    {
+        return $this->morphTo($relationName)->nullable();
+    }
+
     public function morphTo($relationName)
     {
-        return $this->addColumn(null, $relationName, ['nullable' => true])
-                    ->relation(
-                        Config::morphTo()
-                              ->relationName($relationName)
-                    );
+         return $this->addColumn(null, $relationName, ['nullable' => true])
+             ->relation(Config::morphTo()->relationName($relationName));
+
     }
 
     public function belongsToMany(
@@ -96,7 +103,7 @@ trait CreatesRelations
                         Config::hasMany()
                               ->relationName($relationName)
                               ->related($related)
-                              ->foreignKey($foreignKey ?? $this->getResourceBlueprint()->getResourceKey() . '_id')
+                              ->foreignKey($foreignKey ?? $this->getResourceBlueprint()->getResourceKey().'_id')
                               ->localKey($localKey)
                     );
     }
@@ -118,6 +125,16 @@ trait CreatesRelations
                               ->pivotForeignKey($morphName.'_id')
                               ->pivotRelatedKey($pivotRelatedKey)
                               ->pivotColumns($pivotColumns)
+                              ->morphName($morphName)
+                    );
+    }
+
+    public function morphMany($related, $relationName, $morphName) {
+        return $this->addColumn(null, $relationName, ['nullable' => true])
+                    ->relation(
+                        Config::morphMany()
+                              ->relationName($relationName)
+                              ->related($related)
                               ->morphName($morphName)
                     );
     }

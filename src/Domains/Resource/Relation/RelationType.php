@@ -14,6 +14,8 @@ class RelationType extends ValueObject
     private const MORPH_ONE = 'morph_one';
     private const MORPH_TO = 'morph_to';
 
+    private const MORPH_MANY = 'morph_many';
+
     public function isBelongsTo(): bool
     {
         return $this->equals(static::belongsTo());
@@ -49,6 +51,11 @@ class RelationType extends ValueObject
         return $this->equals(static::morphTo());
     }
 
+    public function isMorphMany(): bool
+    {
+        return $this->equals(static::morphMany());
+    }
+
     public static function hasOne(): self
     {
         return new static(self::HAS_ONE);
@@ -82,5 +89,10 @@ class RelationType extends ValueObject
     public static function morphTo(): self
     {
         return new static(self::MORPH_TO);
+    }
+
+    public static function morphMany(): self
+    {
+        return new static(self::MORPH_MANY);
     }
 }

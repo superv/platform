@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Support;
 
+use Carbon\Carbon;
 use SuperV\Platform\Domains\Auth\Contracts\Users;
 use SuperV\Platform\Domains\Port\Port;
 
@@ -44,6 +45,11 @@ class Current
     public function url(string $path = null): string
     {
         return $path ? url($path) : url()->current();
+    }
+
+    public function requestPath()
+    {
+      return str_replace_last('/'.Current::port()->prefix(), '', request()->getPathInfo());
     }
 
     /**
@@ -94,6 +100,11 @@ class Current
     public function isConsole()
     {
         return app()->runningInConsole();
+    }
+
+    public function time()
+    {
+        return Carbon::now();
     }
 
     public function setMigrationScope($scope)

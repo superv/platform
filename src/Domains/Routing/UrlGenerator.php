@@ -18,7 +18,7 @@ class UrlGenerator extends \Illuminate\Routing\UrlGenerator
             return $this->to($this->request->getPathInfo());
         }
 
-        return $this->to(str_replace_last('/'.$prefix, '', $this->request->getPathInfo()));
+        return $this->to($this->getPathInfo());
     }
 
     /**
@@ -39,6 +39,11 @@ class UrlGenerator extends \Illuminate\Routing\UrlGenerator
         }
 
         return parent::formatRoot($scheme, $root);
+    }
+
+    public function getPathInfo()
+    {
+        return str_replace_last('/'.Current::port()->prefix(), '', $this->request->getPathInfo());
     }
 
     private function getRequestRoot()
