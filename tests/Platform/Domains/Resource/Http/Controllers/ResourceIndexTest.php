@@ -2,6 +2,8 @@
 
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Resource;
 use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -16,7 +18,6 @@ class ResourceIndexTest extends ResourceTestCase
 
         $this->assertEquals('sv-loader', $table->getName());
         $this->assertEquals(sv_url($users->route('index.table')), $table->getProp('url'));
-
     }
 
     function test__index_table_config()
@@ -42,9 +43,9 @@ class ResourceIndexTest extends ResourceTestCase
             $this->assertEquals(1, count($rowActions));
 
             $this->assertEquals([
-                'name' => 'view',
+                'name'  => 'view',
                 'title' => 'View',
-                'url' => 'sv/res/t_users/{entry.id}/view'
+                'url'   => 'sv/res/t_users/{entry.id}/view',
             ], $rowActions[0]['props']);
         }
     }
@@ -84,5 +85,31 @@ class ResourceIndexTest extends ResourceTestCase
         $this->assertSame($usersGroup->title, $group['value']);
         $this->assertEquals($groups->route('view', $usersGroup), $group['meta']['link']);
     }
+
+    function test__fields_extending()
+    {
+        Resource::extend('t_posts')->with(function (Resource $resource) {
+            $resource->getField('user')
+                     ->showOnIndex()
+                     ->setCallback('table.presenting', function (EntryContract $entry) {
+                         return $entry->user->email;
+                     });
+        });
+
+        $this->withoutExceptionHandling();
+        $users = $this->schema()->users();
+        $userA = $users->fake(['group_id' => 1]);
+
+        $posts = $this->schema()->posts();
+        $posts->fake(['user_id' => $userA->getId()]);
+        $posts->fake(['user_id' => $userA->getId()]);
+
+        $row = $this->getJsonUser($posts->route('index.table').'/data')->decodeResponseJson('data.rows.0');
+
+        $fields = collect($row['fields'])->keyBy('name');
+        $this->assertEquals($userA->email, $fields->get('user_id')['value']);
+    }
 }
+
+
 

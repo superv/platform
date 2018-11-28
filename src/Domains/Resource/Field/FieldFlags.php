@@ -18,7 +18,7 @@ trait FieldFlags
         return in_array($flag, $this->flags);
     }
 
-    public function showOnIndex()
+    public function showOnIndex(): Field
     {
         return $this->addFlag('table.show');
     }

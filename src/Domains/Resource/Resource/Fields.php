@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Resource;
 
-class ResourceFields
+class Fields
 {
     /**
      * @var \SuperV\Platform\Domains\Resource\Resource
@@ -27,22 +27,35 @@ class ResourceFields
         $this->fields = $fields instanceof Closure ? $fields() : $fields;
     }
 
-    public function get($name = null)
+    public function __invoke()
     {
-        if (is_null($name)) {
-            return $this->fields;
-        }
+        return $this->fields;
+    }
 
+    public function get($name): Field
+    {
         return $this->fields->first(
             function (Field $field) use ($name) {
                 return $field->getName() === $name;
             });
     }
 
+    public function showOnIndex($name): Field
+    {
+        return $this->get($name)->showOnIndex();
+    }
+
     public function keyByName(): Collection
     {
         return $this->fields->keyBy(function (Field $field) {
             return $field->getName();
+        });
+    }
+
+    public function withFlag($flag): Collection
+    {
+        return $this->fields->filter(function (Field $field) use ($flag) {
+            return $field->hasFlag($flag);
         });
     }
 

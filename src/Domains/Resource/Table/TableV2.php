@@ -28,11 +28,6 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
 
-    /**
-     * @var TableConfig
-     */
-    protected $config;
-
     /** @var Builder */
     protected $query;
 
@@ -71,17 +66,16 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
     public function build(): self
     {
-        $fields = $this->resource
-            ->fields()
-            ->forTable()
-            ->merge($this->copyMergeFields())
-            ->map(function (Field $field) {
-                if ($callback = $field->getCallback('table.querying')) {
-                    $this->on('querying', $callback);
-                }
+        $fields = $this->resource->fields()
+                                 ->forTable()
+                                 ->merge($this->copyMergeFields())
+                                 ->map(function (Field $field) {
+                                     if ($callback = $field->getCallback('table.querying')) {
+                                         $this->on('querying', $callback);
+                                     }
 
-                return $field;
-            });
+                                     return $field;
+                                 });
 
         $query = $this->getQuery();
         $this->fire('querying', ['query' => $query]);

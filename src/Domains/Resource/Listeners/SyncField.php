@@ -36,7 +36,7 @@ class SyncField
 
         $this->blueprint = $event->blueprint;
 
-        if ($this->column->autoIncrement || $this->column->type === 'timestamp') {
+        if ($this->column->autoIncrement) {
             return;
         }
 

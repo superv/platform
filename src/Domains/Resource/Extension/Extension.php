@@ -29,12 +29,14 @@ class Extension
         $this->events = $events;
     }
 
-    public function __invoke(string $class)
+    public function __invoke($extension)
     {
-        if (! class_exists($class)) {
-            throw new PlatformException("Extension class not found: [{$class}]");
+        if (is_string($extension)) {
+            if (! class_exists($extension)) {
+                throw new PlatformException("Extension class not found: [{$extension}]");
+            }
+            $extension = app($extension);
         }
-        $extension = app($class);
 
         if ($extension instanceof ExtendsResource) {
             return $this->registerSingle($extension);

@@ -4,8 +4,6 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use Storage;
 use SuperV\Platform\Domains\Media\Media;
-use SuperV\Platform\Domains\Resource\Extension\Extension;
-use Tests\Platform\Domains\Resource\Fixtures\Extension\TestUserResourceExtension;
 use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -52,12 +50,6 @@ class ResourceViewTest extends ResourceTestCase
         $this->assertEquals('file', $avatar['type']);
         $this->assertNull($avatar['value']);
         $this->assertEquals(Media::first()->getUrl(), $avatar['image_url'] ?? null);
-    }
-
-    protected function tearDown()
-    {
-        Extension::unregister(TestUserResourceExtension::class);
-        parent::tearDown();
     }
 }
 

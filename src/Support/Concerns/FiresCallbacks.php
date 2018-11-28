@@ -8,9 +8,11 @@ trait FiresCallbacks
 {
     protected $callbacks = [];
 
-    public function setCallback($trigger, ?Closure $callback)
+    public function setCallback($trigger, $callback)
     {
-        return $this->on($trigger, $callback);
+        $this->callbacks[$trigger] = $callback;
+
+        return $this;
     }
 
     public function on($trigger, ?Closure $callback)
@@ -71,7 +73,9 @@ trait FiresCallbacks
             return null;
         }
 
-        return $this->callbacks[$trigger][0];
+        $callback = $this->callbacks[$trigger];
+
+        return is_array($callback) ? $callback[0] : $callback;
     }
 
     public function getCallbacks(): array

@@ -6,11 +6,13 @@ use Closure;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
+use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
+use SuperV\Platform\Domains\Resource\Resource\Extender;
 use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
-use SuperV\Platform\Domains\Resource\Resource\ResourceFields;
+use SuperV\Platform\Domains\Resource\Resource\Fields;
 use SuperV\Platform\Domains\Resource\Resource\ResourceView;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -39,7 +41,7 @@ class Resource implements
     protected $uuid;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Resource\ResourceFields
+     * @var \SuperV\Platform\Domains\Resource\Resource\Fields
      */
     protected $fields;
 
@@ -68,7 +70,7 @@ class Resource implements
     {
         $this->hydrate($attributes);
 
-        $this->fields = (new ResourceFields($this, $this->fields));
+        $this->fields = (new Fields($this, $this->fields));
     }
 
     public function resolveViewUsing(Closure $closure)
@@ -87,14 +89,14 @@ class Resource implements
         return new ResourceView($this, $entry);
     }
 
-    public function fields(): ResourceFields
+    public function fields(): Fields
     {
         return $this->fields;
     }
 
     public function getFields(): Collection
     {
-        return $this->fields->get();
+        return $this->fields()();
     }
 
     public function provideFields(): Collection
@@ -216,5 +218,12 @@ class Resource implements
             'uuid'   => $this->uuid,
             'handle' => $this->getHandle(),
         ];
+    }
+
+    public static function extend($handle)
+    {
+        Extension::register($extender = new Extender($handle));
+
+        return $extender;
     }
 }

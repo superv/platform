@@ -8,10 +8,6 @@ use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesRetrieved;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaved;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaving;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\Resource\ResourceView;
-use SuperV\Platform\Domains\UI\Components\Html;
-use SuperV\Platform\Domains\UI\Components\Image;
-use SuperV\Platform\Domains\UI\Components\Layout\RowComponent;
 
 class TestUserResourceExtension implements ExtendsResource, ObservesRetrieved, ObservesSaving, ObservesSaved
 {
@@ -25,19 +21,6 @@ class TestUserResourceExtension implements ExtendsResource, ObservesRetrieved, O
     public function extend(Resource $resource)
     {
         $resource->getField('name')->setConfigValue('extended', true);
-
-        $resource->resolveViewUsing(function (EntryContract $entry) use ($resource) {
-            return (new ResourceView($resource, $entry))
-                ->resolveHeadingUsing(
-                    function () {
-                        $avatar = $this->entry->getField('avatar');
-                        $avatarUrl = $avatar->compose()->get('config.url');
-
-                        return RowComponent::make()
-                                           ->addColumn(Image::make()->setProp('src', $avatarUrl))
-                                           ->addColumn(Html::make()->setProp('content', $this->resource->getEntryLabel($this->entry)));
-                    });
-        });
     }
 
     public function retrieved(EntryContract $entry)

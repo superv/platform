@@ -52,9 +52,11 @@ class ResourceView implements ProvidesUIComponent
 
         $label = $this->resource->getEntryLabel($this->entry);
 
+
+
         return Component::make($this->resource->getConfigValue('view.header', 'sv-header'))
                         ->addClass('p-2')->card()
-                        ->setProp('image-url', $avatarUrl ?? '')
+                        ->setProp('image-url', '')
                         ->setProp('header', $label)
                         ->setProp('actions', $this->getActions());
     }
@@ -84,11 +86,20 @@ class ResourceView implements ProvidesUIComponent
 
     public function makeComponent(): ComponentContract
     {
+
+        $imageField = $this->resource->fields()->withFlag('header.show')->first();
+
+        if ($imageField) {
+            $imageField = (new FieldComposer($imageField))->forView($this->entry);
+
+            $imageUrl = $imageField->get('image_url');
+        }
+
         return Component::make('sv-resource-view')
                         ->setProps([
                             'entry'   => $this->entry->toArray(),
                             'heading' => [
-                                'imageUrl' => 'https://www.gravatar.com/avatar/'.md5(strtolower('maselcuk@gmail.com')).'?s=300',
+                                'imageUrl' => $imageUrl ?? '',
                                 'header'   => $this->resource->getEntryLabel($this->entry),
                                 'actions'  => $this->getActions(),
                             ],

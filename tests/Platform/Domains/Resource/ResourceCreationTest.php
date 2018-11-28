@@ -109,7 +109,7 @@ class ResourceCreationTest extends ResourceTestCase
         $this->assertArrayContains(['min:16', 'max:64'], $nameField->getRules());
     }
 
-    function test__does_not_create_fields_for_timestamp_columns()
+    function cancelled__does_not_create_fields_for_timestamp_columns()
     {
         $resource = $this->makeResourceModel('test_users', ['name', 'timestamps']);
 

@@ -43,7 +43,7 @@ interface Field
 
     public function fillFromEntry(EntryContract $entry);
 
-    public function setCallback($trigger, ?Closure $callback);
+    public function setCallback($trigger, $callback);
 
     public function getCallback($trigger);
 
@@ -61,7 +61,7 @@ interface Field
 
     public function setPresenter(Closure $callback);
 
-    public function showOnIndex();
+    public function showOnIndex(): Field;
 
     public function addFlag(string $flag): Field;
 

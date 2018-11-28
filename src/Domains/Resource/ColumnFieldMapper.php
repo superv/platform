@@ -133,6 +133,11 @@ class ColumnFieldMapper
         $this->setConfigValue('time', false);
     }
 
+    protected function mapTimestamp()
+    {
+        $this->mapDateTime();
+    }
+
     protected function mapDateTime()
     {
         $this->fieldType = 'datetime';
