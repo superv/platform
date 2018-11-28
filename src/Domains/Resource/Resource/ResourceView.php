@@ -93,7 +93,7 @@ class ResourceView implements ProvidesUIComponent
                                 'actions'  => $this->getActions(),
                             ],
 
-                            'fields' => $this->resource->getFields()->map(function (Field $field) {
+                            'fields' => $this->resource->fields()->keyByName()->map(function (Field $field) {
                                 return (new FieldComposer($field))->forView($this->entry);
                             }),
 

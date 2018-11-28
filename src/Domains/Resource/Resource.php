@@ -7,10 +7,10 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
+use SuperV\Platform\Domains\Resource\Resource\ResourceFields;
 use SuperV\Platform\Domains\Resource\Resource\ResourceView;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -39,7 +39,7 @@ class Resource implements
     protected $uuid;
 
     /**
-     * @var Collection
+     * @var \SuperV\Platform\Domains\Resource\Resource\ResourceFields
      */
     protected $fields;
 
@@ -67,6 +67,8 @@ class Resource implements
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
+
+        $this->fields = (new ResourceFields($this, $this->fields));
     }
 
     public function resolveViewUsing(Closure $closure)
@@ -85,17 +87,14 @@ class Resource implements
         return new ResourceView($this, $entry);
     }
 
+    public function fields(): ResourceFields
+    {
+        return $this->fields;
+    }
+
     public function getFields(): Collection
     {
-        if ($this->fields instanceof Closure) {
-            $this->fields = ($this->fields)();
-        }
-
-        if (! $this->fields) {
-            return collect();
-        }
-
-        return $this->fields->keyBy(function (Field $field) { return $field->getName(); });
+        return $this->fields->get();
     }
 
     public function provideFields(): Collection
@@ -105,7 +104,7 @@ class Resource implements
 
     public function getField($name): ?Field
     {
-        return $this->getFields()->first(function ($field) use ($name) { return $field->getName() === $name; });
+        return $this->fields()->get($name);
     }
 
     public function getRelations(): Collection
@@ -169,25 +168,6 @@ class Resource implements
     public function getResourceKey()
     {
         return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
-    }
-
-    public function getTableFields(): Collection
-    {
-        $label = FieldFactory::createFromArray([
-            'type'  => 'text',
-            'name'  => 'label',
-            'label' => $this->getSingularLabel(),
-        ]);
-        $label->setCallback('table.presenting', function (EntryContract $entry) {
-            return sv_parse($this->getConfigValue('entry_label'), $entry->toArray());
-        })->showOnIndex();
-
-        return collect()->put('label', $label)
-                        ->merge($this->getFields()
-                                     ->filter(function (Field $field) {
-                                         return $field->hasFlag('table.show');
-                                     })
-                        );
     }
 
     public function route($route, ?EntryContract $entry = null)

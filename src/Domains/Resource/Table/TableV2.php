@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
@@ -37,9 +38,6 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
     /** @var \SuperV\Platform\Domains\Resource\Table\TableRow|\Illuminate\Support\Collection */
     protected $rows;
-
-    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field[]|\Illuminate\Support\Collection */
-    protected $fields;
 
     /** @var array */
     protected $pagination;
@@ -71,28 +69,11 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return $this;
     }
 
-    public function getFields()
-    {
-        if ($this->fields) {
-            return $this->fields;
-        }
-
-        return $this->fields = $this->resource
-            ->getTableFields()
-            ->merge($this->copyMergeFields())
-            ->map(function (Field $field) {
-                if ($callback = $field->getCallback('table.querying')) {
-                    $this->on('querying', $callback);
-                }
-
-                return $field;
-            });
-    }
-
     public function build(): self
     {
         $fields = $this->resource
-            ->getTableFields()
+            ->fields()
+            ->forTable()
             ->merge($this->copyMergeFields())
             ->map(function (Field $field) {
                 if ($callback = $field->getCallback('table.querying')) {
@@ -104,6 +85,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
         $query = $this->getQuery();
         $this->fire('querying', ['query' => $query]);
+
         $this->provider->setQuery($query);
         $this->provider->setRowsPerPage($this->getOption('limit', 10));
         $this->provider->fetch();
@@ -112,12 +94,11 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
         $this->rows = $this->provider->getEntries()->map(
             function (EntryContract $entry) use ($fields) {
-
                 return [
                     'id'      => $entry->getId(),
                     'fields'  => $fields->map(function (Field $field) use ($entry) {
-                                        return (new FieldComposer($field))->forTableRow($entry);
-                                    })->values(),
+                        return (new FieldComposer($field))->forTableRow($entry);
+                    })->values(),
                     'actions' => ['view'],
                 ];
             });
@@ -160,16 +141,6 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return $this->rows;
     }
 
-    public function getColumns(): Collection
-    {
-        return $this->columns;
-    }
-
-    public function getActions(): Collection
-    {
-        return $this->config->getRowActions();
-    }
-
     public function getQuery()
     {
         if (! $this->query) {
@@ -195,7 +166,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return $this->pagination;
     }
 
-    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): TableV2
+    public function setResource(Resource $resource): TableV2
     {
         $this->resource = $resource;
 
@@ -210,7 +181,8 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
     public function composeConfig()
     {
         $fields = $this->resource
-            ->getTableFields()
+            ->fields()
+            ->forTable()
             ->merge($this->copyMergeFields())
             ->map(function (Field $field) {
                 return (new FieldComposer($field))->forTableConfig();

@@ -128,12 +128,13 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         }
         $pivotResource = ResourceFactory::make($this->getConfig()->getPivotTable());
 
-        return $pivotResource->getFields()
+        return $pivotResource->fields()
+                             ->keyByName()
                              ->filter(function (Field $field) use ($pivotColumns) {
                                  return in_array($field->getColumnName(), $pivotColumns);
                              })
                              ->map(function (Field $field) {
-                                 $field->setCallback('table.presenting',function (EntryContract $entry) use ($field) {
+                                 $field->setCallback('table.presenting', function (EntryContract $entry) use ($field) {
                                      if ($pivot = $entry->pivot) {
                                          return $pivot->{$field->getColumnName()};
                                      }
