@@ -60,4 +60,10 @@ interface Field
     public function getMutator($for);
 
     public function setPresenter(Closure $callback);
+
+    public function showOnIndex();
+
+    public function addFlag(string $flag): Field;
+
+    public function hasFlag(string $flag): bool;
 }

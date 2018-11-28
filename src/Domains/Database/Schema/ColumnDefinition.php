@@ -76,8 +76,11 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
 
     public function showOnIndex()
     {
+        $flags = $this->config['flags'] ?? [];
+        $flags[] = 'table.show';
+
         $config = $this->config;
-        $config['table.show'] = true;
+        $config['flags'] = $flags;
         $this->config = $config;
 
         return $this;

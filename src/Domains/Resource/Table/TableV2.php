@@ -71,21 +71,36 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return $this;
     }
 
+    public function getFields()
+    {
+        if ($this->fields) {
+            return $this->fields;
+        }
+
+        return $this->fields = $this->resource
+            ->getTableFields()
+            ->merge($this->copyMergeFields())
+            ->map(function (Field $field) {
+                if ($callback = $field->getCallback('table.querying')) {
+                    $this->on('querying', $callback);
+                }
+
+                return $field;
+            });
+    }
+
     public function build(): self
     {
-        $this->fields = $this->resource->getTableFields()
-                                       ->merge($this->copyMergeFields())
-                                       ->filter(function (Field $field) {
-                                           return $field->getConfigValue('table.show') === true;
-                                       });
+        $fields = $this->resource
+            ->getTableFields()
+            ->merge($this->copyMergeFields())
+            ->map(function (Field $field) {
+                if ($callback = $field->getCallback('table.querying')) {
+                    $this->on('querying', $callback);
+                }
 
-        $this->fields->map(function (Field $field) {
-            if ($callback = $field->getCallback('table.querying')) {
-                $this->on('querying', $callback);
-            }
-
-            return $field;
-        });
+                return $field;
+            });
 
         $query = $this->getQuery();
         $this->fire('querying', ['query' => $query]);
@@ -96,21 +111,13 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         $this->pagination = $this->provider->getPagination();
 
         $this->rows = $this->provider->getEntries()->map(
-            function (EntryContract $entry) {
-//                $fields = ResourceFactory::make($entry)
-//                                         ->getTableFields()
-//                                         ->merge($this->copyMergeFields())
-//                                         ->map(function (Field $field) use ($entry) {
-//                                             return (new FieldComposer($field))->forTableRow($entry);
-//                                         })
-//                                         ->values();
+            function (EntryContract $entry) use ($fields) {
 
                 return [
                     'id'      => $entry->getId(),
-                    'fields'  => $this->fields->map(
-                            function (Field $field) use ($entry) {
-                                return (new FieldComposer($field))->forTableRow($entry);
-                            })->values(),
+                    'fields'  => $fields->map(function (Field $field) use ($entry) {
+                                        return (new FieldComposer($field))->forTableRow($entry);
+                                    })->values(),
                     'actions' => ['view'],
                 ];
             });
@@ -202,15 +209,18 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
     public function composeConfig()
     {
+        $fields = $this->resource
+            ->getTableFields()
+            ->merge($this->copyMergeFields())
+            ->map(function (Field $field) {
+                return (new FieldComposer($field))->forTableConfig();
+            })
+            ->values();
+
         $composition = new Composition([
             'config' => [
                 'data_url'        => $this->dataUrl ?? sv_url($this->resource->route('index.table').'/data'),
-                'fields'          => $this->resource->getTableFields()
-                                                    ->merge($this->copyMergeFields())
-                                                    ->map(function (Field $field) {
-                                                        return (new FieldComposer($field))->forTableConfig();
-                                                    })
-                                                    ->values(),
+                'fields'          => $fields,
                 'row_actions'     => collect($this->actions)->map(function ($action) {
                     if (is_string($action)) {
                         $action = $action::make();

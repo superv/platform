@@ -139,7 +139,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
                                      }
                                  });
 
-                                 $field->setConfigValue('table.show', true);
+                                 $field->showOnIndex();
 
                                  return $field;
                              });

@@ -24,6 +24,8 @@ class Field implements FieldContract
     use FiresCallbacks;
     use HasConfig;
 
+    use FieldFlags;
+
     /**
      * @var string
      */
@@ -90,6 +92,8 @@ class Field implements FieldContract
 
     public function __construct(array $attributes = [])
     {
+        $this->flags = array_pull($attributes, 'config.flags', []);
+
         $this->hydrate($attributes);
 
         $this->uuid = $this->uuid ?? uuid();
@@ -167,7 +171,7 @@ class Field implements FieldContract
 
     public function isHidden(): bool
     {
-        return $this->getFlag('hidden');
+        return $this->hasFlag('hidden');
     }
 
     public function isUnique()
@@ -187,7 +191,7 @@ class Field implements FieldContract
 
     public function hide(bool $value = true)
     {
-        return $this->setFlag('hidden', $value);
+        return $this->addFlag('hidden', $value);
     }
 
     public function getRules()
@@ -242,19 +246,7 @@ class Field implements FieldContract
 
     public function setVisibility(bool $visible): Field
     {
-        return $this->setFlag('hidden', ! $visible);
-    }
-
-    public function setFlag(string $flag, bool $value): self
-    {
-        $this->flags[$flag] = $value;
-
-        return $this;
-    }
-
-    public function getFlag(string $flag, $default = false): bool
-    {
-        return $this->flags[$flag] ?? $default;
+        return $this->addFlag('hidden', ! $visible);
     }
 
     public function uuid(): string

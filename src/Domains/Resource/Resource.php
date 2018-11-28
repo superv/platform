@@ -173,26 +173,20 @@ class Resource implements
 
     public function getTableFields(): Collection
     {
-        $labelField = FieldFactory::createFromArray([
+        $label = FieldFactory::createFromArray([
             'type'  => 'text',
             'name'  => 'label',
             'label' => $this->getSingularLabel(),
-        ])
-                                  ->setCallback('table.presenting', function (EntryContract $entry) {
-                                      return sv_parse($this->getConfigValue('entry_label'), $entry->toArray());
-                                  })->setConfigValue('table.show', true);
+        ]);
+        $label->setCallback('table.presenting', function (EntryContract $entry) {
+            return sv_parse($this->getConfigValue('entry_label'), $entry->toArray());
+        })->showOnIndex();
 
-        return collect()->put('label', $labelField)
-                        ->merge(
-                            $this->getFields()
-                                 ->map(function (Field $field) {
-                                     if ($field->getConfigValue('table.show') === true) {
-                                         return $field;
-                                     }
-
-                                     return null;
-                                 })
-                                 ->filter()
+        return collect()->put('label', $label)
+                        ->merge($this->getFields()
+                                     ->filter(function (Field $field) {
+                                         return $field->hasFlag('table.show');
+                                     })
                         );
     }
 
