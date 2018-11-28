@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
+use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
@@ -13,6 +14,8 @@ class ResourceViewController extends BaseApiController
     public function __invoke()
     {
         $resource = $this->resolveResource();
+
+        return MakeComponentTree::dispatch($resource->resolveView($this->entry));
 
         $page = Page::make('View '.$resource->getEntryLabel($this->entry));
 
