@@ -43,15 +43,21 @@ interface Field
 
     public function fillFromEntry(EntryContract $entry);
 
+    public function setCallback($trigger, ?Closure $callback);
+
+    public function getCallback($trigger);
+
     public function resolveRequestToEntry(Request $request, EntryContract $entry);
 
     public function resolveFromEntry(EntryContract $entry);
 
-    public function getAccessor();
+    public function getAccessor($for);
 
-    public function getComposer();
+    public function getComposer($for);
 
-    public function getPresenter();
+    public function getPresenter($for);
+
+    public function getMutator($for);
 
     public function setPresenter(Closure $callback);
 }

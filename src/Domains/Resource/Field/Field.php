@@ -4,12 +4,10 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
 use Illuminate\Http\Request;
-use SuperV\Platform\Contracts\FiresCallbacks as FiresCallbacksContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
-use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -20,7 +18,7 @@ use SuperV\Platform\Support\Concerns\Hydratable;
  *
  * @package SuperV\Platform\Domains\Resource\Field
  */
-class Field implements FieldContract, FiresCallbacksContract
+class Field implements FieldContract
 {
     use Hydratable;
     use FiresCallbacks;
@@ -113,11 +111,6 @@ class Field implements FieldContract, FiresCallbacksContract
         return $this;
     }
 
-    public function getAlterQueryCallback()
-    {
-        return $this->alterQueryCallback;
-    }
-
     public function resolveRequestToEntry(Request $request, EntryContract $entry)
     {
         if (! $request->has($this->getName())
@@ -129,8 +122,8 @@ class Field implements FieldContract, FiresCallbacksContract
             $value = $request->__get($this->getName());
         }
 
-        if ($this->mutator) {
-            $value = ($this->mutator)($value, $entry);
+        if ($mutator = $this->getMutator('form')) {
+            $value = ($mutator)($value, $entry);
 
             if ($value instanceof Closure) {
                 return $value;
@@ -210,16 +203,6 @@ class Field implements FieldContract, FiresCallbacksContract
         return $entry->getAttribute($this->getColumnName());
     }
 
-    public function getAccessor()
-    {
-        return $this->accessor;
-    }
-
-    public function getComposer()
-    {
-        return $this->composer;
-    }
-
     public function bindFieldType()
     {
         $class = FieldType::resolveClass($this->type);
@@ -227,15 +210,7 @@ class Field implements FieldContract, FiresCallbacksContract
         /** @var FieldType $type */
         $type = new $class($this);
         $this->columnName = $type->getColumnName();
-        $this->mutator = method_exists($type, 'getMutator') ? $type->getMutator() : $this->mutator;
-        $this->accessor = method_exists($type, 'getAccessor') ? $type->getAccessor() : $this->accessor;
-        $this->composer = method_exists($type, 'getComposer') ? $type->getComposer() : $this->composer;
-        $this->presenter = method_exists($type, 'getPresenter') ? $type->getPresenter() : $this->presenter;
-
         $this->doesNotInteractWithTable = $type instanceof DoesNotInteractWithTable;
-        if ($type instanceof AltersTableQuery) {
-            $this->alterQueryCallback = $type->getAlterQueryCallback();
-        }
 
         if (method_exists($type, 'makeRules')) {
             if ($rules = $type->makeRules()) {
@@ -247,6 +222,8 @@ class Field implements FieldContract, FiresCallbacksContract
                 $this->config = array_merge($this->config, $config);
             }
         }
+
+        $this->mergeCallbacks($type->getCallbacks());
 
         return $type;
     }
@@ -287,11 +264,31 @@ class Field implements FieldContract, FiresCallbacksContract
 
     public function setPresenter(Closure $callback)
     {
-        $this->presenter = $callback;
+        $this->on('presenting', $callback);
     }
 
-    public function getPresenter()
+    public function getPresenter($for)
     {
-        return $this->presenter;
+        return $this->getCallback("{$for}.presenting");
+    }
+
+    public function getAccessor($for)
+    {
+        return $this->getCallback("{$for}.accessing");
+    }
+
+    public function getComposer($for)
+    {
+        return $this->getCallback("{$for}.composing");
+    }
+
+    public function getMutator($for)
+    {
+        return $this->getCallback("{$for}.mutating");
+    }
+
+    public function getAlterQueryCallback()
+    {
+        return $this->alterQueryCallback;
     }
 }

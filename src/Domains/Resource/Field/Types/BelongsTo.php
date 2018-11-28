@@ -2,23 +2,28 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Domains\Resource\Table\Contracts\AltersTableQuery;
 use SuperV\Platform\Support\Composer\Composition;
 
-class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQuery
+class BelongsTo extends FieldType implements NeedsDatabaseColumn
 {
-    public function getPresenter(): ?Closure
+    protected function presenter()
+    {
+        return function (EntryContract $entry) {
+            if ($relatedEntry = $entry->{$this->getName()}) {
+                return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
+            }
+        };
+    }
+
+    protected function viewPresenter()
     {
         return function (EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
-                $resource = ResourceFactory::make($relatedEntry);
-
-                return $resource->getEntryLabel($relatedEntry);
+                return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
             }
         };
     }
@@ -28,7 +33,22 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
         return $this->field->getName().'_id';
     }
 
-    public function getComposer(): ?Closure
+    protected function boot()
+    {
+        $this->on('form.presenting', $this->presenter());
+        $this->on('form.composing', $this->composer());
+
+        $this->on('view.presenting', $this->viewPresenter());
+        $this->on('view.composing', $this->composer());
+
+        $this->on('table.presenting', $this->presenter());
+        $this->on('table.composing', $this->composer());
+        $this->on('table.querying', function ($query) {
+            $query->with($this->getName());
+        });
+    }
+
+    protected function composer()
     {
         return function (Composition $composition, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
@@ -37,6 +57,19 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
             }
             $this->buildOptions($composition);
         };
+
+        //        if ($this->hasCallback('querying')) {
+        //            $this->fire('querying', ['query' => $query]);
+        //
+        //            // If parent exists, make sure we get the
+        //            // current related entry in the list
+        //            if ($this->entry->exists) {
+        //                $query->orWhere($query->getModel()->getQualifiedKeyName(), $this->entry->getAttribute($this->getName()));
+        //            }
+        //        } else {
+        //            $query->get();
+        //        }
+        //
     }
 
     protected function buildOptions(Composition $composition)
@@ -55,27 +88,5 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, AltersTableQue
 
         $composition->replace('meta.options', $options);
         $composition->replace('placeholder', 'Choose a '.$relatedResource->getSingularLabel());
-    }
-
-    public function alterComposition(Composition $composition)
-    {
-//        if ($this->hasCallback('querying')) {
-//            $this->fire('querying', ['query' => $query]);
-//
-//            // If parent exists, make sure we get the
-//            // current related entry in the list
-//            if ($this->entry->exists) {
-//                $query->orWhere($query->getModel()->getQualifiedKeyName(), $this->entry->getAttribute($this->getName()));
-//            }
-//        } else {
-//            $query->get();
-//        }
-//
-
-    }
-
-    public function getAlterQueryCallback(): Closure
-    {
-        return function ($query) { $query->with($this->getName()); };
     }
 }

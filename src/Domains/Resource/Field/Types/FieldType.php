@@ -19,7 +19,11 @@ abstract class FieldType
     public function __construct(?Field $field = null)
     {
         $this->field = $field;
+
+        $this->boot();
     }
+
+    protected function boot() {}
 
     public function getColumnName(): ?string
     {

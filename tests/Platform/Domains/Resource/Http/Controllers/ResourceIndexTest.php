@@ -66,7 +66,6 @@ class ResourceIndexTest extends ResourceTestCase
 
         $label = $rowA['fields'][0];
         $this->assertEquals(['type', 'name', 'value',], array_keys($label));
-
         $this->assertEquals('text', $label['type']);
         $this->assertEquals('label', $label['name']);
         $this->assertEquals($users->getEntryLabel($userA), $label['value']);

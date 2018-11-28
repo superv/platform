@@ -4,9 +4,7 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use Storage;
 use SuperV\Platform\Domains\Media\Media;
-use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\Fixtures\Extension\TestUserResourceExtension;
 use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -15,7 +13,7 @@ class ResourceViewTest extends ResourceTestCase
 {
     use ResponseHelper;
 
-    function test__bsmllh()
+    function test__view_data()
     {
         $users = $this->schema()->users();
         $user = $users->fake(['name' => 'Ali Selcuk', 'age' => '40', 'group_id' => 1]);

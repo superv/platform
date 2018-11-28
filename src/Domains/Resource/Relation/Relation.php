@@ -133,11 +133,13 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
                                  return in_array($field->getColumnName(), $pivotColumns);
                              })
                              ->map(function (Field $field) {
-                                 $field->setPresenter(function (EntryContract $entry) use ($field) {
+                                 $field->setCallback('table.presenting',function (EntryContract $entry) use ($field) {
                                      if ($pivot = $entry->pivot) {
                                          return $pivot->{$field->getColumnName()};
                                      }
                                  });
+
+                                 $field->setConfigValue('table.show', true);
 
                                  return $field;
                              });

@@ -10,18 +10,19 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Composition;
 use SuperV\Platform\Support\Composer\Tokens;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
 class TableV2 implements Composable, ProvidesUIComponent, Responsable
 {
     use HasOptions;
+    use FiresCallbacks;
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
@@ -37,8 +38,8 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
     /** @var \SuperV\Platform\Domains\Resource\Table\TableRow|\Illuminate\Support\Collection */
     protected $rows;
 
-    /** @var \SuperV\Platform\Domains\Resource\Table\Contracts\Column[]|\Illuminate\Support\Collection */
-    protected $columns;
+    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field[]|\Illuminate\Support\Collection */
+    protected $fields;
 
     /** @var array */
     protected $pagination;
@@ -72,7 +73,23 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
     public function build(): self
     {
-        $this->provider->setQuery($this->getQuery());
+        $this->fields = $this->resource->getTableFields()
+                                       ->merge($this->copyMergeFields())
+                                       ->filter(function (Field $field) {
+                                           return $field->getConfigValue('table.show') === true;
+                                       });
+
+        $this->fields->map(function (Field $field) {
+            if ($callback = $field->getCallback('table.querying')) {
+                $this->on('querying', $callback);
+            }
+
+            return $field;
+        });
+
+        $query = $this->getQuery();
+        $this->fire('querying', ['query' => $query]);
+        $this->provider->setQuery($query);
         $this->provider->setRowsPerPage($this->getOption('limit', 10));
         $this->provider->fetch();
 
@@ -80,16 +97,20 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
         $this->rows = $this->provider->getEntries()->map(
             function (EntryContract $entry) {
-                $fields = ResourceFactory::make($entry)
-                                         ->getTableFields()
-                                         ->merge($this->copyMergeFields())
-                                         ->map(function (Field $field) use ($entry) {
-                                             return (new FieldComposer($field))->forTableRow($entry);
-                                         })->values();
+//                $fields = ResourceFactory::make($entry)
+//                                         ->getTableFields()
+//                                         ->merge($this->copyMergeFields())
+//                                         ->map(function (Field $field) use ($entry) {
+//                                             return (new FieldComposer($field))->forTableRow($entry);
+//                                         })
+//                                         ->values();
 
                 return [
                     'id'      => $entry->getId(),
-                    'fields'  => $fields,
+                    'fields'  => $this->fields->map(
+                            function (Field $field) use ($entry) {
+                                return (new FieldComposer($field))->forTableRow($entry);
+                            })->values(),
                     'actions' => ['view'],
                 ];
             });

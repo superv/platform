@@ -25,13 +25,9 @@ class FieldComposer
         if ($entry) {
             $value = $field->resolveFromEntry($entry);
 
-            if ($accessor = $field->getAccessor()) {
-                $value = app()->call($accessor, ['entry' => $entry, 'value' => $value, 'field' => $field]);
+            if ($callback = $field->getCallback('form.accessing')) {
+                $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
             }
-
-//            if ($presenter = $field->getPresenter()) {
-//                $value = app()->call($presenter, ['entry' => $entry, 'value' => $value, 'field' => $field]);
-//            }
         }
 
         $composition = (new Composition([
@@ -42,12 +38,69 @@ class FieldComposer
             'value' => $value ?? null,
         ]))->setFilterNull(true);
 
-        if ($composer = $field->getComposer()) {
-            app()->call($composer, ['entry' => $entry, 'composition' => $composition]);
+        if ($callback = $field->getCallback('form.composing')) {
+            app()->call($callback, ['entry' => $entry, 'composition' => $composition]);
         }
 
         return $composition;
     }
+
+    public function forTableRow(EntryContract $entry)
+    {
+        $field = $this->field;
+
+        $value = $field->resolveFromEntry($entry);
+
+        if ($callback = $field->getCallback('table.accessing')) {
+            $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
+        }
+
+        if ($callback = $field->getCallback('table.presenting')) {
+            $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
+        }
+
+        $composition = (new Composition([
+            'type'  => $field->getType(),
+            'name'  => $field->getColumnName(),
+            'value' => $value,
+        ]))->setFilterNull(false);
+
+        if ($callback = $field->getCallback('table.composing')) {
+            app()->call($callback, ['entry' => $entry, 'composition' => $composition]);
+        }
+
+        return $composition;
+    }
+
+    public function forView(EntryContract $entry)
+    {
+        $field = $this->field;
+
+        $value = $field->resolveFromEntry($entry);
+
+        if ($callback = $field->getCallback('view.accessing')) {
+            $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
+        }
+
+        if ($callback = $field->getCallback('view.presenting')) {
+            $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
+        }
+
+        $composition = (new Composition([
+            'type'  => $field->getType(),
+            'uuid'  => $field->uuid(),
+            'name'  => $field->getColumnName(),
+            'label' => $field->getLabel(),
+            'value' => $value,
+        ]))->setFilterNull(false);
+
+        if ($callback = $field->getCallback('view.composing')) {
+               app()->call($callback, ['entry' => $entry, 'composition' => $composition]);
+           }
+
+        return $composition;
+    }
+
 
     public function forTableConfig()
     {
@@ -62,59 +115,4 @@ class FieldComposer
         return $composition;
     }
 
-    public function forTableRow(EntryContract $entry)
-    {
-        $field = $this->field;
-
-        $value = $field->resolveFromEntry($entry);
-
-        if ($accessor = $field->getAccessor()) {
-            $value = app()->call($accessor, ['entry' => $entry, 'value' => $value, 'field' => $field]);
-        }
-
-        if ($presenter = $field->getPresenter()) {
-            $value = app()->call($presenter, ['entry' => $entry, 'value' => $value, 'field' => $field]);
-        }
-
-        $composition = (new Composition([
-            'type'  => $field->getType(),
-            'name'  => $field->getColumnName(),
-            'value' => $value,
-        ]))->setFilterNull(false);
-
-        if ($composer = $field->getComposer()) {
-            app()->call($composer, ['entry' => $entry, 'composition' => $composition]);
-        }
-
-        return $composition;
-    }
-
-    public function forView(EntryContract $entry)
-    {
-        $field = $this->field;
-
-        $value = $field->resolveFromEntry($entry);
-
-        if ($accessor = $field->getAccessor()) {
-            $value = app()->call($accessor, ['entry' => $entry, 'value' => $value, 'field' => $field]);
-        }
-
-        if ($presenter = $field->getPresenter()) {
-            $value = app()->call($presenter, ['entry' => $entry, 'value' => $value, 'field' => $field]);
-        }
-
-        $composition = (new Composition([
-            'type'  => $field->getType(),
-            'uuid'  => $field->uuid(),
-            'name'  => $field->getColumnName(),
-            'label' => $field->getLabel(),
-            'value' => $value,
-        ]))->setFilterNull(false);
-
-        if ($composer = $field->getComposer()) {
-            app()->call($composer, ['entry' => $entry, 'composition' => $composition]);
-        }
-
-        return $composition;
-    }
 }

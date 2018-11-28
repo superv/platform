@@ -2,20 +2,20 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 
 class Boolean extends FieldType implements NeedsDatabaseColumn
 {
-    public function getAccessor(): ?Closure
+    protected function boot()
+    {
+        $this->on('form.accessing', $this->accessor());
+        $this->on('form.mutating', $this->accessor());
+    }
+
+    protected function accessor()
     {
         return function ($value) {
             return ($value === 'false' || ! $value) ? false : true;
         };
-    }
-
-    public function getMutator(): ?Closure
-    {
-        return $this->getAccessor();
     }
 }

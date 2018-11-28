@@ -44,7 +44,7 @@ class BelongsToTest extends ResourceTestCase
         $fakeUser = BelongsToTestUser::create(['name' => 'J', 'group_id' => 100]);
         $belongsTo = $users->getField('group');
 
-        $callback = $belongsTo->getPresenter();
+        $callback = $belongsTo->getPresenter('table');
         $this->assertInstanceOf(Closure::class, $callback);
 
         $this->assertEquals('Users', $callback($fakeUser));

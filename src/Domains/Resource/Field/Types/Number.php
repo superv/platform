@@ -2,30 +2,33 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 
 class Number extends FieldType implements NeedsDatabaseColumn
 {
-    public function getAccessor(): ?Closure
+    protected function boot()
     {
-        if ($this->getConfigValue('type') === 'decimal') {
-            return function ($value) {
+        $this->on('form.accessing', $this->accessor());
+        $this->on('form.mutating', $this->accessor());
+
+        $this->on('view.presenting', $this->accessor());
+        $this->on('table.presenting', $this->accessor());
+    }
+
+    protected function accessor()
+    {
+        return function ($value) {
+            if ($this->getConfigValue('type') === 'decimal') {
                 return (float)number_format(
                     $value,
                     $this->getConfigValue('places'),
                     $this->getConfigValue('dec_point', '.'),
                     $this->getConfigValue('thousands_sep', '')
                 );
-            };
-        }
+            }
 
-        return function ($value) { return (int)$value; };
-    }
-
-    public function getMutator(): ?Closure
-    {
-        return $this->getAccessor();
+            return (int)$value;
+        };
     }
 
     public function makeRules()
@@ -43,12 +46,5 @@ class Number extends FieldType implements NeedsDatabaseColumn
         }
 
         return $rules;
-    }
-
-    public function getDatabaseColumns($fieldName, $fieldConfig)
-    {
-        return [
-            ['name' => $fieldName, 'type' => $fieldConfig['type']],
-        ];
     }
 }

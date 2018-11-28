@@ -12,4 +12,8 @@ class Text extends FieldType implements NeedsDatabaseColumn
             return ["max:{$length}"];
         }
     }
+
+    protected function boot()
+    {
+    }
 }

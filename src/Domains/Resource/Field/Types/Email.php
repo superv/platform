@@ -6,4 +6,8 @@ use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 
 class Email extends FieldType implements NeedsDatabaseColumn
 {
+
+    protected function boot()
+    {
+    }
 }

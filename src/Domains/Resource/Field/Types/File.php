@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
@@ -21,7 +20,7 @@ class File extends FieldType implements DoesNotInteractWithTable
         return $bag->media()->where('label', $label)->latest()->first();
     }
 
-    public function getComposer(): ?Closure
+    protected function composer()
     {
         return function (Composition $composition, EntryContract $entry) {
             if ($media = $this->getMedia($entry, $this->getName())) {
@@ -31,7 +30,7 @@ class File extends FieldType implements DoesNotInteractWithTable
         };
     }
 
-    public function getMutator(): ?Closure
+    protected function mutator()
     {
         return function ($requestFile, EntryContract $entry) {
             $this->requestFile = $requestFile;
@@ -56,5 +55,15 @@ class File extends FieldType implements DoesNotInteractWithTable
                            ->disk($this->getConfigValue('disk', 'local'))
                            ->path($this->getConfigValue('path'))
                            ->visibility($this->getConfigValue('visibility', 'private'));
+    }
+
+    protected function boot()
+    {
+        $this->on('form.composing', $this->composer());
+        $this->on('form.mutating', $this->mutator());
+
+        $this->on('view.composing', $this->composer());
+
+        $this->on('table.composing', $this->composer());
     }
 }

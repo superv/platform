@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Table\TableColumn;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class TableColumnTest extends ResourceTestCase
+class TableColumnTest
 {
     function test__construct()
     {
