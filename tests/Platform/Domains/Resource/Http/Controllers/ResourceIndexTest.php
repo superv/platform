@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
 use SuperV\Platform\Domains\Resource\Resource;
 use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -57,9 +58,7 @@ class ResourceIndexTest extends ResourceTestCase
         $userA = $users->fake(['group_id' => 1]);
         $userB = $users->fake(['group_id' => 2]);
 
-        $response = $this->getJsonUser($users->route('index.table').'/data')->assertOk();
-
-        $rows = $response->decodeResponseJson('data.rows');
+        $rows =  $this->getTableRowsOfResource($users);
         $this->assertEquals(2, count($rows));
 
         $rowA = $rows[0];
@@ -97,7 +96,7 @@ class ResourceIndexTest extends ResourceTestCase
                      });
         });
 
-        $this->withoutExceptionHandling();
+        $this->withExceptionHandling();
         $users = $this->schema()->users();
         $userA = $users->fake(['group_id' => 1]);
 
@@ -109,6 +108,36 @@ class ResourceIndexTest extends ResourceTestCase
 
         $fields = collect($row['fields'])->keyBy('name');
         $this->assertEquals($userA->email, $fields->get('user_id')['value']);
+    }
+
+    function test__filters_in_table_config()
+    {
+        Resource::extend('t_users')->with(function (Resource $resource) {
+            $resource->addFilter(new SearchFilter);
+        });
+
+        $table = $this->getTableConfigOfResource($this->schema()->users());
+
+        $filter = $table->getProp('config.filters.0');
+        $this->assertEquals('search', $filter['name']);
+        $this->assertEquals('text', $filter['type']);
+    }
+
+    function test__filters_apply()
+    {
+        $users = $this->schema()->users();
+        Resource::extend('t_users')->with(function (Resource $resource) {
+            $resource->searchable(['name', 'email']);
+            $resource->addFilter(new SearchFilter);
+        });
+        $users->fake(['name' => 'yks']);
+        $users->fake(['name' => 'none']);
+        $users->fake(['name' => 'none']);
+
+
+        $rows = $this->getTableRowsOfResource($users, 'filters[search]=yks');
+        $this->assertEquals(1, count($rows));
+
     }
 }
 

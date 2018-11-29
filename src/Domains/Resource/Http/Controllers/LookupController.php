@@ -28,7 +28,7 @@ class LookupController extends BaseApiController
             $query->whereNotIn($query->getModel()->getKeyName(), $alreadyAttachedItems);
             $table->setQuery($query);
 
-            return $table->build();
+            return $table->build($this->request);
         }
 
         return MakeComponentTree::dispatch($table)->withTokens(['res' => $resource->toArray()]);

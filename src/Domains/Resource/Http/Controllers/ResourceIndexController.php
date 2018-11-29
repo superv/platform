@@ -30,8 +30,9 @@ class ResourceIndexController extends BaseApiController
         $table->setResource($resource = $this->resolveResource());
         $table->addAction(ViewEntryAction::class);
 
+
         if ($this->route->parameter('data')) {
-            return $table->build();
+            return $table->build($this->request);
         }
 
         return MakeComponentTree::dispatch($table)->withTokens(['res' => $resource->toArray()]);

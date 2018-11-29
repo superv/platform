@@ -85,4 +85,20 @@ trait ResourceTestHelpers
 
         return $resource;
     }
+
+    protected function getTableConfigOfResource($resource)
+    {
+        $response = $this->getJsonUser($resource->route('index.table'));
+        $table = HelperComponent::from($response->decodeResponseJson('data'));
+
+        return $table;
+    }
+
+    protected function getTableRowsOfResource($resource, $query = '')
+    {
+        $url = $resource->route('index.table').'/data'.str_prefix($query, '?', '');
+        $response = $this->getJsonUser($url);
+
+        return $response->decodeResponseJson('data.rows');
+    }
 }

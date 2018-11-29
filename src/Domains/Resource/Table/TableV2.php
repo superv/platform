@@ -4,12 +4,15 @@ namespace SuperV\Platform\Domains\Resource\Table;
 
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
+use SuperV\Platform\Domains\Resource\Filter\ApplyFilters;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
 use SuperV\Platform\Domains\UI\Components\Component;
@@ -64,7 +67,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return $this;
     }
 
-    public function build(): self
+    public function build(Request $request): self
     {
         $fields = $this->resource->fields()
                                  ->forTable()
@@ -79,6 +82,8 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
         $query = $this->getQuery();
         $this->fire('querying', ['query' => $query]);
+
+        ApplyFilters::dispatch($this->resource->getFilters(), $query,  $request);
 
         $this->provider->setQuery($query);
         $this->provider->setRowsPerPage($this->getOption('limit', 10));
@@ -183,10 +188,16 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
             })
             ->values();
 
+        $filters = $this->resource->getFilters()
+                                  ->map(function(Filter $filter) {
+                                      return (new FieldComposer($filter->makeField()))->forForm();
+                                  });
+
         $composition = new Composition([
             'config' => [
                 'data_url'        => $this->dataUrl ?? sv_url($this->resource->route('index.table').'/data'),
                 'fields'          => $fields,
+                'filters'          => $filters,
                 'row_actions'     => collect($this->actions)->map(function ($action) {
                     if (is_string($action)) {
                         $action = $action::make();

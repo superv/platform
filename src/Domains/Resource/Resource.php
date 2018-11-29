@@ -10,9 +10,9 @@ use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\Extender;
+use SuperV\Platform\Domains\Resource\Resource\Fields;
 use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
-use SuperV\Platform\Domains\Resource\Resource\Fields;
 use SuperV\Platform\Domains\Resource\Resource\ResourceView;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -66,12 +66,18 @@ class Resource implements
     /** @var Closure */
     protected $viewResolver;
 
+    protected $searchable = [];
+
+    protected $filters = [];
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
 
         $this->fields = (new Fields($this, $this->fields));
     }
+
+
 
     public function resolveViewUsing(Closure $closure)
     {
@@ -195,6 +201,25 @@ class Resource implements
     public function getHandle(): string
     {
         return $this->handle;
+    }
+
+    public function searchable(array $searchable)
+    {
+        $this->searchable = $searchable;
+
+        return $this;
+    }
+
+    public function addFilter($filter)
+    {
+        $this->filters[] = $filter;
+
+        return $this;
+    }
+
+    public function getFilters()
+    {
+        return wrap_collect($this->filters);
     }
 
     public function uuid(): string
