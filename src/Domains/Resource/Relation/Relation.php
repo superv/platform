@@ -29,6 +29,20 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
     /** @var RelationConfig */
     protected $config;
 
+    protected $flags = [];
+
+    public function addFlag(string $flag)
+    {
+        $this->flags[] = $flag;
+
+        return $this;
+    }
+
+    public function hasFlag(string $flag): bool
+    {
+        return in_array($flag, $this->flags);
+    }
+
     abstract protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation;
 
     public function acceptParentEntry(EntryContract $entry)

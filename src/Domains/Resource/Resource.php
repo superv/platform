@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
@@ -15,6 +16,7 @@ use SuperV\Platform\Domains\Resource\Resource\Fields;
 use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
 use SuperV\Platform\Domains\Resource\Resource\ResourceView;
+use SuperV\Platform\Domains\Resource\Resource\TestHelper;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -218,18 +220,23 @@ class Resource implements
 
     public function getFilters()
     {
-        if (! $this->searchable) {
+        $filters = wrap_collect($this->filters);
+        if (! $searchables = $this->searchable) {
             foreach ($this->fields()->withFlag('searchable') as $field) {
-                $this->searchable[] = $field->getName();
+                $searchables[] = $field->getName();
             }
         }
+        if ($searchables) {
+            $filters->push((new SearchFilter)->setFields($searchables));
+        }
 
-        return wrap_collect($this->filters)
-            ->when(! empty($this->searchable),
-                function ($filters) {
-                    return $filters->push((new SearchFilter)->setFields($this->searchable));
-                }
-            );
+        $this->getRelations()->filter(function (Relation $relation) {
+            return $relation->hasFlag('filter') && $relation instanceof ProvidesFilter;
+        })->map(function (ProvidesFilter $relation) use ($filters) {
+            $filters->push($relation->makeFilter());
+        });
+
+        return $filters;
     }
 
     public function uuid(): string
@@ -253,6 +260,11 @@ class Resource implements
             'uuid'   => $this->uuid,
             'handle' => $this->getHandle(),
         ];
+    }
+
+    public function testHelper()
+    {
+        return new TestHelper($this);
     }
 
     public static function extend($handle)

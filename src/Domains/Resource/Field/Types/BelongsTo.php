@@ -39,7 +39,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         $this->on('form.composing', $this->composer());
 
         $this->on('view.presenting', $this->viewPresenter());
-        $this->on('view.composing', $this->composer());
+        $this->on('view.composing', $this->viewComposer());
 
         $this->on('table.presenting', $this->presenter());
         $this->on('table.composing', $this->tableComposer());
@@ -48,11 +48,21 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         });
     }
 
+    protected function viewComposer() {
+
+        return function (Composition $composition, EntryContract $entry) {
+            if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
+                $resource = sv_resource($relatedEntry);
+                $composition->replace('meta.link', $resource->route('view', $relatedEntry));
+            }
+        };
+    }
+
     protected function tableComposer() {
 
         return function (Composition $composition, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}) {
-                $resource = ResourceFactory::make($relatedEntry);
+                $resource = sv_resource($relatedEntry);
                 $composition->replace('meta.link', $resource->route('view', $relatedEntry));
             }
         };
@@ -62,7 +72,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
     {
         return function (Composition $composition, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
-                $resource = ResourceFactory::make($relatedEntry);
+                $resource = sv_resource($relatedEntry);
                 $composition->replace('meta.link', $resource->route('view', $relatedEntry));
             }
             $this->buildOptions($composition);

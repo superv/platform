@@ -8,23 +8,13 @@ class SearchFilter extends Filter
 {
     protected $type = 'text';
 
-    protected $name = 'search';
+    protected $placeholder = 'Search';
 
     protected $fields = [];
 
-    public function makeField()
-    {
-        return FieldFactory::createFromArray([
-            'type' => $this->type,
-            'name' => $this->name,
-            'placeholder' => 'Search'
-        ]);
-    }
-
-
     public function apply($query, $value)
     {
-        if ($this->name === 'search') {
+        if ($this->getIdentifier() === 'search') {
             $query->where(function ($query) use ($value) {
                 foreach ($this->getFields() as $field) {
                     if (str_contains($field, '.')) {
@@ -34,14 +24,19 @@ class SearchFilter extends Filter
                     }
                 }
             });
-        } elseif (str_contains($this->name, '.')) {
-            $this->applyRelationQuery($query, $this->name, "%{$value}%", 'LIKE');
+        } elseif (str_contains($this->getIdentifier(), '.')) {
+            $this->applyRelationQuery($query, $this->getIdentifier(), "%{$value}%", 'LIKE');
         }
     }
 
-    public function getName(): string
+    public function getIdentifier(): string
     {
-        return $this->name;
+        return 'search';
+    }
+
+    public function getFields(): array
+    {
+        return $this->fields;
     }
 
     public function setFields(array $fields): SearchFilter
@@ -49,10 +44,5 @@ class SearchFilter extends Filter
         $this->fields = $fields;
 
         return $this;
-    }
-
-    public function getFields(): array
-    {
-        return $this->fields;
     }
 }

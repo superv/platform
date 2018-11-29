@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
 use SuperV\Platform\Support\Composer\Composition;
 
 class FieldComposer
@@ -13,9 +13,9 @@ class FieldComposer
      */
     protected $field;
 
-    public function __construct(Field $field)
+    public function __construct($field)
     {
-        $this->field = $field;
+        $this->field = $field instanceof ProvidesField ? $field->makeField() : $field;
     }
 
     public function forForm(?EntryContract $entry = null)

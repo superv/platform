@@ -30,7 +30,7 @@ class ResourceIndexController extends BaseApiController
         $table->setResource($resource = $this->resolveResource());
         $table->addAction(ViewEntryAction::class);
 
-
+        $all = $this->request->all();
         if ($this->route->parameter('data')) {
             return $table->build($this->request);
         }

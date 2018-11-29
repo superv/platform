@@ -110,4 +110,9 @@ class Extension
     {
         unset(static::$map[app($extension)->extends()]);
     }
+
+    public static function flush()
+    {
+        static::$map = [];
+    }
 }

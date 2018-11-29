@@ -62,8 +62,8 @@ class Fake
     {
         $relatedResource = ResourceFactory::make($field->getConfigValue('related_resource'));
 
-        if ($relatedResource->count() < 5) {
-            $relatedResource->fake([], rand(2, 10));
+        if ($relatedResource->count() === 0) {
+            $relatedResource->fake([]);
         }
 
         return $relatedResource->newQuery()->inRandomOrder()->value('id');
@@ -79,7 +79,7 @@ class Fake
         $fieldName = $field->getName();
 
         if (in_array($fieldName, ['name',
-                'title',
+                'name',
                 'first_name',
                 'last_name']) && $fake = $this->faker->__get(camel_case($fieldName))) {
             return $fake;

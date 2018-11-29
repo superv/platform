@@ -18,11 +18,13 @@ class ResourceEntryFake
 
         if ($resource instanceof Resource) {
             if ($number > 1) {
-                return collect(range(1, $number))
+                $fakes = collect(range(1, $number))
                     ->map(function () use ($resource, $overrides) {
                         return static::make($resource, $overrides, 1);
                     })
                     ->all();
+
+                return $fakes;
             }
 
             return Fake::create($resource, $overrides);

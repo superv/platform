@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
 use SuperV\Platform\Domains\Resource\Resource;
 use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
@@ -11,6 +12,12 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ResourceIndexTest extends ResourceTestCase
 {
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->withoutExceptionHandling();
+    }
+
     function test__bsmllh()
     {
         $users = $this->schema()->users();
@@ -59,7 +66,7 @@ class ResourceIndexTest extends ResourceTestCase
         $userA = $users->fake(['group_id' => 1]);
         $userB = $users->fake(['group_id' => 2]);
 
-        $rows =  $this->getTableRowsOfResource($users);
+        $rows = $this->getTableRowsOfResource($users);
         $this->assertEquals(2, count($rows));
 
         $rowA = $rows[0];
@@ -126,45 +133,85 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__filters_apply()
     {
-        $this->withoutExceptionHandling();
         $users = $this->schema()->users();
         Resource::extend('t_users')->with(function (Resource $resource) {
             $resource->searchable(['name']);
         });
+        $users->fake(['name' => 'none']);
         $users->fake(['name' => 'yks']);
-        $users->fake(['name' => 'none']);
-        $users->fake(['name' => 'none']);
+        $users->fake(['name' => 'done']);
 
         $this->assertEquals(1, count($this->getTableRowsOfResource($users, 'filters[search]=yks')));
     }
 
     function test__filters_apply_on_relations()
     {
-        $this->withoutExceptionHandling();
         $users = $this->schema()->users();
         Resource::extend('t_users')->with(function (Resource $resource) {
             $resource->searchable(['group.title']);
         });
         $group = sv_resource('t_groups')->create(['title' => 'Ottomans']);
-        $users->fake(['group_id' => $group->getId()]);
-        $users->fake(['group_id' => $group->getId()]);
-        $users->fake();
+        $users->fake(['group_id' => $group->getId()], 2);
+        $users->fake(['group_id' => 99], 3);
 
-        $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters[search]=tto')));
+        $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters[search]=ttoma')));
     }
 
     function test__builds_search_filter_from_searchable_fields()
     {
-        $this->withoutExceptionHandling();
-        $users = $this->schema()->users(function(Blueprint $table) {
+        $users = $this->schema()->users(function (Blueprint $table) {
             $table->getColumn('name')->searchable();
         });
-        $users->fake(['name' => 'abced']);
-        $users->fake(['name' => 'dcedg']);
-        $users->fake(['name' => 'ced4']);
-        $users->fake(['name' => 'xywx']);
+        $users->fake(['name' => 'none']);
+        $users->fake(['name' => 'yks']);
+        $users->fake(['name' => 'done']);
 
-        $this->assertEquals(3, count($this->getTableRowsOfResource($users, 'filters[search]=ced')));
+        $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters[search]=one')));
+    }
+
+    function test__builds__filter_from_relation_fields()
+    {
+        $this->withoutExceptionHandling();
+
+        $users = $this->schema()->users();
+
+        Resource::extend('t_users')->with(function (Resource $resource) {
+            $resource->getRelation('group')->addFlag('filter');
+        });
+        $group = sv_resource('t_groups')->create(['title' => 'Ottomans']);
+        $users->fake(['group_id' => $group->getId()], 2);
+        $users->fake(['group_id' => 999], 3);
+
+        $table = $this->getTableConfigOfResource($users);
+
+        $filter = $table->getProp('config.filters.0');
+        $this->assertEquals('group', $filter['name']);
+        $this->assertEquals('select', $filter['type']);
+        $this->assertEquals(
+            sv_resource('t_groups')->testHelper()->asOptions(),
+            $table->getProp('config.filters.0.meta.options')
+        );
+    }
+
+    function test__builds__filter_from_relation_fieldsddd()
+    {
+        $this->withoutExceptionHandling();
+        $users = $this->schema()->users();
+        Resource::extend('t_users')->with(function (Resource $resource) {
+            $resource->getRelation('group')->addFlag('filter');
+        });
+        $group = sv_resource('t_groups')->create(['title' => 'Ottomans']);
+        $users->fake(['group_id' => $group->getId()], 2);
+        $users->fake(['group_id' => 999], 3);
+
+        $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters[group]='.$group->getId())));
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        Extension::flush();
     }
 }
 

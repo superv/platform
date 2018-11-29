@@ -32,7 +32,7 @@ trait FiresCallbacks
 
     public function fire($trigger, array $parameters = [])
     {
-        $method = camel_case('on_'.$trigger);
+        $method = camel_case('on_'.str_replace('.', '_', $trigger));
 
         // Call onQuerying..
         //

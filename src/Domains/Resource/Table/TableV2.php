@@ -190,7 +190,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
         $filters = $this->resource->getFilters()
                                   ->map(function(Filter $filter) {
-                                      return (new FieldComposer($filter->makeField()))->forForm();
+                                      return (new FieldComposer($filter))->forForm();
                                   });
 
         $composition = new Composition([

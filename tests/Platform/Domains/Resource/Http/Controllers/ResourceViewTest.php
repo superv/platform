@@ -4,7 +4,6 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use Storage;
 use SuperV\Platform\Domains\Media\Media;
-use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ResourceViewTest extends ResourceTestCase
@@ -39,6 +38,8 @@ class ResourceViewTest extends ResourceTestCase
         $group = $fields['group'];
         $this->assertEquals('belongs_to', $group['type']);
         $this->assertSame('Users', $group['value']);
+        $this->assertNull(array_get($group, 'meta.options'));
+        $this->assertNotNull(array_get($group, 'meta.link'));
 
         $age = $fields['age'];
         $this->assertEquals('number', $age['type']);
