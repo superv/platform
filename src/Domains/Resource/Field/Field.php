@@ -31,9 +31,6 @@ class Field implements FieldContract
      */
     protected $type = 'text';
 
-    /** @var EntryContract */
-    protected $entry;
-
     /**
      * @var string
      */
@@ -73,10 +70,6 @@ class Field implements FieldContract
     protected $watcher;
 
     protected $rules;
-//
-//    protected $unique;
-//
-//    protected $required;
 
     protected $alterQueryCallback;
 
@@ -171,31 +164,6 @@ class Field implements FieldContract
 //        return $this->fieldType()->getColumnName();
     }
 
-    public function isHidden(): bool
-    {
-        return $this->hasFlag('hidden');
-    }
-
-    public function isUnique()
-    {
-        return $this->hasFlag('unique');
-    }
-
-    public function isRequired()
-    {
-        return $this->hasFlag('required');
-    }
-
-    public function doesNotInteractWithTable()
-    {
-        return $this->doesNotInteractWithTable;
-    }
-
-    public function hide()
-    {
-        return $this->addFlag('hidden');
-    }
-
     public function getRules()
     {
         return $this->rules;
@@ -209,12 +177,21 @@ class Field implements FieldContract
         return $entry->getAttribute($this->getColumnName());
     }
 
-    public function bindFieldType()
+    public function getPlaceholder()
+    {
+        return $this->placeholder;
+    }
+
+    public function resolveFieldType(): FieldType
     {
         $class = FieldType::resolveClass($this->type);
+        return new $class($this);
+    }
 
-        /** @var FieldType $type */
-        $type = new $class($this);
+    public function bindFieldType()
+    {
+        $type = $this->resolveFieldType();
+
         $this->columnName = $type->getColumnName();
         $this->doesNotInteractWithTable = $type instanceof DoesNotInteractWithTable;
 
@@ -239,21 +216,6 @@ class Field implements FieldContract
         $this->watcher = null;
 
         return $this;
-    }
-
-    public function isVisible(): bool
-    {
-        return ! $this->isHidden();
-    }
-//
-//    public function setVisibility(bool $visible): Field
-//    {
-//        return $this->addFlag('hidden', ! $visible);
-//    }
-
-    public function getPlaceholder()
-    {
-        return $this->placeholder;
     }
 
     public function uuid(): string

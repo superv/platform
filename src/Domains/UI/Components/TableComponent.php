@@ -26,7 +26,7 @@ class TableComponent extends BaseComponent
         $static = new static;
         $static->table = $table;
         $static->props->merge($table->getConfig()->compose()->get());
-        $static->card();
+//        $static->card();
 
         return $static;
     }

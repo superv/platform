@@ -26,14 +26,14 @@ class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter
     public function makeFilter()
     {
         $resource = sv_resource($this->getConfig()->getRelatedResource());
-        $options = $resource->newQuery()->get()->map(function(EntryContract $entry) use ($resource) {
-                  return ['value' => $entry->getId(), 'text' => $resource->getEntryLabel($entry)];
-              })->all();
+        $options = $resource->newQuery()->get()->map(function (EntryContract $entry) use ($resource) {
+            return ['value' => $entry->getId(), 'text' => $resource->getEntryLabel($entry)];
+        })->all();
 
         $options = array_merge([['value' => null, 'text' => $resource->getSingularLabel()]], $options);
 
         return SelectFilter::make($this->getName())
                            ->setOptions($options)
-            ->setAttribute($this->getConfig()->getForeignKey());
+                           ->setAttribute($this->getConfig()->getForeignKey());
     }
 }

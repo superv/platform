@@ -22,4 +22,40 @@ trait FieldFlags
     {
         return $this->addFlag('table.show');
     }
+
+    public function hide()
+    {
+        return $this->addFlag('hidden');
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->hasFlag('hidden');
+    }
+
+    public function isUnique()
+    {
+        return $this->hasFlag('unique');
+    }
+
+    public function isRequired()
+    {
+        return $this->hasFlag('required');
+    }
+
+    public function isFilter()
+    {
+        return $this->hasFlag('filter');
+    }
+
+    public function isVisible(): bool
+    {
+        return ! $this->isHidden();
+    }
+
+    public function doesNotInteractWithTable()
+    {
+        return $this->doesNotInteractWithTable;
+    }
+
 }

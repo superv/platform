@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
+use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -236,7 +237,16 @@ class Resource implements
             $filters->push($relation->makeFilter());
         });
 
+        $this->fields()->getFilters()->map(function (Filter $filter) use ($filters) {
+            $filters->push($filter);
+        });
+
         return $filters;
+    }
+
+    public function testHelper()
+    {
+        return new TestHelper($this);
     }
 
     public function uuid(): string
@@ -257,14 +267,10 @@ class Resource implements
     public function toArray()
     {
         return [
-            'uuid'   => $this->uuid,
-            'handle' => $this->getHandle(),
+            'uuid'           => $this->uuid,
+            'handle'         => $this->getHandle(),
+            'singular_label' => $this->getSingularLabel(),
         ];
-    }
-
-    public function testHelper()
-    {
-        return new TestHelper($this);
     }
 
     public static function extend($handle)

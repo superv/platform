@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 
 interface Field
 {
@@ -52,6 +53,8 @@ interface Field
     public function resolveRequestToEntry(Request $request, EntryContract $entry);
 
     public function resolveFromEntry(EntryContract $entry);
+
+    public function resolveFieldType(): FieldType;
 
     public function getAccessor($for);
 

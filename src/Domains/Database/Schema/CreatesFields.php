@@ -30,4 +30,9 @@ trait CreatesFields
     {
         return $this->string($name)->fieldType('select');
     }
+
+    public function enum($column, array $allowed)
+    {
+        return $this->select($column)->options($allowed);
+    }
 }

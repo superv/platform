@@ -18,6 +18,13 @@ class ResourceIndexTest extends ResourceTestCase
         $this->withoutExceptionHandling();
     }
 
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        Extension::flush();
+    }
+
     function test__bsmllh()
     {
         $users = $this->schema()->users();
@@ -169,7 +176,7 @@ class ResourceIndexTest extends ResourceTestCase
         $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters[search]=one')));
     }
 
-    function test__builds__filter_from_relation_fields()
+    function test__builds__filter_from_relation_fields_config()
     {
         $this->withoutExceptionHandling();
 
@@ -193,8 +200,11 @@ class ResourceIndexTest extends ResourceTestCase
         );
     }
 
-    function test__builds__filter_from_relation_fieldsddd()
+    function test__builds__filter_from_relation_fields_data()
     {
+        // dont merge with above. consecutive getJson
+        // calls looses query on the second one
+        //
         $this->withoutExceptionHandling();
         $users = $this->schema()->users();
         Resource::extend('t_users')->with(function (Resource $resource) {
@@ -207,11 +217,25 @@ class ResourceIndexTest extends ResourceTestCase
         $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters[group]='.$group->getId())));
     }
 
-    protected function tearDown()
+    function test__builds__filter_from_select_fields()
     {
-        parent::tearDown();
+        $users = $this->schema()->users(function (Blueprint $table) {
+            $table->select('gender')->options(['m' => 'Male', 'f' => 'Female'])->addFlag('filter');
+        });
 
-        Extension::flush();
+        $table = $this->getTableConfigOfResource($users);
+
+        $filter = $table->getProp('config.filters.0');
+        $this->assertEquals('gender', $filter['name']);
+        $this->assertEquals('select', $filter['type']);
+        $this->assertEquals(
+            [
+                ['value' => null, 'text' => 'Gender'],
+                ['value' => 'm', 'text' => 'Male'],
+                ['value' => 'f', 'text' => 'Female']
+            ],
+            $table->getProp('config.filters.0.meta.options')
+        );
     }
 }
 

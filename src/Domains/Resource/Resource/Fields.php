@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Resource;
 use Closure;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Resource;
@@ -76,5 +77,19 @@ class Fields
                                 return $field->hasFlag('table.show');
                             })
                         );
+    }
+
+    public function getFilters(): Collection
+    {
+        $filters = $this->fields->filter(function (Field $field) {
+            return $field->hasFlag('filter');
+        })->map(function (Field $field) {
+            $fieldType = $field->resolveFieldType();
+            if ($fieldType instanceof ProvidesFilter) {
+                return $fieldType->makeFilter();
+            }
+        });
+
+        return $filters->filter();
     }
 }
