@@ -10,6 +10,13 @@ use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 class NavigationTest extends ResourceTestCase
 {
+    protected function setUp()
+    {
+        parent::setUp();
+
+        Section::truncate();
+    }
+
     /** @test */
     function build_section()
     {

@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Resource\Visibility\Visibility;
 
 /**
  * Class ColumnDefinition
- * @method ColumnDefinition nullable($value = true) Allow NULL values to be inserted into the column
  * @method ColumnDefinition ignore($value = true)
  * @method ColumnDefinition fieldType($type)
  * @method ColumnDefinition rules(array $rules)
@@ -20,11 +19,16 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
     /** @var \SuperV\Platform\Domains\Resource\ResourceBlueprint */
     protected $blueprint;
 
+
     public function __construct(ResourceBlueprint $blueprint, $attributes = [])
     {
         foreach ($attributes as $key => $value) {
             $this->attributes[$key] = $value;
         }
+
+        $this->attributes['config'] = [];
+        $this->attributes['rules'] = [];
+        $this->attributes['flags'] = [];
 
         $this->blueprint = $blueprint;
     }
@@ -34,20 +38,20 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         $this->blueprint->entryLabel('{'.$this->name.'}');
     }
 
-    public function isRequired()
-    {
-        return ! (bool)$this->nullable;
-    }
-
-    public function isUnique()
-    {
-        return (bool)$this->unique;
-    }
-
-    public function isSearchable()
-    {
-        return (bool)$this->searchable;
-    }
+//    public function isRequired()
+//    {
+//        return ! (bool)$this->nullable;
+//    }
+//
+//    public function isUnique()
+//    {
+//        return (bool)$this->unique;
+//    }
+//
+//    public function isSearchable()
+//    {
+//        return (bool)$this->searchable;
+//    }
 
     public function isTitleColumn()
     {
@@ -71,7 +75,28 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
 
     public function getConfig()
     {
-        return $this->config ?? [];
+        return $this->config;
+    }
+
+    public function searchable()
+    {
+        return $this->addFlag('searchable');
+    }
+
+    public function required()
+    {
+        return $this->addFlag('required');
+    }
+
+    public function nullable()
+    {
+        $this->nullable = true;
+        return $this->addFlag('nullable');
+    }
+
+    public function unique()
+    {
+        return $this->addFlag('unique');
     }
 
     public function showOnIndex()
@@ -86,7 +111,15 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
 
     public function addFlag($flag)
     {
-        $flags = $this->config['flags'] ?? [];
+        $flags = $this->flags;
+        $flags[] = $flag;
+        $this->flags = $flags;
+        return $this;
+    }
+
+    public function addFlagxxxxxxxxx($flag)
+    {
+        $flags = $this->config['flags'] ?? $this->defaultFlags;
         $flags[] = $flag;
 
         $config = $this->config;

@@ -144,10 +144,10 @@ class ResourceCreationTest extends ResourceTestCase
 
     function test__marks_required_columns()
     {
-        $resource = $this->makeResourceModel('test_users', ['name', 'title' => 'nullable']);
+        $resource = $this->makeResource('test_users', ['name', 'title' => 'nullable']);
 
+        $this->assertTrue($resource->getField('title')->hasFlag('nullable'));
         $this->assertTrue($resource->getField('name')->isRequired());
-        $this->assertTrue($resource->getField('title')->isNullable());
     }
 
     function xxxx__marks_unique_columns()
@@ -163,9 +163,9 @@ class ResourceCreationTest extends ResourceTestCase
 
     function test__marks_searchable_columns()
     {
-        $resource = $this->makeResourceModel('test_users', ['name', 'title' => 'searchable']);
+        $resource = $this->makeResource('test_users', ['name', 'title' => 'searchable']);
 
-        $this->assertTrue($resource->getField('title')->isSearchable());
+        $this->assertTrue($resource->getField('title')->hasFlag('searchable'));
     }
 
     function test__save_column_default_value()

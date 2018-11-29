@@ -50,6 +50,13 @@ class Blueprint extends LaravelBlueprint
         return $column;
     }
 
+    public function getColumn($name): ColumnDefinition
+    {
+        return collect($this->columns)->first(function($column) use ($name) {
+            return $column->name ===  $name;
+        });
+    }
+
     public function build(Connection $connection, Grammar $grammar)
     {
         if ($this->dropping()) {

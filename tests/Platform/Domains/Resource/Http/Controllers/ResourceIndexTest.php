@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
 use SuperV\Platform\Domains\Resource\Resource;
 use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
@@ -125,19 +126,45 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__filters_apply()
     {
+        $this->withoutExceptionHandling();
         $users = $this->schema()->users();
         Resource::extend('t_users')->with(function (Resource $resource) {
-            $resource->searchable(['name', 'email']);
-            $resource->addFilter(new SearchFilter);
+            $resource->searchable(['name']);
         });
         $users->fake(['name' => 'yks']);
         $users->fake(['name' => 'none']);
         $users->fake(['name' => 'none']);
 
+        $this->assertEquals(1, count($this->getTableRowsOfResource($users, 'filters[search]=yks')));
+    }
 
-        $rows = $this->getTableRowsOfResource($users, 'filters[search]=yks');
-        $this->assertEquals(1, count($rows));
+    function test__filters_apply_on_relations()
+    {
+        $this->withoutExceptionHandling();
+        $users = $this->schema()->users();
+        Resource::extend('t_users')->with(function (Resource $resource) {
+            $resource->searchable(['group.title']);
+        });
+        $group = sv_resource('t_groups')->create(['title' => 'Ottomans']);
+        $users->fake(['group_id' => $group->getId()]);
+        $users->fake(['group_id' => $group->getId()]);
+        $users->fake();
 
+        $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters[search]=tto')));
+    }
+
+    function test__builds_search_filter_from_searchable_fields()
+    {
+        $this->withoutExceptionHandling();
+        $users = $this->schema()->users(function(Blueprint $table) {
+            $table->getColumn('name')->searchable();
+        });
+        $users->fake(['name' => 'abced']);
+        $users->fake(['name' => 'dcedg']);
+        $users->fake(['name' => 'ced4']);
+        $users->fake(['name' => 'xywx']);
+
+        $this->assertEquals(3, count($this->getTableRowsOfResource($users, 'filters[search]=ced')));
     }
 }
 

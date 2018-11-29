@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\Extender;
 use SuperV\Platform\Domains\Resource\Resource\Fields;
@@ -76,8 +77,6 @@ class Resource implements
 
         $this->fields = (new Fields($this, $this->fields));
     }
-
-
 
     public function resolveViewUsing(Closure $closure)
     {
@@ -219,7 +218,18 @@ class Resource implements
 
     public function getFilters()
     {
-        return wrap_collect($this->filters);
+        if (! $this->searchable) {
+            foreach ($this->fields()->withFlag('searchable') as $field) {
+                $this->searchable[] = $field->getName();
+            }
+        }
+
+        return wrap_collect($this->filters)
+            ->when(! empty($this->searchable),
+                function ($filters) {
+                    return $filters->push((new SearchFilter)->setFields($this->searchable));
+                }
+            );
     }
 
     public function uuid(): string

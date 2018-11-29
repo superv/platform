@@ -14,10 +14,16 @@ class FieldFactory
      */
     protected $params;
 
+    protected $flags = ['searchable', 'unique', 'required', 'nullable'];
+
     protected function create(): Field
     {
         $field = new Field($this->params);
         $field->bindFieldType();
+
+        if (!$field->hasFlag('nullable')) {
+            $field->addFlag('required');
+        }
 
         return $field;
     }

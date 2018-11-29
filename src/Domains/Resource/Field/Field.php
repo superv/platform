@@ -46,6 +46,8 @@ class Field implements FieldContract
 
     protected $columnName;
 
+    protected $placeholder;
+
     /** @var Closure */
     protected $mutator;
 
@@ -71,10 +73,10 @@ class Field implements FieldContract
     protected $watcher;
 
     protected $rules;
-
-    protected $unique;
-
-    protected $required;
+//
+//    protected $unique;
+//
+//    protected $required;
 
     protected $alterQueryCallback;
 
@@ -92,7 +94,7 @@ class Field implements FieldContract
 
     public function __construct(array $attributes = [])
     {
-        $this->flags = array_pull($attributes, 'config.flags', []);
+//        $this->flags = array_pull($attributes, 'config.flags', []);
 
         $this->hydrate($attributes);
 
@@ -176,12 +178,12 @@ class Field implements FieldContract
 
     public function isUnique()
     {
-        return $this->unique;
+        return $this->hasFlag('unique');
     }
 
     public function isRequired()
     {
-        return $this->required;
+        return $this->hasFlag('required');
     }
 
     public function doesNotInteractWithTable()
@@ -189,9 +191,9 @@ class Field implements FieldContract
         return $this->doesNotInteractWithTable;
     }
 
-    public function hide(bool $value = true)
+    public function hide()
     {
-        return $this->addFlag('hidden', $value);
+        return $this->addFlag('hidden');
     }
 
     public function getRules()
@@ -243,10 +245,15 @@ class Field implements FieldContract
     {
         return ! $this->isHidden();
     }
+//
+//    public function setVisibility(bool $visible): Field
+//    {
+//        return $this->addFlag('hidden', ! $visible);
+//    }
 
-    public function setVisibility(bool $visible): Field
+    public function getPlaceholder()
     {
-        return $this->addFlag('hidden', ! $visible);
+        return $this->placeholder;
     }
 
     public function uuid(): string

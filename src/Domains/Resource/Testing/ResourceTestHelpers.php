@@ -97,7 +97,7 @@ trait ResourceTestHelpers
     protected function getTableRowsOfResource($resource, $query = '')
     {
         $url = $resource->route('index.table').'/data'.str_prefix($query, '?', '');
-        $response = $this->getJsonUser($url);
+        $response = $this->getJsonUser($url)->assertOk();
 
         return $response->decodeResponseJson('data.rows');
     }

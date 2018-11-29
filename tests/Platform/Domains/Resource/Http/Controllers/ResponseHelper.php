@@ -14,6 +14,8 @@ trait ResponseHelper
         $resource = ResourceFactory::make($entry);
         $response = $this->getJsonUser($resource->route('view', $entry));
 
+        return HelperComponent::from($response->decodeResponseJson('data'));
+
         $page = HelperComponent::from($response->decodeResponseJson('data'));
         $view = HelperComponent::from($page->getProp('blocks.0'));
 

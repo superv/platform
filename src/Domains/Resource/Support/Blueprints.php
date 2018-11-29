@@ -49,10 +49,11 @@ class Blueprints
         $table->string('name');
         $table->string('column_type')->nullable();
         $table->string('type');
-        $table->boolean('required');
-        $table->boolean('unique');
-        $table->boolean('searchable');
+//        $table->boolean('required');
+//        $table->boolean('unique');
+//        $table->boolean('searchable');
 
+        $table->text('flags')->nullable();
         $table->text('rules')->nullable();
         $table->text('config')->nullable();
 

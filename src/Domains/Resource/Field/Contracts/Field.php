@@ -41,6 +41,8 @@ interface Field
 
     public function getRules();
 
+    public function getPlaceholder();
+
     public function fillFromEntry(EntryContract $entry);
 
     public function setCallback($trigger, $callback);

@@ -2,40 +2,23 @@
 
 namespace SuperV\Platform\Domains\Resource\Filter;
 
-use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 
-class SearchFilter implements Filter
+class SearchFilter extends Filter
 {
     protected $type = 'text';
 
     protected $name = 'search';
 
-    protected $fields = ['user.email'];
+    protected $fields = [];
 
     public function makeField()
     {
-        return FieldFactory::createFromArray(['type' => $this->type, 'name' => $this->name]);
-    }
-
-    public function applyBase($query, $value)
-    {
-        if ($this->callback) {
-            return ($this->callback)($query, $value);
-        }
-
-        if (str_contains($this->name, '.')) {
-            return $this->applyRelationQuery($query, $this->name, $value);
-        }
-        $query->where($this->slug, '=', $value);
-    }
-
-    protected function applyRelationQuery( $query, $slug, $value, $operator = '=', $method = 'whereHas')
-    {
-        list($relation, $column) = explode('.', $slug);
-        $query->{$method}($relation, function ( $query) use ($column, $value, $operator) {
-            $query->where($column, $operator, $value);
-        });
+        return FieldFactory::createFromArray([
+            'type' => $this->type,
+            'name' => $this->name,
+            'placeholder' => 'Search'
+        ]);
     }
 
 
@@ -43,7 +26,7 @@ class SearchFilter implements Filter
     {
         if ($this->name === 'search') {
             $query->where(function ($query) use ($value) {
-                foreach ($this->fields as $field) {
+                foreach ($this->getFields() as $field) {
                     if (str_contains($field, '.')) {
                         $this->applyRelationQuery($query, $field, "%{$value}%", 'LIKE', 'orWhereHas');
                     } else {
@@ -59,5 +42,17 @@ class SearchFilter implements Filter
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function setFields(array $fields): SearchFilter
+    {
+        $this->fields = $fields;
+
+        return $this;
+    }
+
+    public function getFields(): array
+    {
+        return $this->fields;
     }
 }

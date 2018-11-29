@@ -13,26 +13,11 @@ class FieldModel extends ResourceEntry
     protected $casts = [
         'rules'      => 'array',
         'config'     => 'array',
+        'flags'     => 'array',
         'required'   => 'bool',
         'unique'     => 'bool',
         'searchable' => 'bool',
     ];
-
-//
-//    public function setDefaultValue($value)
-//    {
-//        if ($value) {
-//            $this->setConfigValue('default_value', $value);
-//        }
-//    }
-
-//    public function setConfigValue($key, $value)
-//    {
-//        $config = $this->getConfig();
-//        $config[$key] = $value;
-//
-//        $this->config = $config;
-//    }
 
     protected static function boot()
     {
@@ -42,16 +27,6 @@ class FieldModel extends ResourceEntry
             $model->attributes['uuid'] = Str::orderedUuid()->toString();
         });
     }
-//
-//    public function getResourceEntry()
-//    {
-//        return $this->resourceEntry;
-//    }
-//
-//    public function resourceEntry()
-//    {
-//        return $this->belongsTo(ResourceModel::class, 'resource_id');
-//    }
 
     public function getConfig()
     {
@@ -83,6 +58,11 @@ class FieldModel extends ResourceEntry
         return (bool)$this->required;
     }
 
+    public function isUnique(): bool
+    {
+        return (bool)$this->unique;
+    }
+
     public function getDefaultValue()
     {
         return $this->getConfigValue('default_value');
@@ -96,11 +76,6 @@ class FieldModel extends ResourceEntry
     public function getRules()
     {
         return $this->rules;
-    }
-
-    public function isUnique(): bool
-    {
-        return (bool)$this->unique;
     }
 
     public function getName()

@@ -73,8 +73,9 @@ class ResourceUpdateTest extends ResourceTestCase
 
         $this->assertNotNull(Media::first());
 
-        $view = $this->getResourceView($user);
-        $avatar = $view->getProp('fields.avatar');
+//        $view = $this->getResourceView($user);
+//        $avatar = $view->getProp('fields.avatar');
+//        $this->assertNull($avatar);
 
     }
 }

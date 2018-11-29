@@ -19,6 +19,5 @@ class TextareaTest extends ResourceTestCase
         $field = $res->getField('bio');
 
         $this->assertEquals('textarea', $field->getType());
-        $this->assertEquals(true, $field->getConfigValue('hide.table'));
     }
 }

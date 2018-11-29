@@ -20,12 +20,12 @@ class ResourceViewTest extends ResourceTestCase
         $this->postJsonUser($user->route('update'), ['avatar' => $this->makeUploadedFile()]);
 
         $this->withoutExceptionHandling();
-        $response = $this->getJsonUser($users->route('view', $user));
-        $response->assertOk();
+//        $response = $this->getJsonUser($users->route('view', $user))->assertOk();
 
-        $page = HelperComponent::from($response->decodeResponseJson('data'));
-        $view = HelperComponent::from($page->getProp('blocks.0'));
+//        $page = HelperComponent::from($response->decodeResponseJson('data'));
+//        $view = HelperComponent::from($page->getProp('blocks.0'));
 
+        $view = $this->getResourceView($user);
         $this->assertNotNull($fields = $view->getProp('fields'));
 
         $name = $fields['name'];

@@ -93,52 +93,6 @@ class SyncField
         $this->fieldType = FieldType::resolve($this->column->fieldType);
     }
 
-    protected function syncWithPDO()
-    {
-        $column = $this->column;
-        $resourceId = $this->resourceEntry->id;
-        $fieldName = $column->getFieldName();
-
-        $fieldObj = \DB::table('sv_fields')->where('resource_id', '=', $resourceId)->where('name', '=', $fieldName)->first();
-
-        if (! $fieldObj) {
-            $field = [
-                'name'        => $fieldName,
-                'resource_id' => $resourceId,
-                'uuid'        => uuid(),
-                'config'      => $column->config ?? [],
-                'rules'       => Rules::make($column->getRules())->get(),
-            ];
-        } else {
-            $field = (array)$fieldObj;
-            $field['config'] = array_merge(json_decode($field['config'] ?? "[]", true), $column->config);
-            $field['rules'] = array_merge(json_decode($field['rules'] ?? "[]", true), Rules::make($column->getRules())->get());
-        }
-
-        $field['type'] = $column->fieldType;
-        $field['column_type'] = $column->type;
-        $field['required'] = $column->isRequired();
-        $field['unique'] = $column->isUnique();
-        $field['searchable'] = $column->isSearchable();
-
-        if ($column->hide) {
-            $field['config']['hide.'.$column->hide] = true;
-        }
-        $field['config']['default_value'] = $column->getDefaultValue();
-
-        $dataArray = array_merge($field, [
-            'rules'  => json_encode(array_filter_null($field['rules'])),
-            'config' => json_encode(array_filter_null($field['config'])),
-        ]);
-        if (isset($field['id'])) {
-            \DB::table('sv_fields')->where('id', $field['id'])->update($dataArray);
-        } else {
-            $field['id'] = \DB::table('sv_fields')->insertGetId($dataArray);
-        }
-
-        return $field;
-    }
-
     protected function syncWithEloquent()
     {
         $column = $this->column;
@@ -153,14 +107,16 @@ class SyncField
 
         $field->type = $column->fieldType;
         $field->column_type = $column->type;
-        $field->required = $column->isRequired();
-        $field->unique = $column->isUnique();
-        $field->searchable = $column->isSearchable();
-        $config = $column->config ?? [];
+//        $field->required = $column->isRequired();
+//        $field->unique = $column->isUnique();
+//        $field->searchable = $column->isSearchable();
+        $config = $column->config;
 
-        if ($column->hide) {
-            $config['hide.'.$column->hide] = true;
-        }
+        $field->flags = $column->flags;
+
+//        if ($column->hide) {
+//            $config['hide.'.$column->hide] = true;
+//        }
 
         $config['default_value'] = $column->getDefaultValue();
 

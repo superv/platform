@@ -35,6 +35,7 @@ class FieldComposer
             'uuid'  => $field->uuid(),
             'name'  => $field->getName(),
             'label' => $field->getLabel(),
+            'placeholder' => $field->getPlaceholder(),
             'value' => $value ?? null,
         ]))->setFilterNull(true);
 
@@ -100,7 +101,6 @@ class FieldComposer
 
         return $composition;
     }
-
 
     public function forTableConfig()
     {
