@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\UI\Components;
 
 use SuperV\Platform\Domains\UI\Page\Page;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 class PageComponent extends BaseComponent
 {
@@ -21,9 +21,9 @@ class PageComponent extends BaseComponent
         return $this->uuid;
     }
 
-    public function onComposed(Composition $composition)
+    public function onComposed(Payload $payload)
     {
-        $composition->set('class', ['w-full']);
+        $payload->set('class', ['w-full']);
     }
 
     public static function from(Page $page): self

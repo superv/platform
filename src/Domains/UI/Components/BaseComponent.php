@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\UI\Components;
 use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Domains\UI\Components\Concerns\StyleHelper;
 use SuperV\Platform\Support\Composer\Composable;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 abstract class BaseComponent implements ComponentContract, Composable, Responsable
@@ -61,16 +61,16 @@ abstract class BaseComponent implements ComponentContract, Composable, Responsab
 
     public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
-        $composition = new Composition([
+        $payload = new Payload([
             'component' => $this->getName(),
             'uuid'      => $this->uuid(),
             'props'     => $this->getProps(),
             'classes'   => implode(' ', $this->getClasses()),
         ]);
 
-        $this->fire('composed', ['composition' => $composition]);
+        $this->fire('composed', ['payload' => $payload]);
 
-        return $composition->toArray();
+        return $payload->toArray();
     }
 
     public function getHandle(): string

@@ -75,8 +75,8 @@ class Field implements FieldContract
 
     protected $doesNotInteractWithTable;
 
-    /** @var \SuperV\Platform\Support\Composer\Composition */
-    protected $composition;
+    /** @var \SuperV\Platform\Support\Composer\Payload */
+    protected $payload;
 
     protected $flags = [];
 

@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 interface AltersFieldComposition
 {
-    public function alterComposition(Composition $composition);
+    public function alterComposition(Payload $payload);
 }

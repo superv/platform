@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Action;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 class DetachEntryAction extends Action
 {
@@ -25,10 +25,10 @@ class DetachEntryAction extends Action
                      ->setName('sv-request-action');
     }
 
-    public function onComposed(Composition $composition)
+    public function onComposed(Payload $payload)
     {
-        $composition->set('url', str_replace('entry.id', '{entry.id}', $this->getRequestUrl()));
-        $composition->set('on-complete', 'reload');
+        $payload->set('url', str_replace('entry.id', '{entry.id}', $this->getRequestUrl()));
+        $payload->set('on-complete', 'reload');
     }
 
     public function getRequestUrl()

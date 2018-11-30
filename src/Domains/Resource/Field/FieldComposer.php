@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 class FieldComposer
 {
@@ -30,7 +30,7 @@ class FieldComposer
             }
         }
 
-        $composition = (new Composition([
+        $payload = (new Payload([
             'type'  => $field->getType(),
             'uuid'  => $field->uuid(),
             'name'  => $field->getName(),
@@ -40,10 +40,10 @@ class FieldComposer
         ]))->setFilterNull(true);
 
         if ($callback = $field->getCallback('form.composing')) {
-            app()->call($callback, ['entry' => $entry, 'composition' => $composition]);
+            app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
         }
 
-        return $composition;
+        return $payload;
     }
 
     public function forTableRow(EntryContract $entry)
@@ -60,17 +60,17 @@ class FieldComposer
             $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
         }
 
-        $composition = (new Composition([
+        $payload = (new Payload([
             'type'  => $field->getType(),
             'name'  => $field->getColumnName(),
             'value' => $value,
         ]))->setFilterNull(false);
 
         if ($callback = $field->getCallback('table.composing')) {
-            app()->call($callback, ['entry' => $entry, 'composition' => $composition]);
+            app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
         }
 
-        return $composition;
+        return $payload;
     }
 
     public function forView(EntryContract $entry)
@@ -87,7 +87,7 @@ class FieldComposer
             $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
         }
 
-        $composition = (new Composition([
+        $payload = (new Payload([
             'type'  => $field->getType(),
             'uuid'  => $field->uuid(),
             'name'  => $field->getColumnName(),
@@ -96,23 +96,23 @@ class FieldComposer
         ]))->setFilterNull(false);
 
         if ($callback = $field->getCallback('view.composing')) {
-               app()->call($callback, ['entry' => $entry, 'composition' => $composition]);
+               app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
            }
 
-        return $composition;
+        return $payload;
     }
 
     public function forTableConfig()
     {
         $field = $this->field;
 
-        $composition = (new Composition([
+        $payload = (new Payload([
             'uuid'  => $field->uuid(),
             'name'  => $field->getName(),
             'label' => $field->getLabel(),
         ]))->setFilterNull(false);
 
-        return $composition;
+        return $payload;
     }
 
 }

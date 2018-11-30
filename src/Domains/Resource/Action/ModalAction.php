@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Action;
 
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 class ModalAction extends Action
 {
@@ -13,9 +13,9 @@ class ModalAction extends Action
 
     protected $modalUrl;
 
-    public function onComposed(Composition $composition)
+    public function onComposed(Payload $payload)
     {
-        $composition->set('url', $this->modalUrl);
+        $payload->set('url', $this->modalUrl);
     }
 
     public function makeComponent(): ComponentContract

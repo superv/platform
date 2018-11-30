@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\UI\Components\ActionComponent;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composable;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Action implements ActionContract, Composable, ProvidesUIComponent
@@ -38,14 +38,14 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
 
     public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
-        $composition = new Composition([
+        $payload = new Payload([
             'name'  => $this->getName(),
             'title' => $this->getTitle(),
         ]);
 
-        $this->fire('composed', ['composition' => $composition]);
+        $this->fire('composed', ['payload' => $payload]);
 
-        return $composition;
+        return $payload;
     }
 
     public function getName(): string

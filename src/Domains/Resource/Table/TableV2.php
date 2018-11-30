@@ -18,7 +18,7 @@ use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composable;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Composer\Tokens;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasOptions;
@@ -193,7 +193,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
                                       return (new FieldComposer($filter))->forForm();
                                   });
 
-        $composition = new Composition([
+        $payload = new Payload([
             'config' => [
                 'data_url'        => $this->dataUrl ?? sv_url($this->resource->route('index.table').'/data'),
                 'fields'          => $fields,
@@ -216,7 +216,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
             ],
         ]);
 
-        return $composition->get();
+        return $payload->get();
     }
 
     /**

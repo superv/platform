@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 class AttachEntryAction extends Action
 {
@@ -32,11 +32,11 @@ class AttachEntryAction extends Action
         }
     }
 
-    public function onComposed(Composition $composition)
+    public function onComposed(Payload $payload)
     {
-        $composition->set('lookup-url', sv_url($this->getLookupUrl()));
-        $composition->set('attach-url', sv_url($this->getAttachUrl()));
-        $composition->set('pivot-fields', $this->getPivotForm());
+        $payload->set('lookup-url', sv_url($this->getLookupUrl()));
+        $payload->set('attach-url', sv_url($this->getAttachUrl()));
+        $payload->set('pivot-fields', $this->getPivotForm());
     }
 
     public function getLookupUrl()

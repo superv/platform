@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
 use SuperV\Platform\Support\Composer\Composable;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 class TableRow implements Composable
 {
@@ -62,7 +62,7 @@ class TableRow implements Composable
 
     public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
-        $composer = new Composition([
+        $composer = new Payload([
             'values' => $this->values,
             'actions' => $this->table->getActions()->map(function (Action $action) {
                 return $action->makeComponent();

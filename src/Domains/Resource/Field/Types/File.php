@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 class File extends FieldType implements DoesNotInteractWithTable
 {
@@ -22,10 +22,10 @@ class File extends FieldType implements DoesNotInteractWithTable
 
     protected function composer()
     {
-        return function (Composition $composition, EntryContract $entry) {
+        return function (Payload $payload, EntryContract $entry) {
             if ($media = $this->getMedia($entry, $this->getName())) {
-                $composition->set('image_url', $media->getUrl());
-                $composition->set('config', null);
+                $payload->set('image_url', $media->getUrl());
+                $payload->set('config', null);
             }
         };
     }

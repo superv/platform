@@ -9,7 +9,7 @@ use SuperV\Platform\Contracts\Arrayable;
  *
  * @package SuperV\Platform\Support
  */
-class Composition implements Arrayable, Composable
+class Payload implements Arrayable, Composable
 {
     /**
      * @var array|null
@@ -47,7 +47,7 @@ class Composition implements Arrayable, Composable
         $this->tokens = $tokens;
     }
 
-    public function setFilterNull(bool $filterNull): Composition
+    public function setFilterNull(bool $filterNull): Payload
     {
         $this->filterNull = $filterNull;
 

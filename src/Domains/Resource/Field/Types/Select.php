@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 class Select extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
 {
@@ -18,12 +18,12 @@ class Select extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
 
     protected function composer()
     {
-        return function (Composition $composition) {
+        return function (Payload $payload) {
             $options = array_merge([['value' => null, 'text' => $this->getPlaceholder()]],
                 static::parseOptions(($this->getOptions()))
             );
 
-            $composition->set('meta.options', $options);
+            $payload->set('meta.options', $options);
         };
     }
 

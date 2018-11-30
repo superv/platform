@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 class BelongsTo extends FieldType implements NeedsDatabaseColumn
 {
@@ -50,32 +50,32 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
 
     protected function viewComposer() {
 
-        return function (Composition $composition, EntryContract $entry) {
+        return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                 $resource = sv_resource($relatedEntry);
-                $composition->set('meta.link', $resource->route('view', $relatedEntry));
+                $payload->set('meta.link', $resource->route('view', $relatedEntry));
             }
         };
     }
 
     protected function tableComposer() {
 
-        return function (Composition $composition, EntryContract $entry) {
+        return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}) {
                 $resource = sv_resource($relatedEntry);
-                $composition->set('meta.link', $resource->route('view', $relatedEntry));
+                $payload->set('meta.link', $resource->route('view', $relatedEntry));
             }
         };
     }
 
     protected function composer()
     {
-        return function (Composition $composition, EntryContract $entry) {
+        return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                 $resource = sv_resource($relatedEntry);
-                $composition->set('meta.link', $resource->route('view', $relatedEntry));
+                $payload->set('meta.link', $resource->route('view', $relatedEntry));
             }
-            $this->buildOptions($composition);
+            $this->buildOptions($payload);
         };
 
         //        if ($this->hasCallback('querying')) {
@@ -92,7 +92,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         //
     }
 
-    protected function buildOptions(Composition $composition)
+    protected function buildOptions(Payload $payload)
     {
         $relationConfig = RelationConfig::create($this->getType(), $this->getConfig());
         $relatedResource = ResourceFactory::make($relationConfig->getRelatedResource());
@@ -106,7 +106,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
             return ['value' => $item->id, 'text' => sv_parse($entryLabel, $item->toArray())];
         })->all();
 
-        $composition->set('meta.options', $options);
-        $composition->set('placeholder', 'Choose a '.$relatedResource->getSingularLabel());
+        $payload->set('meta.options', $options);
+        $payload->set('placeholder', 'Choose a '.$relatedResource->getSingularLabel());
     }
 }

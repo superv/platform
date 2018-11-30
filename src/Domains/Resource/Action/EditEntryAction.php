@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 class EditEntryAction extends Action
 {
@@ -12,9 +12,9 @@ class EditEntryAction extends Action
 
     protected $url;
 
-    public function onComposed(Composition $composition)
+    public function onComposed(Payload $payload)
     {
-        $composition->set('url', $this->getUrl());
+        $payload->set('url', $this->getUrl());
     }
 
     public function getUrl()

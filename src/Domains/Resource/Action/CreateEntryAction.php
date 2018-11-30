@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 
 class CreateEntryAction extends Action
 {
@@ -12,9 +12,9 @@ class CreateEntryAction extends Action
 
     protected $routeUrl;
 
-    public function onComposed(Composition $composition)
+    public function onComposed(Payload $payload)
     {
-        $composition->set('url', 'sv/res/{res.handle}/create');
-        $composition->set('button.color', 'green');
+        $payload->set('url', 'sv/res/{res.handle}/create');
+        $payload->set('button.color', 'green');
     }
 }

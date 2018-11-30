@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource\Action;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
 use SuperV\Platform\Domains\UI\Components\ActionComponent;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 interface AcceptsActionTestEntry
@@ -67,9 +67,9 @@ class EntryAction extends Action implements AcceptsActionTestEntry
 
     protected $entryName;
 
-    public function onComposed(Composition $composition)
+    public function onComposed(Payload $payload)
     {
-        $composition->set('entry', $this->entryName);
+        $payload->set('entry', $this->entryName);
     }
 
     public function acceptActionTestEntry(ActionTestEntry $entry)

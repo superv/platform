@@ -13,7 +13,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
-use SuperV\Platform\Support\Composer\Composition;
+use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Form implements ProvidesUIComponent
@@ -137,16 +137,16 @@ class Form implements ProvidesUIComponent
         return $this;
     }
 
-    public function compose(): Composition
+    public function compose(): Payload
     {
-        $composition = new Composition([
+        $payload = new Payload([
             'url'    => $this->getUrl(),
             'method' => $this->getMethod(),
             'fields' => $this->composeFields(),
         ]);
-        $this->fire('composed', ['form' => $this, 'composition' => $composition]);
+        $this->fire('composed', ['form' => $this, 'payload' => $payload]);
 
-        return $composition;
+        return $payload;
     }
 
     protected function composeFields()
