@@ -23,7 +23,7 @@ class PageComponent extends BaseComponent
 
     public function onComposed(Composition $composition)
     {
-        $composition->replace('class', ['w-full']);
+        $composition->set('class', ['w-full']);
     }
 
     public static function from(Page $page): self

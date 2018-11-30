@@ -15,7 +15,7 @@ class ModalAction extends Action
 
     public function onComposed(Composition $composition)
     {
-        $composition->replace('url', $this->modalUrl);
+        $composition->set('url', $this->modalUrl);
     }
 
     public function makeComponent(): ComponentContract

@@ -69,7 +69,7 @@ class EntryAction extends Action implements AcceptsActionTestEntry
 
     public function onComposed(Composition $composition)
     {
-        $composition->replace('entry', $this->entryName);
+        $composition->set('entry', $this->entryName);
     }
 
     public function acceptActionTestEntry(ActionTestEntry $entry)

@@ -23,7 +23,7 @@ class Select extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
                 static::parseOptions(($this->getOptions()))
             );
 
-            $composition->replace('meta.options', $options);
+            $composition->set('meta.options', $options);
         };
     }
 

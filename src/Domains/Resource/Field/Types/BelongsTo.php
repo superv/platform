@@ -53,7 +53,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         return function (Composition $composition, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                 $resource = sv_resource($relatedEntry);
-                $composition->replace('meta.link', $resource->route('view', $relatedEntry));
+                $composition->set('meta.link', $resource->route('view', $relatedEntry));
             }
         };
     }
@@ -63,7 +63,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         return function (Composition $composition, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}) {
                 $resource = sv_resource($relatedEntry);
-                $composition->replace('meta.link', $resource->route('view', $relatedEntry));
+                $composition->set('meta.link', $resource->route('view', $relatedEntry));
             }
         };
     }
@@ -73,7 +73,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         return function (Composition $composition, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                 $resource = sv_resource($relatedEntry);
-                $composition->replace('meta.link', $resource->route('view', $relatedEntry));
+                $composition->set('meta.link', $resource->route('view', $relatedEntry));
             }
             $this->buildOptions($composition);
         };
@@ -106,7 +106,7 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
             return ['value' => $item->id, 'text' => sv_parse($entryLabel, $item->toArray())];
         })->all();
 
-        $composition->replace('meta.options', $options);
-        $composition->replace('placeholder', 'Choose a '.$relatedResource->getSingularLabel());
+        $composition->set('meta.options', $options);
+        $composition->set('placeholder', 'Choose a '.$relatedResource->getSingularLabel());
     }
 }

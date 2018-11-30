@@ -34,9 +34,9 @@ class AttachEntryAction extends Action
 
     public function onComposed(Composition $composition)
     {
-        $composition->replace('lookup-url', sv_url($this->getLookupUrl()));
-        $composition->replace('attach-url', sv_url($this->getAttachUrl()));
-        $composition->replace('pivot-fields', $this->getPivotForm());
+        $composition->set('lookup-url', sv_url($this->getLookupUrl()));
+        $composition->set('attach-url', sv_url($this->getAttachUrl()));
+        $composition->set('pivot-fields', $this->getPivotForm());
     }
 
     public function getLookupUrl()

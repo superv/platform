@@ -14,7 +14,7 @@ class DeleteEntryAction extends Action
 
     public function onComposed(Composition $composition)
     {
-        $composition->replace('url', $this->getUrl());
+        $composition->set('url', $this->getUrl());
     }
 
     public function getUrl()

@@ -14,7 +14,7 @@ class CreateEntryAction extends Action
 
     public function onComposed(Composition $composition)
     {
-        $composition->replace('url', 'sv/res/{res.handle}/create');
-        $composition->replace('button.color', 'green');
+        $composition->set('url', 'sv/res/{res.handle}/create');
+        $composition->set('button.color', 'green');
     }
 }

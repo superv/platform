@@ -28,7 +28,7 @@ class Composition implements Arrayable, Composable
         $this->params = $params;
     }
 
-    public function replace($key, $value)
+    public function set($key, $value)
     {
         array_set($this->params, $key, $value);
     }

@@ -49,7 +49,7 @@ class MorphTo extends FieldType
         return function (Composition $composition, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                 $resource = ResourceFactory::make($relatedEntry);
-                $composition->replace('meta.link', $resource->route('view', $relatedEntry));
+                $composition->set('meta.link', $resource->route('view', $relatedEntry));
             }
             $this->buildOptions($composition);
         };
@@ -82,7 +82,7 @@ class MorphTo extends FieldType
             return ['value' => $item->id, 'text' => sv_parse($entryLabel, $item->toArray())];
         })->all();
 
-        $composition->replace('meta.options', $options);
-        $composition->replace('placeholder', 'Choose a '.$relatedResource->getSingularLabel());
+        $composition->set('meta.options', $options);
+        $composition->set('placeholder', 'Choose a '.$relatedResource->getSingularLabel());
     }
 }

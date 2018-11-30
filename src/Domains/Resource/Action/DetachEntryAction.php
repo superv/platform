@@ -27,8 +27,8 @@ class DetachEntryAction extends Action
 
     public function onComposed(Composition $composition)
     {
-        $composition->replace('url', str_replace('entry.id', '{entry.id}', $this->getRequestUrl()));
-        $composition->replace('on-complete', 'reload');
+        $composition->set('url', str_replace('entry.id', '{entry.id}', $this->getRequestUrl()));
+        $composition->set('on-complete', 'reload');
     }
 
     public function getRequestUrl()

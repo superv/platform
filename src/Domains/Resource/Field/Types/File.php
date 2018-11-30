@@ -24,8 +24,8 @@ class File extends FieldType implements DoesNotInteractWithTable
     {
         return function (Composition $composition, EntryContract $entry) {
             if ($media = $this->getMedia($entry, $this->getName())) {
-                $composition->replace('image_url', $media->getUrl());
-                $composition->replace('config', null);
+                $composition->set('image_url', $media->getUrl());
+                $composition->set('config', null);
             }
         };
     }
