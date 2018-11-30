@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource;
 use Closure;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
@@ -18,6 +19,8 @@ use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
 use SuperV\Platform\Domains\Resource\Resource\ResourceView;
 use SuperV\Platform\Domains\Resource\Resource\TestHelper;
+use SuperV\Platform\Domains\Resource\Table\TableV2;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -29,6 +32,7 @@ class Resource implements
     use HasConfig;
     use LabelConcern;
     use RepoConcern;
+    use FiresCallbacks;
 
     /**
      * Database id
@@ -238,10 +242,28 @@ class Resource implements
         });
 
         $this->fields()->getFilters()->map(function (Filter $filter) use ($filters) {
-            $filters->push($filter);
+            $filters->push($filter->setResource($this));
         });
 
         return $filters;
+    }
+
+    public function resolveTable(): TableV2
+    {
+        $table = app(TableV2::class)
+            ->setResource($this)
+            ->addAction(ViewEntryAction::class);
+
+        $this->fire('table.resolved', ['table' => $table]);
+
+        return $table;
+    }
+
+    public function afterTableResolved(Closure $callback)
+    {
+        $this->on('table.resolved', $callback);
+
+        return $this;
     }
 
     public function testHelper()

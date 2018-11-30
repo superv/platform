@@ -2,13 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Filter;
 
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 
 class SelectFilter extends Filter
 {
-    protected $identifier = 'name';
-
     protected $type = 'select';
 
     protected $options = [];
@@ -16,11 +13,7 @@ class SelectFilter extends Filter
     public function onFieldBuilt(Field $field)
     {
         $field->setConfigValue('options', $this->getOptions());
-    }
-
-    public function getIdentifier()
-    {
-        return $this->identifier;
+        $field->setConfigValue('placeholder', $this->getLabel());
     }
 
     public function getOptions(): array

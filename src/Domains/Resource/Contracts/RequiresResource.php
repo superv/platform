@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Contracts;
 
 use SuperV\Platform\Domains\Resource\Resource;
 
-interface AcceptsResource
+interface RequiresResource
 {
-    public function acceptResource(Resource $resource);
+    public function setResource(Resource $resource);
 }

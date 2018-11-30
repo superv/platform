@@ -9,6 +9,8 @@ use SuperV\Platform\Support\Composer\Composition;
 
 class Select extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
 {
+    protected $placeholder;
+
     protected function boot()
     {
         $this->on('form.composing', $this->composer());
@@ -17,25 +19,28 @@ class Select extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
     protected function composer()
     {
         return function (Composition $composition) {
-            if ($options = $this->field->getConfigValue('options')) {
-                $composition->replace('meta.options', $options);
-            }
+            $options = array_merge([['value' => null, 'text' => $this->getPlaceholder()]],
+                static::parseOptions(($this->getOptions()))
+            );
+
+            $composition->replace('meta.options', $options);
         };
     }
 
     public function makeFilter()
     {
-        $options = array_merge([['value' => null, 'text' => $this->field->getLabel()]],
-            static::parseOptions(($this->getOptions()))
-        );
-
-        return SelectFilter::make($this->getName())
-                           ->setOptions($options);
+        return SelectFilter::make($this->getName(), $this->getLabel())
+                           ->setOptions($this->getOptions());
     }
 
     public function getOptions()
     {
-        return $this->getConfigValue('options');
+        return $this->field->getConfigValue('options', []);
+    }
+
+    public function getPlaceholder()
+    {
+        return $this->field->getPlaceholder() ?? $this->getLabel();
     }
 
     public static function parseOptions(array $options = [])

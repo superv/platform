@@ -30,9 +30,9 @@ class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter
             return ['value' => $entry->getId(), 'text' => $resource->getEntryLabel($entry)];
         })->all();
 
-        $options = array_merge([['value' => null, 'text' => $resource->getSingularLabel()]], $options);
+//        $options = array_merge([['value' => null, 'text' => $resource->getSingularLabel()]], $options);
 
-        return SelectFilter::make($this->getName())
+        return SelectFilter::make($this->getName(), $resource->getSingularLabel())
                            ->setOptions($options)
                            ->setAttribute($this->getConfig()->getForeignKey());
     }

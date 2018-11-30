@@ -25,12 +25,11 @@ class ResourceIndexController extends BaseApiController
         return $page->build(['res' => $resource->toArray()]);
     }
 
-    public function table(TableV2 $table)
+    public function table()
     {
-        $table->setResource($resource = $this->resolveResource());
-        $table->addAction(ViewEntryAction::class);
+        $resource = $this->resolveResource();
+        $table = $resource->resolveTable();
 
-        $all = $this->request->all();
         if ($this->route->parameter('data')) {
             return $table->build($this->request);
         }
@@ -38,18 +37,4 @@ class ResourceIndexController extends BaseApiController
         return MakeComponentTree::dispatch($table)->withTokens(['res' => $resource->toArray()]);
     }
 
-//    public function __invoke2(ResourceTable $table)
-//    {
-//        $table->setResource($resource = $this->resolveResource());
-//
-//        if ($this->route->parameter('data')) {
-//            return $table->build();
-//        }
-//
-//        $page = Page::make($resource->getLabel());
-//        $page->addBlock($table);
-//        $page->addAction(CreateEntryAction::make());
-//
-//        return $page->build(['res' => $resource->toArray()]);
-//    }
 }

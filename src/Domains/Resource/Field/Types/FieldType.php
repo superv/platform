@@ -16,6 +16,8 @@ abstract class FieldType
      */
     protected $field;
 
+    protected $placeholder;
+
     public function __construct(?Field $field = null)
     {
         $this->field = $field;
@@ -45,10 +47,16 @@ abstract class FieldType
         return $this->field->getName();
     }
 
+    public function getLabel()
+    {
+        return $this->field->getLabel();
+    }
+
     public function getType()
     {
         return $this->field->getType();
     }
+
 
     public static function resolve($type)
     {

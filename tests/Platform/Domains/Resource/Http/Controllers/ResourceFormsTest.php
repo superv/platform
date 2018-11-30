@@ -16,9 +16,9 @@ class ResourceFormsTest extends ResourceTestCase
     function test__displays_create_form()
     {
         $users = $this->schema()
-                     ->users(function (Blueprint $table) {
-                         $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
-                     });
+                      ->users(function (Blueprint $table) {
+                          $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
+                      });
 
         // Get Create form
         //
@@ -83,7 +83,12 @@ class ResourceFormsTest extends ResourceTestCase
 
         $gender = $fields->get('gender');
         $this->assertEquals('select', $gender['type']);
-        $this->assertEquals(['m' => 'Male', 'f' => 'Female'], $gender['meta']['options']);
+        $this->assertEquals([
+            ['value' => null, 'text' => 'Gender'],
+            ['value' => 'm', 'text' => 'Male'],
+            ['value' => 'f', 'text' => 'Female'],
+        ], $gender['meta']['options']
+        );
 
         $group = $fields->get('group');
         $this->assertEquals('belongs_to', $group['type']);

@@ -6,25 +6,60 @@ use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter as FilterContract;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 abstract class Filter implements FilterContract, ProvidesField
 {
     use FiresCallbacks;
 
+    /**
+     * Main identifier for the filter
+     *
+     * @var null
+     */
+    protected $identifier;
+
+    /**
+     * Corresponding entry attribute if not same with the identifier
+     *
+     * @var string
+     */
+    protected $attribute;
+
+    /**
+     * Filter type
+     *
+     * @var string
+     */
     protected $type;
 
+    /**
+     * Filter label
+     *
+     * @var string
+     */
+    protected $label;
+    /**
+     * Filter placeholder
+     *
+     * @var string
+     */
     protected $placeholder;
+
+    /**
+     * Resource the filter belongs to
+     *
+     * @var \SuperV\Platform\Domains\Resource\Resource
+     */
+    protected $resource;
 
     protected $callback;
 
-    protected $identifier;
-
-    protected $attribute;
-
-    public function __construct($identifier = null)
+    public function __construct($identifier = null, $label = null)
     {
         $this->identifier = $identifier;
+        $this->label = $label;
 
         $this->boot();
     }
@@ -51,6 +86,12 @@ abstract class Filter implements FilterContract, ProvidesField
         });
     }
 
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    public function onFieldBuilt(Field $field) {}
 
     public function makeField(): Field
     {
@@ -72,7 +113,7 @@ abstract class Filter implements FilterContract, ProvidesField
 
     public function getPlaceholder()
     {
-        return $this->placeholder ?? str_unslug($this->getIdentifier());
+        return $this->placeholder ?? $this->getLabel();
     }
 
     public function getAttribute()
@@ -87,8 +128,20 @@ abstract class Filter implements FilterContract, ProvidesField
         return $this;
     }
 
-    public static function make($identifier = null)
+    public function setResource(Resource $resource): FilterContract
     {
-        return new static($identifier);
+        $this->resource = $resource;
+
+        return $this;
+    }
+
+    public function getLabel()
+    {
+        return $this->label ?? str_unslug($this->identifier);
+    }
+
+    public static function make($identifier = null, $label = null)
+    {
+        return new static($identifier, $label);
     }
 }

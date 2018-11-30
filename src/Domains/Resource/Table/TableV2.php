@@ -247,6 +247,13 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return $this;
     }
 
+    public function setActions(array $actions): self
+    {
+        $this->actions = $actions;
+
+        return $this;
+    }
+
     public function uuid()
     {
         return $this->config->uuid();
