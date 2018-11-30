@@ -44,11 +44,13 @@ class RouteRegistrar
      *
      * @param array $routes
      */
-    public function register(array $routes)
+    public function register(array $routes): self
     {
         foreach ($routes as $uri => $action) {
             $this->registerRoute($uri, $action);
         }
+
+        return $this;
     }
 
     /**

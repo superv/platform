@@ -110,7 +110,7 @@ class Field implements FieldContract
         return $this;
     }
 
-    public function resolveRequestToEntry(Request $request, EntryContract $entry)
+    public function resolveRequest(Request $request, ?EntryContract $entry = null)
     {
         if (! $request->has($this->getName())
             && ! $request->has($this->getColumnName())) {
@@ -129,11 +129,16 @@ class Field implements FieldContract
             }
         }
 
-        if (! $this->doesNotInteractWithTable) {
+        if ($entry && ! $this->doesNotInteractWithTable) {
             $entry->setAttribute($this->getColumnName(), $value);
         }
 
         $this->value = $value;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
     }
 
     public function fillFromEntry(EntryContract $entry)

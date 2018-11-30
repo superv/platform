@@ -4,8 +4,8 @@ namespace SuperV\Platform\Domains\UI\Page;
 
 use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
-use SuperV\Platform\Domains\UI\Components\PageComponent;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
+use SuperV\Platform\Domains\UI\Components\PageComponent;
 use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 
 class Page implements ProvidesUIComponent, Responsable
@@ -38,30 +38,10 @@ class Page implements ProvidesUIComponent, Responsable
         $this->tokens = $tokens;
 
         $this->component = MakeComponentTree::dispatch($this);
-//
-//        $this->component = $this->makeComponent();
-//
-//        $this->component->getProps()->transform(function ($prop) {
-//            if (is_array($prop)) {
-//                foreach ($prop as $key => $value) {
-//                    if ($value instanceof ProvidesUIComponent) {
-//                        $prop[$key] = $value->makeComponent();
-//                    }
-//                }
-//            }
-//
-//            return $prop;
-//        });
 
         return $this;
     }
 
-    /**
-     * Create an HTTP response that represents the object.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
     public function toResponse($request)
     {
         return response()->json([

@@ -7,7 +7,6 @@ use Illuminate\Http\UploadedFile;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
-use SuperV\Platform\Domains\Resource\Field\Types\File;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FileTest extends ResourceTestCase
@@ -46,7 +45,7 @@ class FileTest extends ResourceTestCase
         Storage::fake('fakedisk');
 
         $uploadedFile = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
-        $callback = $field->resolveRequestToEntry($this->makePostRequest('', ['avatar' => $uploadedFile]), $fake);
+        $callback = $field->resolveRequest($this->makePostRequest('', ['avatar' => $uploadedFile]), $fake);
         $this->assertInstanceOf(Closure::class, $callback);
 
 //        $this->assertEquals($uploadedFile, $field->getValueForValidation());

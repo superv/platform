@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Contracts\Validator;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
@@ -89,12 +90,20 @@ class Form implements ProvidesUIComponent
         foreach ($this->groups as $handle => $fields) {
             $entry = $this->entries[$handle] ?? null;
 
+            // If this is a no-entry form then we will
+            // have to validate on our own since the
+            // model events wont fire
+            //
+            if (! $entry) {
+                $this->validate();
+            }
+
             $fields->map(function (Field $field) use ($entry) {
                 if ($field->isHidden()) {
                     return;
                 }
 
-                $this->postSaveCallbacks[] = $field->resolveRequestToEntry($this->request, $entry);
+                $this->postSaveCallbacks[] = $field->resolveRequest($this->request, $entry);
             });
         }
 
@@ -105,6 +114,29 @@ class Form implements ProvidesUIComponent
         });
 
         return $this;
+    }
+
+    public function validate()
+    {
+        $data = $this->request->all();
+        $rules = $this->getFields()->map(function (Field $field) {
+            return [$field->getName(), $this->parseFieldRules($field)];
+        })->filter()->toAssoc()->all();
+
+        app(Validator::class)->make($data, $rules);
+    }
+
+    public function parseFieldRules(Field $field)
+    {
+        $rules = $field->getRules();
+
+        if ($field->isRequired()) {
+            $rules[] = 'required';
+        } else {
+            $rules[] = 'nullable';
+        }
+
+        return $rules;
     }
 
     public function addWatcher($handle, Watcher $watcher)
@@ -156,7 +188,9 @@ class Form implements ProvidesUIComponent
         foreach ($this->fields as $handle => $fields) {
             $composed = $composed->merge(
                 $fields
-                    ->filter(function (Field $field) { return ! $field->isHidden(); })
+                    ->filter(function (Field $field) {
+                        return ! $field->isHidden();
+                    })
                     ->map(function (Field $field) use ($handle) {
                         return array_filter(
                             (new FieldComposer($field))->forForm($this->entries[$handle] ?? null)->get()
@@ -249,6 +283,11 @@ class Form implements ProvidesUIComponent
                                 function (Field $field) use ($name) {
                                     return $field->getName() === $name;
                                 });
+    }
+
+    public function getFieldValue(string $name)
+    {
+        return $this->getField($name)->getValue();
     }
 
     public function composeField($field, $entry = null)
