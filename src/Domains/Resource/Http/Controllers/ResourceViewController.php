@@ -17,11 +17,5 @@ class ResourceViewController extends BaseApiController
 
         return MakeComponentTree::dispatch($resource->resolveView($this->entry));
 
-        $page = Page::make('View '.$resource->getEntryLabel($this->entry));
-
-        $page->setMeta('header', false);
-        $page->addBlock($resource->resolveView($this->entry));
-
-        return $page->build(['res' => $resource->toArray(), 'entry' => $this->entry->toArray()]);
     }
 }
