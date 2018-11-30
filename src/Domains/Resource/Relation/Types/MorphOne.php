@@ -16,7 +16,7 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequ
 {
     protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
     {
-        $morphName = $this->config->getMorphName();
+        $morphName = $this->relationConfig->getMorphName();
 
         return new EloquentMorphOne(
             $relatedEntryInstance->newQuery(),

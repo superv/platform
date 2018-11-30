@@ -76,7 +76,7 @@ class ResourceEntry extends Entry
         if (starts_with($name, 'get')) {
             $relationName = snake_case(str_replace_first('get', '', $name));
             if ($relation = $this->resolveRelation($relationName)) {
-                if ($targetModel = $relation->getConfig()->getTargetModel()) {
+                if ($targetModel = $relation->getRelationConfig()->getTargetModel()) {
                     /** @var \SuperV\Platform\Domains\Database\Model\Entry $relatedEntry */
                     if ($relatedEntry = $relation->newQuery()->getResults()->first()) {
                         $targetModelInstance = new $targetModel;
@@ -90,7 +90,7 @@ class ResourceEntry extends Entry
         } elseif (starts_with($name, 'make')) {
             $relationName = snake_case(str_replace_first('make', '', $name));
             if ($relation = $this->resolveRelation($relationName)) {
-                if ($targetModel = $relation->getConfig()->getTargetModel()) {
+                if ($targetModel = $relation->getRelationConfig()->getTargetModel()) {
                     /** @var \SuperV\Platform\Domains\Database\Model\Entry $relatedEntry */
                     if ($relation instanceof MakesEntry) {
                         if ($relatedEntry = $relation->make($arguments)) {

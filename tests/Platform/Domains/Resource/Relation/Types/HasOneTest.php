@@ -49,7 +49,7 @@ class HasOneTest extends ResourceTestCase
         $this->assertEquals([
             'related_resource' => 't_profiles',
             'foreign_key'      => 'user_id',
-        ], $relation->getConfig()->toArray());
+        ], $relation->getRelationConfig()->toArray());
     }
 
     function test__makes_form()

@@ -92,4 +92,9 @@ class Fields
 
         return $filters->filter();
     }
+
+    public function getHeaderImage(): ?Field
+    {
+        return $this->withFlag('header.show')->first();
+    }
 }

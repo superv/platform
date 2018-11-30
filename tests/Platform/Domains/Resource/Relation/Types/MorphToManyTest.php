@@ -41,7 +41,7 @@ class MorphToManyTest extends ResourceTestCase
             'pivot_related_key' => 'role_id',
             'morph_name'        => 'owner',
             'pivot_columns'     => ['status'],
-        ], $relation->getConfig()->toArray());
+        ], $relation->getRelationConfig()->toArray());
     }
 }
 

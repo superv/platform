@@ -19,7 +19,7 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
 {
     protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
     {
-        if (! $localKey = $this->config->getLocalKey()) {
+        if (! $localKey = $this->relationConfig->getLocalKey()) {
             if ($this->parentEntry) {
                 $entry = $this->parentEntry;
                 $localKey = $entry->getKeyName();
@@ -29,7 +29,7 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
         return new EloquentHasMany(
             $relatedEntryInstance->newQuery(),
             $this->parentEntry,
-            $this->config->getForeignKey(),
+            $this->relationConfig->getForeignKey(),
             $localKey ?? 'id'
         );
     }

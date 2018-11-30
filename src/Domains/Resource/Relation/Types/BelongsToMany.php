@@ -18,9 +18,9 @@ class BelongsToMany extends Relation implements ProvidesTable
         return new EloquentBelongsToMany(
             $relatedEntryInstance->newQuery(),
             $this->parentEntry,
-            $this->config->getPivotTable(),
-            $this->config->getPivotForeignKey(),
-            $this->config->getPivotRelatedKey(),
+            $this->relationConfig->getPivotTable(),
+            $this->relationConfig->getPivotForeignKey(),
+            $this->relationConfig->getPivotRelatedKey(),
             $this->parentEntry->getKeyName(),
             $relatedEntryInstance->getKeyName()
         );

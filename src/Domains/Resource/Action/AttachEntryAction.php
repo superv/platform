@@ -25,7 +25,7 @@ class AttachEntryAction extends Action
 
     protected function getPivotForm()
     {
-        if ($pivotColumns = $this->relation->getConfig()->getPivotColumns()) {
+        if ($pivotColumns = $this->relation->getRelationConfig()->getPivotColumns()) {
             return $this->relation->getPivotFields()->map(function (Field $field) {
                 return (new FieldComposer($field))->forForm();
             });

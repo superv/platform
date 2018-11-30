@@ -19,8 +19,8 @@ class HasOne extends Relation implements ProvidesForm, HandlesRequests
         return new EloquentHasOne(
             $relatedEntryInstance->newQuery(),
             $this->parentEntry,
-            $this->config->getForeignKey(),
-            $this->config->getLocalKey() ?? 'id'
+            $this->relationConfig->getForeignKey(),
+            $this->relationConfig->getLocalKey() ?? 'id'
         );
     }
 

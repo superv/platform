@@ -61,7 +61,7 @@ class MorphOneTest extends ResourceTestCase
         $this->assertEquals([
             'related_resource' => 't_tags',
             'morph_name'       => 'owner',
-        ], $relation->getConfig()->toArray());
+        ], $relation->getRelationConfig()->toArray());
     }
 
     function test__makes_form()
@@ -124,7 +124,7 @@ class MorphOneTest extends ResourceTestCase
             $table->morphTo('owner');
         });
 
-        $this->assertEquals(TestProfileRepository::class, $this->parent->getRelation('profile')->getConfig()->getTargetModel());
+        $this->assertEquals(TestProfileRepository::class, $this->parent->getRelation('profile')->getRelationConfig()->getTargetModel());
 
         $user = $this->parent->create(['name' => 'some']);
 

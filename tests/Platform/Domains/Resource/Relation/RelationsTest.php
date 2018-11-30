@@ -32,7 +32,7 @@ class RelationsTest extends ResourceTestCase
         $this->assertEquals([
             'related_resource' => 't_groups',
             'foreign_key'      => 'group_id',
-        ], $relation->getConfig()->toArray());
+        ], $relation->getRelationConfig()->toArray());
     }
 
     /** @test */
@@ -54,7 +54,7 @@ class RelationsTest extends ResourceTestCase
             'related_model' => TestPost::class,
             'foreign_key'   => 'user_id',
             'local_key'     => 'post_id',
-        ], $relation->getConfig()->toArray());
+        ], $relation->getRelationConfig()->toArray());
     }
 
     /** @test */
@@ -84,7 +84,7 @@ class RelationsTest extends ResourceTestCase
             'pivot_foreign_key' => 'user_id',
             'pivot_related_key' => 'role_id',
             'pivot_columns'     => ['status'],
-        ], $relation->getConfig()->toArray());
+        ], $relation->getRelationConfig()->toArray());
     }
 
 
@@ -101,7 +101,7 @@ class RelationsTest extends ResourceTestCase
 
         $users = ResourceFactory::make('t_users');
         $roles = $users->getRelation('roles');
-        $this->assertEquals(['status'], $roles->getConfig()->getPivotColumns());
+        $this->assertEquals(['status'], $roles->getRelationConfig()->getPivotColumns());
 
         $this->create('t_admins', function (Blueprint $table) {
             $table->increments('id');
@@ -113,6 +113,6 @@ class RelationsTest extends ResourceTestCase
 
         $admins = ResourceFactory::make('t_admins');
         $roles = $admins->getRelation('roles');
-        $this->assertEquals(['status'], $roles->getConfig()->getPivotColumns());
+        $this->assertEquals(['status'], $roles->getRelationConfig()->getPivotColumns());
     }
 }

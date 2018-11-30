@@ -11,13 +11,13 @@ class MorphTo extends Relation
 {
     protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
     {
-        $ownerKey = $this->config->getName().'_id';
-        $type = $this->config->getName().'_type';
+        $ownerKey = $this->relationConfig->getName().'_id';
+        $type = $this->relationConfig->getName().'_type';
 
         return new EloquentMorphTo(
             $relatedEntryInstance->newQuery(),
             $this->parentEntry,
-            $this->config->getForeignKey(),
+            $this->relationConfig->getForeignKey(),
             $ownerKey,
             $type,
             $this->getName()

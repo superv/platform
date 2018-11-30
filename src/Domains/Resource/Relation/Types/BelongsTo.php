@@ -17,7 +17,7 @@ class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter
         return new EloquentBelongsTo(
             $relatedEntryInstance->newQuery(),
             $this->parentEntry,
-            $this->config->getForeignKey(),
+            $this->relationConfig->getForeignKey(),
             'id',
             $this->getName()
         );
@@ -25,7 +25,7 @@ class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter
 
     public function makeFilter()
     {
-        $resource = sv_resource($this->getConfig()->getRelatedResource());
+        $resource = sv_resource($this->getRelationConfig()->getRelatedResource());
         $options = $resource->newQuery()->get()->map(function (EntryContract $entry) use ($resource) {
             return ['value' => $entry->getId(), 'text' => $resource->getEntryLabel($entry)];
         })->all();
@@ -34,6 +34,6 @@ class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter
 
         return SelectFilter::make($this->getName(), $resource->getSingularLabel())
                            ->setOptions($options)
-                           ->setAttribute($this->getConfig()->getForeignKey());
+                           ->setAttribute($this->getRelationConfig()->getForeignKey());
     }
 }

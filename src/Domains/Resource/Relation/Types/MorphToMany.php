@@ -18,10 +18,10 @@ class MorphToMany extends Relation implements ProvidesTable
         return new EloquentMorphToMany(
             $relatedEntryInstance->newQuery(),
             $this->parentEntry,
-            $this->config->getMorphName(),
-            $this->config->getPivotTable(),
-            $this->config->getPivotForeignKey(),
-            $this->config->getPivotRelatedKey(),
+            $this->relationConfig->getMorphName(),
+            $this->relationConfig->getPivotTable(),
+            $this->relationConfig->getPivotForeignKey(),
+            $this->relationConfig->getPivotRelatedKey(),
             $this->parentEntry->getKeyName(),
             $relatedEntryInstance->getKeyName()
         );

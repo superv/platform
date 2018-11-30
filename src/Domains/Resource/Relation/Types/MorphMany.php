@@ -16,8 +16,8 @@ class MorphMany extends Relation implements ProvidesTable
         return new EloquentMorphMany(
             $relatedEntryInstance->newQuery(),
             $this->parentEntry,
-            $this->config->getMorphName().'_type',
-            $this->config->getMorphName().'_id',
+            $this->relationConfig->getMorphName().'_type',
+            $this->relationConfig->getMorphName().'_id',
             'id'
         );
     }

@@ -27,7 +27,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
     protected $parentEntry;
 
     /** @var RelationConfig */
-    protected $config;
+    protected $relationConfig;
 
     protected $flags = [];
 
@@ -56,8 +56,8 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
 
         $query = $this->newRelationQuery($instance);
 
-        if ($this->config->hasPivotColumns()) {
-            $query->withPivot($this->config->getPivotColumns());
+        if ($this->relationConfig->hasPivotColumns()) {
+            $query->withPivot($this->relationConfig->getPivotColumns());
         }
 
         return $query;
@@ -65,9 +65,9 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
 
     protected function newRelatedInstance(): ?EntryContract
     {
-        if ($model = $this->config->getRelatedModel()) {
+        if ($model = $this->relationConfig->getRelatedModel()) {
             return new $model;
-        } elseif ($handle = $this->config->getRelatedResource()) {
+        } elseif ($handle = $this->relationConfig->getRelatedResource()) {
             return ResourceFactory::make($handle)->newEntryInstance();
         }
 
@@ -77,7 +77,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
     /** @return \SuperV\Platform\Domains\Resource\Resource; */
     public function getRelatedResource(): Resource
     {
-        return ResourceFactory::make($this->config->getRelatedResource());
+        return ResourceFactory::make($this->relationConfig->getRelatedResource());
     }
 
     protected function getRelatedEntry(): ?EntryContract
@@ -104,9 +104,9 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         $this->type = is_string($type) ? new RelationType($type) : $type;
     }
 
-    public function getConfig(): RelationConfig
+    public function getRelationConfig(): RelationConfig
     {
-        return $this->config;
+        return $this->relationConfig;
     }
 
     public function getParentEntry()
@@ -137,10 +137,10 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
 
     public function getPivotFields()
     {
-        if (! $pivotColumns = $this->getConfig()->getPivotColumns()) {
+        if (! $pivotColumns = $this->getRelationConfig()->getPivotColumns()) {
             return [];
         }
-        $pivotResource = ResourceFactory::make($this->getConfig()->getPivotTable());
+        $pivotResource = ResourceFactory::make($this->getRelationConfig()->getPivotTable());
 
         return $pivotResource->fields()
                              ->keyByName()
@@ -160,13 +160,13 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
                              });
     }
 
-    public static function fromEntry(Entry $entry): self
+    public static function fromEntry(RelationModel $entry): self
     {
         $relation = new static;
 
         $relation->hydrate($entry->toArray());
 
-        $relation->config = RelationConfig::create($relation->type, $relation->config);
+        $relation->relationConfig = RelationConfig::create($relation->type, $entry->config);
 
         return $relation;
     }

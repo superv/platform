@@ -26,7 +26,7 @@ class RelationController extends BaseApiController
         $this->resolveResource();
         $relationName = $this->route->parameter('relation');
         $items = $this->request->get('items');
-        if ($pivotColumns = $this->resolveRelation()->getConfig()->getPivotColumns()) {
+        if ($pivotColumns = $this->resolveRelation()->getRelationConfig()->getPivotColumns()) {
             $formData = $this->request->get('form_data');
 
             $items = [];

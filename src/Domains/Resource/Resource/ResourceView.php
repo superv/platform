@@ -42,25 +42,6 @@ class ResourceView implements ProvidesUIComponent
         return $this;
     }
 
-    public function getHeading_Xxxxxxxxxxx()
-    {
-        if ($this->headingResolver) {
-            $callback = Closure::bind($this->headingResolver, $this, get_class());
-
-            return app()->call($callback, ['entry' => $this->entry, 'resource' => $this->resource]);
-        }
-
-        $label = $this->resource->getEntryLabel($this->entry);
-
-
-
-        return Component::make($this->resource->getConfigValue('view.header', 'sv-header'))
-                        ->addClass('p-2')->card()
-                        ->setProp('image-url', '')
-                        ->setProp('header', $label)
-                        ->setProp('actions', $this->getActions());
-    }
-
     protected function getActions()
     {
         $relationActions = $this->resource->getRelations()
@@ -86,13 +67,10 @@ class ResourceView implements ProvidesUIComponent
 
     public function makeComponent(): ComponentContract
     {
-
-        $imageField = $this->resource->fields()->withFlag('header.show')->first();
-
-        if ($imageField) {
-            $imageField = (new FieldComposer($imageField))->forView($this->entry);
-
-            $imageUrl = $imageField->get('image_url');
+        if ($imageField = $this->resource->fields()->getHeaderImage()) {
+            $imageUrl = (new FieldComposer($imageField))
+                ->forView($this->entry)
+                ->get('image_url');
         }
 
         return Component::make('sv-resource-view')
@@ -100,7 +78,7 @@ class ResourceView implements ProvidesUIComponent
                             'entry'   => $this->entry->toArray(),
                             'heading' => [
                                 'imageUrl' => $imageUrl ?? '',
-                                'header'   => $this->resource->getLabel() . ' > '. $this->resource->getEntryLabel($this->entry),
+                                'header'   => $this->resource->getLabel().' > '.$this->resource->getEntryLabel($this->entry),
                                 'actions'  => $this->getActions(),
                             ],
 
@@ -109,6 +87,23 @@ class ResourceView implements ProvidesUIComponent
                             }),
 
                         ]);
+    }
+
+    public function getHeading_Xxxxxxxxxxx()
+    {
+        if ($this->headingResolver) {
+            $callback = Closure::bind($this->headingResolver, $this, get_class());
+
+            return app()->call($callback, ['entry' => $this->entry, 'resource' => $this->resource]);
+        }
+
+        $label = $this->resource->getEntryLabel($this->entry);
+
+        return Component::make($this->resource->getConfigValue('view.header', 'sv-header'))
+                        ->addClass('p-2')->card()
+                        ->setProp('image-url', '')
+                        ->setProp('header', $label)
+                        ->setProp('actions', $this->getActions());
     }
 }
 
