@@ -29,6 +29,8 @@ class ResourceView implements ProvidesUIComponent
      */
     protected $entry;
 
+    protected $actions = [];
+
     public function __construct(Resource $resource, EntryContract $entry)
     {
         $this->resource = $resource;
@@ -46,21 +48,23 @@ class ResourceView implements ProvidesUIComponent
     {
         $relationActions = $this->resource->getRelations()
                                           ->map(function (Relation $relation) {
-                                              if ($relation instanceof ProvidesTable) {
-                                                  return [
-                                                      'url'   => $relation->indexRoute($this->entry),
-                                                      'title' => str_unslug($relation->getName()),
-                                                  ];
+                                              if ($url = $relation->getConfigValue('view.url')) {
+                                                  $portal = true;
+                                              } elseif ($relation instanceof ProvidesTable) {
+                                                  $url = $relation->indexRoute($this->entry);
                                               } elseif ($relation instanceof ProvidesForm) {
-                                                  return [
-                                                      'url'   => $relation->route('edit', $this->entry),
-                                                      'title' => str_unslug($relation->getName()),
-                                                  ];
+                                                  $url = $relation->route('edit', $this->entry);
                                               }
+
+                                              return [
+                                                  'url'    => $url,
+                                                  'portal' => $portal ?? false,
+                                                  'title'  => str_unslug($relation->getName()),
+                                              ];
                                           })
                                           ->filter()->values()->all();
 
-        return array_merge([
+        return array_merge($this->actions, [
             ['url' => $this->resource->route('edit', $this->entry), 'title' => 'Edit'],
         ], $relationActions);
     }
@@ -104,6 +108,19 @@ class ResourceView implements ProvidesUIComponent
                         ->setProp('image-url', '')
                         ->setProp('header', $label)
                         ->setProp('actions', $this->getActions());
+    }
+
+    public function addAction(array $action): ResourceView
+    {
+        $this->actions[] = $action;
+
+        return $this;
+    }
+    public function setActions(array $actions): ResourceView
+    {
+        $this->actions = $actions;
+
+        return $this;
     }
 }
 

@@ -85,22 +85,6 @@ class Resource implements
         $this->fields = (new Fields($this, $this->fields));
     }
 
-    public function resolveViewUsing(Closure $closure)
-    {
-        $this->viewResolver = $closure;
-
-        return $this;
-    }
-
-    public function resolveView(?EntryContract $entry = null): ResourceView
-    {
-        if ($this->viewResolver) {
-            return ($this->viewResolver)($entry);
-        }
-
-        return new ResourceView($this, $entry);
-    }
-
     public function fields(): Fields
     {
         return $this->fields;
@@ -262,6 +246,22 @@ class Resource implements
     public function afterTableResolved(Closure $callback)
     {
         $this->on('table.resolved', $callback);
+
+        return $this;
+    }
+
+    public function resolveView(EntryContract $entry): ResourceView
+    {
+        $view = new ResourceView($this, $entry);
+
+        $this->fire('view.resolved', ['view' => $view]);
+
+        return $view;
+    }
+
+    public function afterViewResolved(Closure $callback)
+    {
+        $this->on('view.resolved', $callback);
 
         return $this;
     }
