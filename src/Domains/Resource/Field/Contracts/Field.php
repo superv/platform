@@ -20,6 +20,8 @@ interface Field
 
     public function getType();
 
+    public function getValue();
+
     public function getConfig();
 
     public function getConfigValue($key, $default = null);
@@ -50,7 +52,7 @@ interface Field
 
     public function getCallback($trigger);
 
-    public function resolveRequestToEntry(Request $request, EntryContract $entry);
+    public function resolveRequest(Request $request, ?EntryContract $entry = null);
 
     public function resolveFromEntry(EntryContract $entry);
 

@@ -95,6 +95,4 @@ return [
     ],
 
     'GET@'.'sv/wake/{uuid}' => WakeupController::at('get'),
-    'GET@'.'sv/act/{uuid}'  => ActionController::at('get'),
-    'GET@'.'sv/pag/{uuid}'  => PageController::at('get'),
 ];
