@@ -30,7 +30,7 @@ trait FieldFlags
 
     public function isHidden(): bool
     {
-        return $this->hasFlag('hidden');
+        return (bool) $this->hasFlag('hidden');
     }
 
     public function isUnique()
