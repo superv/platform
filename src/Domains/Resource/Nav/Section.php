@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Nav;
 
 use Illuminate\Database\Eloquent\Collection;
 use SuperV\Platform\Domains\Database\Model\Entry;
+use SuperV\Platform\Support\Composer\Payload;
 
 class Section extends Entry
 {
@@ -16,7 +17,7 @@ class Section extends Entry
 
     public function compose()
     {
-        return array_filter([
+        $payload = new Payload([
             'title'    => $this->title,
             'handle'   => $this->handle,
             'icon'     => $this->icon,
@@ -25,8 +26,11 @@ class Section extends Entry
                                ->with('children')
                                ->get()
                                ->map(function (Section $section) { return $section->compose(); })
-                               ->filter()->all(),
+                               ->filter()
+                               ->all(),
         ]);
+
+        return $payload->get();
     }
 
     public function parent()

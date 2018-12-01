@@ -2,13 +2,12 @@
 
 namespace SuperV\Platform\Domains\Resource\Nav;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\ForwardsCalls;
 use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Nav
 {
-    use ForwardsCalls;
+    use FiresCallbacks;
 
     /**
      * @var Section
@@ -33,49 +32,11 @@ class Nav
     public function add(string $namespace): Section
     {
         return Section::createFromString($namespace, $this->entry);
-//        return $this->entry->add($namespace);
-    }
-
-    public function build()
-    {
-        $this->sections = Section::query()
-                                 ->where('nav', $this->handle)
-                                 ->get()
-                                 ->map(function ($entry) { return $entry->toArray(); })
-                                 ->groupBy('section');
-
-        $this->sections->transform(function (Collection $section) {
-            return Section::create($section->groupBy('subsection'));
-        });
-
-        return $this;
     }
 
     public function compose()
     {
         return $this->entry->compose();
-        $sections = $this->entry->children()->with('children')->get();
-
-        return [
-            'title'    => $this->entry->title,
-            'handle'   => $this->entry->handle,
-            'sections' => $sections
-                ->map(function (Section $section) {
-                    return $section->compose();
-                })
-                ->filter()
-                ->all(),
-        ];
-    }
-
-    public function sections(): Collection
-    {
-        return $this->sections;
-    }
-
-    public function section($key): Section
-    {
-        return $this->sections->get($key);
     }
 
     public function entry(): Section

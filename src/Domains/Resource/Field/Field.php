@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
 use Illuminate\Http\Request;
+use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
@@ -177,9 +178,17 @@ class Field implements FieldContract
 //        return Rules::make(wrap_array($this->rules))->merge($fieldTypeRules)->get();
     }
 
-    public function resolveFromEntry(EntryContract $entry)
+    public function resolveFromEntry($entry)
     {
-        return $entry->getAttribute($this->getColumnName());
+        $attribute = $this->getColumnName();
+
+        if ($entry instanceof EntryContract) {
+            return $entry->getAttribute($attribute);
+        } elseif ($entry instanceof stdClass) {
+            return $entry->{$attribute};
+        } elseif (is_array($entry)) {
+            return $entry[$attribute];
+        }
     }
 
     public function getPlaceholder()
@@ -190,6 +199,7 @@ class Field implements FieldContract
     public function resolveFieldType(): FieldType
     {
         $class = FieldType::resolveClass($this->type);
+
         return new $class($this);
     }
 

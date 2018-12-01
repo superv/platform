@@ -18,7 +18,7 @@ class FieldComposer
         $this->field = $field instanceof ProvidesField ? $field->makeField() : $field;
     }
 
-    public function forForm(?EntryContract $entry = null)
+    public function forForm($entry = null)
     {
         $field = $this->field;
 
@@ -46,8 +46,10 @@ class FieldComposer
         return $payload;
     }
 
-    public function forTableRow(EntryContract $entry)
+    public function forTableRow($entry)
     {
+//        return $this->forForm($entry);
+
         $field = $this->field;
 
         $value = $field->resolveFromEntry($entry);
@@ -61,9 +63,10 @@ class FieldComposer
         }
 
         $payload = (new Payload([
-            'type'  => $field->getType(),
-            'name'  => $field->getColumnName(),
-            'value' => $value,
+            'type'       => $field->getType(),
+            'name'       => $field->getColumnName(),
+            'value'      => $value,
+            'presenting' => true,
         ]))->setFilterNull(false);
 
         if ($callback = $field->getCallback('table.composing')) {

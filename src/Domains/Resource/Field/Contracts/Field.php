@@ -54,7 +54,7 @@ interface Field
 
     public function resolveRequest(Request $request, ?EntryContract $entry = null);
 
-    public function resolveFromEntry(EntryContract $entry);
+    public function resolveFromEntry($entry);
 
     public function resolveFieldType(): FieldType;
 

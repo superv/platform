@@ -34,7 +34,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
     /** @var Builder */
     protected $query;
 
-    /** @var \SuperV\Platform\Domains\Resource\Table\TableRow|\Illuminate\Support\Collection */
+    /** @var \Illuminate\Support\Collection */
     protected $rows;
 
     /** @var array */
@@ -53,10 +53,11 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
     protected $mergeFields;
 
+    protected $fields;
+
     public function __construct(DataProvider $provider)
     {
         $this->options = collect();
-        $this->rows = collect();
         $this->provider = $provider;
     }
 
@@ -67,34 +68,25 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return $this;
     }
 
-    public function build(Request $request): self
+    public function build(?Request $request = null): self
     {
-        $fields = $this->resource->fields()
-                                 ->forTable()
-                                 ->merge($this->copyMergeFields())
-                                 ->map(function (Field $field) {
-                                     if ($callback = $field->getCallback('table.querying')) {
-                                         $this->on('querying', $callback);
-                                     }
+        $fields = $this->makeFields();
 
-                                     return $field;
-                                 });
+        if (! $this->rows) {
+            $query = $this->getQuery();
+            $this->fire('querying', ['query' => $query]);
+            ApplyFilters::dispatch($this->resource->getFilters(), $query, $request);
+            $this->provider->setQuery($query);
+            $this->provider->setRowsPerPage($this->getOption('limit', 10));
+            $this->provider->fetch();
+            $this->pagination = $this->provider->getPagination();
+            $this->rows = $this->provider->getEntries();
+        }
 
-        $query = $this->getQuery();
-        $this->fire('querying', ['query' => $query]);
-
-        ApplyFilters::dispatch($this->resource->getFilters(), $query,  $request);
-
-        $this->provider->setQuery($query);
-        $this->provider->setRowsPerPage($this->getOption('limit', 10));
-        $this->provider->fetch();
-
-        $this->pagination = $this->provider->getPagination();
-
-        $this->rows = $this->provider->getEntries()->map(
-            function (EntryContract $entry) use ($fields) {
+        $this->rows = $this->rows->map(
+            function ($entry) use ($fields) {
                 return [
-                    'id'      => $entry->getId(),
+                    'id'      => $entry instanceof EntryContract ? $entry->getId() : 'id?',
                     'fields'  => $fields->map(function (Field $field) use ($entry) {
                         return (new FieldComposer($field))->forTableRow($entry);
                     })->values(),
@@ -103,6 +95,20 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
             });
 
         return $this;
+    }
+
+    public function makeFields()
+    {
+        $fields = wrap_collect($this->fields) ?? $this->resource->fields()->forTable();
+
+        return $fields->merge($this->copyMergeFields())
+                      ->map(function (Field $field) {
+                          if ($callback = $field->getCallback('table.querying')) {
+                              $this->on('querying', $callback);
+                          }
+
+                          return $field;
+                      });
     }
 
     protected function copyMergeFields()
@@ -140,6 +146,13 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return $this->rows;
     }
 
+    public function setRows(\Illuminate\Support\Collection $rows): TableV2
+    {
+        $this->rows = $rows;
+
+        return $this;
+    }
+
     public function getQuery()
     {
         if (! $this->query) {
@@ -160,7 +173,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return $this;
     }
 
-    public function getPagination(): array
+    public function getPagination()
     {
         return $this->pagination;
     }
@@ -179,25 +192,29 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
     public function composeConfig()
     {
-        $fields = $this->resource
-            ->fields()
-            ->forTable()
+        $fields = wrap_collect($this->fields) ?? $this->resource
+                ->fields()
+                ->forTable();
+//
+        $fields = $fields
             ->merge($this->copyMergeFields())
             ->map(function (Field $field) {
                 return (new FieldComposer($field))->forTableConfig();
             })
             ->values();
 
-        $filters = $this->resource->getFilters()
-                                  ->map(function(Filter $filter) {
-                                      return (new FieldComposer($filter))->forForm();
-                                  });
+        if ($this->resource) {
+            $filters = $this->resource->getFilters()
+                                      ->map(function (Filter $filter) {
+                                          return (new FieldComposer($filter))->forForm();
+                                      });
+        }
 
         $payload = new Payload([
             'config' => [
-                'data_url'        => $this->dataUrl ?? sv_url($this->resource->route('index.table').'/data'),
+                'data_url'        => $this->getDataUrl(),
                 'fields'          => $fields,
-                'filters'          => $filters,
+                'filters'         => $filters ?? null,
                 'row_actions'     => collect($this->actions)->map(function ($action) {
                     if (is_string($action)) {
                         $action = $action::make();
@@ -240,16 +257,39 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return [];
     }
 
-    public function setDataUrl($dataUrl)
+    public function setActions(array $actions): self
     {
-        $this->dataUrl = $dataUrl;
+        $this->actions = $actions;
 
         return $this;
     }
 
-    public function setActions(array $actions): self
+    public function setFields($fields)
     {
-        $this->actions = $actions;
+        $this->fields = $fields;
+
+        return $this;
+    }
+
+    /**
+     * @return \Illuminate\Foundation\Application|mixed|string|\SuperV\Platform\Domains\Routing\UrlGenerator
+     */
+    protected function getDataUrl()
+    {
+        if ($this->dataUrl) {
+            return $this->dataUrl;
+        }
+
+        if ($this->resource) {
+            return sv_url($this->resource->route('index.table').'/data');
+        }
+
+        return url()->current().'/data';
+    }
+
+    public function setDataUrl($dataUrl)
+    {
+        $this->dataUrl = $dataUrl;
 
         return $this;
     }

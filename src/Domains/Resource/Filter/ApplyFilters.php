@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Filter;
 
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
@@ -27,7 +26,7 @@ class ApplyFilters
      */
     protected $request;
 
-    public function __construct(Collection $filters, $query, Request $request)
+    public function __construct(Collection $filters, $query, ?Request $request)
     {
         $this->filters = $filters;
         $this->query = $query;
@@ -36,6 +35,10 @@ class ApplyFilters
 
     public function handle()
     {
+        if (! $this->request) {
+            return;
+        }
+
         if ($this->filters->isEmpty()) {
             return;
         }
