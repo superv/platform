@@ -51,6 +51,16 @@ class IndexFields
         return $field;
     }
 
+    public function showFirst($name, $label = null)
+    {
+        return $this->show($name, $label)->displayOrder(-999);
+    }
+
+    public function showLast($name, $label = null)
+    {
+        return $this->show($name, $label)->displayOrder(+999);
+    }
+
     public function show($name, $label = null)
     {
         $field = $this->getField($name);
@@ -87,7 +97,7 @@ class IndexFields
                                    );
                                })
                            ->showOnIndex()
-                           ->sortOrder(-1);
+                           ->displayOrder(-1);
     }
 
     public function get()
