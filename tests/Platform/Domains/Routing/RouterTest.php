@@ -18,7 +18,7 @@ class RouterTest extends TestCase
         ];
 
         $loader = $this->bindMock(RouteRegistrar::class);
-        $loader->shouldReceive('register')->with($_SERVER['test.routes.web.foo'])->once();
+        $loader->shouldReceive('register')->with($_SERVER['test.routes.web.foo'])->once()->andReturnSelf();
 
         app(Router::class)->loadFromFile('tests/Platform/__fixtures__/routes/web/foo.php');
     }
@@ -59,16 +59,16 @@ class RouterTest extends TestCase
 
         $loader->shouldReceive('setPort')->with(Hub::get('acp'))->once();
         $loader->shouldReceive('globally')->with(false)->once();
-        $loader->shouldReceive('register')->with(['foo/baz' => 'FooAcpController@baz'])->once();
+        $loader->shouldReceive('register')->with(['foo/baz' => 'FooAcpController@baz'])->once()->andReturnSelf();
 
         $loader->shouldReceive('setPort')->with(Hub::get('api'))->once();
         $loader->shouldReceive('globally')->with(false)->once();
-        $loader->shouldReceive('register')->with(['bom/bor' => 'BomAcpController@bor'])->once();
+        $loader->shouldReceive('register')->with(['bom/bor' => 'BomAcpController@bor'])->once()->andReturnSelf();
 
         $loader->shouldReceive('setPort')->with(Hub::get('web'))->once();
         $loader->shouldReceive('globally')->with(false)->once();
-        $loader->shouldReceive('register')->with(['foo/baz' => 'FooWebController@baz'])->once();
-        $loader->shouldReceive('register')->with(['bar/baz' => 'BarWebController@baz'])->once();
+        $loader->shouldReceive('register')->with(['foo/baz' => 'FooWebController@baz'])->once()->andReturnSelf();
+        $loader->shouldReceive('register')->with(['bar/baz' => 'BarWebController@baz'])->once()->andReturnSelf();
 
         app(Router::class)->loadFromPath('tests/Platform/__fixtures__/routes');
     }
