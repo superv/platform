@@ -15,6 +15,7 @@ use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\Extender;
 use SuperV\Platform\Domains\Resource\Resource\Fields;
+use SuperV\Platform\Domains\Resource\Resource\IndexFields;
 use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
 use SuperV\Platform\Domains\Resource\Resource\ResourceView;
@@ -88,6 +89,11 @@ class Resource implements
     public function fields(): Fields
     {
         return $this->fields;
+    }
+
+    public function indexFields(): IndexFields
+    {
+        return new IndexFields($this->fields);
     }
 
     public function getFields(): Collection
