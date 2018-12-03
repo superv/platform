@@ -30,13 +30,14 @@ class ResourceFormsTest extends ResourceTestCase
 
         $group = $fields->get('group');
         $this->assertEquals('belongs_to', $group['type']);
-        $this->assertEquals('Choose a T Group', $group['placeholder']);
-        $this->assertEquals(sv_resource('t_groups')->count(), count($group['meta']['options']));
+        // +1 is for the null value placeholder
+        //
+        $this->assertEquals(sv_resource('t_groups')->count() + 1, count($group['meta']['options']));
 
         $first = sv_resource('t_groups')->first();
         $this->assertEquals(
             ['value' => $first->getId(), 'text' => $first->title],
-            $group['meta']['options'][0]
+            $group['meta']['options'][1]
         );
     }
 
@@ -93,12 +94,15 @@ class ResourceFormsTest extends ResourceTestCase
         $group = $fields->get('group');
         $this->assertEquals('belongs_to', $group['type']);
         $this->assertEquals(1, $group['value']);
-        $this->assertEquals(sv_resource('t_groups')->count(), count($group['meta']['options']));
+
+        // +1 is for the null value placeholder
+        //
+        $this->assertEquals(sv_resource('t_groups')->count() + 1, count($group['meta']['options']));
 
         $first = sv_resource('t_groups')->first();
         $this->assertEquals(
             ['value' => $first->getId(), 'text' => $first->title],
-            $group['meta']['options'][0]
+            $group['meta']['options'][1]
         );
     }
 

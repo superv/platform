@@ -14,14 +14,29 @@ class Select extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
     protected function boot()
     {
         $this->on('form.composing', $this->composer());
+        $this->on('view.presenting', $this->presenter());
+        $this->on('table.presenting', $this->presenter());
+    }
+
+    protected function presenter()
+    {
+        return function ($value) {
+            $options = $this->getOptions();
+
+            return array_get($options, $value, $value);
+        };
     }
 
     protected function composer()
     {
         return function (Payload $payload) {
-            $options = array_merge([['value' => null, 'text' => $this->getPlaceholder()]],
-                static::parseOptions(($this->getOptions()))
-            );
+            $options = static::parseOptions(($this->getOptions()));
+            // Add a null value placeholder if not exists
+            if (! is_null(array_first($options)['value'])) {
+                $options = array_merge([['value' => null, 'text' => $this->getPlaceholder()]],
+                    $options
+                );
+            }
 
             $payload->set('meta.options', $options);
         };
