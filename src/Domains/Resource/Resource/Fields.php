@@ -4,10 +4,8 @@ namespace SuperV\Platform\Domains\Resource\Resource;
 
 use Closure;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -29,9 +27,18 @@ class Fields
         $this->fields = $fields instanceof Closure ? $fields() : $fields;
     }
 
-    public function __invoke()
+    public function getAll()
     {
         return $this->fields;
+    }
+
+    public function sort()
+    {
+        $this->fields = $this->fields->sortBy(function (Field $field) {
+            return $field->getConfigValue('sort_order', 100);
+        });
+
+        return $this;
     }
 
     public function get($name): Field
@@ -65,25 +72,6 @@ class Fields
         return $this->fields->filter(function (Field $field) use ($flag) {
             return $field->hasFlag($flag);
         });
-    }
-
-    public function forTable(): Collection
-    {
-        $label = FieldFactory::createFromArray([
-            'type'  => 'text',
-            'name'  => 'label',
-            'label' => $this->resource->getSingularLabel(),
-        ]);
-        $label->setCallback('table.presenting', function (EntryContract $entry) {
-            return sv_parse($this->resource->getConfigValue('entry_label'), $entry->toArray());
-        })->showOnIndex();
-
-        return collect()->put('label', $label)
-                        ->merge($this->fields
-                            ->filter(function (Field $field) {
-                                return $field->hasFlag('table.show');
-                            })
-                        );
     }
 
     public function getFilters(): Collection
