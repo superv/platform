@@ -12,7 +12,7 @@ class ResourceTable extends EntryTable
 
     public function getFields()
     {
-        return $this->resource->fields()->forTable();
+        return $this->resource->indexFields()->get();
     }
 
     public function getFilters(): Collection

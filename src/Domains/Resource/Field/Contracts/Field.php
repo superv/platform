@@ -70,7 +70,13 @@ interface Field
 
     public function showOnIndex(): Field;
 
+    public function showAsFilter(): Field;
+
+    public function sortOrder($order): Field;
+
     public function addFlag(string $flag): Field;
 
     public function hasFlag(string $flag): bool;
+
+    public function removeFlag(string $flag): Field;
 }

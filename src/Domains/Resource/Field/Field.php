@@ -203,6 +203,11 @@ class Field implements FieldContract
         return new $class($this);
     }
 
+    public function sortOrder($order): FieldContract
+    {
+        return $this->setConfigValue('sort_order', $order);
+    }
+
     public function bindFieldType()
     {
         $type = $this->resolveFieldType();

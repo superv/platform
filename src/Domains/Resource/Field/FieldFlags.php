@@ -13,6 +13,13 @@ trait FieldFlags
         return $this;
     }
 
+    public function removeFlag(string $flag): Field
+    {
+        $this->flags = array_diff($this->flags, [$flag]);
+
+        return $this;
+    }
+
     public function hasFlag(string $flag): bool
     {
         return in_array($flag, $this->flags);
@@ -48,7 +55,7 @@ trait FieldFlags
         return $this->hasFlag('filter');
     }
 
-    public function makeFilter()
+    public function showAsFilter(): Field
     {
         return $this->addFlag('filter');
     }
