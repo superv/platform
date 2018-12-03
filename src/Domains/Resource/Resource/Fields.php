@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class Fields
 {
@@ -35,10 +36,16 @@ class Fields
 
     public function get($name): Field
     {
-        return $this->fields->first(
+        $field = $this->fields->first(
             function (Field $field) use ($name) {
                 return $field->getName() === $name;
             });
+
+        if (! $field) {
+            PlatformException::fail("Field not found: [{$name}]");
+        }
+
+        return $field;
     }
 
     public function showOnIndex($name): Field
