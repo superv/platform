@@ -79,6 +79,9 @@ class Resource implements
 
     protected $filters = [];
 
+    /** @var \SuperV\Platform\Domains\Resource\Resource\IndexFields */
+    protected $indexFields;
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
@@ -93,12 +96,16 @@ class Resource implements
 
     public function indexFields(): IndexFields
     {
-        return new IndexFields($this->fields);
+        if ($this->indexFields) {
+            return $this->indexFields;
+        }
+
+        return $this->indexFields = new IndexFields($this);
     }
 
     public function getFields(): Collection
     {
-        return $this->fields()();
+        return $this->fields()->getAll();
     }
 
     public function provideFields(): Collection
