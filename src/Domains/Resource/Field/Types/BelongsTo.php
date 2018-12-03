@@ -4,12 +4,19 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
+use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Support\Composer\Payload;
 
-class BelongsTo extends FieldType implements NeedsDatabaseColumn
+class BelongsTo extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
 {
+    /** @var \SuperV\Platform\Domains\Resource\Resource */
+    protected $resource;
+
+    /** @var array */
+    protected $options;
+
     protected function presenter()
     {
         return function (EntryContract $entry) {
@@ -48,8 +55,8 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         });
     }
 
-    protected function viewComposer() {
-
+    protected function viewComposer()
+    {
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                 $resource = sv_resource($relatedEntry);
@@ -58,8 +65,8 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         };
     }
 
-    protected function tableComposer() {
-
+    protected function tableComposer()
+    {
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}) {
                 $resource = sv_resource($relatedEntry);
@@ -75,7 +82,8 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
                 $resource = sv_resource($relatedEntry);
                 $payload->set('meta.link', $resource->route('view', $relatedEntry));
             }
-            $this->buildOptions($payload);
+            $this->buildOptions();
+            $payload->set('meta.options', $this->options);
         };
 
         //        if ($this->hasCallback('querying')) {
@@ -92,21 +100,31 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn
         //
     }
 
-    protected function buildOptions(Payload $payload)
+    protected function buildOptions()
     {
         $relationConfig = RelationConfig::create($this->getType(), $this->getConfig());
-        $relatedResource = ResourceFactory::make($relationConfig->getRelatedResource());
+        $this->resource = sv_resource($relationConfig->getRelatedResource());
 
-        $query = $relatedResource->newQuery();
-
+        $query = $this->resource->newQuery();
         $query->get();
 
-        $entryLabel = $relatedResource->getConfigValue('entry_label', '#{id}');
-        $options = $query->get()->map(function ($item) use ($entryLabel) {
+        $entryLabel = $this->resource->getConfigValue('entry_label', '#{id}');
+        $this->options = $query->get()->map(function ($item) use ($entryLabel) {
             return ['value' => $item->id, 'text' => sv_parse($entryLabel, $item->toArray())];
         })->all();
 
-        $payload->set('meta.options', $options);
-        $payload->set('placeholder', 'Choose a '.$relatedResource->getSingularLabel());
+        $this->options = array_merge(
+            [['value' => null, 'text' => 'Select '.$this->resource->getSingularLabel()]],
+            $this->options
+        );
+    }
+
+    public function makeFilter()
+    {
+        $this->buildOptions();
+
+        return SelectFilter::make($this->getName(), 'Select '.$this->resource->getSingularLabel())
+                           ->setAttribute($this->getColumnName())
+                           ->setOptions($this->options);
     }
 }
