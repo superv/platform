@@ -54,6 +54,8 @@ class ResourceView implements ProvidesUIComponent
                                                   $url = $relation->indexRoute($this->entry);
                                               } elseif ($relation instanceof ProvidesForm) {
                                                   $url = $relation->route('edit', $this->entry);
+                                              } else {
+                                                  return null;
                                               }
 
                                               return [
@@ -67,6 +69,13 @@ class ResourceView implements ProvidesUIComponent
         return array_merge($this->actions, [
             ['url' => $this->resource->route('edit', $this->entry), 'title' => 'Edit'],
         ], $relationActions);
+    }
+
+    public function setActions(array $actions): ResourceView
+    {
+        $this->actions = $actions;
+
+        return $this;
     }
 
     public function makeComponent(): ComponentContract
@@ -113,12 +122,6 @@ class ResourceView implements ProvidesUIComponent
     public function addAction(array $action): ResourceView
     {
         $this->actions[] = $action;
-
-        return $this;
-    }
-    public function setActions(array $actions): ResourceView
-    {
-        $this->actions = $actions;
 
         return $this;
     }
