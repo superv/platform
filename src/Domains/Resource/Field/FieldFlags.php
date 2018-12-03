@@ -55,7 +55,7 @@ trait FieldFlags
         return $this->hasFlag('filter');
     }
 
-    public function showAsFilter(): Field
+    public function copyToFilters(): Field
     {
         return $this->addFlag('filter');
     }
