@@ -13,6 +13,7 @@ use SuperV\Platform\Domains\Resource\Visibility\Visibility;
  * @method ColumnDefinition fieldType($type)
  * @method ColumnDefinition rules(array $rules)
  * @method ColumnDefinition config(array $config)
+ * @method ColumnDefinition default($value)
  */
 class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
 {
@@ -37,21 +38,6 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
     {
         $this->blueprint->entryLabel('{'.$this->name.'}');
     }
-
-//    public function isRequired()
-//    {
-//        return ! (bool)$this->nullable;
-//    }
-//
-//    public function isUnique()
-//    {
-//        return (bool)$this->unique;
-//    }
-//
-//    public function isSearchable()
-//    {
-//        return (bool)$this->searchable;
-//    }
 
     public function isTitleColumn()
     {

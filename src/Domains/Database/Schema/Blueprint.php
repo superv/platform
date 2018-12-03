@@ -73,7 +73,7 @@ class Blueprint extends LaravelBlueprint
         $this->columns = collect($this->columns)->keyBy('name');
 
         if ($this->creating()) {
-            TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->getResourceBlueprint(), Current::migrationScope());
+            TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->resourceBlueprint(), Current::migrationScope());
         } else {
             $this->runDropOperations();
         }
@@ -83,7 +83,7 @@ class Blueprint extends LaravelBlueprint
                 if ($column->change) {
                     ColumnUpdatedEvent::dispatch($this->tableName(), $this, $column);
                 } else {
-                    ColumnCreatedEvent::dispatch($this->tableName(), $this, $column, $this->getResourceBlueprint()->model);
+                    ColumnCreatedEvent::dispatch($this->tableName(), $this, $column, $this->resourceBlueprint()->model);
                 }
 
                 return $column->ignore ? null : $column;
@@ -133,7 +133,7 @@ class Blueprint extends LaravelBlueprint
         return sv_collect($this->getColumns())->pluck('name')->all();
     }
 
-    public function getResourceBlueprint(): ResourceBlueprint
+    public function resourceBlueprint(): ResourceBlueprint
     {
         return $this->builder->resource();
     }

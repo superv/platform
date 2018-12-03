@@ -35,4 +35,25 @@ trait CreatesFields
     {
         return $this->select($column)->options($allowed);
     }
+
+    public function money($column)
+    {
+        return $this->decimal($column, 10, 2)->default(0);
+    }
+
+    public function createdBy(): self
+    {
+        $this->belongsTo('users', 'created_by')->addFlag('form.hide');
+        $this->timestamp('created_at')->nullable();
+
+        return $this;
+    }
+
+    public function updatedBy(): self
+    {
+        $this->nullableBelongsTo('users', 'updated_by')->addFlag('form.hide');
+        $this->timestamp('updated_at')->nullable();
+
+        return $this;
+    }
 }
