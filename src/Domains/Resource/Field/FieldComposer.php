@@ -46,10 +46,22 @@ class FieldComposer
         return $payload;
     }
 
+    public function forTableConfig()
+    {
+        $field = $this->field;
+
+        $payload = (new Payload([
+            'uuid'    => $field->uuid(),
+            'name'    => $field->getName(),
+            'label'   => $field->getLabel(),
+            'classes' => $field->getConfigValue('classes'),
+        ]))->setFilterNull(false);
+
+        return $payload;
+    }
+
     public function forTableRow($entry)
     {
-//        return $this->forForm($entry);
-
         $field = $this->field;
 
         $value = $field->resolveFromEntry($entry);
@@ -67,6 +79,7 @@ class FieldComposer
             'name'       => $field->getColumnName(),
             'value'      => $value,
             'presenting' => true,
+            'classes'    => $field->getConfigValue('classes'),
         ]))->setFilterNull(false);
 
         if ($callback = $field->getCallback('table.composing')) {
@@ -97,24 +110,12 @@ class FieldComposer
             'label'      => $field->getLabel(),
             'value'      => $value,
             'presenting' => true,
+            'classes'    => $field->getConfigValue('classes'),
         ]))->setFilterNull(false);
 
         if ($callback = $field->getCallback('view.composing')) {
                app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
            }
-
-        return $payload;
-    }
-
-    public function forTableConfig()
-    {
-        $field = $this->field;
-
-        $payload = (new Payload([
-            'uuid'  => $field->uuid(),
-            'name'  => $field->getName(),
-            'label' => $field->getLabel(),
-        ]))->setFilterNull(false);
 
         return $payload;
     }
