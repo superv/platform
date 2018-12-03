@@ -13,7 +13,7 @@ use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Domains\Resource\Table\TableV2;
+use SuperV\Platform\Domains\Resource\Table\ResourceTable;
 
 class HasMany extends Relation implements ProvidesTable, ProvidesForm
 {
@@ -36,7 +36,7 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
 
     public function makeTable()
     {
-        return app(TableV2::class)
+        return app(ResourceTable::class)
             ->setResource($this->getRelatedResource())
             ->setQuery($this)
             ->addAction(ViewEntryAction::class)

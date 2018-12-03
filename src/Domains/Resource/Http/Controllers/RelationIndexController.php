@@ -23,7 +23,7 @@ class RelationIndexController extends BaseApiController
         }
 
         if ($this->route->parameter('data')) {
-            return $table->build($this->request);
+            return $table->setRequest($this->request)->build();
         }
 
         return MakeComponentTree::dispatch($table)->withTokens(['res' => $relation->getRelatedResource()->toArray()]);

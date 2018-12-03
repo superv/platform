@@ -27,16 +27,19 @@ class MakePageTest extends TestCase
             FieldFactory::createFromArray(['type' => 'text', 'name' => 'singular']),
         ];
 
-        $rows = app(SchemaService::class)->getDatabaseTables();
+        $dbRows = app(SchemaService::class)->getDatabaseTables();
 
         MakeTablePage::forUrl('sv/table/abc')
                      ->setFields($fields)
-                     ->setRows($rows)
+                     ->setRows($dbRows)
                      ->register();
 
         $response = $this->getJsonUser('sv/table/abc/data')->assertOk();
 
-        $this->assertEquals($rows->count(), count($response->decodeResponseJson('data.rows')));
+        $this->assertEquals($dbRows->count(), count($rows = $response->decodeResponseJson('data.rows')));
+
+        $this->assertNotNull($rows[0]['id']);
+        $this->assertNotNull($rows[0]['fields']);
     }
 
     function test__make_form_page()

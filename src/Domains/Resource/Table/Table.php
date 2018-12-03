@@ -3,116 +3,76 @@
 namespace SuperV\Platform\Domains\Resource\Table;
 
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
-use SuperV\Platform\Domains\Resource\Table\Contracts\Column;
-use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldComposer;
+use SuperV\Platform\Domains\Resource\Table\Contracts\Table as TableContract;
+use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
-use SuperV\Platform\Domains\UI\Components\TableComponent;
 use SuperV\Platform\Support\Composer\Composable;
-use SuperV\Platform\Support\Concerns\HasOptions;
+use SuperV\Platform\Support\Composer\Tokens;
 
-class Table implements Composable, ProvidesUIComponent, Responsable
+class Table implements TableContract, Composable, ProvidesUIComponent, Responsable
 {
-    use HasOptions;
-
-    /**
-     * @var TableConfig
-     */
-    protected $config;
-
-    /** @var Builder */
-    protected $query;
-
-    /** @var \SuperV\Platform\Domains\Resource\Table\TableRow|\Illuminate\Support\Collection */
+    /** @var Collection */
     protected $rows;
 
-    /** @var \SuperV\Platform\Domains\Resource\Table\Contracts\Column[]|\Illuminate\Support\Collection */
-    protected $columns;
+    protected $rowActions = [];
 
-    /** @var array */
-    protected $pagination;
+    protected $contextActions = [];
 
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider
-     */
-    protected $provider;
+    protected $dataUrl;
 
-    public function __construct(DataProvider $provider)
+    protected $mergeFields;
+
+    protected $fields;
+
+    protected $selectable = true;
+
+    public function mergeFields($fields)
     {
-        $this->options = collect();
-        $this->rows = collect();
-        $this->provider = $provider;
-    }
-
-    public function build(): self
-    {
-        $this->columns = $this->config->getColumns()->map(function (Column $column) {
-            if ($callback = $column->getAlterQueryCallback()) {
-                $callback($this->getQuery());
-            }
-
-            return $column;
-        });
-
-        $entries = $this->fetch();
-
-        $this->rows = $this->buildRows($entries);
+        $this->mergeFields = $fields;
 
         return $this;
     }
 
-    protected function buildRows(Collection $entries)
+    public function build()
     {
-        $rows = collect();
-        $entries->map(
-            function (EntryContract $entry) use ($rows) {
-                $row = new TableRow($this, $entry);
-                $rows->push($row->build());
+        $fields = $this->makeFields();
+
+        $this->rows = $this->buildRows($fields);
+
+        return $this;
+    }
+
+    public function addAction($action): TableContract
+    {
+        $this->rowActions[] = $action;
+
+        return $this;
+    }
+
+    public function addContextAction($action): TableContract
+    {
+        $this->contextActions[] = $action;
+
+        return $this;
+    }
+
+    protected function copyMergeFields()
+    {
+        return wrap_collect($this->mergeFields)
+            ->map(function (Field $field) {
+                return clone $field;
             });
-
-        return $rows;
     }
 
-    /**
-     * @param $query
-     */
-    protected function fetch(): Collection
-    {
-        $this->provider->setQuery($this->getQuery());
-        $this->provider->setRowsPerPage($this->getOption('limit', 10));
-        $this->provider->fetch();
-
-        $this->pagination = $this->provider->getPagination();
-
-        return $this->provider->getEntries();
-    }
-
-    public function url()
-    {
-        return $this->config->getDataUrl();
-    }
-
-    public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
+    public function compose(Tokens $tokens = null)
     {
         return [
-            'rows'       => $this->getRows(),
-            'pagination' => $this->getPagination(),
+            'rows' => $this->getRows(),
         ];
-    }
-
-    public function getConfig(): TableConfig
-    {
-        return $this->config;
-    }
-
-    public function setConfig(TableConfig $config): self
-    {
-        $this->config = $config;
-
-        return $this;
     }
 
     public function getRows(): Collection
@@ -120,48 +80,13 @@ class Table implements Composable, ProvidesUIComponent, Responsable
         return $this->rows;
     }
 
-    public function getColumns(): Collection
+    public function setRows($rows)
     {
-        return $this->columns;
-    }
-
-    public function getActions(): Collection
-    {
-        return $this->config->getRowActions();
-    }
-
-    public function getQuery()
-    {
-        if (! $this->query) {
-            $this->query = $this->config->newQuery();
-        }
-
-        return $this->query;
-    }
-
-    public function setQuery($query): Table
-    {
-        $this->query = $query;
+        $this->rows = $rows;
 
         return $this;
     }
 
-    public function getPagination(): array
-    {
-        return $this->pagination;
-    }
-
-    public function makeComponent(): ComponentContract
-    {
-        return TableComponent::from($this);
-    }
-
-    /**
-     * Create an HTTP response that represents the object.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
     public function toResponse($request)
     {
         return response()->json([
@@ -169,21 +94,87 @@ class Table implements Composable, ProvidesUIComponent, Responsable
         ]);
     }
 
-    /**
-     * @return array
-     */
     protected function makeTokens(): array
     {
         return [];
     }
 
-    public function uuid()
+    protected function buildRows(Collection $fields): Collection
     {
-        return $this->config->uuid();
+        return $this->rows->map(
+            function ($row) use ($fields) {
+                return [
+                    'id'      => $row['id'] ?? null,
+                    'fields'  => $fields->map(function (Field $field) use ($row) {
+                        return (new FieldComposer($field))->forTableRow($row);
+                    })->values(),
+                    'actions' => ['view'],
+                ];
+            });
     }
 
-    public static function config(TableConfig $config): self
+    public function setFields($fields)
     {
-        return app(Table::class)->setConfig($config);
+        $this->fields = $fields;
+
+        return $this;
+    }
+
+    public function makeComponent(): ComponentContract
+    {
+        return Component::make('sv-table')->card()->setProps($this->composeConfig());
+    }
+
+    public function composeConfig()
+    {
+        return (new TableComposer($this))->forConfig();
+    }
+
+    public function setActions($rowActions)
+    {
+        $this->rowActions = $rowActions;
+
+        return $this;
+    }
+
+    public function getDataUrl()
+    {
+        if ($this->dataUrl) {
+            return $this->dataUrl;
+        }
+
+        return url()->current().'/data';
+    }
+
+    public function setDataUrl($url): TableContract
+    {
+        $this->dataUrl = $url;
+
+        return $this;
+    }
+
+    public function getFields()
+    {
+        return $this->fields;
+    }
+
+    public function getRowActions()
+    {
+        return $this->rowActions;
+    }
+
+    public function getContextActions()
+    {
+        return $this->contextActions;
+    }
+
+    public function makeFields(): Collection
+    {
+        return wrap_collect($this->getFields())->merge($this->copyMergeFields());
+    }
+
+    public function isSelectable(): bool
+    {
+        return $this->selectable;
     }
 }

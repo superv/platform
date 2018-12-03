@@ -187,7 +187,7 @@ class Field implements FieldContract
         } elseif ($entry instanceof stdClass) {
             return $entry->{$attribute};
         } elseif (is_array($entry)) {
-            return $entry[$attribute];
+            return $entry[$attribute] ?? null;
         }
     }
 

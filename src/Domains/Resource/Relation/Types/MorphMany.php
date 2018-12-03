@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Table\TableV2;
+use SuperV\Platform\Domains\Resource\Table\ResourceTable;
 
 class MorphMany extends Relation implements ProvidesTable
 {
@@ -24,7 +24,7 @@ class MorphMany extends Relation implements ProvidesTable
 
     public function makeTable()
     {
-        return app(TableV2::class)
+        return app(ResourceTable::class)
             ->setResource($this->getRelatedResource())
             ->setQuery($this)
             ->setDataUrl(url()->current().'/data')

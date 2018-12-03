@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\UI\Page;
 
 use Closure;
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Table\TableV2;
+use SuperV\Platform\Domains\Resource\Table\FormTable;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -47,6 +47,7 @@ class MakeTablePage
             ->register([
                 $this->url         => function () { return $this->getConfig(); },
                 $this->url.'/data' => function () { return $this->getData(); },
+                'POST@'.$this->url => function (Request $request) { return $this->post($request); },
             ]);
     }
 
@@ -64,22 +65,19 @@ class MakeTablePage
         return $this->makeTable()->build();
     }
 
-    public function makeTable(): TableV2
-    {
-        return app(TableV2::class)->setFields($this->fields)->setRows($this->rows);
-    }
-
     public function post(Request $request)
     {
-        $form = $this->makeForm();
-        $form->setRequest($request)->save();
-
-        if ($this->successCallback) {
-            $response = app()->call($this->successCallback, ['form' => $form]);
-        }
-
-        return response()->json($response ?? []);
+        return $request->all();
     }
+
+    public function makeTable(): FormTable
+    {
+        return app(FormTable::class)
+            ->setFields($this->fields)
+            ->setRows($this->rows)
+            ->setPostUrl($this->url);
+    }
+
 
     public function setFields(array $fields)
     {

@@ -23,7 +23,7 @@ use SuperV\Platform\Support\Composer\Tokens;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasOptions;
 
-class TableV2 implements Composable, ProvidesUIComponent, Responsable
+class WorkingTable implements Composable, ProvidesUIComponent, Responsable
 {
     use HasOptions;
     use FiresCallbacks;
@@ -34,7 +34,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
     /** @var Builder */
     protected $query;
 
-    /** @var \Illuminate\Support\Collection */
+    /** @var Collection */
     protected $rows;
 
     /** @var array */
@@ -99,16 +99,16 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
     public function makeFields()
     {
-        $fields = wrap_collect($this->fields) ?? $this->resource->fields()->forTable();
+        $fields = $this->fields ?? $this->resource->fields()->forTable();
 
-        return $fields->merge($this->copyMergeFields())
-                      ->map(function (Field $field) {
-                          if ($callback = $field->getCallback('table.querying')) {
-                              $this->on('querying', $callback);
-                          }
+        return wrap_collect($fields)->merge($this->copyMergeFields())
+                                    ->map(function (Field $field) {
+                                        if ($callback = $field->getCallback('table.querying')) {
+                                            $this->on('querying', $callback);
+                                        }
 
-                          return $field;
-                      });
+                                        return $field;
+                                    });
     }
 
     protected function copyMergeFields()
@@ -146,7 +146,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return $this->rows;
     }
 
-    public function setRows(\Illuminate\Support\Collection $rows): TableV2
+    public function setRows(Collection $rows): ResourceTable
     {
         $this->rows = $rows;
 
@@ -178,7 +178,7 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
         return $this->pagination;
     }
 
-    public function setResource(Resource $resource): TableV2
+    public function setResource(Resource $resource): ResourceTable
     {
         $this->resource = $resource;
 
@@ -192,11 +192,11 @@ class TableV2 implements Composable, ProvidesUIComponent, Responsable
 
     public function composeConfig()
     {
-        $fields = wrap_collect($this->fields) ?? $this->resource
+        $fields = $this->fields ?? $this->resource
                 ->fields()
                 ->forTable();
-//
-        $fields = $fields
+
+        $fields = wrap_collect($fields)
             ->merge($this->copyMergeFields())
             ->map(function (Field $field) {
                 return (new FieldComposer($field))->forTableConfig();

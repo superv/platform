@@ -19,7 +19,7 @@ use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
 use SuperV\Platform\Domains\Resource\Resource\ResourceView;
 use SuperV\Platform\Domains\Resource\Resource\TestHelper;
-use SuperV\Platform\Domains\Resource\Table\TableV2;
+use SuperV\Platform\Domains\Resource\Table\ResourceTable;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -232,9 +232,9 @@ class Resource implements
         return $filters;
     }
 
-    public function resolveTable(): TableV2
+    public function resolveTable(): ResourceTable
     {
-        $table = app(TableV2::class)
+        $table = app(ResourceTable::class)
             ->setResource($this)
             ->addAction(ViewEntryAction::class);
 

@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Database\Schema;
 
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Support\Collection;
 
 class SchemaService
 {
@@ -14,11 +15,12 @@ class SchemaService
         $this->db = $db;
     }
 
-    public function getDatabaseTables($connection = null)
+    public function getDatabaseTables($connection = null): Collection
     {
         return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableNames())
             ->map(function (string $table) {
                 return [
+                    'id'       => $table,
                     'table'    => $table,
                     'singular' => $this->formatSingular($table),
                 ];

@@ -91,11 +91,12 @@ class FieldComposer
         }
 
         $payload = (new Payload([
-            'type'  => $field->getType(),
-            'uuid'  => $field->uuid(),
-            'name'  => $field->getColumnName(),
-            'label' => $field->getLabel(),
-            'value' => $value,
+            'type'       => $field->getType(),
+            'uuid'       => $field->uuid(),
+            'name'       => $field->getColumnName(),
+            'label'      => $field->getLabel(),
+            'value'      => $value,
+            'presenting' => true,
         ]))->setFilterNull(false);
 
         if ($callback = $field->getCallback('view.composing')) {

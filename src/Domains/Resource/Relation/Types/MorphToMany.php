@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Action\AttachEntryAction;
 use SuperV\Platform\Domains\Resource\Action\DetachEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Table\TableV2;
+use SuperV\Platform\Domains\Resource\Table\ResourceTable;
 
 class MorphToMany extends Relation implements ProvidesTable
 {
@@ -29,7 +29,7 @@ class MorphToMany extends Relation implements ProvidesTable
 
     public function makeTable()
     {
-        return app(TableV2::class)
+        return app(ResourceTable::class)
             ->setResource($this->getRelatedResource())
             ->setQuery($this)
             ->addAction(DetachEntryAction::make()->setRelation($this))
