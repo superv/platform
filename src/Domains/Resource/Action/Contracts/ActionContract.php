@@ -7,4 +7,6 @@ interface ActionContract
     public function getName();
 
     public function getTitle();
+
+    public function setTitle($title): ActionContract;
 }

@@ -164,7 +164,7 @@ class GuardableTest extends TestCase
     }
 
     /**
-     * @return \SuperV\Platform\Domains\Auth\Access\User $user
+     * @return \SuperV\Platform\Domains\Auth\User $user
      */
     protected function beUser()
     {
@@ -175,7 +175,7 @@ class GuardableTest extends TestCase
 
     /**
      * @param array $overrides
-     * @return \SuperV\Platform\Domains\Auth\Access\User $user
+     * @return \SuperV\Platform\Domains\Auth\User $user
      */
     protected function newUser(array $overrides = [])
     {

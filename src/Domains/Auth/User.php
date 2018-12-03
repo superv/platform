@@ -13,7 +13,6 @@ use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-
 class User extends Entry implements
     UserContract, AuthenticatableContract, JWTSubject, CanResetPasswordContract
 {
@@ -26,6 +25,23 @@ class User extends Entry implements
     protected $guarded = [];
 
     protected $visible = ['id', 'email', 'name'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function (User $user) {
+            $user->roles()->sync([]);
+            $user->actions()->sync([]);
+
+            optional($user->profile)->delete();
+        });
+    }
+
+    public function getId()
+    {
+        return $this->getKey();
+    }
 
     public function getEmailForPasswordReset()
     {
@@ -93,10 +109,5 @@ class User extends Entry implements
         return [];
 
         return ['port' => optional(Current::port())->slug()];
-    }
-
-    public function getId()
-    {
-        return $this->getKey();
     }
 }

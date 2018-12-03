@@ -9,10 +9,12 @@ use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
+use SuperV\Platform\Support\Concerns\Hydratable;
 
 class Action implements ActionContract, Composable, ProvidesUIComponent
 {
     use FiresCallbacks;
+    use Hydratable;
 
     /**
      * Unique name of the action
@@ -26,9 +28,10 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
 
     protected $uuid;
 
-    protected function __construct()
+    protected function __construct(array $params = [])
     {
         $this->uuid = uuid();
+        $this->hydrate($params);
     }
 
     public function makeComponent(): ComponentContract
@@ -58,19 +61,25 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
         return $this->title ?? ucwords($this->name);
     }
 
+    public function setTitle($title): ActionContract
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
     public function uuid(): string
     {
         return $this->uuid;
     }
 
     /** @return static */
-    public static function make(?string $name = null)
+    public static function make(?string $title = null, ?string $name = null)
     {
-        $action = new static;
-        if ($name) {
-            $action->name = $name;
+        if ($title && ! $name) {
+            $name = str_slug($title, '_');
         }
 
-        return $action;
+        return new static(array_filter(compact('title', 'name')));
     }
 }
