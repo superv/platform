@@ -38,6 +38,10 @@ class RelationIndexTest extends ResourceTestCase
         $this->assertEquals(1, count($table->getProp('config.context_actions')));
         $action = HelperComponent::from($table->getProp('config.context_actions.0'));
 
+        // Button title should be generated from, singular relation name
+        //
+        $this->assertEquals('New Post', $action->getProp('title'));
+
         // Check the actions url, should point to create new relation form
         //
         $this->assertEquals(

@@ -21,6 +21,7 @@ class Blueprints
         $users = $this->create('t_users',
             function (Blueprint $table, ResourceBlueprint $resource) use ($callback) {
                 $resource->resourceKey('user');
+                $resource->label('Users');
 
                 $table->increments('id');
                 $table->string('name');
@@ -55,6 +56,8 @@ class Blueprints
     public function posts()
     {
         return $this->create('t_posts', function (Blueprint $table) {
+            $table->resourceBlueprint()->label('Posts');
+
             $table->increments('id');
             $table->string('title');
 

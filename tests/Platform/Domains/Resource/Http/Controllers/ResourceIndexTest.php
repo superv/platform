@@ -53,6 +53,7 @@ class ResourceIndexTest extends ResourceTestCase
                 'uuid',
                 'name',
                 'label',
+                'classes',
             ], array_keys($field));
 
             $rowActions = $table->getProp('config.row_actions');
