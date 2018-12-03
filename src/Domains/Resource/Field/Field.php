@@ -203,7 +203,7 @@ class Field implements FieldContract
         return new $class($this);
     }
 
-    public function sortOrder($order): FieldContract
+    public function displayOrder($order): FieldContract
     {
         return $this->setConfigValue('sort_order', $order);
     }
@@ -271,5 +271,18 @@ class Field implements FieldContract
     public function getAlterQueryCallback()
     {
         return $this->alterQueryCallback;
+    }
+
+    /**
+     * Add css class(es)
+     *
+     * @param string $class
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+     */
+    public function addClass(string $class): FieldContract
+    {
+        $previous = $this->getConfigValue('classes');
+
+        return $this->setConfigValue('classes', trim($class.' '.$previous));
     }
 }
