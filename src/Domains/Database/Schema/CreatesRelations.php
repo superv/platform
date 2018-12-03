@@ -40,14 +40,14 @@ trait CreatesRelations
                     );
     }
 
-    public function hasOne($related, $relationName, $foreignKey, $localKey = null): ColumnDefinition
+    public function hasOne($related, $relationName, $foreignKey = null, $localKey = null): ColumnDefinition
     {
         return $this->addColumn(null, $relationName, ['nullable' => true])
                     ->relation(
                         Config::hasOne()
                               ->relationName($relationName)
                               ->related($related)
-                              ->foreignKey($foreignKey)
+                              ->foreignKey($foreignKey ?? $this->resourceBlueprint()->getResourceKey().'_id')
                               ->localKey($localKey)
                     );
     }
@@ -103,7 +103,7 @@ trait CreatesRelations
                         Config::hasMany()
                               ->relationName($relationName)
                               ->related($related)
-                              ->foreignKey($foreignKey ?? $this->getResourceBlueprint()->getResourceKey().'_id')
+                              ->foreignKey($foreignKey ?? $this->resourceBlueprint()->getResourceKey().'_id')
                               ->localKey($localKey)
                     );
     }
