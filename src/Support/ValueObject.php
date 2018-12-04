@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Support;
 
+use InvalidArgumentException;
 use ReflectionClass;
 
 abstract class ValueObject
@@ -13,6 +14,10 @@ abstract class ValueObject
 
     public function __construct(string $value)
     {
+        if (! in_array($value, static::all())) {
+            throw new InvalidArgumentException("Invalid value: [{$value}]");
+        }
+
         $this->value = $value;
     }
 
@@ -26,16 +31,25 @@ abstract class ValueObject
         return $this->value;
     }
 
-    public static function all()
+    public static function choices()
     {
-        $reflection = new ReflectionClass(static::class);
-        $vars = $reflection->getConstants();
-
-        return collect($vars)
+        return collect(static::all())
             ->map(function ($value) {
                 return [$value, str_unslug($value)];
             })
             ->toAssoc()
             ->all();
+    }
+
+    /**
+     * @return array
+     * @throws \ReflectionException
+     */
+    protected static function all(): array
+    {
+        $reflection = new ReflectionClass(static::class);
+        $vars = $reflection->getConstants();
+
+        return $vars;
     }
 }
