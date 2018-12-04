@@ -4,6 +4,7 @@ use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Feature\FeatureBus;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
 use SuperV\Platform\Domains\UI\Nucleo\SvBlock;
@@ -291,6 +292,11 @@ function sv_loader($url)
     }
 
     return SvBlock::make('sv-loader')->setProp('url', $url);
+}
+
+function sv_field(array $params)
+{
+    return FieldFactory::createFromArray($params);
 }
 
 function sv_resource($handle)

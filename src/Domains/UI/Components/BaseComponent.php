@@ -13,6 +13,7 @@ abstract class BaseComponent implements ComponentContract, Composable, Responsab
     use FiresCallbacks;
     use StyleHelper;
 
+    /** @var \SuperV\Platform\Domains\UI\Components\Props */
     protected $props;
 
     protected $name;
@@ -28,14 +29,24 @@ abstract class BaseComponent implements ComponentContract, Composable, Responsab
      */
     protected $tokens = [];
 
-    abstract public function getName(): string;
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): ComponentContract
+    {
+        $this->name = $name;
+
+        return $this;
+    }
 
     public function __construct(array $props = [])
     {
         $this->setProps($props);
     }
 
-    public function addClass(string $class)
+    public function addClass(string $class): ComponentContract
     {
         $this->classes[] = $class;
 
@@ -52,7 +63,7 @@ abstract class BaseComponent implements ComponentContract, Composable, Responsab
         return $this->props;
     }
 
-    public function setProps($props)
+    public function setProps($props): ComponentContract
     {
         $this->props = new Props($props);
 
@@ -88,7 +99,7 @@ abstract class BaseComponent implements ComponentContract, Composable, Responsab
         return $this->props->get($key);
     }
 
-    public function setProp($key, $value): self
+    public function setProp($key, $value): ComponentContract
     {
         $this->props->set($key, $value);
 

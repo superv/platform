@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Table;
 
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
@@ -19,6 +20,8 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
     protected $rows;
 
     protected $rowActions = [];
+
+    protected $selectionActions = [];
 
     protected $contextActions = [];
 
@@ -49,6 +52,13 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
     public function addRowAction($action): TableContract
     {
         $this->rowActions[] = $action;
+
+        return $this;
+    }
+
+    public function addSelectionAction($action): TableContract
+    {
+        $this->selectionActions[] = $action;
 
         return $this;
     }
@@ -138,6 +148,17 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
         return $this;
     }
 
+    public function getAction($name)
+    {
+        return collect($this->getSelectionActions())->map(function ($action) {
+            if (is_string($action)) {
+                $action = $action::make();
+            }
+
+            return $action;
+        })->first(function (Action $action) use ($name) { return $action->getName() === $name; });
+    }
+
     public function getDataUrl()
     {
         if ($this->dataUrl) {
@@ -159,6 +180,16 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
         return $this->fields;
     }
 
+    public function makeFields(): Collection
+    {
+        return wrap_collect($this->getFields())->merge($this->copyMergeFields());
+    }
+
+    public function isSelectable(): bool
+    {
+        return $this->selectable;
+    }
+
     public function getRowActions()
     {
         return $this->rowActions;
@@ -169,13 +200,8 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
         return $this->contextActions;
     }
 
-    public function makeFields(): Collection
+    public function getSelectionActions()
     {
-        return wrap_collect($this->getFields())->merge($this->copyMergeFields());
-    }
-
-    public function isSelectable(): bool
-    {
-        return $this->selectable;
+        return $this->selectionActions;
     }
 }

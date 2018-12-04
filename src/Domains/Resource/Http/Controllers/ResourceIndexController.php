@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Resource\Action\CreateEntryAction;
+use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use SuperV\Platform\Domains\UI\Page\Page;
@@ -29,8 +30,7 @@ class ResourceIndexController extends BaseApiController
 
     public function table()
     {
-        $resource = $this->resolveResource();
-        $table = $resource->resolveTable();
+        $table = ($resource = $this->resolveResource())->resolveTable();
 
         if ($this->route->parameter('data')) {
             return $table->setRequest($this->request)->build();
@@ -41,5 +41,21 @@ class ResourceIndexController extends BaseApiController
         }
 
         return MakeComponentTree::dispatch($table)->withTokens(['res' => $resource->toArray()]);
+    }
+
+    public function tableAction()
+    {
+        $action = $this->resolveTableAction();
+
+        if ($action instanceof HandlesRequests) {
+            $action->handleRequest($this->request);
+        }
+
+        return $this->resolveTableAction();
+    }
+
+    public function tableActionPost()
+    {
+        return $this->resolveTableAction()->handleRequest($this->request);
     }
 }

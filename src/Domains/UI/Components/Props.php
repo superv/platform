@@ -20,10 +20,11 @@ class Props implements Composable
         return array_get($this->props, $key);
     }
 
-    public function set($key, $value)
+    public function set($key, $value): Props
     {
-         $this->props[$key] = $value;
+        array_set($this->props, $key, $value);
 
+        return $this;
     }
 
     public function push($value, $to)

@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
@@ -23,7 +22,7 @@ class FormTable extends Table
                     'id'     => $row['id'] ?? null,
                     'fields' => $fields
                         ->map(function ($field) {
-                            return is_array($field) ? FieldFactory::createFromArray($field) : $field;
+                            return is_array($field) ? sv_field($field) : $field;
                         })
                         ->map(function (Field $field) use ($row) {
                             return (new FieldComposer($field))->forForm($row);

@@ -12,11 +12,6 @@ class ActionComponent extends BaseComponent
     /** @var Action */
     protected $action;
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
     public function getProps(): Props
     {
         return $this->props->merge($this->action->compose()->get());
@@ -25,16 +20,6 @@ class ActionComponent extends BaseComponent
     public function uuid()
     {
         return $this->action->uuid();
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public static function from(Action $action): self

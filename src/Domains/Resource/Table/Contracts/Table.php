@@ -17,9 +17,13 @@ interface Table
 
     public function setRows($rows);
 
+    public function addSelectionAction($action): Table;
+
     public function addRowAction($action): Table;
 
     public function addContextAction($action): Table;
+
+    public function getAction($name);
 
     public function setActions($actions);
 
@@ -36,6 +40,8 @@ interface Table
     public function setDataUrl($url): Table;
 
     public function getRowActions();
+
+    public function getSelectionActions();
 
     public function getContextActions();
 }

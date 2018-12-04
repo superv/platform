@@ -49,4 +49,11 @@ trait ResolvesResource
 
         return $relation;
     }
+
+    protected function resolveTableAction()
+    {
+        return $this->resolveResource()
+                    ->resolveTable()
+                    ->getAction($this->route->parameter('action'));
+    }
 }

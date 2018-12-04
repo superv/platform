@@ -25,11 +25,12 @@ class TableComposer
     {
         $payload = new Payload([
             'config' => [
-                'selectable'      => $this->table->isSelectable(),
-                'data_url'        => $this->table->getDataUrl(),
-                'fields'          => $this->makeFields(),
-                'row_actions'     => $this->makeRowActions(),
-                'context_actions' => $this->makeContextActions(),
+                'selectable'        => $this->table->isSelectable(),
+                'data_url'          => $this->table->getDataUrl(),
+                'fields'            => $this->makeFields(),
+                'row_actions'       => $this->makeRowActions(),
+                'selection_actions' => $this->makeSelectionActions(),
+                'context_actions'   => $this->makeContextActions(),
 
             ],
         ]);
@@ -44,6 +45,17 @@ class TableComposer
     protected function makeRowActions()
     {
         return collect($this->table->getRowActions())->map(function ($action) {
+            if (is_string($action)) {
+                $action = $action::make();
+            }
+
+            return $action;
+        });
+    }
+
+    protected function makeSelectionActions()
+    {
+        return collect($this->table->getSelectionActions())->map(function ($action) {
             if (is_string($action)) {
                 $action = $action::make();
             }
