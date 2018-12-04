@@ -11,7 +11,7 @@ use SuperV\Platform\Domains\Resource\Visibility\Visibility;
  * Class ColumnDefinition
  * @method ColumnDefinition ignore($value = true)
  * @method ColumnDefinition fieldType($type)
- * @method ColumnDefinition rules(array $rules)
+ * @method ColumnDefinition rules(array|string $rules)
  * @method ColumnDefinition config(array $config)
  */
 class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition

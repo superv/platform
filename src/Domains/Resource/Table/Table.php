@@ -46,7 +46,7 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
         return $this;
     }
 
-    public function addAction($action): TableContract
+    public function addRowAction($action): TableContract
     {
         $this->rowActions[] = $action;
 

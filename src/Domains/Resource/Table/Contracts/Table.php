@@ -17,7 +17,7 @@ interface Table
 
     public function setRows($rows);
 
-    public function addAction($action): Table;
+    public function addRowAction($action): Table;
 
     public function addContextAction($action): Table;
 

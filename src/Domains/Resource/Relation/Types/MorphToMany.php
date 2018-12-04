@@ -32,7 +32,7 @@ class MorphToMany extends Relation implements ProvidesTable
         return app(ResourceTable::class)
             ->setResource($this->getRelatedResource())
             ->setQuery($this)
-            ->addAction(DetachEntryAction::make()->setRelation($this))
+            ->addRowAction(DetachEntryAction::make()->setRelation($this))
             ->setDataUrl(url()->current().'/data')
             ->addContextAction(AttachEntryAction::make()->setRelation($this))
             ->mergeFields($this->getPivotFields());

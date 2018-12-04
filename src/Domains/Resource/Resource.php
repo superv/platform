@@ -254,7 +254,7 @@ class Resource implements
     {
         $table = app(ResourceTable::class)
             ->setResource($this)
-            ->addAction(ViewEntryAction::class);
+            ->addRowAction(ViewEntryAction::class);
 
         $this->fire('table.resolved', ['table' => $table]);
 
