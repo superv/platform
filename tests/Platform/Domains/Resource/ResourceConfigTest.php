@@ -8,6 +8,18 @@ use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class ResourceConfigTest extends ResourceTestCase
 {
+    function test__trashable()
+    {
+        $res = $this->create('t_users', function (Blueprint $table) {
+            $table->increments('id');
+
+            $table->restorable();
+        });
+
+        $this->assertTrue($res->isRestorable());
+        $this->assertColumnExists('t_users', 'deleted_at');
+    }
+
     function test__saves_resource_key()
     {
         $res = $this->create('t_users', function (Blueprint $table, ResourceBlueprint $resource) {

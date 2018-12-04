@@ -21,11 +21,11 @@ class Blueprints
         $table->text('config')->nullable();
 
         if ($table instanceof Blueprint) {
+            $resource->label('Platform Resources');
             $table->hasMany('sv_fields', 'fields');
             $table->hasMany('sv_relations', 'relations');
-
-            $resource->label('Platform Resources');
         }
+        $table->boolean('restorable')->default(false);
 
         $table->timestamps();
     }

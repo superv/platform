@@ -12,12 +12,6 @@ use Tests\Platform\Domains\Resource\Fixtures\TestUser;
 
 class ResourceCreationTest extends ResourceTestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-//        $this->app['migrator']->run(__DIR__.'/migrations');
-    }
-
     function test__creates_resource_model_entry_when_a_table_is_created()
     {
         Schema::create('test_users', function (Blueprint $table) {

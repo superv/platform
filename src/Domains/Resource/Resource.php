@@ -83,6 +83,8 @@ class Resource implements
     /** @var \SuperV\Platform\Domains\Resource\Resource\IndexFields */
     protected $indexFields;
 
+    protected $restorable = false;
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
@@ -287,6 +289,11 @@ class Resource implements
     public function testHelper()
     {
         return new TestHelper($this);
+    }
+
+    public function isRestorable(): bool
+    {
+        return $this->restorable;
     }
 
     public function uuid(): string

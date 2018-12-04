@@ -4,44 +4,63 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Resource\Nav\Section;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class CreateResource
 {
+    /** @var string */
+    protected $table;
+
+    /** @var ResourceBlueprint */
+    protected $blueprint;
+
     public function handle(TableCreatingEvent $event)
     {
         if (! $event->scope) {
             return;
         }
 
-        $resource = $event->resourceBlueprint;
+        $this->table = $event->table;
+        $this->blueprint = $event->resourceBlueprint;
 
-        /** @var ResourceModel $entry */
-        $entry = ResourceModel::create(array_filter(
-            [
-                'slug'   => $event->table,
-                'handle' => $event->table,
-                'model'  => $resource->model,
-                'config' => $resource->config($event->table, $event->columns),
-                'addon'  => $event->scope,
-            ]
-        ));
+        $this->createResourceEntry($this->blueprint->config($this->table, $event->columns), $event->scope);
 
-        if ($nav = $resource->nav) {
+        $this->createNavSections();
+    }
+
+    protected function createNavSections()
+    {
+        if ($nav = $this->blueprint->nav) {
             if (is_string($nav)) {
-                Section::createFromString($handle = $nav.'.'.$event->table);
+                Section::createFromString($handle = $nav.'.'.$this->table);
                 $section = Section::get($handle);
                 $section->update([
-                    'url'    => 'sv/res/'.$event->table,
-                    'title'  => $resource->label,
-                    'handle' => str_slug($resource->label, '_'),
+                    'url'    => 'sv/res/'.$this->table,
+                    'title'  => $this->blueprint->label,
+                    'handle' => str_slug($this->blueprint->label, '_'),
                 ]);
             } elseif (is_array($nav)) {
                 if (! isset($nav['url'])) {
-                    $nav['url'] = 'sv/res/'.$event->table;
+                    $nav['url'] = 'sv/res/'.$this->table;
                 }
                 Section::createFromArray($nav);
             }
         }
+    }
+
+    protected function createResourceEntry($config, $addon)
+    {
+        /** @var ResourceModel $entry */
+        ResourceModel::create(array_filter(
+            [
+                'slug'       => $this->table,
+                'handle'     => $this->table,
+                'model'      => $this->blueprint->model,
+                'config'     => $config,
+                'addon'      => $addon,
+                'restorable' => (bool)$this->blueprint->restorable,
+            ]
+        ));
     }
 }

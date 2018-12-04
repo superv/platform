@@ -54,6 +54,12 @@ trait CreatesFields
         return $this;
     }
 
+    public function restorable()
+    {
+        $this->resourceBlueprint()->restorable(true);
+        $this->timestamp('deleted_at')->nullable();
+    }
+
     public function updatedBy(): self
     {
         $this->nullableBelongsTo('users', 'updated_by')->addFlag('form.hide');
