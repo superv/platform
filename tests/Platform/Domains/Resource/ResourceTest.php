@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use Tests\Platform\Domains\Resource\Fixtures\TestResourceEntry;
 
@@ -62,6 +63,19 @@ class ResourceTest extends ResourceTestCase
             'age'      => ['integer', 'min:0', 'nullable'],
             'avatar'   => ['nullable'],
         ], $users->getRules($user));
+    }
+
+    function test__rules_for_dynamically_added_fields()
+    {
+        $this->schema()->users();
+        Resource::extend('t_users')
+                ->with(function (Resource $resource) {
+                    $resource->indexFields()->add(['type' => 'text', 'name' => 'isot']);
+                });
+
+        $users = sv_resource('t_users');
+
+        $this->assertFalse(in_array('isot', array_keys($users->getRules())));
     }
 
     function test__count()
