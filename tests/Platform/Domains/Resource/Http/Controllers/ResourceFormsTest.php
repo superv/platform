@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Resource;
 use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -18,6 +19,7 @@ class ResourceFormsTest extends ResourceTestCase
         $users = $this->schema()
                       ->users(function (Blueprint $table) {
                           $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
+                          $table->createdBy()->updatedBy();
                       });
 
         // Get Create form
@@ -25,8 +27,10 @@ class ResourceFormsTest extends ResourceTestCase
         $page = $this->getPageFromUrl($users->route('create'));
 
         $form = HelperComponent::from($page->getProp('blocks.0'));
+        $this->assertEquals(7, $form->countProp('fields'));
 
         $fields = collect($form->getProp('fields'))->keyBy('name');
+
 
         $group = $fields->get('group');
         $this->assertEquals('belongs_to', $group['type']);
@@ -41,11 +45,32 @@ class ResourceFormsTest extends ResourceTestCase
         );
     }
 
+    function test__displays_extended_create_form()
+    {
+        $users = $this->schema()->users();
+
+        // extend resource creation form
+        //
+        Resource::extend('t_users')->with(function (Resource $resource) {
+            $resource->on('creating', function (Form $form) {
+                $form->onlyFields('name', 'email', 'group');
+            });
+        });
+
+        // Get Create form
+        //
+        $page = $this->getPageFromUrl($users->route('create'));
+
+        $form = HelperComponent::from($page->getProp('blocks.0'));
+        $this->assertEquals(3, $form->countProp('fields'));
+    }
+
     function test__displays_update_form()
     {
         $user = $this->schema()
                      ->users(function (Blueprint $table) {
                          $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
+                         $table->createdBy()->updatedBy();
                      })
                      ->fake(['group_id' => 1]);
 
@@ -104,6 +129,30 @@ class ResourceFormsTest extends ResourceTestCase
             ['value' => $first->getId(), 'text' => $first->title],
             $group['meta']['options'][1]
         );
+    }
+
+    function test__displays_extended_update_form()
+    {
+        $user = $this->schema()
+                     ->users(function (Blueprint $table) {
+                         $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
+                         $table->createdBy()->updatedBy();
+                     })
+                     ->fake(['group_id' => 1]);
+
+        // extend resource edit form
+        //
+        Resource::extend('t_users')->with(function (Resource $resource) {
+            $resource->on('editing', function (Form $form) {
+                $form->onlyFields('name', 'email', 'group');
+            });
+        });
+
+        // Get Update form
+        //
+        $response = $this->getJsonUser($user->route('edit'))->assertOk();
+        $form = HelperComponent::from($response->decodeResponseJson('data'));
+        $this->assertEquals(3, $form->countProp('fields'));
     }
 
     function test__posts_create_form()

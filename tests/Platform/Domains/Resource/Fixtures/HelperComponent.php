@@ -25,6 +25,15 @@ class HelperComponent extends BaseComponent
         return $this->uuid;
     }
 
+    public function countProp($key)
+    {
+        if ($prop = $this->getProp($key)) {
+            return count($prop);
+        }
+
+        return 0;
+    }
+
     public static function from($array)
     {
         $component = new self($array['props']);

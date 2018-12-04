@@ -36,7 +36,7 @@ class Fake
 
         $resource->getFields()
                  ->map(function (Field $field) {
-                     if (! $field->isHidden() && ! $field->doesNotInteractWithTable()) {
+                     if ($this->shouldFake($field)) {
                          $this->attributes[$field->getColumnName()] = $this->fake($field);
                      }
                  })->filter()
@@ -44,6 +44,13 @@ class Fake
                  ->all();
 
         return array_filter_null($this->attributes);
+    }
+
+    protected function shouldFake(Field $field)
+    {
+        return ! $field->isHidden()
+            && ! $field->hasFlag('form.hide')
+            && ! $field->doesNotInteractWithTable();
     }
 
     protected function fake(Field $field)

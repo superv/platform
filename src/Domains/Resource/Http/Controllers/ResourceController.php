@@ -18,6 +18,10 @@ class ResourceController extends BaseApiController
                           ->setUrl($resource->route('store'))
                           ->makeForm();
 
+        if ($callback = $resource->getCallback('creating')) {
+            app()->call($callback, ['form' => $form]);
+        }
+
         $page = Page::make('Create new '.$resource->getSingularLabel());
         $page->addBlock($form);
 
@@ -30,6 +34,10 @@ class ResourceController extends BaseApiController
         $form = FormConfig::make($this->entry)
                           ->setUrl($this->entry->route('update'))
                           ->makeForm();
+
+        if ($callback = $resource->getCallback('editing')) {
+            app()->call($callback, ['form' => $form]);
+        }
 
         return $form->makeComponent();
     }

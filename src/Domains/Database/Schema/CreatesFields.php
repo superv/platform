@@ -49,7 +49,7 @@ trait CreatesFields
     public function createdBy(): self
     {
         $this->nullableBelongsTo('users', 'created_by')->addFlag('form.hide');
-        $this->timestamp('created_at')->nullable();
+        $this->timestamp('created_at')->nullable()->addFlag('form.hide');
 
         return $this;
     }
@@ -57,7 +57,7 @@ trait CreatesFields
     public function updatedBy(): self
     {
         $this->nullableBelongsTo('users', 'updated_by')->addFlag('form.hide');
-        $this->timestamp('updated_at')->nullable();
+        $this->timestamp('updated_at')->nullable()->addFlag('form.hide');
 
         return $this;
     }

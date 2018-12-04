@@ -189,7 +189,7 @@ class Form implements ProvidesUIComponent
             $composed = $composed->merge(
                 $fields
                     ->filter(function (Field $field) {
-                        return ! $field->isHidden();
+                        return ! $field->isHidden() && ! $field->hasFlag('form.hide');
                     })
                     ->map(function (Field $field) use ($handle) {
                         return array_filter(
