@@ -18,6 +18,16 @@ class Current
     protected $migrationScope;
 
     /**
+     * Return id of the current logged in user
+     *
+     * @return \SuperV\Platform\Domains\Auth\Contracts\User
+     */
+    public function userId()
+    {
+        return auth()->guard()->id();
+    }
+
+    /**
      * Return the current logged in user
      *
      * @return \SuperV\Platform\Domains\Auth\Contracts\User
