@@ -73,6 +73,19 @@ class IndexFields
         return $field;
     }
 
+    public function add($field)
+    {
+        if (is_array($field)) {
+            $field = FieldFactory::createFromArray($field);
+        }
+
+        $field->showOnIndex();
+
+        $this->fields->push($field);
+
+        return $field;
+    }
+
     public function hideLabel()
     {
         $this->hideLabelField = true;
