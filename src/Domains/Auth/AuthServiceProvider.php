@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Auth\Console\AssignRoleCommand;
 use SuperV\Platform\Domains\Auth\Console\CreateUserCommand;
-use SuperV\Platform\Domains\Auth\Events\UserCreatedEvent;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use Tymon\JWTAuth\Providers\LaravelServiceProvider;
@@ -26,18 +25,18 @@ class AuthServiceProvider extends BaseServiceProvider
         $this->app->register(LaravelServiceProvider::class);
 
         $this->registerListeners([
-            UserCreatedEvent::class  => function (UserCreatedEvent $event) {
-                $user = $event->user;
-                $request = $event->request;
-
-                if (! $profile = array_get($request, 'profile')) {
-                    return;
-                }
-                $user->createProfile([
-                    'first_name' => $profile['first_name'],
-                    'last_name'  => $profile['last_name'],
-                ]);
-            },
+//            UserCreatedEvent::class  => function (UserCreatedEvent $event) {
+//                $user = $event->user;
+//                $request = $event->request;
+//
+//                if (! $profile = array_get($request, 'profile')) {
+//                    return;
+//                }
+//                $user->createProfile([
+//                    'first_name' => $profile['first_name'],
+//                    'last_name'  => $profile['last_name'],
+//                ]);
+//            },
             PortDetectedEvent::class => function (PortDetectedEvent $event) {
                 if ($model = $event->port->model()) {
                     config()->set('superv.auth.user.model', $model);

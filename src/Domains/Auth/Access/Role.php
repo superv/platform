@@ -2,16 +2,13 @@
 
 namespace SuperV\Platform\Domains\Auth\Access;
 
-use Illuminate\Database\Eloquent\Model;
-use SuperV\Modules\Nucleo\Domains\Entry\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class Role extends Model
+class Role extends ResourceEntry
 {
     use HasActions;
 
     protected $table = 'auth_roles';
-
-    protected $guarded = [];
 
     /**
      * @param $slug

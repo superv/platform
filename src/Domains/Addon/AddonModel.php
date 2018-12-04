@@ -2,13 +2,11 @@
 
 namespace SuperV\Platform\Domains\Addon;
 
-use Illuminate\Database\Eloquent\Model;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class AddonModel extends Model
+class AddonModel extends ResourceEntry
 {
     protected $table = 'sv_addons';
-
-    protected $guarded = [];
 
     /**
      * Create new Addon instance

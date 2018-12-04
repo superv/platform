@@ -2,9 +2,8 @@
 
 namespace Tests\Platform\Support\Meta;
 
-use DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Domains\Database\Model\Morphable;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
@@ -130,14 +129,14 @@ class RepositoryTest extends TestCase
     }
 }
 
-class TestOwner implements Morphable
+class TestOwner extends Entry
 {
-    public function getOwnerType()
+    public function getMorphClass()
     {
         return 'test_owners';
     }
 
-    public function getOwnerId()
+    public function getKey()
     {
         return 123;
     }

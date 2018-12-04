@@ -5,8 +5,8 @@ namespace SuperV\Platform\Support\Meta;
 use ArrayAccess;
 use Exception;
 use SuperV\Platform\Domains\Database\Model\BelongsToEntry;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Entry;
-use SuperV\Platform\Domains\Database\Model\Morphable;
 
 class Meta implements ArrayAccess, BelongsToEntry
 {
@@ -136,10 +136,10 @@ class Meta implements ArrayAccess, BelongsToEntry
     public function setOwner($ownerType, $ownerId = null, $label = null): Meta
     {
         if (is_object($ownerType)) {
-            if ($ownerType instanceof Morphable) {
+            if ($ownerType instanceof EntryContract) {
                 $this->owner = [
-                    'owner_type' => $ownerType->getOwnerType(),
-                    'owner_id'   => $ownerType->getOwnerId(),
+                    'owner_type' => $ownerType->getMorphClass(),
+                    'owner_id'   => $ownerType->getKey(),
                 ];
             } else {
                 throw new Exception('Unknown owner type');

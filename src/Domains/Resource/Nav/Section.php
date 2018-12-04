@@ -10,6 +10,15 @@ class Section extends Entry
 {
     protected $table = 'sv_navigation';
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function (Section $entry) {
+            $entry->children->map->delete();
+        });
+    }
+
     public function add(string $namespace): Section
     {
         return static::createFromString($namespace, $this);

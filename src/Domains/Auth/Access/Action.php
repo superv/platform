@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Auth\Access;
 
-use SuperV\Platform\Domains\Database\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class Action extends Entry
+class Action extends ResourceEntry
 {
     protected $table = 'auth_actions';
 

@@ -17,6 +17,15 @@ class ResourceEntry extends Entry
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
 
+    protected static function boot()
+    {
+        parent::boot();
+
+//        static::creating(function(ResourceEntry $entry) {
+//            $entry->setAttribute('created_by_id', Current::userId() ?? 0);
+//        });
+    }
+
     public function getRelationshipFromConfig($name)
     {
         if ($relation = $this->resolveRelation($name)) {

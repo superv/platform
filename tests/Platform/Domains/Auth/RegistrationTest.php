@@ -53,20 +53,6 @@ class RegistrationTest extends TestCase
             });
     }
 
-    /** @test */
-    function saves_user_profile_with_registration()
-    {
-        $user = factory(User::class)->create();
-
-        UserCreatedEvent::dispatch($user, $request = ['profile' => [
-            'first_name' => 'Fatih',
-            'last_name'  => 'Mehmet',
-        ]]);
-
-        $this->assertEquals('Fatih', $user->profile->first_name);
-        $this->assertEquals('Mehmet', $user->profile->last_name);
-    }
-
     /**
      * @test
      */

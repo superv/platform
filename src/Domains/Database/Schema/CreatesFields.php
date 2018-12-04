@@ -43,7 +43,7 @@ trait CreatesFields
 
     public function createdBy(): self
     {
-        $this->belongsTo('users', 'created_by')->addFlag('form.hide');
+        $this->nullableBelongsTo('users', 'created_by')->addFlag('form.hide');
         $this->timestamp('created_at')->nullable();
 
         return $this;

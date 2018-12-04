@@ -2,13 +2,11 @@
 
 namespace SuperV\Platform\Domains\Auth;
 
-use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Auth\Contracts\Account as AccountContract;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class Account extends Model implements AccountContract, \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract
+class Account extends ResourceEntry implements AccountContract
 {
-    protected $guarded = [];
-
     protected $table = 'sv_accounts';
 
     public function users()

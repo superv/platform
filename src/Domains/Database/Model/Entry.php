@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Database\Model;
 use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 
-class Entry extends Model implements Morphable, EntryContract
+class Entry extends Model implements EntryContract
 {
     protected $guarded = [];
 
@@ -29,15 +29,15 @@ class Entry extends Model implements Morphable, EntryContract
         );
     }
 
-    public function getOwnerType()
-    {
-        return $this->getMorphClass();
-    }
-
-    public function getOwnerId()
-    {
-        return $this->getKey();
-    }
+//    public function getOwnerType()
+//    {
+//        return $this->getMorphClass();
+//    }
+//
+//    public function getOwnerId()
+//    {
+//        return $this->getKey();
+//    }
 
     public function getId()
     {

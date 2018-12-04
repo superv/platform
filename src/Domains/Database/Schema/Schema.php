@@ -26,7 +26,7 @@ class Schema
             $this->builder = new Builder(\DB::connection(), $this);
 
             $this->builder->blueprintResolver(function ($table, $callback) {
-                return new Blueprint($table, $callback, $this);
+                return (new Blueprint($table, $callback, $this));
             });
         }
     }
