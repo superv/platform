@@ -28,7 +28,7 @@ class EloquentDataProvider implements DataProvider
     public function fetch(): void
     {
         /** @var \Illuminate\Pagination\LengthAwarePaginator $paginator */
-        $paginator = $this->query->paginate();
+        $paginator = $this->query->paginate($this->getRowsPerPage());
         $countBefore = $paginator->getCollection()->count();
         $this->entries = $paginator->getCollection();
 
@@ -59,5 +59,10 @@ class EloquentDataProvider implements DataProvider
     public function setRowsPerPage($count): void
     {
         $this->rowsPerPage = $count;
+    }
+
+    public function getRowsPerPage(): int
+    {
+        return $this->rowsPerPage;
     }
 }

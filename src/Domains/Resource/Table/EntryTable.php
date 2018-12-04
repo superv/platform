@@ -44,6 +44,7 @@ class EntryTable extends Table implements EntryTableContract
         $query = $this->newQuery();
         $this->fire('querying', ['query' => $query]);
         $this->applyFilters($query);
+        $this->applyOptions($query);
 
         $this->provider->setQuery($query);
         $this->provider->setRowsPerPage($this->getOption('limit', 10));
@@ -63,8 +64,8 @@ class EntryTable extends Table implements EntryTableContract
                 return [
                     'id'      => $entry->getId(),
                     'fields'  => $fields->map(function (Field $field) use ($entry) {
-                        return (new FieldComposer($field))->forTableRow($entry);
-                    })->values(),
+                        return (new FieldComposer($field))->forTableRow($entry)->get();
+                    })->values()->all(),
                     'actions' => ['view'],
                 ];
             });
@@ -86,7 +87,7 @@ class EntryTable extends Table implements EntryTableContract
     public function compose(Tokens $tokens = null)
     {
         return [
-            'rows'       => $this->getRows(),
+            'rows'       => $this->getRows()->all(),
             'pagination' => $this->getPagination(),
         ];
     }
@@ -94,6 +95,19 @@ class EntryTable extends Table implements EntryTableContract
     protected function applyFilters($query)
     {
         ApplyFilters::dispatch($this->getFilters(), $query, $this->getRequest());
+    }
+
+    protected function applyOptions($query)
+    {
+        $table = $query->getModel()->getTable();
+
+        if ($orderBy = $this->options->get('order_by')) {
+            foreach ($orderBy as $column => $direction) {
+                $query->orderBy($table.'.'.$column, $direction);
+            }
+        } else {
+            $query->orderBy($table.'.created_at', 'DESC');
+        }
     }
 
     protected function newQuery()

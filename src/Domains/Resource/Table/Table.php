@@ -71,7 +71,7 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
     public function compose(Tokens $tokens = null)
     {
         return [
-            'rows' => $this->getRows(),
+            'rows' => $this->getRows()->all(),
         ];
     }
 
@@ -90,7 +90,8 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
     public function toResponse($request)
     {
         return response()->json([
-            'data' => sv_compose($this, $this->makeTokens()),
+//            'data' => sv_compose($this->compose(), $this->makeTokens()),
+            'data' => $this->compose(),
         ]);
     }
 
@@ -106,7 +107,7 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
                 return [
                     'id'      => $row['id'] ?? null,
                     'fields'  => $fields->map(function (Field $field) use ($row) {
-                        return (new FieldComposer($field))->forTableRow($row);
+                        return (new FieldComposer($field))->forTableRow($row)->get();
                     })->values(),
                     'actions' => ['view'],
                 ];
