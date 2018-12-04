@@ -84,6 +84,7 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
             }
             $this->buildOptions();
             $payload->set('meta.options', $this->options);
+            $payload->set('placeholder', 'Select '.$this->resource->getSingularLabel());
         };
 
         //        if ($this->hasCallback('querying')) {

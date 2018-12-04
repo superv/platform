@@ -32,13 +32,14 @@ class SelectField extends FieldType implements NeedsDatabaseColumn, ProvidesFilt
         return function (Payload $payload) {
             $options = static::parseOptions(($this->getOptions()));
             // Add a null value placeholder if not exists
-            if (! is_null(array_first($options)['value'])) {
-                $options = array_merge([['value' => null, 'text' => $this->getPlaceholder()]],
-                    $options
-                );
-            }
+//            if (! is_null(array_first($options)['value'])) {
+//                $options = array_merge([['value' => null, 'text' => $this->getPlaceholder()]],
+//                    $options
+//                );
+//            }
 
             $payload->set('meta.options', $options);
+            $payload->set('placeholder', 'Select '.$this->getPlaceholder());
         };
     }
 

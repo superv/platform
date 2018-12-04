@@ -31,12 +31,12 @@ class FieldComposer
         }
 
         $payload = (new Payload([
-            'type'  => $field->getType(),
-            'uuid'  => $field->uuid(),
-            'name'  => $field->getName(),
-            'label' => $field->getLabel(),
+            'type'        => $field->getType(),
+            'uuid'        => $field->uuid(),
+            'name'        => $field->getName(),
+            'label'       => $field->getLabel(),
             'placeholder' => $field->getPlaceholder(),
-            'value' => $value ?? null,
+            'value'       => $value ?? $field->getValue(),
         ]))->setFilterNull(true);
 
         if ($callback = $field->getCallback('form.composing')) {
