@@ -146,15 +146,21 @@ class Resource implements
 
     public function getRules(EntryContract $entry = null)
     {
-        return $this->getFields()
-                    ->keyBy(function (Field $field) {
-                        return $field->getColumnName();
-                    })
-                    ->map(function (Field $field) use ($entry) {
-                        return $this->parseFieldRules($field, $entry);
-                    })
-                    ->filter()
-                    ->all();
+        $rules = $this->getFields()
+                      ->filter(function (Field $field) {
+                          return ! $field->isUnbound();
+                      })
+                      ->keyBy(function (Field $field) {
+                          return $field->getColumnName();
+                      })
+                      ->map(function (Field $field) use ($entry) {
+                          $rules = $this->parseFieldRules($field, $entry);
+
+                          return $rules;
+                      });
+
+        return $rules->filter()
+                     ->all();
     }
 
     public function parseFieldRules($field, ?EntryContract $entry = null)

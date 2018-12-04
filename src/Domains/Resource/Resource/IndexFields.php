@@ -80,6 +80,10 @@ class IndexFields
         }
 
         $field->showOnIndex();
+        // Lets add this flag here to distinguish that
+        // this field is added later on
+        //
+        $field->addFlag('unbound');
 
         $this->fields->push($field);
 

@@ -36,6 +36,8 @@ interface Field
 
     public function isRequired();
 
+    public function isUnbound();
+
     public function doesNotInteractWithTable();
 
     public function hide();

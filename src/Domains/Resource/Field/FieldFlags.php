@@ -50,6 +50,11 @@ trait FieldFlags
         return $this->hasFlag('required');
     }
 
+    public function isUnbound()
+    {
+        return $this->hasFlag('unbound');
+    }
+
     public function isFilter()
     {
         return $this->hasFlag('filter');
