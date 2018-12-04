@@ -25,6 +25,11 @@ class ResourceTable extends EntryTable
         return $this->query ?? $this->resource->newQuery();
     }
 
+    public function onQuerying($query)
+    {
+        $this->resource->fire('table.querying', ['query' => $query]);
+    }
+
     public function getDataUrl()
     {
         if ($this->dataUrl) {

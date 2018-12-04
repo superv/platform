@@ -20,6 +20,10 @@ class ResourceIndexController extends BaseApiController
         $page->addBlock(sv_loader($resource->route('index.table')));
         $page->addAction(CreateEntryAction::make());
 
+        if ($callback = $resource->getCallback('index.page')) {
+            app()->call($callback, ['page' => $page]);
+        }
+
         return $page->build(['res' => $resource->toArray()]);
     }
 
@@ -32,7 +36,10 @@ class ResourceIndexController extends BaseApiController
             return $table->setRequest($this->request)->build();
         }
 
+        if ($callback = $resource->getCallback('index.config')) {
+            app()->call($callback, ['table' => $table]);
+        }
+
         return MakeComponentTree::dispatch($table)->withTokens(['res' => $resource->toArray()]);
     }
-
 }

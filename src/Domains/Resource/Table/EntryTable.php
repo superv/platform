@@ -102,6 +102,9 @@ class EntryTable extends Table implements EntryTableContract
         $table = $query->getModel()->getTable();
 
         if ($orderBy = $this->options->get('order_by')) {
+            if (is_string($orderBy)) {
+                $orderBy = [$orderBy => 'ASC'];
+            }
             foreach ($orderBy as $column => $direction) {
                 $query->orderBy($table.'.'.$column, $direction);
             }
