@@ -21,8 +21,8 @@ class Blueprints
         $table->text('config')->nullable();
 
         if ($table instanceof Blueprint) {
-            $table->hasMany('sv_fields', 'fields', 'resource_id');
-            $table->hasMany('sv_relations', 'relations', 'resource_id');
+            $table->hasMany('sv_fields', 'fields');
+            $table->hasMany('sv_relations', 'relations');
 
             $resource->label('Platform Resources');
         }
@@ -137,7 +137,7 @@ class Blueprints
         if ($table instanceof Blueprint) {
             $resource->label('Meta');
 //            $resource->model(MetaModel::class);
-            $table->hasMany('sv_meta_items', 'items', 'meta_id', 'id');
+            $table->hasMany('sv_meta_items', 'items', 'meta_id');
         }
 
         $table->nullableMorphs('owner');
@@ -159,7 +159,7 @@ class Blueprints
 
             $table->nullableBelongsTo('sv_meta', 'meta');
             $table->nullableBelongsTo('sv_meta_items', 'parent_item');
-            $table->hasMany('sv_meta_items', 'items', 'parent_item_id', 'id');
+            $table->hasMany('sv_meta_items', 'items', 'parent_item_id');
         } else {
             $table->unsignedInteger('meta_id')->nullable();
             $table->unsignedInteger('parent_item_id')->nullable();

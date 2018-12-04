@@ -11,4 +11,6 @@ interface EntryContract extends Watcher
     public function toArray();
 
     public function getMorphClass();
+
+    public function getForeignKey();
 }

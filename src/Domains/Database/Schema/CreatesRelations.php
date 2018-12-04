@@ -103,7 +103,8 @@ trait CreatesRelations
                         Config::hasMany()
                               ->relationName($relationName)
                               ->related($related)
-                              ->foreignKey($foreignKey ?? $this->resourceBlueprint()->getResourceKey().'_id')
+//                              ->foreignKey($foreignKey ?? $this->resourceBlueprint()->getResourceKey().'_id')
+                              ->foreignKey($foreignKey)
                               ->localKey($localKey)
                     );
     }

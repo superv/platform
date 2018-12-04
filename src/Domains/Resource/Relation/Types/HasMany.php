@@ -6,14 +6,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\ModalAction;
-use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Domains\Resource\Table\ResourceTable;
 
 class HasMany extends Relation implements ProvidesTable, ProvidesForm
 {
@@ -29,22 +27,29 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
         return new EloquentHasMany(
             $relatedEntryInstance->newQuery(),
             $this->parentEntry,
-            $this->relationConfig->getForeignKey(),
+            $this->relationConfig->getForeignKey() ?? $this->parentEntry->getForeignKey(),
             $localKey ?? 'id'
         );
     }
 
     public function makeTable()
     {
-        return app(ResourceTable::class)
-            ->setResource($this->getRelatedResource())
-            ->setQuery($this)
-            ->addAction(ViewEntryAction::class)
-            ->setDataUrl(url()->current().'/data')
-            ->addContextAction(
-                ModalAction::make('New '.str_singular(str_unslug($this->getName())))
-                           ->setModalUrl($this->route('create', $this->parentEntry))
-            );
+        return $this->getRelatedResource()->resolveTable()
+                    ->setQuery($this)
+                    ->setDataUrl(url()->current().'/data')
+                    ->addContextAction(
+                        ModalAction::make('New '.str_singular(str_unslug($this->getName())))
+                                   ->setModalUrl($this->route('create', $this->parentEntry))
+                    );
+//        return app(ResourceTable::class)
+//            ->setResource($this->getRelatedResource())
+//            ->setQuery($this)
+//            ->addAction(ViewEntryAction::class)
+//            ->setDataUrl(url()->current().'/data')
+//            ->addContextAction(
+//                ModalAction::make('New '.str_singular(str_unslug($this->getName())))
+//                           ->setModalUrl($this->route('create', $this->parentEntry))
+//            );
     }
 
     public function makeForm(): Form

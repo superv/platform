@@ -26,62 +26,11 @@ class ResourceEntry extends Entry
 //        });
     }
 
-    public function getRelationshipFromConfig($name)
-    {
-        if ($relation = $this->resolveRelation($name)) {
-            return $relation->newQuery();
-        }
-    }
-
-    protected function resolveRelation($name)
-    {
-        if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
-            return null;
-        }
-
-        $relation = RelationBuilder::resolveFromRelationEntry($relation);
-        if ($relation instanceof AcceptsParentEntry) {
-            $relation->acceptParentEntry($this);
-        }
-
-        return $relation;
-    }
-
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
-    public function getResource()
-    {
-        if (! $this->resource) {
-            $this->resource = ResourceFactory::make($this->getHandle());
-        }
-
-        return $this->resource;
-    }
-
-    public function getHandle(): string
-    {
-        return $this->getTable();
-    }
-
-    public function route($route)
-    {
-        $base = 'sv/res/'.$this->getHandle();
-        if ($route === 'update') {
-            return $base.'/'.$this->getId();
-        }
-        if ($route === 'delete' || $route === 'edit' || $route === 'view') {
-            return $base.'/'.$this->getId().'/'.$route;
-        }
-    }
-
-    public function getField(string $name): ?Field
-    {
-        $field = $this->getResource()->getField($name);
-
-        return $field->setWatcher($this);
-    }
-
     public function __call($name, $arguments)
     {
+        /**
+         * Responds to $entry->get{Relation}
+         */
         if (starts_with($name, 'get')) {
             $relationName = snake_case(str_replace_first('get', '', $name));
             if ($relation = $this->resolveRelation($relationName)) {
@@ -96,7 +45,12 @@ class ResourceEntry extends Entry
                     }
                 }
             }
-        } elseif (starts_with($name, 'make')) {
+        }
+
+        /**
+         * Responds to $entry->make{Relation}
+         */
+        if (starts_with($name, 'make')) {
             $relationName = snake_case(str_replace_first('make', '', $name));
             if ($relation = $this->resolveRelation($relationName)) {
                 if ($targetModel = $relation->getRelationConfig()->getTargetModel()) {
@@ -144,6 +98,78 @@ class ResourceEntry extends Entry
         return new QueryBuilder(
             $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
         );
+    }
+
+    public function getRelationshipFromConfig($name)
+    {
+        if ($relation = $this->resolveRelation($name)) {
+            return $relation->newQuery();
+        }
+
+        /**
+         * not used since there's a better alternative: withCount
+         */
+        if (false && ends_with($name, 'Count')) {
+            $relation = str_replace_last('Count', '', $name);
+            if ($relation = $this->getRelationshipFromConfig($relation)) {
+                $foreignKey = $this->getForeignKey();
+
+                return $relation->selectRaw($foreignKey.', count(*) as aggregate')
+                                ->groupBy($foreignKey);
+            }
+        }
+    }
+
+    public function getForeignKey()
+    {
+        return $this->getResource()->getResourceKey().'_id';
+    }
+
+    protected function resolveRelation($name)
+    {
+        if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
+            return null;
+        }
+
+        $relation = RelationBuilder::resolveFromRelationEntry($relation);
+        if ($relation instanceof AcceptsParentEntry) {
+            $relation->acceptParentEntry($this);
+        }
+
+        return $relation;
+    }
+
+    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    public function getResource()
+    {
+        if (! $this->resource) {
+            $this->resource = ResourceFactory::make($this->getHandle());
+        }
+
+        return $this->resource;
+    }
+
+    public function getHandle(): string
+    {
+        return $this->getTable();
+    }
+
+    public function route($route)
+    {
+        $base = 'sv/res/'.$this->getHandle();
+        if ($route === 'update') {
+            return $base.'/'.$this->getId();
+        }
+        if ($route === 'delete' || $route === 'edit' || $route === 'view') {
+            return $base.'/'.$this->getId().'/'.$route;
+        }
+    }
+
+    public function getField(string $name): ?Field
+    {
+        $field = $this->getResource()->getField($name);
+
+        return $field->setWatcher($this);
     }
 
     public static function make($resourceHandle)
