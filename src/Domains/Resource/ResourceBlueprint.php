@@ -10,7 +10,6 @@ use Illuminate\Support\Fluent;
  * @method ResourceBlueprint model($model)
  * @method ResourceBlueprint nav($nav)
  * @method ResourceBlueprint resourceKey($key)
- * @method ResourceBlueprint label($label)
  * @method ResourceBlueprint entryLabel($entryLabel)
  */
 class ResourceBlueprint extends Fluent
@@ -20,6 +19,14 @@ class ResourceBlueprint extends Fluent
     public function getResourceKey()
     {
         return $this->resourceKey ?? str_singular($this->table);
+    }
+
+    public function label($label)
+    {
+        $this->offsetSet('label', $label);
+        if (! $this->resourceKey) {
+            $this->resourceKey(str_slug(str_singular($label), '_'));
+        }
     }
 
     public function fill(array $attributes = [])
