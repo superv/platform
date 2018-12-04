@@ -22,6 +22,6 @@ class TestHelper
             return ['value' => $entry->getId(), 'text' => $this->resource->getEntryLabel($entry)];
         })->all();
 
-        return   array_merge([['value' => null, 'text' => $placeholder ?? $this->resource->getSingularLabel()]], $options);
+        return $options;
     }
 }
