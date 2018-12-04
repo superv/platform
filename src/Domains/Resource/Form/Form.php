@@ -232,9 +232,28 @@ class Form implements ProvidesUIComponent
         return $this;
     }
 
-    public function hideFields(array $fields): self
+    public function hideFields($fields): self
     {
-        collect($fields)->map(function ($fieldName) { $this->hideField($fieldName); });
+        $fields = is_array($fields) ? $fields : func_get_args();
+
+        $this->getFields()->map(function (Field $field) use ($fields) {
+            if (in_array($field->getName(), $fields)) {
+                $field->hide();
+            }
+        });
+
+        return $this;
+    }
+
+    public function onlyFields($fields): self
+    {
+        $fields = is_array($fields) ? $fields : func_get_args();
+
+        $this->getFields()->map(function (Field $field) use ($fields) {
+            if (! in_array($field->getName(), $fields)) {
+                $field->hide();
+            }
+        });
 
         return $this;
     }
