@@ -36,6 +36,11 @@ trait CreatesFields
         return $this->select($column)->options($allowed);
     }
 
+    public function decimal($column, $total = 8, $places = 2): ColumnDefinition
+    {
+        return $this->addColumn('decimal', $column, compact('total', 'places'));
+    }
+
     public function money($column)
     {
         return $this->decimal($column, 10, 2)->default(0);
