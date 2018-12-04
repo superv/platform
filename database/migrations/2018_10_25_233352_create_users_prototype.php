@@ -1,10 +1,9 @@
 <?php
 
 use SuperV\Platform\Domains\Auth\Account;
-use SuperV\Platform\Domains\Auth\Profile;
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 class CreateUsersPrototype extends Migration
@@ -20,9 +19,10 @@ class CreateUsersPrototype extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('remember_token')->nullable();
-            $table->timestamps();
+            $table->createdBy()->updatedBy();
+            $table->restorable();
 
-            $table->hasOne(Profile::class, 'profile', 'user_id');
+            $table->hasOne('user_profiles', 'profile', 'user_id');
             $table->morphToMany('auth_roles', 'roles', 'owner', 'auth_assigned_roles', 'role_id');
 
             $pivotColumns = function (Blueprint $pivotTable) {

@@ -1,17 +1,20 @@
 <?php
 
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class CreateAccountsTable extends Migration
 {
     public function up()
     {
         Schema::create('sv_accounts', function (Blueprint $table) {
+            $table->resourceBlueprint()->resourceKey('account');
+
             $table->increments('id');
-            $table->string('name');
-            $table->timestamps();
+            $table->string('name')->entryLabel();
+            $table->createdBy()->updatedBy();
+            $table->restorable();
         });
     }
 

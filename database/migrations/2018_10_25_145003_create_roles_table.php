@@ -13,7 +13,8 @@ class CreateRolesTable extends Migration
 
             $table->increments('id');
             $table->string('slug')->unique();
-            $table->timestamps();
+            $table->createdBy()->updatedBy();
+            $table->restorable();
         });
 
         Schema::create('auth_assigned_roles', function (Blueprint $table) {
@@ -22,7 +23,7 @@ class CreateRolesTable extends Migration
             $table->morphs('owner');
             $table->unsignedInteger('role_id');
 
-            $table->timestamps();
+            $table->createdBy()->updatedBy();
         });
 
         Schema::create('auth_actions', function (Blueprint $table) {
@@ -30,7 +31,8 @@ class CreateRolesTable extends Migration
 
             $table->increments('id');
             $table->string('slug')->unique();
-            $table->timestamps();
+            $table->createdBy()->updatedBy();
+            $table->restorable();
         });
 
         Schema::create('auth_assigned_actions', function (Blueprint $table) {
@@ -40,7 +42,7 @@ class CreateRolesTable extends Migration
             $table->unsignedInteger('action_id');
 
             $table->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
-            $table->timestamps();
+            $table->createdBy()->updatedBy();
         });
     }
 

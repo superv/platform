@@ -1,8 +1,8 @@
 <?php
 
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 
 class CreateAddonsTable extends Migration
@@ -18,7 +18,9 @@ class CreateAddonsTable extends Migration
             $table->string('namespace');
             $table->string('type');
             $table->boolean('enabled');
-            $table->timestamps();
+
+            $table->createdBy()->updatedBy();
+            $table->restorable();
 
             $resource->label('SuperV Addons');
         });

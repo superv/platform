@@ -1,8 +1,8 @@
 <?php
 
+use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class CreateMediaTable extends Migration
 {
@@ -18,7 +18,9 @@ class CreateMediaTable extends Migration
             $table->string('label');
             $table->string('extension');
             $table->unsignedInteger('size');
-            $table->timestamps();
+
+            $table->createdBy()->updatedBy();
+            $table->restorable();
         });
     }
 
