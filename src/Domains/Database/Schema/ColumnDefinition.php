@@ -19,7 +19,6 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
     /** @var \SuperV\Platform\Domains\Resource\ResourceBlueprint */
     protected $blueprint;
 
-
     public function __construct(ResourceBlueprint $blueprint, $attributes = [])
     {
         foreach ($attributes as $key => $value) {
@@ -76,6 +75,7 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
     public function nullable()
     {
         $this->nullable = true;
+
         return $this->addFlag('nullable');
     }
 
@@ -89,6 +89,11 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         $this->offsetSet('default', $value);
 
         return $this->nullable();
+    }
+
+    public function unit($unit)
+    {
+        return $this->setConfigValue('unit', $unit);
     }
 
     public function showOnIndex()
@@ -106,17 +111,6 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         $flags = $this->flags;
         $flags[] = $flag;
         $this->flags = $flags;
-        return $this;
-    }
-
-    public function addFlagxxxxxxxxx($flag)
-    {
-        $flags = $this->config['flags'] ?? $this->defaultFlags;
-        $flags[] = $flag;
-
-        $config = $this->config;
-        $config['flags'] = $flags;
-        $this->config = $config;
 
         return $this;
     }
@@ -149,8 +143,17 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
 
     public function options(array $options): self
     {
+//        $config = $this->getConfig();
+//        $config['options'] = $options;
+//        $this->config = $config;
+
+        return $this->setConfigValue('options', $options);
+    }
+
+    public function setConfigValue($key, $value)
+    {
         $config = $this->getConfig();
-        $config['options'] = $options;
+        $config[$key] = $value;
         $this->config = $config;
 
         return $this;

@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Database\Schema;
 
 use SuperV\Platform\Domains\Media\MediaOptions;
+use SuperV\Platform\Support\ValueObject;
 
 /**
  * Trait CreatesFields
@@ -31,6 +32,17 @@ trait CreatesFields
         return $this->string($name)->fieldType('select');
     }
 
+    public function status($valueObjectClass = null)
+    {
+        $column = $this->select('status');
+        if ($valueObjectClass) {
+            /** @var ValueObject $valueObjectClass */
+            $column->options($valueObjectClass::choices());
+        }
+
+        return $column;
+    }
+
     public function enum($column, array $allowed)
     {
         return $this->select($column)->options($allowed);
@@ -41,9 +53,29 @@ trait CreatesFields
         return $this->addColumn('decimal', $column, compact('total', 'places'));
     }
 
+    public function boolean($column): ColumnDefinition
+    {
+        return $this->addColumn('boolean', $column);
+    }
+
     public function money($column)
     {
         return $this->decimal($column, 10, 2)->default(0);
+    }
+
+    public function number($column): ColumnDefinition
+    {
+        return $this->integer($column);
+    }
+
+    public function text($column): ColumnDefinition
+    {
+        return $this->addColumn('text', $column);
+    }
+
+    public function dictionary($column)
+    {
+        return $this->text($column)->fieldType('dictionary')->nullable();
     }
 
     public function createdBy(): self
