@@ -25,7 +25,7 @@ abstract class FieldType
         $this->boot();
     }
 
-    protected function boot() {}
+    protected function boot() { }
 
     public function getColumnName(): ?string
     {
@@ -57,7 +57,6 @@ abstract class FieldType
         return $this->field->getType();
     }
 
-
     public static function resolve($type)
     {
         $class = static::resolveClass($type);
@@ -71,6 +70,10 @@ abstract class FieldType
 
         /** @var \SuperV\Platform\Domains\Resource\Field\Types\FieldType $class */
         $class = $base."\\".studly_case($type);
+
+        if (! class_exists($class)) {
+            $class = $base."\\".studly_case($type.'_field');
+        }
 
         return $class;
     }

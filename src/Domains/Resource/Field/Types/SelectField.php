@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 use SuperV\Platform\Support\Composer\Payload;
 
-class Select extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
+class SelectField extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
 {
     protected $placeholder;
 

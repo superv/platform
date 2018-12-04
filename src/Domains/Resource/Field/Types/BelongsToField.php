@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Support\Composer\Payload;
 
-class BelongsTo extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
+class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
@@ -113,10 +113,10 @@ class BelongsTo extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
             return ['value' => $item->id, 'text' => sv_parse($entryLabel, $item->toArray())];
         })->all();
 
-        $this->options = array_merge(
-            [['value' => null, 'text' => 'Select '.$this->resource->getSingularLabel()]],
-            $this->options
-        );
+//        $this->options = array_merge(
+//            [['value' => null, 'text' => 'Select '.$this->resource->getSingularLabel()]],
+//            $this->options
+//        );
     }
 
     public function makeFilter()
