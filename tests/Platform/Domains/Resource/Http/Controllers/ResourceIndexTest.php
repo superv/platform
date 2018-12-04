@@ -229,11 +229,11 @@ class ResourceIndexTest extends ResourceTestCase
         $this->assertEquals('gender', $filter['name']);
         $this->assertEquals('select', $filter['type']);
         $this->assertEquals([
-                ['value' => null, 'text' => 'Gender'],
                 ['value' => 'm', 'text' => 'Male'],
                 ['value' => 'f', 'text' => 'Female']
             ], $table->getProp('config.filters.0.meta.options')
         );
+        $this->assertEquals('Select Gender', $filter['placeholder']);
     }
 
     function test__builds__select_filter_from_text_fields_with_distinct_options()
@@ -254,13 +254,13 @@ class ResourceIndexTest extends ResourceTestCase
         $this->assertEquals('select', $filter['type']);
         $this->assertEquals(
             [
-                ['value' => null, 'text' => 'Name'],
                 ['value' => 'tic', 'text' => 'tic'],
                 ['value' => 'tac', 'text' => 'tac'],
                 ['value' => 'toe', 'text' => 'toe']
             ],
             $table->getProp('config.filters.0.meta.options')
         );
+        $this->assertEquals('Select Name', $filter['placeholder']);
     }
 }
 
