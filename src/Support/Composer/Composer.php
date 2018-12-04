@@ -18,10 +18,11 @@ class Composer
     public function compose($data)
     {
         $composed = $this->__compose($data);
+        if ($tokens = $this->tokens->get()) {
+            $composed = sv_parse($composed, $this->tokens->get());
+        }
 
-        $parsed = sv_parse($composed, $this->tokens->get());
-
-        return $parsed;
+        return $composed;
     }
 
     public function __compose($data)
@@ -80,8 +81,9 @@ class Composer
              * Search  nearby composers of the Class
              */
             if (class_exists($class = get_class($data).'Composer')) {
-                if (array_key_exists(self::class, class_implements($class)))
+                if (array_key_exists(self::class, class_implements($class))) {
                     return $this->compose((new $class($data))->compose($this->tokens));
+                }
             }
 
             /**
