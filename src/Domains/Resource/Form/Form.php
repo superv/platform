@@ -272,7 +272,9 @@ class Form implements ProvidesUIComponent
         }
 
         if (is_array($fields)) {
-            $fields = collect($fields);
+            $fields = collect($fields)->map(function ($field) {
+                return is_array($field) ? sv_field($field) : $field;
+            });
         }
 
         return $fields;
