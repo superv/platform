@@ -106,7 +106,7 @@ class EntryTable extends Table implements EntryTableContract
                 $query->orderBy($table.'.'.$column, $direction);
             }
         } else {
-            $query->orderBy($table.'.created_at', 'DESC');
+//            $query->orderBy($table.'.id', 'DESC');
         }
     }
 

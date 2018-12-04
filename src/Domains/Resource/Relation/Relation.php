@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
@@ -17,6 +18,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
 {
     use Hydratable;
     use HasConfig;
+    use FiresCallbacks;
 
     /** @var string */
     protected $name;

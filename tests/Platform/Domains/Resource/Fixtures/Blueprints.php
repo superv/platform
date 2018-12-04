@@ -43,6 +43,7 @@ class Blueprints
                     });
 
                 $table->hasMany('t_posts', 'posts');
+                $table->hasMany('t_comments', 'comments');
 
                 if ($callback) {
                     $callback($table);
@@ -50,6 +51,20 @@ class Blueprints
             });
 
         return $users;
+    }
+
+    /** @return Resource */
+    public function comments()
+    {
+        return $this->create('t_comments', function (Blueprint $table) {
+            $table->resourceBlueprint()->label('Comments');
+
+            $table->increments('id');
+            $table->string('comment');
+            $table->select('status')->options(['approved', 'pending']);
+
+            $table->belongsTo('t_users', 'user');
+        });
     }
 
     /** @return Resource */

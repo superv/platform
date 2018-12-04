@@ -21,6 +21,7 @@ use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
 use SuperV\Platform\Domains\Resource\Resource\ResourceView;
 use SuperV\Platform\Domains\Resource\Resource\TestHelper;
 use SuperV\Platform\Domains\Resource\Table\ResourceTable;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -132,6 +133,10 @@ class Resource implements
         $relation = $this->getRelations()->get($name);
         if ($entry && $relation instanceof AcceptsParentEntry) {
             $relation->acceptParentEntry($entry);
+        }
+
+        if (! $relation) {
+            PlatformException::fail("Relation not found: [{$name}]");
         }
 
         return $relation;

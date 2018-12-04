@@ -11,17 +11,29 @@ class RelationCreateController extends BaseApiController
 
     public function create()
     {
-        return $this->resolveRelation()
-                    ->makeForm()
-                    ->setUrl(str_replace_last('/create', '', url()->current()))
-                    ->makeComponent();
+        $relation = $this->resolveRelation();
+        $form = $relation->makeForm();
+
+        if ($callback = $relation->getCallback('create.displaying')) {
+            $callback($form);
+        }
+
+        return $form
+            ->setUrl(str_replace_last('/create', '', url()->current()))
+            ->makeComponent();
     }
 
     public function store()
     {
-        $form = $this->resolveRelation()->makeForm();
+        $relation = $this->resolveRelation();
+        $form = $relation->makeForm();
+
+        if ($callback = $relation->getCallback('create.storing')) {
+            app()->call($callback, ['form' => $form, 'request' => $this->request, 'entry' => $this->entry]);
+        }
+
         $form->setRequest($this->request)->save();
 
-        return response()->json([]);
+        return response()->json(['status' => 'ok']);
     }
 }
