@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Support;
 
+use ReflectionClass;
+
 abstract class ValueObject
 {
     /**
@@ -22,5 +24,18 @@ abstract class ValueObject
     public function __toString()
     {
         return $this->value;
+    }
+
+    public static function all()
+    {
+        $reflection = new ReflectionClass(static::class);
+        $vars = $reflection->getConstants();
+
+        return collect($vars)
+            ->map(function ($value) {
+                return [$value, str_unslug($value)];
+            })
+            ->toAssoc()
+            ->all();
     }
 }
