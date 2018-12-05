@@ -8,10 +8,12 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use Symfony\Component\HttpFoundation\File\File;
 
 class MediaBag
 {
+    /** @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract */
     protected $owner;
 
     protected $files = [];
@@ -20,7 +22,7 @@ class MediaBag
 
     protected $label;
 
-    public function __construct($owner, $label)
+    public function __construct(EntryContract $owner, $label)
     {
         $this->owner = $owner;
         $this->label = $label;
@@ -104,7 +106,7 @@ class MediaBag
                 'filename'   => $target,
                 'disk'       => $diskName,
                 'original'   => $filename,
-                'owner_type' => get_class($this->owner),
+                'owner_type' => $this->owner->getMorphClass(),
                 'owner_id'   => $this->owner->id,
                 'label'      => $this->label,
                 'mime_type'  => $mimeType,

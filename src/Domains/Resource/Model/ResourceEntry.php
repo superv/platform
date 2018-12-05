@@ -149,6 +149,11 @@ class ResourceEntry extends Entry
         return $this->resource;
     }
 
+    public function getMorphClass()
+    {
+        return $this->getTable();
+    }
+
     public function getHandle(): string
     {
         return $this->getTable();
@@ -181,11 +186,6 @@ class ResourceEntry extends Entry
             public function setTable($table)
             {
                 return $this->table = $table;
-            }
-
-            public function getMorphClass()
-            {
-                return $this->getTable();
             }
         };
         $model->setTable($resourceHandle);
