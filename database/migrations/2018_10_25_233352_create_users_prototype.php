@@ -1,6 +1,5 @@
 <?php
 
-use SuperV\Platform\Domains\Auth\Account;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
@@ -14,7 +13,7 @@ class CreateUsersPrototype extends Migration
             $resource->resourceKey('user');
 
             $table->increments('id');
-            $table->belongsTo(Account::class, 'account')->nullable();
+            $table->belongsTo('sv_accounts', 'account')->nullable();
             $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->string('password');

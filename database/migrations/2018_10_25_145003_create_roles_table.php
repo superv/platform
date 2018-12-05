@@ -15,12 +15,17 @@ class CreateRolesTable extends Migration
             $table->string('slug')->unique();
             $table->createdBy()->updatedBy();
             $table->restorable();
+
+            $pivotColumns = function (Blueprint $pivotTable) {
+                $pivotTable->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
+            };
+            $table->morphToMany('auth_actions', 'actions', 'owner', 'auth_assigned_actions', 'action_id', $pivotColumns);
         });
 
         Schema::create('auth_assigned_roles', function (Blueprint $table) {
             $table->resourceBlueprint()->label('Assigned Roles');
             $table->increments('id');
-            $table->morphs('owner');
+            $table->morphTo('owner');
             $table->unsignedInteger('role_id');
 
             $table->createdBy()->updatedBy();
@@ -34,20 +39,13 @@ class CreateRolesTable extends Migration
             $table->createdBy()->updatedBy();
             $table->restorable();
         });
-
-        Schema::create('auth_assigned_actions', function (Blueprint $table) {
-            $table->resourceBlueprint()->label('Assigned Actions');
-            $table->increments('id');
-            $table->morphs('owner');
-            $table->unsignedInteger('action_id');
-
-            $table->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
-            $table->createdBy()->updatedBy();
-        });
     }
 
     public function down()
     {
         Schema::dropIfExists('auth_roles');
+        Schema::dropIfExists('auth_assigned_roles');
+        Schema::dropIfExists('auth_actions');
+        Schema::dropIfExists('auth_assigned_actions');
     }
 }

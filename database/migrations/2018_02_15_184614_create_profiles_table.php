@@ -15,7 +15,8 @@ class CreateProfilesTable extends Migration
             $table->string('last_name')->nullable();
 
             $table->file('avatar', 'sv/users/avatar');
-            $table->timestamps();
+            $table->createdBy()->updatedBy();
+            $table->restorable();
         });
     }
 

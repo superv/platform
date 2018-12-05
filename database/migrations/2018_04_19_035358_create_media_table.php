@@ -10,12 +10,12 @@ class CreateMediaTable extends Migration
     {
         Schema::create('media', function (Blueprint $table) {
             $table->increments('id');
-            $table->morphs('owner');
-            $table->string('disk');
-            $table->string('original');
+            $table->morphTo('owner')->showOnIndex();
+            $table->string('disk')->showOnIndex();
+            $table->string('original')->showOnIndex();
             $table->string('filename');
             $table->string('mime_type');
-            $table->string('label');
+            $table->string('label')->showOnIndex();
             $table->string('extension');
             $table->unsignedInteger('size');
 
