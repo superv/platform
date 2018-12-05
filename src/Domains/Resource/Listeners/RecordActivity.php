@@ -14,18 +14,23 @@ class RecordActivity
             return;
         }
 
-        $entryType = sv_resource($route->parameter('resource'))->newEntryInstance()->getMorphClass();
+        $resource = sv_resource($route->parameter('resource'));
+        $entryType = $resource->newEntryInstance()->getMorphClass();
+
         sv_resource('sv_activities')->create([
-            'user_id'    => $event->request->user()->getKey(),
-            'entry_type' => $entryType,
-            'entry_id'   => $route->parameter('id'),
-            'activity'   => $activity,
-            'created_at' => Current::time(),
+            'user_id'     => $event->request->user()->getKey(),
+            'resource_id' => $resource->id(),
+            'entry_type'  => $entryType,
+            'entry_id'    => $route->parameter('id'),
+            'activity'    => $activity,
+            'payload'     => json_encode($event->request->all()),
+            'created_at'  => Current::time(),
         ]);
     }
 
     protected function shouldRecord($activity)
     {
-        return in_array($activity, ['resource.view']);
+        return starts_with($activity, ['resource.', 'relation'])
+            && ! in_array($activity, ['resource.index.table']);
     }
 }
