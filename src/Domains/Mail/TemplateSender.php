@@ -45,6 +45,11 @@ class TemplateSender
         return $this;
     }
 
+    public function getTemplate(): MailTemplate
+    {
+        return $this->template;
+    }
+
     /**
      * @return mixed|\SuperV\Platform\Domains\Mail\MailSender
      */
