@@ -78,6 +78,11 @@ trait CreatesFields
         return $this->text($column)->fieldType('dictionary')->nullable();
     }
 
+    public function timestamp($column, $precision = 0): ColumnDefinition
+    {
+        return $this->addColumn('timestamp', $column, compact('precision'));
+    }
+
     public function createdBy(): self
     {
         $this->nullableBelongsTo('users', 'created_by')->hideOnForms();
