@@ -27,6 +27,8 @@ class MailSender
 
     protected $body;
 
+    protected $renderedView;
+
     public function __construct(ViewFactory $view, array $options = [])
     {
         $this->view = $view;
@@ -46,21 +48,18 @@ class MailSender
         );
     }
 
-    public function render($view, $inliner = null)
-    {
-        $contents = $this->view->make($view, $this->buildViewData())->render();
-
-        $view = new HtmlString(($inliner ?: new CssToInlineStyles)->convert(
-            $contents, $this->view->make('mail.html.themes.'.$this->theme)->render()
-        ));
-
-        return $view;
-    }
-
     protected function buildView(): array
     {
+        $contents = $this->view->make($this->layout, $this->buildViewData())->render();
+
+        $html = (new CssToInlineStyles)->convert(
+            $contents, $this->view->make('mail.html.themes.'.$this->theme)->render()
+        );
+
+        $this->renderedView = new HtmlString($html);
+
         return [
-            'html' => $this->render($this->layout),
+            'html' => $this->renderedView,
         ];
     }
 
@@ -126,6 +125,16 @@ class MailSender
         $this->bcc = $bcc;
 
         return $this;
+    }
+
+    public function getRenderedView()
+    {
+        return $this->renderedView;
+    }
+
+    public function getSubject()
+    {
+        return $this->subject;
     }
 
     public static function make()
