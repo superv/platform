@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Media\HasMedia;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
@@ -121,7 +122,7 @@ class MediaTest extends TestCase
 
 }
 
-class OwnerMock extends Model implements MediaOwner
+class OwnerMock extends Model implements MediaOwner, EntryContract
 {
     public $timestamps = false;
 
@@ -130,4 +131,9 @@ class OwnerMock extends Model implements MediaOwner
     protected $table = '__media_owner';
 
     use HasMedia;
+
+    public function getId()
+    {
+        return $this->id;
+    }
 }

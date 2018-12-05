@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Contracts\Validator;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\Resource;
 
 class ValidateSavingEntry
 {
@@ -29,7 +29,11 @@ class ValidateSavingEntry
             return;
         }
 
-        if (! $resource = ResourceFactory::make($this->entry)) {
+        if (! Resource::exists($this->entry)) {
+            return;
+        }
+
+        if (! $resource = sv_resource($this->entry)) {
             return;
         }
 

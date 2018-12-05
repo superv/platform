@@ -254,8 +254,8 @@ class Resource implements
         $this->fields()
              ->getFilters()
              ->map(function (Filter $filter) use ($filters) {
-            $filters->push($filter->setResource($this));
-        });
+                 $filters->push($filter->setResource($this));
+             });
 
         return $filters;
     }
@@ -333,5 +333,14 @@ class Resource implements
         Extension::register($extender = new Extender($handle));
 
         return $extender;
+    }
+
+    public static function exists($handle): bool
+    {
+        if ($handle instanceof EntryContract) {
+            $handle = $handle->getTable();
+        }
+
+        return ResourceModel::query()->where('handle', $handle)->exists();
     }
 }
