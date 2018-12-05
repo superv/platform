@@ -34,9 +34,9 @@ class Nav
         return Section::createFromString($namespace, $this->entry);
     }
 
-    public function compose()
+    public function compose($withColophon = false)
     {
-        return $this->entry->compose();
+        return $this->entry->compose($withColophon);
     }
 
     public function entry(): Section

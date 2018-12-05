@@ -1,12 +1,13 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource;
+namespace Tests\Platform\Domains\Resource\Nav;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Nav\Nav;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class NavigationTest extends ResourceTestCase
 {
@@ -205,5 +206,37 @@ class NavigationTest extends ResourceTestCase
             'handle' => 'templates',
             'url'    => 'sv/res/t_templates',
         ], Section::get('acp.settings.templates')->fresh()->compose());
+    }
+
+    function test__adds_full_colophon_for_authorization_check()
+    {
+        $nav = Nav::create('acp');
+        $nav->add('foo.baz.bom');
+
+        $this->assertEquals([
+            'title'    => 'Acp',
+            'handle'   => 'acp',
+            'sections' => [
+                [
+                    'title'    => 'Foo',
+                    'handle'   => 'foo',
+                    'colophon' => 'foo',
+                    'sections' => [
+                        [
+                            'title'    => 'Baz',
+                            'handle'   => 'baz',
+                            'colophon' => 'foo.baz',
+                            'sections' => [
+                                [
+                                    'title'    => 'Bom',
+                                    'handle'   => 'bom',
+                                    'colophon' => 'foo.baz.bom',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ], Nav::get('acp')->compose($withColophon = true));
     }
 }

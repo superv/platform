@@ -24,22 +24,38 @@ class Section extends Entry
         return static::createFromString($namespace, $this);
     }
 
-    public function compose()
+    public function compose($withColophon = false)
     {
         $payload = new Payload([
             'title'    => $this->title,
             'handle'   => $this->handle,
+            'colophon' => $withColophon ? $this->getColophon() : null,
             'icon'     => $this->icon,
             'url'      => $this->url,
             'sections' => $this->children()
                                ->with('children')
                                ->get()
-                               ->map(function (Section $section) { return $section->compose(); })
+                               ->map(function (Section $section) use ($withColophon) {
+                                   return $section->compose($withColophon);
+                               })
                                ->filter()
                                ->all(),
         ]);
 
         return $payload->get();
+    }
+
+    public function getColophon()
+    {
+        if (is_null($this->parent)) {
+            return null;
+        }
+
+        if ($parentColophon = $this->parent->getColophon()) {
+            return $parentColophon.'.'.$this->handle;
+        }
+
+        return $this->handle;
     }
 
     public function parent()
