@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use Storage;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -19,13 +20,10 @@ class ResourceViewTest extends ResourceTestCase
         $this->postJsonUser($user->route('update'), ['avatar' => $this->makeUploadedFile()]);
 
         $this->withoutExceptionHandling();
-//        $response = $this->getJsonUser($users->route('view', $user))->assertOk();
-
-//        $page = HelperComponent::from($response->decodeResponseJson('data'));
-//        $view = HelperComponent::from($page->getProp('blocks.0'));
-
         $view = $this->getResourceView($user);
-        $this->assertNotNull($fields = $view->getProp('fields'));
+        $this->assertEquals(6, $view->countProp('fields'));
+
+        $fields = $view->getProp('fields');
 
         $name = $fields['name'];
         $this->assertNotNull($name['uuid']);
@@ -51,6 +49,27 @@ class ResourceViewTest extends ResourceTestCase
         $this->assertEquals('file', $avatar['type']);
         $this->assertNull($avatar['value']);
         $this->assertEquals(Media::first()->getUrl(), $avatar['image_url'] ?? null);
+    }
+
+    function test__fields_those_should_be_hidden_in_view()
+    {
+        $users = $this->schema()->users(function (Blueprint $table) {
+            $table->restorable();
+        });
+
+        $user = $users->fake();
+        $this->withoutExceptionHandling();
+        $view = $this->getResourceView($user);
+        $this->assertEquals(6, $view->countProp('fields'));
+
+        $this->assertEquals([
+            'name',
+            'email',
+            'bio',
+            'age',
+            'avatar',
+            'group',
+        ], array_keys($view->getProp('fields')));
     }
 }
 
