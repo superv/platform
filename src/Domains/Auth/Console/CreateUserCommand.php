@@ -3,19 +3,17 @@
 namespace SuperV\Platform\Domains\Auth\Console;
 
 use SuperV\Platform\Contracts\Command;
-use SuperV\Platform\Domains\Auth\Account;
+use SuperV\Platform\Domains\Auth\Contracts\Users;
 
 class CreateUserCommand extends Command
 {
-    protected $signature = 'superv:create-user {email} {--role=user} {--account=1}';
+    protected $signature = 'superv:user {email} {--role=user}';
 
     protected $description = 'Create Platform User';
 
     public function handle()
     {
-        $account = Account::query()->findOrFail(($this->option('account')));
-
-        $user = $account->users()->create([
+        $user = app(Users::class)->create([
             'email'    => $this->argument('email'),
             'password' => bcrypt($this->ask('Enter user password')),
         ]);

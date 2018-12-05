@@ -13,7 +13,7 @@ class CreateUsersPrototype extends Migration
             $resource->resourceKey('user');
 
             $table->increments('id');
-            $table->belongsTo('sv_accounts', 'account')->nullable();
+            $table->nullableBelongsTo('sv_accounts', 'account');
             $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->string('password');
