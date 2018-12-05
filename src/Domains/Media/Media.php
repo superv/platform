@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Media;
 
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Entry;
 
 class Media extends Entry
@@ -43,5 +44,13 @@ class Media extends Entry
         $this->owner()->associate($owner);
 
         return $this;
+    }
+
+    public static function for(EntryContract $owner, $label = null)
+    {
+        return static::query()->where('owner_type', $owner->getMorphClass())
+                     ->where('owner_id', $owner->getId())
+                     ->when($label, function ($query, $label) { $query->where('label', $label); })
+                     ->first();
     }
 }
