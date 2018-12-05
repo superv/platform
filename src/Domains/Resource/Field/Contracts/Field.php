@@ -89,7 +89,7 @@ interface Field
      *
      * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
      */
-    public function copyToFilters(): Field;
+    public function copyToFilters(array $params = []): Field;
 
     /**
      * Set the display order for the field

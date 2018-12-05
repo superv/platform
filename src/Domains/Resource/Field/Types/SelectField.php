@@ -43,7 +43,7 @@ class SelectField extends FieldType implements NeedsDatabaseColumn, ProvidesFilt
         };
     }
 
-    public function makeFilter()
+    public function makeFilter(array $params = [])
     {
         return SelectFilter::make($this->getName(), $this->getLabel())
                            ->setOptions($this->getOptions());

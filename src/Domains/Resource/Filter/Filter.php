@@ -40,12 +40,15 @@ abstract class Filter implements FilterContract, ProvidesField
      * @var string
      */
     protected $label;
+
     /**
      * Filter placeholder
      *
      * @var string
      */
     protected $placeholder;
+
+    protected $defaultValue;
 
     /**
      * Resource the filter belongs to
@@ -64,7 +67,7 @@ abstract class Filter implements FilterContract, ProvidesField
         $this->boot();
     }
 
-    protected function boot() {}
+    protected function boot() { }
 
     public function apply($query, $value)
     {
@@ -78,32 +81,9 @@ abstract class Filter implements FilterContract, ProvidesField
         $query->where($this->getAttribute(), '=', $value);
     }
 
-    protected function applyRelationQuery($query, $slug, $value, $operator = '=', $method = 'whereHas')
-    {
-        list($relation, $column) = explode('.', $slug);
-        $query->{$method}($relation, function ( $query) use ($column, $value, $operator) {
-            $query->where($column, $operator, $value);
-        });
-    }
-
     public function getIdentifier()
     {
         return $this->identifier;
-    }
-
-    public function onFieldBuilt(Field $field) {}
-
-    public function makeField(): Field
-    {
-        $field = FieldFactory::createFromArray([
-            'type'        => $this->getType(),
-            'name'        => $this->getIdentifier(),
-            'placeholder' => $this->getPlaceholder(),
-        ]);
-
-        $this->fire('field.built', ['field' => $field]);
-
-        return $field;
     }
 
     public function getType()
@@ -114,6 +94,43 @@ abstract class Filter implements FilterContract, ProvidesField
     public function getPlaceholder()
     {
         return $this->placeholder ?? $this->getLabel();
+    }
+
+    public function setResource(Resource $resource): FilterContract
+    {
+        $this->resource = $resource;
+
+        return $this;
+    }
+
+    public function getLabel()
+    {
+        return $this->label ?? str_unslug($this->identifier);
+    }
+
+    protected function applyRelationQuery($query, $slug, $value, $operator = '=', $method = 'whereHas')
+    {
+        list($relation, $column) = explode('.', $slug);
+        $query->{$method}($relation, function ($query) use ($column, $value, $operator) {
+            $query->where($column, $operator, $value);
+        });
+    }
+
+    public function onFieldBuilt(Field $field) { }
+
+    public function makeField(): Field
+    {
+        $field = FieldFactory::createFromArray([
+            'type'        => $this->getType(),
+            'name'        => $this->getIdentifier(),
+            'placeholder' => $this->getPlaceholder(),
+            'value'       => $this->getDefaultValue(),
+
+        ]);
+
+        $this->fire('field.built', ['field' => $field]);
+
+        return $field;
     }
 
     public function getAttribute()
@@ -128,16 +145,16 @@ abstract class Filter implements FilterContract, ProvidesField
         return $this;
     }
 
-    public function setResource(Resource $resource): FilterContract
+    public function getDefaultValue()
     {
-        $this->resource = $resource;
-
-        return $this;
+        return $this->defaultValue;
     }
 
-    public function getLabel()
+    public function setDefaultValue($defaultValue)
     {
-        return $this->label ?? str_unslug($this->identifier);
+        $this->defaultValue = $defaultValue;
+
+        return $this;
     }
 
     public static function make($identifier = null, $label = null)

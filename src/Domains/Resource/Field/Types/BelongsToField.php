@@ -120,12 +120,13 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
 //        );
     }
 
-    public function makeFilter()
+    public function makeFilter(array $params = [])
     {
         $this->buildOptions();
 
-        return SelectFilter::make($this->getName(), 'Select '.$this->resource->getSingularLabel())
+        return SelectFilter::make($this->getName(), $this->resource->getSingularLabel())
                            ->setAttribute($this->getColumnName())
-                           ->setOptions($this->options);
+                           ->setOptions($this->options)
+                           ->setDefaultValue($params['default_value'] ?? null);
     }
 }

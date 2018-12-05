@@ -76,14 +76,15 @@ class Fields
 
     public function getFilters(): Collection
     {
-        $filters = $this->fields->filter(function (Field $field) {
-            return $field->hasFlag('filter');
-        })->map(function (Field $field) {
-            $fieldType = $field->resolveFieldType();
-            if ($fieldType instanceof ProvidesFilter) {
-                return $fieldType->makeFilter();
-            }
-        });
+        $filters = $this->fields
+            ->filter(function (Field $field) {
+                return $field->hasFlag('filter');
+            })->map(function (Field $field) {
+                $fieldType = $field->resolveFieldType();
+                if ($fieldType instanceof ProvidesFilter) {
+                    return $fieldType->makeFilter($field->getConfigValue('filter'));
+                }
+            });
 
         return $filters->filter();
     }

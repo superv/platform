@@ -23,7 +23,7 @@ class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter
         );
     }
 
-    public function makeFilter()
+    public function makeFilter(array $params = [])
     {
         $resource = sv_resource($this->getRelationConfig()->getRelatedResource());
         $options = $resource->newQuery()->get()->map(function (EntryContract $entry) use ($resource) {

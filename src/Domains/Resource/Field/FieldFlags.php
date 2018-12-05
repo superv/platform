@@ -65,11 +65,6 @@ trait FieldFlags
         return $this->hasFlag('filter');
     }
 
-    public function copyToFilters(): Field
-    {
-        return $this->addFlag('filter');
-    }
-
     public function isVisible(): bool
     {
         return ! $this->isHidden();

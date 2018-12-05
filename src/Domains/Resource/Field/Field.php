@@ -203,6 +203,15 @@ class Field implements FieldContract
         return new $class($this);
     }
 
+    public function copyToFilters(array $params = []): FieldContract
+    {
+        if ($params) {
+            $this->setConfigValue('filter', $params);
+        }
+
+        return $this->addFlag('filter');
+    }
+
     public function displayOrder($order): FieldContract
     {
         return $this->setConfigValue('sort_order', $order);
