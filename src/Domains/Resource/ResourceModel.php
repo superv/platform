@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
@@ -23,7 +22,7 @@ class ResourceModel extends Entry implements ProvidesFields
         parent::boot();
 
         static::creating(function (ResourceModel $entry) {
-            $entry->attributes['uuid'] = Str::orderedUuid()->toString();
+            $entry->attributes['uuid'] = uuid();
         });
 
         static::deleting(function (ResourceModel $entry) {

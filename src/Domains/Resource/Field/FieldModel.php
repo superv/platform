@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
 class FieldModel extends ResourceEntry
@@ -24,7 +23,7 @@ class FieldModel extends ResourceEntry
         parent::boot();
 
         static::creating(function (Model $model) {
-            $model->attributes['uuid'] = Str::orderedUuid()->toString();
+            $model->attributes['uuid'] = uuid();
         });
     }
 

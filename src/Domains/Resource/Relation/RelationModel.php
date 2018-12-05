@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Relation;
 
-use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
@@ -19,7 +18,7 @@ class RelationModel extends Entry
         parent::boot();
 
         static::creating(function (RelationModel $entry) {
-            $entry->attributes['uuid'] = Str::orderedUuid()->toString();
+            $entry->attributes['uuid'] = uuid();
         });
     }
 
