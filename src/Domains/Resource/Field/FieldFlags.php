@@ -30,6 +30,11 @@ trait FieldFlags
         return $this->addFlag('table.show');
     }
 
+    public function hideOnForms(): Field
+    {
+        return $this->addFlag('form.hide');
+    }
+
     public function hide()
     {
         return $this->addFlag('hidden');

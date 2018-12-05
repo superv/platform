@@ -71,6 +71,13 @@ interface Field
     public function setPresenter(Closure $callback);
 
     /**
+     * Add a flag to hide the field on forms
+     *
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+     */
+    public function hideOnForms(): Field;
+
+    /**
      * Add a flag to show the field on index table
      *
      * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
@@ -85,7 +92,7 @@ interface Field
     public function copyToFilters(): Field;
 
     /**
-     * Set a display order for the field
+     * Set the display order for the field
      *
      * @param $order
      * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field

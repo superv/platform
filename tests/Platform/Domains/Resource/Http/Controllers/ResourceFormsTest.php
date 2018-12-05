@@ -6,6 +6,7 @@ use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Resource;
 use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -30,7 +31,6 @@ class ResourceFormsTest extends ResourceTestCase
         $this->assertEquals(7, $form->countProp('fields'));
 
         $fields = collect($form->getProp('fields'))->keyBy('name');
-
 
         $group = $fields->get('group');
         $this->assertEquals('belongs_to', $group['type']);
@@ -184,6 +184,19 @@ class ResourceFormsTest extends ResourceTestCase
             ['email', 'group_id'],
             array_keys($response->decodeResponseJson('errors'))
         );
+    }
+
+    function test__fields_that_should_not_show_up()
+    {
+        $users = $this->create('t_some', function (Blueprint $table) {
+            $table->increments('id');
+            $table->createdBy()->updatedBy();
+            $table->restorable();
+        });
+
+        $form = FormConfig::make($users)->makeForm();
+
+        $this->assertEquals(0, count($form->compose()->get('fields')));
     }
 
     /**

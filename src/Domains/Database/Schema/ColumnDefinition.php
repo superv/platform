@@ -106,6 +106,11 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this->addFlag('header.show');
     }
 
+    public function hideOnForms()
+    {
+        return $this->addFlag('form.hide');
+    }
+
     public function addFlag($flag)
     {
         $flags = $this->flags;

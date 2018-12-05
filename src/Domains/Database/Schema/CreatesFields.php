@@ -80,8 +80,8 @@ trait CreatesFields
 
     public function createdBy(): self
     {
-        $this->nullableBelongsTo('users', 'created_by')->addFlag('form.hide');
-        $this->timestamp('created_at')->nullable()->addFlag('form.hide');
+        $this->nullableBelongsTo('users', 'created_by')->hideOnForms();
+        $this->timestamp('created_at')->nullable()->hideOnForms();
 
         return $this;
     }
@@ -89,13 +89,13 @@ trait CreatesFields
     public function restorable()
     {
         $this->resourceBlueprint()->restorable(true);
-        $this->timestamp('deleted_at')->nullable();
+        $this->timestamp('deleted_at')->nullable()->hideOnForms();
     }
 
     public function updatedBy(): self
     {
-        $this->nullableBelongsTo('users', 'updated_by')->addFlag('form.hide');
-        $this->timestamp('updated_at')->nullable()->addFlag('form.hide');
+        $this->nullableBelongsTo('users', 'updated_by')->hideOnForms();
+        $this->timestamp('updated_at')->nullable()->hideOnForms();
 
         return $this;
     }
