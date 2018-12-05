@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class NavigationTest extends ResourceTestCase
+class NavTest extends ResourceTestCase
 {
     protected function setUp()
     {
