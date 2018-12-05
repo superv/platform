@@ -15,7 +15,7 @@ class Text extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
         }
     }
 
-    public function makeFilter(array $params = [])
+    public function makeFilter(?array $params = [])
     {
         return DistinctFilter::make($this->getName());
     }

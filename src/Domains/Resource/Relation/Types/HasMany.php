@@ -11,7 +11,6 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class HasMany extends Relation implements ProvidesTable, ProvidesForm
 {
@@ -41,21 +40,12 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
                         ModalAction::make('New '.str_singular(str_unslug($this->getName())))
                                    ->setModalUrl($this->route('create', $this->parentEntry))
                     );
-//        return app(ResourceTable::class)
-//            ->setResource($this->getRelatedResource())
-//            ->setQuery($this)
-//            ->addAction(ViewEntryAction::class)
-//            ->setDataUrl(url()->current().'/data')
-//            ->addContextAction(
-//                ModalAction::make('New '.str_singular(str_unslug($this->getName())))
-//                           ->setModalUrl($this->route('create', $this->parentEntry))
-//            );
     }
 
     public function makeForm(): Form
     {
         return FormConfig::make($this->newQuery()->make())
-                         ->hideField(ResourceFactory::make($this->parentEntry)->getResourceKey().'_id')
+                         ->hideField(sv_resource($this->parentEntry)->getResourceKey().'_id')
                          ->makeForm();
     }
 

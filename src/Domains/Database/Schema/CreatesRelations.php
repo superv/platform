@@ -69,7 +69,7 @@ trait CreatesRelations
         return $this->morphTo($relationName)->nullable();
     }
 
-    public function morphTo($relationName)
+    public function morphTo($relationName): ColumnDefinition
     {
          return $this->addColumn(null, $relationName, ['nullable' => true])
              ->relation(Config::morphTo()->relationName($relationName));

@@ -19,7 +19,7 @@ class ResourceIndexController extends BaseApiController
 
         $page = Page::make($resource->getLabel());
         $page->addBlock(sv_loader($resource->route('index.table')));
-        $page->addAction(CreateEntryAction::make());
+        $page->addAction(CreateEntryAction::make('New '.$resource->getSingularLabel()));
 
         if ($callback = $resource->getCallback('index.page')) {
             app()->call($callback, ['page' => $page]);

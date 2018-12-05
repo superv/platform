@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Support\Composer\Payload;
 
-class File extends FieldType implements DoesNotInteractWithTable
+class FileField extends FieldType implements DoesNotInteractWithTable
 {
     protected $requestFile;
 
@@ -17,7 +17,9 @@ class File extends FieldType implements DoesNotInteractWithTable
     {
         $bag = new MediaBag($entry, $label);
 
-        return $bag->media()->where('label', $label)->latest()->first();
+        $query = $bag->media()->where('label', $label)->latest();
+
+        return $query->first();
     }
 
     protected function composer()

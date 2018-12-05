@@ -16,8 +16,7 @@ use SuperV\Platform\Domains\Addon\Listeners\AddonInstalledListener;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
 use SuperV\Platform\Domains\Database\Model\Listener;
-use SuperV\Platform\Domains\Navigation\AddonNavigationCollector;
-use SuperV\Platform\Domains\Navigation\Collector;
+use SuperV\Platform\Domains\Resource\Extension\RegisterExtensionsInPath;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Exceptions\PlatformExceptionHandler;
 use SuperV\Platform\Providers\BaseServiceProvider;
@@ -25,10 +24,6 @@ use SuperV\Platform\Providers\TwigServiceProvider;
 
 class PlatformServiceProvider extends BaseServiceProvider
 {
-    protected $_bindings = [
-        Collector::class => AddonNavigationCollector::class,
-    ];
-
     protected $providers = [
         Providers\ThemeServiceProvider::class,
         Adapters\AdapterServiceProvider::class,
@@ -143,6 +138,8 @@ class PlatformServiceProvider extends BaseServiceProvider
         \Route::pattern('id', '[0-9]+');
 
         Listener::listen();
+
+        RegisterExtensionsInPath::dispatch(realpath(__DIR__.'/Extensions'), 'SuperV\Platform\Extensions');
     }
 
     protected function registerMigrationScope(): void

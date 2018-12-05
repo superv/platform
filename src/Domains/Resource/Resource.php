@@ -251,7 +251,9 @@ class Resource implements
             $filters->push($relation->makeFilter());
         });
 
-        $this->fields()->getFilters()->map(function (Filter $filter) use ($filters) {
+        $this->fields()
+             ->getFilters()
+             ->map(function (Filter $filter) use ($filters) {
             $filters->push($filter->setResource($this));
         });
 

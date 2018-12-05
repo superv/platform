@@ -2,11 +2,10 @@
 
 namespace SuperV\Platform\Domains\Auth;
 
-use SuperV\Platform\Domains\Database\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class Profile extends Entry
+class Profile extends ResourceEntry
 {
     protected $table = 'user_profiles';
 
-    protected $guarded = [];
 }

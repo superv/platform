@@ -120,7 +120,7 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
 //        );
     }
 
-    public function makeFilter(array $params = [])
+    public function makeFilter(?array $params = [])
     {
         $this->buildOptions();
 
