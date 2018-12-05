@@ -21,9 +21,11 @@ class Blueprints
         $table->text('config')->nullable();
 
         if ($table instanceof Blueprint) {
-            $resource->label('Platform Resources');
+            $resource->label('Resources');
+            $resource->resourceKey('resource');
             $table->hasMany('sv_fields', 'fields');
             $table->hasMany('sv_relations', 'relations');
+            $table->hasMany('sv_activities', 'activities');
         }
         $table->boolean('restorable')->default(false);
 
@@ -114,16 +116,18 @@ class Blueprints
             $resource->nav('acp.management.system');
             $resource->label('Resource Activity');
 
+            $table->belongsTo('sv_resources', 'resource')->showOnIndex();
             $table->belongsTo('users', 'user')->showOnIndex();
             $table->nullableMorphTo('entry')->showOnIndex();
+            $table->dictionary('payload');
         } else {
             $table->unsignedInteger('user_id');
+            $table->unsignedInteger('resource_id');
             $table->nullableMorphs('entry');
+            $table->text('payload')->nullable();
         }
 
         $table->string('activity')->entryLabel();
-//        $table->text('data');
-
         $table->timestamp('created_at')->showOnIndex();
     }
 
