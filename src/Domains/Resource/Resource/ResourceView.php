@@ -95,9 +95,7 @@ class ResourceView implements ProvidesUIComponent
                                 'actions'  => $this->getActions(),
                             ],
 
-                            'fields' => $this->resource->fields()->keyByName()->map(function (Field $field) {
-                                return (new FieldComposer($field))->forView($this->entry);
-                            }),
+                            'fields' => $this->getFieldsForView(),
 
                         ]);
     }
@@ -124,6 +122,18 @@ class ResourceView implements ProvidesUIComponent
         $this->actions[] = $action;
 
         return $this;
+    }
+
+    protected function getFieldsForView()
+    {
+        return $this->resource->fields()
+                              ->keyByName()
+                              ->filter(function (Field $field) {
+                                  return ! in_array($field->getName(), ['deleted_at']);
+                              })
+                              ->map(function (Field $field) {
+                                  return (new FieldComposer($field))->forView($this->entry);
+                              });
     }
 }
 
