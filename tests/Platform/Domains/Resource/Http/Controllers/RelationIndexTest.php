@@ -118,8 +118,8 @@ class RelationIndexTest extends ResourceTestCase
         //
         $this->assertNotNull($rows[0]['fields'][1] ?? null);
 
-        $this->assertEquals('note-1', $rows[0]['fields'][1]['value']);
-        $this->assertEquals('note-2', $rows[1]['fields'][1]['value']);
+        $this->assertEquals('note-2', $rows[0]['fields'][1]['value']);
+        $this->assertEquals('note-1', $rows[1]['fields'][1]['value']);
     }
 
     function test__index_listing_with_morph_to_many_relations()
@@ -169,8 +169,8 @@ class RelationIndexTest extends ResourceTestCase
         //
         $this->assertNotNull($rows[0]['fields'][1] ?? null);
 
-        $this->assertEquals('pass', $rows[0]['fields'][1]['value']);
+        $this->assertEquals('fail', $rows[0]['fields'][1]['value']);
         $this->assertEquals('fail', $rows[1]['fields'][1]['value']);
-        $this->assertEquals('fail', $rows[2]['fields'][1]['value']);
+        $this->assertEquals('pass', $rows[2]['fields'][1]['value']);
     }
 }

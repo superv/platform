@@ -71,8 +71,8 @@ class ResourceIndexTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
         $users = $this->schema()->users();
-        $userA = $users->fake(['group_id' => 1]);
         $userB = $users->fake(['group_id' => 2]);
+        $userA = $users->fake(['group_id' => 1]);
 
         $rows = $this->getTableRowsOfResource($users);
         $this->assertEquals(2, count($rows));
