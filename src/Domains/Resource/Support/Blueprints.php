@@ -23,6 +23,8 @@ class Blueprints
         if ($table instanceof Blueprint) {
             $resource->label('Resources');
             $resource->resourceKey('resource');
+            $resource->nav('acp.platform.system');
+
             $table->hasMany('sv_fields', 'fields');
             $table->hasMany('sv_relations', 'relations');
             $table->hasMany('sv_activities', 'activities');
@@ -41,20 +43,27 @@ class Blueprints
         $table->uuid('uuid');
 
         if ($table instanceof Blueprint) {
-            $resource->label('Resource Fields');
+            $resource->label('Fields');
+            $resource->resourceKey('field');
+            $resource->nav('acp.platform.system');
+
             $table->belongsTo('sv_resources', 'resource');
             $table->morphOne('sv_meta', 'configMeta', 'owner');
+
+            $table->text('flags')->fieldType('array')->nullable();
+            $table->dictionary('rules')->nullable();
+            $table->dictionary('config')->nullable();
         } else {
             $table->unsignedInteger('resource_id');
+
+            $table->text('flags')->nullable();
+            $table->text('rules')->nullable();
+            $table->text('config')->nullable();
         }
 
         $table->string('name');
         $table->string('column_type')->nullable();
         $table->string('type');
-
-        $table->text('flags')->nullable();
-        $table->text('rules')->nullable();
-        $table->text('config')->nullable();
 
         $table->timestamps();
     }
@@ -67,15 +76,20 @@ class Blueprints
         $table->increments('id');
         $table->uuid('uuid');
         if ($table instanceof Blueprint) {
+            $resource->label('Relations');
+            $resource->resourceKey('relation');
+            $resource->nav('acp.platform.system');
+
             $table->belongsTo('sv_resources', 'resource');
-            $resource->label('Resource Relations');
+            $table->dictionary('config')->nullable();
         } else {
             $table->unsignedInteger('resource_id');
+            $table->text('config')->nullable();
         }
 
         $table->string('name');
         $table->string('type');
-        $table->text('config')->nullable();
+
 
         $table->timestamps();
     }
@@ -87,7 +101,9 @@ class Blueprints
     {
         $table->increments('id');
         if ($table instanceof Blueprint) {
-            $resource->label('Resource Navigation');
+            $resource->label('Navigation');
+            $resource->resourceKey('nav');
+            $resource->nav('acp.platform.system');
 
             $table->nullableBelongsTo('sv_navigation', 'parent');
             $table->nullableBelongsTo('sv_resources', 'resource');
@@ -113,7 +129,7 @@ class Blueprints
     {
         $table->increments('id');
         if ($table instanceof Blueprint) {
-            $resource->nav('acp.management.system');
+            $resource->nav('acp.platform.system');
             $resource->label('Resource Activity');
 
             $table->belongsTo('sv_resources', 'resource')->showOnIndex();
