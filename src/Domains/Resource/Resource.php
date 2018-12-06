@@ -196,21 +196,30 @@ class Resource implements
 
     public function route($route, ?EntryContract $entry = null)
     {
-        $base = 'sv/api/res/'.$this->getHandle();
+        $base = 'sv/res/'.$this->getHandle();
+        $apiBase = 'sv/api/res/'.$this->getHandle();
         if ($route === 'create') {
-            return $base.'/create';
+            return $apiBase.'/create';
         }
 
         if ($route === 'index.table') {
-            return $base.'/table';
+            return $apiBase.'/table';
         }
 
-        if ($route === 'index' || $route === 'store') {
+        if ($route === 'index') {
             return $base;
         }
 
-        if ($route === 'view' || $route === 'edit') {
+        if ($route === 'store') {
+            return $apiBase;
+        }
+
+        if ($route === 'view') {
             return $base.'/'.$entry->getId().'/'.$route;
+        }
+
+        if ($route === 'edit') {
+            return $apiBase.'/'.$entry->getId().'/'.$route;
         }
     }
 

@@ -100,23 +100,6 @@ class ResourceView implements ProvidesUIComponent
                         ]);
     }
 
-    public function getHeading_Xxxxxxxxxxx()
-    {
-        if ($this->headingResolver) {
-            $callback = Closure::bind($this->headingResolver, $this, get_class());
-
-            return app()->call($callback, ['entry' => $this->entry, 'resource' => $this->resource]);
-        }
-
-        $label = $this->resource->getEntryLabel($this->entry);
-
-        return Component::make($this->resource->getConfigValue('view.header', 'sv-header'))
-                        ->addClass('p-2')->card()
-                        ->setProp('image-url', '')
-                        ->setProp('header', $label)
-                        ->setProp('actions', $this->getActions());
-    }
-
     public function addAction(array $action): ResourceView
     {
         $this->actions[] = $action;
@@ -137,6 +120,24 @@ class ResourceView implements ProvidesUIComponent
     }
 }
 
+
+//
+//public function getHeading_Xxxxxxxxxxx()
+//{
+//    if ($this->headingResolver) {
+//        $callback = Closure::bind($this->headingResolver, $this, get_class());
+//
+//        return app()->call($callback, ['entry' => $this->entry, 'resource' => $this->resource]);
+//    }
+//
+//    $label = $this->resource->getEntryLabel($this->entry);
+//
+//    return Component::make($this->resource->getConfigValue('view.header', 'sv-header'))
+//                    ->addClass('p-2')->card()
+//                    ->setProp('image-url', '')
+//                    ->setProp('header', $label)
+//                    ->setProp('actions', $this->getActions());
+//}
 
 //        return RowComponent::make()
 //                           ->addClass('p-8 h-32')->card()

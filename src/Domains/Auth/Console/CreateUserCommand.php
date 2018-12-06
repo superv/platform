@@ -20,6 +20,8 @@ class CreateUserCommand extends Command
 
         $user->assign($this->option('role'));
 
+        $user->allow('*');
+
         $this->comment("User created with ID: {$user->id}");
     }
 }
