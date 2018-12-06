@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Auth\Contracts\Users;
 
 class CreateUserCommand extends Command
 {
-    protected $signature = 'superv:user {email} {--role=user}';
+    protected $signature = 'superv:user {email} {--role=user} {--password=}';
 
     protected $description = 'Create Platform User';
 
@@ -15,7 +15,7 @@ class CreateUserCommand extends Command
     {
         $user = app(Users::class)->create([
             'email'    => $this->argument('email'),
-            'password' => bcrypt($this->ask('Enter user password')),
+            'password' => bcrypt($this->option('password') ?? $this->ask('Enter user password')),
         ]);
 
         $user->assign($this->option('role'));
