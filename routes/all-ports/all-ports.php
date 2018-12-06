@@ -5,16 +5,22 @@ use SuperV\Platform\Http\Controllers\AuthController;
 use SuperV\Platform\Http\Controllers\DataController;
 
 return [
-    'data/init'   => DataController::class.'@init',
-    'data/nav'    => DataController::class.'@nav',
-    'data/navold' => DataController::class.'@navold',
-    'post@login'  => [
+
+    'superv{path}' => [
+        'uses'  => function () {
+            return view('superv::spa');
+        },
+        'where' => ['path' => '.*'],
+    ],
+    'data/init'    => DataController::class.'@init',
+    'data/nav'     => DataController::class.'@nav',
+    'data/navold'  => DataController::class.'@navold',
+    'post@login'   => [
         'uses' => AuthController::class.'@login',
     ],
-    'platform'    => function () {
+    'platform'     => function () {
         return 'SuperV Platform @'.Current::port()->slug();
     },
-
 
     'GET@'.'sv/wake/{uuid}' => WakeupController::at('get'),
 ];

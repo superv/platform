@@ -29,6 +29,9 @@ class Action
     /** @var array */
     protected $middleware = [];
 
+    /** @var array */
+    protected $where = [];
+
     public function build()
     {
         if (str_contains($this->uri, '@')) {
@@ -95,6 +98,7 @@ class Action
             'domain'     => $this->domain,
             'prefix'     => $this->prefix,
             'middleware' => $this->middleware,
+            'where'      => $this->where,
         ]);
     }
 
