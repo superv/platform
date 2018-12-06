@@ -36,13 +36,13 @@ class CreateResource
                 Section::createFromString($handle = $nav.'.'.$this->table);
                 $section = Section::get($handle);
                 $section->update([
-                    'url'    => 'sv/res/'.$this->table,
+                    'url'    => 'sv/api/res/'.$this->table,
                     'title'  => $this->blueprint->label,
                     'handle' => str_slug($this->blueprint->label, '_'),
                 ]);
             } elseif (is_array($nav)) {
                 if (! isset($nav['url'])) {
-                    $nav['url'] = 'sv/res/'.$this->table;
+                    $nav['url'] = 'sv/api/res/'.$this->table;
                 }
                 Section::createFromArray($nav);
             }

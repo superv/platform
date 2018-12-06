@@ -10,39 +10,39 @@ return [
     /**
      * Resource Management
      */
-    'GET@'.'sv/res/{resource}/create'    => ResourceController::at('create'),
-    'GET@'.'sv/res/{resource}/{id}/edit' => ResourceController::at('edit'),
+    'GET@'.'sv/api/res/{resource}/create'    => ResourceController::at('create'),
+    'GET@'.'sv/api/res/{resource}/{id}/edit' => ResourceController::at('edit'),
 
-    'sv/res/{resource}/{id}/view' => [
+    'sv/api/res/{resource}/{id}/view' => [
         'as'   => 'resource.view',
         'uses' => ResourceViewController::class,
     ],
 
-    'POST@'.'sv/res/{resource}/{id}' => [
+    'POST@'.'sv/api/res/{resource}/{id}' => [
         'as'   => 'resource.update',
         'uses' => ResourceUpdateController::class,
     ],
 
-    'POST@'.'sv/res/{resource}' => [
+    'POST@'.'sv/api/res/{resource}' => [
         'as'   => 'resource.create',
         'uses' => ResourceCreateController::class,
     ],
 
-    'GET@'.'sv/res/{resource}' => [
+    'GET@'.'sv/api/res/{resource}' => [
         'as'   => 'resource.index',
         'uses' => ResourceIndexController::at('page'),
     ],
 
-    'GET@'.'sv/res/{resource}/table/{data?}' => [
+    'GET@'.'sv/api/res/{resource}/table/{data?}' => [
         'as'   => 'resource.index.table',
         'uses' => ResourceIndexController::at('table'),
     ],
 
-    'GET@'.'sv/res/{resource}/table/actions/{action}' => [
+    'GET@'.'sv/api/res/{resource}/table/actions/{action}' => [
         'uses' => ResourceIndexController::at('tableAction'),
     ],
 
-    'POST@'.'sv/res/{resource}/table/actions/{action}' => [
+    'POST@'.'sv/api/res/{resource}/table/actions/{action}' => [
         'uses' => ResourceIndexController::at('tableActionPost'),
     ],
 ];

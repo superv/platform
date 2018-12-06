@@ -161,7 +161,7 @@ class ResourceEntry extends Entry
 
     public function route($route)
     {
-        $base = 'sv/res/'.$this->getHandle();
+        $base = 'sv/api/res/'.$this->getHandle();
         if ($route === 'update') {
             return $base.'/'.$this->getId();
         }

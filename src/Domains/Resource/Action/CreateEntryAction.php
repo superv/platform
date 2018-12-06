@@ -14,7 +14,7 @@ class CreateEntryAction extends Action
 
     public function onComposed(Payload $payload)
     {
-        $payload->set('url', 'sv/res/{res.handle}/create');
+        $payload->set('url', 'sv/api/res/{res.handle}/create');
         $payload->set('button.color', 'green');
     }
 }

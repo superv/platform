@@ -196,7 +196,7 @@ class Resource implements
 
     public function route($route, ?EntryContract $entry = null)
     {
-        $base = 'sv/res/'.$this->getHandle();
+        $base = 'sv/api/res/'.$this->getHandle();
         if ($route === 'create') {
             return $base.'/create';
         }

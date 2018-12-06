@@ -24,7 +24,7 @@ class WatchActivity
 
         $uri = ltrim(Current::requestPath(), '/');
 
-        if (starts_with($uri, 'sv/res/')) {
+        if (starts_with($uri, 'sv/api/res/')) {
             ResourceActivityEvent::dispatch($request);
         }
 

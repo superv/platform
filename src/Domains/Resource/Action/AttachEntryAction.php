@@ -44,7 +44,7 @@ class AttachEntryAction extends Action
         return $this->relation->route('lookup', $this->relation->getParentEntry());
 
         return sprintf(
-            'sv/res/%s/%s/%s/lookup',
+            'sv/api/res/%s/%s/%s/lookup',
             $this->relation->getParentResourceHandle(),
             $this->relation->getParentEntry()->getId(),
             $this->relation->getName()
@@ -56,7 +56,7 @@ class AttachEntryAction extends Action
         return $this->relation->route('attach', $this->relation->getParentEntry());
 
         return sprintf(
-            'sv/res/%s/%s/%s/attach',
+            'sv/api/res/%s/%s/%s/attach',
             $this->relation->getParentResourceHandle(),
             $this->relation->getParentEntry()->getId(),
             $this->relation->getName()

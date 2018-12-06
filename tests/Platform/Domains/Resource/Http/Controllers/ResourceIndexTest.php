@@ -62,7 +62,7 @@ class ResourceIndexTest extends ResourceTestCase
             $this->assertEquals([
                 'name'  => 'view',
                 'title' => 'View',
-                'url'   => 'sv/res/t_users/{entry.id}/view',
+                'url'   => 'sv/api/res/t_users/{entry.id}/view',
             ], $rowActions[0]['props']);
         }
     }
