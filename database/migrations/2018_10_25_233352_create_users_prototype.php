@@ -11,6 +11,7 @@ class CreateUsersPrototype extends Migration
     {
         Schema::run('users', function (Blueprint $table, ResourceBlueprint $resource) {
             $resource->resourceKey('user');
+            $resource->nav('acp.platform.auth');
 
             $table->increments('id');
             $table->nullableBelongsTo('sv_accounts', 'account');

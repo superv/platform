@@ -10,6 +10,7 @@ class CreateRolesTable extends Migration
     {
         Schema::create('auth_roles', function (Blueprint $table) {
             $table->resourceBlueprint()->label('Roles');
+            $table->resourceBlueprint()->nav('acp.platform.auth');
 
             $table->increments('id');
             $table->string('slug')->unique();
@@ -24,6 +25,7 @@ class CreateRolesTable extends Migration
 
         Schema::create('auth_assigned_roles', function (Blueprint $table) {
             $table->resourceBlueprint()->label('Assigned Roles');
+
             $table->increments('id');
             $table->morphTo('owner');
             $table->unsignedInteger('role_id');
@@ -33,6 +35,7 @@ class CreateRolesTable extends Migration
 
         Schema::create('auth_actions', function (Blueprint $table) {
             $table->resourceBlueprint()->label('Actions');
+            $table->resourceBlueprint()->nav('acp.platform.auth');
 
             $table->increments('id');
             $table->string('slug')->unique();
