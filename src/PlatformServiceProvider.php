@@ -82,7 +82,9 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->registerCollectionMacros();
 
-//        $this->app->extend('url', function () { return app(Domains\Routing\UrlGenerator::class); });
+        $this->addViewNamespaces([
+            'superv' => __DIR__.'/../resources/views',
+        ]);
 
         event('platform.registered');
     }
@@ -123,6 +125,8 @@ class PlatformServiceProvider extends BaseServiceProvider
         if ($this->app->runningInConsole()) {
             $this->registerMigrationScope();
             $this->publishConfig();
+            $this->publishViews();
+            $this->publishAssets();
         }
 
         if (! Platform::isInstalled()) {
@@ -154,6 +158,20 @@ class PlatformServiceProvider extends BaseServiceProvider
         $target = $this->app->basePath().'/config/superv.php';
 
         $this->publishes([$stub => $target], 'superv.config');
+    }
+
+    protected function publishViews()
+    {
+        $this->publishes([
+            __DIR__.'/../resources/views' => resource_path('views/vendor/superv'),
+        ], 'superv.views');
+    }
+
+    protected function publishAssets()
+    {
+        $this->publishes([
+            __DIR__.'/../resources/assets' => public_path('vendor/superv'),
+        ], 'superv.assets');
     }
 
     protected function registerPlatformRoutes(): void

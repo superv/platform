@@ -19,6 +19,8 @@ class SuperVInstallCommand extends Command
         $this->setEnv('SV_INSTALLED=true');
 
         $this->call('vendor:publish', ['--tag' => 'superv.config']);
+        $this->call('vendor:publish', ['--tag' => 'superv.views']);
+        $this->call('vendor:publish', ['--tag' => 'superv.assets']);
 
         $this->call('jwt:secret', ['--force' => true]);
 
