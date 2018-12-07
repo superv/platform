@@ -1741,7 +1741,7 @@ function o(e){return getComputedStyle(e)}function r(e,t){for(var n in t){var o=t
 /*!***********************!*\
   !*** ./src/routes.js ***!
   \***********************/
-/*! exports provided: default */function(e,t,n){"use strict";n.r(t);var o=n(/*! ./pages/SvLogin */"./src/pages/SvLogin.vue"),r=n(/*! ./pages/SvDashboard */"./src/pages/SvDashboard.vue");t["default"]=[{path:"/sv/res/*path",component:"SvLoader",props:({path:e})=>{return{url:`sv/api/res/${e}`}}},{path:"/sv/pag/*path",component:"SvLoader",props:({path:e})=>{return{url:`sv/api/pag/${e}`}}},{path:"/login",meta:{layout:"blank"},before:e=>{if(!e.auth.loggedIn)return!0;e.router.push("/")},component:o["default"]},{path:"/",component:r["default"]}]},"./src/stores/store.js":
+/*! exports provided: default */function(e,t,n){"use strict";n.r(t);var o=n(/*! ./pages/SvLogin */"./src/pages/SvLogin.vue"),r=n(/*! ./pages/SvDashboard */"./src/pages/SvDashboard.vue");t["default"]=[{path:"/sv/res/*path",component:"SvLoader",props:({path:e})=>{return{url:`sv/res/${e}`}}},{path:"/sv/pag/*path",component:"SvLoader",props:({path:e})=>{return{url:`sv/api/pag/${e}`}}},{path:"/login",meta:{layout:"blank"},before:e=>{if(!e.auth.loggedIn)return!0;e.router.push("/")},component:o["default"]},{path:"/",component:r["default"]}]},"./src/stores/store.js":
 /*!*****************************!*\
   !*** ./src/stores/store.js ***!
   \*****************************/

@@ -15,7 +15,7 @@ class ResourceFormsTest extends ResourceTestCase
 {
     use FieldTestHelper;
 
-    protected $handleExceptions = false;
+    protected $handleExceptions = true;
 
     function test__displays_create_form()
     {
@@ -161,7 +161,7 @@ class ResourceFormsTest extends ResourceTestCase
             'email'    => 'ali@superv.io',
             'group_id' => 1,
         ];
-        $response = $this->postJsonUser($this->getCreateRoute($users), $post);
+        $response = $this->postJsonUser($users->route('store'), $post);
         $response->assertOk();
 
         $user = $users->first();
@@ -179,7 +179,7 @@ class ResourceFormsTest extends ResourceTestCase
             'name'  => 'Ali Selcuk',
             'email' => 'ali@superv.io',
         ];
-        $response = $this->postJsonUser($this->getCreateRoute($users), $post);
+        $response = $this->postJsonUser($users->route('store'), $post);
         $response->assertStatus(422);
 
         $this->assertEquals(

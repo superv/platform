@@ -1,31 +1,36 @@
 <?php
 
-use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
-use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceCreateController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceFormController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceIndexController;
-use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceUpdateController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceViewController;
 
 return [
     /**
      * Resource Management
      */
-    'GET@'.'sv/res/{resource}/create'    => ResourceController::at('create'),
-    'GET@'.'sv/res/{resource}/{id}/edit' => ResourceController::at('edit'),
+    'GET@'.'sv/res/{resource}/create' => [
+        'as'   => 'resource.create',
+        'uses' => ResourceFormController::at('create'),
+    ],
 
-    'sv/res/{resource}/{id}/view' => [
-        'as'   => 'resource.view',
-        'uses' => ResourceViewController::class,
+    'POST@'.'sv/res/{resource}' => [
+        'as'   => 'resource.store',
+        'uses' => ResourceFormController::at('store'),
+    ],
+
+    'GET@'.'sv/res/{resource}/{id}/edit' => [
+        'as'   => 'resource.edit',
+        'uses' => ResourceFormController::at('edit'),
     ],
 
     'POST@'.'sv/res/{resource}/{id}' => [
         'as'   => 'resource.update',
-        'uses' => ResourceUpdateController::class,
+        'uses' => ResourceFormController::at('update'),
     ],
 
-    'POST@'.'sv/res/{resource}' => [
-        'as'   => 'resource.create',
-        'uses' => ResourceCreateController::class,
+    'sv/res/{resource}/{id}/view' => [
+        'as'   => 'resource.view',
+        'uses' => ResourceViewController::class,
     ],
 
     'GET@'.'sv/res/{resource}' => [
