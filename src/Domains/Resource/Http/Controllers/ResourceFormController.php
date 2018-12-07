@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\UI\Page\Page;
@@ -16,7 +17,8 @@ class ResourceFormController extends BaseApiController
         $resource = $this->resolveResource();
         $form = FormConfig::make($resource->newEntryInstance())
                           ->setUrl($resource->route('store'))
-                          ->makeForm();
+                          ->makeForm()
+                          ->setResource($resource);
 
         if ($callback = $resource->getCallback('creating')) {
             app()->call($callback, ['form' => $form]);
@@ -32,12 +34,15 @@ class ResourceFormController extends BaseApiController
     {
         $resource = $this->resolveResource();
 
-        FormConfig::make($resource->newEntryInstance())
-                  ->makeForm()
-                  ->setRequest($this->request)
-                  ->save();
-
-        return response()->json([]);
+        return Form::forResource($resource)
+                   ->setRequest($this->request)
+                   ->save();
+//
+//        return response()->json([
+//            'data' => [
+//                'redirect_to' => $this->resource->route('view', $form->getDefaultEntry()),
+//            ],
+//        ]);
     }
 
     public function edit()
@@ -45,7 +50,9 @@ class ResourceFormController extends BaseApiController
         $resource = $this->resolveResource();
         $form = FormConfig::make($this->entry)
                           ->setUrl($this->entry->route('update'))
-                          ->makeForm();
+                          ->makeForm()
+                          ->setRequest($this->request)
+                          ->setResource($resource);
 
         if ($callback = $resource->getCallback('editing')) {
             app()->call($callback, ['form' => $form]);
@@ -56,18 +63,13 @@ class ResourceFormController extends BaseApiController
 
     public function update()
     {
-        $this->resolveResource();
+        $resource = $this->resolveResource();
 
-        FormConfig::make($this->entry)
-                  ->setUrl($this->entry->route('update'))
-                  ->makeForm()
-                  ->setRequest($this->request)
-                  ->save();
-
-        return response()->json([
-            'data' => [
-                'redirect_to' => $this->resource->route('index'),
-            ],
-        ]);
+        return FormConfig::make($this->entry)
+                         ->setUrl($this->entry->route('update'))
+                         ->makeForm()
+                         ->setResource($resource)
+                         ->setRequest($this->request)
+                         ->save();
     }
 }

@@ -33,6 +33,13 @@ class Payload implements Arrayable, Composable
         array_set($this->params, $key, $value);
     }
 
+    public function merge(array $params)
+    {
+        $this->params = array_merge($this->params, $params);
+
+        return $this;
+    }
+
     public function get($key = null)
     {
         if (is_null($key)) {

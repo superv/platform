@@ -4,22 +4,28 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Closure;
 use Exception;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Validator;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-class Form implements ProvidesUIComponent
+class Form implements ProvidesUIComponent, Responsable
 {
     use FiresCallbacks;
+
+    /** @var Resource */
+    protected $resource;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field[]|Collection
@@ -171,7 +177,7 @@ class Form implements ProvidesUIComponent
 
     public function compose(): Payload
     {
-        return FormComposer::make($this);
+        return FormComposer::make($this)->setRequest($this->request)->payload();
     }
 
     public function makeComponent(): ComponentContract
@@ -265,6 +271,7 @@ class Form implements ProvidesUIComponent
     {
         return $this->fields;
     }
+
     /**
      * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field[]|Collection
      */
@@ -318,6 +325,41 @@ class Form implements ProvidesUIComponent
         return $this->entries[$handle] ?? null;
     }
 
+    public function getDefaultEntry(): EntryContract
+    {
+        return $this->getEntryForHandle('default');
+    }
+
+    public function setResource(Resource $resource): Form
+    {
+        $this->resource = $resource;
+
+        return $this;
+    }
+
+    public function toResponse($request)
+    {
+        $action = $request->get('__form_action');
+
+        if ($action === 'view') {
+            $route = $this->resource->route('view', $this->getDefaultEntry());
+        } elseif ($action === 'create_another') {
+            $route = $this->resource->route('create');
+        } elseif ($action === 'edit_next') {
+            $next = $this->resource->newQuery()->where('id', '>', $this->getDefaultEntry()->getId())->first();
+            if ($next) {
+                $route = $this->resource->route('edit', $next).'?action=edit_next';
+            }
+        }
+
+        return response()->json([
+            'data' => [
+                'action'      => $action,
+                'redirect_to' => $route ?? $this->resource->route('index'),
+            ],
+        ]);
+    }
+
     public function uuid(): string
     {
         return $this->uuid;
@@ -326,5 +368,12 @@ class Form implements ProvidesUIComponent
     public static function make(FormConfig $config): Form
     {
         return new static($config);
+    }
+
+    public static function forResource(Resource $resource): Form
+    {
+        return FormConfig::make($resource->newEntryInstance())
+                         ->makeForm()
+                         ->setResource($resource);
     }
 }

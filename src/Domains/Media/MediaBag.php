@@ -113,7 +113,6 @@ class MediaBag
                 'extension'  => $extension,
                 'size'       => Storage::disk($diskName)->size($target),
             ]);
-            $media->owner()->associate($this->owner);
             $media->save();
 
             return $media;
