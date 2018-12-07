@@ -43,8 +43,8 @@ class FormTest extends ResourceTestCase
 
         $form = $config->makeForm();
         $this->assertInstanceOf(Form::class, $form);
-        $this->assertEquals(2, $form->getFields()->count());
-        $this->assertEquals($watcher, $form->getWatcher());
+        $this->assertEquals(2, $form->getFieldsFlat()->count());
+        $this->assertEquals($watcher, $form->getEntryForHandle());
         $this->assertEquals(['age'], $config->getHiddenFields());
     }
 
@@ -55,7 +55,7 @@ class FormTest extends ResourceTestCase
                             ->addGroup($fields = $this->makeFields());
 
         $form = $config->makeForm();
-        $this->assertEquals($fields, $form->getFields()->all());
+        $this->assertEquals($fields, $form->getFieldsFlat()->all());
         $this->assertEquals([
             'url'    => sv_url('url/to/form'),
             'method' => 'post',
@@ -133,7 +133,7 @@ class FormTest extends ResourceTestCase
         $this->assertEquals('Omar', $form->composeField('name', $testUser)->get('value'));
         $this->assertEquals(33, $form->composeField('age', $testUser)->get('value'));
 
-        $user = $form->getWatcher('default');
+        $user = $form->getEntryForHandle('default');
         $this->assertEquals('Omar', $user->name);
         $this->assertEquals(33, $user->age);
         $this->assertTrue($user->wasRecentlyCreated);
@@ -145,7 +145,7 @@ class FormTest extends ResourceTestCase
                           ->addGroup($fields = $this->makeFields(), $user = new FormTestUser, 'user')
                           ->makeForm();
 
-        $this->assertEquals($user, $form->getWatcher('user'));
+        $this->assertEquals($user, $form->getEntryForHandle('user'));
     }
 
     function test__resource_create_over_http()
@@ -189,11 +189,11 @@ class FormTest extends ResourceTestCase
         $this->assertEquals('Omar', $form->composeField($form->getField('name', 'test_user'), $user)->get('value'));
         $this->assertEquals('Khalifa', $form->composeField($form->getField('title', 'test_post'), $post)->get('value'));
 
-        $user = $form->getWatcher('test_user');
+        $user = $form->getEntryForHandle('test_user');
         $this->assertEquals('Omar', $user->name);
         $this->assertTrue($user->wasRecentlyCreated);
 
-        $post = $form->getWatcher('test_post');
+        $post = $form->getEntryForHandle('test_post');
         $this->assertEquals('Khalifa', $post->title);
         $this->assertTrue($post->wasRecentlyCreated);
     }

@@ -19,7 +19,7 @@ class DeleteEntryAction extends Action
 
     public function getUrl()
     {
-        return $this->url ?? 'sv/api/res/{res.handle}/{entry.id}/delete';
+        return $this->url ?? 'sv/res/{res.handle}/{entry.id}/delete';
     }
 
     public function setUrl($url)

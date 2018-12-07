@@ -20,6 +20,10 @@ class ResourceUpdateController extends BaseApiController
                   ->setRequest($this->request)
                   ->save();
 
-        return response()->json([]);
+        return response()->json([
+            'data' => [
+                'redirect_to' => $this->resource->route('index'),
+            ],
+        ]);
     }
 }

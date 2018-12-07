@@ -33,6 +33,8 @@ class TestCase extends OrchestraTestCase
 
     protected $installs = [];
 
+    protected $handleExceptions = true;
+
     protected function getPackageProviders($app)
     {
         return array_flatten(array_merge([PlatformServiceProvider::class], $this->packageProviders));
@@ -56,6 +58,10 @@ class TestCase extends OrchestraTestCase
     protected function setUp()
     {
         parent::setUp();
+
+        if ($this->handleExceptions === false) {
+            $this->withoutExceptionHandling();
+        }
 
         $this->loadLaravelMigrations();
         $this->withFactories(__DIR__.'/../database/factories');

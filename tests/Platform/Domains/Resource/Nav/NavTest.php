@@ -192,7 +192,7 @@ class NavTest extends ResourceTestCase
             'title'  => 'System Users',
             'handle' => 'users',
             'icon'   => 'user',
-            'url'    => 'sv/api/res/t_users',
+            'url'    => 'sv/res/t_users',
         ], Section::get('acp.settings.auth.users')->compose());
 
         Schema::create('t_templates', function (Blueprint $table, ResourceBlueprint $resource) {
@@ -204,7 +204,7 @@ class NavTest extends ResourceTestCase
         $this->assertEquals([
             'title'  => 'Templates',
             'handle' => 'templates',
-            'url'    => 'sv/api/res/t_templates',
+            'url'    => 'sv/res/t_templates',
         ], Section::get('acp.settings.templates')->fresh()->compose());
     }
 

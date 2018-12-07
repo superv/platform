@@ -94,7 +94,7 @@ class RelationIndexTest extends ResourceTestCase
         $this->assertEquals(1, count($table->getProp('config.row_actions')));
         $action = HelperComponent::from($table->getProp('config.row_actions.0'));
 
-        $this->assertEquals('/sv/api/res/t_users/1/rel/roles/detach/{entry.id}', $action->getProp('url'));
+        $this->assertEquals('/sv/res/t_users/1/rel/roles/detach/{entry.id}', $action->getProp('url'));
         $this->assertEquals('reload', $action->getProp('on-complete'));
 
         // Check context action ATTACH NEW

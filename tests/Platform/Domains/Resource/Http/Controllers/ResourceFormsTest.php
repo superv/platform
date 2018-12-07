@@ -15,6 +15,8 @@ class ResourceFormsTest extends ResourceTestCase
 {
     use FieldTestHelper;
 
+    protected $handleExceptions = false;
+
     function test__displays_create_form()
     {
         $users = $this->schema()

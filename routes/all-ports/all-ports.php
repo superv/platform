@@ -8,10 +8,11 @@ return [
 
     'superv{path}' => [
         'uses'  => function () {
-            return view('superv::spa');
+            return view('superv::spa', ['api_url' => '???']);
         },
         'where' => ['path' => '.*'],
     ],
+
     'data/init'    => DataController::class.'@init',
     'data/nav'     => DataController::class.'@nav',
     'data/navold'  => DataController::class.'@navold',
