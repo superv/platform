@@ -119,7 +119,7 @@ class Form implements ProvidesUIComponent
     public function validate()
     {
         $data = $this->request->all();
-        $rules = $this->getFields()->map(function (Field $field) {
+        $rules = $this->getFieldsFlat()->map(function (Field $field) {
             return [$field->getName(), $this->parseFieldRules($field)];
         })->filter()->toAssoc()->all();
 
@@ -171,35 +171,7 @@ class Form implements ProvidesUIComponent
 
     public function compose(): Payload
     {
-        $payload = new Payload([
-            'url'    => $this->getUrl(),
-            'method' => $this->getMethod(),
-            'fields' => $this->composeFields(),
-        ]);
-        $this->fire('composed', ['form' => $this, 'payload' => $payload]);
-
-        return $payload;
-    }
-
-    protected function composeFields()
-    {
-        $composed = collect();
-
-        foreach ($this->fields as $handle => $fields) {
-            $composed = $composed->merge(
-                $fields
-                    ->filter(function (Field $field) {
-                        return ! $field->isHidden() && ! $field->hasFlag('form.hide');
-                    })
-                    ->map(function (Field $field) use ($handle) {
-                        return array_filter(
-                            (new FieldComposer($field))->forForm($this->entries[$handle] ?? null)->get()
-                        );
-                    })
-            );
-        }
-
-        return $composed->values()->all();
+        return FormComposer::make($this);
     }
 
     public function makeComponent(): ComponentContract
@@ -236,7 +208,7 @@ class Form implements ProvidesUIComponent
     {
         $fields = is_array($fields) ? $fields : func_get_args();
 
-        $this->getFields()->map(function (Field $field) use ($fields) {
+        $this->getFieldsFlat()->map(function (Field $field) use ($fields) {
             if (in_array($field->getName(), $fields)) {
                 $field->hide();
             }
@@ -249,7 +221,7 @@ class Form implements ProvidesUIComponent
     {
         $fields = is_array($fields) ? $fields : func_get_args();
 
-        $this->getFields()->map(function (Field $field) use ($fields) {
+        $this->getFieldsFlat()->map(function (Field $field) use ($fields) {
             if (! in_array($field->getName(), $fields)) {
                 $field->hide();
             }
@@ -289,10 +261,14 @@ class Form implements ProvidesUIComponent
         return $this;
     }
 
+    public function getFields()
+    {
+        return $this->fields;
+    }
     /**
      * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field[]|Collection
      */
-    public function getFields(): Collection
+    public function getFieldsFlat(): Collection
     {
         return $this->fields->flatten(1);
     }
@@ -337,9 +313,9 @@ class Form implements ProvidesUIComponent
         return $this->method;
     }
 
-    public function getWatcher(?string $handle = 'default')
+    public function getEntryForHandle(?string $handle = 'default')
     {
-        return $this->entries[$handle];
+        return $this->entries[$handle] ?? null;
     }
 
     public function uuid(): string
