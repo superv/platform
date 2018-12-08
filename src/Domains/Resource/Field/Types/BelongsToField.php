@@ -101,28 +101,26 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
         //
     }
 
-    protected function buildOptions()
+    protected function buildOptions(?array $queryParams = [])
     {
         $relationConfig = RelationConfig::create($this->getType(), $this->getConfig());
         $this->resource = sv_resource($relationConfig->getRelatedResource());
 
         $query = $this->resource->newQuery();
+        if ($queryParams) {
+            $query->where($queryParams);
+        }
         $query->get();
 
         $entryLabel = $this->resource->getConfigValue('entry_label', '#{id}');
         $this->options = $query->get()->map(function ($item) use ($entryLabel) {
             return ['value' => $item->id, 'text' => sv_parse($entryLabel, $item->toArray())];
         })->all();
-
-//        $this->options = array_merge(
-//            [['value' => null, 'text' => 'Select '.$this->resource->getSingularLabel()]],
-//            $this->options
-//        );
     }
 
     public function makeFilter(?array $params = [])
     {
-        $this->buildOptions();
+        $this->buildOptions($params['query'] ?? null);
 
         return SelectFilter::make($this->getName(), $this->resource->getSingularLabel())
                            ->setAttribute($this->getColumnName())

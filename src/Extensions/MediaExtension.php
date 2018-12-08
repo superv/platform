@@ -11,6 +11,9 @@ class MediaExtension implements ExtendsResource
     public function extend(\SuperV\Platform\Domains\Resource\Resource $resource)
     {
         $fields = $resource->indexFields();
+        $fields->hideLabel();
+
+        $fields->showFirst('owner')->copyToFilters();
 
         $fields->add(['type' => 'file', 'name' => 'image'])
                ->setCallback('table.composing', function (Payload $payload, EntryContract $entry) {

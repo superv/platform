@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -74,7 +73,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
             return ResourceFactory::make($handle)->newEntryInstance();
         }
 
-        throw new PlatformException('Related resource/model not found');
+        throw new \Exception('Related resource/model not found');
     }
 
     /** @return \SuperV\Platform\Domains\Resource\Resource; */

@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Jobs\CreatePivotTable;
+use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class SyncField
@@ -171,6 +172,15 @@ class SyncField
                     $blueprint->unsignedBigInteger("{$name}_id");
                     $blueprint->index(["{$name}_type", "{$name}_id"]);
                 });
+
+            $morphToField = $this->resourceEntry->createField($name);
+            $morphToField->fill([
+                'type'   => 'morph_to',
+                'config' => RelationConfig::morphTo()
+                                          ->relationName($name)
+                                          ->toArray(),
+            ]);
+            $morphToField->save();
         }
 
         $this->resourceEntry->resourceRelations()->create([

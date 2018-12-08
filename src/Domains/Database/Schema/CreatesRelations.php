@@ -40,6 +40,17 @@ trait CreatesRelations
                     );
     }
 
+    public function nullableMorphTo($relationName)
+    {
+        return $this->morphTo($relationName)->nullable();
+    }
+
+    public function morphTo($relationName): ColumnDefinition
+    {
+        return $this->addColumn(null, $relationName, ['nullable' => true])
+                    ->relation(Config::morphTo()->relationName($relationName));
+    }
+
     public function hasOne($related, $relationName, $foreignKey = null, $localKey = null): ColumnDefinition
     {
         return $this->addColumn(null, $relationName, ['nullable' => true])
@@ -62,18 +73,6 @@ trait CreatesRelations
                               ->morphName($morphName)
                               ->targetModel($targetModel)
                     );
-    }
-
-    public function nullableMorphTo($relationName)
-    {
-        return $this->morphTo($relationName)->nullable();
-    }
-
-    public function morphTo($relationName): ColumnDefinition
-    {
-         return $this->addColumn(null, $relationName, ['nullable' => true])
-             ->relation(Config::morphTo()->relationName($relationName));
-
     }
 
     public function belongsToMany(
