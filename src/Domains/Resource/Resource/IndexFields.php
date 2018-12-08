@@ -117,8 +117,12 @@ class IndexFields
                            ->displayOrder(-1);
     }
 
-    public function get()
+    public function get($name = null)
     {
+        if ($name) {
+            return $this->getField($name);
+        }
+
         if ($this->hideLabelField === false) {
             $this->fields->push($this->makeLabelField());
         }
