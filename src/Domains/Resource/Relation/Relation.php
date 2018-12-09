@@ -173,6 +173,17 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         return $relation;
     }
 
+    public static function fromArray(array $params): self
+    {
+        $relation = new static;
+
+        $relation->hydrate($params);
+
+        $relation->relationConfig = RelationConfig::create($relation->type, $params['config'] ?? []);
+
+        return $relation;
+    }
+
     public static function resolve($type)
     {
         $class = static::resolveClass($type);
