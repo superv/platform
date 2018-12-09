@@ -56,6 +56,13 @@ class Props implements Composable
 
     public function compose(Tokens $tokens = null)
     {
-        return $this->props;
+        $props = [];
+        // prepare keys for vue props
+        //
+        foreach ($this->props as $key => $value) {
+            $props[str_replace('_', '-', $key)] = $value;
+        }
+
+        return $props;
     }
 }
