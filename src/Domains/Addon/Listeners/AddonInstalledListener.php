@@ -11,8 +11,7 @@ class AddonInstalledListener
         $addon = $event->addon;
 
         superv('addons')->put($addon->slug(), $addon);
-        if (method_exists($addon, 'postInstall')) {
-            $addon->postInstall();
-        }
+
+        $addon->fire('installed');
     }
 }

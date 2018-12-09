@@ -4,11 +4,14 @@ namespace SuperV\Platform\Domains\Addon;
 
 use Illuminate\Support\Collection;
 
+/**
+ * @method Addon get($key, $default = null)
+ */
 class AddonCollection extends Collection
 {
     /**
      * @param $slug
-     * @return \SuperV\Platform\Domains\Addon\Addon
+     * @return Addon
      */
     public function withSlug($slug)
     {
@@ -21,7 +24,7 @@ class AddonCollection extends Collection
 
     /**
      * @param $class
-     * @return \SuperV\Platform\Domains\Addon\Addon
+     * @return Addon
      */
     public function withClass($class)
     {

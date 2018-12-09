@@ -3,9 +3,12 @@
 namespace SuperV\Platform\Domains\Addon;
 
 use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
+use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Addon
 {
+    use FiresCallbacks;
+
     /**
      * @var \SuperV\Platform\Domains\Addon\AddonModel
      */
