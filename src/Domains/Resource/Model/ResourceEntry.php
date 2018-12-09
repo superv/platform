@@ -70,6 +70,8 @@ class ResourceEntry extends Entry
 
         if ($relation = $this->getRelationshipFromConfig($name)) {
             return $relation;
+        } elseif ($relation = superv('relations')->get($this->getHandle().'.'.$name)) {
+            return $relation->newQuery();
         }
 
         return parent::__call($name, $arguments);

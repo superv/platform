@@ -7,17 +7,7 @@ use SuperV\Platform\Exceptions\PlatformException;
 
 class RelationFactory
 {
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Resource
-     */
-    protected $resource;
-
     protected $base = 'SuperV\Platform\Domains\Resource\Relation\Types';
-
-    public function __construct()
-    {
-//        $this->resource = $resource;
-    }
 
     public function make($relation)
     {

@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
+use SuperV\Platform\Domains\Resource\Relation\RelationCollection;
 use SuperV\Platform\Providers\BaseServiceProvider;
 
 class ResourceServiceProvider extends BaseServiceProvider
@@ -28,6 +29,10 @@ class ResourceServiceProvider extends BaseServiceProvider
 
     protected $_bindings = [
         Table\Contracts\DataProvider::class => Table\EloquentDataProvider::class,
+    ];
+
+    protected $_singletons = [
+        'relations' => RelationCollection::class,
     ];
 
     public function register()

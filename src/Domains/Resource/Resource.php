@@ -65,6 +65,8 @@ class Resource implements
      */
     protected $relations;
 
+    protected $mergeRelations;
+
     /**
      * @var Closure
      */
@@ -124,14 +126,26 @@ class Resource implements
     public function getRelations(): Collection
     {
         if ($this->relations instanceof Closure) {
-            $this->relations = ($this->relations)();
+            $this->relations = ($this->relations)($this);
         }
 
-        return $this->relations;
+        return $this->relations->merge(collect($this->mergeRelations));
+    }
+
+    public function addRelation(Relation $relation)
+    {
+        $this->cacheRelation($relation);
+        $this->mergeRelations[$relation->getName()] = $relation;
     }
 
     public function getRelation($name, ?EntryContract $entry = null): ?Relation
     {
+        $key = $this->getHandle().'.'.$name;
+        if ($relation = superv('relations')->get($key)) {
+            info('hit: '.$key);
+
+            return $relation;
+        }
         $relation = $this->getRelations()->get($name);
         if ($entry && $relation instanceof AcceptsParentEntry) {
             $relation->acceptParentEntry($entry);
@@ -141,7 +155,16 @@ class Resource implements
             PlatformException::fail("Relation not found: [{$name}]");
         }
 
+        $this->cacheRelation($relation);
+
         return $relation;
+    }
+
+    public function cacheRelation(Relation $relation)
+    {
+        $key = $this->getHandle().'.'.$relation->getName();
+        info('cache: '.$key);
+        superv('relations')->put($key, $relation);
     }
 
     public function getRules(EntryContract $entry = null)
