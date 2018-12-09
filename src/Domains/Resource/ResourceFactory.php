@@ -53,14 +53,17 @@ class ResourceFactory
 
     protected function getRelationsProvider()
     {
-        return function () {
-            return $this->model->getResourceRelations()
-                               ->map(function (RelationModel $relation) {
-                                   $relation = (new RelationFactory)->make($relation);
+        return function (Resource $resource) {
+            $relations = $this->model->getResourceRelations()
+                                     ->map(function (RelationModel $relation) use ($resource) {
+                                         $relation = (new RelationFactory)->make($relation);
+                                         $resource->cacheRelation($relation);
 
-                                   return $relation;
-                               })
-                               ->keyBy(function (Relation $relation) { return $relation->getName(); });
+                                         return $relation;
+                                     })->all();
+            // get rid of eloquent collection
+            //
+            return collect($relations)->keyBy(function (Relation $relation) { return $relation->getName(); });
         };
     }
 
