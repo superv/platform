@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Database\Schema;
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 
 class SchemaService
 {
@@ -24,7 +25,7 @@ class SchemaService
                     'table'    => $table,
                     'singular' => $this->formatSingular($table),
                 ];
-            });
+            })->keyBy('table');
     }
 
     public function formatSingular($tbl)
@@ -45,17 +46,18 @@ class SchemaService
     {
         return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableColumns($table))
             ->map(function (Column $column) use ($table, $connection) {
+                $columnType = $column->getType()->getName();
+                $mapper = ColumnFieldMapper::for($columnType)->map();
+
                 return [
-                    'name'     => $column->getName(),
-                    'type'     => $column->getType()->getName(),
-                    'nullable' => ! $column->getNotnull(),
-                    'field'    => null,
-                    'label'    => null,
-                    'required' => null,
-                    'show'     => 'all',
-                    'sortable' => null,
-                    'relation' => null,
+                    'id'         => $column->getName(),
+                    'label'      => str_unslug($column->getName()),
+                    'type'       => $columnType,
+                    'field_type' => $mapper->getFieldType(),
+                    'rules'      => $mapper->getRules(),
+                    'config'     => $mapper->getConfig(),
+                    'nullable'   => ! $column->getNotnull(),
                 ];
-            });
+            })->values();
     }
 }
