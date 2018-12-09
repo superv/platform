@@ -1,7 +1,7 @@
 <?php namespace {model.namespace};
 
-use SuperV\Platform\Domains\Addon\Addon;
+use SuperV\Platform\Domains\Addon\Types\Theme;
 
-class {class} extends Addon
+class {addon.class_name} extends Addon
 {
 }

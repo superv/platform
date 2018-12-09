@@ -1,21 +1,27 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\ResourceBlueprint;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class DummyClass extends Migration
 {
     public function up()
     {
-        Schema::create('DummyTable', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamps();
-        });
+        $this->create('DummyTable',
+            function (Blueprint $table, ResourceBlueprint $resource) {
+                // $resource->label('');
+                // $resource->nav('');
+                // $resource->resourceKey('');
+
+                $table->increments('id');
+                $table->createdBy()->updatedBy();
+                // $table->restorable();
+            });
     }
 
     public function down()
     {
-        Schema::dropIfExists('DummyTable');
+        $this->dropIfExists('DummyTable');
     }
 }

@@ -1,7 +1,7 @@
 <?php namespace {model.namespace};
 
-use SuperV\Platform\Domains\Addon\Agent\Agent;
+use SuperV\Platform\Domains\Addon\Types\Agent;
 
-class {class} extends Agent
+class {addon.class_name} extends Agent
 {
 }
