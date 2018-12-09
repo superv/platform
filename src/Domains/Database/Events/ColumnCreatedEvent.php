@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Database\Events;
 
-use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
 use SuperV\Platform\Events\BaseEvent;
 
@@ -28,7 +27,7 @@ class ColumnCreatedEvent extends BaseEvent
      */
     public $blueprint;
 
-    public function __construct(string $table, Blueprint $blueprint, ColumnDefinition $column, $model = null)
+    public function __construct(string $table, $blueprint, ColumnDefinition $column, $model = null)
     {
         $this->table = $table;
         $this->column = $column;
