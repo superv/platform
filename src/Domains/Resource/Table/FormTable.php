@@ -14,6 +14,8 @@ class FormTable extends Table
 
     protected $postUrl;
 
+    protected $formData;
+
     protected function buildRows(Collection $fields): Collection
     {
         return $this->rows->map(
@@ -21,9 +23,6 @@ class FormTable extends Table
                 return [
                     'id'     => $row['id'] ?? null,
                     'fields' => $fields
-                        ->map(function ($field) {
-                            return is_array($field) ? sv_field($field) : $field;
-                        })
                         ->map(function (Field $field) use ($row) {
                             return (new FieldComposer($field))->forForm($row);
                         })->values(),
@@ -31,10 +30,18 @@ class FormTable extends Table
             });
     }
 
+    public function makeFields(): Collection
+    {
+        return parent::makeFields()->filter(function (Field $field) {
+            return ! $field->hasFlag('form.hide');
+        })->values();
+    }
+
     public function makeComponent(): ComponentContract
     {
         $props = array_merge_recursive([
-            'config' => ['post_url' => $this->getPostUrl()],
+            'config'    => ['post_url' => $this->getPostUrl()],
+            'seed_data' => $this->formData,
         ],
             $this->composeConfig()
         );
@@ -50,6 +57,13 @@ class FormTable extends Table
     public function setPostUrl($postUrl)
     {
         $this->postUrl = $postUrl;
+
+        return $this;
+    }
+
+    public function setFormData($formData)
+    {
+        $this->formData = $formData;
 
         return $this;
     }

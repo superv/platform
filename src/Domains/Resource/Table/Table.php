@@ -116,9 +116,10 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
             function ($row) use ($fields) {
                 return [
                     'id'      => $row['id'] ?? null,
-                    'fields'  => $fields->map(function (Field $field) use ($row) {
-                        return (new FieldComposer($field))->forTableRow($row)->get();
-                    })->values(),
+                    'fields'  => $fields
+                        ->map(function (Field $field) use ($row) {
+                            return (new FieldComposer($field))->forTableRow($row)->get();
+                        })->values(),
                     'actions' => ['view'],
                 ];
             });
@@ -182,7 +183,10 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
 
     public function makeFields(): Collection
     {
-        return wrap_collect($this->getFields())->merge($this->copyMergeFields());
+        return wrap_collect($this->getFields())->merge($this->copyMergeFields())
+                                               ->map(function ($field) {
+                                                   return is_array($field) ? sv_field($field) : $field;
+                                               });
     }
 
     public function isSelectable(): bool

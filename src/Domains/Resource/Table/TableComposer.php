@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Table\Contracts\Table;
 use SuperV\Platform\Support\Composer\Payload;
 
@@ -78,9 +77,6 @@ class TableComposer
     protected function makeFields()
     {
         $fields = $this->table->makeFields()
-                              ->map(function ($field) {
-                                  return is_array($field) ? FieldFactory::createFromArray($field) : $field;
-                              })
                               ->map(function (Field $field) {
                                   return (new FieldComposer($field))->forTableConfig();
                               })->values();
