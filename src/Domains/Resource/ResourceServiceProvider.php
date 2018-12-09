@@ -4,11 +4,13 @@ namespace SuperV\Platform\Domains\Resource;
 
 use Platform;
 use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
+use SuperV\Platform\Domains\Addon\Events\AddonUninstallingEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
 use SuperV\Platform\Providers\BaseServiceProvider;
 
 class ResourceServiceProvider extends BaseServiceProvider
@@ -21,6 +23,7 @@ class ResourceServiceProvider extends BaseServiceProvider
         AddonBootedEvent::class               => Listeners\RegisterExtensions::class,
         Model\Events\EntrySavingEvent::class  => Listeners\ValidateSavingEntry::class,
         Resource\ResourceActivityEvent::class => Listeners\RecordActivity::class,
+        AddonUninstallingEvent::class         => DeleteAddonResources::class,
     ];
 
     protected $_bindings = [

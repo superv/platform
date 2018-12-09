@@ -15,7 +15,16 @@ class Section extends Entry
         parent::boot();
 
         static::deleting(function (Section $entry) {
-            $entry->children->map->delete();
+            $entry->getChildren()->map->delete();
+        });
+
+        static::deleted(function (Section $entry) {
+            // if parent has no child other than this
+            // delete it too
+            //
+            if ($entry->getParent()->children()->count() === 0) {
+                $entry->getParent()->delete();
+            }
         });
     }
 
@@ -140,7 +149,7 @@ class Section extends Entry
         }
     }
 
-    public static function createFromArray(array $data)
+    public static function createFromArray(array $data): Section
     {
         $parent = array_pull($data, 'parent');
         $handle = ($parent ? $parent.'.' : '').$data['handle'] ?? str_slug($data['title'], '_');

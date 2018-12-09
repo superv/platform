@@ -9,9 +9,13 @@ use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Domains\Addon\AddonCollection;
 use SuperV\Platform\Domains\Addon\Console\AddonInstallCommand;
 use SuperV\Platform\Domains\Addon\Console\AddonMakeMigrationCommand;
+use SuperV\Platform\Domains\Addon\Console\AddonReinstallCommand;
 use SuperV\Platform\Domains\Addon\Console\AddonRunMigrationCommand;
+use SuperV\Platform\Domains\Addon\Console\AddonUninstallCommand;
 use SuperV\Platform\Domains\Addon\Console\MakeAddonCommand;
+use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
+use SuperV\Platform\Domains\Addon\Listeners\AddonBootedListener;
 use SuperV\Platform\Domains\Addon\Listeners\AddonInstalledListener;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
@@ -50,11 +54,14 @@ class PlatformServiceProvider extends BaseServiceProvider
         'Illuminate\Routing\Events\RouteMatched'         => 'SuperV\Platform\Listeners\RouteMatchedListener',
         'SuperV\Platform\Domains\Port\PortDetectedEvent' => 'SuperV\Platform\Listeners\PortDetectedListener',
         AddonInstalledEvent::class                       => AddonInstalledListener::class,
+        AddonBootedEvent::class                          => AddonBootedListener::class,
     ];
 
     protected $commands = [
         SuperVInstallCommand::class,
         AddonInstallCommand::class,
+        AddonUninstallCommand::class,
+        AddonReinstallCommand::class,
         MakeAddonCommand::class,
         AddonMakeMigrationCommand::class,
         AddonRunMigrationCommand::class,

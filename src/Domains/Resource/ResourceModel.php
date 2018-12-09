@@ -27,6 +27,11 @@ class ResourceModel extends Entry implements ProvidesFields
 
         static::deleting(function (ResourceModel $entry) {
             $entry->fields->map->delete();
+            $entry->wipeCache();
+        });
+
+        static::saving(function (ResourceModel $entry) {
+            $entry->wipeCache();
         });
     }
 
@@ -102,6 +107,12 @@ class ResourceModel extends Entry implements ProvidesFields
     public function getHandle()
     {
         return $this->handle;
+    }
+
+    public function wipeCache()
+    {
+        $cacheKey = 'sv:resources:'.$this->getHandle();
+        cache()->forget($cacheKey);
     }
 
     public function uuid()

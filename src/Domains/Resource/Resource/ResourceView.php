@@ -91,7 +91,7 @@ class ResourceView implements ProvidesUIComponent
                             'entry'   => $this->entry->toArray(),
                             'heading' => [
                                 'imageUrl' => $imageUrl ?? '',
-                                'header'   => $this->resource->getLabel().' > '.$this->resource->getEntryLabel($this->entry),
+                                'header'   => $this->resource->getEntryLabel($this->entry),
                                 'actions'  => $this->getActions(),
                             ],
 

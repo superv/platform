@@ -115,6 +115,7 @@ class Blueprints
 
         $table->string('title')->entryLabel();
         $table->string('handle');
+        $table->string('addon')->nullable();
         $table->string('icon')->nullable();
         $table->string('url')->nullable();
 

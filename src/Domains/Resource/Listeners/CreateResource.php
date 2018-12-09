@@ -15,12 +15,16 @@ class CreateResource
     /** @var ResourceBlueprint */
     protected $blueprint;
 
+    /** @var string */
+    protected $addon;
+
     public function handle(TableCreatingEvent $event)
     {
         if (! $event->scope) {
             return;
         }
 
+        $this->addon = $event->scope;
         $this->table = $event->table;
         $this->blueprint = $event->resourceBlueprint;
 
@@ -44,8 +48,10 @@ class CreateResource
                 if (! isset($nav['url'])) {
                     $nav['url'] = 'sv/res/'.$this->table;
                 }
-                Section::createFromArray($nav);
+                $section = Section::createFromArray($nav);
             }
+
+            $section->update(['addon' => $this->addon]);
         }
     }
 
