@@ -35,6 +35,10 @@ class NavGuard
     {
         foreach ($sections as $key => $section) {
             if ($colophon = array_pull($section, 'colophon')) {
+                // remove navigation name from colophon
+                // because it's not set in actions for now
+                //
+                $colophon = str_replace_first($this->nav->entry()->getHandle().'.', '', $colophon);
                 if (! $this->user->can($colophon)) {
                     unset($sections[$key]);
                     continue;

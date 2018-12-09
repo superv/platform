@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Nav\Nav;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Support\Composer\Payload;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class NavTest extends ResourceTestCase
@@ -206,6 +207,18 @@ class NavTest extends ResourceTestCase
             'handle' => 'templates',
             'url'    => 'sv/res/t_templates',
         ], Section::get('acp.settings.templates')->fresh()->compose());
+    }
+
+    function test__inject_while_building()
+    {
+        Nav::create('acp.settings.auth');
+        Nav::building('acp.settings', function (Payload $payload) {
+            $payload->push('sections', ['title'  => 'Foo',
+                                        'handle' => 'foo']);
+        });
+
+        $composed = Nav::get('acp')->compose();
+        $this->assertEquals(2, count(array_get($composed, 'sections.0.sections')));
     }
 
     function test__adds_full_colophon_for_authorization_check()

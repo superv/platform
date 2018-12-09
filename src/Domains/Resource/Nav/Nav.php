@@ -2,17 +2,18 @@
 
 namespace SuperV\Platform\Domains\Resource\Nav;
 
+use Closure;
 use SuperV\Platform\Exceptions\PlatformException;
-use SuperV\Platform\Support\Concerns\FiresCallbacks;
+use SuperV\Platform\Support\Composer\Payload;
 
 class Nav
 {
-    use FiresCallbacks;
-
     /**
      * @var Section
      */
     protected $entry;
+
+    public static $callbacks = [];
 
     public function __construct(Section $entry)
     {
@@ -36,12 +37,33 @@ class Nav
 
     public function compose($withColophon = false)
     {
-        return $this->entry->compose($withColophon);
+        return $this->entry->setRoot($this)->compose($withColophon);
     }
 
     public function entry(): Section
     {
         return $this->entry;
+    }
+
+    /**
+     * @param                $sectionHandle
+     * @param string|Closure $title
+     * @param null           $url
+     */
+    public static function building($sectionHandle, $title, $url = null)
+    {
+        if ($title instanceof Closure) {
+            $callback = $title;
+        } else {
+            $callback = function (Payload $payload) use ($url, $title) {
+                $payload->push('sections', [
+                    'title' => $title,
+                    'url'   => $url,
+                ]);
+            };
+        }
+        // @TODO: should set as array to allow multiple
+        static::$callbacks[$sectionHandle] = $callback;
     }
 
     public static function get(string $handle): Nav

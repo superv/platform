@@ -10,6 +10,9 @@ class Section extends Entry
 {
     protected $table = 'sv_navigation';
 
+    /** @var \SuperV\Platform\Domains\Resource\Nav\Nav */
+    protected $root;
+
     protected static function boot()
     {
         parent::boot();
@@ -35,21 +38,27 @@ class Section extends Entry
 
     public function compose($withColophon = false)
     {
+        $colophon = $this->getColophon();
+
         $payload = new Payload([
             'title'    => $this->title,
             'handle'   => $this->handle,
-            'colophon' => $withColophon ? $this->getColophon() : null,
+            'colophon' => $withColophon ? $colophon : null,
             'icon'     => $this->icon,
             'url'      => $this->url,
             'sections' => $this->children()
                                ->with('children')
                                ->get()
                                ->map(function (Section $section) use ($withColophon) {
-                                   return $section->compose($withColophon);
+                                   return $section->setRoot($this->root)->compose($withColophon);
                                })
                                ->filter()
                                ->all(),
         ]);
+
+        if ($callback = (Nav::$callbacks[$colophon] ?? null)) {
+            app()->call($callback, ['payload' => $payload]);
+        }
 
         return $payload->get();
     }
@@ -57,7 +66,7 @@ class Section extends Entry
     public function getColophon()
     {
         if (is_null($this->parent)) {
-            return null;
+            return $this->handle;
         }
 
         if ($parentColophon = $this->parent->getColophon()) {
@@ -110,6 +119,13 @@ class Section extends Entry
     public function getTitle(): ?string
     {
         return $this->title;
+    }
+
+    public function setRoot(Nav $root): Section
+    {
+        $this->root = $root;
+
+        return $this;
     }
 
     public static function get(string $handle, ?Section $parent = null): ?self
