@@ -32,6 +32,7 @@ class Blueprints
             $table->text('config')->nullable();
         }
         $table->boolean('restorable')->default(false);
+        $table->boolean('sortable')->default(false);
 
         $table->timestamps();
     }

@@ -90,6 +90,8 @@ class Resource implements
 
     protected $restorable = false;
 
+    protected $sortable = false;
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
@@ -178,7 +180,7 @@ class Resource implements
     public function cacheRelation(Relation $relation)
     {
         $key = $this->getHandle().'.'.$relation->getName();
-        info('cache: '.$key);
+        info('cache relation: '.$key);
         superv('relations')->put($key, $relation);
     }
 
@@ -355,6 +357,11 @@ class Resource implements
     public function isRestorable(): bool
     {
         return $this->restorable;
+    }
+
+    public function isSortable(): bool
+    {
+        return $this->sortable;
     }
 
     public function uuid(): string

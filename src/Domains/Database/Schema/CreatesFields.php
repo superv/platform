@@ -97,6 +97,12 @@ trait CreatesFields
         $this->timestamp('deleted_at')->nullable()->hideOnForms();
     }
 
+    public function sortable()
+    {
+        $this->resourceBlueprint()->sortable(true);
+        $this->unsignedBigInteger('sort_order')->default(0);
+    }
+
     public function updatedBy(): self
     {
         $this->nullableBelongsTo('users', 'updated_by')->hideOnForms();

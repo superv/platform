@@ -66,6 +66,7 @@ class CreateResource
                 'config'     => $config,
                 'addon'      => $addon,
                 'restorable' => (bool)$this->blueprint->restorable,
+                'sortable'   => (bool)$this->blueprint->sortable,
             ]
         ));
     }
