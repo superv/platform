@@ -22,7 +22,7 @@ class SuperVInstallCommand extends Command
         $this->call('vendor:publish', ['--tag' => 'superv.views']);
         $this->call('vendor:publish', ['--tag' => 'superv.assets']);
 
-        $this->call('jwt:secret', ['--force' => true]);
+//        $this->call('jwt:secret', ['--force' => true]);
 
         $this->comment("SuperV installed..! \n");
     }

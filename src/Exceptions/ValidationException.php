@@ -69,6 +69,11 @@ class ValidationException extends \Exception
         return $this;
     }
 
+    public function getErrorsAsString()
+    {
+        return json_encode($this->all());
+    }
+
     public function toResponse()
     {
         return response()->json([

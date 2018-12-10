@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Addon\Console;
 use Illuminate\Console\Command;
 use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Addon\Locator;
+use SuperV\Platform\Exceptions\ValidationException;
 
 class AddonInstallCommand extends Command
 {
@@ -26,6 +27,8 @@ class AddonInstallCommand extends Command
             $installer->install();
 
             $this->comment(sprintf("Addon %s installed \n", $this->argument('addon')));
+        } catch (ValidationException $e) {
+            $this->error($e->getErrorsAsString());
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }
