@@ -92,6 +92,7 @@ class Resource implements
         $this->hydrate($attributes);
 
         $this->fields = (new Fields($this, $this->fields));
+        $this->relations = ($this->relations)($this);
     }
 
     public function fields(): Fields
@@ -125,9 +126,9 @@ class Resource implements
 
     public function getRelations(): Collection
     {
-        if ($this->relations instanceof Closure) {
-            $this->relations = ($this->relations)($this);
-        }
+//        if ($this->relations instanceof Closure) {
+//            $this->relations = ($this->relations)($this);
+//        }
 
         return $this->relations->merge(collect($this->mergeRelations));
     }
@@ -143,8 +144,7 @@ class Resource implements
         $key = $this->getHandle().'.'.$name;
         if ($relation = superv('relations')->get($key)) {
             info('hit: '.$key);
-
-            return $relation;
+//            return $relation;
         }
         $relation = $this->getRelations()->get($name);
         if ($entry && $relation instanceof AcceptsParentEntry) {

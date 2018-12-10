@@ -10,6 +10,15 @@ class ValidationException extends \Exception
 
     protected $rules;
 
+    public function all()
+    {
+        return [
+            'data'   => $this->getData(),
+            'rules'  => $this->getRules(),
+            'errors' => $this->getErrors(),
+        ];
+    }
+
     public function getErrors()
     {
         return $this->errors;

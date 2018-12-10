@@ -51,10 +51,11 @@ class FormTester extends Assert
 
     public function test(Form $form)
     {
-        $original = $form->getEntryForHandle()->toArray();
+        $entryForHandle = $form->getEntryForHandle();
+        $original = $entryForHandle->toArray();
         $fields = [];
         foreach ($form->getFieldsFlat() as $field) {
-            if ($field->isHidden()) {
+            if ($field->isHidden() || $field->doesNotInteractWithTable()) {
                 continue;
             }
 

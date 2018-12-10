@@ -50,7 +50,7 @@ class Fake
     {
         return ! $field->isHidden()
             && ! $field->hasFlag('form.hide')
-            && ! $field->doesNotInteractWithTable();
+            || $field->doesNotInteractWithTable();
     }
 
     protected function fake(Field $field)

@@ -48,21 +48,22 @@ class FormTest extends ResourceTestCase
         $this->assertEquals(['age'], $config->getHiddenFields());
     }
 
-    function test_makes_create_form()
+    function t1qqest_makes_create_form()
     {
         $config = FormConfig::make()
                             ->setUrl(sv_url('url/to/form'))
-                            ->addGroup($fields = $this->makeFields());
+                            ->addGroup($fields = $this->makeFields(), $testUser = new FormTestUser());
 
         $form = $config->makeForm();
         $this->assertEquals($fields, $form->getFieldsFlat()->all());
         $this->assertEquals([
-            'url'    => sv_url('url/to/form'),
-            'method' => 'post',
-            'fields' => [
+            'url'     => sv_url('url/to/form'),
+            'method'  => 'post',
+            'fields'  => [
                 $form->composeField('name')->get(),
                 $form->composeField('age')->get(),
             ],
+            'actions' => [],
         ], sv_compose($form->compose()));
     }
 
@@ -154,7 +155,7 @@ class FormTest extends ResourceTestCase
         $response->assertOk();
 
         $props = $response->decodeResponseJson('data.props.blocks.0.props');
-        $this->assertEquals(['url', 'method', 'fields'], array_keys($props));
+        $this->assertEquals(['url', 'method', 'fields', 'actions'], array_keys($props));
         $this->assertEquals(2, count($props['fields']));
 
         $response = $this->postJsonUser($props['url'], [

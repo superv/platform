@@ -179,6 +179,7 @@ class SyncField
                 'config' => RelationConfig::morphTo()
                                           ->relationName($name)
                                           ->toArray(),
+                'flags'  => ['nullable'],
             ]);
             $morphToField->save();
         }

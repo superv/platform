@@ -3,16 +3,17 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Support\Composer\Payload;
 
-class MorphTo extends FieldType
+class MorphTo extends FieldType implements DoesNotInteractWithTable
 {
     protected function boot()
     {
-        $this->on('form.presenting', $this->presenter());
-        $this->on('form.composing', $this->composer());
+//        $this->on('form.presenting', $this->presenter());
+//        $this->on('form.composing', $this->composer());
 
         $this->on('view.presenting', $this->viewPresenter());
         $this->on('view.composing', $this->viewComposer());

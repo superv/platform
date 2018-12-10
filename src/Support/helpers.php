@@ -3,7 +3,6 @@
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Feature\FeatureBus;
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
@@ -206,17 +205,6 @@ function sv_compose($data, $tokens = null)
     return (new Composer($tokens))->compose($data);
 }
 
-function sv_compose_ui($data)
-{
-    if ($data instanceof ProvidesUIComponent) {
-        $component = $data->makeComponent();
-
-        dd($component);
-    }
-    $objVars = get_object_vars($data);
-
-    dd($data, $objVars);
-}
 
 function sv_parse($target, array $data)
 {

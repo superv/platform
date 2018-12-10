@@ -67,6 +67,7 @@ class MorphOneTest extends ResourceTestCase
     function test__makes_form()
     {
         $user = $this->parent->fake();
+
         $tag = $user->tag()->make(['label' => 'blue']);
         $this->assertEquals($user->getId(), $tag->owner_id);
         $this->assertEquals($user->getHandle(), $tag->owner_type);

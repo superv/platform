@@ -40,9 +40,6 @@ class ResourceFactory
             $fields = $this->model->getFields()
                                   ->map(function (FieldModel $fieldEntry) {
                                       $field = FieldFactory::createFromEntry($fieldEntry);
-//                                      if ($this->entry) {
-//                                          $field->setEntry($this->entry);
-//                                      }
 
                                       return $field;
                                   });

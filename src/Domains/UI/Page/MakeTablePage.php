@@ -49,6 +49,8 @@ class MakeTablePage
                 $this->url.'/data' => function () { return $this->getData(); },
                 'POST@'.$this->url => function (Request $request) { return $this->post($request); },
             ]);
+
+        return $this;
     }
 
     public function getConfig()

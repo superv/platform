@@ -101,6 +101,11 @@ class ColumnFieldMapper
         $this->mapInteger();
     }
 
+    protected function mapBigInt()
+    {
+        $this->mapInteger();
+    }
+
     protected function mapDecimal()
     {
         $this->fieldType = 'number';

@@ -325,7 +325,7 @@ class Form implements ProvidesUIComponent, Responsable
         return $this->entries[$handle] ?? null;
     }
 
-    public function getDefaultEntry(): EntryContract
+    public function getDefaultEntry(): ?EntryContract
     {
         return $this->getEntryForHandle('default');
     }
