@@ -21,9 +21,9 @@ class ResourceEntry extends Entry
     {
         parent::boot();
 
-//        static::creating(function(ResourceEntry $entry) {
-//            $entry->setAttribute('created_by_id', Current::userId() ?? 0);
-//        });
+        static::created(function (ResourceEntry $entry) {
+            app('events')->dispatch('sv.res.'.$entry->getHandle().'.created', $entry);
+        });
     }
 
     public function __call($name, $arguments)

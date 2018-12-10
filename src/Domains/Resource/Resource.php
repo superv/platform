@@ -12,6 +12,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
+use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatedEvent;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\Extender;
 use SuperV\Platform\Domains\Resource\Resource\Fields;
@@ -85,6 +86,8 @@ class Resource implements
     /** @var \SuperV\Platform\Domains\Resource\Resource\IndexFields */
     protected $indexFields;
 
+    protected $onCreatedCallbacks = [];
+
     protected $restorable = false;
 
     public function __construct(array $attributes = [])
@@ -93,6 +96,17 @@ class Resource implements
 
         $this->fields = (new Fields($this, $this->fields));
         $this->relations = ($this->relations)($this);
+    }
+
+    public function onCreated(Closure $callback): Resource
+    {
+        app('events')->listen(EntryCreatedEvent::class, function (EntryCreatedEvent $event) use ($callback) {
+            if ($event->entry->getTable() === $this->getHandle()) {
+                $callback($event->entry);
+            }
+        });
+
+        return $this;
     }
 
     public function fields(): Fields

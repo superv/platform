@@ -169,4 +169,8 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         $visibility = new Visibility();
         $callback($visibility);
     }
+
+    public function setWithEvent($event, $foreignKey, $localKey)
+    {
+    }
 }

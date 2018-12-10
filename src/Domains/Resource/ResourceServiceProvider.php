@@ -38,6 +38,12 @@ class ResourceServiceProvider extends BaseServiceProvider
     public function register()
     {
         parent::register();
+        app('events')->listen('eloquent.created:*', function ($event, $payload) {
+            if (($entry = $payload[0]) instanceof EntryContract) {
+                Model\Events\EntryCreatedEvent::dispatch($entry);
+            }
+        });
+
         app('events')->listen('eloquent.saving:*', function ($event, $payload) {
             if (($entry = $payload[0]) instanceof EntryContract) {
                 Model\Events\EntrySavingEvent::dispatch($entry);
