@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\Fixtures\Blueprints;
@@ -52,7 +52,7 @@ trait ResourceTestHelpers
     /** @return \SuperV\Platform\Domains\Resource\ResourceModel */
     protected function makeResourceModel($slug, array $columns, array $resource = [])
     {
-        Schema::create($slug, function (Blueprint $table, ResourceBlueprint $resourceBlueprint) use (
+        Schema::create($slug, function (Blueprint $table, ResourceConfig $resourceBlueprint) use (
             $columns,
             $resource
         ) {

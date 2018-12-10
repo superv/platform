@@ -13,7 +13,7 @@ use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Events\TableDroppedEvent;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class Blueprint extends LaravelBlueprint
 {
@@ -43,7 +43,7 @@ class Blueprint extends LaravelBlueprint
         // Here, while adding a column let's pass along
         // the resource blueprint to each column
         $this->columns[] = $column = new ColumnDefinition(
-            $this->builder ? $this->builder->resource() : new \SuperV\Platform\Domains\Resource\ResourceBlueprint,
+            $this->builder ? $this->builder->resource() : new \SuperV\Platform\Domains\Resource\ResourceConfig,
             array_merge(compact('type', 'name'), $parameters)
         );
 
@@ -133,7 +133,7 @@ class Blueprint extends LaravelBlueprint
         return sv_collect($this->getColumns())->pluck('name')->all();
     }
 
-    public function resourceBlueprint(): ResourceBlueprint
+    public function resourceBlueprint(): ResourceConfig
     {
         return $this->builder->resource();
     }

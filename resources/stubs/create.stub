@@ -1,7 +1,7 @@
 <?php
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 
 class DummyClass extends Migration
@@ -9,7 +9,7 @@ class DummyClass extends Migration
     public function up()
     {
         $this->create('DummyTable',
-            function (Blueprint $table, ResourceBlueprint $resource) {
+            function (Blueprint $table, ResourceConfig $resource) {
                 // $resource->label('');
                 // $resource->nav('');
                 // $resource->resourceKey('');

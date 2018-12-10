@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource;
 use Exception;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\Fixtures\TestUser;
@@ -27,7 +27,7 @@ class ResourceCreationTest extends ResourceTestCase
 
     function test__saves_resource_model_class_if_provided()
     {
-        Schema::create('test_users', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::create('test_users', function (Blueprint $table, ResourceConfig $resource) {
             $table->increments('id');
             $resource->model(TestUser::class);
         });

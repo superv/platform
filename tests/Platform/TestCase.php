@@ -87,7 +87,10 @@ class TestCase extends OrchestraTestCase
 
             (new PlatformServiceProvider($this->app))->boot();
         }
-//        define('SV_TEST_BASE', $this->basePath());
+
+//        if (! defined('SV_TEST_BASE')) {
+//            define('SV_TEST_BASE', $this->basePath());
+//        }
     }
 
     protected function tearDown()

@@ -3,13 +3,13 @@
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class CreateAddonsTable extends Migration
 {
     public function up()
     {
-        Schema::create('sv_addons', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::create('sv_addons', function (Blueprint $table, ResourceConfig $resource) {
             $table->increments('id');
             $table->string('name');
             $table->string('vendor');

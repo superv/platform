@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource\Fixtures;
 use Closure;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
 
 class Blueprints
@@ -19,7 +19,7 @@ class Blueprints
         $this->roles();
 
         $users = $this->create('t_users',
-            function (Blueprint $table, ResourceBlueprint $resource) use ($callback) {
+            function (Blueprint $table, ResourceConfig $resource) use ($callback) {
                 $resource->resourceKey('user');
                 $resource->label('Users');
 
@@ -83,7 +83,7 @@ class Blueprints
     /** @return Resource */
     public function roles()
     {
-        $roles = $this->create('t_roles', function (Blueprint $table, ResourceBlueprint $resource) {
+        $roles = $this->create('t_roles', function (Blueprint $table, ResourceConfig $resource) {
             $resource->resourceKey('role');
             $table->increments('id');
             $table->string('title')->unique();

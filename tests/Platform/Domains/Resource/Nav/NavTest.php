@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Nav\Nav;
 use SuperV\Platform\Domains\Resource\Nav\Section;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Support\Composer\Payload;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -179,7 +179,7 @@ class NavTest extends ResourceTestCase
     /** @test */
     function creates_from_resource_blueprint()
     {
-        Schema::create('t_users', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::create('t_users', function (Blueprint $table, ResourceConfig $resource) {
             $table->increments('id');
             $resource->nav([
                 'parent' => 'acp.settings.auth',
@@ -196,7 +196,7 @@ class NavTest extends ResourceTestCase
             'url'    => 'sv/res/t_users',
         ], Section::get('acp.settings.auth.users')->compose());
 
-        Schema::create('t_templates', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::create('t_templates', function (Blueprint $table, ResourceConfig $resource) {
             $table->increments('id');
             $resource->label('Templates'); // modifies section handle and title
             $resource->nav('acp.settings');

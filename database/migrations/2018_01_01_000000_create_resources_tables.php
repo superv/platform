@@ -5,7 +5,7 @@ use Schema as LaravelSchema;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\Support\Blueprints;
 
 class CreateResourcesTables extends Migration
@@ -39,27 +39,27 @@ class CreateResourcesTables extends Migration
 
     protected function selfAware()
     {
-        Schema::run('sv_resources', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::run('sv_resources', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::resources($table, $resource);
         });
-        Schema::run('sv_fields', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::run('sv_fields', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::fields($table, $resource);
         });
-        Schema::run('sv_relations', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::run('sv_relations', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::relations($table, $resource);
         });
-        Schema::run('sv_navigation', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::run('sv_navigation', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::navigation($table, $resource);
         });
 
-        Schema::run('sv_activities', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::run('sv_activities', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::activity($table, $resource);
         });
 
-        Schema::run('sv_meta', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::run('sv_meta', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::meta($table, $resource);
         });
-        Schema::run('sv_meta_items', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::run('sv_meta_items', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::metaItems($table, $resource);
         });
     }

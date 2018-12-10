@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\Testing\FormTester;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -22,7 +22,7 @@ class HasOneTest extends ResourceTestCase
     {
         parent::setUp();
 
-        $this->parent = $this->create('t_users', function (Blueprint $table, ResourceBlueprint $resource) {
+        $this->parent = $this->create('t_users', function (Blueprint $table, ResourceConfig $resource) {
             $resource->resourceKey('user');
 
             $table->increments('id');

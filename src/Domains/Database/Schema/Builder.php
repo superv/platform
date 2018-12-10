@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Database\Schema;
 
 use Closure;
 use Illuminate\Database\Connection;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class Builder extends \Illuminate\Database\Schema\Builder
 {
@@ -13,7 +13,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
      */
     protected $schema;
 
-    /** @var \SuperV\Platform\Domains\Resource\ResourceBlueprint */
+    /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
     protected $resource;
 
     public function __construct(Connection $connection, Schema $schema)
@@ -21,7 +21,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
         parent::__construct($connection);
 
         $this->schema = $schema;
-        $this->resource = new ResourceBlueprint();
+        $this->resource = new ResourceConfig();
     }
 
     public function create($table, Closure $callback)
@@ -42,7 +42,7 @@ class Builder extends \Illuminate\Database\Schema\Builder
         }));
     }
 
-    public function resource(): ?ResourceBlueprint
+    public function resource(): ?ResourceConfig
     {
         return $this->resource;
     }

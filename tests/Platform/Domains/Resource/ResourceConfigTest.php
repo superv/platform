@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class ResourceConfigTest extends ResourceTestCase
@@ -22,7 +22,7 @@ class ResourceConfigTest extends ResourceTestCase
 
     function test__saves_resource_key()
     {
-        $res = $this->create('t_users', function (Blueprint $table, ResourceBlueprint $resource) {
+        $res = $this->create('t_users', function (Blueprint $table, ResourceConfig $resource) {
             $table->increments('id');
 
             // default resource key is singular table name
@@ -47,7 +47,7 @@ class ResourceConfigTest extends ResourceTestCase
 
     function test__builds_label_from_given()
     {
-        $this->create('customers', function (Blueprint $table, ResourceBlueprint $resource) {
+        $this->create('customers', function (Blueprint $table, ResourceConfig $resource) {
             $table->increments('id');
 
             $resource->label('SuperV Customers');
@@ -60,7 +60,7 @@ class ResourceConfigTest extends ResourceTestCase
 
     function test__builds_label_for_resource_entry()
     {
-        $res = $this->create('customers', function (Blueprint $table, ResourceBlueprint $resource) {
+        $res = $this->create('customers', function (Blueprint $table, ResourceConfig $resource) {
             $table->increments('id');
             $table->string('first_name');
             $table->string('last_name');

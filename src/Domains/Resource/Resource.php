@@ -144,7 +144,8 @@ class Resource implements
         $key = $this->getHandle().'.'.$name;
         if ($relation = superv('relations')->get($key)) {
             info('hit: '.$key);
-//            return $relation;
+
+            return $relation;
         }
         $relation = $this->getRelations()->get($name);
         if ($entry && $relation instanceof AcceptsParentEntry) {

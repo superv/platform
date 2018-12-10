@@ -3,13 +3,13 @@
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class CreateUsersPrototype extends Migration
 {
     public function up()
     {
-        Schema::run('users', function (Blueprint $table, ResourceBlueprint $resource) {
+        Schema::run('users', function (Blueprint $table, ResourceConfig $resource) {
             $resource->resourceKey('user');
             $resource->nav('acp.platform.auth');
 

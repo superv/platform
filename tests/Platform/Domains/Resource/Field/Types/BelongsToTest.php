@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -34,7 +34,7 @@ class BelongsToTest extends ResourceTestCase
     {
         $this->makeGroupResource();
         $users = $this->create('t_users',
-            function (Blueprint $table, ResourceBlueprint $resource) {
+            function (Blueprint $table, ResourceConfig $resource) {
                 $resource->model(BelongsToTestUser::class);
                 $table->increments('id');
                 $table->string('name')->entryLabel();

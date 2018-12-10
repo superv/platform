@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Database\Schema;
 
 use Closure;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\Visibility\Visibility;
 
 /**
@@ -16,10 +16,10 @@ use SuperV\Platform\Domains\Resource\Visibility\Visibility;
  */
 class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
 {
-    /** @var \SuperV\Platform\Domains\Resource\ResourceBlueprint */
+    /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
     protected $blueprint;
 
-    public function __construct(ResourceBlueprint $blueprint, $attributes = [])
+    public function __construct(ResourceConfig $blueprint, $attributes = [])
     {
         foreach ($attributes as $key => $value) {
             $this->attributes[$key] = $value;

@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use Tests\Platform\Domains\Resource\Fixtures\TestResourceEntry;
 
 class ResourceTest extends ResourceTestCase
@@ -23,7 +23,7 @@ class ResourceTest extends ResourceTestCase
     function test__instantiates_entries_using_provided_model()
     {
         $resource = $this->create('t_entries',
-            function (Blueprint $table, ResourceBlueprint $resource) {
+            function (Blueprint $table, ResourceConfig $resource) {
                 $table->increments('id');
 
                 $resource->model(TestResourceEntry::class);

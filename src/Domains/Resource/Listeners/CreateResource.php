@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Resource\Nav\Section;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class CreateResource
@@ -12,7 +12,7 @@ class CreateResource
     /** @var string */
     protected $table;
 
-    /** @var ResourceBlueprint */
+    /** @var ResourceConfig */
     protected $blueprint;
 
     /** @var string */

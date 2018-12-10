@@ -6,13 +6,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
 
 /**
- * Class ResourceBlueprint
- * @method ResourceBlueprint model($model)
- * @method ResourceBlueprint nav($nav)
- * @method ResourceBlueprint resourceKey($key)
- * @method ResourceBlueprint entryLabel($entryLabel)
+ * Class ResourceConfig
+ *
+ * @method ResourceConfig model($model)
+ * @method ResourceConfig nav($nav)
+ * @method ResourceConfig resourceKey($key)
+ * @method ResourceConfig entryLabel($entryLabel)
  */
-class ResourceBlueprint extends Fluent
+class ResourceConfig extends Fluent
 {
     protected $table;
 

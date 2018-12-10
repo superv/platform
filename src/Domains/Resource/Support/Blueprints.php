@@ -3,14 +3,14 @@
 namespace SuperV\Platform\Domains\Resource\Support;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\ResourceBlueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class Blueprints
 {
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
      */
-    public static function resources($table, ResourceBlueprint $resource = null)
+    public static function resources($table, ResourceConfig $resource = null)
     {
         $table->increments('id');
         $table->uuid('uuid')->unique();
@@ -39,7 +39,7 @@ class Blueprints
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
      */
-    public static function fields($table, ResourceBlueprint $resource = null)
+    public static function fields($table, ResourceConfig $resource = null)
     {
         $table->increments('id');
         $table->uuid('uuid');
@@ -73,7 +73,7 @@ class Blueprints
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
      */
-    public static function relations($table, ResourceBlueprint $resource = null)
+    public static function relations($table, ResourceConfig $resource = null)
     {
         $table->increments('id');
         $table->uuid('uuid');
@@ -98,7 +98,7 @@ class Blueprints
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
      */
-    public static function navigation($table, ResourceBlueprint $resource = null)
+    public static function navigation($table, ResourceConfig $resource = null)
     {
         $table->increments('id');
         if ($table instanceof Blueprint) {
@@ -127,7 +127,7 @@ class Blueprints
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
      */
-    public static function activity($table, ResourceBlueprint $resource = null)
+    public static function activity($table, ResourceConfig $resource = null)
     {
         $table->increments('id');
         if ($table instanceof Blueprint) {
@@ -152,7 +152,7 @@ class Blueprints
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
      */
-    public static function meta($table, ResourceBlueprint $resource = null)
+    public static function meta($table, ResourceConfig $resource = null)
     {
         $table->increments('id');
 
@@ -172,7 +172,7 @@ class Blueprints
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
      */
-    public static function metaItems($table, ResourceBlueprint $resource = null)
+    public static function metaItems($table, ResourceConfig $resource = null)
     {
         $table->increments('id');
 
