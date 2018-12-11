@@ -54,7 +54,7 @@ class Current
      */
     public function url(string $path = null): string
     {
-        return $path ? url($path) : url()->current();
+        return $path ? sv_url($path) : sv_url()->current();
     }
 
     public function requestPath()

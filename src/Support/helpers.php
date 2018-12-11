@@ -205,7 +205,6 @@ function sv_compose($data, $tokens = null)
     return (new Composer($tokens))->compose($data);
 }
 
-
 function sv_parse($target, array $data)
 {
     return app(Parser::class)->parse($target, $data);
@@ -229,6 +228,11 @@ function sv_url($path = null)
     }
 
     return $generator->to($path);
+}
+
+function sv_route($name, $parameters = [])
+{
+    return sv_url(route($name, $parameters, false));
 }
 
 function uuid()
