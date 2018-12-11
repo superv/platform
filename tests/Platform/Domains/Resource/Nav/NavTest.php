@@ -217,8 +217,10 @@ class NavTest extends ResourceTestCase
                                         'handle' => 'foo']);
         });
 
+        Nav::building('acp.settings', 'Bar', 'bar');
+
         $composed = Nav::get('acp')->compose();
-        $this->assertEquals(2, count(array_get($composed, 'sections.0.sections')));
+        $this->assertEquals(3, count(array_get($composed, 'sections.0.sections')));
     }
 
     function test__adds_full_colophon_for_authorization_check()

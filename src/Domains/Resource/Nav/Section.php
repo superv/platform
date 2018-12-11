@@ -56,8 +56,10 @@ class Section extends Entry
                                ->all(),
         ]);
 
-        if ($callback = (Nav::$callbacks[$colophon] ?? null)) {
-            app()->call($callback, ['payload' => $payload]);
+        if ($callbacks = (Nav::$callbacks[$colophon] ?? [])) {
+            foreach ($callbacks as $callback) {
+                app()->call($callback, ['payload' => $payload]);
+            }
         }
 
         return $payload->get();

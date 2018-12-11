@@ -62,8 +62,9 @@ class Nav
                 ]);
             };
         }
-        // @TODO: should set as array to allow multiple
-        static::$callbacks[$sectionHandle] = $callback;
+        $sectionCallbacks = static::$callbacks[$sectionHandle] ?? [];
+        $sectionCallbacks[] = $callback;
+        static::$callbacks[$sectionHandle] = $sectionCallbacks;
     }
 
     public static function get(string $handle): Nav
