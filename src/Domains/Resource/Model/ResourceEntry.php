@@ -20,10 +20,6 @@ class ResourceEntry extends Entry
     protected static function boot()
     {
         parent::boot();
-
-        static::created(function (ResourceEntry $entry) {
-            app('events')->dispatch('sv.res.'.$entry->getHandle().'.created', $entry);
-        });
     }
 
     public function __call($name, $arguments)
@@ -164,13 +160,6 @@ class ResourceEntry extends Entry
     public function route($route)
     {
         return $this->getResource()->route($route, $this);
-        $base = 'sv/res/'.$this->getHandle();
-        if ($route === 'update') {
-            return $base.'/'.$this->getId();
-        }
-        if ($route === 'delete' || $route === 'edit' || $route === 'view') {
-            return $base.'/'.$this->getId().'/'.$route;
-        }
     }
 
     public function getField(string $name): ?Field

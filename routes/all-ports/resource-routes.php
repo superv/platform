@@ -28,6 +28,11 @@ return [
         'uses' => ResourceFormController::at('update'),
     ],
 
+    'DELETE@'.'sv/res/{resource}/{id}' => [
+        'as'   => 'resource.delete',
+        'uses' => ResourceIndexController::at('delete'),
+    ],
+
     'sv/res/{resource}/{id}' => [
         'as'    => 'resource.view.page',
         'uses'  => ResourceViewController::at('page'),

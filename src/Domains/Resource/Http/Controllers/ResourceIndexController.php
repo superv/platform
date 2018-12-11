@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\RequiresEntry;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
-use SuperV\Platform\Domains\UI\Page\Page;
+use SuperV\Platform\Domains\UI\Page\ResourcePage;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
@@ -15,11 +15,19 @@ class ResourceIndexController extends BaseApiController
 {
     use ResolvesResource;
 
+    public function delete()
+    {
+        $resource = $this->resolveResource();
+
+        $this->entry->delete();
+    }
+
     public function page()
     {
         $resource = $this->resolveResource();
 
-        $page = Page::make($resource->getLabel());
+        $page = ResourcePage::make($resource->getLabel());
+        $page->setResource($resource);
         $page->addBlock(sv_loader($resource->route('index.table')));
         $page->addAction(CreateEntryAction::make('New '.$resource->getSingularLabel()));
 
