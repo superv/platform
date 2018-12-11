@@ -38,6 +38,7 @@ trait CreatesFields
         if ($valueObjectClass) {
             /** @var ValueObject $valueObjectClass */
             $column->options($valueObjectClass::choices());
+            $column->setConfigValue('value_object', $valueObjectClass);
         }
 
         return $column;
