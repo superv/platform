@@ -33,12 +33,6 @@ class FormConfig
         return $this;
     }
 
-    public function hideField(string $fieldName): self
-    {
-        $this->hiddenFields[] = $fieldName;
-
-        return $this;
-    }
 
     public function makeForm(): Form
     {
@@ -48,11 +42,6 @@ class FormConfig
     public function getGroups(): array
     {
         return $this->groups;
-    }
-
-    public function getHiddenFields(): array
-    {
-        return $this->hiddenFields;
     }
 
     public function getUrl()

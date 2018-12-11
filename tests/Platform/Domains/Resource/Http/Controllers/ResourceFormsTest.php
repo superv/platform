@@ -6,7 +6,6 @@ use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Resource;
 use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -15,7 +14,7 @@ class ResourceFormsTest extends ResourceTestCase
 {
     use FieldTestHelper;
 
-    protected $handleExceptions = true;
+    protected $handleExceptions = false;
 
     function test__displays_create_form()
     {
@@ -155,6 +154,7 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__posts_create_form()
     {
+
         $users = $this->schema()->users();
         $post = [
             'name'     => 'Ali',
@@ -196,7 +196,8 @@ class ResourceFormsTest extends ResourceTestCase
             $table->restorable();
         });
 
-        $form = FormConfig::make($users)->makeForm();
+//        $form = FormConfig::make($users)->makeForm();
+        $form = Form::for($users);
 
         $this->assertEquals(0, count($form->compose()->get('fields')));
     }

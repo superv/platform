@@ -8,9 +8,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class HasOne extends Relation implements ProvidesForm, HandlesRequests
 {
@@ -26,9 +24,9 @@ class HasOne extends Relation implements ProvidesForm, HandlesRequests
 
     public function makeForm(): Form
     {
-        return FormConfig::make($this->getRelatedEntry())
-                         ->hideField(ResourceFactory::make($this->parentEntry)->getResourceKey().'_id')
-                         ->makeForm();
+        return Form::for($this->getRelatedEntry())
+                   ->hideField(sv_resource($this->parentEntry)->getResourceKey())
+                   ->make();
     }
 
     public function getFormTitle(): string

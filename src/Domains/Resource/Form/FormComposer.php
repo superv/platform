@@ -52,23 +52,15 @@ class FormComposer
 
     protected function composeFields()
     {
-        $composed = collect();
-
-        foreach ($this->form->getFields() as $handle => $fields) {
-            $composed = $composed->merge(
-                $fields
-                    ->filter(function (Field $field) {
-                        return ! $field->isHidden() && ! $field->hasFlag('form.hide');
-                    })
-                    ->map(function (Field $field) use ($handle) {
-                        return array_filter(
-                            (new FieldComposer($field))->forForm($this->form->getEntryForHandle($handle) ?? null)->get()
-                        );
-                    })
-            );
-        }
-
-        return $composed->values()->all();
+        return $this->form->getFields()
+                          ->filter(function (Field $field) {
+                              return ! $field->isHidden() && ! $field->hasFlag('form.hide');
+                          })
+                          ->map(function (Field $field) {
+                              return array_filter(
+                                  (new FieldComposer($field))->forForm($this->form->getEntry() ?? null)->get()
+                              );
+                          })->values()->all();
     }
 
     public function setRequest(?Request $request): FormComposer
@@ -80,7 +72,7 @@ class FormComposer
 
     protected function getActions()
     {
-        if ($this->form->getDefaultEntry() && $this->form->getDefaultEntry()->exists) {
+        if ($this->form->getEntry() && $this->form->getEntry()->exists) {
             return [
                 [
                     'identifier' => 'view',

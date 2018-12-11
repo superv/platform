@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequests
@@ -29,8 +28,8 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequ
 
     public function makeForm(): Form
     {
-        return FormConfig::make($this->getRelatedEntry())
-                         ->makeForm();
+        return Form::for($this->getRelatedEntry())
+                   ->make();
     }
 
     public function getFormTitle(): string

@@ -51,10 +51,10 @@ class FormTester extends Assert
 
     public function test(Form $form)
     {
-        $entryForHandle = $form->getEntryForHandle();
+        $entryForHandle = $form->getEntry();
         $original = $entryForHandle->toArray();
         $fields = [];
-        foreach ($form->getFieldsFlat() as $field) {
+        foreach ($form->getFields() as $field) {
             if ($field->isHidden() || $field->doesNotInteractWithTable()) {
                 continue;
             }
@@ -69,7 +69,7 @@ class FormTester extends Assert
 
         $form->setRequest($this->makePostRequest('', $post))->save();
 
-        $entry = $form->getEntryForHandle()->newQuery()->first();
+        $entry = $form->getEntry()->newQuery()->first();
 
         static::assertTrue($entry->exists());
 

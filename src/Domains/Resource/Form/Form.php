@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Validator;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -32,6 +31,8 @@ class Form implements ProvidesUIComponent, Responsable
      */
     protected $fields;
 
+    protected $hiddenFields = [];
+
     /**
      * @var string
      */
@@ -52,68 +53,65 @@ class Form implements ProvidesUIComponent, Responsable
      */
     protected $request;
 
-    protected $entries = [];
+    /** @var EntryContract */
+    protected $entry;
 
     protected $postSaveCallbacks = [];
 
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Form\FormConfig
-     */
-    protected $config;
-
-    protected $groups;
-
-    protected function __construct(FormConfig $config)
+    protected function __construct()
     {
-        $this->config = $config;
-        $this->fields = collect();
         $this->uuid = uuid();
-
-        $this->boot();
     }
 
-    protected function boot()
+    public function setFields($fields)
     {
-        foreach ($this->config->getGroups() as $handle => $group) {
-            $this->addGroup($group['provider'], $group['watcher'], $handle);
-        }
+        $this->fields = $this->provideFields($fields);
 
-        foreach ($this->entries as $handle => $entry) {
-            $this->fields[$handle]->map(function (Field $field) use ($entry) {
-                $field->setWatcher($entry);
-
-                if (in_array($field->getColumnName(), $this->config->getHiddenFields())) {
-                    $field->hide();
-                }
-
-                $field->fillFromEntry($entry);
-            });
-        }
+        return $this;
     }
+
+    public function make()
+    {
+        if (is_null($this->fields)) {
+            if ($this->entry) {
+                $this->fields = $this->provideFields($this->entry);
+            }
+        }
+        $this->fields->map(function (Field $field) {
+            $field->setWatcher($this->getEntry());
+
+            if (in_array($field->getColumnName(), $this->getHiddenFields())) {
+                $field->hide();
+            }
+
+            $field->fillFromEntry($this->getEntry());
+        });
+
+        return $this;
+    }
+
 
     public function save(): self
     {
-        foreach ($this->groups as $handle => $fields) {
-            $entry = $this->entries[$handle] ?? null;
-
-            // If this is a no-entry form then we will
-            // have to validate on our own since the
-            // model events wont fire
-            //
-            if (! $entry) {
-                $this->validate();
-            }
-
-            $fields->map(function (Field $field) use ($entry) {
-                if ($field->isHidden()) {
-                    return;
-                }
-
-                $this->postSaveCallbacks[] = $field->resolveRequest($this->request, $entry);
-            });
+        // If this is a no-entry form then we will
+        // have to validate on our own since the
+        // model events wont fire
+        //
+        if (! $this->hasEntry()) {
+            $this->validate();
         }
 
-        $this->notifyWatchers($this);
+        $this->fields->map(function (Field $field) {
+            if ($field->isHidden()) {
+                return;
+            }
+
+            $this->postSaveCallbacks[] = $field->resolveRequest($this->request, $this->getEntry());
+        });
+
+        if ($this->hasEntry()) {
+            $this->getEntry()->save();
+        }
 
         collect($this->postSaveCallbacks)->filter()->map(function (Closure $callback) {
             $callback();
@@ -125,7 +123,7 @@ class Form implements ProvidesUIComponent, Responsable
     public function validate()
     {
         $data = $this->request->all();
-        $rules = $this->getFieldsFlat()->map(function (Field $field) {
+        $rules = $this->getFields()->map(function (Field $field) {
             return [$field->getName(), $this->parseFieldRules($field)];
         })->filter()->toAssoc()->all();
 
@@ -145,36 +143,6 @@ class Form implements ProvidesUIComponent, Responsable
         return $rules;
     }
 
-    public function addWatcher($handle, Watcher $watcher)
-    {
-        $this->entries[$handle] = $watcher;
-
-        return $this;
-    }
-
-    public function removeWatcher(Watcher $detach)
-    {
-        $this->entries = collect($this->entries)->filter(function (Watcher $watcher) use ($detach) {
-            return $watcher !== $detach;
-        })->filter()->values()->all();
-
-        return $this;
-    }
-
-    public function notifyWatchers($params = null)
-    {
-        collect($this->entries)->map(function (Watcher $watcher) use ($params) {
-            $watcher->save();
-        });
-    }
-
-    public function setRequest(Request $request): self
-    {
-        $this->request = $request;
-
-        return $this;
-    }
-
     public function compose(): Payload
     {
         return FormComposer::make($this)->setRequest($this->request)->payload();
@@ -186,17 +154,13 @@ class Form implements ProvidesUIComponent, Responsable
                         ->setProps(
                             $this->compose()->get()
                         );
-//        return FormComponent::from($this);
     }
 
-    public function mergeFields($fields, ?Watcher $watcher, string $handle = 'default')
+    public function mergeFields($fields)
     {
         $fields = $this->provideFields($fields);
-        $this->fields->put($handle, $fields);
+        $this->fields->merge($fields);
 
-        if ($watcher) {
-            $this->addWatcher($handle, $watcher);
-        }
     }
 
     public function hideField(string $fieldName): self
@@ -207,6 +171,8 @@ class Form implements ProvidesUIComponent, Responsable
 
         $field->hide();
 
+        $this->hiddenFields[] = $fieldName;
+
         return $this;
     }
 
@@ -214,7 +180,7 @@ class Form implements ProvidesUIComponent, Responsable
     {
         $fields = is_array($fields) ? $fields : func_get_args();
 
-        $this->getFieldsFlat()->map(function (Field $field) use ($fields) {
+        $this->getFields()->map(function (Field $field) use ($fields) {
             if (in_array($field->getName(), $fields)) {
                 $field->hide();
             }
@@ -227,7 +193,7 @@ class Form implements ProvidesUIComponent, Responsable
     {
         $fields = is_array($fields) ? $fields : func_get_args();
 
-        $this->getFieldsFlat()->map(function (Field $field) use ($fields) {
+        $this->getFields()->map(function (Field $field) use ($fields) {
             if (! in_array($field->getName(), $fields)) {
                 $field->hide();
             }
@@ -238,7 +204,7 @@ class Form implements ProvidesUIComponent, Responsable
 
     public function addFields($fields): self
     {
-        $this->mergeFields($fields, null, 'default');
+        $this->mergeFields($fields);
 
         return $this;
     }
@@ -258,32 +224,14 @@ class Form implements ProvidesUIComponent, Responsable
         return $fields;
     }
 
-    public function addGroup($fieldsProvider, Watcher $watcher = null, string $handle = 'default'): self
-    {
-        $this->groups[$handle] = $this->provideFields($fieldsProvider);
-
-        $this->mergeFields($fieldsProvider, $watcher, $handle);
-
-        return $this;
-    }
-
     public function getFields()
     {
         return $this->fields;
     }
 
-    /**
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field[]|Collection
-     */
-    public function getFieldsFlat(): Collection
+    public function getField(string $name): ?Field
     {
-        return $this->fields->flatten(1);
-    }
-
-    public function getField(string $name, $group = 'default'): ?Field
-    {
-        return $this->fields->get($group)
-                            ->first(
+        return $this->fields->first(
                                 function (Field $field) use ($name) {
                                     return $field->getName() === $name;
                                 });
@@ -305,7 +253,7 @@ class Form implements ProvidesUIComponent, Responsable
 
     public function getUrl()
     {
-        return $this->url ?? $this->config->getUrl();
+        return $this->url;
     }
 
     public function setUrl(string $url): Form
@@ -320,14 +268,11 @@ class Form implements ProvidesUIComponent, Responsable
         return $this->method;
     }
 
-    public function getEntryForHandle(?string $handle = 'default')
+    public function setRequest(Request $request): self
     {
-        return $this->entries[$handle] ?? null;
-    }
+        $this->request = $request;
 
-    public function getDefaultEntry(): ?EntryContract
-    {
-        return $this->getEntryForHandle('default');
+        return $this;
     }
 
     public function setResource(Resource $resource): Form
@@ -335,6 +280,11 @@ class Form implements ProvidesUIComponent, Responsable
         $this->resource = $resource;
 
         return $this;
+    }
+
+    public function getHiddenFields(): array
+    {
+        return $this->hiddenFields;
     }
 
     public function toResponse($request)
@@ -360,20 +310,46 @@ class Form implements ProvidesUIComponent, Responsable
         ]);
     }
 
+    public function getEntry(): ?EntryContract
+    {
+        return $this->entry;
+    }
+
+    public function setEntry(EntryContract $entry): Form
+    {
+        $this->entry = $entry;
+
+        return $this;
+    }
+
+    public function hasEntry(): bool
+    {
+        return (bool)$this->entry;
+    }
+
     public function uuid(): string
     {
         return $this->uuid;
     }
 
-    public static function make(FormConfig $config): Form
+    public static function for($arg, $fields = null): self
     {
-        return new static($config);
-    }
+        if (is_string($arg)) {
+            $resource = sv_resource($arg);
+        }
 
-    public static function forResource(Resource $resource): Form
-    {
-        return FormConfig::make($resource->newEntryInstance())
-                         ->makeForm()
-                         ->setResource($resource);
+        if ($arg instanceof EntryContract) {
+            $entry = $arg;
+            $resource = sv_resource($entry);
+        }
+
+        $resource = $resource ?? $arg;
+
+        $form = new static();
+        $form->setFields($fields ?? $resource->getFields());
+        $form->setResource($resource);
+        $form->setEntry($entry ?? $resource->newEntryInstance());
+
+        return $form;
     }
 }

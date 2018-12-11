@@ -13,7 +13,6 @@ use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\FormConfig;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FormTest extends ResourceTestCase
@@ -36,45 +35,25 @@ class FormTest extends ResourceTestCase
     {
         $fields = $this->makeFields();
         $watcher = new FormTestUser(['name' => 'Omar', 'age' => 33]);
+////
+////        $config = FormConfig::make()
+////                            ->addGroup($fields, $watcher, 'default')
+//                            ->hideField('age');
 
-        $config = FormConfig::make()
-                            ->addGroup($fields, $watcher, 'default')
-                            ->hideField('age');
+        $form = Form::for($watcher)->setFields($fields)->hideField('age')->make();
 
-        $form = $config->makeForm();
         $this->assertInstanceOf(Form::class, $form);
-        $this->assertEquals(2, $form->getFieldsFlat()->count());
-        $this->assertEquals($watcher, $form->getEntryForHandle());
-        $this->assertEquals(['age'], $config->getHiddenFields());
-    }
-
-    function t1qqest_makes_create_form()
-    {
-        $config = FormConfig::make()
-                            ->setUrl(sv_url('url/to/form'))
-                            ->addGroup($fields = $this->makeFields(), $testUser = new FormTestUser());
-
-        $form = $config->makeForm();
-        $this->assertEquals($fields, $form->getFieldsFlat()->all());
-        $this->assertEquals([
-            'url'     => sv_url('url/to/form'),
-            'method'  => 'post',
-            'fields'  => [
-                $form->composeField('name')->get(),
-                $form->composeField('age')->get(),
-            ],
-            'actions' => [],
-        ], sv_compose($form->compose()));
+        $this->assertEquals(2, $form->getFields()->count());
+        $this->assertEquals($watcher, $form->getEntry());
+        $this->assertEquals(['age'], $form->getHiddenFields());
     }
 
     function test_makes_update_form()
     {
-        $form = FormConfig::make()
-                          ->addGroup(
-                              $fields = $this->makeFields(),
-                              $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
-                          )
-                          ->makeForm();
+        $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
+        $fields = $this->makeFields();
+
+        $form = Form::for($testUser, $fields)->make();
 
         $this->assertEquals('Omar', $this->getComposedValue($form->getField('name'), $testUser));
         $this->assertEquals(33, $this->getComposedValue($form->getField('age'), $testUser));
@@ -87,14 +66,13 @@ class FormTest extends ResourceTestCase
 
     function test__saves_form()
     {
-        $form = FormConfig::make()
-                          ->addGroup(
-                              $fields = $this->makeFields(),
-                              $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
-                          )
-                          ->makeForm()
-                          ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                          ->save();
+        $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
+        $fields = $this->makeFields();
+
+        $form = Form::for($testUser, $fields)
+                    ->make()
+                    ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
+                    ->save();
 
         $this->assertEquals('Omar', $form->composeField('name', $testUser)->get('value'));
         $this->assertEquals(33, $form->composeField('age', $testUser)->get('value'));
@@ -102,16 +80,14 @@ class FormTest extends ResourceTestCase
 
     function test__hidden_fields()
     {
-        $form = FormConfig::make()
-                          ->setUrl('url/to/form')
-                          ->addGroup(
-                              $fields = $this->makeFields(),
-                              $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33])
-                          )
-                          ->hideField('name')
-                          ->makeForm()
-                          ->setRequest($this->makePostRequest(['name' => 'Ali', 'age' => 99]))
-                          ->save();
+        $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
+        $fields = $this->makeFields();
+
+        $form = Form::for($testUser, $fields)
+                    ->hideField('name')
+                    ->make()
+                    ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 99]))
+                    ->save();
 
         $nameField = $form->getField('name');
         $this->assertTrue($nameField->isHidden());
@@ -126,27 +102,21 @@ class FormTest extends ResourceTestCase
 
     function test__saves_entry()
     {
-        $form = FormConfig::make()
-                          ->addGroup($fields = $this->makeFields(), $testUser = new FormTestUser)
-                          ->makeForm()->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                          ->save();
+        $testUser = new FormTestUser;
+        $fields = $this->makeFields();
+
+        $form = Form::for($testUser, $fields)
+                    ->make()
+                    ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
+                    ->save();
 
         $this->assertEquals('Omar', $form->composeField('name', $testUser)->get('value'));
         $this->assertEquals(33, $form->composeField('age', $testUser)->get('value'));
 
-        $user = $form->getEntryForHandle('default');
+        $user = $form->getEntry();
         $this->assertEquals('Omar', $user->name);
         $this->assertEquals(33, $user->age);
         $this->assertTrue($user->wasRecentlyCreated);
-    }
-
-    function test__returns_watcher()
-    {
-        $form = FormConfig::make()
-                          ->addGroup($fields = $this->makeFields(), $user = new FormTestUser, 'user')
-                          ->makeForm();
-
-        $this->assertEquals($user, $form->getEntryForHandle('user'));
     }
 
     function test__resource_create_over_http()
@@ -169,36 +139,6 @@ class FormTest extends ResourceTestCase
         $this->assertEquals(33, $user->age);
     }
 
-    function test__saves_multiple_entries()
-    {
-        $posts = $this->create('test_posts', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-        });
-
-        $form = FormConfig::make()
-                          ->addGroup($this->users, $user = $this->users->newEntryInstance(), 'test_user')
-                          ->addGroup($posts,  $post = $posts->newEntryInstance(), 'test_post')
-                          ->makeForm()
-                          ->setRequest($this->makePostRequest([
-                              'name'  => 'Omar',
-                              'title' => 'Khalifa',
-                              'age'   => 33,
-                          ]))
-                          ->save();
-
-        $this->assertEquals('Omar', $form->composeField($form->getField('name', 'test_user'), $user)->get('value'));
-        $this->assertEquals('Khalifa', $form->composeField($form->getField('title', 'test_post'), $post)->get('value'));
-
-        $user = $form->getEntryForHandle('test_user');
-        $this->assertEquals('Omar', $user->name);
-        $this->assertTrue($user->wasRecentlyCreated);
-
-        $post = $form->getEntryForHandle('test_post');
-        $this->assertEquals('Khalifa', $post->title);
-        $this->assertTrue($post->wasRecentlyCreated);
-    }
-
     function test__save_handles_fields_mutating_callbacks()
     {
         $fields = [
@@ -209,17 +149,14 @@ class FormTest extends ResourceTestCase
 
         $file = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
 
-        $form = FormConfig::make()
-                          ->addGroup($fields, $testUser = new FormTestUser)
-                          ->makeForm()
-                          ->setRequest($this->makePostRequest(['name'   => 'Omar',
-                                                               'age'    => 33,
-                                                               'avatar' => $file]));
+        $form = Form::for($testUser = new FormTestUser, $fields)
+                    ->make()
+                    ->setRequest($this->makePostRequest(['name'   => 'Omar',
+                                                         'age'    => 33,
+                                                         'avatar' => $file]));
 
         $form->getField('avatar');
-
         $form->save();
-
         $this->assertNull($testUser->avatar);
 
         $this->assertEquals(1, Media::count());

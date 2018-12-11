@@ -84,7 +84,7 @@ class MorphOneTest extends ResourceTestCase
         $this->assertNull($form->getField('user'));
         $this->assertNull($form->composeField('label')->get('value'));
 
-        $relatedEntry = $form->getEntryForHandle();
+        $relatedEntry = $form->getEntry();
         $this->assertEquals($user->getId(), $relatedEntry->owner_id);
         $this->assertEquals($user->getHandle(), $relatedEntry->owner_type);
 
@@ -106,7 +106,7 @@ class MorphOneTest extends ResourceTestCase
 
         /** @var Form $form */
         $form = $relation->makeForm();
-        $relatedEntry = $form->getEntryForHandle();
+        $relatedEntry = $form->getEntry();
         $this->assertInstanceOf(TestTac::class, $relatedEntry);
 
         $this->assertEquals($user->getId(), $relatedEntry->owner_id);
