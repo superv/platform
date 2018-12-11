@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Resource;
 
 use Closure;
+use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
@@ -31,51 +32,14 @@ class ResourceView implements ProvidesUIComponent
 
     protected $actions = [];
 
+    protected $sections;
+
     public function __construct(Resource $resource, EntryContract $entry)
     {
         $this->resource = $resource;
         $this->entry = $entry;
-    }
 
-    public function resolveHeadingUsing(Closure $callback)
-    {
-        $this->headingResolver = $callback;
-
-        return $this;
-    }
-
-    protected function getActions()
-    {
-        $relationActions = $this->resource->getRelations()
-                                          ->map(function (Relation $relation) {
-                                              if ($url = $relation->getConfigValue('view.url')) {
-                                                  $portal = true;
-                                              } elseif ($relation instanceof ProvidesTable) {
-                                                  $url = $relation->indexRoute($this->entry);
-                                              } elseif ($relation instanceof ProvidesForm) {
-                                                  $url = $relation->route('edit', $this->entry);
-                                              } else {
-                                                  return null;
-                                              }
-
-                                              return [
-                                                  'url'    => $url,
-                                                  'portal' => $portal ?? false,
-                                                  'title'  => str_unslug($relation->getName()),
-                                              ];
-                                          })
-                                          ->filter()->values()->all();
-
-        return array_merge($this->actions, [
-            ['url' => $this->resource->route('edit', $this->entry), 'title' => 'Edit'],
-        ], $relationActions);
-    }
-
-    public function setActions(array $actions): ResourceView
-    {
-        $this->actions = $actions;
-
-        return $this;
+        $this->sections = collect();
     }
 
     public function makeComponent(): ComponentContract
@@ -86,25 +50,34 @@ class ResourceView implements ProvidesUIComponent
                 ->get('image_url');
         }
 
+        $this->buildSections();
+
         return Component::make('sv-resource-view')
                         ->setProps([
-                            'entry'   => $this->entry->toArray(),
-                            'heading' => [
+                            'entry'    => $this->entry->toArray(),
+                            'heading'  => [
                                 'imageUrl' => $imageUrl ?? '',
                                 'header'   => $this->resource->getEntryLabel($this->entry),
-                                'actions'  => $this->getActions(),
                             ],
+                            'sections' => $this->getSections(),
 
                             'fields' => $this->getFieldsForView(),
 
                         ]);
     }
 
-    public function addAction(array $action): ResourceView
+    public function resolveHeadingUsing(Closure $callback)
     {
-        $this->actions[] = $action;
+        $this->headingResolver = $callback;
 
         return $this;
+    }
+
+    protected function buildSections()
+    {
+        $this->sections = $this->sections->merge($this->getRelationsSections());
+
+        $this->sections->push(['url' => $this->resource->route('edit', $this->entry), 'title' => 'Edit']);
     }
 
     protected function getFieldsForView()
@@ -117,6 +90,48 @@ class ResourceView implements ProvidesUIComponent
                               ->map(function (Field $field) {
                                   return (new FieldComposer($field))->forView($this->entry);
                               });
+    }
+
+    public function addSection(array $section): ResourceView
+    {
+        $this->sections[] = $section;
+
+        return $this;
+    }
+
+    public function getSections(): Collection
+    {
+        return $this->sections;
+    }
+
+    public function setSections($sections): ResourceView
+    {
+        $this->sections = wrap_collect($sections);
+
+        return $this;
+    }
+
+    protected function getRelationsSections(): Collection
+    {
+        return $this->resource->getRelations()
+                              ->map(function (Relation $relation) {
+                                  if ($url = $relation->getConfigValue('view.url')) {
+                                      $portal = true;
+                                  } elseif ($relation instanceof ProvidesTable) {
+                                      $url = $relation->indexRoute($this->entry);
+                                  } elseif ($relation instanceof ProvidesForm) {
+                                      $url = $relation->route('edit', $this->entry);
+                                  } else {
+                                      return null;
+                                  }
+
+                                  return [
+                                      'url'    => $url,
+                                      'portal' => $portal ?? false,
+                                      'title'  => str_unslug($relation->getName()),
+                                  ];
+                              })
+                              ->filter()->values();
     }
 }
 

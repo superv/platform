@@ -28,14 +28,25 @@ return [
         'uses' => ResourceFormController::at('update'),
     ],
 
+    'sv/res/{resource}/{id}' => [
+        'as'    => 'resource.view.page',
+        'uses'  => ResourceViewController::at('page'),
+        'where' => ['id' => '[0-9]*'],
+    ],
+
     'sv/res/{resource}/{id}/view' => [
         'as'   => 'resource.view',
-        'uses' => ResourceViewController::class,
+        'uses' => ResourceViewController::at('view'),
     ],
 
     'GET@'.'sv/res/{resource}' => [
         'as'   => 'resource.index',
         'uses' => ResourceIndexController::at('page'),
+    ],
+
+    'ANY@'.'sv/res/{resource}/{id}/actions/{action}' => [
+        'as'   => 'resource.entry.actions',
+        'uses' => ResourceIndexController::at('action'),
     ],
 
     'GET@'.'sv/res/{resource}/table/{data?}' => [
