@@ -16,6 +16,11 @@ class SchemaService
         $this->db = $db;
     }
 
+    public function dropTable($table)
+    {
+        $this->db->connection()->getDoctrineSchemaManager()->dropTable($table);
+    }
+
     public function getDatabaseTables($connection = null): Collection
     {
         return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableNames())
@@ -28,20 +33,13 @@ class SchemaService
             })->keyBy('table');
     }
 
-    public function formatSingular($tbl)
+    public function formatSingular($table)
     {
-        $replace = camel_case($tbl);
+        $replace = camel_case($table);
 
         return str_singular(ucwords($replace));
     }
 
-    /**
-     * [getTableColumns description].
-     *
-     * @param  [type] $table      [description]
-     * @param  [type] $connection [description]
-     * @return [type]             [description]
-     */
     public function getTableColumns($table, $connection = null)
     {
         return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableColumns($table))

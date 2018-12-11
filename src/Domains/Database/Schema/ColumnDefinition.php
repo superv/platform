@@ -101,6 +101,11 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this->addFlag('table.show');
     }
 
+    public function hideOnView()
+    {
+        return $this->addFlag('view.hide');
+    }
+
     public function showOnHeader()
     {
         return $this->addFlag('header.show');

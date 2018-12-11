@@ -21,7 +21,7 @@ class RecordActivity
             'user_id'     => $event->request->user()->getKey(),
             'resource_id' => $resource->id(),
             'entry_type'  => $entryType,
-            'entry_id'    => $route->parameter('id'),
+            'entry_id'    => (int)$route->parameter('id'),
             'activity'    => $activity,
             'payload'     => json_encode($event->request->all()),
             'created_at'  => Current::time(),

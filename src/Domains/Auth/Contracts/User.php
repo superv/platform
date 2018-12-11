@@ -2,7 +2,9 @@
 
 namespace SuperV\Platform\Domains\Auth\Contracts;
 
-interface User
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+
+interface User extends EntryContract
 {
     public static function query();
 

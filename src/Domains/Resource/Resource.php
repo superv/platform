@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
+use SuperV\Platform\Domains\Resource\Contracts\RequiresResource;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
@@ -69,6 +70,13 @@ class Resource implements
     protected $mergeRelations;
 
     /**
+     * Registered resource actions
+     *
+     * @var \Illuminate\Support\Collection
+     */
+    protected $actions;
+
+    /**
      * @var Closure
      */
     protected $relationProvider;
@@ -98,6 +106,28 @@ class Resource implements
 
         $this->fields = (new Fields($this, $this->fields));
         $this->relations = ($this->relations)($this);
+        $this->actions = collect();
+    }
+
+    public function registerAction($identifier, $handler): Resource
+    {
+        $this->actions->put($identifier, $handler);
+
+        return $this;
+    }
+
+    public function getAction($identifier)
+    {
+        $action = $this->actions->get($identifier);
+        if (is_string($action)) {
+            $action = $action::make();
+        }
+
+        if ($action instanceof RequiresResource) {
+            $action->setResource($this);
+        }
+
+        return $action;
     }
 
     public function onCreated(Closure $callback): Resource
@@ -234,7 +264,7 @@ class Resource implements
         return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
     }
 
-    public function route($route, ?EntryContract $entry = null)
+    public function route($route, ?EntryContract $entry = null, array $params = [])
     {
         $base = 'sv/res/'.$this->getHandle();
         if ($route === 'create') {
@@ -267,6 +297,9 @@ class Resource implements
         if ($route === 'delete' || $route === 'edit' || $route === 'view') {
             return $base.'/'.$entry->getId().'/'.$route;
         }
+
+        return sv_route('resource.'.$route, array_merge($params, ['id'       => $entry->getId(),
+                                                                  'resource' => $this->getHandle()]));
     }
 
     public function getHandle(): string

@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Http;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Exceptions\PlatformException;
 
 trait ResolvesResource
 {
@@ -28,8 +29,9 @@ trait ResolvesResource
         }
 
         if ($id = request()->route()->parameter('id')) {
-            $this->entry = $this->resource->find($id);
-
+            if (! $this->entry = $this->resource->find($id)) {
+                PlatformException::fail('Entry not found');
+            }
             // Recreate resource with entry injected (fields)
             $this->resource = ResourceFactory::make($this->entry);
         }
