@@ -99,7 +99,7 @@ class Addon
 
     public function loadConfigFiles()
     {
-        foreach (glob($this->realPath('config/*')) as $path) {
+        foreach (glob($this->realPath('config/*.php')) as $path) {
             $key = pathinfo($path, PATHINFO_FILENAME);
             $config = config()->get("superv.{$key}", []);
 

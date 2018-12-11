@@ -19,7 +19,7 @@ class MakePageTest extends TestCase
 
     protected $flags = [];
 
-    function test__make_table_page()
+    function t1est__make_table_page()
     {
         $this->withoutExceptionHandling();
         $fields = [

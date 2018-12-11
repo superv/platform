@@ -33,6 +33,10 @@ class AddonServiceProvider extends BaseServiceProvider
             $this->addon->slug() => base_path($this->addon->resourcePath('views')),
         ]);
 
+        if (file_exists($file = $this->addon->realPath('config/service/listeners.php'))) {
+            $this->registerListeners((array)require($file));
+        }
+
         if ($this->app->runningInConsole()) {
             MigrationScopes::register($this->addon->slug(), base_path($this->addon->path('database/migrations')));
         }

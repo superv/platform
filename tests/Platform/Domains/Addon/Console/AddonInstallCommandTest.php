@@ -19,7 +19,7 @@ class AddonInstallCommandTest extends TestCase
 
         $this->artisan('addon:install', [
             '--path' => 'path/to/addon',
-            'slug'   => 'addon.slug',
+            'addon'  => 'addon.slug',
         ]);
     }
 
@@ -33,7 +33,7 @@ class AddonInstallCommandTest extends TestCase
         $installer->shouldReceive('install')->once();
 
         $this->artisan('addon:install', [
-            'slug' => 'vendor.addons.slug',
+            'addon' => 'vendor.addons.slug',
         ]);
     }
 }

@@ -6,14 +6,15 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use SuperV\Platform\Domains\Database\Migrations\Scopes;
 use SuperV\Platform\Domains\Routing\Router;
+use Tests\Platform\Providers\TestEvent;
+use Tests\Platform\Providers\TestListener;
 use Tests\Platform\TestCase;
 
 class AddonServiceProviderTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function registers_addons_routes_from_routes_folder()
+    function test_registers_addons_routes_from_routes_folder()
     {
         $router = $this->app->instance(Router::class, Mockery::mock(Router::class));
         $router->shouldReceive('loadFromPath')
@@ -23,8 +24,18 @@ class AddonServiceProviderTest extends TestCase
         $this->setUpAddon();
     }
 
-    /** @test */
-    function adds_addons_view_namespaces()
+    function test__registers_event_listeners_from_config_folder()
+    {
+        $_SERVER['__addon.listeners.file'] = [TestEvent::class => TestListener::class];
+        unset($_SERVER['__event.class']);
+
+        $this->setUpAddon();
+
+        $this->app['events']->fire(new TestEvent());
+        $this->assertEquals(TestEvent::class, $_SERVER['__event.class']);
+    }
+
+    function test_adds_addons_view_namespaces()
     {
         $addon = $this->setUpAddon();
 
@@ -33,8 +44,7 @@ class AddonServiceProviderTest extends TestCase
         $this->assertDirectoryExists(reset($hints['superv.addons.sample']));
     }
 
-    /** @test */
-    function registers_migrations_path()
+    function test_registers_migrations_path()
     {
         $addon = $this->setUpAddon();
 

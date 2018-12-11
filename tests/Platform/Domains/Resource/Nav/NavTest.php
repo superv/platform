@@ -229,21 +229,22 @@ class NavTest extends ResourceTestCase
         $this->assertEquals([
             'title'    => 'Acp',
             'handle'   => 'acp',
+            'colophon' => 'acp',
             'sections' => [
                 [
                     'title'    => 'Foo',
                     'handle'   => 'foo',
-                    'colophon' => 'foo',
+                    'colophon' => 'acp.foo',
                     'sections' => [
                         [
                             'title'    => 'Baz',
                             'handle'   => 'baz',
-                            'colophon' => 'foo.baz',
+                            'colophon' => 'acp.foo.baz',
                             'sections' => [
                                 [
                                     'title'    => 'Bom',
                                     'handle'   => 'bom',
-                                    'colophon' => 'foo.baz.bom',
+                                    'colophon' => 'acp.foo.baz.bom',
                                 ],
                             ],
                         ],
