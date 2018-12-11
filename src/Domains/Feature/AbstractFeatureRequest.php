@@ -50,7 +50,8 @@ abstract class AbstractFeatureRequest implements Request
         if (! is_array($input)) {
             $this->throwValidationError('Invalid input data');
         }
-        $this->validator->make($input, $rules);
+
+        return $this->validator->make($input, $rules);
 
         // return only validated input
         $validated = collect($input)

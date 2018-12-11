@@ -32,6 +32,17 @@ class LaravelValidator implements Validator
             $exception->setRules($rules);
             throw $exception;
         }
+
+        // return only validated input
+        return collect($data)
+            ->only(
+                collect($rules)->keys()
+                               ->map(function ($rule) {
+                                   return explode('.', $rule)[0];
+                               })
+                               ->unique()
+                               ->toArray()
+            )->toArray();
     }
 
     public function errors()
