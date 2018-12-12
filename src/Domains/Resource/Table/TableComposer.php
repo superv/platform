@@ -24,8 +24,9 @@ class TableComposer
     {
         $payload = new Payload([
             'config' => [
+                'title'             => $this->table->getTitle(),
                 'selectable'        => $this->table->isSelectable(),
-                'data_url'          => $this->table->getDataUrl(),
+                'data_url'          => $this->makeDataUrl(),
                 'fields'            => $this->makeFields(),
                 'row_actions'       => $this->makeRowActions(),
                 'selection_actions' => $this->makeSelectionActions(),
@@ -92,5 +93,13 @@ class TableComposer
         return $this->table->getFilters()->map(function (Filter $filter) {
             return (new FieldComposer($filter))->forForm();
         });
+    }
+
+    /**
+     * @return string
+     */
+    protected function makeDataUrl(): string
+    {
+        return $this->table->getDataUrl().(request()->query() ? '?'.http_build_query(request()->query()) : '');
     }
 }
