@@ -15,14 +15,14 @@
 
     }</style>
   <title>SuperV Project</title>
-  <link href=/superv/js/app.9ba2a4c3.js rel=preload as=script>
-  <link href=/superv/js/chunk-vendors.f48ebed1.js rel=preload as=script>
+  <link href=/vendor/superv/js/app.9ba2a4c3.js rel=preload as=script>
+  <link href=/vendor/superv/js/chunk-vendors.f48ebed1.js rel=preload as=script>
 </head>
 <body class="font-sans font-normal antialiased text-smooth min-h-screen">
   <noscript><strong>We're sorry but frontend doesn't work at all without JavaScript enabled. Please enable it to
       continue.</strong></noscript>
   <div id=app></div>
-  <script src=/superv/js/chunk-vendors.f48ebed1.js></script>
-  <script src=/superv/js/app.9ba2a4c3.js></script>
+  <script src=/vendor/superv/js/chunk-vendors.f48ebed1.js></script>
+  <script src=/vendor/superv/js/app.9ba2a4c3.js></script>
 </body>
 </html>
