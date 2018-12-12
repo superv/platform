@@ -99,6 +99,11 @@ class Field implements FieldContract
 
     protected function boot() { }
 
+    public function setHint($hint)
+    {
+        $this->setConfigValue('hint', $hint);
+    }
+
     public function getLabel(): string
     {
         return $this->label ?? str_unslug($this->name);

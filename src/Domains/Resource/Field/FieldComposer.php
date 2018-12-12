@@ -35,8 +35,12 @@ class FieldComposer
             'uuid'        => $field->uuid(),
             'name'        => $field->getName(),
             'label'       => $field->getLabel(),
+            'hint'        => $field->getConfigValue('hint'),
             'placeholder' => $field->getPlaceholder(),
             'value'       => $value ?? $field->getValue(),
+            'meta'        => [
+                'on_change_event' => $field->getConfigValue('on_change_event'),
+            ],
         ]))->setFilterNull(true);
 
         if ($callback = $field->getCallback('form.composing')) {
@@ -114,10 +118,9 @@ class FieldComposer
         ]))->setFilterNull(false);
 
         if ($callback = $field->getCallback('view.composing')) {
-               app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
-           }
+            app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
+        }
 
         return $payload;
     }
-
 }
