@@ -47,6 +47,14 @@ class ApplyFilters
             return;
         }
 
+        if ($decoded = base64_decode($this->request->get('filters'))) {
+            if ($hydrated = json_decode($decoded, true)) {
+                if (is_array($hydrated)) {
+                    $request = $hydrated;
+                }
+            }
+        }
+
         $this->filters->map(function (Filter $filter) use ($request) {
             if ($filterValue = array_get($request, $filter->getIdentifier())) {
                 $filter->apply($this->query, $filterValue);
