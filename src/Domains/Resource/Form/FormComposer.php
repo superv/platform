@@ -25,10 +25,12 @@ class FormComposer
     public function payload()
     {
         $payload = new Payload([
-            'url'     => $this->form->getUrl(),
-            'method'  => $this->form->getMethod(),
-            'fields'  => $this->composeFields(),
-            'actions' => $this->composeActions(),
+            'identifier' => $this->form->getIdentifier(),
+            'title'      => $this->form->getTitle(),
+            'url'        => $this->form->getUrl(),
+            'method'     => $this->form->getMethod(),
+            'fields'     => $this->composeFields(),
+            'actions'    => $this->composeActions(),
         ]);
         $this->form->fire('composed', ['form' => $this, 'payload' => $payload]);
 

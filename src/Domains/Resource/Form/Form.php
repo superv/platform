@@ -23,6 +23,9 @@ class Form implements ProvidesUIComponent, Responsable
 {
     use FiresCallbacks;
 
+    /** @var string */
+    protected $identifier;
+
     /** @var Resource */
     protected $resource;
 
@@ -58,38 +61,32 @@ class Form implements ProvidesUIComponent, Responsable
 
     protected $postSaveCallbacks = [];
 
-    protected function __construct()
-    {
-        $this->uuid = uuid();
-    }
-
-    public function setFields($fields)
-    {
-        $this->fields = $this->provideFields($fields);
-
-        return $this;
-    }
+    protected $title;
 
     public function make()
     {
+        $this->uuid = uuid();
         if (is_null($this->fields)) {
             if ($this->entry) {
                 $this->fields = $this->provideFields($this->entry);
             }
         }
         $this->fields->map(function (Field $field) {
-            $field->setWatcher($this->getEntry());
+            if ($this->hasEntry()) {
+                $field->setWatcher($this->getEntry());
+            }
 
             if (in_array($field->getColumnName(), $this->getHiddenFields())) {
                 $field->hide();
             }
 
-            $field->fillFromEntry($this->getEntry());
+            if ($this->hasEntry()) {
+                $field->fillFromEntry($this->getEntry());
+            }
         });
 
         return $this;
     }
-
 
     public function save(): self
     {
@@ -160,7 +157,6 @@ class Form implements ProvidesUIComponent, Responsable
     {
         $fields = $this->provideFields($fields);
         $this->fields->merge($fields);
-
     }
 
     public function hideField(string $fieldName): self
@@ -229,12 +225,19 @@ class Form implements ProvidesUIComponent, Responsable
         return $this->fields;
     }
 
+    public function setFields($fields)
+    {
+        $this->fields = $this->provideFields($fields);
+
+        return $this;
+    }
+
     public function getField(string $name): ?Field
     {
         return $this->fields->first(
-                                function (Field $field) use ($name) {
-                                    return $field->getName() === $name;
-                                });
+            function (Field $field) use ($name) {
+                return $field->getName() === $name;
+            });
     }
 
     public function getFieldValue(string $name)
@@ -292,11 +295,11 @@ class Form implements ProvidesUIComponent, Responsable
         $action = $request->get('__form_action');
 
         if ($action === 'view') {
-            $route = $this->resource->route('view', $this->getDefaultEntry());
+            $route = $this->resource->route('view', $this->getEntry());
         } elseif ($action === 'create_another') {
             $route = $this->resource->route('create');
         } elseif ($action === 'edit_next') {
-            $next = $this->resource->newQuery()->where('id', '>', $this->getDefaultEntry()->getId())->first();
+            $next = $this->resource->newQuery()->where('id', '>', $this->getEntry()->getId())->first();
             if ($next) {
                 $route = $this->resource->route('edit', $next).'?action=edit_next';
             }
@@ -327,6 +330,30 @@ class Form implements ProvidesUIComponent, Responsable
         return (bool)$this->entry;
     }
 
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    public function setIdentifier(string $identifier): Form
+    {
+        $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
     public function uuid(): string
     {
         return $this->uuid;
@@ -346,6 +373,7 @@ class Form implements ProvidesUIComponent, Responsable
         $resource = $resource ?? $arg;
 
         $form = new static();
+        $form->setIdentifier($resource->getResourceKey());
         $form->setFields($fields ?? $resource->getFields());
         $form->setResource($resource);
         $form->setEntry($entry ?? $resource->newEntryInstance());

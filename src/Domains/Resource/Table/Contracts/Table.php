@@ -7,6 +7,10 @@ use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
 interface Table
 {
+    public function getTitle();
+
+    public function setTitle($title);
+
     public function getFields();
 
     public function makeFields(): Collection;
