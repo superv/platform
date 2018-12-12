@@ -22,6 +22,8 @@ class Page implements ProvidesUIComponent, Responsable
 
     protected $component;
 
+    protected $componentName = 'sv-page';
+
     protected function __construct(string $title)
     {
         $this->boot();
@@ -70,7 +72,7 @@ class Page implements ProvidesUIComponent, Responsable
 
     public function makeComponent(): ComponentContract
     {
-        return PageComponent::from($this);
+        return PageComponent::from($this)->setName($this->componentName);
     }
 
     public function getMeta(): array
@@ -100,6 +102,13 @@ class Page implements ProvidesUIComponent, Responsable
     public function addAction($action)
     {
         $this->actions[] = $action;
+
+        return $this;
+    }
+
+    public function setComponentName(string $componentName): Page
+    {
+        $this->componentName = $componentName;
 
         return $this;
     }
