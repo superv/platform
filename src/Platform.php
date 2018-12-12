@@ -32,9 +32,9 @@ class Platform extends Addon
 
         /** @var AddonModel $entry */
         foreach ($entries as $entry) {
-            $addon = $entry->resolveAddon();
-
-            $addon->boot();
+            if ($addon = $entry->resolveAddon()) {
+                $addon->boot();
+            }
         }
 
         PlatformBootedEvent::dispatch();

@@ -11,13 +11,15 @@ class AddonModel extends ResourceEntry
     /**
      * Create new Addon instance
      *
-     * @return \SuperV\Platform\Domains\Addon\Addon
+     * @return \SuperV\Platform\Domains\Addon\Addon|null
      */
     public function resolveAddon()
     {
         $class = $this->addonClass();
 
-        return new $class($this);
+        if (class_exists($class)) {
+            return new $class($this);
+        }
     }
 
     /**
