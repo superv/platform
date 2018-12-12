@@ -101,6 +101,11 @@ class ColumnFieldMapper
         $this->mapInteger();
     }
 
+    protected function mapSmallint()
+    {
+        $this->mapInteger();
+    }
+
     protected function mapBigInt()
     {
         $this->mapInteger();

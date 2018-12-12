@@ -13,7 +13,6 @@ class RelationType extends ValueObject
     private const MORPH_TO_MANY = 'morph_to_many';
     private const MORPH_ONE = 'morph_one';
     private const MORPH_TO = 'morph_to';
-
     private const MORPH_MANY = 'morph_many';
 
     public function isBelongsTo(): bool

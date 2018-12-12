@@ -23,6 +23,7 @@ class SchemaService
 
     public function getDatabaseTables($connection = null): Collection
     {
+        return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableNames());
         return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableNames())
             ->map(function (string $table) {
                 return [
@@ -31,6 +32,13 @@ class SchemaService
                     'singular' => $this->formatSingular($table),
                 ];
             })->keyBy('table');
+    }
+
+    public function getTable($tableName)
+    {
+        return $this->getDatabaseTables()->first(function ($table) use ($tableName) {
+            return $tableName === $table;
+        });
     }
 
     public function formatSingular($table)

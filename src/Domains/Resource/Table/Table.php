@@ -16,6 +16,8 @@ use SuperV\Platform\Support\Composer\Tokens;
 
 class Table implements TableContract, Composable, ProvidesUIComponent, Responsable
 {
+    protected $title;
+
     /** @var Collection */
     protected $rows;
 
@@ -207,5 +209,17 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
     public function getSelectionActions()
     {
         return $this->selectionActions;
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
     }
 }

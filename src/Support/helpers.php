@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Feature\FeatureBus;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
+use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Nucleo\SvBlock;
 use SuperV\Platform\Domains\UI\Nucleo\SvComponent;
 use SuperV\Platform\Domains\UI\Nucleo\SvTab;
@@ -283,7 +284,7 @@ function sv_loader($url)
         $url = sv_url($url);
     }
 
-    return SvBlock::make('sv-loader')->setProp('url', $url);
+    return Component::make('sv-loader')->setProp('url', $url);
 }
 
 function sv_field(array $params)
