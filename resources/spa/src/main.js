@@ -1,5 +1,5 @@
-import Vue from 'vue'
 import SuperVJS from 'superv-js'
+import App from './App'
 
 const configElement = document.getElementById('config')
 const config = JSON.parse(configElement.innerHTML)
@@ -18,5 +18,10 @@ Vue.use(SuperVJS, {
 new Vue({
   el: '#app',
   name: 'root',
+  data() {
+    return {
+      layouts: { default: App }
+    }
+  },
   mixins: [require('superv-js').LayoutMixin]
 })

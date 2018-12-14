@@ -139,6 +139,7 @@ class PlatformServiceProvider extends BaseServiceProvider
             $this->publishConfig();
             $this->publishViews();
             $this->publishAssets();
+            $this->publishSpa();
         }
 
         if (! Platform::isInstalled()) {
@@ -184,6 +185,13 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->publishes([
             __DIR__.'/../resources/assets' => public_path('vendor/superv'),
         ], 'superv.assets');
+    }
+
+    protected function publishSpa()
+    {
+        $this->publishes([
+            __DIR__.'/../resources/spa' => public_path('vendor/superv/spa'),
+        ], 'superv.spa');
     }
 
     protected function registerPlatformRoutes(): void
