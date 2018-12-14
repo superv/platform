@@ -120,6 +120,16 @@ class ColumnFieldMapper
         $this->setConfigValue('places', $this->getParameter('places'));
     }
 
+    protected function mapDouble()
+    {
+        $this->mapDecimal();
+    }
+
+    protected function mapFloat()
+    {
+        $this->mapDecimal();
+    }
+
     protected function mapBoolean()
     {
         $this->fieldType = 'boolean';

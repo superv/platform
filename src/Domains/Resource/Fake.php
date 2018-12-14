@@ -85,11 +85,54 @@ class Fake
     {
         $fieldName = $field->getName();
 
-        if (in_array($fieldName, ['name',
-                'name',
+        if (in_array($fieldName, [
+                'email',
+                'currency_code',
                 'first_name',
                 'last_name']) && $fake = $this->faker->__get(camel_case($fieldName))) {
             return $fake;
+        }
+
+        if (in_array($fieldName, [
+                'color',
+                'domain']) && $fake = $this->faker->__get(camel_case($fieldName.'_name'))) {
+            return $fake;
+        }
+
+        if (ends_with($fieldName, '_name') || $fieldName === 'name') {
+            return $this->faker->name;
+        }
+
+        if (ends_with($fieldName, '_at')) {
+            return $this->faker->dateTime;
+        }
+
+        if (ends_with($fieldName, '_phone') || $fieldName === 'phone' || $fieldName === 'cell') {
+            return $this->faker->phoneNumber;
+        }
+
+        if (ends_with($fieldName, '_number') || $fieldName === 'number') {
+            return $this->faker->randomNumber(8);
+        }
+
+        if (ends_with($fieldName, '_address') || $fieldName === 'address') {
+            return $this->faker->address;
+        }
+
+        if (ends_with($fieldName, '_url') || $fieldName === 'website') {
+            return $this->faker->url;
+        }
+
+        if (ends_with($fieldName, '_rate') || $fieldName === 'rate') {
+            return $this->faker->randomFloat(2, 0.5, 10);
+        }
+
+        if (ends_with($fieldName, '_price') || $fieldName === 'price') {
+            return $this->faker->randomFloat(2, 0.5, 100);
+        }
+
+        if ($fieldName === 'quantity' || $fieldName === 'qty' || $fieldName === 'count') {
+            return $this->faker->randomNumber(2);
         }
 
         return $this->faker->word;

@@ -233,7 +233,7 @@ function sv_url($path = null)
 
 function sv_route($name, $parameters = [])
 {
-    return sv_url(route($name, $parameters, false));
+    return route($name, $parameters, false);
 }
 
 function uuid()

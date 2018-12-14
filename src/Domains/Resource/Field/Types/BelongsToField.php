@@ -60,7 +60,7 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                 $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view', $relatedEntry));
+                $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
             }
         };
     }
@@ -70,7 +70,7 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}) {
                 $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view', $relatedEntry));
+                $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
             }
         };
     }
@@ -80,7 +80,7 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                 $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view', $relatedEntry));
+                $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
             }
             $this->buildOptions();
             $payload->set('meta.options', $this->options);
