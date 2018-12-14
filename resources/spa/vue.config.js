@@ -6,7 +6,7 @@ module.exports = {
   outputDir: '../assets/',
 
   indexPath: process.env.NODE_ENV === 'production'
-    ? '../views/spa.blade.php'
+    ? '../views/spa.php'
     : 'index.html',
 
   chainWebpack: config => {
