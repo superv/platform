@@ -65,7 +65,6 @@ class FileField extends FieldType implements DoesNotInteractWithTable
         $this->on('form.mutating', $this->mutator());
 
         $this->on('view.composing', $this->composer());
-
         $this->on('table.composing', $this->composer());
     }
 }
