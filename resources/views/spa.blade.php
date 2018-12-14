@@ -18,7 +18,7 @@
     <link href=/vendor/superv/js/app.0ca2aa5b.js rel=preload as=script>
     <link href=/vendor/superv/js/chunk-vendors.e08bceb4.js rel=preload as=script>
 </head>
-<body class="font-sans font-normal antialiased text-smooth min-h-screen">
+<body class="font-sans font-normal antialiased text-smooth min-h-screen acp">
     <noscript><strong>We're sorry but frontend doesn't work at all without JavaScript enabled. Please enable it to
             continue.</strong></noscript>
     <div id=app></div>
