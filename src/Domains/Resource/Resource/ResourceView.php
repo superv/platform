@@ -54,7 +54,7 @@ class ResourceView implements ProvidesUIComponent
 
         return Component::make('sv-resource-view')
                         ->setProps([
-                            'entry'    => $this->entry->toArray(),
+                            'entry'    => sv_compose($this->entry),
                             'heading'  => [
                                 'imageUrl' => $imageUrl ?? '',
                                 'header'   => $this->resource->getEntryLabel($this->entry),
@@ -78,6 +78,10 @@ class ResourceView implements ProvidesUIComponent
         $this->sections = $this->sections->merge($this->getRelationsSections());
 
         $this->sections->push(['url' => $this->resource->route('edit', $this->entry), 'title' => 'Edit']);
+
+        $this->sections->transform(function ($section) {
+            return sv_parse($section, ['entry' => $this->entry]);
+        });
     }
 
     protected function getFieldsForView()

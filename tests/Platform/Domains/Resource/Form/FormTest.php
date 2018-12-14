@@ -125,7 +125,7 @@ class FormTest extends ResourceTestCase
         $response->assertOk();
 
         $props = $response->decodeResponseJson('data.props.blocks.0.props');
-        $this->assertEquals(['url', 'method', 'fields', 'actions'], array_keys($props));
+        $this->assertEquals(['identifier', 'url', 'method', 'fields', 'actions'], array_keys($props));
         $this->assertEquals(2, count($props['fields']));
 
         $response = $this->postJsonUser($props['url'], [
