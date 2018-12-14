@@ -46,6 +46,6 @@ class AddonServiceProvider extends BaseServiceProvider
 
     public function boot()
     {
-        app(Router::class)->loadFromPath($this->addon->path('routes'));
+        app(Router::class)->loadFromPath($this->addon->realPath('routes'));
     }
 }
