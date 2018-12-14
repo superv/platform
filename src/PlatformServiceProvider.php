@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform;
 
+use Hub;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
 use Platform;
@@ -92,6 +93,10 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->addViewNamespaces([
             'superv' => __DIR__.'/../resources/views',
         ]);
+
+        if ($port = config('superv.ports.api')) {
+            Hub::register($port);
+        }
 
         event('platform.registered');
     }

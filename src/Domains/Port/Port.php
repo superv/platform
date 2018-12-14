@@ -12,6 +12,8 @@ class Port
 
     protected $hostname;
 
+    protected $secure = false;
+
     protected $prefix = null;
 
     protected $theme = null;
@@ -54,7 +56,7 @@ class Port
      */
     public function hostname()
     {
-        return $this->hostname;
+        return $this->hostname ?? config('superv.hostname');
     }
 
     /**
@@ -115,6 +117,11 @@ class Port
     public function guard()
     {
         return $this->guard;
+    }
+
+    public function url()
+    {
+        return ($this->secure ? 'https://' : 'http://').$this->hostname().($this->prefix() ? '/'.$this->prefix() : '');
     }
 
     /**

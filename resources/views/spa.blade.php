@@ -2,11 +2,11 @@
 <html lang=en>
 <head>
     <meta charset=utf-8>
-    <meta http-equiv=X-UA-Compatible content="IE=edge">
-    <meta name=viewport content="width=device-width,initial-scale=1">
+    <meta content="IE=edge" http-equiv=X-UA-Compatible>
+    <meta content="width=device-width,initial-scale=1" name=viewport>
     <link href=https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css rel=stylesheet>
-    <link rel=stylesheet href=https://use.fontawesome.com/releases/v5.3.1/css/all.css
-          integrity=sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU crossorigin=anonymous>
+    <link crossorigin=anonymous href=https://use.fontawesome.com/releases/v5.3.1/css/all.css
+          integrity=sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU rel=stylesheet>
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel=stylesheet>
     <style>.font-sans {
             font-family: 'Montserrat', sans-serif;
@@ -22,7 +22,7 @@
     <noscript><strong>We're sorry but frontend doesn't work at all without JavaScript enabled. Please enable it to
             continue.</strong></noscript>
     <div id=app></div>
-    <script id=config type=application/json>{"locale":"en","apiUrl":"http:\/\/api.example.dev.io"}</script>
+    <script id=config type=application/json>{!! json_encode($config) !!}</script>
     <script src=/vendor/superv/js/chunk-vendors.e08bceb4.js></script>
     <script src=/vendor/superv/js/app.0ca2aa5b.js></script>
 </body>

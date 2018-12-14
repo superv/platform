@@ -8,7 +8,7 @@ return [
 
     'superv{path}' => [
         'uses'  => function () {
-            return view('superv::spa', ['api_url' => '???']);
+            return view('superv::spa', ['config' => ['apiUrl' => Hub::get('api')->url()]]);
         },
         'where' => ['path' => '.*'],
     ],
