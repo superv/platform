@@ -13,15 +13,27 @@ class CreateUserCommand extends Command
 
     public function handle()
     {
-        $user = app(Users::class)->create([
-            'email'    => $this->argument('email'),
-            'password' => bcrypt($this->option('password') ?? $this->ask('Enter user password')),
-        ]);
+        if ($user = app(Users::class)->withEmail($this->argument('email'))) {
+            $user->updatePassword($this->getPassword());
+        } else {
+            $user = app(Users::class)->create([
+                'email'    => $this->argument('email'),
+                'password' => bcrypt($this->getPassword()),
+            ]);
+        }
 
         $user->assign($this->option('role'));
 
         $user->allow('*');
 
-        $this->comment("User created with ID: {$user->id}");
+        $this->comment("User created and allowed all (*) with ID: {$user->id}");
+    }
+
+    /**
+     * @return array|mixed|string|null
+     */
+    protected function getPassword()
+    {
+        return $this->option('password') ?? $this->ask('Enter user password');
     }
 }

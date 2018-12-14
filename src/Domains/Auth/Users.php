@@ -32,6 +32,11 @@ class Users implements UsersContract
         return $this->query->first();
     }
 
+    public function withEmail($email): ?User
+    {
+        return $this->query->whereEmail($email)->first();
+    }
+
     public function find($id, $columns = ['*'])
     {
         return $this->query->find($id, $columns);

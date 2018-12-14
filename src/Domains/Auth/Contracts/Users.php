@@ -8,6 +8,8 @@ interface Users
 
     public function first();
 
+    public function withEmail($email): ?User;
+
     public function find($id, $columns = ['*']);
 
     /**
