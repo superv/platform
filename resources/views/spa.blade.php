@@ -9,21 +9,25 @@
           integrity=sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU rel=stylesheet>
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel=stylesheet>
     <style>.font-sans {
-            font-family: 'Montserrat', sans-serif;
+            font-family: Montserrat, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-
         }</style>
     <title>SuperV Project</title>
-    <link href=/vendor/superv/js/app.0ca2aa5b.js rel=preload as=script>
-    <link href=/vendor/superv/js/chunk-vendors.e08bceb4.js rel=preload as=script>
+    <link href=/vendor/superv/js/app.97d68aa5.js rel=preload as=script>
+    <link href=/vendor/superv/js/chunk-vendors.32d87065.js rel=preload as=script>
 </head>
-<body class="font-sans font-normal antialiased text-smooth min-h-screen acp">
+<body class="font-sans font-normal antialiased text-smooth min-h-screen">
     <noscript><strong>We're sorry but frontend doesn't work at all without JavaScript enabled. Please enable it to
             continue.</strong></noscript>
     <div id=app></div>
-    <script id=config type=application/json>{!! json_encode($config) !!}</script>
-    <script src=/vendor/superv/js/chunk-vendors.e08bceb4.js></script>
-    <script src=/vendor/superv/js/app.0ca2aa5b.js></script>
+    <script id=config type=application/json>{
+    !!
+    json_encode($config)
+    !!
+  }
+    </script>
+    <script src=/vendor/superv/js/chunk-vendors.32d87065.js></script>
+    <script src=/vendor/superv/js/app.97d68aa5.js></script>
 </body>
 </html>
