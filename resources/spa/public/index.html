@@ -25,11 +25,7 @@
       continue.</strong>
   </noscript>
   <div id="app"></div>
-  <script id="config" type="application/json">{
-    !!
-    json_encode($config)
-    !!
-  }</script>
+  <script id="config" type="application/json"><?php echo json_encode($config); ?></script>
   <!-- built files will be auto injected -->
 </body>
 </html>

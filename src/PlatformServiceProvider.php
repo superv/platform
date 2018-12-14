@@ -148,15 +148,22 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         superv('addons')->put('superv.platform', Platform::instance());
 
+        // Register platform resources before boot
+        // so that addons can override them
+        //
+        RegisterExtensionsInPath::dispatch(realpath(__DIR__.'/Extensions'), 'SuperV\Platform\Extensions');
+
+        // Boot all addons
+        //
         Platform::boot();
 
         $this->registerPlatformRoutes();
 
         \Route::pattern('id', '[0-9]+');
 
+        // Experimental query listening
+        //
         Listener::listen();
-
-        RegisterExtensionsInPath::dispatch(realpath(__DIR__.'/Extensions'), 'SuperV\Platform\Extensions');
     }
 
     protected function registerMigrationScope(): void

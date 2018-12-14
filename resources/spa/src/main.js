@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import SuperVJS from 'superv-js'
 import App from './App'
 

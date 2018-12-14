@@ -21,12 +21,7 @@
     <noscript><strong>We're sorry but frontend doesn't work at all without JavaScript enabled. Please enable it to
             continue.</strong></noscript>
     <div id=app></div>
-    <script id=config type=application/json>{
-    !!
-    json_encode($config)
-    !!
-  }
-    </script>
+  <script id=config type=application/json><?php echo json_encode($config); ?></script>
     <script src=/vendor/superv/js/chunk-vendors.32d87065.js></script>
     <script src=/vendor/superv/js/app.97d68aa5.js></script>
 </body>

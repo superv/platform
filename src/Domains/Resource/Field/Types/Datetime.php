@@ -5,14 +5,23 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 use Carbon\Carbon;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
+use SuperV\Platform\Support\Composer\Payload;
 
 class Datetime extends FieldType implements NeedsDatabaseColumn
 {
     protected function boot()
     {
         $this->on('form.accessing', $this->formPresenter());
+        $this->on('form.composing', $this->formComposer());
         $this->on('table.presenting', $this->presenter());
         $this->on('view.presenting', $this->presenter());
+    }
+
+    protected function formComposer()
+    {
+        return function (Payload $payload, EntryContract $entry) {
+            $payload->set('config.time', $this->getConfigValue('time'));
+        };
     }
 
     protected function formPresenter()
