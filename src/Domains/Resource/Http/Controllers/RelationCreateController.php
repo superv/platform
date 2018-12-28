@@ -19,7 +19,7 @@ class RelationCreateController extends BaseApiController
         }
 
         return $form
-            ->setUrl(str_replace_last('/create', '', url()->current()))
+            ->setUrl(str_replace_last('/create', '', sv_url()->current()))
             ->makeComponent();
     }
 

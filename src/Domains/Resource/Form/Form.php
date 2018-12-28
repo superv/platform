@@ -66,11 +66,13 @@ class Form implements ProvidesUIComponent, Responsable
     public function make()
     {
         $this->uuid = uuid();
+
         if (is_null($this->fields)) {
             if ($this->entry) {
                 $this->fields = $this->provideFields($this->entry);
             }
         }
+
         $this->fields->map(function (Field $field) {
             if ($this->hasEntry()) {
                 $field->setWatcher($this->getEntry());

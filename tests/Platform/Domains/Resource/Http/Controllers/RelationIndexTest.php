@@ -45,7 +45,7 @@ class RelationIndexTest extends ResourceTestCase
         // Check the actions url, should point to create new relation form
         //
         $this->assertEquals(
-            route('relation.create', ['resource' => 't_users', 'id' => $userA->getId(), 'relation' => 'posts']),
+            sv_route('relation.create', ['resource' => 't_users', 'id' => $userA->getId(), 'relation' => 'posts']),
             sv_url($action->getProp('url')));
 
         // Now get the table data

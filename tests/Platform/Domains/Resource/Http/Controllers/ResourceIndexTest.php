@@ -148,7 +148,7 @@ class ResourceIndexTest extends ResourceTestCase
         $users->fake(['name' => 'yks']);
         $users->fake(['name' => 'done']);
 
-        $this->assertEquals(1, count($this->getTableRowsOfResource($users, 'filters[search]=yks')));
+        $this->assertEquals(1, count($this->getTableRowsOfResource($users, 'filters='.base64_encode(json_encode(['search' => 'yks'])))));
     }
 
     function test__filters_apply_on_relations()
@@ -161,7 +161,7 @@ class ResourceIndexTest extends ResourceTestCase
         $users->fake(['group_id' => $group->getId()], 2);
         $users->fake(['group_id' => 99], 3);
 
-        $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters[search]=ttoma')));
+        $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters='.base64_encode(json_encode(['search' => 'ttoma'])))));
     }
 
     function test__builds_search_filter_from_searchable_fields()
@@ -173,7 +173,7 @@ class ResourceIndexTest extends ResourceTestCase
         $users->fake(['name' => 'yks']);
         $users->fake(['name' => 'done']);
 
-        $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters[search]=one')));
+        $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters='.base64_encode(json_encode(['search' => 'one'])))));
     }
 
     function test__builds__filter_from_relation_fields_config()
@@ -214,7 +214,7 @@ class ResourceIndexTest extends ResourceTestCase
         $users->fake(['group_id' => $group->getId()], 2);
         $users->fake(['group_id' => 999], 3);
 
-        $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters[group]='.$group->getId())));
+        $this->assertEquals(2, count($this->getTableRowsOfResource($users, 'filters='.base64_encode(json_encode(['group' => $group->getId()])))));
     }
 
     function test__builds__filter_from_select_fields()
