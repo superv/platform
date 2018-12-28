@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Arrayable;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
 class Composer
 {
@@ -102,8 +103,7 @@ class Composer
              */
             if ($port = \Platform::port()) {
                 if ($composersNamespace = $port->getComposers()) {
-                    $parts = explode("\\", get_class($data));
-                    $shortClassName = end($parts);
+                    $shortClassName = $this->getShortClassName($data);
                     $composerClass = $composersNamespace."\\".$shortClassName."Composer";
                     if (class_exists($composerClass)) {
                         return $this->compose((new $composerClass($data))->compose($this->tokens));
@@ -113,5 +113,20 @@ class Composer
         }
 
         return $data;
+    }
+
+    /**
+     * @param $data
+     * @return mixed
+     */
+    protected function getShortClassName($data)
+    {
+        if ($data instanceof ResourceEntry) {
+            return $data->getResource()->getSingularLabel();
+        }
+        $parts = explode("\\", get_class($data));
+        $shortClassName = end($parts);
+
+        return $shortClassName;
     }
 }
