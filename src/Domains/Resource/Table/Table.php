@@ -144,9 +144,9 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
         return (new TableComposer($this))->forConfig();
     }
 
-    public function setActions($rowActions)
+    public function setRowActions($rowActions)
     {
-        $this->rowActions = $rowActions;
+        $this->rowActions = wrap_array($rowActions);
 
         return $this;
     }

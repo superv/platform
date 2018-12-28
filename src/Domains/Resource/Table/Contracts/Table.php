@@ -29,7 +29,7 @@ interface Table
 
     public function getAction($name);
 
-    public function setActions($actions);
+    public function setRowActions($actions);
 
     public function makeComponent(): ComponentContract;
 

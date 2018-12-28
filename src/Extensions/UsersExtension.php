@@ -4,11 +4,12 @@ namespace SuperV\Platform\Extensions;
 
 use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsResource;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\Table\ResourceTable;
 
 class UsersExtension implements ExtendsResource
 {
-    public function extend(\SuperV\Platform\Domains\Resource\Resource $resource)
+    public function extend(Resource $resource)
     {
         $resource->on('index.config', function (ResourceTable $table) {
             $table->addRowAction(DeleteEntryAction::class);

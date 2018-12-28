@@ -98,29 +98,25 @@ class ResourceEntry extends Entry
         );
     }
 
-    public function getRelationshipFromConfig($name)
-    {
-        if ($relation = $this->resolveRelation($name)) {
-            return $relation->newQuery();
-        }
-
-        /**
-         * not used since there's a better alternative: withCount
-         */
-        if (false && ends_with($name, 'Count')) {
-            $relation = str_replace_last('Count', '', $name);
-            if ($relation = $this->getRelationshipFromConfig($relation)) {
-                $foreignKey = $this->getForeignKey();
-
-                return $relation->selectRaw($foreignKey.', count(*) as aggregate')
-                                ->groupBy($foreignKey);
-            }
-        }
-    }
-
     public function getForeignKey()
     {
         return $this->getResource()->getResourceKey().'_id';
+    }
+
+    public function getMorphClass()
+    {
+        return $this->getTable();
+    }
+
+    public function getRelationshipFromConfig($name)
+    {
+        if (! $relation = $this->resolveRelation($name)) {
+            if (! $relation = $this->resolveRelation(snake_case($name))) {
+                return null;
+            }
+        }
+
+        return $relation->newQuery();
     }
 
     protected function resolveRelation($name)
@@ -145,11 +141,6 @@ class ResourceEntry extends Entry
         }
 
         return $this->resource;
-    }
-
-    public function getMorphClass()
-    {
-        return $this->getTable();
     }
 
     public function getHandle(): string
