@@ -32,8 +32,9 @@ trait ResolvesResource
             if (! $this->entry = $this->resource->find($id)) {
                 PlatformException::fail('Entry not found');
             }
-            // Recreate resource with entry injected (fields)
-            $this->resource = ResourceFactory::make($this->entry);
+            if ($keyName = $this->resource->getConfigValue('key_name')) {
+                $this->entry->setKeyName($keyName);
+            }
         }
 
         return $this->resource;
