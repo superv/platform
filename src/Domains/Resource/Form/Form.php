@@ -297,7 +297,7 @@ class Form implements ProvidesUIComponent, Responsable
         $action = $request->get('__form_action');
 
         if ($action === 'view') {
-            $route = $this->resource->route('view', $this->getEntry());
+            $route = $this->resource->route('view.page', $this->getEntry());
         } elseif ($action === 'create_another') {
             $route = $this->resource->route('create');
         } elseif ($action === 'edit_next') {
