@@ -44,6 +44,12 @@ class ResourceServiceProvider extends BaseServiceProvider
             }
         });
 
+        app('events')->listen('eloquent.deleted:*', function ($event, $payload) {
+            if (($entry = $payload[0]) instanceof EntryContract) {
+                Model\Events\EntryDeletedEvent::dispatch($entry);
+            }
+        });
+
         app('events')->listen('eloquent.saving:*', function ($event, $payload) {
             if (($entry = $payload[0]) instanceof EntryContract) {
                 Model\Events\EntrySavingEvent::dispatch($entry);

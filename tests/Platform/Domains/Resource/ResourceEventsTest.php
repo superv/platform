@@ -7,6 +7,7 @@ use Event;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatedEvent;
+use SuperV\Platform\Domains\Resource\Model\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class ResourceEventsTest extends ResourceTestCase
@@ -22,6 +23,22 @@ class ResourceEventsTest extends ResourceTestCase
         $fake = $res->fake();
 
         Event::assertDispatched(EntryCreatedEvent::class, function ($event) use ($fake) {
+            return $event->entry->id === $fake->id;
+        });
+    }
+
+    function test__dispatches_event_when_a_resource_entry_is_deleted()
+    {
+        Event::fake(EntryDeletedEvent::class);
+
+        $res = $this->create('t_users', function (Blueprint $table) {
+            $table->increments('id');
+        });
+
+        $fake = $res->fake();
+        $fake->delete();
+
+        Event::assertDispatched(EntryDeletedEvent::class, function ($event) use ($fake) {
             return $event->entry->id === $fake->id;
         });
     }
