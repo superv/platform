@@ -14,6 +14,7 @@ use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
 use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatedEvent;
+use SuperV\Platform\Domains\Resource\Model\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\Extender;
 use SuperV\Platform\Domains\Resource\Resource\Fields;
@@ -141,6 +142,17 @@ class Resource implements
         return $this;
     }
 
+    public function onDeleted(Closure $callback): Resource
+    {
+        app('events')->listen(EntryDeletedEvent::class, function (EntryDeletedEvent $event) use ($callback) {
+            if ($event->entry->getTable() === $this->getHandle()) {
+                $callback($event->entry);
+            }
+        });
+
+        return $this;
+    }
+
     public function fields(): Fields
     {
         return $this->fields;
@@ -210,7 +222,6 @@ class Resource implements
     public function cacheRelation(Relation $relation)
     {
         $key = $this->getHandle().'.'.$relation->getName();
-        info('cache relation: '.$key);
         superv('relations')->put($key, $relation);
     }
 
