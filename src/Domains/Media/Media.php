@@ -9,10 +9,24 @@ class Media extends Entry
 {
     protected $visible = ['id', 'filename', 'size', 'original', 'mime_type', 'created_at'];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        parent::deleted(function (Media $entry) {
+            \Storage::disk($entry->getDiskName())->delete($entry->getBasename());
+        });
+    }
+
     public function getBasename()
     {
         return ! str_contains($this->filename, '.') ? $this->filename.'.'.$this->extension
             : $this->filename;
+    }
+
+    public function getDiskName()
+    {
+        return $this->disk;
     }
 
     public function owner()
@@ -51,6 +65,7 @@ class Media extends Entry
         return static::query()->where('owner_type', $owner->getMorphClass())
                      ->where('owner_id', $owner->getId())
                      ->when($label, function ($query, $label) { $query->where('label', $label); })
+                     ->orderBy('id', 'DESC')
                      ->first();
     }
 }
