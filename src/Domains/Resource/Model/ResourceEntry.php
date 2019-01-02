@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class ResourceEntry extends Entry
@@ -160,18 +161,32 @@ class ResourceEntry extends Entry
         return $field->setWatcher($this);
     }
 
-    public static function make($resourceHandle)
+    public static function make(Resource $resource)
     {
         $model = new class extends ResourceEntry
         {
             public $timestamps = false;
 
+            protected $resourceConfig = [];
+
+            public function setResourceConfig($config)
+            {
+                $this->resourceConfig = $config;
+            }
+
             public function setTable($table)
             {
                 return $this->table = $table;
             }
+
+            public function getKeyName()
+            {
+                return $this->resourceConfig['key_name'] ?? parent::getKeyName();
+            }
         };
-        $model->setTable($resourceHandle);
+
+        $model->setTable($resource->getHandle());
+        $model->setResourceConfig($resource->getConfig());
 
         return $model;
     }
