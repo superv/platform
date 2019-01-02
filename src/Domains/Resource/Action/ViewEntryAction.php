@@ -15,6 +15,10 @@ class ViewEntryAction extends Action
     public function onComposed(Payload $payload)
     {
         $payload->set('url', $this->getUrl());
+        $payload->set('button', [
+            'title' => $this->title,
+            'color' => 'primary inverse',
+            'size'  => 'sm']);
     }
 
     public function getUrl()

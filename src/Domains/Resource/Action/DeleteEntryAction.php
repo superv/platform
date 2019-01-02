@@ -26,7 +26,9 @@ class DeleteEntryAction extends Action
         $payload->set('on-complete', 'reload');
         $payload->set('button', ['confirm' => 'Are you sure? This might trigger actions that can not be undone.',
                                  'title'   => $this->title,
-                                 'color'   => 'danger']);
+                                 'color'   => 'danger inverse',
+                                 'size'    => 'sm',
+        ]);
     }
 
     public function getUrl()
