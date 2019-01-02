@@ -122,7 +122,7 @@ class Composer
     protected function getShortClassName($data)
     {
         if ($data instanceof ResourceEntry) {
-            return $data->getResource()->getSingularLabel();
+            return str_replace(' ', '', $data->getResource()->getSingularLabel());
         }
         $parts = explode("\\", get_class($data));
         $shortClassName = end($parts);
