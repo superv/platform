@@ -22,7 +22,7 @@ trait RepoConcern
             $entry = new $model;
         } else {
             // Anonymous Entry Model
-            $entry = ResourceEntry::make($this->getHandle());
+            $entry = ResourceEntry::make($this);
         }
 
         $this->getFields()->map(function (Field $field) use ($entry) {

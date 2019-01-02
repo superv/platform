@@ -13,4 +13,12 @@ interface EntryContract extends Watcher
     public function getMorphClass();
 
     public function getForeignKey();
+
+    public function setKeyName($name);
+
+    public function relationLoaded($key);
+
+    public function load($relations);
+
+    public function getRelation($key);
 }

@@ -20,7 +20,10 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
     protected function presenter()
     {
         return function (EntryContract $entry) {
-            if ($relatedEntry = $entry->{$this->getName()}) {
+            if (! $entry->relationLoaded($this->getName())) {
+                $entry->load($this->getName());
+            }
+            if ($relatedEntry = $entry->getRelation($this->getName())) {
                 return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
             }
         };
@@ -37,7 +40,7 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
 
     public function getColumnName(): ?string
     {
-        return $this->field->getName().'_id';
+        return $this->getConfigValue('foreign_key', $this->field->getName().'_id');
     }
 
     protected function boot()
@@ -68,7 +71,10 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
     protected function tableComposer()
     {
         return function (Payload $payload, EntryContract $entry) {
-            if ($relatedEntry = $entry->{$this->getName()}) {
+            if (! $entry->relationLoaded($this->getName())) {
+                $entry->load($this->getName());
+            }
+            if ($relatedEntry = $entry->getRelation($this->getName())) {
                 $resource = sv_resource($relatedEntry);
                 $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
             }
@@ -113,7 +119,11 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
         $query->get();
 
         $entryLabel = $this->resource->getConfigValue('entry_label', '#{id}');
-        $this->options = $query->get()->map(function ($item) use ($entryLabel) {
+        $this->options = $query->get()->map(function (EntryContract $item) use ($entryLabel) {
+            if ($keyName = $this->resource->getConfigValue('key_name')) {
+                $item->setKeyName($keyName);
+            }
+
             return ['value' => $item->id, 'text' => sv_parse($entryLabel, $item->toArray())];
         })->all();
     }

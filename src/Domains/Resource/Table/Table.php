@@ -53,7 +53,7 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
 
     public function addRowAction($action): TableContract
     {
-        $this->rowActions[] = $action;
+        $this->rowActions = array_merge([$action], $this->rowActions);
 
         return $this;
     }
@@ -117,7 +117,7 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
         return $this->rows->map(
             function ($row) use ($fields) {
                 return [
-                    'id'      => $row['id'] ?? null,
+                    'id'      => $this->getRowId($row),
                     'fields'  => $fields
                         ->map(function (Field $field) use ($row) {
                             return (new FieldComposer($field))->forTableRow($row)->get();
@@ -125,6 +125,16 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
                     'actions' => ['view'],
                 ];
             });
+    }
+
+    protected function getRowId($rowEntry)
+    {
+        return $rowEntry[$this->getRowKeyName()] ?? null;
+    }
+
+    protected function getRowKeyName()
+    {
+        return 'id';
     }
 
     public function setFields($fields)

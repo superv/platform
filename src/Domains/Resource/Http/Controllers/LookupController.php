@@ -22,10 +22,12 @@ class LookupController extends BaseApiController
         if ($this->route->parameter('data')) {
             /** @var \Illuminate\Database\Eloquent\Builder $query */
             $query = $resource->newQuery();
-            $alreadyAttachedItems = $this->entry->{$relation->getName()}()
-                                                ->pluck($resource->getHandle().'.id');
 
-            $query->whereNotIn($query->getModel()->getKeyName(), $alreadyAttachedItems);
+            $keyName = $query->getModel()->getKeyName();
+            $alreadyAttachedItems = $this->entry->{$relation->getName()}()
+                                                ->pluck($resource->getHandle().'.'.$keyName);
+
+            $query->whereNotIn($keyName, $alreadyAttachedItems);
             $table->setQuery($query);
 
             return $table->build($this->request);

@@ -39,6 +39,16 @@ class ResourceTable extends EntryTable
         return sv_url($this->resource->route('index.table').'/data');
     }
 
+    protected function getRowKeyName()
+    {
+        return $this->resource->getConfigValue('key_name', 'id');
+    }
+
+    protected function getRowId($rowEntry)
+    {
+        return $rowEntry->getAttribute($this->getRowKeyName());
+    }
+
     public function setResource(Resource $resource): ResourceTable
     {
         $this->resource = $resource;

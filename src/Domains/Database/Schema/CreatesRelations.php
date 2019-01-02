@@ -14,29 +14,26 @@ trait CreatesRelations
 
     public function belongsTo($related, $relationName, $foreignKey = null, $ownerKey = null): ColumnDefinition
     {
-        // relation
-        //
-        $this->addColumn(null, $relationName, ['nullable' => true])
-             ->relation(
-                 Config::belongsTo()
-                       ->relationName($relationName)
-                       ->related($related)
-                       ->foreignKey($foreignKey ?? $relationName.'_id')
-                       ->ownerKey($ownerKey)
-             );
+//        return $this->addColumn(null, $relationName, ['nullable' => true])
+//                    ->relation(
+//                        Config::belongsTo()
+//                              ->relationName($relationName)
+//                              ->related($related)
+//                              ->foreignKey($foreignKey ?? $relationName.'_id')
+//                              ->ownerKey($ownerKey)
+//                    );
 
         // field
         //
         return $this->unsignedInteger($foreignKey ?? $relationName.'_id')
                     ->fieldType('belongs_to')
                     ->fieldName($relationName)
-                    ->config(
+                    ->relation(
                         Config::belongsTo()
                               ->relationName($relationName)
                               ->related($related)
                               ->foreignKey($foreignKey ?? $relationName.'_id')
                               ->ownerKey($ownerKey)
-                              ->toArray()
                     );
     }
 
@@ -129,7 +126,8 @@ trait CreatesRelations
                     );
     }
 
-    public function morphMany($related, $relationName, $morphName) {
+    public function morphMany($related, $relationName, $morphName)
+    {
         return $this->addColumn(null, $relationName, ['nullable' => true])
                     ->relation(
                         Config::morphMany()

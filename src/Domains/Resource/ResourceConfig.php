@@ -52,6 +52,9 @@ class ResourceConfig extends Fluent
             $attributes[snake_case($key)] = $value;
         }
 
+        $attributes['key_name'] = $this->keyName;
+
+
         return $attributes;
     }
 

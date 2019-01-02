@@ -62,13 +62,18 @@ class EntryTable extends Table implements EntryTableContract
         return $this->rows->map(
             function (EntryContract $entry) use ($fields) {
                 return [
-                    'id'      => $entry->getId(),
+                    'id'      => $this->getRowId($entry),
                     'fields'  => $fields->map(function (Field $field) use ($entry) {
                         return (new FieldComposer($field))->forTableRow($entry)->get();
                     })->values()->all(),
                     'actions' => ['view'],
                 ];
             });
+    }
+
+    protected function getRowId($rowEntry)
+    {
+        return $rowEntry->getId();
     }
 
     public function makeFields(): Collection
@@ -99,7 +104,9 @@ class EntryTable extends Table implements EntryTableContract
 
     protected function applyOptions($query)
     {
+        /** @var \Illuminate\Database\Eloquent\Builder $query */
         $table = $query->getModel()->getTable();
+        $keyName = $query->getModel()->getKeyName();
 
         if ($orderBy = $this->options->get('order_by')) {
             if (is_string($orderBy)) {
@@ -109,7 +116,7 @@ class EntryTable extends Table implements EntryTableContract
                 $query->orderBy($table.'.'.$column, $direction);
             }
         } else {
-            $query->orderBy($table.'.id', 'DESC');
+            $query->orderBy($table.'.'.$keyName, 'DESC');
         }
     }
 

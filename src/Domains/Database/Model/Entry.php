@@ -41,7 +41,7 @@ class Entry extends Model implements EntryContract
 
     public function getId()
     {
-        return $this->attributes['id'] ?? null;
+        return $this->getKey();
     }
 
     /**

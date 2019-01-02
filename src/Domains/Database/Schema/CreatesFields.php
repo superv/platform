@@ -92,6 +92,14 @@ trait CreatesFields
         return $this;
     }
 
+    public function increments($column)
+    {
+        $this->resourceBlueprint()->keyName($column);
+
+        return parent::increments($column);
+    }
+
+
     public function restorable()
     {
         $this->resourceBlueprint()->restorable(true);

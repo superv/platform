@@ -43,36 +43,75 @@ class SyncField
 
         $this->setResourceEntry($event);
 
-        if ($this->column->relation) {
-            $this->handleRelationConfig();
-
+        if (! $this->handleRelations()) {
             return;
         }
 
         $this->mapFieldType();
+
         $this->checkMustBeCreated();
 
-//        $field = $this->syncWithPDO();
-        $field = $this->syncWithEloquent();
-//        $field = $this->syncWithResource();
+        $this->syncWithEloquent();
+    }
 
-//        if (! Current::envIsTesting()) {
-//            if (! $this->column->ignore) {
-//                if (ResourceModel::withSlug('sv_meta_items')) {
-//                    (new Repository)
-//                        ->save(
-//                            Meta::make($field['config'] ?? [])
-//                                ->setOwner('sv_fields', $field['id'], 'config')
-//                        );
+    protected function handleRelations()
+    {
+        if (! $this->column->relation) {
+            return true;
+        }
+
+        $relationConfig = $this->column->getRelationConfig();
+        $this->column->ignore();
+
+        if ($relationConfig->hasPivotTable()) {
+            CreatePivotTable::dispatch($relationConfig);
+        }
+
+        $this->resourceEntry->resourceRelations()->create([
+            'name'   => $relationConfig->getName(),
+            'type'   => $relationConfig->getType(),
+            'config' => $relationConfig->toArray(),
+        ]);
+
+        if ($relationConfig->type()->isBelongsTo()) {
+            $this->column->ignore(false);
+            $this->column->config($relationConfig->toArray());
+//            $this->blueprint->addPostBuildCallback(
+//                function (Blueprint $blueprint) use ($relationConfig) {
+//                    $blueprint->unsignedBigInteger($relationConfig->getForeignKey())->nullable($this->column->nullable);
+//                });
 //
-//                    (new Repository)
-//                        ->save(
-//                            Meta::make($field['rules'] ?? [])
-//                                ->setOwner('sv_fields', $field['id'], 'rules')
-//                        );
-//                }
-//            }
-//        }
+//            $belongsToField = $this->resourceEntry->createField($relationConfig->getName());
+//            $belongsToField->fill([
+//                'type'   => 'belongs_to',
+//                'config' => $relationConfig->toArray(),
+//                'flags'  => $this->column->flags,
+//            ]);
+//            $belongsToField->save();
+
+            return true;
+        } elseif ($relationConfig->type()->isMorphTo()) {
+            $name = $relationConfig->getName();
+
+            $this->blueprint->addPostBuildCallback(
+                function (Blueprint $blueprint) use ($name) {
+                    $blueprint->string("{$name}_type")->nullable($this->column->nullable);
+                    $blueprint->unsignedBigInteger("{$name}_id")->nullable($this->column->nullable);
+                    $blueprint->index(["{$name}_type", "{$name}_id"]);
+                });
+
+            $morphToField = $this->resourceEntry->createField($name);
+            $morphToField->fill([
+                'type'   => 'morph_to',
+                'config' => RelationConfig::morphTo()
+                                          ->relationName($name)
+                                          ->toArray(),
+                'flags'  => ['nullable'],
+            ]);
+            $morphToField->save();
+        }
+
+        return false;
     }
 
     protected function mapFieldType()
@@ -144,9 +183,6 @@ class SyncField
         $this->resourceEntry = $resourceEntry;
     }
 
-    /**
-     * @param \SuperV\Platform\Domains\Database\Schema\ColumnDefinition $column
-     */
     protected function checkMustBeCreated()
     {
         if (! $this->fieldType instanceof NeedsDatabaseColumn) {
@@ -154,40 +190,4 @@ class SyncField
         }
     }
 
-    protected function handleRelationConfig()
-    {
-        $relationConfig = $this->column->getRelationConfig();
-        $this->column->ignore();
-
-        if ($relationConfig->hasPivotTable()) {
-            CreatePivotTable::dispatch($relationConfig);
-        }
-
-        if ($relationConfig->type()->isMorphTo()) {
-            $name = $relationConfig->getName();
-
-            $this->blueprint->addPostBuildCallback(
-                function (Blueprint $blueprint) use ($name) {
-                    $blueprint->string("{$name}_type");
-                    $blueprint->unsignedBigInteger("{$name}_id");
-                    $blueprint->index(["{$name}_type", "{$name}_id"]);
-                });
-
-            $morphToField = $this->resourceEntry->createField($name);
-            $morphToField->fill([
-                'type'   => 'morph_to',
-                'config' => RelationConfig::morphTo()
-                                          ->relationName($name)
-                                          ->toArray(),
-                'flags'  => ['nullable'],
-            ]);
-            $morphToField->save();
-        }
-
-        $this->resourceEntry->resourceRelations()->create([
-            'name'   => $relationConfig->getName(),
-            'type'   => $relationConfig->getType(),
-            'config' => $relationConfig->toArray(),
-        ]);
-    }
 }

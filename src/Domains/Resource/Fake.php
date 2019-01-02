@@ -65,12 +65,17 @@ class Fake
         return $this->faker->text;
     }
 
-    protected function fakeBelongsTo($field)
+    protected function fakeBelongsTo(Field $field)
     {
         $relatedResource = ResourceFactory::make($field->getConfigValue('related_resource'));
 
         if ($relatedResource->count() === 0) {
-            $relatedResource->fake([]);
+            if ($relatedResource->getHandle() === $this->resource->getHandle()) {
+                return rand(1, 5); // otherwise causes dead recursionr
+            } else {
+                $relatedResource->fake([]);
+            }
+//            $relatedResource->fake([]);
         }
 
         return $relatedResource->newQuery()->inRandomOrder()->value('id');
