@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Addon;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
+use RuntimeException;
 use SuperV\Platform\Domains\Addon\Contracts\AddonLocator;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 use SuperV\Platform\Exceptions\PathNotFoundException;
@@ -51,6 +52,8 @@ class Installer
      */
     public function install()
     {
+        $this->ensureNotInstalledBefore();
+
         if ($this->locator) {
             $this->path = $this->locator->locate($this->slug);
         }
@@ -68,6 +71,13 @@ class Installer
         AddonInstalledEvent::dispatch($this->addon);
 
         return $this;
+    }
+
+    public function ensureNotInstalledBefore()
+    {
+        if ($addon = AddonModel::bySlug($this->getSlug())) {
+            throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getSlug()));
+        }
     }
 
     /**
@@ -251,5 +261,10 @@ class Installer
         }
 
         return $key ? array_get($this->composerJson, $key) : $this->composerJson;
+    }
+
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

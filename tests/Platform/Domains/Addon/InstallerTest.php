@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\addon;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use RuntimeException;
 use SuperV\Addons\Sample\SampleAddon;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 use SuperV\Platform\Domains\Addon\Installer;
@@ -15,8 +16,7 @@ class InstallerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function installs_a_addon()
+    function test__installs_a_addon()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-addon'));
 
@@ -45,23 +45,29 @@ class InstallerTest extends TestCase
         ]);
     }
 
-    /** @test */
-    function ensures_addon_is_available_in_addons_collection_right_after_it_is_installed()
+    function test__does_not_install_an_already_installed_addon()
+    {
+        $this->setUpAddon();
+
+        $this->expectException(RuntimeException::class);
+
+        $this->setUpAddon();
+    }
+
+    function test__ensures_addon_is_available_in_addons_collection_right_after_it_is_installed()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-addon'));
 
         $this->installer()->setPath('tests/Platform/__fixtures__/sample-addon')
              ->setSlug('superv.addons.sample')
-                  ->install();
+             ->install();
 
         $addon = superv('addons')->get('superv.addons.sample');
         $this->assertNotNull($addon);
         $this->assertInstanceOf(SampleAddon::class, $addon);
-
     }
 
-    /** @test */
-    function addon_installs_subaddons()
+    function test__addon_installs_subaddons()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another'));
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another/addons/themes/another_sub-addon'));
@@ -85,8 +91,7 @@ class InstallerTest extends TestCase
         ]);
     }
 
-    /** @test */
-    function runs_addons_migrations_when_installed()
+    function test__runs_addons_migrations_when_installed()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-addon'));
 
@@ -100,8 +105,7 @@ class InstallerTest extends TestCase
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_addon_baz_migration']);
     }
 
-    /** @test */
-    function locates_addon_from_slug_if_path_is_not_given()
+    function test__locates_addon_from_slug_if_path_is_not_given()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another'));
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another/addons/themes/another_sub-addon'));
@@ -117,8 +121,7 @@ class InstallerTest extends TestCase
         $this->assertEquals('tests/Platform/__fixtures__/superv/addons/another', $addon->path());
     }
 
-    /** @test */
-    function verifies_addon_path_exists()
+    function test__verifies_addon_path_exists()
     {
         $this->expectException(PathNotFoundException::class);
 
@@ -128,8 +131,7 @@ class InstallerTest extends TestCase
              ->install();
     }
 
-    /** @test */
-    function parses_composer_data()
+    function test__parses_composer_data()
     {
         $installer = $this->installer();
         $installer->setPath('tests/Platform/__fixtures__/sample-addon');
