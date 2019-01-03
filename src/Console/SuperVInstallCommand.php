@@ -33,7 +33,7 @@ class SuperVInstallCommand extends Command
 
         $data = $this->readEnvironmentFile();
 
-        array_set($data, $variable, $value.PHP_EOL);
+        array_set($data, PHP_EOL.$variable, $value);
 
         $this->writeEnvironmentFile($data);
     }
@@ -71,7 +71,7 @@ class SuperVInstallCommand extends Command
             if ($key) {
                 $contents .= strtoupper($key).'='.$value;
             } else {
-                $contents .= $value.PHP_EOL;
+                $contents .= PHP_EOL.$value;
             }
         }
 
