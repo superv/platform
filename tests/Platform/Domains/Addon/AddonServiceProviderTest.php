@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Addon;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Mockery;
 use SuperV\Platform\Domains\Database\Migrations\Scopes;
 use SuperV\Platform\Domains\Routing\Router;
 use Tests\Platform\Providers\TestEvent;
@@ -16,9 +15,12 @@ class AddonServiceProviderTest extends TestCase
 
     function test_registers_addons_routes_from_routes_folder()
     {
-        $router = $this->app->instance(Router::class, Mockery::mock(Router::class));
+//        $router = $this->app->instance(Router::class, Mockery::mock(Router::class));
+        $router = $this->mock(Router::class);
+
+        $path = $this->basePath('__fixtures__/sample-addon/routes');
         $router->shouldReceive('loadFromPath')
-               ->with('tests/Platform/__fixtures__/sample-addon/routes')
+               ->with($path)
                ->once();
 
         $this->setUpAddon();

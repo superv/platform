@@ -83,10 +83,12 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
 
     protected function composer()
     {
-        return function (Payload $payload, EntryContract $entry) {
-            if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
-                $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
+        return function (Payload $payload, ?EntryContract $entry = null) {
+            if ($entry) {
+                if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
+                    $resource = sv_resource($relatedEntry);
+                    $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
+                }
             }
             $this->buildOptions();
             $payload->set('meta.options', $this->options);
@@ -116,7 +118,6 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
         if ($queryParams) {
             $query->where($queryParams);
         }
-        $query->get();
 
         $entryLabel = $this->resource->getConfigValue('entry_label', '#{id}');
         $this->options = $query->get()->map(function (EntryContract $item) use ($entryLabel) {
@@ -124,7 +125,7 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
                 $item->setKeyName($keyName);
             }
 
-            return ['value' => $item->id, 'text' => sv_parse($entryLabel, $item->toArray())];
+            return ['value' => $item->getId(), 'text' => sv_parse($entryLabel, $item->toArray())];
         })->all();
     }
 

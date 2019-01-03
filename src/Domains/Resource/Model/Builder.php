@@ -2,8 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
-use Illuminate\Database\Eloquent\RelationNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use RuntimeException;
 
 class Builder extends \Illuminate\Database\Eloquent\Builder
 {
@@ -31,7 +31,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder
                 return $relation;
             }
 
-            throw RelationNotFoundException::make($this->getModel(), $name);
+            throw new RuntimeException("Call to undefined relationship [{$name}] on resource [{$this->getModel()->getTable()}].");
         });
 
         $nested = $this->relationsNestedUnder($name);

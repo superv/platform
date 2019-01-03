@@ -70,7 +70,6 @@ class RouteRegistrarTest extends TestCase
     {
         $this->setUpPorts();
 
-
         Route::get('key/kol', function () { return 'ok'; });
 
         $registrar = $this->app->make(RouteRegistrar::class);

@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform;
 
+use Current;
 use Hub;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
@@ -94,7 +95,7 @@ class PlatformServiceProvider extends BaseServiceProvider
             'superv' => __DIR__.'/../resources/views',
         ]);
 
-        if ($port = config('superv.ports.api')) {
+        if (! Current::envIsTesting() && $port = config('superv.ports.api')) {
             Hub::register($port);
         }
 
