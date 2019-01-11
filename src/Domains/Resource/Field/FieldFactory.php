@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
+use SuperV\Platform\Exceptions\PlatformException;
+
 class FieldFactory
 {
     /**
@@ -18,6 +20,9 @@ class FieldFactory
 
     protected function create(): Field
     {
+        if (! isset($this->params['name'])) {
+            PlatformException::fail('Missing parameter [name] for field');
+        }
         $field = new Field($this->params);
         $field->bindFieldType();
 
