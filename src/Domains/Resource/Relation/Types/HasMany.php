@@ -13,7 +13,7 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class HasMany extends Relation implements ProvidesTable, ProvidesForm
 {
-    protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
+    protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
     {
         if (! $localKey = $this->relationConfig->getLocalKey()) {
             if ($this->parentEntry) {

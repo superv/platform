@@ -13,7 +13,7 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequests
 {
-    protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
+    protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
     {
         $morphName = $this->relationConfig->getMorphName();
 

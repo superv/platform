@@ -45,7 +45,9 @@ trait CreatesRelations
     public function morphTo($relationName): ColumnDefinition
     {
         return $this->addColumn(null, $relationName, ['nullable' => true])
-                    ->relation(Config::morphTo()->relationName($relationName));
+                    ->relation(Config::morphTo()
+                                     ->morphName($relationName)
+                                     ->relationName($relationName));
     }
 
     public function hasOne($related, $relationName, $foreignKey = null, $localKey = null): ColumnDefinition

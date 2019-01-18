@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -33,6 +34,8 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
 
     protected $flags = [];
 
+    abstract protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation;
+
     public function addFlag(string $flag)
     {
         $this->flags[] = $flag;
@@ -44,8 +47,6 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
     {
         return in_array($flag, $this->flags);
     }
-
-    abstract protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation;
 
     public function acceptParentEntry(EntryContract $entry)
     {
@@ -73,7 +74,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
             return ResourceFactory::make($handle)->newEntryInstance();
         }
 
-        throw new \Exception('Related resource/model not found');
+        PlatformException::runtime('Related resource/model not found ['.$this->getName().' :: '.$this->getType().']');
     }
 
     /** @return \SuperV\Platform\Domains\Resource\Resource; */
@@ -170,6 +171,10 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
 
         $relation->relationConfig = RelationConfig::create($relation->type, $entry->config);
 
+        if (! $relation->relationConfig->getName()) {
+            $relation->relationConfig->relationName($relation->getName());
+        }
+
         return $relation;
     }
 
@@ -180,6 +185,10 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         $relation->hydrate($params);
 
         $relation->relationConfig = RelationConfig::create($relation->type, $params['config'] ?? []);
+
+        if (! $relation->relationConfig->getName()) {
+            $relation->relationConfig->relationName($relation->getName());
+        }
 
         return $relation;
     }

@@ -14,7 +14,7 @@ use SuperV\Platform\Domains\Resource\Table\ResourceTable;
 
 class MorphMany extends Relation implements ProvidesTable, ProvidesForm
 {
-    protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
+    protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
     {
         return new EloquentMorphMany(
             $relatedEntryInstance->newQuery(),

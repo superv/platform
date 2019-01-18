@@ -12,7 +12,7 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class HasOne extends Relation implements ProvidesForm, HandlesRequests
 {
-    protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
+    protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
     {
         return new EloquentHasOne(
             $relatedEntryInstance->newQuery(),

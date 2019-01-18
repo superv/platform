@@ -12,7 +12,7 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter
 {
-    protected function newRelationQuery(EntryContract $relatedEntryInstance): EloquentRelation
+    protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
     {
         return new EloquentBelongsTo(
             $relatedEntryInstance->newQuery(),
