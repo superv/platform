@@ -198,7 +198,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected function publishSpa()
     {
         $this->publishes([
-            __DIR__.'/../resources/spa' => public_path('vendor/superv/spa'),
+            __DIR__.'/../resources/spa' => resource_path('superv/spa'),
         ], 'superv.spa');
     }
 
