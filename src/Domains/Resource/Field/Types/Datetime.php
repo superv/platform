@@ -19,7 +19,7 @@ class Datetime extends FieldType implements NeedsDatabaseColumn
 
     protected function formComposer()
     {
-        return function (Payload $payload, EntryContract $entry) {
+        return function (Payload $payload, ?EntryContract $entry) {
             $payload->set('config.time', $this->getConfigValue('time'));
         };
     }
