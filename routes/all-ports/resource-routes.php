@@ -40,8 +40,9 @@ return [
     ],
 
     'sv/res/{resource}/{id}/view' => [
-        'as'   => 'resource.view',
-        'uses' => ResourceViewController::at('view'),
+        'as'    => 'resource.view',
+        'uses'  => ResourceViewController::at('view'),
+        'where' => ['id' => '[0-9]*'],
     ],
 
     'GET@'.'sv/res/{resource}' => [
@@ -50,8 +51,9 @@ return [
     ],
 
     'ANY@'.'sv/res/{resource}/{id}/actions/{action}' => [
-        'as'   => 'resource.entry.actions',
-        'uses' => ResourceIndexController::at('action'),
+        'as'    => 'resource.entry.actions',
+        'uses'  => ResourceIndexController::at('action'),
+        'where' => ['id' => '[0-9]*'],
     ],
 
     'GET@'.'sv/res/{resource}/table/{data?}' => [
