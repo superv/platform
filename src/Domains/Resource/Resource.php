@@ -201,8 +201,6 @@ class Resource implements
     {
         $key = $this->getHandle().'.'.$name;
         if ($relation = superv('relations')->get($key)) {
-            info('hit: '.$key);
-
             return $relation;
         }
         $relation = $this->getRelations()->get($name);
