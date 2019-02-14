@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Addon;
 
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class AddonModel extends ResourceEntry
 {
@@ -19,6 +20,8 @@ class AddonModel extends ResourceEntry
 
         if (class_exists($class)) {
             return new $class($this);
+        } else {
+            PlatformException::runtime("Could not resolve addon: ". $class);
         }
     }
 
