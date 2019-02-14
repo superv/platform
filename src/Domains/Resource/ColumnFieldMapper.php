@@ -16,6 +16,11 @@ class ColumnFieldMapper
 
     protected $rules = [];
 
+    public static function for(string $columnType): self
+    {
+        return (new static())->setColumnType($columnType);
+    }
+
     /**
      * @param mixed $columnType
      * @return ColumnFieldMapper
@@ -106,9 +111,19 @@ class ColumnFieldMapper
         $this->mapInteger();
     }
 
+    protected function mapSmallInteger()
+    {
+        $this->mapInteger();
+    }
+
     protected function mapBigInt()
     {
         $this->mapInteger();
+    }
+
+    protected function mapDouble()
+    {
+        $this->mapDecimal();
     }
 
     protected function mapDecimal()
@@ -118,11 +133,6 @@ class ColumnFieldMapper
 
         $this->setConfigValue('total', $this->getParameter('total'));
         $this->setConfigValue('places', $this->getParameter('places'));
-    }
-
-    protected function mapDouble()
-    {
-        $this->mapDecimal();
     }
 
     protected function mapFloat()
@@ -182,10 +192,5 @@ class ColumnFieldMapper
     public function getRules()
     {
         return $this->rules;
-    }
-
-    public static function for(string $columnType): self
-    {
-        return (new static())->setColumnType($columnType);
     }
 }
