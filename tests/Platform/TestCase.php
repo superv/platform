@@ -112,21 +112,19 @@ class TestCase extends OrchestraTestCase
         }
     }
 
-    /**
-     * @param string $slug
-     * @param string $path
-     * @return \SuperV\Platform\Domains\Addon\Addon
-     * @throws \SuperV\Platform\Exceptions\PathNotFoundException
-     */
-    protected function setUpAddon(
-        $slug = 'superv.addons.sample',
-        $path = 'tests/Platform/__fixtures__/sample-addon'
-    ) {
+    protected function setUpAddon($slug = null, $path = null, $seed = false)
+    {
+        $path = $path ?? 'tests/Platform/__fixtures__/sample-addon';
+        $slug = $slug ?? 'superv.addons.sample';
+
         ComposerLoader::load(base_path($path));
-        $this->app->make(Installer::class)
-                  ->setSlug($slug)
-                  ->setPath($path)
-                  ->install();
+        $installer = $this->app->make(Installer::class)
+                               ->setSlug($slug)
+                               ->setPath($path);
+        $installer->install();
+        if ($seed === true) {
+            $installer->seed();
+        }
 
         $entry = AddonModel::bySlug($slug);
 

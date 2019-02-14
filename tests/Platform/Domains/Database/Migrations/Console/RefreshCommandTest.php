@@ -33,13 +33,13 @@ class RefreshCommandTest extends TestCase
         );
 
         $rollbackCommand->shouldReceive('run')->with(
-            $this->makeInputMatcher("--database --path --realpath --step=2 --force --scope=test-scope 'migrate:rollback'"), m::any()
+            $this->makeInputMatcher("--step=2 --scope=test-scope 'migrate:rollback'"), m::any()
         );
         $migrateCommand->shouldReceive('run')->with(
             $this->makeInputMatcher('--database --path --realpath --force --scope=test-scope migrate'), m::any()
         );
 
-        $this->runCommand($command, ['--step' => 2, '--scope' => 'test-scope']);
+        $this->runCommand($command, ['--step' => 2, '--force', '--scope' => 'test-scope']);
     }
 
     /** @test */

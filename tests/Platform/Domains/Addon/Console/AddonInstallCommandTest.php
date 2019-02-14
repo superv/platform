@@ -36,4 +36,17 @@ class AddonInstallCommandTest extends TestCase
             'addon' => 'vendor.addons.slug',
         ]);
     }
+
+    /** @test */
+    function runs_seeder_after_installation_if_provided()
+    {
+        $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
+        $installer->shouldIgnoreMissing();
+        $installer->shouldReceive('seed')->once();
+
+        $this->artisan('addon:install', [
+            'addon' => 'vendor.addons.slug',
+            '--seed' => true,
+        ]);
+    }
 }

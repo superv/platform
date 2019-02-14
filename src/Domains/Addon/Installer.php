@@ -73,6 +73,14 @@ class Installer
         return $this;
     }
 
+    public function seed()
+    {
+        $seederClass = str_replace_last(ucfirst($this->type()), 'Seeder', get_class($this->addon));
+        if (class_exists($seederClass)) {
+            app()->make($seederClass, ['addon' => $this->addon])->seed();
+        }
+    }
+
     public function ensureNotInstalledBefore()
     {
         if ($addon = AddonModel::bySlug($this->getSlug())) {

@@ -45,6 +45,12 @@ class InstallerTest extends TestCase
         ]);
     }
 
+    function test__seeds_addon()
+    {
+        $this->setUpAddon(null, null, $seed = true);
+        $this->assertTrue($_SERVER['sample.seeder']);
+    }
+
     function test__does_not_install_an_already_installed_addon()
     {
         $this->setUpAddon();
