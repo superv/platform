@@ -3,7 +3,9 @@ import SuperVJS from 'superv-js'
 import App from './App'
 
 const configElement = document.getElementById('config')
-const config = JSON.parse(configElement.innerHTML)
+if (configElement) {
+  const config = JSON.parse(configElement.innerHTML)
+}
 
 Vue.config.productionTip = false
 Vue.use(SuperVJS, {

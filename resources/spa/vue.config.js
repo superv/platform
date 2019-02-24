@@ -1,7 +1,7 @@
 const path = require('path')
 
 module.exports = {
-  baseUrl: '/superv/',
+  publicPath: '/superv/',
 
   outputDir: '../assets/',
 
