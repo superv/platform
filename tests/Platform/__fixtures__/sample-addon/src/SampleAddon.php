@@ -6,4 +6,5 @@ use SuperV\Platform\Domains\Addon\Addon;
 
 class SampleAddon extends Addon
 {
+    protected $seeder = SampleSeeder::class;
 }

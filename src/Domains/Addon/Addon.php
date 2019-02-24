@@ -14,6 +14,8 @@ class Addon
      */
     protected $entry;
 
+    protected $seeder;
+
     protected $installs;
 
     public function __construct(AddonModel $entry)
@@ -108,5 +110,15 @@ class Addon
 
             config()->set($this->slug().'::'.$key, $merged);
         }
+    }
+
+    /**
+     * Return seeder class
+     *
+     * @return string
+     */
+    public function seederClass()
+    {
+        return $this->seeder;
     }
 }

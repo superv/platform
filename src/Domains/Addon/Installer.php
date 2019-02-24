@@ -7,6 +7,7 @@ use Illuminate\Contracts\Console\Kernel;
 use RuntimeException;
 use SuperV\Platform\Domains\Addon\Contracts\AddonLocator;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
+use SuperV\Platform\Domains\Addon\Jobs\SeedAddon;
 use SuperV\Platform\Exceptions\PathNotFoundException;
 use SuperV\Platform\Support\Concerns\HasPath;
 
@@ -75,10 +76,7 @@ class Installer
 
     public function seed()
     {
-        $seederClass = str_replace_last(ucfirst($this->type()), 'Seeder', get_class($this->addon));
-        if (class_exists($seederClass)) {
-            app()->make($seederClass, ['addon' => $this->addon])->seed();
-        }
+        SeedAddon::dispatch($this->addon);
     }
 
     public function ensureNotInstalledBefore()
