@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Port;
 
+use App\Http\Middleware\AutoLoginDev;
+
 class ApiPort extends Port
 {
     protected $slug = 'api';
@@ -14,5 +16,6 @@ class ApiPort extends Port
 
     protected $middlewares = [
         'Barryvdh\Cors\HandleCors',
+        AutoLoginDev::class
     ];
 }

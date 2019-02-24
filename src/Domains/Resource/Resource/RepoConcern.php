@@ -10,9 +10,18 @@ use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
 
 trait RepoConcern
 {
+    protected $with = [];
+
     public function newQuery()
     {
-        return $this->newEntryInstance()->newQuery();
+        return $this->newEntryInstance()->newQuery()->with($this->with);
+    }
+
+    public function with($relation)
+    {
+        $this->with[] = $relation;
+
+        return $this;
     }
 
     public function newEntryInstance()

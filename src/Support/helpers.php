@@ -151,6 +151,11 @@ if (! function_exists('superv')) {
     }
 }
 
+function sv_addon($addon)
+{
+    return superv('addons')->get($addon);
+}
+
 /**
  * @param      $key
  * @param null $default
