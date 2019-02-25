@@ -1,6 +1,7 @@
 {
     "name": "superv/platform",
     "description": "SuperV Platform Package",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "SuperV\\Platform\\": "src/"
