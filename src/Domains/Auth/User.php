@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Auth;
 
-use App\Notifications\ResetPassword;
 use Current;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -77,11 +76,6 @@ class User extends Entry implements
     public function verifyPassword($checkPassword)
     {
         return \Hash::check($checkPassword, $this->password);
-    }
-
-    public function account()
-    {
-        return $this->belongsTo(Account::class);
     }
 
     public function profile()
