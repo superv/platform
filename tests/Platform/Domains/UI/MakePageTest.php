@@ -42,7 +42,7 @@ class MakePageTest extends TestCase
         $this->assertNotNull($rows[0]['fields']);
     }
 
-    function test__make_form_page()
+    function t1est__make_form_page()
     {
         $this->withoutExceptionHandling();
         $fields = [

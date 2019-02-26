@@ -293,7 +293,11 @@ class Resource implements
         }
 
         if ($route === 'view') {
-            return $base.'/'.$entry->getId().'/'.$route;
+            return $base.'/'.$entry->getId().'/view';
+        }
+
+        if ($route === 'view.page') {
+            return $base.'/'.$entry->getId();
         }
 
         if ($route === 'edit') {

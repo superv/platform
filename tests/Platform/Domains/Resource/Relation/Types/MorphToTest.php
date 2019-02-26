@@ -37,6 +37,6 @@ class MorphToTest extends ResourceTestCase
 
         $relation = $this->relatedResource->getRelation('owner');
         $this->assertEquals('morph_to', $relation->getType());
-        $this->assertEquals([], $relation->getRelationConfig()->toArray());
+        $this->assertEquals(['morph_name' => 'owner'], $relation->getRelationConfig()->toArray());
     }
 }

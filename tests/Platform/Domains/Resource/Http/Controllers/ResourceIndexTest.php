@@ -59,11 +59,10 @@ class ResourceIndexTest extends ResourceTestCase
             $rowActions = $table->getProp('config.row_actions');
             $this->assertEquals(1, count($rowActions));
 
-            $this->assertEquals([
-                'name'  => 'view',
-                'title' => 'View',
-                'url'   => 'sv/res/t_users/{entry.id}',
-            ], $rowActions[0]['props']);
+            $this->assertEquals('view', $rowActions[0]['props']['name']);
+            $this->assertEquals('View', $rowActions[0]['props']['title']);
+            $this->assertEquals('sv/res/t_users/{entry.id}', $rowActions[0]['props']['url']);
+            $this->assertEquals('View', $rowActions[0]['props']['button']['title']);
         }
     }
 
@@ -98,7 +97,7 @@ class ResourceIndexTest extends ResourceTestCase
         $groups = sv_resource('t_groups');
         $usersGroup = $groups->find(1);
         $this->assertSame($usersGroup->title, $group['value']);
-        $this->assertEquals($groups->route('view', $usersGroup), $group['meta']['link']);
+        $this->assertEquals($groups->route('view.page', $usersGroup), $group['meta']['link']);
     }
 
     function test__fields_extending()
