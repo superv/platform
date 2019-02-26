@@ -23,6 +23,7 @@ class RegistrationTest extends TestCase
         app('router')->post('register', ControllerStub::class.'@register');
 
         $response = $this->post('register', [
+            'name'                  => 'User Me',
             'email'                 => 'user@example.com',
             'password'              => 'secret',
             'password_confirmation' => 'secret',
@@ -175,6 +176,7 @@ class RegistrationTest extends TestCase
     private function validParams($overrides = [])
     {
         return array_merge([
+            'name'                  => 'User Name',
             'email'                 => 'user@example.com',
             'password'              => 'secret',
             'password_confirmation' => 'secret',

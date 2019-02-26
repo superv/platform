@@ -9,9 +9,8 @@ use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
 use SuperV\Platform\Support\Meta\Meta;
 use SuperV\Platform\Support\Meta\Repository;
-use Tests\Platform\TestCase;
 
-class RepositoryTest extends TestCase
+class RepositoryTest
 {
     use RefreshDatabase;
     use ResourceTestHelpers;

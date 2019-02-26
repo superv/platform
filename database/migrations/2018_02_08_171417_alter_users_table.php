@@ -8,16 +8,16 @@ class AlterUsersTable extends Migration
 {
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedInteger('account_id')->nullable();
-            $table->string('name')->change()->nullable();
-        });
+//        Schema::table('users', function (Blueprint $table) {
+//            $table->unsignedInteger('account_id')->nullable();
+//            $table->string('name')->change()->nullable();
+//        });
     }
 
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('account_id');
-        });
+//        Schema::table('users', function (Blueprint $table) {
+//            $table->dropColumn('account_id');
+//        });
     }
 }

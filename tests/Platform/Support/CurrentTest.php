@@ -15,10 +15,10 @@ class CurrentTest extends TestCase
     function test_returns_current_logged_in_user()
     {
         $user = User::query()->create([
-            'account_id' => 1,
-            'id'         => rand(9, 999),
-            'email'      => 'user@superv.io',
-            'password'   => '123',
+            'id'       => rand(9, 999),
+            'name'     => 'User Name',
+            'email'    => 'user@superv.io',
+            'password' => '123',
         ]);
 
         $this->be($user);

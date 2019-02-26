@@ -90,6 +90,7 @@ class UserRegistrar
     protected function create()
     {
         $this->user = app(\SuperV\Platform\Domains\Auth\Contracts\User::class)->create([
+            'name'    => $this->request['name'],
             'email'    => $this->request['email'],
             'password' => bcrypt($this->request['password']),
         ]);

@@ -10,9 +10,8 @@ use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
 use SuperV\Platform\Domains\UI\Page\MakeFormPage;
 use SuperV\Platform\Domains\UI\Page\MakeTablePage;
 use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
-use Tests\Platform\TestCase;
 
-class MakePageTest extends TestCase
+class MakePageTest
 {
     use RefreshDatabase;
     use ResourceTestHelpers;

@@ -5,7 +5,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
-class CreateUsersPrototype extends Migration
+class CreateUsersResource extends Migration
 {
     public function up()
     {
@@ -14,7 +14,7 @@ class CreateUsersPrototype extends Migration
             $resource->nav('acp.platform.auth');
 
             $table->increments('id');
-            $table->nullableBelongsTo('sv_accounts', 'account');
+//            $table->nullableBelongsTo('sv_accounts', 'account');
             $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->string('password');

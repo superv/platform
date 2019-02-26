@@ -17,7 +17,7 @@ class UsersExtension implements ExtendsResource
 
         $fields = $resource->indexFields();
         $fields->show('email');
-        $fields->show('account')->copyToFilters(['default_value' => 1]);
+//        $fields->show('account')->copyToFilters(['default_value' => 1]);
 
         $resource->searchable(['email']);
     }

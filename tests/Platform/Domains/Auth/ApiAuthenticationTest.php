@@ -4,7 +4,6 @@ namespace Tests\Platform\Domains\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Route;
-use SuperV\Platform\Domains\Auth\Account;
 use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use Tests\Platform\TestCase;
@@ -18,8 +17,6 @@ class ApiAuthenticationTest extends TestCase
 
     protected $user;
 
-    protected $account;
-
     protected function setUp()
     {
         parent::setUp();
@@ -31,12 +28,7 @@ class ApiAuthenticationTest extends TestCase
             'middlewares' => ['auth:superv-api'],
         ]);
 
-        $this->account = Account::create(
-            ['name' => 'Test Account']
-        );
-
         $this->user = factory(User::class)->create([
-            'account_id' => $this->account->id,
             'id'         => rand(9, 999),
             'email'      => 'user@superv.io',
             'password'   => bcrypt('secret'),
@@ -50,7 +42,6 @@ class ApiAuthenticationTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $response = $this->json('post', 'login', [
-            'account_id' => $this->account->id,
             'email'      => 'user@superv.io',
             'password'   => 'secret',
         ]);

@@ -25,9 +25,6 @@ $factory->define(SuperV\Platform\Domains\Auth\User::class, function (Faker\Gener
     static $password;
 
     return [
-        'account_id'     => function () {
-            return factory(Account::class)->create()->id;
-        },
         'name'           => $faker->name,
         'email'          => $faker->unique()->safeEmail,
         'password'       => $password ?: $password = '$2y$10$lEElUpT9ssdSw4XVVEUt5OaJnBzgcmcE6MJ2Rrov4dKPEjuRD6dd.',

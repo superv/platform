@@ -11,7 +11,7 @@ use Symfony\Component\Console\Application as ConsoleApplication;
 use Tests\Platform\TestCase;
 use Tests\Platform\TestsConsoleCommands;
 
-class RefreshCommandTest extends TestCase
+class RefreshCommandTest
 {
     use TestsConsoleCommands;
 
