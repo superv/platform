@@ -2,4 +2,8 @@
 *.css linguist-vendored
 *.scss linguist-vendored
 *.js linguist-vendored
-CHANGELOG.md export-ignore
+/tests          export-ignore
+/.gitattributes export-ignore
+/.gitignore     export-ignore
+/.travis.yml    export-ignore
+/phpunit.xml.dist    export-ignore
