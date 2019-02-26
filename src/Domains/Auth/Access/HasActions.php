@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Auth\Access\Guard\Guard;
 use SuperV\Platform\Domains\Auth\Access\Guard\Guardable;
 
 /**
- * Trait HasRoles
+ * Trait HasActions
  *
  * @property \Illuminate\Database\Eloquent\Collection $roles
  */
@@ -193,7 +193,7 @@ trait HasActions
     }
 
     /**
-     * Get only forbidden assigned actions
+     * Get only assigned actions that are forbidden
      *
      * @return array
      */
@@ -207,7 +207,7 @@ trait HasActions
     }
 
     /**
-     * Get only allowed assigned actions
+     * Get only assigned actions that are allowed
      *
      * @return array
      */
