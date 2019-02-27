@@ -21,6 +21,14 @@ class ResourceEntry extends Entry
     protected static function boot()
     {
         parent::boot();
+
+        static::saving(function (ResourceEntry $entry) {
+            if (!starts_with($entry->getTable(), 'sv_')) {
+                if ($entry->getResource()->hasUuid() && is_null($entry->uuid)) {
+                    $entry->setAttribute('uuid', uuid());
+                }
+            }
+        });
     }
 
     public function __call($name, $arguments)
@@ -159,6 +167,13 @@ class ResourceEntry extends Entry
         $field = $this->getResource()->getField($name);
 
         return $field->setWatcher($this);
+    }
+
+    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): ResourceEntry
+    {
+        $this->resource = $resource;
+
+        return $this;
     }
 
     public static function make(Resource $resource)

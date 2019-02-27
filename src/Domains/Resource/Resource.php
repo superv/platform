@@ -405,6 +405,11 @@ class Resource implements
         return $this->restorable;
     }
 
+    public function hasUuid(): bool
+    {
+        return $this->getConfigValue('has_uuid', false);
+    }
+
     public function isSortable(): bool
     {
         return $this->sortable;

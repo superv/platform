@@ -99,6 +99,11 @@ trait CreatesFields
         return parent::increments($column);
     }
 
+    public function hasUuid($column = 'uuid')
+    {
+        $this->resourceConfig()->hasUuid(true);
+        return $this->addColumn('uuid', $column);
+    }
 
     public function restorable()
     {

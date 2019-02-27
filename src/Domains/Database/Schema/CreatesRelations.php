@@ -77,9 +77,9 @@ trait CreatesRelations
     public function belongsToMany(
         $related,
         $relationName,
-        $pivotTable = null,
-        $pivotForeignKey = null,
-        $pivotRelatedKey = null,
+        $pivotTable,
+        $pivotForeignKey,
+        $pivotRelatedKey,
         Closure $pivotColumns = null
     ) {
         return $this->addColumn(null, $relationName, ['nullable' => true])

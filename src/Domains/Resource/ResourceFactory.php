@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class ResourceFactory
 {
