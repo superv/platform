@@ -63,7 +63,81 @@ Navigate to `http://superv.test/superv` using your browser and login with the cr
 
 
 ## Usage
-...coming
+
+### Addons
+Every single reusable composer package in SuperV platform is called an `addon`. Different types of addons have different features. For now we will use the type `module` which is most common addon type.
+
+SuperV groups all your platform related addon packages under the `addons` directory that is located at your project root. While installing through composer, it detects platform specific packages and moves them here instead of the default vendor folder.
+
+Every SuperV addon has a unique slug combined of 3 parameters; `vendor.plural_addon_type.name`
+
+
+#### Making your first module
+Let's create a sample module to demonstrate the key features mentioned above. We will be creating a CRM module for our company ACME, thus our addon slug will be `acme.modules.crm`. Let's do this using the command line tool:
+
+```bash
+php artisan make:addon acme.modules.crm
+```
+
+You can now find the created module files in `addons/acme/modules/crm` directory.
+
+Before using your addon, you should install it:
+
+```bash
+php artisan addon:install acme.modules.crm
+```
+
+This would run the migrations located in your addon's `database/migrations` folder if any.
+
+While developing and addon, you can use `addon:reinstall` command to uninstall and install again. And also `addon:uninstall` to uninstall it. 
+
+Note that, uninstalling an addon rollbacks all it's migrations, thus would drop related database tables.
+
+Now, let's create an addon migration:
+```bash
+php artisan addon:migration
+```
+
+We didn't provide an addon slug in this command, because the interactive command line will let us choose it among the installed addons.
+For this migration I will be using `crm_clients` as the table name that I want to create.
+
+
+As now, migration file should be created in `addons/acme/modules/crm/database/migrations/` folder. Open it up in your IDE and paste the following to speed things a little bit up:
+
+```php
+<?php
+
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Database\Migrations\Migration;
+
+class CreateCrmClientsTable extends Migration
+{
+    public function up()
+    {
+        $this->create('crm_clients',
+            function (Blueprint $table, ResourceConfig $resource) {
+                $resource->label('Clients');
+                $resource->nav('acp.crm.clients');
+                $resource->resourceKey('client');
+                $resource->entryLabel('{last_name}, {first_name}');
+
+                $table->increments('id');
+                $table->string('first_name');
+                $table->string('last_name');
+
+                $table->createdBy()->updatedBy();
+                $table->restorable();
+            });
+    }
+
+    public function down()
+    {
+        $this->dropIfExists('crm_clients');
+    }
+}
+```
+
 
 
 ## Contributing
