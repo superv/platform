@@ -57,7 +57,7 @@ trait CreatesRelations
                         Config::hasOne()
                               ->relationName($relationName)
                               ->related($related)
-                              ->foreignKey($foreignKey ?? $this->resourceBlueprint()->getResourceKey().'_id')
+                              ->foreignKey($foreignKey ?? $this->resourceConfig()->getResourceKey().'_id')
                               ->localKey($localKey)
                     );
     }

@@ -94,7 +94,7 @@ trait CreatesFields
 
     public function increments($column)
     {
-        $this->resourceBlueprint()->keyName($column);
+        $this->resourceConfig()->keyName($column);
 
         return parent::increments($column);
     }
@@ -102,13 +102,13 @@ trait CreatesFields
 
     public function restorable()
     {
-        $this->resourceBlueprint()->restorable(true);
+        $this->resourceConfig()->restorable(true);
         $this->timestamp('deleted_at')->nullable()->hideOnForms();
     }
 
     public function sortable()
     {
-        $this->resourceBlueprint()->sortable(true);
+        $this->resourceConfig()->sortable(true);
         $this->unsignedBigInteger('sort_order')->default(0);
     }
 

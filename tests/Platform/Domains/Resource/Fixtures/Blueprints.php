@@ -57,7 +57,7 @@ class Blueprints
     public function comments()
     {
         return $this->create('t_comments', function (Blueprint $table) {
-            $table->resourceBlueprint()->label('Comments');
+            $table->resourceConfig()->label('Comments');
 
             $table->increments('id');
             $table->string('comment');
@@ -71,7 +71,7 @@ class Blueprints
     public function posts()
     {
         return $this->create('t_posts', function (Blueprint $table) {
-            $table->resourceBlueprint()->label('Posts');
+            $table->resourceConfig()->label('Posts');
 
             $table->increments('id');
             $table->string('title');

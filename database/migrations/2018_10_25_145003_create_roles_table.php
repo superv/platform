@@ -9,8 +9,8 @@ class CreateRolesTable extends Migration
     public function up()
     {
         Schema::create('auth_roles', function (Blueprint $table) {
-            $table->resourceBlueprint()->label('Roles');
-            $table->resourceBlueprint()->nav('acp.platform.auth');
+            $table->resourceConfig()->label('Roles');
+            $table->resourceConfig()->nav('acp.platform.auth');
 
             $table->increments('id');
             $table->string('slug')->unique();
@@ -24,7 +24,7 @@ class CreateRolesTable extends Migration
         });
 
         Schema::create('auth_assigned_roles', function (Blueprint $table) {
-            $table->resourceBlueprint()->label('Assigned Roles');
+            $table->resourceConfig()->label('Assigned Roles');
 
             $table->increments('id');
             $table->morphTo('owner');
@@ -34,8 +34,8 @@ class CreateRolesTable extends Migration
         });
 
         Schema::create('auth_actions', function (Blueprint $table) {
-            $table->resourceBlueprint()->label('Actions');
-            $table->resourceBlueprint()->nav('acp.platform.auth');
+            $table->resourceConfig()->label('Actions');
+            $table->resourceConfig()->nav('acp.platform.auth');
 
             $table->increments('id');
             $table->string('slug')->unique();

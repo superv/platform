@@ -74,7 +74,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
             return ResourceFactory::make($handle)->newEntryInstance();
         }
 
-        PlatformException::runtime('Related resource/model not found ['.$this->getName().' :: '.$this->getType().']');
+        PlatformException::fail('Related resource/model not found ['.$this->getName().' :: '.$this->getType().']');
     }
 
     /** @return \SuperV\Platform\Domains\Resource\Resource; */
