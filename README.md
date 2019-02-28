@@ -81,7 +81,7 @@ php artisan make:addon acme.modules.crm
 
 You can now find the created module files in `addons/acme/modules/crm` directory.
 
-Before using your addon, you should install it:
+Before using your addon, you must install it first:
 
 ```bash
 php artisan addon:install acme.modules.crm
@@ -89,7 +89,7 @@ php artisan addon:install acme.modules.crm
 
 This would run the migrations located in your addon's `database/migrations` folder if any.
 
-While developing and addon, you can use `addon:reinstall` command to uninstall and install again. And also `addon:uninstall` to uninstall it. 
+While developing an addon, you can use `addon:reinstall` command to uninstall and install again. And also `addon:uninstall` to uninstall it. 
 
 Note that, uninstalling an addon rollbacks all it's migrations, thus would drop related database tables.
 
@@ -102,20 +102,21 @@ We didn't provide an addon slug in this command, because the interactive command
 For this migration I will be using `crm_clients` as the table name that I want to create.
 
 
-As now, migration file should be created in `addons/acme/modules/crm/database/migrations/` folder. Open it up in your IDE and paste the following to speed things a little bit up:
+As now, the new migration file should be created in `addons/acme/modules/crm/database/migrations` folder. Open it up in your IDE and paste the following:
 
 ```php
 <?php
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
+use SuperV\Platform\Domains\Database\Schema\Schema;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class CreateCrmClientsTable extends Migration
 {
     public function up()
     {
-        $this->create('crm_clients',
+        Schema::create('crm_clients',
             function (Blueprint $table, ResourceConfig $resource) {
                 $resource->label('Clients');
                 $resource->nav('acp.crm.clients');
@@ -133,7 +134,7 @@ class CreateCrmClientsTable extends Migration
 
     public function down()
     {
-        $this->dropIfExists('crm_clients');
+        Schema::dropIfExists('crm_clients');
     }
 }
 ```
