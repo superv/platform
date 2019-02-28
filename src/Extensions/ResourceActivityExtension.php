@@ -13,6 +13,7 @@ class ResourceActivityExtension implements ExtendsResource
     public function extend(Resource $resource)
     {
         $resource->on('index.page', function (ResourcePage $page) {
+            $page->setActions([]);
         });
 
         $resource->on('index.config', function (ResourceTable $table) {
@@ -20,7 +21,7 @@ class ResourceActivityExtension implements ExtendsResource
         });
         $fields = $resource->indexFields();
         $fields->show('entry');
-        $fields->show('user')->copyToFilters(['query' => ['account_id' => 1]]);
+        $fields->show('user')->copyToFilters();
         $fields->show('resource')->copyToFilters();
 
         $resource->searchable(['email']);
