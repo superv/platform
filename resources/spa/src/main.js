@@ -2,9 +2,10 @@ import Vue from 'vue'
 import SuperVJS from 'superv-js'
 import App from './App'
 
+let config
 const configElement = document.getElementById('config')
 if (configElement) {
-  const config = JSON.parse(configElement.innerHTML)
+   config = JSON.parse(configElement.innerHTML)
 }
 
 Vue.config.productionTip = false
