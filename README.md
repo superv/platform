@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/superv/superv-platform.svg?branch=0.8)](https://travis-ci.org/superv/superv-platform)
+[![Build Status](https://travis-ci.org/superv/superv-platform.svg?branch=master)](https://travis-ci.org/superv/superv-platform)
 # SuperV Platform
 ‼️💥💥 This package is under heavy development ⛏ and may not be suitable for production use yet. 💥💥‼️
 
