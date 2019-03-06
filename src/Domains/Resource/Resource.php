@@ -75,7 +75,7 @@ class Resource implements
      *
      * @var \Illuminate\Support\Collection
      */
-    protected $actions;
+    protected Collection $actions;
 
     /**
      * @var Closure
