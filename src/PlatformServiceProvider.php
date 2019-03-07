@@ -34,7 +34,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         Providers\ThemeServiceProvider::class,
         Adapters\AdapterServiceProvider::class,
         Domains\Auth\AuthServiceProvider::class,
-        Domains\Asset\AssetServiceProvider::class,
         Domains\Resource\ResourceServiceProvider::class,
         Domains\Database\Migrations\MigrationServiceProvider::class,
     ];
