@@ -72,18 +72,23 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/superv.php', 'superv');
-
-        $this->bindUserModel();
-
-        $this->enableTwig();
-
         $this->registerBindings($this->_bindings);
         $this->registerSingletons($this->_singletons);
         $this->registerAliases($this->aliases);
-        $this->registerListeners($this->listeners);
         $this->registerCommands($this->commands);
 
+        if (! Platform::isInstalled()) {
+            return;
+        }
+
+
+
+        $this->mergeConfigFrom(__DIR__.'/../config/superv.php', 'superv');
+
+        $this->bindUserModel();
+        $this->enableTwig();
+
+        $this->registerListeners($this->listeners);
         $this->registerListeners([
             'platform.registered' => function () {
                 $this->registerProviders($this->providers);
@@ -101,6 +106,7 @@ class PlatformServiceProvider extends BaseServiceProvider
         }
 
         event('platform.registered');
+
     }
 
     protected function bindUserModel(): void
