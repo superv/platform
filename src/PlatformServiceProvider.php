@@ -20,6 +20,7 @@ use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 use SuperV\Platform\Domains\Addon\Listeners\AddonBootedListener;
 use SuperV\Platform\Domains\Addon\Listeners\AddonInstalledListener;
+use SuperV\Platform\Domains\Auth\AuthServiceProvider;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
 use SuperV\Platform\Domains\Database\Model\Listener;
@@ -72,23 +73,18 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     public function register()
     {
-        $this->registerBindings($this->_bindings);
-        $this->registerSingletons($this->_singletons);
-        $this->registerAliases($this->aliases);
-        $this->registerCommands($this->commands);
-
-        if (! Platform::isInstalled()) {
-            return;
-        }
-
-
-
         $this->mergeConfigFrom(__DIR__.'/../config/superv.php', 'superv');
 
         $this->bindUserModel();
+
         $this->enableTwig();
 
+        $this->registerBindings($this->_bindings);
+        $this->registerSingletons($this->_singletons);
+        $this->registerAliases($this->aliases);
         $this->registerListeners($this->listeners);
+        $this->registerCommands($this->commands);
+
         $this->registerListeners([
             'platform.registered' => function () {
                 $this->registerProviders($this->providers);
@@ -167,11 +163,11 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->registerPlatformRoutes();
 
-        \Route::pattern('id', '[0-9]+');
+//        \Route::pattern('id', '[0-9]+');
 
         // Experimental query listening
         //
-        Listener::listen();
+//        Listener::listen();
     }
 
     protected function registerMigrationScope(): void
