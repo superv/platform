@@ -105,5 +105,17 @@ class Platform extends Addon
     {
         $this->on('installed', $callback);
     }
+
+    public function tables()
+    {
+        return [
+            'sv_addons',
+            'sv_resources',
+            'sv_fields',
+            'sv_relations',
+            'sv_navigation',
+            'sv_activities',
+        ];
+    }
 }
 

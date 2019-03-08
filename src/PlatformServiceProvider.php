@@ -8,6 +8,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
 use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
+use SuperV\Platform\Console\SuperVUninstallCommand;
 use SuperV\Platform\Domains\Addon\AddonCollection;
 use SuperV\Platform\Domains\Addon\Console\AddonInstallCommand;
 use SuperV\Platform\Domains\Addon\Console\AddonMakeMigrationCommand;
@@ -60,6 +61,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     protected $commands = [
         SuperVInstallCommand::class,
+        SuperVUninstallCommand::class,
         AddonInstallCommand::class,
         AddonUninstallCommand::class,
         AddonReinstallCommand::class,
