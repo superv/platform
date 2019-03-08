@@ -69,22 +69,6 @@ class SuperVInstallCommandTest extends TestCase
         return __DIR__.'/../__fixtures__/'.$name.'.env';
     }
 
-    private function getOrigEnvFile()
-    {
-        return file_get_contents(__DIR__.'../sample.env');
-
-        return [
-            'APP_ENV=local'."\r\n",
-            'APP_KEY='."\r\n",
-            'APP_URL=http://localhost'."\r\n",
-            ''."\r\n",
-            'LOG_CHANNEL=stack'."\r\n",
-            ''."\r\n",
-            'DB_CONNECTION=mysql'."\r\n",
-            'DB_HOST=127.0.0.1'."\r\n",
-        ];
-    }
-
     protected function tearDown()
     {
         parent::tearDown();

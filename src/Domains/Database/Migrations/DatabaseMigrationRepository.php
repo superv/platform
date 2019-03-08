@@ -44,10 +44,10 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
     {
         parent::createRepository();
 
-        $schema = $this->getConnection()->getSchemaBuilder();
-        $schema->table($this->table, function ($table) {
-            $table->string('scope')->nullable();
-        });
+//        $schema = $this->getConnection()->getSchemaBuilder();
+//        $schema->table($this->table, function ($table) {
+//            $table->string('scope')->nullable();
+//        });
     }
 
     public function log($file, $batch)

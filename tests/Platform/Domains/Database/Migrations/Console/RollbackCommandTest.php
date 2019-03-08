@@ -33,6 +33,8 @@ class RollbackCommandTest extends TestCase
     /** @test */
     function rollback_with_steps_and_scope()
     {
+        $this->installSuperV();
+
         Scopes::register('foo', __DIR__.'/../migrations/foo');
         Scopes::register('baz', __DIR__.'/../migrations/baz');
 

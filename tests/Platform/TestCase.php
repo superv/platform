@@ -20,8 +20,8 @@ class TestCase extends OrchestraTestCase
     use TestHelpers;
 
     /**
-     * Temporary directory to be created and
-     * afterwards deleted in storage folder
+     * Temporary directory to be created in storage folder
+     * during setup and deleted in tearDown
      *
      * @var string
      */
@@ -30,6 +30,8 @@ class TestCase extends OrchestraTestCase
     protected $packageProviders = [];
 
     protected $appConfig = [];
+
+    protected $shouldInstallPlatform = true;
 
     protected $installs = [];
 
@@ -64,33 +66,18 @@ class TestCase extends OrchestraTestCase
         }
 
         $this->loadLaravelMigrations();
+
         $this->withFactories(__DIR__.'/../database/factories');
+
         $this->makeTmpDirectory();
+
         $this->setUpMacros();
 
         $this->app->setBasePath(realpath(__DIR__.'/../../'));
-        if (method_exists($this, 'refreshDatabase')) {
-            $this->artisan('superv:install');
-            config([
-                'superv.installed' => true,
-                'jwt.secret'       => 'skdjfslkdfj',
-            ]);
 
-            $this->handlePostInstallCallbacks();
-
-            foreach ($this->installs as $addon) {
-                app(Installer::class)
-                    ->setLocator(new Locator(realpath(__DIR__.'/../../../../')))
-                    ->setSlug($addon)
-                    ->install();
-            }
-
-            (new PlatformServiceProvider($this->app))->boot();
+        if ($this->shouldInstallPlatform()) {
+            $this->installSuperV();
         }
-
-//        if (! defined('SV_TEST_BASE')) {
-//            define('SV_TEST_BASE', $this->basePath());
-//        }
     }
 
     protected function tearDown()
@@ -189,5 +176,41 @@ class TestCase extends OrchestraTestCase
     protected function makeUploadedFile($filename = 'square.png')
     {
         return new UploadedFile($this->basePath('__fixtures__/'.$filename), $filename);
+    }
+
+    protected function installAddons(): void
+    {
+        foreach ($this->installs as $addon) {
+            app(Installer::class)
+                ->setLocator(new Locator(realpath(__DIR__.'/../../../../')))
+                ->setSlug($addon)
+                ->install();
+        }
+    }
+
+    protected function setConfigParams(): void
+    {
+        config([
+            'superv.installed' => true,
+            'jwt.secret'       => 'skdjfslkdfj',
+        ]);
+    }
+
+    protected function installSuperV(): void
+    {
+        $this->artisan('superv:install');
+
+        $this->setConfigParams();
+
+        $this->handlePostInstallCallbacks();
+
+        $this->installAddons();
+
+        (new PlatformServiceProvider($this->app))->boot();
+    }
+
+    protected function shouldInstallPlatform()
+    {
+        return $this->shouldInstallPlatform && method_exists($this, 'refreshDatabase');
     }
 }

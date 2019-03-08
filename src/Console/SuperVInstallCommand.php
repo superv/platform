@@ -3,6 +3,8 @@
 namespace SuperV\Platform\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Schema\Blueprint;
+use Schema;
 
 class SuperVInstallCommand extends Command
 {
@@ -13,7 +15,13 @@ class SuperVInstallCommand extends Command
     public function handle()
     {
         $this->comment('Installing SuperV');
-        $this->call('migrate', ['--force' => true]);
+        if (\Illuminate\Support\Facades\Schema::hasTable('migrations')) {
+            Schema::table('migrations', function (Blueprint $table) {
+                $table->string('scope')->nullable();
+            });
+        } else {
+            $this->call('migrate', ['--force' => true]);
+        }
         $this->call('migrate', ['--scope' => 'platform', '--force' => true]);
 
         $this->setEnv('SV_INSTALLED=true');
