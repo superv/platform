@@ -161,6 +161,8 @@ class PlatformServiceProvider extends BaseServiceProvider
         //
         Platform::boot();
 
+        // Register routes needed by platform
+        //
         $this->registerPlatformRoutes();
 
 //        \Route::pattern('id', '[0-9]+');

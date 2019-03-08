@@ -26,7 +26,7 @@ class PlatformTest extends TestCase
     }
 
     /** @test */
-    function dispatches_event_when_platform_is_booted()
+    function dispatches_event_when_platform_has_booted()
     {
         Event::fake();
 
