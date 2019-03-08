@@ -16,7 +16,44 @@ SuperV is a Laravel package that aims to be a rapid development platform.
 ## Installation
 
 ### On an existing project
-! soon !
+Install SuperV Platform package:
+```bash
+composer require superv/platform 0.8.x-dev
+```
+
+Create addons directory, and make it writable:
+```bash
+mkdir addons
+chmod -Rf 777 addons
+echo 'superv/*' > addons/.gitignore
+```
+
+Add required parameters to your `.env` file:
+```bash
+SV_HOSTNAME=superv.dev.io
+```
+
+Add composer merge plugin configuration under the `extra` key in your `composer.json` file:
+```json
+    "extra": {
+        "merge-plugin": {
+            "include": [
+                "addons/*/*/*/composer.json"
+            ],
+            "recurse": true,
+            "replace": false
+        }
+    }
+```
+
+Add scope (VARCHAR:255) column to your migrations table
+
+ 
+Install SuperV
+```bash
+php artisan superv:install
+```
+
 
 ### As a fresh project
 
