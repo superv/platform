@@ -97,7 +97,7 @@ class ResourceFormTester extends Assert
 
         $this->assertEquals(array_except($entry->toArray(), 'id'), $fake);
 
-        $this->assertDatabaseHas('media', [
+        $this->assertDatabaseHas('sv_media', [
             'label'      => 'avatar',
             'owner_type' => 't_users',
             'owner_id'   => $entry->getId(),

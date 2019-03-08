@@ -4,9 +4,12 @@ namespace SuperV\Platform\Domains\Media;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Entry;
+use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
-class Media extends Entry
+class Media extends ResourceEntry
 {
+    protected $table = 'sv_media';
+
     protected $visible = ['id', 'filename', 'size', 'original', 'mime_type', 'created_at'];
 
     protected static function boot()
