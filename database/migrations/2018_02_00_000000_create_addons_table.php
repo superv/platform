@@ -1,5 +1,7 @@
 <?php
 
+use SuperV\Platform\Domains\Addon\Addon;
+use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
@@ -10,19 +12,23 @@ class CreateAddonsTable extends Migration
     public function up()
     {
         Schema::create('sv_addons', function (Blueprint $table, ResourceConfig $resource) {
+            $resource->label('Addons');
+            $resource->model(AddonModel::class);
+            $resource->nav('acp.platform.system');
+
             $table->increments('id');
             $table->string('name');
-            $table->string('vendor');
-            $table->string('slug');
+            $table->string('vendor')->showOnIndex();
+            $table->string('slug')->showOnIndex();
             $table->string('path');
             $table->string('namespace');
             $table->string('type');
-            $table->boolean('enabled');
+            $table->boolean('enabled')->showOnIndex();
 
             $table->createdBy()->updatedBy();
             $table->restorable();
 
-            $resource->label('SuperV Addons');
+
         });
     }
 

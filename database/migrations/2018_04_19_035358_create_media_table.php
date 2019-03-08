@@ -3,14 +3,17 @@
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class CreateMediaTable extends Migration
 {
     public function up()
     {
-        Schema::create('media', function (Blueprint $table) {
+        Schema::create('sv_media', function (Blueprint $table, ResourceConfig $resource) {
+            $resource->label('Media');
+
             $table->increments('id');
-            $table->morphTo('owner')->showOnIndex();
+            $table->morphTo('owner');
             $table->string('disk')->showOnIndex();
             $table->string('original')->showOnIndex();
             $table->string('filename');
@@ -26,6 +29,6 @@ class CreateMediaTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('media');
+        Schema::dropIfExists('sv_media');
     }
 }
