@@ -16,7 +16,7 @@ class DataController extends BaseApiController
         $userArray = $user->toArray();
 
         if ($user->profile) {
-            $avatar = sv_resource('user_profiles')->getField('avatar');
+            $avatar = sv_resource('sv_profiles')->getField('avatar');
 
             $userArray['avatar_url'] = (new FieldComposer($avatar))
                 ->forView($user->profile)

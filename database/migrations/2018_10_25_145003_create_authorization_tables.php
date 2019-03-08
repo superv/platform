@@ -4,11 +4,11 @@ use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 
-class CreateRolesTable extends Migration
+class CreateAuthorizationTables extends Migration
 {
     public function up()
     {
-        Schema::create('auth_roles', function (Blueprint $table) {
+        Schema::create('sv_auth_roles', function (Blueprint $table) {
             $table->resourceConfig()->label('Roles');
             $table->resourceConfig()->nav('acp.platform.auth');
 
@@ -20,10 +20,10 @@ class CreateRolesTable extends Migration
             $pivotColumns = function (Blueprint $pivotTable) {
                 $pivotTable->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
             };
-            $table->morphToMany('auth_actions', 'actions', 'owner', 'auth_assigned_actions', 'action_id', $pivotColumns);
+            $table->morphToMany('sv_auth_actions', 'actions', 'owner', 'sv_auth_assigned_actions', 'action_id', $pivotColumns);
         });
 
-        Schema::create('auth_assigned_roles', function (Blueprint $table) {
+        Schema::create('sv_auth_assigned_roles', function (Blueprint $table) {
             $table->resourceConfig()->label('Assigned Roles');
 
             $table->increments('id');
@@ -33,7 +33,7 @@ class CreateRolesTable extends Migration
             $table->createdBy()->updatedBy();
         });
 
-        Schema::create('auth_actions', function (Blueprint $table) {
+        Schema::create('sv_auth_actions', function (Blueprint $table) {
             $table->resourceConfig()->label('Actions');
             $table->resourceConfig()->nav('acp.platform.auth');
 
@@ -46,9 +46,9 @@ class CreateRolesTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('auth_roles');
-        Schema::dropIfExists('auth_assigned_roles');
-        Schema::dropIfExists('auth_actions');
-        Schema::dropIfExists('auth_assigned_actions');
+        Schema::dropIfExists('sv_auth_roles');
+        Schema::dropIfExists('sv_auth_assigned_roles');
+        Schema::dropIfExists('sv_auth_actions');
+        Schema::dropIfExists('sv_auth_assigned_actions');
     }
 }

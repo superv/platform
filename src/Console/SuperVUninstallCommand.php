@@ -15,9 +15,11 @@ class SuperVUninstallCommand extends Command
     public function handle()
     {
         $this->comment('Uninstalling SuperV');
-        foreach (Platform::tables() as $table) {
-            Schema::dropIfExists($table);
-        }
+//        foreach (Platform::tables() as $table) {
+//            Schema::dropIfExists($table);
+//        }
+
+        $this->call('migrate:rollback', ['--scope' => 'platform', '--force' => true]);
 
         $this->setEnv('SV_INSTALLED=false');
 //        if (Schema::dropIfExists('sv_addons')) {

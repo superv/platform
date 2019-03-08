@@ -2,7 +2,6 @@
 
 namespace Tests\Platform\Console;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use Platform;
 use Tests\Platform\TestCase;

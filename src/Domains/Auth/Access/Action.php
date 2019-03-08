@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
 class Action extends ResourceEntry
 {
-    protected $table = 'auth_actions';
+    protected $table = 'sv_auth_actions';
 
     public function getSlug()
     {

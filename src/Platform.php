@@ -109,12 +109,19 @@ class Platform extends Addon
     public function tables()
     {
         return [
+            'sv_auth_actions',
+            'sv_auth_assigned_actions',
+            'sv_auth_roles',
+            'sv_auth_assigned_roles',
+
             'sv_addons',
             'sv_resources',
             'sv_fields',
             'sv_relations',
             'sv_navigation',
             'sv_activities',
+
+            'sv_profiles',
         ];
     }
 }

@@ -14,12 +14,12 @@ trait HasActions
 {
     public function roles()
     {
-        return $this->morphToMany(Role::class, 'owner', 'auth_assigned_roles');
+        return $this->morphToMany(Role::class, 'owner', 'sv_auth_assigned_roles');
     }
 
     public function actions()
     {
-        return $this->morphToMany(Action::class, 'owner', 'auth_assigned_actions')->withPivot(['provision']);
+        return $this->morphToMany(Action::class, 'owner', 'sv_auth_assigned_actions')->withPivot(['provision']);
     }
 
     public function allow($action)
