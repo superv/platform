@@ -14,7 +14,6 @@ class CreateUsersResource extends Migration
             $resource->nav('acp.platform.auth');
 
             $table->increments('id');
-//            $table->nullableBelongsTo('sv_accounts', 'account');
             $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->string('password');
@@ -22,13 +21,13 @@ class CreateUsersResource extends Migration
             $table->createdBy()->updatedBy();
             $table->restorable();
 
-            $table->hasOne('user_profiles', 'profile', 'user_id');
-            $table->morphToMany('auth_roles', 'roles', 'owner', 'auth_assigned_roles', 'role_id');
+            $table->hasOne('sv_profiles', 'profile', 'user_id');
+            $table->morphToMany('sv_auth_roles', 'roles', 'owner', 'sv_auth_assigned_roles', 'role_id');
 
             $pivotColumns = function (Blueprint $pivotTable) {
                 $pivotTable->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
             };
-            $table->morphToMany('auth_actions', 'actions', 'owner', 'auth_assigned_actions', 'action_id', $pivotColumns);
+            $table->morphToMany('sv_auth_actions', 'actions', 'owner', 'sv_auth_assigned_actions', 'action_id', $pivotColumns);
         });
     }
 

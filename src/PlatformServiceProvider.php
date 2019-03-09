@@ -8,6 +8,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
 use Platform;
 use SuperV\Platform\Console\SuperVInstallCommand;
+use SuperV\Platform\Console\SuperVUninstallCommand;
 use SuperV\Platform\Domains\Addon\AddonCollection;
 use SuperV\Platform\Domains\Addon\Console\AddonInstallCommand;
 use SuperV\Platform\Domains\Addon\Console\AddonMakeMigrationCommand;
@@ -19,6 +20,7 @@ use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 use SuperV\Platform\Domains\Addon\Listeners\AddonBootedListener;
 use SuperV\Platform\Domains\Addon\Listeners\AddonInstalledListener;
+use SuperV\Platform\Domains\Auth\AuthServiceProvider;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
 use SuperV\Platform\Domains\Database\Model\Listener;
@@ -34,7 +36,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         Providers\ThemeServiceProvider::class,
         Adapters\AdapterServiceProvider::class,
         Domains\Auth\AuthServiceProvider::class,
-        Domains\Asset\AssetServiceProvider::class,
         Domains\Resource\ResourceServiceProvider::class,
         Domains\Database\Migrations\MigrationServiceProvider::class,
     ];
@@ -61,6 +62,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     protected $commands = [
         SuperVInstallCommand::class,
+        SuperVUninstallCommand::class,
         AddonInstallCommand::class,
         AddonUninstallCommand::class,
         AddonReinstallCommand::class,
@@ -100,6 +102,7 @@ class PlatformServiceProvider extends BaseServiceProvider
         }
 
         event('platform.registered');
+
     }
 
     protected function bindUserModel(): void
@@ -158,13 +161,15 @@ class PlatformServiceProvider extends BaseServiceProvider
         //
         Platform::boot();
 
+        // Register routes needed by platform
+        //
         $this->registerPlatformRoutes();
 
-        \Route::pattern('id', '[0-9]+');
+//        \Route::pattern('id', '[0-9]+');
 
         // Experimental query listening
         //
-        Listener::listen();
+//        Listener::listen();
     }
 
     protected function registerMigrationScope(): void

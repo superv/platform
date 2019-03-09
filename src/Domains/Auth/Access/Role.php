@@ -8,7 +8,7 @@ class Role extends ResourceEntry
 {
     use HasActions;
 
-    protected $table = 'auth_roles';
+    protected $table = 'sv_auth_roles';
 
     /**
      * @param $slug

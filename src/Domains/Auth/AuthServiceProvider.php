@@ -25,18 +25,6 @@ class AuthServiceProvider extends BaseServiceProvider
         $this->app->register(LaravelServiceProvider::class);
 
         $this->registerListeners([
-//            UserCreatedEvent::class  => function (UserCreatedEvent $event) {
-//                $user = $event->user;
-//                $request = $event->request;
-//
-//                if (! $profile = array_get($request, 'profile')) {
-//                    return;
-//                }
-//                $user->createProfile([
-//                    'first_name' => $profile['first_name'],
-//                    'last_name'  => $profile['last_name'],
-//                ]);
-//            },
             PortDetectedEvent::class => function (PortDetectedEvent $event) {
                 if ($model = $event->port->model()) {
                     config()->set('superv.auth.user.model', $model);
@@ -80,11 +68,14 @@ class AuthServiceProvider extends BaseServiceProvider
             return $this;
         });
 
-        Relation::morphMap([
-            'SuperV\Platform\Domains\Auth\User',
-        ]);
+//        Relation::morphMap([
+//            'SuperV\Platform\Domains\Auth\User',
+//        ]);
     }
 
+    /**
+     * Extend default JWT guard for port-base token authentication
+     */
     protected function extendAuthGuard()
     {
         $this->app['auth']->extend('superv-jwt', function ($app, $name, array $config) {

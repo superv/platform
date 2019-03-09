@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Lakcom\Core\Domains\Media;
+namespace Tests\SuperV\Platform\Domains\Media;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;

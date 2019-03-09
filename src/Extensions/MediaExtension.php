@@ -27,6 +27,6 @@ class MediaExtension implements ExtendsResource
 
     public function extends(): string
     {
-        return 'media';
+        return 'sv_media';
     }
 }

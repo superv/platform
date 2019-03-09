@@ -6,6 +6,6 @@ use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 
 class Profile extends ResourceEntry
 {
-    protected $table = 'user_profiles';
+    protected $table = 'sv_profiles';
 
 }
