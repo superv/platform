@@ -15,17 +15,17 @@ class DataController extends BaseApiController
         $user = auth()->user();
         $userArray = $user->toArray();
 
-        if ($user->profile) {
-            $avatar = sv_resource('sv_profiles')->getField('avatar');
-
-            $userArray['avatar_url'] = (new FieldComposer($avatar))
-                ->forView($user->profile)
-                ->get('image_url');
-
-            $userArray['first_name'] = $user->profile->first_name;
-            $userArray['last_name'] = $user->profile->last_name;
-            $userArray['profile_id'] = $user->profile->id;
-        }
+//        if ($user->profile) {
+//            $avatar = sv_resource('sv_profiles')->getField('avatar');
+//
+//            $userArray['avatar_url'] = (new FieldComposer($avatar))
+//                ->forView($user->profile)
+//                ->get('image_url');
+//
+//            $userArray['first_name'] = $user->profile->first_name;
+//            $userArray['last_name'] = $user->profile->last_name;
+//            $userArray['profile_id'] = $user->profile->id;
+//        }
 
         return [
             'data' => [
