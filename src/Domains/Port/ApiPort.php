@@ -8,7 +8,7 @@ class ApiPort extends Port
 
     protected $prefix = 'sv-api';
 
-    protected $guard = 'superv-api';
+    protected $guard = 'sv-api';
 
     protected $navigationSlug = 'acp';
 

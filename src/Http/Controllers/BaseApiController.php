@@ -10,7 +10,7 @@ class BaseApiController extends BaseController
     {
         parent::__construct();
 
-        $this->middleware('sv.auth:superv-api');
+        $this->middleware('sv.auth:sv-api');
         $this->middleware(WatchActivity::class);
     }
 }

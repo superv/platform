@@ -57,7 +57,7 @@ class AuthServiceProvider extends BaseServiceProvider
 //            'provider' => 'platform',
 //        ]);
 
-        config()->set('auth.guards.superv-api', [
+        config()->set('auth.guards.sv-api', [
             'driver'   => 'superv-jwt',
             'provider' => 'platform',
         ]);

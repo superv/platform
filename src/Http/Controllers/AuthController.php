@@ -8,7 +8,7 @@ class AuthController
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials, true)) {
+        if (! $token = $this->guard()->attempt($credentials, true)) {
             return response()->json(['status' => 'error', 'error' => ['description' => 'Invalid Credentials']], 401);
         }
 
@@ -17,8 +17,13 @@ class AuthController
             'data'   => [
                 'access_token' => $token,
                 'token_type'   => 'bearer',
-                'expires_in'   => auth()->guard()->factory()->getTTL() * 60,
+                'expires_in'   => $this->guard()->factory()->getTTL() * 60,
             ],
         ]);
+    }
+
+    protected function guard()
+    {
+        return auth()->guard('sv-api');
     }
 }

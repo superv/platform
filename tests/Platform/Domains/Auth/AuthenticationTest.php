@@ -101,13 +101,13 @@ class AuthenticationTest extends TestCase
 
         $this->login('user@superv.io', 'secret');
 
-        $this->assertAuthenticatedAs($user);
+        $this->assertAuthenticatedAs($user, 'sv-api');
 
         Auth::logout();
 
         $this->login('admin@superv.io', 'secret');
 
-        $this->assertAuthenticatedAs($admin);
+        $this->assertAuthenticatedAs($admin, 'sv-api');
     }
 
     protected function login($email, $password)
