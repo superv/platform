@@ -3,11 +3,11 @@
 namespace SuperV\Platform\Domains\Auth;
 
 use Auth;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Auth\Console\AssignRoleCommand;
 use SuperV\Platform\Domains\Auth\Console\CreateUserCommand;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
+use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 use SuperV\Platform\Providers\BaseServiceProvider;
 use Tymon\JWTAuth\Providers\LaravelServiceProvider;
 
@@ -43,17 +43,19 @@ class AuthServiceProvider extends BaseServiceProvider
             return new PlatformUserProvider($app['hash'], config('superv.auth.user.model'));
         });
 
+        $this->aliasMiddleware();
+
         config()->set('auth.providers.platform', [
             'driver' => 'platform',
             'model'  => config('superv.auth.user.model'),
         ]);
 
-        config()->set('auth.defaults.guard', 'platform');
-
-        config()->set('auth.guards.platform', [
-            'driver'   => 'session',
-            'provider' => 'platform',
-        ]);
+//        config()->set('auth.defaults.guard', 'platform');
+//
+//        config()->set('auth.guards.platform', [
+//            'driver'   => 'session',
+//            'provider' => 'platform',
+//        ]);
 
         config()->set('auth.guards.superv-api', [
             'driver'   => 'superv-jwt',
@@ -67,10 +69,20 @@ class AuthServiceProvider extends BaseServiceProvider
 
             return $this;
         });
+    }
 
-//        Relation::morphMap([
-//            'SuperV\Platform\Domains\Auth\User',
-//        ]);
+    /**
+     * Alias the middleware.
+     *
+     * @return void
+     */
+    protected function aliasMiddleware()
+    {
+        $router = $this->app['router'];
+
+        $method = method_exists($router, 'aliasMiddleware') ? 'aliasMiddleware' : 'middleware';
+
+        $router->$method('sv.auth', PlatformAuthenticate::class);
     }
 
     /**
