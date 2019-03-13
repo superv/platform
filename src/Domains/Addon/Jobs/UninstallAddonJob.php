@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Addon\Jobs;
 
+use Illuminate\Support\Facades\Artisan;
 use SuperV\Platform\Domains\Addon\AddonCollection;
 use SuperV\Platform\Domains\Addon\Events\AddonUninstallingEvent;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -30,6 +31,8 @@ class UninstallAddonJob
         }
 
         AddonUninstallingEvent::dispatch($this->addon);
+
+        Artisan::call('migrate:reset', ['--scope' => $this->addon->slug()]);
 
         $this->addon->entry()->delete();
 

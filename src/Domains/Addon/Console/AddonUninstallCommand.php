@@ -16,7 +16,6 @@ class AddonUninstallCommand extends Command
             $addon = $this->choice('Select Addon to Uninstall', AddonModel::enabled()->latest()->get()->pluck('slug')->all());
         }
         $this->comment(sprintf('Uninstalling %s', $addon));
-        $this->call('migrate:reset', ['--scope' => $addon]);
 
         if ($this->dispatch(new UninstallAddonJob($addon))) {
             $this->info('The ['.$addon.'] addon successfully uninstalled.');
