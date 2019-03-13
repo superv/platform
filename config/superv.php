@@ -68,7 +68,7 @@ return [
     */
 
     'ports' => [
-        'api' => 'SuperV\Platform\Domains\Port\ApiPort',
+        'default' => 'SuperV\Platform\Domains\Port\ApiPort',
     ],
 
     /*

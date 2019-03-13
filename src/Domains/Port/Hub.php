@@ -7,9 +7,16 @@ use Illuminate\Support\Collection;
 class Hub
 {
     /**
+     * Registered ports
+     *
      * @var \Illuminate\Support\Collection
      */
     protected $ports;
+
+    /**
+     * @var \SuperV\Platform\Domains\Port\Port
+     */
+    protected $defaultPort;
 
     public function __construct(Collection $ports)
     {
@@ -20,7 +27,7 @@ class Hub
      * Register the port, resolve if class name is provided
      * and return the resolved instance.
      *
-     * @param $port
+     * @param \SuperV\Platform\Domains\Port\Port $port
      * @return mixed
      */
     public function register($port)
@@ -28,18 +35,38 @@ class Hub
         if (is_string($port)) {
             $port = resolve($port);
         }
+
         $this->ports->push($port);
 
         return $port;
     }
 
-    /** @return \Illuminate\Support\Collection */
+    public function registerDefaultPort(): void
+    {
+        if ($port = sv_config('ports.default')) {
+            $this->defaultPort = resolve($port);
+            $this->register($this->defaultPort);
+        }
+    }
+
+    public function getDefaultPort(): Port
+    {
+        return $this->defaultPort;
+    }
+
+    /**
+     * Return currently registered ports
+     *
+     * @return \Illuminate\Support\Collection
+     */
     public function ports()
     {
         return $this->ports;
     }
 
     /**
+     * Get port by slug
+     *
      * @param $slug
      * @return \SuperV\Platform\Domains\Port\Port
      */

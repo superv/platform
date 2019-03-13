@@ -120,7 +120,7 @@ class Blueprints
         $table->string('icon')->nullable();
         $table->string('url')->nullable();
 
-//        $table->unique(['handle', 'parent_id']);  @TODO: test
+//        $table->unique(['handle', 'parent_id']);
 
         $table->timestamps();
     }

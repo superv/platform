@@ -45,11 +45,6 @@ class Port
         $this->slug = $slug;
     }
 
-    public function hostname()
-    {
-        return $this->hostname ?? config('superv.hostname');
-    }
-
     public function prefix()
     {
         return $this->prefix;
@@ -57,7 +52,17 @@ class Port
 
     public function root()
     {
-        return $this->hostname().($this->prefix ? '/'.$this->prefix : '');
+        return $this->hostname().($this->prefix() ? '/'.$this->prefix() : '');
+    }
+
+    public function hostname()
+    {
+        return $this->hostname ?? sv_config('hostname');
+    }
+
+    public function url()
+    {
+        return $this->protocol().$this->root();
     }
 
     public function theme()
@@ -70,31 +75,26 @@ class Port
         return $this->roles;
     }
 
-    public function model()
-    {
-        return $this->model;
-    }
-
-    public function resolveModel()
-    {
-        $class = $this->model();
-
-        return new $class;
-    }
-
     public function middlewares()
     {
         return $this->middlewares;
     }
 
+//    public function model()
+//    {
+//        return $this->model;
+//    }
+//
+//    public function resolveModel()
+//    {
+//        $class = $this->model();
+//
+//        return new $class;
+//    }
+
     public function guard()
     {
         return $this->guard;
-    }
-
-    public function url()
-    {
-        return ($this->secure ? 'https://' : 'http://').$this->hostname().($this->prefix() ? '/'.$this->prefix() : '');
     }
 
     public function getComposers()
@@ -105,5 +105,10 @@ class Port
     public function getNavigationSlug()
     {
         return $this->navigationSlug;
+    }
+
+    protected function protocol()
+    {
+        return $this->secure ? 'https://' : 'http://';
     }
 }

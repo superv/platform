@@ -26,9 +26,9 @@ class AuthServiceProvider extends BaseServiceProvider
 
         $this->registerListeners([
             PortDetectedEvent::class => function (PortDetectedEvent $event) {
-                if ($model = $event->port->model()) {
-                    config()->set('superv.auth.user.model', $model);
-                }
+//                if ($model = $event->port->model()) {
+//                    config()->set('superv.auth.user.model', $model);
+//                }
 
                 if ($guard = $event->port->guard()) {
                     config()->set('auth.defaults.guard', $guard);

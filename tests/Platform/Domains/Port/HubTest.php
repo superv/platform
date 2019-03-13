@@ -8,8 +8,7 @@ use Tests\Platform\TestCase;
 
 class HubTest extends TestCase
 {
-    /** @test */
-    function registers_port_and_resolves_back()
+    function test_registers_port_and_resolves_back()
     {
         $registered = Hub::register(TestApiPort::class);
 
@@ -19,8 +18,7 @@ class HubTest extends TestCase
         $this->assertEquals($registered, $port);
     }
 
-    /** @test */
-    function returns_all_registered_ports()
+    function test_returns_all_registered_ports()
     {
         $apiPort = Hub::register(TestApiPort::class);
         $acpPort = Hub::register(TestAcpPort::class);
@@ -35,10 +33,10 @@ class HubTest extends TestCase
 
 class TestApiPort extends Port
 {
-   protected $slug = 'api';
+    protected $slug = 'api';
 }
 
 class TestAcpPort extends Port
 {
-   protected $slug = 'acp';
+    protected $slug = 'acp';
 }

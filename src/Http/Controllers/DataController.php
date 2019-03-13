@@ -2,8 +2,6 @@
 
 namespace SuperV\Platform\Http\Controllers;
 
-use Current;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Nav\Nav;
 use SuperV\Platform\Domains\Resource\Nav\NavGuard;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -34,14 +32,17 @@ class DataController extends BaseApiController
         ];
     }
 
-    public function nav()
+    public function nav(\SuperV\Platform\Support\Current $current)
     {
-        if (! $portNav = Current::port()->getNavigationSlug()) {
+        if (! $port = $current->port()) {
+            PlatformException::fail('No registered ports found');
+        }
+
+        if (! $portNav = $port->getNavigationSlug()) {
             PlatformException::fail('Current port has no navigation');
         }
 
-//        $nav = Nav::get($portNav)->compose();
-
+        // @TODO.dali
         $nav = (new NavGuard(auth()->user(), Nav::get('acp')))->compose();
 
         return [
