@@ -2,15 +2,15 @@
 
 namespace Tests\Platform\Domains\Routing;
 
-use Current;
-use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Port\PortDetectedEvent;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
 use Tests\Platform\TestCase;
 use URL;
 
 class UrlGeneratorTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @var \SuperV\Platform\Domains\Port\Port */
     protected $port;
 

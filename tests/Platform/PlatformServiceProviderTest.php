@@ -9,14 +9,12 @@ use SuperV\Platform\PlatformServiceProvider;
 
 class PlatformServiceProviderTest extends TestCase
 {
-    /** @test */
-    function get_registered_with_platform()
+    function test__get_registered_with_platform()
     {
         $this->assertProviderRegistered(PlatformServiceProvider::class);
     }
 
-    /** @test */
-    function registers_required_aliases_if_installed()
+    function test__registers_required_aliases_if_installed()
     {
         config(['superv.installed' => true]);
         (new PlatformServiceProvider($this->app))->register();
@@ -25,8 +23,7 @@ class PlatformServiceProviderTest extends TestCase
         $this->assertEquals(PlatformFacade::class, $aliases['Platform']);
     }
 
-    /** @test */
-    function boots_platform_if_superv_is_installed()
+    function test__boots_platform_if_superv_is_installed()
     {
         config(['superv.installed' => true]);
 
@@ -35,8 +32,7 @@ class PlatformServiceProviderTest extends TestCase
         (new PlatformServiceProvider($this->app))->boot();
     }
 
-    /** @test */
-    function does_not_boot_platform_if_superv_is_not_installed()
+    function test__does_not_boot_platform_if_superv_is_not_installed()
     {
         config(['superv.installed' => false]);
 

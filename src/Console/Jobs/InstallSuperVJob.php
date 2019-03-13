@@ -3,31 +3,55 @@
 namespace SuperV\Platform\Console\Jobs;
 
 use Artisan;
+use DB;
+use Exception;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema as SchemaBuilder;
 use Schema;
+use SuperV\Platform\Domains\Database\Migrations\Console\MigrateCommand;
+use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
+use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\PlatformServiceProvider;
 
 class InstallSuperVJob
 {
     public function handle()
     {
-        if (! SchemaBuilder::hasTable('migrations')) {
-            Artisan::call('migrate', ['--force' => true]);
+        $platformServiceProvider = new PlatformServiceProvider(app());
+
+        DB::beginTransaction();
+
+        try {
+            if (! SchemaBuilder::hasTable('migrations')) {
+                Artisan::call('migrate', ['--force' => true]);
+            }
+            if (! SchemaBuilder::hasColumn('migrations', 'scope')) {
+                Schema::table('migrations', function (Blueprint $table) {
+                    $table->string('scope')->nullable();
+                });
+            }
+            $this->setEnv('SV_INSTALLED=true');
+            config(['superv.installed' => true]);
+
+            $platformServiceProvider->register();
+
+            Artisan::call('migrate', ['--scope' => 'platform', '--force' => true]);
+        } catch (Exception $e) {
+            dump('rolling back');
+
+            DB::rollBack();
+
+            $this->setEnv('SV_INSTALLED=false');
+            config(['superv.installed' => false]);
+
+            PlatformException::fail($e->getMessage());
+        } finally {
+            DB::commit();
+
+            Artisan::call('vendor:publish', ['--tag' => 'superv.config']);
+            Artisan::call('vendor:publish', ['--tag' => 'superv.views']);
+            Artisan::call('vendor:publish', ['--tag' => 'superv.assets']);
         }
-
-        if (! SchemaBuilder::hasColumn('migrations', 'scope')) {
-            Schema::table('migrations', function (Blueprint $table) {
-                $table->string('scope')->nullable();
-            });
-        }
-
-        Artisan::call('migrate', ['--scope' => 'platform', '--force' => true]);
-
-        Artisan::call('vendor:publish', ['--tag' => 'superv.config']);
-        Artisan::call('vendor:publish', ['--tag' => 'superv.views']);
-        Artisan::call('vendor:publish', ['--tag' => 'superv.assets']);
-
-        $this->setEnv('SV_INSTALLED=true');
     }
 
     public function setEnv($line)

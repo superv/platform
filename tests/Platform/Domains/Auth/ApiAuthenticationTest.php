@@ -24,8 +24,8 @@ class ApiAuthenticationTest extends TestCase
         $this->port = $this->setUpPort([
             'slug'        => 'api',
             'hostname'    => 'localhost',
-            'guard'       => 'superv-api',
-            'middlewares' => ['auth:superv-api'],
+            'guard'       => 'sv-api',
+            'middlewares' => ['sv.auth:sv-api'],
         ]);
 
         $this->user = factory(User::class)->create([

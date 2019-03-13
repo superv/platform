@@ -58,7 +58,7 @@ class ApiV1Port extends Port
 {
     protected $slug = 'api-v1';
 
-    protected $guard = 'superv-api';
+    protected $guard = 'sv-api';
 
     protected $prefix = 'api/v1';
 
@@ -72,7 +72,7 @@ class ApiV2Port extends Port
 {
     protected $slug = 'api-v2';
 
-    protected $guard = 'superv-api';
+    protected $guard = 'sv-api';
 
     protected $prefix = 'api/v2';
 
