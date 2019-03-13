@@ -20,10 +20,9 @@ use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 use SuperV\Platform\Domains\Addon\Listeners\AddonBootedListener;
 use SuperV\Platform\Domains\Addon\Listeners\AddonInstalledListener;
-use SuperV\Platform\Domains\Auth\AuthServiceProvider;
 use SuperV\Platform\Domains\Auth\Contracts\User;
+use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
-use SuperV\Platform\Domains\Database\Model\Listener;
 use SuperV\Platform\Domains\Resource\Extension\RegisterExtensionsInPath;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Exceptions\PlatformExceptionHandler;
@@ -37,7 +36,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         Adapters\AdapterServiceProvider::class,
         Domains\Auth\AuthServiceProvider::class,
         Domains\Resource\ResourceServiceProvider::class,
-        Domains\Database\Migrations\MigrationServiceProvider::class,
     ];
 
     protected $aliases = [
@@ -71,19 +69,34 @@ class PlatformServiceProvider extends BaseServiceProvider
         AddonRunMigrationCommand::class,
     ];
 
+    /** @var \SuperV\Platform\Platform */
+    protected $platform;
+
+    public function __construct($app)
+    {
+        parent::__construct($app);
+        $this->platform = $app->make(\SuperV\Platform\Platform::class);
+    }
+
     public function register()
     {
+        $this->registerAliases($this->aliases);
+        $this->registerCommands($this->commands);
+        $this->registerSingletons($this->_singletons);
+
+        app()->register(MigrationServiceProvider::class);
+
+        if (! $this->platform->isInstalled()) {
+            return;
+        }
+
         $this->mergeConfigFrom(__DIR__.'/../config/superv.php', 'superv');
 
         $this->bindUserModel();
 
         $this->enableTwig();
 
-        $this->registerBindings($this->_bindings);
-        $this->registerSingletons($this->_singletons);
-        $this->registerAliases($this->aliases);
         $this->registerListeners($this->listeners);
-        $this->registerCommands($this->commands);
 
         $this->registerListeners([
             'platform.registered' => function () {
@@ -102,13 +115,11 @@ class PlatformServiceProvider extends BaseServiceProvider
         }
 
         event('platform.registered');
-
     }
 
     protected function bindUserModel(): void
     {
-        $userModel = sv_config('auth.user.model');
-        $this->_bindings[User::class] = $userModel;
+        $this->app->bind(User::class, sv_config('auth.user.model'));
     }
 
     protected function enableTwig(): void
@@ -146,7 +157,7 @@ class PlatformServiceProvider extends BaseServiceProvider
             $this->publishSpa();
         }
 
-        if (! Platform::isInstalled()) {
+        if (! $this->platform->isInstalled()) {
             return;
         }
 

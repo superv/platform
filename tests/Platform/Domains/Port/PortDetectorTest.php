@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Port;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\Event;
@@ -11,6 +12,8 @@ use Tests\Platform\TestCase;
 
 class PortDetectorTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @test */
     function detects_active_port_from_request()
     {
