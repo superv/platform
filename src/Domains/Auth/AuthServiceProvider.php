@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Auth\Console\CreateUserCommand;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 use SuperV\Platform\Providers\BaseServiceProvider;
-use Tymon\JWTAuth\Providers\LaravelServiceProvider;
+use Tymon\JWTAuth\Providers\LaravelServiceProvider as JwtAuthServiceProvider;
 
 class AuthServiceProvider extends BaseServiceProvider
 {
@@ -22,7 +22,7 @@ class AuthServiceProvider extends BaseServiceProvider
     {
         parent::register();
 
-        $this->app->register(LaravelServiceProvider::class);
+        $this->app->register(JwtAuthServiceProvider::class);
 
         $this->registerListeners([
             PortDetectedEvent::class => function (PortDetectedEvent $event) {
