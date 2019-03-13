@@ -3,8 +3,9 @@
 namespace SuperV\Platform\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Schema;
-use Platform;
+use SuperV\Platform\Domains\Addon\Addon;
+use SuperV\Platform\Domains\Addon\AddonCollection;
+use SuperV\Platform\Domains\Addon\Jobs\UninstallAddonJob;
 
 class SuperVUninstallCommand extends Command
 {
@@ -12,30 +13,17 @@ class SuperVUninstallCommand extends Command
 
     protected $description = 'Uninstall SuperV Platform';
 
-    public function handle()
+    public function handle(AddonCollection $addons)
     {
         $this->comment('Uninstalling SuperV');
-//        foreach (Platform::tables() as $table) {
-//            Schema::dropIfExists($table);
-//        }
+
+        $addons->map(function (Addon $addon) {
+            UninstallAddonJob::dispatch($addon);
+        });
 
         $this->call('migrate:rollback', ['--scope' => 'platform', '--force' => true]);
 
         $this->setEnv('SV_INSTALLED=false');
-//        if (Schema::dropIfExists('sv_addons')) {
-//            Schema::table('migrations', function (Blueprint $table) {
-//                $table->string('scope')->nullable();
-//            });
-//        } else {
-//            $this->call('migrate', ['--force' => true]);
-//        }
-//        $this->call('migrate', ['--scope' => 'platform', '--force' => true]);
-//
-//        $this->setEnv('SV_INSTALLED=true');
-//
-//        $this->call('vendor:publish', ['--tag' => 'superv.config']);
-//        $this->call('vendor:publish', ['--tag' => 'superv.views']);
-//        $this->call('vendor:publish', ['--tag' => 'superv.assets']);
 
         $this->comment("SuperV Uninstalled..! \n");
     }

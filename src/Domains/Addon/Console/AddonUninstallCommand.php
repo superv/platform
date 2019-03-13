@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Addon\Console;
 
 use SuperV\Platform\Contracts\Command;
 use SuperV\Platform\Domains\Addon\AddonModel;
-use SuperV\Platform\Domains\Addon\Jobs\UninstallAddon;
+use SuperV\Platform\Domains\Addon\Jobs\UninstallAddonJob;
 
 class AddonUninstallCommand extends Command
 {
@@ -18,7 +18,7 @@ class AddonUninstallCommand extends Command
         $this->comment(sprintf('Uninstalling %s', $addon));
         $this->call('migrate:reset', ['--scope' => $addon]);
 
-        if ($this->dispatch(new UninstallAddon($addon))) {
+        if ($this->dispatch(new UninstallAddonJob($addon))) {
             $this->info('The ['.$addon.'] addon successfully uninstalled.');
         } else {
             $this->error('Addon could not be uninstalled');

@@ -2,25 +2,14 @@
 
 namespace Tests\Platform\Console;
 
+use Event;
 use Illuminate\Support\Facades\Schema;
 use Platform;
+use SuperV\Platform\Domains\Addon\Events\AddonUninstallingEvent;
 use Tests\Platform\TestCase;
 
 class SuperVUninstallCommandTest extends TestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->app->setBasePath(base_path('tests'));
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        file_put_contents(base_path('.env'), '');
-    }
 
     function test__drops_platform_tables()
     {
@@ -37,12 +26,27 @@ class SuperVUninstallCommandTest extends TestCase
 
     function test__cleans_up_env_file()
     {
+        $this->app->setBasePath(base_path('tests'));
         file_put_contents(base_path('.env'), '');
 
         $this->artisan('superv:install');
         $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
         $this->artisan('superv:uninstall');
         $this->assertContains('SV_INSTALLED=false', file_get_contents(base_path('.env')));
+    }
+
+    function test__uninstalls_modules()
+    {
+        $this->artisan('superv:install');
+
+        $this->setUpAddon();
+
+        Event::fake(AddonUninstallingEvent::class);
+
+        $this->artisan('superv:uninstall');
+
+        Event::assertDispatched(AddonUninstallingEvent::class);
+
     }
 
     protected function envPath($name)
