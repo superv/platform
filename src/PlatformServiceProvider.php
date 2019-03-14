@@ -7,6 +7,7 @@ use Hub;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
 use Platform;
+use SuperV\Modules\Webdev\TwigServiceProvider;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Console\SuperVUninstallCommand;
 use SuperV\Platform\Domains\Addon\AddonCollection;
@@ -27,12 +28,10 @@ use SuperV\Platform\Domains\Resource\Extension\RegisterExtensionsInPath;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Exceptions\PlatformExceptionHandler;
 use SuperV\Platform\Providers\BaseServiceProvider;
-use SuperV\Platform\Providers\TwigServiceProvider;
 
 class PlatformServiceProvider extends BaseServiceProvider
 {
     protected $providers = [
-        Providers\ThemeServiceProvider::class,
         Adapters\AdapterServiceProvider::class,
         Domains\Auth\AuthServiceProvider::class,
         Domains\Resource\ResourceServiceProvider::class,
@@ -94,8 +93,6 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->bindUserModel();
 
-        $this->enableTwig();
-
         $this->registerListeners($this->listeners);
 
         $this->registerListeners([
@@ -156,12 +153,7 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->app->bind(User::class, sv_config('auth.user.model'));
     }
 
-    protected function enableTwig(): void
-    {
-        if (sv_config('twig.enabled')) {
-            $this->providers[] = TwigServiceProvider::class;
-        }
-    }
+
 
     protected function registerCollectionMacros()
     {
