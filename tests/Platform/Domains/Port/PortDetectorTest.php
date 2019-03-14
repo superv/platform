@@ -14,8 +14,7 @@ class PortDetectorTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function detects_active_port_from_request()
+    function test_detects_active_port_from_request()
     {
         $this->setUpPorts();
 
@@ -36,8 +35,14 @@ class PortDetectorTest extends TestCase
         $this->assertEquals('api', $this->setUpDetector()->detectFor('api.superv.io', 'foo/bar'));
     }
 
-    /** @test */
-    function dispatches_event_when_active_port_detected()
+    function test__does_not_detect_for_same_hostname_with_different_prefix()
+    {
+        $this->setUpCustomPort('superv.io', 'sv-api');
+
+        $this->assertNull($this->setUpDetector()->detectFor('superv.io', 'other-api'));
+    }
+
+    function test_dispatches_event_when_active_port_detected()
     {
         $this->setUpPorts();
 

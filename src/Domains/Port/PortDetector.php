@@ -24,20 +24,37 @@ class PortDetector
         $ports = Hub::ports();
         $requestUri = ltrim($requestUri, '/');
 
-        /** @var \SuperV\Platform\Domains\Port\Port $port */
+        /**
+         * First loop all ports with prefixes
+         * and match hostname + prefix
+         *
+         * @var \SuperV\Platform\Domains\Port\Port $port
+         */
         foreach ($ports as $port) {
             if ($port->hostname() !== $httpHost) {
                 continue;
             }
 
-            if ($prefix = $port->prefix()) {
-                if ($requestUri && starts_with($requestUri, $prefix)) {
-                    return $port->slug();
-                }
+            if (! $prefix = $port->prefix()) {
+                continue;
+            }
+
+            if ($requestUri && starts_with($requestUri, $prefix)) {
+                return $port->slug();
             }
         }
 
+        /**
+         * Next loop all ports without prefixes
+         * and try to match the hostname
+         *
+         * @var \SuperV\Platform\Domains\Port\Port $port
+         */
         foreach ($ports as $port) {
+            if ($port->prefix()) {
+                continue;
+            }
+
             if ($port->hostname() === $httpHost) {
                 return $port->slug();
             }
