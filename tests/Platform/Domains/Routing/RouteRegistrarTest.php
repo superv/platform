@@ -37,6 +37,30 @@ class RouteRegistrarTest extends TestCase
         $this->assertInstanceOf(\Closure::class, $patchRoutes['web/bar']->getAction('uses'));
     }
 
+    function test__registers_hostname_with_different_port()
+    {
+        Hub::register(new class extends Port
+        {
+            protected $slug = 'local';
+
+            protected $hostname = '127.0.0.1:8000';
+        });
+
+        $registrar = $this->app->make(RouteRegistrar::class);
+        $registrar->setPort($this->getPort('local'))->register(['data' => 'WebController@foo']);
+
+
+        $getRoutes = $this->router()->getRoutes()->get('GET');
+
+            $route = $getRoutes['127.0.0.1:8000data'];
+        $this->assertNotNull($route);
+        $this->assertEquals('local', $route->getAction('port'));
+
+
+//        dd($getRoutes['127.0.0.1:8000data']);
+
+    }
+
     /** @test */
     function registers_routes_for_a_port()
     {
