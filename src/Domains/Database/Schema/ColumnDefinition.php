@@ -35,6 +35,8 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
     public function entryLabel()
     {
         $this->blueprint->entryLabel('{'.$this->name.'}');
+
+        return $this;
     }
 
     public function isTitleColumn()
