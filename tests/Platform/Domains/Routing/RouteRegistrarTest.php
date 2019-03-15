@@ -37,13 +37,13 @@ class RouteRegistrarTest extends TestCase
         $this->assertInstanceOf(\Closure::class, $patchRoutes['web/bar']->getAction('uses'));
     }
 
-    function test__registers_hostname_with_different_port()
+    function test__registers_hostname_without_port_number()
     {
         Hub::register(new class extends Port
         {
             protected $slug = 'local';
 
-            protected $hostname = '127.0.0.1:8000';
+            protected $hostname = 'localhost:8000';
         });
 
         $registrar = $this->app->make(RouteRegistrar::class);
@@ -52,8 +52,7 @@ class RouteRegistrarTest extends TestCase
 
         $getRoutes = $this->router()->getRoutes()->get('GET');
 
-            $route = $getRoutes['127.0.0.1:8000data'];
-        $this->assertNotNull($route);
+        $this->assertNotNull($route = $getRoutes['localhostdata'] ?? null, 'Route not found');
         $this->assertEquals('local', $route->getAction('port'));
 
 
