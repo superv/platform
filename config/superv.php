@@ -68,19 +68,7 @@ return [
     */
 
     'ports' => [
-        'api' => 'SuperV\Platform\Domains\Port\ApiPort',
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Twig Configuration
-    |--------------------------------------------------------------------------
-    |
-    |
-    */
-
-    'twig'      => [
-        'enabled' => true,
+        'default' => 'SuperV\Platform\Domains\Port\ApiPort',
     ],
 
     /*

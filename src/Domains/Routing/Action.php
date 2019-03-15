@@ -43,18 +43,6 @@ class Action
         return $this;
     }
 
-    protected function portify()
-    {
-        if (! $this->port) {
-            return;
-        }
-
-        $this->domain = $this->port->hostname();
-        $this->prefix = $this->port->prefix();
-
-        $this->mergeMiddlewares($this->port->middlewares());
-    }
-
     /**
      * @param \SuperV\Platform\Domains\Port\Port $port
      * @return Action
@@ -64,14 +52,6 @@ class Action
         $this->port = $port;
 
         return $this;
-    }
-
-    protected function mergeMiddlewares($middlewares)
-    {
-        if (! is_array($middlewares)) {
-            return;
-        }
-        $this->middleware = array_merge($middlewares, $this->middleware);
     }
 
     /**
@@ -110,5 +90,29 @@ class Action
         }
 
         return (new static)->hydrate(array_set($action, 'uri', $uri));
+    }
+
+    protected function portify()
+    {
+        if (! $this->port) {
+            return;
+        }
+
+        $this->domain = $domain = $this->port->hostname();
+        if (str_contains($domain, ':')) {
+            $this->domain = explode(':', $domain)[0];
+        }
+
+        $this->prefix = $this->port->prefix();
+
+        $this->mergeMiddlewares($this->port->middlewares());
+    }
+
+    protected function mergeMiddlewares($middlewares)
+    {
+        if (! is_array($middlewares)) {
+            return;
+        }
+        $this->middleware = array_merge($middlewares, $this->middleware);
     }
 }

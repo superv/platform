@@ -7,7 +7,7 @@ php:
 
 before_script:
   - phpenv config-rm xdebug.ini
-  - travis_retry composer update
+  - travis_retry composer install --prefer-source --no-interaction --dev
 
 script:
   - vendor/bin/phpunit

@@ -7,6 +7,7 @@ use Hub;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
 use Platform;
+use SuperV\Modules\Webdev\TwigServiceProvider;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Console\SuperVUninstallCommand;
 use SuperV\Platform\Domains\Addon\AddonCollection;
@@ -27,12 +28,10 @@ use SuperV\Platform\Domains\Resource\Extension\RegisterExtensionsInPath;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Exceptions\PlatformExceptionHandler;
 use SuperV\Platform\Providers\BaseServiceProvider;
-use SuperV\Platform\Providers\TwigServiceProvider;
 
 class PlatformServiceProvider extends BaseServiceProvider
 {
     protected $providers = [
-        Providers\ThemeServiceProvider::class,
         Adapters\AdapterServiceProvider::class,
         Domains\Auth\AuthServiceProvider::class,
         Domains\Resource\ResourceServiceProvider::class,
@@ -94,8 +93,6 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->bindUserModel();
 
-        $this->enableTwig();
-
         $this->registerListeners($this->listeners);
 
         $this->registerListeners([
@@ -110,41 +107,9 @@ class PlatformServiceProvider extends BaseServiceProvider
             'superv' => __DIR__.'/../resources/views',
         ]);
 
-        if (! Current::envIsTesting() && $port = config('superv.ports.api')) {
-            Hub::register($port);
-        }
+        $this->registerDefaultPort();
 
         event('platform.registered');
-    }
-
-    protected function bindUserModel(): void
-    {
-        $this->app->bind(User::class, sv_config('auth.user.model'));
-    }
-
-    protected function enableTwig(): void
-    {
-        if (sv_config('twig.enabled')) {
-            $this->providers[] = TwigServiceProvider::class;
-        }
-    }
-
-    protected function registerCollectionMacros()
-    {
-        Collection::macro('toAssoc', function () {
-            return $this->reduce(function ($assoc, $keyValuePair) {
-                list($key, $value) = $keyValuePair;
-                $assoc[$key] = $value;
-
-                return $assoc;
-            }, new static);
-        });
-
-        Collection::macro('compose', function () {
-            return $this->map(function ($item) {
-                return sv_compose($item);
-            });
-        });
     }
 
     public function boot()
@@ -181,6 +146,31 @@ class PlatformServiceProvider extends BaseServiceProvider
         // Experimental query listening
         //
 //        Listener::listen();
+    }
+
+    protected function bindUserModel(): void
+    {
+        $this->app->bind(User::class, sv_config('auth.user.model'));
+    }
+
+
+
+    protected function registerCollectionMacros()
+    {
+        Collection::macro('toAssoc', function () {
+            return $this->reduce(function ($assoc, $keyValuePair) {
+                list($key, $value) = $keyValuePair;
+                $assoc[$key] = $value;
+
+                return $assoc;
+            }, new static);
+        });
+
+        Collection::macro('compose', function () {
+            return $this->map(function ($item) {
+                return sv_compose($item);
+            });
+        });
     }
 
     protected function registerMigrationScope(): void
@@ -221,5 +211,14 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected function registerPlatformRoutes(): void
     {
         app(Router::class)->loadFromPath(Platform::path('routes'));
+    }
+
+    protected function registerDefaultPort(): void
+    {
+        if (Current::envIsTesting()) {
+            return;
+        }
+
+        Hub::registerDefaultPort();
     }
 }

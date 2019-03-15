@@ -25,8 +25,10 @@ class Section extends Entry
             // if parent has no child other than this
             // delete it too
             //
-            if ($entry->getParent()->children()->count() === 0) {
-                $entry->getParent()->delete();
+            if ($parent = $entry->getParent()) {
+                if ($parent->children()->count() === 0) {
+                    $parent->delete();
+                }
             }
         });
     }

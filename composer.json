@@ -22,7 +22,6 @@
         "fideloper/proxy": "^4.0",
         "superv/composer-plugin": "~0.1.0",
         "laravel/framework": "5.7.*",
-        "rcrowe/twigbridge": "^0.9.6",
         "barryvdh/laravel-cors": "^0.11.2",
         "tymon/jwt-auth": "dev-develop",
         "nicmart/string-template": "~0.1",
