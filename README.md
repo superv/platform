@@ -18,7 +18,7 @@ SuperV is a Laravel package that aims to be a rapid development platform.
 ### On an existing project
 Install SuperV Platform package:
 ```bash
-composer require superv/platform 0.8.x-dev
+composer require superv/platform 0.9.x-dev
 ```
 
 Create addons directory, and make it writable:

@@ -62,7 +62,8 @@ class ResourceIndexTest extends ResourceTestCase
             $this->assertEquals('view', $rowActions[0]['props']['name']);
             $this->assertEquals('View', $rowActions[0]['props']['title']);
             $this->assertEquals('sv/res/t_users/{entry.id}', $rowActions[0]['props']['url']);
-            $this->assertEquals('View', $rowActions[0]['props']['button']['title']);
+            $this->assertEquals('', $rowActions[0]['props']['button']['title']);
+            $this->assertEquals('view', $rowActions[0]['props']['button']['icon']);
         }
     }
 
