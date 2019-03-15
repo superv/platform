@@ -16,7 +16,8 @@ class DeleteEntryAction extends Action
     public function makeComponent(): ComponentContract
     {
         return parent::makeComponent()
-                     ->setName('sv-request-action');
+                     ->setName('sv-action')
+                     ->setProp('type', 'post-request');
     }
 
     public function onComposed(Payload $payload)
@@ -25,8 +26,8 @@ class DeleteEntryAction extends Action
         $payload->set('url', $this->getUrl());
         $payload->set('on-complete', 'reload');
         $payload->set('button', ['confirm' => 'Are you sure? This might trigger actions that can not be undone.',
-                                 'title'   => $this->title,
-                                 'color'   => 'danger inverse',
+//                                 'color'   => 'danger inverse',
+                                 'icon'    => 'trash',
                                  'size'    => 'sm',
         ]);
     }

@@ -30,6 +30,15 @@ class ResourceConfigTest extends ResourceTestCase
         $this->assertColumnExists('t_users', 'sort_order');
     }
 
+    function test__id_column()
+    {
+        $res = $this->create('t_users', function (Blueprint $table) {
+            $table->id();
+        });
+
+        $this->assertColumnExists('t_users', 'id');
+    }
+
     function test__uuid()
     {
         $res = $this->create('t_users', function (Blueprint $table) {

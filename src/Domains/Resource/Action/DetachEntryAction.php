@@ -22,7 +22,8 @@ class DetachEntryAction extends Action
     public function makeComponent(): ComponentContract
     {
         return parent::makeComponent()
-                     ->setName('sv-request-action');
+                     ->setName('sv-action')
+                     ->setProp('type', 'post-request');
     }
 
     public function onComposed(Payload $payload)

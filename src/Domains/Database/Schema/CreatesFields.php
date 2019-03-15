@@ -92,6 +92,11 @@ trait CreatesFields
         return $this;
     }
 
+    public function id($key = 'id')
+    {
+        $this->increments($key);
+    }
+
     public function increments($column)
     {
         $this->resourceConfig()->keyName($column);

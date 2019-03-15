@@ -16,9 +16,11 @@ class ViewEntryAction extends Action
     {
         $payload->set('url', $this->getUrl());
         $payload->set('button', [
-            'title' => $this->title,
-            'color' => 'primary inverse',
-            'size'  => 'sm']);
+            'title' => '',
+//            'color' => 'primary inverse',
+            'icon'  => 'view',
+            'size'  => 'sm',
+        ]);
     }
 
     public function getUrl()

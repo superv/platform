@@ -1,6 +1,6 @@
 <template>
 
-  <layout-default router="default">
+  <layout-default router-type="tabbed">
     <template slot="sidebar">
       <sv-sidebar>
         <template slot="logo">

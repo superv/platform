@@ -76,18 +76,6 @@ class SyncField
         if ($relationConfig->type()->isBelongsTo()) {
             $this->column->ignore(false);
             $this->column->config($relationConfig->toArray());
-//            $this->blueprint->addPostBuildCallback(
-//                function (Blueprint $blueprint) use ($relationConfig) {
-//                    $blueprint->unsignedBigInteger($relationConfig->getForeignKey())->nullable($this->column->nullable);
-//                });
-//
-//            $belongsToField = $this->resourceEntry->createField($relationConfig->getName());
-//            $belongsToField->fill([
-//                'type'   => 'belongs_to',
-//                'config' => $relationConfig->toArray(),
-//                'flags'  => $this->column->flags,
-//            ]);
-//            $belongsToField->save();
 
             return true;
         } elseif ($relationConfig->type()->isMorphTo()) {
