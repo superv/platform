@@ -27,12 +27,6 @@ class CreateResourcesTables extends Migration
         LaravelSchema::create('sv_activities', function (LaravelBlueprint $table) {
             Blueprints::activity($table);
         });
-//        LaravelSchema::create('sv_meta', function (LaravelBlueprint $table) {
-//            Blueprints::meta($table);
-//        });
-//        LaravelSchema::create('sv_meta_items', function (LaravelBlueprint $table) {
-//            Blueprints::metaItems($table);
-//        });
 
         $this->selfAware();
     }
@@ -51,17 +45,9 @@ class CreateResourcesTables extends Migration
         Schema::run('sv_navigation', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::navigation($table, $resource);
         });
-
         Schema::run('sv_activities', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::activity($table, $resource);
         });
-
-//        Schema::run('sv_meta', function (Blueprint $table, ResourceConfig $resource) {
-//            Blueprints::meta($table, $resource);
-//        });
-//        Schema::run('sv_meta_items', function (Blueprint $table, ResourceConfig $resource) {
-//            Blueprints::metaItems($table, $resource);
-//        });
     }
 
     public function down()
@@ -71,7 +57,5 @@ class CreateResourcesTables extends Migration
         Schema::dropIfExists('sv_relations');
         Schema::dropIfExists('sv_navigation');
         Schema::dropIfExists('sv_activities');
-//        Schema::dropIfExists('sv_meta');
-//        Schema::dropIfExists('sv_meta_items');
     }
 }

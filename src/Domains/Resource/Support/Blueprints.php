@@ -8,7 +8,8 @@ use SuperV\Platform\Domains\Resource\ResourceConfig;
 class Blueprints
 {
     /**
-     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
+     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
      */
     public static function resources($table, ResourceConfig $resource = null)
     {
@@ -38,7 +39,8 @@ class Blueprints
     }
 
     /**
-     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
+     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
      */
     public static function fields($table, ResourceConfig $resource = null)
     {
@@ -72,7 +74,8 @@ class Blueprints
     }
 
     /**
-     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
+     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
      */
     public static function relations($table, ResourceConfig $resource = null)
     {
@@ -97,7 +100,8 @@ class Blueprints
     }
 
     /**
-     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
+     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
      */
     public static function navigation($table, ResourceConfig $resource = null)
     {
@@ -126,7 +130,8 @@ class Blueprints
     }
 
     /**
-     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
+     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
      */
     public static function activity($table, ResourceConfig $resource = null)
     {
@@ -148,47 +153,5 @@ class Blueprints
 
         $table->string('activity')->entryLabel();
         $table->timestamp('created_at')->showOnIndex();
-    }
-
-    /**
-     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
-     */
-    public static function meta($table, ResourceConfig $resource = null)
-    {
-        $table->increments('id');
-
-        if ($table instanceof Blueprint) {
-            $resource->label('Meta');
-//            $resource->model(MetaModel::class);
-            $table->hasMany('sv_meta_items', 'items', 'meta_id');
-        }
-
-        $table->nullableMorphs('owner');
-        $table->string('label')->nullable();
-        $table->uuid('uuid')->nullable();
-
-        $table->timestamps();
-    }
-
-    /**
-     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint $table
-     */
-    public static function metaItems($table, ResourceConfig $resource = null)
-    {
-        $table->increments('id');
-
-        if ($table instanceof Blueprint) {
-            $resource->label('Meta Items');
-
-            $table->nullableBelongsTo('sv_meta', 'meta');
-            $table->nullableBelongsTo('sv_meta_items', 'parent_item');
-            $table->hasMany('sv_meta_items', 'items', 'parent_item_id');
-        } else {
-            $table->unsignedInteger('meta_id')->nullable();
-            $table->unsignedInteger('parent_item_id')->nullable();
-        }
-
-        $table->string('key');
-        $table->text('value')->nullable();
     }
 }
