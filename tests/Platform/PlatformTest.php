@@ -13,8 +13,7 @@ class PlatformTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function registers_service_providers_for_enabled_addons()
+    function test_registers_service_providers_for_enabled_addons()
     {
         $this->setUpAddon();
 
@@ -25,8 +24,7 @@ class PlatformTest extends TestCase
         $this->assertContains($entry->resolveAddon()->providerClass(), array_keys(app()->getLoadedProviders()));
     }
 
-    /** @test */
-    function dispatches_event_when_platform_has_booted()
+    function test_dispatches_event_when_platform_has_booted()
     {
         Event::fake();
 
@@ -35,8 +33,7 @@ class PlatformTest extends TestCase
         Event::assertDispatched(PlatformBootedEvent::class);
     }
 
-    /** @test */
-    function gets_config_from_superv_namespace()
+    function test_gets_config_from_superv_namespace()
     {
         config(['superv.foo' => 'bar']);
         config(['superv.ping' => 'pong']);
@@ -46,8 +43,7 @@ class PlatformTest extends TestCase
         $this->assertEquals('zone', Platform::config('zoom', 'zone'));
     }
 
-    /** @test */
-    function listens_port_detected_event_and_sets_active_port()
+    function test_listens_port_detected_event_and_sets_active_port()
     {
         $this->setUpPort('acp', 'hostname.io');
         PortDetectedEvent::dispatch(\Hub::get('acp'));
@@ -55,8 +51,7 @@ class PlatformTest extends TestCase
         $this->assertEquals('acp', Platform::port()->slug());
     }
 
-    /** @test */
-    function returns_platform_full_path()
+    function test_returns_platform_full_path()
     {
         $this->assertEquals(base_path(), Platform::fullPath());
         $this->assertEquals(base_path('resources'), Platform::fullPath('resources'));

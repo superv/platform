@@ -2,7 +2,11 @@
 
 namespace Tests\Platform\Console;
 
+use Event;
+use Platform;
+use SuperV\Platform\Console\Jobs\InstallSuperV;
 use SuperV\Platform\Domains\Addon\AddonModel;
+use SuperV\Platform\Events\PlatformInstalledEvent;
 use Tests\Platform\TestCase;
 use Tests\Platform\TestsConsoleCommands;
 
@@ -10,15 +14,7 @@ class SuperVInstallCommandTest extends TestCase
 {
     use TestsConsoleCommands;
 
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->app->setBasePath(base_path('tests'));
-    }
-
-    /** @test */
-    function sets_env_variable_existing_parameter()
+    function test_sets_env_variable_existing_parameter()
     {
         file_put_contents(base_path('.env'), 'SV_INSTALLED=false');
 
@@ -26,8 +22,7 @@ class SuperVInstallCommandTest extends TestCase
         $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
     }
 
-    /** @test */
-    function sets_env_variable_invalid_parameter()
+    function test_sets_env_variable_invalid_parameter()
     {
         file_put_contents(base_path('.env'), 'SV_INSTALLED***invalid');
 
@@ -36,8 +31,7 @@ class SuperVInstallCommandTest extends TestCase
         $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
     }
 
-    /** @test */
-    function sets_env_variable_empty_env()
+    function test_sets_env_variable_empty_env()
     {
         file_put_contents(base_path('.env'), '');
 
@@ -46,8 +40,7 @@ class SuperVInstallCommandTest extends TestCase
         $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
     }
 
-    /** @test */
-    function does_not_make_any_other_changes_on_env_file()
+    function test_does_not_make_any_other_changes_on_env_file()
     {
         file_put_contents(base_path('.env'), file_get_contents($this->envPath('sample')));
 
@@ -56,17 +49,46 @@ class SuperVInstallCommandTest extends TestCase
         $this->assertEnvValuesPreserved($this->envPath('sample'), base_path('.env'));
     }
 
-    /** @test */
-    function runs_platform_migrations()
+    function test_runs_platform_migrations()
     {
         $this->artisan('superv:install');
 
         $this->assertEquals(0, AddonModel::count());
     }
 
-    protected function envPath($name)
+    function test_dispatches_event_when_platform_is_installed()
     {
-        return __DIR__.'/../__fixtures__/'.$name.'.env';
+        Event::fake([PlatformInstalledEvent::class]);
+
+        $installer = app(InstallSuperV::class);
+
+        $installer();
+
+        Event::assertDispatched(PlatformInstalledEvent::class);
+    }
+
+    function test_runs_callbacks_when_platform_is_installed()
+    {
+        $_SERVER['__switch__'] =  'off';
+
+        Platform::on('install',function() {
+            $_SERVER['__switch__'] =  'on';
+        });
+
+        $installer = app(InstallSuperV::class);
+
+        $installer();
+
+        $this->assertEquals('on', $_SERVER['__switch__']);
+    }
+
+
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->app->setBasePath(base_path('tests'));
     }
 
     protected function tearDown()
@@ -74,6 +96,11 @@ class SuperVInstallCommandTest extends TestCase
         parent::tearDown();
 
         file_put_contents(base_path('.env'), '');
+    }
+
+    protected function envPath($name)
+    {
+        return __DIR__.'/../__fixtures__/'.$name.'.env';
     }
 
     protected function assertEnvValuesPreserved($orig, $updated)

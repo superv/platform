@@ -3,7 +3,8 @@
 namespace SuperV\Platform\Console;
 
 
-use SuperV\Platform\Console\Jobs\InstallSuperVJob;
+use Exception;
+use SuperV\Platform\Console\Jobs\InstallSuperV;
 use SuperV\Platform\Contracts\Command;
 
 class SuperVInstallCommand extends Command
@@ -16,8 +17,14 @@ class SuperVInstallCommand extends Command
     {
         $this->comment('Installing SuperV');
 
-        $this->dispatch(new InstallSuperVJob);
+        try {
+            app(InstallSuperV::class)();
 
-        $this->comment("SuperV installed..! \n");
+            $this->comment("SuperV installed..! \n");
+        } catch (Exception $e) {
+            $this->error($e->getMessage());
+        }
+
+
     }
 }

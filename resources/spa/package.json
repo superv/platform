@@ -1,5 +1,5 @@
 {
-    "name": "frontend",
+    "name": "superv-spa",
     "version": "0.1.0",
     "private": true,
     "scripts": {
@@ -10,12 +10,12 @@
     },
     "dependencies": {
         "superv-js": "^0.9.0",
-        "vue": "^2.5.17"
+        "vue": "^2.6.9"
     },
     "devDependencies": {
-        "@vue/cli-plugin-babel": "^3.0.3",
-        "@vue/cli-service": "^3.0.3",
-        "vue-template-compiler": "^2.5.17"
+        "@vue/cli-plugin-babel": "^3.4.0",
+        "@vue/cli-service": "^3.4.0",
+        "vue-template-compiler": "^2.6.9"
     },
     "browserslist": [
         "> 1%",
