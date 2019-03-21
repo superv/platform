@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/superv/platform.svg?branch=master)](https://travis-ci.org/superv/platform)
-# SuperV Platform
+# SuperV Platform for Laravel
 ‼️💥💥 This package is under heavy development ⛏ and may not be suitable for production use yet. 💥💥‼️
 
 SuperV is a Laravel package that aims to be a rapid development platform.
@@ -28,9 +28,9 @@ chmod -Rf 777 addons
 echo 'superv/*' > addons/.gitignore
 ```
 
-Add required parameters to your `.env` file:
+Add base hostname to your `.env` file:
 ```bash
-SV_HOSTNAME=superv.dev.io
+SV_HOSTNAME=superv.test
 ```
 
 Add composer merge plugin configuration under the `extra` key in your `composer.json` file:
@@ -45,9 +45,6 @@ Add composer merge plugin configuration under the `extra` key in your `composer.
         }
     }
 ```
-
-Add scope (VARCHAR:255) column to your migrations table
-
  
 Install SuperV
 ```bash
@@ -128,7 +125,7 @@ This would run the migrations located in your addon's `database/migrations` fold
 
 While developing an addon, you can use `addon:reinstall` command to uninstall and install again. And also `addon:uninstall` to uninstall it. 
 
-Note that, uninstalling an addon rollbacks all it's migrations, thus would drop related database tables.
+‼ Note that, uninstalling an addon rollbacks all it's migrations, thus would drop related database tables.
 
 Now, let's create an addon migration:
 ```bash

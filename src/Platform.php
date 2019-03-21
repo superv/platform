@@ -101,11 +101,6 @@ class Platform extends Addon
         return config('superv.installed') === true;
     }
 
-    public function postInstall(Closure $callback)
-    {
-        $this->on('installed', $callback);
-    }
-
     public function tables()
     {
         return [

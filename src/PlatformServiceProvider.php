@@ -7,7 +7,6 @@ use Hub;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
 use Platform;
-use SuperV\Modules\Webdev\TwigServiceProvider;
 use SuperV\Platform\Console\SuperVInstallCommand;
 use SuperV\Platform\Console\SuperVUninstallCommand;
 use SuperV\Platform\Domains\Addon\AddonCollection;
@@ -47,6 +46,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     protected $_singletons = [
         'SuperV\Platform\Domains\Auth\Contracts\Users' => 'SuperV\Platform\Domains\Auth\Users',
         'addons'                                       => AddonCollection::class,
+        'platform'                                     => \SuperV\Platform\Platform::class,
         ExceptionHandler::class                        => PlatformExceptionHandler::class,
     ];
 
@@ -152,8 +152,6 @@ class PlatformServiceProvider extends BaseServiceProvider
     {
         $this->app->bind(User::class, sv_config('auth.user.model'));
     }
-
-
 
     protected function registerCollectionMacros()
     {
