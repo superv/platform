@@ -19,4 +19,6 @@ interface ComponentContract
     public function setProp($key, $value): ComponentContract;
 
     public function setProps($props): ComponentContract;
+
+    public function mergeProps($props): ComponentContract;
 }

@@ -69,6 +69,12 @@ abstract class BaseComponent implements ComponentContract, Composable, Responsab
 
         return $this;
     }
+    public function mergeProps($props): ComponentContract
+    {
+        $this->props->merge($props);
+
+        return $this;
+    }
 
     public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
