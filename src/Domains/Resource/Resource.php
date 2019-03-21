@@ -29,7 +29,7 @@ use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-class Resource implements
+final class Resource implements
     Contracts\ProvidesFields,
     Contracts\ProvidesQuery
 {

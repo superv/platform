@@ -55,6 +55,7 @@ class ResourceView implements ProvidesUIComponent
         return Component::make('sv-resource-view')
                         ->setProps([
                             'entry'    => sv_compose($this->entry),
+                            'edit-url'     => sv_url($this->resource->route('edit', $this->entry)),
                             'heading'  => [
                                 'imageUrl' => $imageUrl ?? '',
                                 'header'   => $this->resource->getEntryLabel($this->entry),
@@ -71,29 +72,6 @@ class ResourceView implements ProvidesUIComponent
         $this->headingResolver = $callback;
 
         return $this;
-    }
-
-    protected function buildSections()
-    {
-        $this->sections = $this->sections->merge($this->getRelationsSections());
-
-        $this->sections->push(['url' => $this->resource->route('edit', $this->entry), 'title' => 'Edit']);
-
-        $this->sections->transform(function ($section) {
-            return sv_parse($section, ['entry' => $this->entry]);
-        });
-    }
-
-    protected function getFieldsForView()
-    {
-        return $this->resource->fields()
-                              ->keyByName()
-                              ->filter(function (Field $field) {
-                                  return ! in_array($field->getName(), ['deleted_at']);
-                              })
-                              ->map(function (Field $field) {
-                                  return (new FieldComposer($field))->forView($this->entry);
-                              });
     }
 
     public function addSection(array $section): ResourceView
@@ -113,6 +91,27 @@ class ResourceView implements ProvidesUIComponent
         $this->sections = wrap_collect($sections);
 
         return $this;
+    }
+
+    protected function buildSections()
+    {
+        $this->sections = $this->sections->merge($this->getRelationsSections());
+
+        $this->sections->transform(function ($section) {
+            return sv_parse($section, ['entry' => $this->entry]);
+        });
+    }
+
+    protected function getFieldsForView()
+    {
+        return $this->resource->fields()
+                              ->keyByName()
+                              ->filter(function (Field $field) {
+                                  return ! in_array($field->getName(), ['deleted_at']);
+                              })
+                              ->map(function (Field $field) {
+                                  return (new FieldComposer($field))->forView($this->entry);
+                              });
     }
 
     protected function getRelationsSections(): Collection

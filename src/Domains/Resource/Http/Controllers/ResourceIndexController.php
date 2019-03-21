@@ -43,7 +43,7 @@ class ResourceIndexController extends BaseApiController
         $resource = $this->resolveResource();
 
         if (! $action = $resource->getAction($this->route->parameter('action'))) {
-            PlatformException::fail('Resource action not found: '.$action);
+            PlatformException::fail('Resource action not found: '.$this->route->parameter('action'));
         }
 
         if ($action instanceof RequiresEntry) {
