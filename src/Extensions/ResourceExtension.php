@@ -18,6 +18,10 @@ class ResourceExtension implements ExtendsResource
         $resource->on('index.config', function (ResourceTable $table) {
             $table->addRowAction(DeleteEntryAction::class);
         });
+
+        $resource->on('index.data', function (ResourceTable $table) {
+            $table->setOption('limit', 50);
+        });
     }
 
     public function extends(): string

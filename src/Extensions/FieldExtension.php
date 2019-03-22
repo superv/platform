@@ -16,6 +16,10 @@ class FieldExtension implements ExtendsResource
             $fields->getField('resource')->copyToFilters();
             $fields->getField('type')->copyToFilters();
         });
+
+        $resource->on('index.data', function (ResourceTable $table) {
+            $table->setOption('limit', 50);
+        });
     }
 
     public function extends(): string
