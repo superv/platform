@@ -28,10 +28,25 @@
 import { LayoutDefault, SvSidebar } from 'superv-js'
 
 export default {
-  name: 'App',
+  name: 'SuperV',
   components: { SvSidebar, LayoutDefault },
-  data() {
-    return {}
-  },
 }
 </script>
+
+<style>
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  .font-sans {
+    font-size: 14px;
+    font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .material-icons {
+    font-size: 20px !important;
+  }
+
+</style>
