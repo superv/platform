@@ -5,6 +5,7 @@ use Schema as LaravelSchema;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
+use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\Support\Blueprints;
 
@@ -33,6 +34,13 @@ class CreateResourcesTables extends Migration
 
     protected function selfAware()
     {
+        Section::createFromArray([
+            'parent' => 'acp.platform',
+            'title'  => 'System',
+            'handle' => 'system',
+            'icon'   => 'system',
+        ]);
+
         Schema::run('sv_resources', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::resources($table, $resource);
         });
