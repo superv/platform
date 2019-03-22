@@ -60,7 +60,7 @@ class ResourceViewTest extends ResourceTestCase
         $user = $users->fake();
         $this->withoutExceptionHandling();
         $view = $this->getResourceView($user);
-        $this->assertEquals(6, $view->countProp('fields'));
+        $this->assertEquals(7, $view->countProp('fields'));
 
         $this->assertEquals([
             'name',
@@ -69,6 +69,7 @@ class ResourceViewTest extends ResourceTestCase
             'age',
             'avatar',
             'group',
+            'deleted_at',
         ], array_keys($view->getProp('fields')));
     }
 }

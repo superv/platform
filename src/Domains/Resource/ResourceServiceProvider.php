@@ -17,14 +17,18 @@ use SuperV\Platform\Providers\BaseServiceProvider;
 class ResourceServiceProvider extends BaseServiceProvider
 {
     protected $listeners = [
-        ColumnCreatedEvent::class             => Listeners\SyncField::class,
-        ColumnUpdatedEvent::class             => Listeners\SyncField::class,
-        ColumnDroppedEvent::class             => Listeners\DeleteField::class,
-        TableCreatingEvent::class             => Listeners\CreateResource::class,
-        AddonBootedEvent::class               => Listeners\RegisterExtensions::class,
-        Model\Events\EntrySavingEvent::class  => Listeners\ValidateSavingEntry::class,
-        Resource\ResourceActivityEvent::class => Listeners\RecordActivity::class,
-        AddonUninstallingEvent::class         => DeleteAddonResources::class,
+        ColumnCreatedEvent::class              => Listeners\SyncField::class,
+        ColumnUpdatedEvent::class              => Listeners\SyncField::class,
+        ColumnDroppedEvent::class              => Listeners\DeleteField::class,
+        TableCreatingEvent::class              => Listeners\CreateResource::class,
+        AddonBootedEvent::class                => Listeners\RegisterExtensions::class,
+        Model\Events\EntrySavingEvent::class   => [
+            Listeners\ValidateSavingEntry::class,
+            Listeners\SaveUpdatedBy::class
+        ],
+        Model\Events\EntryCreatingEvent::class => Listeners\SaveCreatedBy::class,
+        Resource\ResourceActivityEvent::class  => Listeners\RecordActivity::class,
+        AddonUninstallingEvent::class          => DeleteAddonResources::class,
     ];
 
     protected $_bindings = [
@@ -38,18 +42,23 @@ class ResourceServiceProvider extends BaseServiceProvider
     public function register()
     {
         parent::register();
+
+        app('events')->listen('eloquent.creating:*', function ($event, $payload) {
+            if (($entry = $payload[0]) instanceof EntryContract) {
+                Model\Events\EntryCreatingEvent::dispatch($entry);
+            }
+        });
+
         app('events')->listen('eloquent.created:*', function ($event, $payload) {
             if (($entry = $payload[0]) instanceof EntryContract) {
                 Model\Events\EntryCreatedEvent::dispatch($entry);
             }
         });
-
         app('events')->listen('eloquent.deleted:*', function ($event, $payload) {
             if (($entry = $payload[0]) instanceof EntryContract) {
                 Model\Events\EntryDeletedEvent::dispatch($entry);
             }
         });
-
         app('events')->listen('eloquent.saving:*', function ($event, $payload) {
             if (($entry = $payload[0]) instanceof EntryContract) {
                 Model\Events\EntrySavingEvent::dispatch($entry);

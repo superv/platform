@@ -9,18 +9,12 @@ use SuperV\Platform\Domains\Resource\Contracts\RequiresEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Resource\ResourceView;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
 class EntryPage extends ResourcePage
 {
-    /** @var \Illuminate\Support\Collection */
-    protected $sections;
-
     public function build($tokens = [])
     {
-//        $this->buildView();
-
         $this->buildSections();
 
         $this->buildActions();
@@ -30,12 +24,22 @@ class EntryPage extends ResourcePage
 
     public function makeComponent(): ComponentContract
     {
+        if ($imageField = $this->resource->fields()->getHeaderImage()) {
+            $imageUrl = (new FieldComposer($imageField))
+                ->forView($this->entry)
+                ->get('image_url');
+        }
+
         return parent::makeComponent()
                      ->setName('sv-entry-page')
-                     ->setProp('sections', $this->sections)
-                     ->setProp('edit-url', sv_url($this->resource->route('edit', $this->entry)))
-                     ->setProp('view-url', sv_url($this->resource->route('view', $this->entry)))
-            ;
+                     ->mergeProps([
+                         'sections' => $this->buildSections(),
+                         'image-url' => $imageUrl ?? '',
+                         'create-url' =>$this->resource->route('create'),
+                         'edit-url' => sv_url($this->resource->route('edit', $this->entry)),
+                         'view-url' => sv_url($this->resource->route('view', $this->entry)),
+                         'index-url' => $this->resource->route('index'),
+                     ]);
     }
 
     protected function buildActions(): void
@@ -55,17 +59,10 @@ class EntryPage extends ResourcePage
         })->filter()->values()->all();
     }
 
-    protected function buildView(): void
-    {
-        $view = new ResourceView($this->resource, $this->entry);
-
-        $this->addBlock($view);
-    }
-
     protected function buildSections()
     {
-        $this->sections = collect($this->getRelationsSections())
-            ->transform(function ($section) {
+        return collect($this->getRelationsSections())
+            ->map(function ($section) {
                 return sv_parse($section, ['entry' => $this->entry]);
             });
     }

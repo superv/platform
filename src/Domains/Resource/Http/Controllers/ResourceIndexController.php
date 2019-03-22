@@ -62,6 +62,9 @@ class ResourceIndexController extends BaseApiController
         $table = ($resource = $this->resolveResource())->resolveTable();
 
         if ($this->route->parameter('data')) {
+            if ($callback = $resource->getCallback('index.data')) {
+                app()->call($callback, ['table' => $table]);
+            }
             return $table->setRequest($this->request)->build();
         }
 

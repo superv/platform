@@ -106,9 +106,9 @@ class ResourceView implements ProvidesUIComponent
     {
         return $this->resource->fields()
                               ->keyByName()
-                              ->filter(function (Field $field) {
-                                  return ! in_array($field->getName(), ['deleted_at']);
-                              })
+//                              ->filter(function (Field $field) {
+//                                  return ! in_array($field->getName(), ['deleted_at']);
+//                              })
                               ->map(function (Field $field) {
                                   return (new FieldComposer($field))->forView($this->entry);
                               });

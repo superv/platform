@@ -41,14 +41,17 @@ class Fields
         return $this;
     }
 
-    public function get($name): Field
+    public function find($name): ?Field
     {
-        $field = $this->fields->first(
+        return $this->fields->first(
             function (Field $field) use ($name) {
                 return $field->getName() === $name;
             });
+    }
 
-        if (! $field) {
+    public function get($name): Field
+    {
+        if (! $field = $this->find($name)) {
             PlatformException::fail("Field not found: [{$name}]");
         }
 

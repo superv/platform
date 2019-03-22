@@ -3,11 +3,18 @@
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
+use SuperV\Platform\Domains\Resource\Nav\Section;
 
 class CreateAuthorizationTables extends Migration
 {
     public function up()
     {
+        Section::createFromArray([
+            'parent' => 'acp.platform',
+            'title'  => 'Auth',
+            'handle' => 'auth',
+            'icon'   => 'auth',
+        ]);
         Schema::create('sv_auth_roles', function (Blueprint $table) {
             $table->resourceConfig()->label('Roles');
             $table->resourceConfig()->nav('acp.platform.auth');

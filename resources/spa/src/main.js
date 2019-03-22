@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import SuperVJS from 'superv-js'
-import App from './App'
+import SuperV from './SuperV'
 
 let config
 const configElement = document.getElementById('config')
@@ -24,7 +24,7 @@ new Vue({
   name: 'root',
   data() {
     return {
-      layouts: { default: App }
+      layouts: { default: SuperV }
     }
   },
   mixins: [require('superv-js').LayoutMixin]

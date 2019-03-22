@@ -34,6 +34,6 @@ class RelationCreateController extends BaseApiController
 
         $form->setRequest($this->request)->save();
 
-        return response()->json(['status' => 'ok']);
+        return response()->json(['status' => 'ok', 'events' => ['create_'.$relation->getName().':complete']]);
     }
 }

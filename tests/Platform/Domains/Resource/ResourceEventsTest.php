@@ -7,24 +7,43 @@ use Event;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatedEvent;
+use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatingEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class ResourceEventsTest extends ResourceTestCase
 {
-    function test__dispatches_event_when_a_resource_entry_is_created()
+    function test__dispatches_event_when_a_resource_entry_is_creating()
     {
-        Event::fake(EntryCreatedEvent::class);
-
         $res = $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name');
         });
 
-        $fake = $res->fake();
+        app('events')->listen(EntryCreatingEvent::class, function(EntryCreatingEvent $event) {
+             $this->assertFalse($event->entry->exists);
+             $this->assertEquals('Test User', $event->entry->name);
+        });
 
-        Event::assertDispatched(EntryCreatedEvent::class, function ($event) use ($fake) {
+       $res->create(['name' => 'Test User']);
+    }
+
+    function test__dispatches_event_when_a_resource_entry_is_created()
+    {
+        $res = $this->create('t_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+        });
+
+        Event::fake(EntryCreatedEvent::class);
+
+        $fake = $res->create(['name' => 'Test User']);
+
+        Event::assertDispatched(EntryCreatedEvent::class, function (EntryCreatedEvent $event) use ($fake) {
             return $event->entry->id === $fake->id;
         });
+
+
     }
 
     function test__dispatches_event_when_a_resource_entry_is_deleted()

@@ -13,6 +13,29 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class HasMany extends Relation implements ProvidesTable, ProvidesForm
 {
+    public function makeTable()
+    {
+        return $this->getRelatedResource()->resolveTable()
+                    ->setQuery($this)
+                    ->setDataUrl(url()->current().'/data')
+                    ->addContextAction(
+                        ModalAction::make('New '.str_singular(str_unslug($this->getName())))
+                                   ->setModalUrl($this->route('create', $this->parentEntry))
+                                   ->setIdentifier('create_'.$this->getName())
+                    );
+    }
+
+    public function makeForm(): Form
+    {
+        return Form::for($childEntry = $this->newQuery()->make())
+                   ->hideField(sv_resource($this->parentEntry)->getResourceKey())
+                   ->make();
+    }
+
+    public function getFormTitle(): string
+    {
+    }
+
     protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
     {
         if (! $localKey = $this->relationConfig->getLocalKey()) {
@@ -28,27 +51,5 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
             $this->relationConfig->getForeignKey() ?? $this->parentEntry->getForeignKey(),
             $localKey ?? 'id'
         );
-    }
-
-    public function makeTable()
-    {
-        return $this->getRelatedResource()->resolveTable()
-                    ->setQuery($this)
-                    ->setDataUrl(url()->current().'/data')
-                    ->addContextAction(
-                        ModalAction::make('New '.str_singular(str_unslug($this->getName())))
-                                   ->setModalUrl($this->route('create', $this->parentEntry))
-                    );
-    }
-
-    public function makeForm(): Form
-    {
-        return Form::for($childEntry = $this->newQuery()->make())
-                   ->hideField(sv_resource($this->parentEntry)->getResourceKey())
-                   ->make();
-    }
-
-    public function getFormTitle(): string
-    {
     }
 }
