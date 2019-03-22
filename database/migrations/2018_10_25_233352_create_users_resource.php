@@ -18,8 +18,6 @@ class CreateUsersResource extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('remember_token')->nullable();
-            $table->createdBy()->updatedBy();
-            $table->restorable();
 
             $table->hasOne('sv_profiles', 'profile', 'user_id');
             $table->morphToMany('sv_auth_roles', 'roles', 'owner', 'sv_auth_assigned_roles', 'role_id');
