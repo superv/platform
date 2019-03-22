@@ -116,7 +116,7 @@ class InstallSuperV
         DB::commit();
 
         Artisan::call('vendor:publish', ['--tag' => 'superv.config']);
-        Artisan::call('vendor:publish', ['--tag' => 'superv.views']);
+//        Artisan::call('vendor:publish', ['--tag' => 'superv.views']);
         Artisan::call('vendor:publish', ['--tag' => 'superv.assets']);
 
         PlatformInstalledEvent::dispatch();
