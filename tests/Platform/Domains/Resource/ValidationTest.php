@@ -7,10 +7,9 @@ use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Exceptions\ValidationException;
 
-class ValidationTest
+class ValidationTest extends ResourceTestCase
 {
-    /** @test */
-    function runs_validation_when_creating_resource_entry()
+    function test_runs_validation_when_creating_resource_entry()
     {
         $resource = $this->create('tx_users', function (Blueprint $table) {
             $table->increments('id');

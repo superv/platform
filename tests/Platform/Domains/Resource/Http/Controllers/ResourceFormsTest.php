@@ -154,7 +154,6 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__posts_create_form()
     {
-
         $users = $this->schema()->users();
         $post = [
             'name'     => 'Ali',
@@ -203,7 +202,7 @@ class ResourceFormsTest extends ResourceTestCase
     }
 
     /**
-     * @param \SuperV\Platform\Domains\Resource\Resource $roles
+     * @param \SuperV\Platform\Domains\Resource\Resource $resource
      * @return string
      */
     protected function getCreateRoute(Resource $resource): string
