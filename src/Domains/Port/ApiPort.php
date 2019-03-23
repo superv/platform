@@ -12,6 +12,8 @@ class ApiPort extends Port
 
     protected $navigationSlug = 'acp';
 
+    protected $roles = ['user'];
+
     protected $middlewares = [
         'Barryvdh\Cors\HandleCors',
     ];
