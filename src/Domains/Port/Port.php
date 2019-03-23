@@ -80,18 +80,6 @@ class Port
         return $this->middlewares;
     }
 
-//    public function model()
-//    {
-//        return $this->model;
-//    }
-//
-//    public function resolveModel()
-//    {
-//        $class = $this->model();
-//
-//        return new $class;
-//    }
-
     public function guard()
     {
         return $this->guard;
@@ -107,8 +95,13 @@ class Port
         return $this->navigationSlug;
     }
 
+    public function isSecure()
+    {
+        return $this->secure;
+    }
+
     protected function protocol()
     {
-        return $this->secure ? 'https://' : 'http://';
+        return $this->isSecure() ? 'https://' : 'http://';
     }
 }
