@@ -26,6 +26,9 @@ module.exports = {
       transparent: 'transparent',
       black: '#000',
       white: '#fff',
+      cyan: '#49c5b6',
+      bluw: '#60bafd',
+      blush: 'ff758e',
       gray: {
         100: '#f7fafc',
         200: '#edf2f7',
@@ -107,9 +110,9 @@ module.exports = {
     },
   },
   variants: {
-    // Some useful comment
+    opacity: ['responsive', 'hover'],
   },
   plugins: [
-    // Some useful comment
+
   ]
 }

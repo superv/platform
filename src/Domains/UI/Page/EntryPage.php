@@ -31,7 +31,7 @@ class EntryPage extends ResourcePage
         }
 
         return parent::makeComponent()
-                     ->setName('sv-entry-page')
+                     ->setName('sv-page')
                      ->mergeProps([
                          'sections' => $this->buildSections(),
                          'image-url' => $imageUrl ?? '',
