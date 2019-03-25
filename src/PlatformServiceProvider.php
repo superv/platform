@@ -104,7 +104,7 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->registerCollectionMacros();
 
         $this->addViewNamespaces([
-            'superv' => __DIR__.'/../resources/views',
+            'superv' => realpath(__DIR__.'/../resources/views'),
         ]);
 
         $this->registerDefaultPort();
@@ -117,9 +117,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         if ($this->app->runningInConsole()) {
             $this->registerMigrationScope();
             $this->publishConfig();
-            $this->publishViews();
-            $this->publishAssets();
-            $this->publishSpa();
         }
 
         if (! $this->platform->isInstalled()) {
@@ -140,12 +137,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         // Register routes needed by platform
         //
         $this->registerPlatformRoutes();
-
-//        \Route::pattern('id', '[0-9]+');
-
-        // Experimental query listening
-        //
-//        Listener::listen();
     }
 
     protected function bindUserModel(): void
