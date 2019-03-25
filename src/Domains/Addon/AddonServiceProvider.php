@@ -30,7 +30,11 @@ class AddonServiceProvider extends BaseServiceProvider
         parent::register();
 
         $this->addViewNamespaces([
-            $this->addon->slug() => base_path($this->addon->resourcePath('views')),
+            $this->addon->slug() =>
+                [
+                    base_path($this->addon->resourcePath('views')),
+                    resource_path('vendor/superv/'.$this->addon->shortSlug().'/views'),
+                ],
         ]);
 
         if (file_exists($file = $this->addon->realPath('config/service/listeners.php'))) {
