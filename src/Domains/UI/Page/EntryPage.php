@@ -34,11 +34,13 @@ class EntryPage extends ResourcePage
                      ->setName('sv-page')
                      ->mergeProps([
                          'sections' => $this->buildSections(),
-                         'image-url' => $imageUrl ?? '',
-                         'create-url' =>$this->resource->route('create'),
-                         'edit-url' => sv_url($this->resource->route('edit', $this->entry)),
-                         'view-url' => sv_url($this->resource->route('view', $this->entry)),
-                         'index-url' => $this->resource->route('index'),
+                         'links'    => [
+                             'image'  => $imageUrl ?? '',
+                             'create' => $this->resource->route('create'),
+                             'edit'   => sv_url($this->resource->route('edit', $this->entry)),
+                             'view'   => sv_url($this->resource->route('view', $this->entry)),
+                             'index'  => $this->resource->route('index'),
+                         ],
                      ]);
     }
 

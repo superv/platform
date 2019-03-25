@@ -13,8 +13,7 @@
     <strong>We're sorry but frontend doesn't work at all without JavaScript enabled. Please enable it to
       continue.</strong>
   </noscript>
-  <div id="app"></div>
-  <script id="config" type="application/json"><?php echo json_encode($config); ?></script>
+  <div id="app" data-config="<?php echo json_encode($config); ?>"></div>
   <!-- built files will be auto injected -->
 </body>
 </html>
