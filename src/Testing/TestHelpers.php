@@ -202,6 +202,14 @@ trait TestHelpers
         return $this->getJson($uri, $this->getHeaderWithAccessToken());
     }
 
+    public function deleteJsonUser($uri): TestResponse
+    {
+        if (! $this->testUser) {
+            $this->newUser();
+        }
+        return $this->json('DELETE', $uri, [], $this->getHeaderWithAccessToken());
+    }
+
     protected function makePostRequest($uri, array $data = []): Request
     {
         if (is_array($uri) && empty($data)) {

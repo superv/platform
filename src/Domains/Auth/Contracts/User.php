@@ -10,8 +10,6 @@ interface User extends EntryContract
 
     public function getEmail();
 
-    public function createProfile(array $attributes);
-
     public function updatePassword($newPassword);
 
     public function assign(string $role);

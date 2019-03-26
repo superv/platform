@@ -21,16 +21,12 @@ class ResourceViewController extends BaseApiController
         $page->setResource($resource);
         $page->setEntry($this->entry);
 
-//        $page->addBlock($resource->resolveView($this->entry));
-//        $page->addBlock(sv_loader($resource->route('view', $this->entry)));
-
         if ($callback = $resource->getCallback('view.page')) {
             app()->call($callback, ['page' => $page, 'entry' => $this->entry]);
-//            dd($page);
         }
 
 
-        return $page->build(['res' => $resource->toArray()]);
+        return $page->build(['res' => $resource->toArray(), 'entry' => $this->entry]);
     }
 
     public function view()

@@ -16,6 +16,7 @@ trait ResponseHelper
         return HelperComponent::from($response->decodeResponseJson('data'));
 
         $page = HelperComponent::from($response->decodeResponseJson('data'));
+
         $view = HelperComponent::from($page->getProp('blocks.0'));
 
         return $view;

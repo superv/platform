@@ -27,6 +27,9 @@ class ResourceTable extends EntryTable
 
     public function onQuerying($query)
     {
+        if ($this->resource->isRestorable()) {
+            $query->where('deleted_at', null);
+        }
         $this->resource->fire('table.querying', ['query' => $query]);
     }
 

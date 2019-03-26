@@ -44,14 +44,6 @@ class ResourceView implements ProvidesUIComponent
 
     public function makeComponent(): ComponentContract
     {
-        if ($imageField = $this->resource->fields()->getHeaderImage()) {
-            $imageUrl = (new FieldComposer($imageField))
-                ->forView($this->entry)
-                ->get('image_url');
-        }
-
-        $this->buildSections();
-
         return Component::make('sv-resource-view')
                         ->setProps([
                             'entry'    => sv_compose($this->entry),

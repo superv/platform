@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\UI\Page;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\Action\RestoreEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Contracts\RequiresEntry;
@@ -16,6 +17,8 @@ class EntryPage extends ResourcePage
     public function build($tokens = [])
     {
         $this->buildSections();
+
+        $this->actions[] = RestoreEntryAction::make();
 
         $this->buildActions();
 
@@ -31,14 +34,16 @@ class EntryPage extends ResourcePage
         }
 
         return parent::makeComponent()
-                     ->setName('sv-entry-page')
+                     ->setName('sv-page')
                      ->mergeProps([
                          'sections' => $this->buildSections(),
-                         'image-url' => $imageUrl ?? '',
-                         'create-url' =>$this->resource->route('create'),
-                         'edit-url' => sv_url($this->resource->route('edit', $this->entry)),
-                         'view-url' => sv_url($this->resource->route('view', $this->entry)),
-                         'index-url' => $this->resource->route('index'),
+                         'links'    => [
+                             'image'  => $imageUrl ?? '',
+                             'create' => $this->resource->route('create'),
+                             'edit'   => sv_url($this->resource->route('edit', $this->entry)),
+                             'view'   => sv_url($this->resource->route('view', $this->entry)),
+                             'index'  => $this->resource->route('index'),
+                         ],
                      ]);
     }
 
@@ -67,17 +72,6 @@ class EntryPage extends ResourcePage
             });
     }
 
-    protected function getFieldsForView()
-    {
-        return $this->resource->fields()
-                              ->keyByName()
-                              ->filter(function (Field $field) {
-                                  return ! in_array($field->getName(), ['deleted_at']);
-                              })
-                              ->map(function (Field $field) {
-                                  return (new FieldComposer($field))->forView($this->entry);
-                              });
-    }
 
     protected function getRelationsSections(): Collection
     {

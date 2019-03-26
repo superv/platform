@@ -6,17 +6,6 @@ use SuperV\Platform\Http\Controllers\DataController;
 
 return [
 
-    'superv{path}' => [
-        'uses'  => function () {
-            if (! $port = Hub::getDefaultPort()) {
-                return 'No registered ports found';
-            }
-
-            return view('superv::spa', ['config' => ['apiUrl' => $port->url()]]);
-        },
-        'where' => ['path' => '.*'],
-    ],
-
     'data/init'   => DataController::class.'@init',
     'data/nav'    => DataController::class.'@nav',
     'data/navold' => DataController::class.'@navold',

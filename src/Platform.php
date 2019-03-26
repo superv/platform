@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform;
 
-use Closure;
 use SuperV\Platform\Domains\Addon\Addon;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Port\Port;
@@ -28,7 +27,9 @@ class Platform extends Addon
      */
     public function boot()
     {
-        $entries = AddonModel::enabled()->get();
+        $entries = AddonModel::query()
+                             ->where('enabled', true)
+                             ->get();
 
         /** @var AddonModel $entry */
         foreach ($entries as $entry) {
