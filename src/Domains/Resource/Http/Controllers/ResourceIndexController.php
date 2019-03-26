@@ -17,9 +17,16 @@ class ResourceIndexController extends BaseApiController
 
     public function delete()
     {
-        $resource = $this->resolveResource();
+        $this->resolveResource();
 
         $this->entry->delete();
+    }
+
+    public function restore()
+    {
+        $this->resolveResource();
+
+        $this->entry->restore();
     }
 
     public function page()

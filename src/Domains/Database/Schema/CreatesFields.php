@@ -113,6 +113,8 @@ trait CreatesFields
     public function restorable()
     {
         $this->resourceConfig()->restorable(true);
+        $this->nullableBelongsTo('users', 'deleted_by')->hideOnForms();
+
         $this->timestamp('deleted_at')->nullable()->hideOnForms();
     }
 

@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\UI\Page;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\Action\RestoreEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Contracts\RequiresEntry;
@@ -16,6 +17,8 @@ class EntryPage extends ResourcePage
     public function build($tokens = [])
     {
         $this->buildSections();
+
+        $this->actions[] = RestoreEntryAction::make();
 
         $this->buildActions();
 
@@ -69,17 +72,6 @@ class EntryPage extends ResourcePage
             });
     }
 
-    protected function getFieldsForView()
-    {
-        return $this->resource->fields()
-                              ->keyByName()
-                              ->filter(function (Field $field) {
-                                  return ! in_array($field->getName(), ['deleted_at']);
-                              })
-                              ->map(function (Field $field) {
-                                  return (new FieldComposer($field))->forView($this->entry);
-                              });
-    }
 
     protected function getRelationsSections(): Collection
     {

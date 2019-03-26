@@ -33,6 +33,11 @@ return [
         'uses' => ResourceIndexController::at('delete'),
     ],
 
+    'POST@'.'sv/res/{resource}/{id}/restore' => [
+        'as'   => 'resource.restore',
+        'uses' => ResourceIndexController::at('restore'),
+    ],
+
     'sv/res/{resource}/{id}' => [
         'as'    => 'resource.view.page',
         'uses'  => ResourceViewController::at('page'),

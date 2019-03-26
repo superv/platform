@@ -57,7 +57,7 @@ class ResourceIndexTest extends ResourceTestCase
             ], array_keys($field));
 
             $rowActions = $table->getProp('config.row_actions');
-            $this->assertEquals(1, count($rowActions));
+            $this->assertEquals(2, count($rowActions));
 
             $this->assertEquals('view', $rowActions[0]['props']['name']);
             $this->assertEquals('View', $rowActions[0]['props']['title']);

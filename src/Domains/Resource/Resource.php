@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource;
 use Closure;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
 use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
@@ -304,10 +305,10 @@ final class Resource implements
             return $base.'/'.$entry->getId().'/'.$route;
         }
 
-        if ($route === 'update') {
+        if ($route === 'update' || $route === 'delete') {
             return $base.'/'.$entry->getId();
         }
-        if ($route === 'delete' || $route === 'edit' || $route === 'view') {
+        if ($route === 'edit' || $route === 'view') {
             return $base.'/'.$entry->getId().'/'.$route;
         }
 
@@ -365,6 +366,7 @@ final class Resource implements
     {
         $table = app(ResourceTable::class)
             ->setResource($this)
+            ->addRowAction(DeleteEntryAction::class)
             ->addRowAction(ViewEntryAction::class);
 
         $this->fire('table.resolved', ['table' => $table]);

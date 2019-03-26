@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Model\MakesEntry;
@@ -15,12 +17,16 @@ use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class ResourceEntry extends Entry
 {
+    use Restorable;
+
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
 
     protected static function boot()
     {
         parent::boot();
+
+//        static::addGlobalScope(new SoftDeletingScope);
 
         static::saving(function (ResourceEntry $entry) {
             if (!starts_with($entry->getTable(), 'sv_')) {

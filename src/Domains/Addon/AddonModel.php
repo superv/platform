@@ -50,11 +50,6 @@ class AddonModel extends ResourceEntry
         return studly_case($this->shortSlug());
     }
 
-    public function scopeEnabled($query)
-    {
-        $query->where('enabled', true);
-    }
-
     public function getRelativePath()
     {
         return $this->path;
