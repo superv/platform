@@ -1,7 +1,7 @@
 ## Fresh project
 Create project with composer in your terminal:
 ```bash
-composer create-project superv/superv-project
+composer create-project superv/superv-project 0.9.x-dev@dev
 ```
 
 Your web server should point to project's `public` folder for your hostname (eg: `superv.test`). Just as it would in a normal Laravel application.

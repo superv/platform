@@ -1,13 +1,13 @@
 module.exports = {
   title: 'superV',
-  description: 'A platform for Laravel',
+  description: 'A platform package and admin panel for Laravel',
 
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Github', link: 'https://github.com/superv/platform' },
     ],
-    displayAllHeaders: true,
+    displayAllHeaders: false,
     sidebar: [
       {
         title: 'Introduction',
@@ -30,8 +30,17 @@ module.exports = {
         children: [
           '/concepts/01-addons',
           '/concepts/02-migrations',
+          '/concepts/03-ports',
         ]
       },
     ]
-  }
+  },
+  plugins: [
+    [
+      '@vuepress/google-analytics',
+      {
+        'ga': 'UA-137036636-1'
+      }
+    ]
+  ]
 }

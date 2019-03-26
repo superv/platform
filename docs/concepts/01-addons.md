@@ -1,9 +1,15 @@
 # Addons
-Every single reusable composer package in superV platform is called an `addon`. 
+Every single reusable composer package in superV platform is called an `addon`
 
 superV groups all your platform related addon packages under the `addons` directory that is located at your project root. While installing through composer, it detects platform specific packages and moves them here instead of the default vendor folder.  
   
-Every superV addon has a unique slug combined of 3 parameters; `vendor.plural_addon_type.name`
+Addons have a unique slug combined of 3 parameters; vendor, type and name. So if we are to create a Crm module under the vendor name Acme we would use:  
+
+```
+acme.modules.crm
+```
+
+<p class="hom">Please not that plural of addon type should be in the slug.</p>
 
 ### Addon Types
 Different types of addons have different features. Valid addon types are:
@@ -24,7 +30,7 @@ php artisan make:addon acme.modules.crm
 
 You can now find the created module files in `addons/acme/modules/crm` directory.
 
-## Installing 
+### Install an addon
 Before using your addon, you must install it first:
 
 ```bash
@@ -33,6 +39,17 @@ php artisan addon:install acme.modules.crm
 
 This would run the migrations located in your addon's `database/migrations` folder if any.
 
-While developing an addon, you can use `addon:reinstall` command to uninstall and install again. And also `addon:uninstall` to uninstall it. 
+### Uninstall an addon
+To remove an addon from system and drop all related tables and data you may run the command:
 
-‼ Note that, uninstalling an addon rollbacks all it's migrations, thus would drop related database tables.
+```bash
+php artisan addon:uninstall
+```
+and select the addon from console input.
+
+<p class="hey">Uninstalling an addon rollbacks all it's migrations, thus would drop related database tables.</p>
+
+### Reinstall an addon
+While developing an addon, you can use `addon:reinstall` command to uninstall and install again.
+
+

@@ -10,7 +10,7 @@ vuepress build .
 cd .vuepress/dist
 
 # if you are deploying to a custom domain
-# echo 'www.example.com' > CNAME
+echo 'docs.superv.io' > CNAME
 
 git init
 git add -A
@@ -22,4 +22,5 @@ git push -f git@github.com:superv/superv.github.io.git master
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
 # git push -f git@github.com:<USERNAME>/<REPO>.git master:gh-pages
 
-cd -
+cd ..
+rm -Rf dist/

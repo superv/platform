@@ -1,5 +1,13 @@
 # Migrations
 
+Since every model starts with a migration, superV listens migrations by extending default framework classes:
+```php
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Migrations\Migration;
+use SuperV\Platform\Domains\Database\Schema\Schema;
+```
+
+
 ## Creating
 
 Now, let's create an addon migration:
@@ -10,16 +18,18 @@ php artisan addon:migration
 We didn't provide an addon slug in this command, because the interactive command line will let us choose it among the installed addons.
 For this migration I will be using `crm_clients` as the table name that I want to create.
 
+As now, the new migration file should be created in `addons/acme/modules/crm/database/migrations` folder. 
 
-As now, the new migration file should be created in `addons/acme/modules/crm/database/migrations` folder. Open it up in your IDE and paste the following:
+
+Open it up in your IDE and paste the following:
 
 ```php
 <?php
 
-use superV\Platform\Domains\Database\Schema\Blueprint;
-use superV\Platform\Domains\Database\Migrations\Migration;
-use superV\Platform\Domains\Database\Schema\Schema;
-use superV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Migrations\Migration;
+use SuperV\Platform\Domains\Database\Schema\Schema;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class CreateCrmClientsTable extends Migration
 {

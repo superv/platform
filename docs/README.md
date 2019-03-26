@@ -1,6 +1,8 @@
 ---
 home: true
-actionText: Features →
+tagline: Platform for Laravel
+heroText: superV
+actionText: Docs →
 actionLink: /introduction/01-key-features.html
 features:
 - title: Migrations on Steroids
