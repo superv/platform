@@ -151,8 +151,16 @@ if (! function_exists('superv')) {
     }
 }
 
-function sv_addon($addon)
+/**
+ * @param null $addon
+ * @return \SuperV\Platform\Domains\Addon\Addon|\SuperV\Platform\Domains\Addon\AddonCollection
+ */
+function sv_addons($addon = null)
 {
+    if (is_null($addon)) {
+        return superv('addons');
+    }
+
     return superv('addons')->get($addon);
 }
 

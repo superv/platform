@@ -13,7 +13,7 @@ class AddonUninstallCommand extends Command
     public function handle()
     {
         if (! $addon = $this->option('addon')) {
-            $addon = $this->choice('Select Addon to Uninstall', AddonModel::enabled()->latest()->get()->pluck('slug')->all());
+            $addon = $this->choice('Select Addon to Uninstall', sv_addons()->enabled()->slugs()->all());
         }
         $this->comment(sprintf('Uninstalling %s', $addon));
 

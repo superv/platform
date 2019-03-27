@@ -74,7 +74,7 @@ class Addon
      *
      * @return \SuperV\Platform\Domains\Addon\AddonModel
      */
-    public function entry()
+    public function entry(): AddonModel
     {
         return $this->entry;
     }

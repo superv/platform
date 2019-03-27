@@ -9,6 +9,18 @@ use Illuminate\Support\Collection;
  */
 class AddonCollection extends Collection
 {
+    public function enabled()
+    {
+        return $this->filter(function(Addon $addon) {
+           return $addon->entry()->enabled;
+        });
+    }
+
+    public function slugs()
+    {
+        return $this->map(function(Addon $addon) { return $addon->slug(); })->values();
+    }
+
     /**
      * @param $slug
      * @return Addon
