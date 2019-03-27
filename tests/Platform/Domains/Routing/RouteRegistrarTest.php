@@ -26,12 +26,12 @@ class RouteRegistrarTest extends TestCase
 
         $getRoutes = $this->router()->getRoutes()->get('GET');
 
-        $this->assertEquals('WebController@foo', $getRoutes['web/foo']->getAction('controller'));
-        $this->assertEquals('WebController@bar', $getRoutes['web/bar']->getAction('controller'));
+        $this->assertRouteController('WebController@foo', $getRoutes['web/foo']);
+        $this->assertRouteController('WebController@bar', $getRoutes['web/bar']);
         $this->assertEquals('web.bar', $getRoutes['web/bar']->getName());
 
         $postRoutes = $this->router()->getRoutes()->get('POST');
-        $this->assertEquals('WebController@postFoo', $postRoutes['web/foo']->getAction('controller'));
+        $this->assertRouteController('WebController@postFoo', $postRoutes['web/foo']);
 
         $patchRoutes = $this->router()->getRoutes()->get('PATCH');
         $this->assertInstanceOf(\Closure::class, $patchRoutes['web/bar']->getAction('uses'));
@@ -49,13 +49,10 @@ class RouteRegistrarTest extends TestCase
         $registrar = $this->app->make(RouteRegistrar::class);
         $registrar->setPort($this->getPort('local'))->register(['data' => 'WebController@foo']);
 
-
         $getRoutes = $this->router()->getRoutes()->get('GET');
 
         $this->assertNotNull($route = $getRoutes['localhostdata'] ?? null, 'Route not found');
         $this->assertEquals('local', $route->getAction('port'));
-
-
 //        dd($getRoutes['127.0.0.1:8000data']);
 
     }
@@ -91,16 +88,23 @@ class RouteRegistrarTest extends TestCase
     /** @test */
     function registers_global_routes()
     {
+        // set up 3 sample ports
         $this->setUpPorts();
 
         Route::get('key/kol', function () { return 'ok'; });
 
         $registrar = $this->app->make(RouteRegistrar::class);
-        $registrar->globally()->register(['bar/foo' => 'BarController@foo']);
-        $registrar->globally()->register(['foo/bar' => 'FooController@bar']);
+        $routeList = $registrar->globally()->registerRoute('bar/foo', 'BarController@foo');
+        $this->assertEquals(4, count($routeList));
+
+        $routeList = $registrar->globally()->registerRoute('foo/bar', 'FooController@bar');
+        $this->assertEquals(8, count($routeList));
 
         $routes = $this->router()->getRoutes()->get('GET');
 
+
+        $this->assertNotNull($routes['key/kol'])
+        ;
         $this->assertNotNull($routes['bar/foo']);
         $this->assertNotNull($routes['foo/bar']);
 
@@ -129,6 +133,11 @@ class RouteRegistrarTest extends TestCase
         $routes = $registrar->registerRoute('foo', 'WebController@foo');
 
         $this->assertEquals(['a', 'b', 'c'], $routes->first()->getAction('middleware'));
+    }
+
+    protected function assertRouteController($controller, $route)
+    {
+        $this->assertEquals($controller, $route->getAction('controller'));
     }
 
     /**

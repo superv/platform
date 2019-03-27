@@ -57,7 +57,8 @@ class Port
 
     public function hostname()
     {
-        return $this->hostname ?? sv_config('hostname');
+        return $this->hostname;
+//        return $this->hostname ?? sv_config('hostname');
     }
 
     public function url()
