@@ -24,13 +24,13 @@ class MigrateCommandTest extends TestCase
         $migrateCommand->setLaravel($this->app);
 
 
-        Scopes::register('test-scope', __DIR__ . '/../migrations/baz');
+        Scopes::register('test-addon', __DIR__ . '/../migrations/baz');
 
         $migrator->shouldReceive('repositoryExists')->once()->andReturn(true);
-        $migrator->shouldReceive('setScope')->with('test-scope')->once();
+        $migrator->shouldReceive('setAddon')->with('test-addon')->once();
         $migrator->shouldReceive('setOutput')->once()->andReturnSelf();
 
-        $this->runCommand($migrateCommand, ['--scope' => 'test-scope']);
+        $this->runCommand($migrateCommand, ['--addon' => 'test-addon']);
     }
 
     /** @test */
@@ -38,12 +38,12 @@ class MigrateCommandTest extends TestCase
     {
         Scopes::register('superv.addons.sample', base_path('tests/Platform/__fixtures__/sample-addon/database/migrations'));
 
-        $this->artisan('migrate', ['--scope' => 'superv.addons.sample']);
+        $this->artisan('migrate', ['--addon' => 'superv.addons.sample']);
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_addon_foo_migration',
-                                                'scope'     => 'superv.addons.sample']);
+                                                'addon'     => 'superv.addons.sample']);
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200100_addon_bar_migration',
-                                                'scope'     => 'superv.addons.sample']);
+                                                'addon'     => 'superv.addons.sample']);
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_addon_baz_migration',
-                                                'scope'     => 'superv.addons.sample']);
+                                                'addon'     => 'superv.addons.sample']);
     }
 }

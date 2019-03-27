@@ -130,9 +130,9 @@ class InstallSuperV
         if (! SchemaBuilder::hasTable('migrations')) {
             Artisan::call('migrate', ['--force' => true]);
         }
-        if (! SchemaBuilder::hasColumn('migrations', 'scope')) {
+        if (! SchemaBuilder::hasColumn('migrations', 'addon')) {
             Schema::table('migrations', function (Blueprint $table) {
-                $table->string('scope')->nullable();
+                $table->string('addon')->nullable();
             });
         }
         $this->setEnv('SV_INSTALLED=true');
@@ -140,6 +140,6 @@ class InstallSuperV
 
         $platformServiceProvider->register();
 
-        Artisan::call('migrate', ['--scope' => 'platform', '--force' => true]);
+        Artisan::call('migrate', ['--addon' => 'platform', '--force' => true]);
     }
 }

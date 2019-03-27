@@ -231,7 +231,7 @@ class Installer
     {
         $this->console->call(
             'migrate',
-            ['--scope' => $this->addon->slug(), '--force' => true],
+            ['--addon' => $this->addon->slug(), '--force' => true],
             $this->command ? $this->command->getOutput() : null
         );
     }

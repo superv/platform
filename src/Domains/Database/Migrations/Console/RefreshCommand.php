@@ -8,9 +8,9 @@ class RefreshCommand extends \Illuminate\Database\Console\Migrations\RefreshComm
 {
     public function call($command, array $arguments = [])
     {
-        if ($this->option('scope')) {
+        if ($this->option('addon')) {
             if (in_array($command, ['migrate', 'migrate:rollback', 'migrate:reset'])) {
-                array_set($arguments, '--scope', $this->option('scope'));
+                array_set($arguments, '--addon', $this->option('addon'));
             }
         }
 
@@ -22,7 +22,7 @@ class RefreshCommand extends \Illuminate\Database\Console\Migrations\RefreshComm
         return array_merge(
             parent::getOptions(),
             [
-                ['scope', null, InputOption::VALUE_OPTIONAL, 'The scope to rollback for.'],
+                ['addon', null, InputOption::VALUE_OPTIONAL, 'The scope to rollback for.'],
             ]
         );
     }

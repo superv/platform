@@ -6,7 +6,7 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
 {
     protected $migration;
 
-    protected $scope;
+    protected $addon;
 
     public function getAll()
     {
@@ -46,7 +46,7 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
 
 //        $schema = $this->getConnection()->getSchemaBuilder();
 //        $schema->table($this->table, function ($table) {
-//            $table->string('scope')->nullable();
+//            $table->string('addon')->nullable();
 //        });
     }
 
@@ -58,8 +58,8 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
         ];
 
         if ($this->migration) {
-            if ($this->scope) {
-                array_set($record, 'scope', $this->scope);
+            if ($this->addon) {
+                array_set($record, 'addon', $this->addon);
             }
         }
 
@@ -85,11 +85,11 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
     }
 
     /**
-     * @param mixed $scope
+     * @param mixed $addon
      */
-    public function setScope($scope)
+    public function setAddon($addon)
     {
-        $this->scope = $scope;
+        $this->addon = $addon;
 
         return $this;
     }
@@ -100,8 +100,8 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
      */
     protected function filterScope($query)
     {
-        if ($this->scope) {
-            $query->where('scope', $this->scope);
+        if ($this->addon) {
+            $query->where('addon', $this->addon);
         }
 
         return $query;

@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Database\Migrations;
 
 class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
 {
-    protected $scope;
+    protected $addon;
 
     public function stubPath()
     {
@@ -15,18 +15,18 @@ class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
     {
         $stub = parent::populateStub($name, $stub, $table);
 
-        $scope = $this->scope ? "protected \$scope = '{$this->scope}';" : "";
+        $addon = $this->addon ? "protected \$addon = '{$this->addon}';" : "";
 
-        return str_replace('{scope}', $scope, $stub);
+        return str_replace('{addon}', $addon, $stub);
     }
 
     /**
-     * @param mixed $scope
+     * @param mixed $addon
      * @return MigrationCreator
      */
-    public function setScope($scope)
+    public function setAddon($addon)
     {
-        $this->scope = $scope;
+        $this->addon = $addon;
 
         return $this;
     }

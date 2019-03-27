@@ -20,15 +20,15 @@ class CreateResource
 
     public function handle(TableCreatingEvent $event)
     {
-        if (! $event->scope) {
+        if (! $event->addon) {
             return;
         }
 
-        $this->addon = $event->scope;
+        $this->addon = $event->addon;
         $this->table = $event->table;
         $this->blueprint = $event->resourceBlueprint;
 
-        $this->createResourceEntry($this->blueprint->config($this->table, $event->columns), $event->scope);
+        $this->createResourceEntry($this->blueprint->config($this->table, $event->columns), $event->addon);
 
         $this->createNavSections();
     }

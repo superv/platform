@@ -15,6 +15,6 @@ class AddonRunMigrationCommand extends Command
             $addon = $this->choice('Addon ?', AddonModel::enabled()->latest()->get()->pluck('slug')->all());
         }
 
-        $this->call('migrate', ['--scope' => $addon]);
+        $this->call('migrate', ['--addon' => $addon]);
     }
 }

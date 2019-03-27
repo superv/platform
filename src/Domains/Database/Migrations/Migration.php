@@ -5,18 +5,18 @@ namespace SuperV\Platform\Domains\Database\Migrations;
 use Closure;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 
-class Migration extends \Illuminate\Database\Migrations\Migration implements InScope
+class Migration extends \Illuminate\Database\Migrations\Migration implements AddonMigration
 {
-    protected $scope;
+    protected $addon;
 
-    public function getScope()
+    public function getAddon()
     {
-        return $this->scope;
+        return $this->addon;
     }
 
-    public function setScope($scope)
+    public function setAddon($addon)
     {
-        $this->scope = $scope;
+        $this->addon = $addon;
     }
 
     public function schema()

@@ -32,13 +32,13 @@ class RefreshCommandTest
         );
 
         $rollbackCommand->shouldReceive('run')->with(
-            $this->makeInputMatcher("--step=2 --scope=test-scope 'migrate:rollback'"), m::any()
+            $this->makeInputMatcher("--step=2 --addon=test-addon 'migrate:rollback'"), m::any()
         );
         $migrateCommand->shouldReceive('run')->with(
-            $this->makeInputMatcher('--database --path --realpath --force --scope=test-scope migrate'), m::any()
+            $this->makeInputMatcher('--database --path --realpath --force --addon=test-addon migrate'), m::any()
         );
 
-        $this->runCommand($command, ['--step' => 2, '--force', '--scope' => 'test-scope']);
+        $this->runCommand($command, ['--step' => 2, '--force', '--addon' => 'test-addon']);
     }
 
     function refresh_command_calls_other_commands_with_proper_arguments_without_step()
@@ -56,13 +56,13 @@ class RefreshCommandTest
                 ->andReturn($migrateCommand = m::mock(MigrateCommand::class));
 
         $resetCommand->shouldReceive('run')->with(
-            $this->makeInputMatcher("--database --path --realpath --force --scope=test-scope 'migrate:reset'"), m::any()
+            $this->makeInputMatcher("--database --path --realpath --force --addon=test-addon 'migrate:reset'"), m::any()
         );
         $migrateCommand->shouldReceive('run')->with(
-            $this->makeInputMatcher('--database --path --realpath --force --scope=test-scope migrate'), m::any()
+            $this->makeInputMatcher('--database --path --realpath --force --addon=test-addon migrate'), m::any()
         );
 
-        $this->runCommand($command, ['--scope' => 'test-scope']);
+        $this->runCommand($command, ['--addon' => 'test-addon']);
     }
 }
 

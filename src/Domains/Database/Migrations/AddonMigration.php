@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database\Migrations;
 
-interface InScope
+interface AddonMigration
 {
-    public function setScope($scope);
+    public function setAddon($addon);
 }

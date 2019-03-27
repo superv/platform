@@ -15,7 +15,7 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
         {--create= : The table to be created.}
         {--table= : The table to migrate.}
         {--path= : The location where the migration file should be created.}
-        {--scope= : The migration scope.}
+        {--addon= : The addon of the migration.}
         ';
 
     /** @var \SuperV\Platform\Domains\Database\Migrations\MigrationCreator */
@@ -28,8 +28,8 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
 
     protected function getMigrationPath()
     {
-        if ($this->option('scope')) {
-            if ($path = Scopes::path($this->option('scope'))) {
+        if ($this->option('addon')) {
+            if ($path = Scopes::path($this->option('addon'))) {
                 return $path;
             }
         }

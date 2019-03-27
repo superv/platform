@@ -30,13 +30,13 @@ class AddonMakeMigrationCommand extends Command
             $arguments = [
                 'name'     => "create_{$table}_table".$name,
                 '--create' => $table,
-                '--scope'  => $addon,
+                '--addon'  => $addon,
             ];
         } else {
             $arguments = [
                 'name'    => "alter_{$table}_table".$name,
                 '--table' => $table,
-                '--scope' => $addon,
+                '--addon' => $addon,
             ];
         }
 
