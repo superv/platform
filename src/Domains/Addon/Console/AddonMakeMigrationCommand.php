@@ -11,9 +11,9 @@ class AddonMakeMigrationCommand extends Command
 
     public function handle()
     {
-        $mode = $this->choice('Create or Alter?', ['0' => 'Create', '1' => 'Alter'], 0);
-        $addon = $this->choice('Addon ?', AddonModel::enabled()->latest()->get()->pluck('slug')->all());
-        if ($mode === 'Alter') {
+        $mode = $this->choice('Will we create a table or update one?', ['0' => 'Create', '1' => 'Update'], 0);
+        $addon = $this->choice('Select Addon', AddonModel::enabled()->latest()->get()->pluck('slug')->all());
+        if ($mode === 'Update') {
             $allTables = [];
             foreach (\DB::select('SHOW tables') as $key => $table) {
                 $allTables[] = head($table);
