@@ -93,7 +93,9 @@ final class Resource implements
 
     protected $filters = [];
 
-    /** @var \SuperV\Platform\Domains\Resource\Resource\IndexFields */
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Resource\IndexFields
+     */
     protected $indexFields;
 
     protected $onCreatedCallbacks = [];
@@ -272,6 +274,11 @@ final class Resource implements
     public function getResourceKey()
     {
         return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
+    }
+
+    public function getKeyName()
+    {
+        return $this->getConfigValue('key_name', str_singular($this->getHandle()));
     }
 
     public function route($route, ?EntryContract $entry = null, array $params = [])

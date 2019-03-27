@@ -10,6 +10,7 @@ use Illuminate\Support\Fluent;
  *
  * @method ResourceConfig model($model)
  * @method ResourceConfig nav($nav)
+ * @method ResourceConfig keyNam($name)
  * @method ResourceConfig resourceKey($key)
  * @method ResourceConfig entryLabel($entryLabel)
  */

@@ -27,7 +27,11 @@ trait ResourceTestHelpers
         return new Blueprints;
     }
 
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    /**
+     * @param               $table
+     * @param \Closure|null $callback
+     * @return \SuperV\Platform\Domains\Resource\Resource
+     */
     protected function create($table, Closure $callback = null)
     {
         if ($table instanceof Closure) {
@@ -37,6 +41,17 @@ trait ResourceTestHelpers
         $table = $table ?? Str::random(4);
 
         Schema::create($table, $callback);
+
+        return ResourceFactory::make($table);
+    }
+
+    /**
+     * @param \Closure|null $callback
+     * @return \SuperV\Platform\Domains\Resource\Resource
+     */
+    protected function randomTable(Closure $callback = null)
+    {
+        Schema::create($table = Str::random(8), $callback);
 
         return ResourceFactory::make($table);
     }

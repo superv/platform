@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource;
 
+use Closure;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -55,6 +56,21 @@ class ResourceConfigTest extends ResourceTestCase
         });
 
         $this->assertEquals('user', $res->getResourceKey());
+    }
+
+    function test__saves_primary_key()
+    {
+        $assertKeySaved = function (Closure $callback) {
+            $this->assertEquals('entry_id', $this->randomTable($callback)->getKeyName());
+        };
+
+        $assertKeySaved(function (Blueprint $table) { $table->increments('entry_id'); });
+        $assertKeySaved(function (Blueprint $table) { $table->id('entry_id'); });
+        $assertKeySaved(function (Blueprint $table) { $table->integer('entry_id')->primary(); });
+        $assertKeySaved(function (Blueprint $table, ResourceConfig $resource) {
+            $resource->keyName('entry_id');
+            $table->integer('entry_id');
+        });
     }
 
     function test__builds_label_from_table_name()
