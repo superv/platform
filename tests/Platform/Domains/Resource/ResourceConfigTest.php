@@ -71,6 +71,12 @@ class ResourceConfigTest extends ResourceTestCase
             $resource->keyName('entry_id');
             $table->integer('entry_id');
         });
+
+        $resource = $this->randomTable(function (Blueprint $table) {
+            $table->increments('id');
+        });
+        $this->assertEquals('id', $resource->getKeyName());
+
     }
 
     function test__builds_label_from_table_name()

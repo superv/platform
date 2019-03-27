@@ -10,7 +10,7 @@ use Illuminate\Support\Fluent;
  *
  * @method ResourceConfig model($model)
  * @method ResourceConfig nav($nav)
- * @method ResourceConfig keyNam($name)
+ * @method ResourceConfig keyName($name)
  * @method ResourceConfig resourceKey($key)
  * @method ResourceConfig entryLabel($entryLabel)
  */
@@ -61,7 +61,6 @@ class ResourceConfig extends Fluent
 
     public function guessEntryLabel(Collection $columns): void
     {
-//        $columns = collect($columns)->keyBy('name');
         if ($columns->has('name')) {
             $this->entryLabel('{name}');
         } elseif ($columns->has('title')) {
@@ -69,7 +68,7 @@ class ResourceConfig extends Fluent
         } elseif ($firstStringColumn = $columns->firstWhere('type', 'string')) {
             $this->entryLabel('{'.$firstStringColumn->name.'}');
         } else {
-            $this->entryLabel(str_singular($this->label).' #{id}');
+            $this->entryLabel(str_singular($this->label).' #{'.$this->keyName.'}');
         }
     }
 
