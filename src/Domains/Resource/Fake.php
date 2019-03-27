@@ -104,6 +104,10 @@ class Fake
             return $fake;
         }
 
+        if ($fieldName === 'slug') {
+            return str_slug($this->faker->unique()->name, '_');
+        }
+
         if (ends_with($fieldName, '_name') || $fieldName === 'name') {
             return $this->faker->name;
         }

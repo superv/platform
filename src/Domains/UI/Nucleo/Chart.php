@@ -36,14 +36,15 @@ class Chart
         return $this;
     }
 
-    public function get($group = 'date', $callback = null)
+    public function get($query, $group = 'date', $callback = null)
     {
         return [
             'component' => 'SvChart',
             'props'     => [
                 'title' => $this->title,
                 'type'  => $this->type,
-                'data'  => (new ChartData())->get($group, $callback),
+                'data'  => (new ChartData($query))->get($group, $callback),
+                'chart-options' => ['legend' => false]
             ],
             'class'     => $this->htmlClass,
         ];

@@ -2,22 +2,29 @@
 
 namespace SuperV\Platform\Domains\UI\Nucleo;
 
-use Lakcom\Modules\Core\Domains\Client;
+use Illuminate\Database\Eloquent\Builder;
 
 class ChartData
 {
-    /** @var string */
-    protected $model = Client::class;
+    /**
+     * @var Builder
+     */
+    protected $query;
 
     protected $labels = [];
 
     protected $data = [];
 
-    protected $label = 'Clients';
+    protected $label = 'Labels';
 
     protected $backgroundColor = 'rgba(13,88,145, 0.2)';
 
     protected $borderColor = 'rgba(13,88,145,1)';
+
+    public function __construct(Builder $query)
+    {
+        $this->query = $query;
+    }
 
     public function get($group, $callback = null)
     {
@@ -34,6 +41,7 @@ class ChartData
                     'label'           => $this->label,
                     'data'            => $this->data,
                     'backgroundColor' => $this->backgroundColor,
+                    'strokeColor' => 'rgba(132,88,145,1)',
                     'borderColor'     => $this->borderColor,
                     'borderWidth'     => 2,
                 ],
@@ -41,34 +49,34 @@ class ChartData
         ];
     }
 
-    public function byCustom($column, $callback = null)
+    public function byCustom($group, $callback = null)
     {
+        if (! is_array($group)) {
+            $titleColumn = $valueColumn = $group;
+        } else {
+            $titleColumn = $group['title'];
+            $valueColumn = $group['value'];
+        }
         /** @var \Illuminate\Database\Eloquent\Builder $query */
-        $query = $this->model::query();
+        $query = $this->newQuery();
 //        $query->where('created_at', '>=', \Carbon\Carbon::now()->subMonth());
         $query
             ->select([
                 \DB::raw('COUNT(*) as "count"'),
-                $column,
+                $valueColumn,
             ]);
 
         if ($callback instanceof \Closure) {
             $callback($query);
-        } else {
-
         }
 
-        $dataset = $query->groupBy($column)
+        $dataset = $query->groupBy($valueColumn)
                          ->get()
-                         ->pluck('count', $column)
+                         ->pluck('count', $titleColumn)
                          ->all();
 
         $this->data = array_values($dataset);
         $this->labels = array_keys($dataset);
-
-//        $this->backgroundColor = array_map(function ($data) {
-//            return $this->rand_color();
-//        }, $this->data);
 
         $this->backgroundColor = array_slice($this->color(), 0, count($this->data));
         $this->borderColor = '#FFFFFF';
@@ -81,15 +89,12 @@ class ChartData
 
     public function byDate()
     {
-        /** @var \Illuminate\Database\Eloquent\Builder $query */
-        $query = $this->model::query();
-        $dataset = $query->where('created_at', '>=', \Carbon\Carbon::now()->subMonth())
+        $query = $this->newQuery();
+        $dataset = $query->selectRaw('DATE(created_at) as date')
+            ->selectRaw('COUNT(*) as "count"')
+                         ->where('created_at', '>=', \Carbon\Carbon::now()->subMonth())
                          ->groupBy('date')
                          ->orderBy('date', 'ASC')
-                         ->get([
-                             \DB::raw('DATE(created_at) as date'),
-                             \DB::raw('COUNT(*) as "count"'),
-                         ])
                          ->pluck('count', 'date')
                          ->all();
 
@@ -134,5 +139,10 @@ class ChartData
             '#329262',
             '#5574A6',
             '#3B3EAC',];
+    }
+
+    protected function newQuery(): Builder
+    {
+        return $this->query;
     }
 }

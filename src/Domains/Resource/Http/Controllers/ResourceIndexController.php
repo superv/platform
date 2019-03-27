@@ -7,6 +7,8 @@ use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\RequiresEntry;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
+use SuperV\Platform\Domains\UI\Nucleo\Chart;
+use SuperV\Platform\Domains\UI\Nucleo\PieChart;
 use SuperV\Platform\Domains\UI\Page\ResourcePage;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Http\Controllers\BaseApiController;
@@ -35,12 +37,13 @@ class ResourceIndexController extends BaseApiController
 
         $page = ResourcePage::make($resource->getLabel());
         $page->setResource($resource);
-        $page->addBlock(sv_loader($resource->route('index.table')));
-        $page->addAction(CreateEntryAction::make('New '.$resource->getSingularLabel()));
 
         if ($callback = $resource->getCallback('index.page')) {
             app()->call($callback, ['page' => $page]);
         }
+
+        $page->addBlock(sv_loader($resource->route('index.table')));
+        $page->addAction(CreateEntryAction::make('New '.$resource->getSingularLabel()));
 
         return $page->build(['res' => $resource->toArray()]);
     }
@@ -72,6 +75,7 @@ class ResourceIndexController extends BaseApiController
             if ($callback = $resource->getCallback('index.data')) {
                 app()->call($callback, ['table' => $table]);
             }
+
             return $table->setRequest($this->request)->build();
         }
 
@@ -97,4 +101,5 @@ class ResourceIndexController extends BaseApiController
     {
         return $this->resolveTableAction()->handleRequest($this->request);
     }
+
 }
