@@ -103,10 +103,9 @@ class RouteRegistrarTest extends TestCase
         $routes = $this->router()->getRoutes()->get('GET');
 
 
-        $this->assertNotNull($routes['key/kol'])
-        ;
-        $this->assertNotNull($routes['bar/foo']);
-        $this->assertNotNull($routes['foo/bar']);
+        $this->assertNotNull($routes['key/kol']);
+        $this->assertNotNull($routes[sv_config('hostname').'bar/foo']);
+        $this->assertNotNull($routes[sv_config('hostname').'foo/bar']);
 
         $this->assertNotNull($routes['superv.iobar/foo']);
         $this->assertNotNull($routes['superv.iofoo/bar']);
