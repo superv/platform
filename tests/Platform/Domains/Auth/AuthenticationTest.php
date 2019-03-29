@@ -99,13 +99,15 @@ class AuthenticationTest extends TestCase
         $admin = $this->makeUser('admin@superv.io');
         $admin->assign('admin');
 
-        $this->login('user@superv.io', 'secret');
+        $response = $this->login('user@superv.io', 'secret');
+        $response->assertRedirect();
 
         $this->assertAuthenticatedAs($user, 'sv-api');
 
         Auth::logout();
 
-        $this->login('admin@superv.io', 'secret');
+        $response =  $this->login('admin@superv.io', 'secret');
+        $response->assertRedirect();
 
         $this->assertAuthenticatedAs($admin, 'sv-api');
     }

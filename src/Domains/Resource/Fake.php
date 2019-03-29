@@ -140,7 +140,7 @@ class Fake
             return $this->faker->randomFloat(2, 0.5, 100);
         }
 
-        if ($fieldName === 'quantity' || $fieldName === 'qty' || $fieldName === 'count') {
+        if (ends_with($fieldName, '_count')  || $fieldName === 'quantity' || $fieldName === 'qty' || $fieldName === 'count') {
             return $this->faker->randomNumber(2);
         }
 

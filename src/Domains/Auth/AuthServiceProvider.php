@@ -26,10 +26,6 @@ class AuthServiceProvider extends BaseServiceProvider
 
         $this->registerListeners([
             PortDetectedEvent::class => function (PortDetectedEvent $event) {
-//                if ($model = $event->port->model()) {
-//                    config()->set('superv.auth.user.model', $model);
-//                }
-
                 if ($guard = $event->port->guard()) {
                     config()->set('auth.defaults.guard', $guard);
                 }
@@ -39,36 +35,17 @@ class AuthServiceProvider extends BaseServiceProvider
 
     public function boot()
     {
-        Auth::provider('platform', function ($app) {
-            return new PlatformUserProvider($app['hash'], config('superv.auth.user.model'));
-        });
+        $this->registerUserProvider();
 
         $this->aliasMiddleware();
 
-        config()->set('auth.providers.platform', [
-            'driver' => 'platform',
-            'model'  => config('superv.auth.user.model'),
-        ]);
+        $this->registerAuthGuard();
 
-//        config()->set('auth.defaults.guard', 'platform');
+//        Collection::macro('guard', function () {
+//            $this->items = sv_guard($this->items);
 //
-//        config()->set('auth.guards.platform', [
-//            'driver'   => 'session',
-//            'provider' => 'platform',
-//        ]);
-
-        config()->set('auth.guards.sv-api', [
-            'driver'   => 'superv-jwt',
-            'provider' => 'platform',
-        ]);
-
-        $this->extendAuthGuard();
-
-        Collection::macro('guard', function () {
-            $this->items = sv_guard($this->items);
-
-            return $this;
-        });
+//            return $this;
+//        });
     }
 
     /**
@@ -85,11 +62,16 @@ class AuthServiceProvider extends BaseServiceProvider
         $router->$method('sv.auth', PlatformAuthenticate::class);
     }
 
-    /**
-     * Extend default JWT guard for port-base token authentication
-     */
-    protected function extendAuthGuard()
+    protected function registerAuthGuard()
     {
+        config()->set('auth.guards.sv-api', [
+            'driver'   => 'superv-jwt',
+            'provider' => 'platform',
+        ]);
+
+        /**
+         * Extend default JWT guard for port-base token authentication
+         */
         $this->app['auth']->extend('superv-jwt', function ($app, $name, array $config) {
             $guard = new JWTGuard(
                 $app['tymon.jwt'],
@@ -101,5 +83,17 @@ class AuthServiceProvider extends BaseServiceProvider
 
             return $guard;
         });
+    }
+
+    protected function registerUserProvider(): void
+    {
+        Auth::provider('platform', function ($app) {
+            return new PlatformUserProvider($app['hash'], config('superv.auth.user.model'));
+        });
+
+        config()->set('auth.providers.platform', [
+            'driver' => 'platform',
+            'model'  => config('superv.auth.user.model'),
+        ]);
     }
 }
