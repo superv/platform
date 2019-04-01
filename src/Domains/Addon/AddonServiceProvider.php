@@ -29,13 +29,7 @@ class AddonServiceProvider extends BaseServiceProvider
     {
         parent::register();
 
-        $this->addViewNamespaces([
-            $this->addon->slug() =>
-                [
-                    base_path($this->addon->resourcePath('views')),
-                    resource_path('vendor/superv/'.$this->addon->shortSlug().'/views'),
-                ],
-        ]);
+        $this->registerViewNamespaces();
 
         if (file_exists($file = $this->addon->realPath('config/service/listeners.php'))) {
             $this->registerListeners((array)require($file));
@@ -50,7 +44,20 @@ class AddonServiceProvider extends BaseServiceProvider
 
     public function boot()
     {
-        $path = $this->addon->realPath('routes');
-        app(Router::class)->loadFromPath($path);
+        app(Router::class)->loadFromPath($this->addon->realPath('routes'));
+
+        $this->loadTranslationsFrom($this->addon->realPath('resources/lang'), $this->addon()->slug());
+
+    }
+
+    protected function registerViewNamespaces(): void
+    {
+        $this->addViewNamespaces([
+            $this->addon->slug() =>
+                [
+                    base_path($this->addon->resourcePath('views')),
+                    resource_path('vendor/superv/'.$this->addon->shortSlug().'/views'),
+                ],
+        ]);
     }
 }

@@ -24,7 +24,6 @@ class Field implements FieldContract
     use Hydratable;
     use FiresCallbacks;
     use HasConfig;
-
     use FieldFlags;
 
     /**
@@ -88,8 +87,6 @@ class Field implements FieldContract
 
     public function __construct(array $attributes = [])
     {
-//        $this->flags = array_pull($attributes, 'config.flags', []);
-
         $this->hydrate($attributes);
 
         $this->uuid = $this->uuid ?? uuid();
@@ -106,6 +103,10 @@ class Field implements FieldContract
 
     public function getLabel(): string
     {
+//        if ($this->resource) {
+//            return trans($this->resource->getAddon().'::'.$this->resource->getHandle().'.'.$this->name,[]);
+//        }
+
         return $this->label ?? str_unslug($this->name);
     }
 
