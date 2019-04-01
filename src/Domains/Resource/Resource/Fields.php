@@ -24,7 +24,7 @@ class Fields
     public function __construct(Resource $resource, $fields)
     {
         $this->resource = $resource;
-        $this->fields = $fields instanceof Closure ? $fields() : $fields;
+        $this->fields = $fields instanceof Closure ? $fields($resource) : $fields;
     }
 
     public function getAll()

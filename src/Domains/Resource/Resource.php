@@ -55,6 +55,11 @@ final class Resource implements
     protected $uuid;
 
     /**
+     * @var string
+     */
+    protected $addon;
+
+    /**
      * @var \SuperV\Platform\Domains\Resource\Resource\Fields
      */
     protected $fields;
@@ -422,6 +427,14 @@ final class Resource implements
     public function isSortable(): bool
     {
         return $this->sortable;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddon(): string
+    {
+        return $this->addon;
     }
 
     public function uuid(): string

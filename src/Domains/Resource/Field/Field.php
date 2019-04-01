@@ -245,11 +245,12 @@ class Field implements FieldContract
         return $type;
     }
 
-    public function removeWatcher()
+    /**
+     * @param \SuperV\Platform\Domains\Resource\Resource $resource
+     */
+    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void
     {
-        $this->watcher = null;
-
-        return $this;
+        $this->resource = $resource;
     }
 
     public function uuid(): string

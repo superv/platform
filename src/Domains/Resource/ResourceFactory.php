@@ -37,10 +37,12 @@ class ResourceFactory
 
     protected function getFieldsProvider()
     {
-        return function () {
+        return function (Resource $resource) {
             $fields = $this->model->getFields()
-                                  ->map(function (FieldModel $fieldEntry) {
+                                  ->map(function (FieldModel $fieldEntry) use ($resource) {
                                       $field = FieldFactory::createFromEntry($fieldEntry);
+
+                                      $field->setResource($resource);
 
                                       return $field;
                                   });
