@@ -132,7 +132,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         // Boot all addons
         //
-        Platform::boot();
+        $this->platform->boot();
 
         // Register routes needed by platform
         //
