@@ -49,7 +49,7 @@ class ResourceFormController extends BaseApiController
                     ->make();
 
         if ($callback = $resource->getCallback('editing')) {
-            app()->call($callback, ['form' => $form]);
+            app()->call($callback, ['form' => $form, 'entry' => $this->entry]);
         }
 
         return $form->makeComponent();
