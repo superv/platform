@@ -55,6 +55,10 @@ class Installer
     {
         $this->ensureNotInstalledBefore();
 
+        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $this->slug)) {
+            throw new \Exception('Slug should be snake case and formatted like: {vendor}.{type}.{name}');
+        }
+
         if ($this->locator) {
             $this->path = $this->locator->locate($this->slug);
         }
@@ -72,6 +76,26 @@ class Installer
         AddonInstalledEvent::dispatch($this->addon);
 
         return $this;
+    }
+
+    /**
+     * Validate addon parameters
+     */
+    public function validate()
+    {
+        $realPath = $this->realPath();
+
+        if (! $realPath) {
+            throw new \InvalidArgumentException("Path can not be empty");
+        }
+
+        if (! file_exists($realPath)) {
+            throw new PathNotFoundException("Path does not exist: [{$realPath}]");
+        }
+
+        if (! $this->composer('type')) {
+            throw new \Exception('Composer type not provided in composer.json');
+        }
     }
 
     public function seed()
@@ -136,19 +160,6 @@ class Installer
     }
 
     /**
-     * Set addon slug
-     *
-     * @param string $slug
-     * @return Installer
-     */
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    /**
      * Set addon path
      *
      * @param string $path
@@ -173,28 +184,22 @@ class Installer
         return $this;
     }
 
-    /**
-     * Validate addon parameters
-     */
-    protected function validate()
+    public function getSlug()
     {
-        $realPath = $this->realPath();
+        return $this->slug;
+    }
 
-        if (! $realPath) {
-            throw new \InvalidArgumentException("Path can not be empty");
-        }
+    /**
+     * Set addon slug
+     *
+     * @param string $slug
+     * @return Installer
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
 
-        if (! file_exists($realPath)) {
-            throw new PathNotFoundException("Path does not exist: [{$realPath}]");
-        }
-
-        if (! $this->composer('type')) {
-            throw new \Exception('Composer type not provided in composer.json');
-        }
-
-        if (! str_is('*.*.*', $this->slug)) {
-            throw new \Exception('Slug should be snake case and formatted like: {vendor}.{type}.{name}');
-        }
+        return $this;
     }
 
     /**
@@ -267,10 +272,5 @@ class Installer
         }
 
         return $key ? array_get($this->composerJson, $key) : $this->composerJson;
-    }
-
-    public function getSlug()
-    {
-        return $this->slug;
     }
 }

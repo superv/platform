@@ -18,13 +18,9 @@ class Locator implements AddonLocator
 
     public function locate(string $slug)
     {
-        if (! str_is('*.*.*', $slug)) {
-            throw new \Exception('Slug should be snake case and formatted like: {vendor}.{type}.{name}');
-        }
-
         list($vendor, $type, $name) = array_map(
             function ($value) {
-                return str_slug(strtolower($value), '_');
+                return strtolower($value);
             },
             explode('.', $slug)
         );
