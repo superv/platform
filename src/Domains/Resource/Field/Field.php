@@ -254,6 +254,14 @@ class Field implements FieldContract
         $this->resource = $resource;
     }
 
+    /**
+     * @return \SuperV\Platform\Domains\Resource\Resource
+     */
+    public function getResource(): \SuperV\Platform\Domains\Resource\Resource
+    {
+        return $this->resource;
+    }
+
     public function uuid(): string
     {
         return $this->uuid;

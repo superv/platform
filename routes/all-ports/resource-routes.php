@@ -1,5 +1,6 @@
 <?php
 
+use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceFormController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceIndexController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceViewController;
@@ -38,13 +39,18 @@ return [
         'uses' => ResourceIndexController::at('restore'),
     ],
 
-    'sv/res/{resource}/{id}' => [
+    'GET@'.'sv/res/{resource}/{id}' => [
         'as'    => 'resource.view.page',
         'uses'  => ResourceViewController::at('page'),
         'where' => ['id' => '[0-9]*'],
     ],
 
-    'sv/res/{resource}/{id}/view' => [
+    'ANY@'.'sv/res/{resource}/fields/{field?}/{rpc?}' => [
+        'as'    => 'resource.fields',
+        'uses'  => ResourceController::at('fields'),
+    ],
+
+    'GET@'.'sv/res/{resource}/{id}/view' => [
         'as'    => 'resource.view',
         'uses'  => ResourceViewController::at('view'),
         'where' => ['id' => '[0-9]*'],

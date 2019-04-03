@@ -12,6 +12,16 @@ interface Field
 {
     public function getName();
 
+    /**
+     * @param \SuperV\Platform\Domains\Resource\Resource $resource
+     */
+    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void;
+
+    /**
+     * @return \SuperV\Platform\Domains\Resource\Resource
+     */
+    public function getResource(): \SuperV\Platform\Domains\Resource\Resource;
+
     public function getColumnName();
 
     public function getLabel(): string;

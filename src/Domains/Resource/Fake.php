@@ -71,7 +71,7 @@ class Fake
 
         if ($relatedResource->count() === 0) {
             if ($relatedResource->getHandle() === $this->resource->getHandle()) {
-                return rand(1, 5); // otherwise causes dead recursionr
+                return rand(1, 5); // otherwise causes dead recursion
             } else {
                 $relatedResource->fake([]);
             }

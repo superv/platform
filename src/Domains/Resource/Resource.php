@@ -289,6 +289,12 @@ final class Resource implements
     public function route($route, ?EntryContract $entry = null, array $params = [])
     {
         $base = 'sv/res/'.$this->getHandle();
+
+
+        if ($route === 'fields') {
+            $params = array_merge($params, ['resource' => $this->getHandle()]);
+            return sv_route('resource.fields', $params);
+        }
         if ($route === 'create') {
             return $base.'/create';
         }
