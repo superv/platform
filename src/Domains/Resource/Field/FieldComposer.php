@@ -38,9 +38,8 @@ class FieldComposer
             'hint'        => $field->getConfigValue('hint'),
             'placeholder' => $field->getPlaceholder(),
             'value'       => $value ?? $field->getValue(),
-            'meta'        => [
-                'on_change_event' => $field->getConfigValue('on_change_event'),
-            ],
+            'meta'        => $field->getConfigValue('meta'),
+
         ]))->setFilterNull(true);
 
         if ($callback = $field->getCallback('form.composing')) {
