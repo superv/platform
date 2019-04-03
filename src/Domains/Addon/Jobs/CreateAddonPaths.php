@@ -35,7 +35,7 @@ class CreateAddonPaths
         return [
             "src",
             "src/Domains",
-            "src/Jobs",
+            "src/Extensions",
             "src/Console",
             "resources",
             "routes",
