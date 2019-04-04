@@ -209,6 +209,27 @@ class Field implements FieldContract
         return new $class($this);
     }
 
+    public function observe(FieldContract $parent, ?EntryContract $entry = null)
+    {
+        $parent->setConfigValue('meta.on_change_event', $parent->getName().':'.$parent->getColumnName().'={value}');
+
+        $this->mergeConfig([
+            'meta' => [
+                'listen_event' => $parent->getName(),
+                'autofetch'    => false,
+            ],
+        ]);
+
+        if ($entry) {
+            $this->mergeConfig([
+                'meta' => [
+                    'query'     => [$parent->getColumnName() => $entry->{$parent->getColumnName()}],
+                    'autofetch' => true,
+                ],
+            ]);
+        }
+    }
+
     public function copyToFilters(array $params = []): FieldContract
     {
         if ($params) {
@@ -246,6 +267,11 @@ class Field implements FieldContract
         return $type;
     }
 
+    public function uuid(): string
+    {
+        return $this->uuid;
+    }
+
     /**
      * @param \SuperV\Platform\Domains\Resource\Resource $resource
      */
@@ -260,11 +286,6 @@ class Field implements FieldContract
     public function getResource(): \SuperV\Platform\Domains\Resource\Resource
     {
         return $this->resource;
-    }
-
-    public function uuid(): string
-    {
-        return $this->uuid;
     }
 
     public function setPresenter(Closure $callback)
