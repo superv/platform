@@ -35,6 +35,10 @@ interface Table
 
     public function isSelectable();
 
+    public function showIdColumn();
+
+    public function shouldShowIdColumn(): bool;
+
     public function composeConfig();
 
     public function build();

@@ -97,40 +97,6 @@ class EntryTable extends Table implements EntryTableContract
         ];
     }
 
-    protected function applyFilters($query)
-    {
-        ApplyFilters::dispatch($this->getFilters(), $query, $this->getRequest());
-    }
-
-    protected function applyOptions($query)
-    {
-        /** @var \Illuminate\Database\Eloquent\Builder $query */
-        $table = $query->getModel()->getTable();
-        $keyName = $query->getModel()->getKeyName();
-
-        if ($orderBy = $this->options->get('order_by')) {
-            if (is_string($orderBy)) {
-                $orderBy = [$orderBy => 'ASC'];
-            }
-            foreach ($orderBy as $column => $direction) {
-                $query->orderBy($table.'.'.$column, $direction);
-            }
-        } else {
-            $query->orderBy($table.'.'.$keyName, 'DESC');
-        }
-    }
-
-    protected function newQuery()
-    {
-        $query = $this->getQuery();
-
-        if ($query instanceof ProvidesQuery) {
-            return $query->newQuery();
-        }
-
-        return $query;
-    }
-
     public function getQuery()
     {
         return $this->query;
@@ -153,6 +119,44 @@ class EntryTable extends Table implements EntryTableContract
         $this->filters = wrap_collect($filters);
 
         return $this;
+    }
+
+    protected function applyFilters($query)
+    {
+        ApplyFilters::dispatch($this->getFilters(), $query, $this->getRequest());
+    }
+
+    protected function applyOptions($query)
+    {
+        /** @var \Illuminate\Database\Eloquent\Builder $query */
+        $table = $query->getModel()->getTable();
+        $keyName = $query->getModel()->getKeyName();
+
+        if ($this->request && $orderBy = $this->request->get('order_by')) {
+            [$column, $direction] = explode(':', $orderBy);
+
+            $query->orderBy($table.'.'.$column, $direction ?? 'ASC');
+        } elseif ($orderBy = $this->options->get('order_by')) {
+            if (is_string($orderBy)) {
+                $orderBy = [$orderBy => 'ASC'];
+            }
+            foreach ($orderBy as $column => $direction) {
+                $query->orderBy($table.'.'.$column, $direction);
+            }
+        } else {
+            $query->orderBy($table.'.'.$keyName, 'DESC');
+        }
+    }
+
+    protected function newQuery()
+    {
+        $query = $this->getQuery();
+
+        if ($query instanceof ProvidesQuery) {
+            return $query->newQuery();
+        }
+
+        return $query;
     }
 
     protected function getRequest()

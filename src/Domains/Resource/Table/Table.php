@@ -35,6 +35,8 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
 
     protected $selectable = true;
 
+    protected $showIdColumn = false;
+
     public function mergeFields($fields)
     {
         $this->mergeFields = $fields;
@@ -72,14 +74,6 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
         return $this;
     }
 
-    protected function copyMergeFields()
-    {
-        return wrap_collect($this->mergeFields)
-            ->map(function (Field $field) {
-                return clone $field;
-            });
-    }
-
     public function compose(Tokens $tokens = null)
     {
         return [
@@ -105,6 +99,19 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
 //            'data' => sv_compose($this->compose(), $this->makeTokens()),
             'data' => $this->compose(),
         ]);
+    }
+
+    public function shouldShowIdColumn(): bool
+    {
+        return $this->showIdColumn;
+    }
+
+    protected function copyMergeFields()
+    {
+        return wrap_collect($this->mergeFields)
+            ->map(function (Field $field) {
+                return clone $field;
+            });
     }
 
     protected function makeTokens(): array
@@ -135,9 +142,7 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
     protected function getRowKeyName()
     {
         return 'id';
-    }
-
-    public function setFields($fields)
+    }    public function setFields($fields)
     {
         $this->fields = $fields;
 
@@ -232,4 +237,11 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
 
         return $this;
     }
+
+    public function showIdColumn()
+    {
+        $this->showIdColumn = true;
+    }
+
+
 }

@@ -26,6 +26,7 @@ class TableComposer
             'config' => [
                 'title'             => $this->table->getTitle(),
                 'selectable'        => $this->table->isSelectable(),
+                'show_id_column'    => $this->table->shouldShowIdColumn(),
                 'data_url'          => $this->makeDataUrl(),
                 'fields'            => $this->makeFields(),
                 'row_actions'       => $this->makeRowActions(),
