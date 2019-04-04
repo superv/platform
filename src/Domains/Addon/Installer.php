@@ -56,7 +56,7 @@ class Installer
         $this->ensureNotInstalledBefore();
 
         if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $this->slug)) {
-            throw new \Exception('Slug should be snake case and formatted like: {vendor}.{type}.{name}');
+            throw new \Exception('Slug ['.$this->slug.'] should be snake case and formatted like: {vendor}.{type}.{name}');
         }
 
         if ($this->locator) {
