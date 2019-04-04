@@ -44,7 +44,7 @@ class Chart
                 'title' => $this->title,
                 'type'  => $this->type,
                 'data'  => (new ChartData($query))->get($group, $callback),
-                'chart-options' => ['legend' => false]
+                'chart-options' => ['legend' => false, 'responsive' => true]
             ],
             'class'     => $this->htmlClass,
         ];
