@@ -49,4 +49,11 @@ trait HasConfig
 
         return $this;
     }
+
+    public function mergeConfig(array $config)
+    {
+        $this->config = array_merge_recursive($this->config, $config);
+
+        return $this;
+    }
 }
