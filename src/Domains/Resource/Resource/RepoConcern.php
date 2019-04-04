@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Resource;
 
+use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Fake;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -12,6 +13,7 @@ trait RepoConcern
 {
     protected $with = [];
 
+    /** @return \Illuminate\Database\Eloquent\Builder */
     public function newQuery()
     {
         return $this->newEntryInstance()->newQuery()->with($this->with);
@@ -72,9 +74,9 @@ trait RepoConcern
     }
 
     /** @return  \SuperV\Platform\Domains\Resource\Model\ResourceEntry|array */
-    public function fake(array $overrides = [], int $number = 1)
+    public function fake(array $overrides = [], int $number = 1, Closure $callback = null)
     {
-        return ResourceEntryFake::make($this, $overrides, $number);
+        return ResourceEntryFake::make($this, $overrides, $number, $callback);
     }
 
     /** @return \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract|array */
