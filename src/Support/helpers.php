@@ -15,19 +15,6 @@ use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
 
-/**
- * @param null  $handler
- * @param array $input
- * @return FeatureBus
- */
-function feature($handler = null, array $input = [])
-{
-    if ($handler) {
-        return \Feature::handler($handler)->merge($input);
-    }
-
-    return app(FeatureBus::class);
-}
 
 function dump_callers($limit = 10)
 {

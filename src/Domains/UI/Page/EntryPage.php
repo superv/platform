@@ -18,7 +18,7 @@ class EntryPage extends ResourcePage
     {
         $this->buildSections();
 
-        $this->actions[] = RestoreEntryAction::make();
+//        $this->actions[] = RestoreEntryAction::make();
 
         $this->buildActions();
 
