@@ -278,13 +278,15 @@ function sv_block($url = null)
     return SvBlock::make()->url($url);
 }
 
-function sv_loader($url)
+function sv_loader($url, array $props = [])
 {
     if (! starts_with($url, 'http')) {
         $url = sv_url($url);
     }
 
-    return Component::make('sv-loader')->setProp('url', $url);
+    $props['url'] = $url;
+
+    return Component::make('sv-loader')->setProps($props);
 }
 
 function sv_field(array $params)
