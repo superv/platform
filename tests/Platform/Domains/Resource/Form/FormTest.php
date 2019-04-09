@@ -55,13 +55,13 @@ class FormTest extends ResourceTestCase
 
         $form = Form::for($testUser, $fields)->make();
 
-        $this->assertEquals('Omar', $this->getComposedValue($form->getField('name'), $testUser));
-        $this->assertEquals(33, $this->getComposedValue($form->getField('age'), $testUser));
+        $this->assertEquals('Omar', $this->getComposedValue($form->getField('name'), $form));
+        $this->assertEquals(33, $this->getComposedValue($form->getField('age'), $form));
     }
 
-    protected function getComposedValue($field, $entry = null)
+    protected function getComposedValue($field, $form = null)
     {
-        return (new FieldComposer($field))->forForm($entry)->get('value');
+        return (new FieldComposer($field))->forForm($form)->get('value');
     }
 
     function test__saves_form()
@@ -74,8 +74,8 @@ class FormTest extends ResourceTestCase
                     ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
                     ->save();
 
-        $this->assertEquals('Omar', $form->composeField('name', $testUser)->get('value'));
-        $this->assertEquals(33, $form->composeField('age', $testUser)->get('value'));
+        $this->assertEquals('Omar', $form->composeField('name', $form)->get('value'));
+        $this->assertEquals(33, $form->composeField('age', $form)->get('value'));
     }
 
     function test__hidden_fields()
@@ -92,8 +92,8 @@ class FormTest extends ResourceTestCase
         $nameField = $form->getField('name');
         $this->assertTrue($nameField->isHidden());
 
-        $this->assertEquals('Omar', $form->composeField('name', $testUser)->get('value'));
-        $this->assertEquals(99, $form->composeField('age', $testUser)->get('value'));
+        $this->assertEquals('Omar', $form->composeField('name', $form)->get('value'));
+        $this->assertEquals(99, $form->composeField('age', $form)->get('value'));
 
         $composedFields = $form->compose()->get('fields');
         $this->assertEquals(1, count($composedFields));
@@ -110,13 +110,13 @@ class FormTest extends ResourceTestCase
                     ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
                     ->save();
 
-        $this->assertEquals('Omar', $form->composeField('name', $testUser)->get('value'));
-        $this->assertEquals(33, $form->composeField('age', $testUser)->get('value'));
+        $this->assertEquals('Omar', $form->composeField('name', $form)->get('value'));
+        $this->assertEquals(33, $form->composeField('age', $form)->get('value'));
 
         $user = $form->getEntry();
         $this->assertEquals('Omar', $user->name);
         $this->assertEquals(33, $user->age);
-        $this->assertTrue($user->wasRecentlyCreated);
+        $this->assertTrue($user->wasRecentlyCreated());
     }
 
     function test__resource_create_over_http()
@@ -187,6 +187,11 @@ class FormTestUser extends Model implements Watcher, EntryContract
     public function getId()
     {
         return $this->getKey();
+    }
+
+    public function wasRecentlyCreated(): bool
+    {
+        return $this->wasRecentlyCreated;
     }
 }
 

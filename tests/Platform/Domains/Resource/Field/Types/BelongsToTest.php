@@ -83,4 +83,9 @@ class BelongsToTestUser extends Model implements EntryContract
 
         return $relation->newQuery();
     }
+
+    public function wasRecentlyCreated(): bool
+    {
+        // TODO: Implement wasRecentlyCreated() method.
+    }
 }
