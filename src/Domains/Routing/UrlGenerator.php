@@ -13,10 +13,10 @@ class UrlGenerator extends \Illuminate\Routing\UrlGenerator
      */
     public function current()
     {
-        $port = Current::port();
-        if (! $port || ! $prefix = $port->prefix()) {
-            return $this->to($this->request->getPathInfo());
-        }
+//        $port = Current::port();
+//        if (! $port || ! $prefix = $port->prefix()) {
+//            return $this->to($this->request->getPathInfo());
+//        }
 
         return $this->to($this->getPathInfo());
     }
@@ -24,8 +24,8 @@ class UrlGenerator extends \Illuminate\Routing\UrlGenerator
     /**
      * Get the base URL for the request.
      *
-     * @param  string $scheme
-     * @param  string $root
+     * @param string $scheme
+     * @param string $root
      * @return string
      */
     public function formatRoot($scheme, $root = null)
@@ -43,7 +43,14 @@ class UrlGenerator extends \Illuminate\Routing\UrlGenerator
 
     public function getPathInfo()
     {
-        return str_replace_last('/'.Current::port()->prefix(), '', $this->request->getPathInfo());
+        $pathInfo = $this->request->getPathInfo();
+        $port = Current::port();
+
+        if (! $port || ! $port->prefix()) {
+            return $pathInfo;
+        }
+
+        return str_replace_last('/'.$port->prefix(), '', $pathInfo);
     }
 
     private function getRequestRoot()

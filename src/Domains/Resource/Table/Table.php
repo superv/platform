@@ -183,7 +183,7 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
             return $this->dataUrl;
         }
 
-        return url()->current().'/data';
+        return request()->path().'/data';
     }
 
     public function setDataUrl($url): TableContract

@@ -281,7 +281,7 @@ function sv_block($url = null)
 function sv_loader($url, array $props = [])
 {
     if (! starts_with($url, 'http')) {
-        $url = sv_url($url);
+//        $url = sv_url($url);
     }
 
     $props['url'] = $url;

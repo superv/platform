@@ -33,7 +33,7 @@ class ResourceIndexTest extends ResourceTestCase
         $table = HelperComponent::from($page->getProp('blocks.0'));
 
         $this->assertEquals('sv-loader', $table->getName());
-        $this->assertEquals(sv_url($users->route('index.table')), $table->getProp('url'));
+        $this->assertEquals($users->route('index.table'), $table->getProp('url'));
     }
 
     function test__index_table_config()
@@ -43,7 +43,7 @@ class ResourceIndexTest extends ResourceTestCase
         $response = $this->getJsonUser($users->route('index.table'))->assertOk();
         $table = HelperComponent::from($response->decodeResponseJson('data'));
 
-        $this->assertEquals(sv_url($users->route('index.table').'/data'), $table->getProp('config.data_url'));
+        $this->assertEquals($users->route('index.table').'/data', $table->getProp('config.data_url'));
 
         $fields = $table->getProp('config.fields');
         $this->assertEquals(3, count($fields));

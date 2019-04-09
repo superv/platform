@@ -15,14 +15,17 @@ class ResourceFormController extends BaseApiController
     {
         $resource = $this->resolveResource();
 
+        $form = Form::for($resource)
+                    ->setUrl($resource->route('store'))
+                    ->setRequest($this->request)
+                    ->make();
 
+        if ($callback = $resource->getCallback('creating')) {
+            app()->call($callback, ['form' => $form]);
+        }
 
-        $request = [
-            'for' => ['res' => $resource->getHandle()]
-        ];
         $page = Page::make('Create new '.$resource->getSingularLabel());
-        $page->addBlock(sv_loader('sv/forms', ['request' => $request]));
-//        $page->addBlock($form);
+        $page->addBlock($form);
 
         return $page->build();
     }

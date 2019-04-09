@@ -13,12 +13,6 @@ use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-/**
- * Class Field
- * No closures allowed here..
- *
- * @package SuperV\Platform\Domains\Resource\Field
- */
 class Field implements FieldContract
 {
     use Hydratable;

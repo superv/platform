@@ -28,6 +28,8 @@ class RelationIndexTest extends ResourceTestCase
 
         // get the relation table over http
         //
+        $this->withoutExceptionHandling();
+
         $url = route('relation.index', ['resource' => 't_users', 'id' => $userA->getId(), 'relation' => 'posts']);
         $response = $this->getJsonUser($url);
         $response->assertOk();

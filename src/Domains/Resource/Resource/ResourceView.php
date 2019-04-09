@@ -38,7 +38,6 @@ class ResourceView implements ProvidesUIComponent
     {
         $this->resource = $resource;
         $this->entry = $entry;
-
         $this->sections = collect();
     }
 
@@ -47,15 +46,13 @@ class ResourceView implements ProvidesUIComponent
         return Component::make('sv-resource-view')
                         ->setProps([
                             'entry'    => sv_compose($this->entry),
-                            'edit-url'     => sv_url($this->resource->route('edit', $this->entry)),
+                            'edit-url' => sv_url($this->resource->route('edit', $this->entry)),
                             'heading'  => [
                                 'imageUrl' => $imageUrl ?? '',
                                 'header'   => $this->resource->getEntryLabel($this->entry),
                             ],
                             'sections' => $this->getSections(),
-
                             'fields' => $this->getFieldsForView(),
-
                         ]);
     }
 
@@ -102,8 +99,8 @@ class ResourceView implements ProvidesUIComponent
 //                                  return ! in_array($field->getName(), ['deleted_at']);
 //                              })
                               ->map(function (Field $field) {
-                                  return (new FieldComposer($field))->forView($this->entry);
-                              });
+                return (new FieldComposer($field))->forView($this->entry);
+            });
     }
 
     protected function getRelationsSections(): Collection

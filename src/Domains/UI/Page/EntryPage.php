@@ -40,8 +40,8 @@ class EntryPage extends ResourcePage
                          'links'    => [
                              'image'  => $imageUrl ?? '',
                              'create' => $this->resource->route('create'),
-                             'edit'   => sv_url($this->resource->route('edit', $this->entry)),
-                             'view'   => sv_url($this->resource->route('view', $this->entry)),
+                             'edit'   => $this->resource->route('edit', $this->entry),
+                             'view'   => $this->resource->route('view', $this->entry),
                              'index'  => $this->resource->route('index'),
                          ],
                      ]);
