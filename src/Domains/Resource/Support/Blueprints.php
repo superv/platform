@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Support;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class Blueprints
 {
@@ -29,13 +30,17 @@ class Blueprints
             $table->hasMany('sv_relations', 'relations');
             $table->hasMany('sv_activities', 'activities');
             $table->dictionary('config')->nullable();
+
+            $table->createdBy()->updatedBy();
         } else {
             $table->text('config')->nullable();
+
+            $table->nullableTimestamps();
+            $table->unsignedInteger('created_by_id')->nullable();
+            $table->unsignedInteger('updated_by_id')->nullable();
         }
         $table->boolean('restorable')->default(false);
         $table->boolean('sortable')->default(false);
-
-        $table->timestamps();
     }
 
     /**

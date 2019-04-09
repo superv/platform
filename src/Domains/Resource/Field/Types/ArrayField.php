@@ -3,8 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\Field;
 
-class ArrayField extends FieldType
+class ArrayField extends Field
 {
     protected function boot()
     {

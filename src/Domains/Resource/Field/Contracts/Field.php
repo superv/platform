@@ -70,8 +70,6 @@ interface Field
 
     public function resolveFromEntry($entry);
 
-    public function resolveFieldType(): FieldType;
-
     public function getAccessor($for);
 
     public function getComposer($for);

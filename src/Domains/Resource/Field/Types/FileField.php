@@ -7,9 +7,10 @@ use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Support\Composer\Payload;
 
-class FileField extends FieldType implements DoesNotInteractWithTable
+class FileField extends Field implements DoesNotInteractWithTable
 {
     protected $requestFile;
 

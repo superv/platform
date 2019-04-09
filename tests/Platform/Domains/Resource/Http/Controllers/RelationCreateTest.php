@@ -10,10 +10,10 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class RelationCreateTest extends ResourceTestCase
 {
-    protected $handleExceptions = false;
-
     function test__display_standard_form()
     {
+        $this->withoutExceptionHandling();
+
         $users = $this->schema()->users();
         $this->schema()->comments();
         $user = $users->fake();

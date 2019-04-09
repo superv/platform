@@ -6,11 +6,12 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Support\Composer\Payload;
 
-class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesFilter, HandlesRpc
+class BelongsToField extends Field implements NeedsDatabaseColumn, ProvidesFilter, HandlesRpc
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $relatedResource;
@@ -20,7 +21,7 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
 
     public function getColumnName(): ?string
     {
-        return $this->getConfigValue('foreign_key', $this->field->getName().'_id');
+        return $this->getConfigValue('foreign_key', $this->getName().'_id');
     }
 
     protected function boot()
@@ -69,7 +70,7 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
                 }
             }
             $this->buildOptions();
-            $payload->set('meta.options', $this->field->getResource()->route('fields', null,
+            $payload->set('meta.options', $this->getResource()->route('fields', null,
                 [
                     'field' => $this->getName(),
                     'rpc'   => 'options',

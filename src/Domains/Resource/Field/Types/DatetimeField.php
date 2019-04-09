@@ -5,9 +5,10 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 use Carbon\Carbon;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Support\Composer\Payload;
 
-class Datetime extends FieldType implements NeedsDatabaseColumn
+class DatetimeField extends Field implements NeedsDatabaseColumn
 {
     protected function boot()
     {

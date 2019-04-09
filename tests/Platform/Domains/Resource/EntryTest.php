@@ -8,6 +8,8 @@ class EntryTest extends ResourceTestCase
 {
     function test__saves_created_by_field_when_an_entry_is_created()
     {
+        $this->withoutExceptionHandling();
+
         $posts = $this->create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title');

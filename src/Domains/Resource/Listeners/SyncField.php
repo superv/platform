@@ -16,8 +16,8 @@ class SyncField
     /** @var \SuperV\Platform\Domains\Resource\ResourceModel */
     protected $resourceEntry;
 
-    /** @var \SuperV\Platform\Domains\Resource\Field\Types\FieldType */
-    protected $fieldType;
+    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field */
+    protected $field;
 
     protected $fieldWithoutEloquent = true;
 
@@ -118,7 +118,7 @@ class SyncField
             );
         }
 
-        $this->fieldType = FieldType::resolve($this->column->fieldType);
+        $this->field = FieldType::resolve($this->column->fieldType);
     }
 
     protected function syncWithEloquent()
@@ -173,7 +173,7 @@ class SyncField
 
     protected function checkMustBeCreated()
     {
-        if (! $this->fieldType instanceof NeedsDatabaseColumn) {
+        if (! $this->field instanceof NeedsDatabaseColumn) {
             $this->column->ignore();
         }
     }

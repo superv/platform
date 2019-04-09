@@ -4,10 +4,11 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 use SuperV\Platform\Support\Composer\Payload;
 
-class SelectField extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
+class SelectField extends Field implements NeedsDatabaseColumn, ProvidesFilter
 {
     protected $placeholder;
 
@@ -51,12 +52,7 @@ class SelectField extends FieldType implements NeedsDatabaseColumn, ProvidesFilt
 
     public function getOptions()
     {
-        return $this->field->getConfigValue('options', []);
-    }
-
-    public function getPlaceholder()
-    {
-        return $this->field->getPlaceholder() ?? $this->getLabel();
+        return $this->getConfigValue('options', []);
     }
 
     public static function parseOptions(array $options = [])

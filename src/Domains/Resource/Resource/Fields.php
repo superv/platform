@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -83,9 +84,8 @@ class Fields
             ->filter(function (Field $field) {
                 return $field->hasFlag('filter');
             })->map(function (Field $field) {
-                $fieldType = $field->resolveFieldType();
-                if ($fieldType instanceof ProvidesFilter) {
-                    return $fieldType->makeFilter($field->getConfigValue('filter'));
+                if ($field instanceof ProvidesFilter) {
+                    return $field->makeFilter($field->getConfigValue('filter'));
                 }
             });
 

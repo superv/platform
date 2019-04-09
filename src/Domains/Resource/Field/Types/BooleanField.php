@@ -3,8 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
+use SuperV\Platform\Domains\Resource\Field\Field;
 
-class Boolean extends FieldType implements NeedsDatabaseColumn
+class BooleanField extends Field implements NeedsDatabaseColumn
 {
     protected function boot()
     {

@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Field\Types\Number;
+use SuperV\Platform\Domains\Resource\Field\Types\NumberField;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class NumberTest extends ResourceTestCase

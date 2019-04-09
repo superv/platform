@@ -4,10 +4,11 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
+use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Composer\Payload;
 
-class MorphTo extends FieldType implements DoesNotInteractWithTable
+class MorphToField extends Field implements DoesNotInteractWithTable
 {
     protected function boot()
     {
@@ -21,7 +22,7 @@ class MorphTo extends FieldType implements DoesNotInteractWithTable
 //            $query->with($this->getName());
         });
 
-        $this->field->addFlag('form.hide');
+        $this->addFlag('form.hide');
     }
 
     protected function presenter()

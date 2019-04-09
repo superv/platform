@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
+use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class FieldFactory
@@ -18,21 +19,6 @@ class FieldFactory
 
     protected $flags = ['searchable', 'unique', 'required', 'nullable'];
 
-    protected function create(): Field
-    {
-        if (! isset($this->params['name'])) {
-            PlatformException::fail('Missing parameter [name] for field');
-        }
-        $field = new Field($this->params);
-        $field->bindFieldType();
-
-        if (!$field->hasFlag('nullable')) {
-            $field->addFlag('required');
-        }
-
-        return $field;
-    }
-
     public static function createFromEntry(FieldModel $entry): Field
     {
         $factory = new static;
@@ -47,5 +33,22 @@ class FieldFactory
         $factory->params = $params;
 
         return $factory->create();
+    }
+
+    protected function create(): Field
+    {
+        if (! isset($this->params['name'])) {
+            PlatformException::fail('Missing parameter [name] for field');
+        }
+
+        $class = FieldType::resolveClass( $this->params['type']);
+        /** @var \SuperV\Platform\Domains\Resource\Field\Field $field */
+        $field = new $class($this->params);
+
+        if (! $field->hasFlag('nullable')) {
+            $field->addFlag('required');
+        }
+
+        return $field;
     }
 }

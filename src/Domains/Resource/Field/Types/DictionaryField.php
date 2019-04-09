@@ -4,8 +4,9 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
+use SuperV\Platform\Domains\Resource\Field\Field;
 
-class DictionaryField extends FieldType implements NeedsDatabaseColumn
+class DictionaryField extends Field implements NeedsDatabaseColumn
 {
     protected function boot()
     {

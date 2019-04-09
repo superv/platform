@@ -8,7 +8,6 @@ use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -85,6 +84,14 @@ class Field implements FieldContract
 
         $this->uuid = $this->uuid ?? uuid();
 
+        $this->doesNotInteractWithTable = $this instanceof DoesNotInteractWithTable;
+
+        if (method_exists($this, 'makeRules')) {
+            if ($rules = $this->makeRules()) {
+                $this->rules = Rules::make($rules)->merge(wrap_array($this->rules))->get();
+            }
+        }
+
         $this->boot();
     }
 
@@ -101,7 +108,7 @@ class Field implements FieldContract
 //            return trans($this->resource->getAddon().'::'.$this->resource->getHandle().'.'.$this->name,[]);
 //        }
 
-        return $this->label ?? str_unslug($this->name);
+        return $this->label ?? str_unslug($this->getName());
     }
 
     public function setLabel(string $label): FieldContract
@@ -193,14 +200,7 @@ class Field implements FieldContract
 
     public function getPlaceholder()
     {
-        return $this->placeholder;
-    }
-
-    public function resolveFieldType(): FieldType
-    {
-        $class = FieldType::resolveClass($this->type);
-
-        return new $class($this);
+        return $this->placeholder ?? $this->getLabel();
     }
 
     public function observe(FieldContract $parent, ?EntryContract $entry = null)
@@ -236,29 +236,6 @@ class Field implements FieldContract
     public function displayOrder($order): FieldContract
     {
         return $this->setConfigValue('sort_order', $order);
-    }
-
-    public function bindFieldType()
-    {
-        $type = $this->resolveFieldType();
-
-        $this->columnName = $type->getColumnName();
-        $this->doesNotInteractWithTable = $type instanceof DoesNotInteractWithTable;
-
-        if (method_exists($type, 'makeRules')) {
-            if ($rules = $type->makeRules()) {
-                $this->rules = Rules::make($rules)->merge(wrap_array($this->rules))->get();
-            }
-        }
-        if (method_exists($type, 'mergeConfig')) {
-            if ($config = $type->mergeConfig()) {
-                $this->config = array_merge($this->config, $config);
-            }
-        }
-
-        $this->mergeCallbacks($type->getCallbacks());
-
-        return $type;
     }
 
     public function uuid(): string

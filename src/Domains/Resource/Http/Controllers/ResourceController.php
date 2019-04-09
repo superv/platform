@@ -24,10 +24,9 @@ class ResourceController extends BaseApiController
             return ['data' => sv_compose($composed)];
         }
 
-        $fieldType = $field->resolveFieldType();
 
-        if ($fieldType instanceof HandlesRpc) {
-            return $fieldType->getRpcResult(['method' => $rpcMethod], $this->request->toArray());
+        if ($field instanceof HandlesRpc) {
+            return $field->getRpcResult(['method' => $rpcMethod], $this->request->toArray());
         }
 
         return abort(404);
