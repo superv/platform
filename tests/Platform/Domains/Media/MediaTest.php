@@ -136,4 +136,9 @@ class OwnerMock extends Model implements MediaOwner, EntryContract
     {
         return $this->id;
     }
+
+    public function wasRecentlyCreated(): bool
+    {
+        // TODO: Implement wasRecentlyCreated() method.
+    }
 }
