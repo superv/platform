@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class FieldFactory
@@ -41,7 +40,7 @@ class FieldFactory
             PlatformException::fail('Missing parameter [name] for field');
         }
 
-        $class = FieldType::resolveClass( $this->params['type']);
+        $class = Field::resolveTypeClass($this->params['type']);
         /** @var \SuperV\Platform\Domains\Resource\Field\Field $field */
         $field = new $class($this->params);
 

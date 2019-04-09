@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 
 interface Field
 {
@@ -22,7 +21,7 @@ interface Field
      */
     public function getResource(): \SuperV\Platform\Domains\Resource\Resource;
 
-    public function getColumnName();
+    public function getColumnName(): ?string;
 
     public function getLabel(): string;
 
@@ -97,6 +96,7 @@ interface Field
     /**
      * Generate filter from field and add to filters
      *
+     * @param array $params
      * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
      */
     public function copyToFilters(array $params = []): Field;

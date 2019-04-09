@@ -171,18 +171,14 @@ class Field implements FieldContract
         return $this->name;
     }
 
-    public function getColumnName()
+    public function getColumnName(): ?string
     {
-        return $this->columnName ?? $this->name;
-//        return $this->fieldType()->getColumnName();
+        return $this->columnName ?? $this->getName();
     }
 
     public function getRules()
     {
         return $this->rules;
-//        $fieldTypeRules = $this->fieldType()->makeRules();
-//
-//        return Rules::make(wrap_array($this->rules))->merge($fieldTypeRules)->get();
     }
 
     public function resolveFromEntry($entry)
@@ -196,6 +192,8 @@ class Field implements FieldContract
         } elseif (is_array($entry)) {
             return $entry[$attribute] ?? null;
         }
+
+        return null;
     }
 
     public function getPlaceholder()
@@ -300,5 +298,25 @@ class Field implements FieldContract
         $previous = $this->getConfigValue('classes');
 
         return $this->setConfigValue('classes', trim($class.' '.$previous));
+    }
+
+    public static function resolveTypeClass($type)
+    {
+        $base = 'SuperV\Platform\Domains\Resource\Field\Types';
+
+        $class = $base."\\".studly_case($type);
+
+        if (! class_exists($class)) {
+            $class = $base."\\".studly_case($type.'_field');
+        }
+
+        return $class;
+    }
+
+    public static function resolveType($type)
+    {
+        $class = Field::resolveTypeClass($type);
+
+        return new $class;
     }
 }

@@ -11,7 +11,6 @@ use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -193,9 +192,4 @@ class FormTestUser extends Model implements Watcher, EntryContract
     {
         return $this->wasRecentlyCreated;
     }
-}
-
-class TestFileFieldType extends FieldType
-{
-    protected $hasColumn = false;
 }
