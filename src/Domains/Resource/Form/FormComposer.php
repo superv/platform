@@ -60,7 +60,7 @@ class FormComposer
                           })
                           ->map(function (Field $field) {
                               return array_filter(
-                                  (new FieldComposer($field))->forForm($this->form->getEntry() ?? null)->get()
+                                  (new FieldComposer($field))->forForm($this->form)->get()
                               );
                           })->values()->all();
     }

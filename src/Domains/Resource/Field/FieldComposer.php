@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Support\Composer\Payload;
 
 class FieldComposer
@@ -18,9 +19,11 @@ class FieldComposer
         $this->field = $field instanceof ProvidesField ? $field->makeField() : $field;
     }
 
-    public function forForm($entry = null)
+    public function forForm(Form $form = null)
     {
         $field = $this->field;
+
+        $entry = $form ? $form->getEntry() : null;
 
         if ($entry) {
             $value = $field->resolveFromEntry($entry);
@@ -43,7 +46,7 @@ class FieldComposer
         ]))->setFilterNull(true);
 
         if ($callback = $field->getCallback('form.composing')) {
-            app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
+            app()->call($callback, ['form' => $form, 'entry' => $entry, 'payload' => $payload]);
         }
 
         return $payload;
