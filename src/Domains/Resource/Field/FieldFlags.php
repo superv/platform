@@ -72,7 +72,7 @@ trait FieldFlags
 
     public function doesNotInteractWithTable()
     {
-        return $this->doesNotInteractWithTable;
+        return $this->fieldType instanceof DoesNotInteractWithTable;
     }
 
 }

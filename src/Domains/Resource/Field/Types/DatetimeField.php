@@ -3,19 +3,19 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Carbon\Carbon;
+use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
+use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Support\Composer\Payload;
 
-class DatetimeField extends Field implements NeedsDatabaseColumn
+class DatetimeField extends FieldType implements RequiresDbColumn, HasPresenter
 {
     protected function boot()
     {
-        $this->on('form.accessing', $this->formPresenter());
-        $this->on('form.composing', $this->formComposer());
-        $this->on('table.presenting', $this->presenter());
-        $this->on('view.presenting', $this->presenter());
+        $this->field->on('form.accessing', $this->formPresenter());
+        $this->field->on('form.composing', $this->formComposer());
     }
 
     protected function formComposer()
@@ -40,7 +40,20 @@ class DatetimeField extends Field implements NeedsDatabaseColumn
         };
     }
 
-    protected function presenter()
+
+    protected function getFormat()
+    {
+        $default = $this->hasTime() ? 'M j, Y H:i' : 'M j, Y';
+
+        return $this->getConfigValue('format', $default);
+    }
+
+    protected function hasTime()
+    {
+        return $this->getConfigValue('time') === true;
+    }
+
+    public function getPresenter(): Closure
     {
         return function (EntryContract $entry) {
             if (! $value = $entry->getAttribute($this->getName())) {
@@ -53,17 +66,5 @@ class DatetimeField extends Field implements NeedsDatabaseColumn
 
             return $value->format($this->getFormat());
         };
-    }
-
-    public function getFormat()
-    {
-        $default = $this->hasTime() ? 'M j, Y H:i' : 'M j, Y';
-
-        return $this->getConfigValue('format', $default);
-    }
-
-    public function hasTime()
-    {
-        return $this->getConfigValue('time') === true;
     }
 }

@@ -13,13 +13,16 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Field\FormField;
+use SuperV\Platform\Domains\Resource\Form\Contracts\Form as FormContract;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-class Form implements ProvidesUIComponent, Responsable
+class Form implements FormContract, ProvidesUIComponent, Responsable
 {
     use FiresCallbacks;
 
@@ -215,7 +218,7 @@ class Form implements ProvidesUIComponent, Responsable
 
         if (is_array($fields)) {
             $fields = collect($fields)->map(function ($field) {
-                return is_array($field) ? sv_field($field) : $field;
+                return is_array($field) ?  FieldFactory::createFromArray($field, FormField::class) : $field;
             });
         }
 

@@ -4,8 +4,9 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
-use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
+use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Jobs\CreatePivotTable;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
@@ -118,7 +119,7 @@ class SyncField
             );
         }
 
-        $this->field = Field::resolveType($this->column->fieldType);
+        $this->field = FieldType::resolveType($this->column->fieldType);
     }
 
     protected function syncWithEloquent()
@@ -173,7 +174,7 @@ class SyncField
 
     protected function checkMustBeCreated()
     {
-        if (! $this->field instanceof NeedsDatabaseColumn) {
+        if (! $this->field instanceof RequiresDbColumn) {
             $this->column->ignore();
         }
     }

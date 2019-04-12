@@ -84,8 +84,8 @@ class Fields
             ->filter(function (Field $field) {
                 return $field->hasFlag('filter');
             })->map(function (Field $field) {
-                if ($field instanceof ProvidesFilter) {
-                    return $field->makeFilter($field->getConfigValue('filter'));
+                if ($field->getFieldType() instanceof ProvidesFilter) {
+                    return $field->getFieldType()->makeFilter($field->getConfigValue('filter'));
                 }
             });
 

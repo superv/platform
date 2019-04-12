@@ -4,21 +4,21 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Composer\Payload;
 
-class MorphToField extends Field implements DoesNotInteractWithTable
+class MorphToField extends FieldType implements DoesNotInteractWithTable
 {
     protected function boot()
     {
 
-        $this->on('view.presenting', $this->viewPresenter());
-        $this->on('view.composing', $this->viewComposer());
+        $this->field->on('view.presenting', $this->viewPresenter());
+        $this->field->on('view.composing', $this->viewComposer());
 
-        $this->on('table.presenting', $this->presenter());
-        $this->on('table.composing', $this->tableComposer());
-        $this->on('table.querying', function ($query) {
+        $this->field->on('table.presenting', $this->presenter());
+        $this->field->on('table.composing', $this->tableComposer());
+        $this->field->on('table.querying', function ($query) {
 //            $query->with($this->getName());
         });
 

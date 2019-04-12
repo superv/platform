@@ -2,18 +2,18 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class NumberField extends Field implements NeedsDatabaseColumn
+class NumberField extends FieldType implements RequiresDbColumn
 {
     protected function boot()
     {
-        $this->on('form.accessing', $this->accessor());
-        $this->on('form.mutating', $this->accessor());
+        $this->field->on('form.accessing', $this->accessor());
+        $this->field->on('form.mutating', $this->accessor());
 
-        $this->on('view.presenting', $this->accessor());
-        $this->on('table.presenting', $this->accessor());
+        $this->field->on('view.presenting', $this->accessor());
+        $this->field->on('table.presenting', $this->accessor());
     }
 
     protected function accessor()

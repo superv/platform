@@ -109,7 +109,9 @@ class Fake
 
     protected function fakeFile()
     {
-        return new UploadedFile(SV_TEST_BASE.'/__fixtures__/square.png', 'square.png');
+        if (defined('SV_TEST_BASE')) {
+            return new UploadedFile(SV_TEST_BASE.'/__fixtures__/square.png', 'square.png');
+        }
     }
 
     protected function fakeText(Field $field)

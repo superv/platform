@@ -8,6 +8,7 @@ use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -18,11 +19,13 @@ class Field implements FieldContract
     use FiresCallbacks;
     use HasConfig;
     use FieldFlags;
-
     /**
-     * @var string
+     * @var \SuperV\Platform\Domains\Resource\Field\FieldType
      */
-    protected $type = 'text';
+    protected $fieldType;
+
+    /** @var string */
+    protected $type;
 
     /**
      * @var string
@@ -40,6 +43,9 @@ class Field implements FieldContract
 
     /** @var Closure */
     protected $mutator;
+
+    /** @var Closure */
+    protected $modifier;
 
     /** @var Closure */
     protected $accessor;
@@ -66,8 +72,6 @@ class Field implements FieldContract
 
     protected $alterQueryCallback;
 
-    protected $doesNotInteractWithTable;
-
     /** @var \SuperV\Platform\Support\Composer\Payload */
     protected $payload;
 
@@ -78,21 +82,23 @@ class Field implements FieldContract
      */
     protected $resource;
 
-    public function __construct(array $attributes = [])
+    public function __construct(FieldType $fieldType, array $attributes = [])
     {
+        $this->fieldType = $fieldType;
+        $this->fieldType->setField($this);
+
         $this->hydrate($attributes);
 
         $this->uuid = $this->uuid ?? uuid();
 
-        $this->doesNotInteractWithTable = $this instanceof DoesNotInteractWithTable;
-
-        if (method_exists($this, 'makeRules')) {
-            if ($rules = $this->makeRules()) {
+        if (method_exists($this->fieldType, 'makeRules')) {
+            if ($rules = $this->fieldType->makeRules()) {
                 $this->rules = Rules::make($rules)->merge(wrap_array($this->rules))->get();
             }
         }
 
         $this->boot();
+
     }
 
     protected function boot() { }
@@ -129,15 +135,17 @@ class Field implements FieldContract
             $value = $request->__get($this->getName());
         }
 
-        if ($mutator = $this->getMutator('form')) {
+        if ($this->fieldType instanceof HasModifier) {
+            $value = (new Modifier($this->fieldType))->set(['entry' => $entry, 'value' => $value]);
+        } elseif ($mutator = $this->getMutator('form')) {
             $value = ($mutator)($value, $entry);
-
-            if ($value instanceof Closure) {
-                return $value;
-            }
         }
 
-        if ($entry && ! $this->doesNotInteractWithTable) {
+        if ($value instanceof Closure) {
+            return $value;
+        }
+
+        if ($entry && ! $this->doesNotInteractWithTable()) {
             $entry->setAttribute($this->getColumnName(), $value);
         }
 
@@ -161,9 +169,9 @@ class Field implements FieldContract
         return $this;
     }
 
-    public function getType(): string
+    public function getFieldType(): FieldType
     {
-        return $this->type;
+        return $this->fieldType;
     }
 
     public function getName(): string
@@ -173,6 +181,9 @@ class Field implements FieldContract
 
     public function getColumnName(): ?string
     {
+        if (method_exists($this->fieldType, 'getColumnName')) {
+            return $this->fieldType->getColumnName();
+        }
         return $this->columnName ?? $this->getName();
     }
 
@@ -241,35 +252,12 @@ class Field implements FieldContract
         return $this->uuid;
     }
 
-    /**
-     * @param \SuperV\Platform\Domains\Resource\Resource $resource
-     */
-    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void
+    public function setPresenter(Closure $callback): FieldContract
     {
-        $this->resource = $resource;
-    }
+        $this->presenter = $callback;
 
-    /**
-     * @return \SuperV\Platform\Domains\Resource\Resource
-     */
-    public function getResource(): \SuperV\Platform\Domains\Resource\Resource
-    {
-        return $this->resource;
-    }
-
-    public function setPresenter(Closure $callback)
-    {
-        $this->on('presenting', $callback);
-    }
-
-    public function getPresenter($for)
-    {
-        return $this->getCallback("{$for}.presenting");
-    }
-
-    public function getAccessor($for)
-    {
-        return $this->getCallback("{$for}.accessing");
+        return $this;
+//        $this->on('presenting', $callback);
     }
 
     public function getComposer($for)
@@ -300,23 +288,24 @@ class Field implements FieldContract
         return $this->setConfigValue('classes', trim($class.' '.$previous));
     }
 
-    public static function resolveTypeClass($type)
+    /**
+     * @return \SuperV\Platform\Domains\Resource\Resource
+     */
+    public function getResource(): \SuperV\Platform\Domains\Resource\Resource
     {
-        $base = 'SuperV\Platform\Domains\Resource\Field\Types';
-
-        $class = $base."\\".studly_case($type);
-
-        if (! class_exists($class)) {
-            $class = $base."\\".studly_case($type.'_field');
-        }
-
-        return $class;
+        return $this->resource;
     }
 
-    public static function resolveType($type)
+    /**
+     * @param \SuperV\Platform\Domains\Resource\Resource $resource
+     */
+    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void
     {
-        $class = Field::resolveTypeClass($type);
+        $this->resource = $resource;
+    }
 
-        return new $class;
+    public function getType(): string
+    {
+       return $this->type;
     }
 }

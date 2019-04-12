@@ -2,10 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class TextareaField extends Field implements NeedsDatabaseColumn
+class TextareaField extends FieldType implements RequiresDbColumn
 {
 
 }

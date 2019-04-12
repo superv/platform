@@ -1,17 +1,19 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types;
+namespace SuperV\Platform\Domains\Resource\Field\Types\BelongsTo;
 
+use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
+use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Support\Composer\Payload;
 
-class BelongsToField extends Field implements NeedsDatabaseColumn, ProvidesFilter, HandlesRpc
+class BelongsToField extends FieldType implements RequiresDbColumn, ProvidesFilter, HandlesRpc, HasPresenter
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $relatedResource;
@@ -26,15 +28,15 @@ class BelongsToField extends Field implements NeedsDatabaseColumn, ProvidesFilte
 
     protected function boot()
     {
-        $this->on('form.presenting', $this->presenter());
-        $this->on('form.composing', $this->formComposer());
+//        $this->field->on('form.presenting', $this->presenter());
+        $this->field->on('form.composing', $this->formComposer());
 
-        $this->on('view.presenting', $this->viewPresenter());
-        $this->on('view.composing', $this->viewComposer());
+        $this->field->on('view.presenting', $this->viewPresenter());
+        $this->field->on('view.composing', $this->viewComposer());
 
-        $this->on('table.presenting', $this->presenter());
-        $this->on('table.composing', $this->tableComposer());
-        $this->on('table.querying', function ($query) {
+        $this->field->on('table.presenting', $this->presenter());
+        $this->field->on('table.composing', $this->tableComposer());
+        $this->field->on('table.querying', function ($query) {
             $query->with($this->getName());
         });
     }
@@ -70,7 +72,7 @@ class BelongsToField extends Field implements NeedsDatabaseColumn, ProvidesFilte
                 }
             }
             $this->buildOptions();
-            $payload->set('meta.options', $this->getResource()->route('fields', null,
+            $payload->set('meta.options', $this->field->getResource()->route('fields', null,
                 [
                     'field' => $this->getName(),
                     'rpc'   => 'options',
@@ -129,7 +131,7 @@ class BelongsToField extends Field implements NeedsDatabaseColumn, ProvidesFilte
         };
     }
 
-    protected function buildOptions(?array $queryParams = [])
+    public function buildOptions(?array $queryParams = [])
     {
         $this->relatedResource = $this->resolveRelatedResource();
 
@@ -154,10 +156,23 @@ class BelongsToField extends Field implements NeedsDatabaseColumn, ProvidesFilte
     /**
      * @return \SuperV\Platform\Domains\Resource\Resource
      */
-    protected function resolveRelatedResource()
+    public function resolveRelatedResource()
     {
-        $relationConfig = RelationConfig::create($this->getType(), $this->getConfig());
+        $relationConfig = RelationConfig::create($this->field->getType(), $this->field->getConfig());
 
         return sv_resource($relationConfig->getRelatedResource());
+    }
+
+    public function getPresenter(): Closure
+    {
+        return function (EntryContract $entry) {
+            if (! $entry->relationLoaded($this->getName())) {
+                $entry->load($this->getName());
+            }
+
+            if ($relatedEntry = $entry->getRelation($this->getName())) {
+                return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
+            }
+        };
     }
 }

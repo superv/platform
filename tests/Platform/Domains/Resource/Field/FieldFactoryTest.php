@@ -17,7 +17,7 @@ class FieldFactoryTest extends ResourceTestCase
         $field = FieldFactory::createFromEntry($fieldEntry);
         $this->assertInstanceOf(Field::class, $field);
         $this->assertEquals('title', $field->getName());
-        $this->assertEquals('text', $field->getType());
+        $this->assertEquals('text', $field->getFieldType());
 
 //        $fieldType = $field->fieldType();
 //        $fieldType->setAccessor(function ($value) { return str_slug($value); });

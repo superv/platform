@@ -66,6 +66,8 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__displays_update_form()
     {
+        $this->withoutExceptionHandling();
+
         $user = $this->schema()
                      ->users(function (Blueprint $table) {
                          $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);

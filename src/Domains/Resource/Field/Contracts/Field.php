@@ -6,20 +6,13 @@ use Closure;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 interface Field
 {
     public function getName();
 
-    /**
-     * @param \SuperV\Platform\Domains\Resource\Resource $resource
-     */
-    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void;
-
-    /**
-     * @return \SuperV\Platform\Domains\Resource\Resource
-     */
-    public function getResource(): \SuperV\Platform\Domains\Resource\Resource;
+    public function getType(): string;
 
     public function getColumnName(): ?string;
 
@@ -27,7 +20,7 @@ interface Field
 
     public function setLabel(string $label): Field;
 
-    public function getType();
+    public function getFieldType(): FieldType;
 
     public function getValue();
 
@@ -69,15 +62,11 @@ interface Field
 
     public function resolveFromEntry($entry);
 
-    public function getAccessor($for);
-
     public function getComposer($for);
-
-    public function getPresenter($for);
 
     public function getMutator($for);
 
-    public function setPresenter(Closure $callback);
+    public function setPresenter(Closure $callback): Field;
 
     /**
      * Add a flag to hide the field on forms
@@ -140,4 +129,6 @@ interface Field
      * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
      */
     public function removeFlag(string $flag): Field;
+
+    public function uuid();
 }

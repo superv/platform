@@ -18,31 +18,35 @@ class FieldFactory
 
     protected $flags = ['searchable', 'unique', 'required', 'nullable'];
 
-    public static function createFromEntry(FieldModel $entry): Field
+    public static function createFromEntry(FieldModel $entry, string $resolveFrom = null): Field
     {
         $factory = new static;
         $factory->params = $entry->toArray();
 
-        return $factory->create();
+        return $factory->create($resolveFrom);
     }
 
-    public static function createFromArray(array $params): Field
+    public static function createFromArray(array $params, string $resolveFrom = null): Field
     {
         $factory = new static;
         $factory->params = $params;
 
-        return $factory->create();
+        return $factory->create($resolveFrom);
     }
 
-    protected function create(): Field
+    protected function create(string $resolveFrom = null): Field
     {
         if (! isset($this->params['name'])) {
             PlatformException::fail('Missing parameter [name] for field');
         }
 
-        $class = Field::resolveTypeClass($this->params['type']);
+        $fieldTypeClass = FieldType::resolveTypeClass($this->params['type']);
+
+        /** @var \SuperV\Platform\Domains\Resource\Field\FieldType $fieldType */
+        $fieldType = new $fieldTypeClass();
+
         /** @var \SuperV\Platform\Domains\Resource\Field\Field $field */
-        $field = new $class($this->params);
+        $field = new Field($fieldType, $this->params);
 
         if (! $field->hasFlag('nullable')) {
             $field->addFlag('required');

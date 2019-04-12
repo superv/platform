@@ -18,7 +18,7 @@ class NumberTest extends ResourceTestCase
 
         $age = $res->getField('age');
 
-        $this->assertEquals('number', $age->getType());
+        $this->assertEquals('number', $age->getFieldType());
         $this->assertEquals(['integer', 'min:0', 'required'], $res->parseFieldRules('age'));
         $this->assertEquals('integer', $age->getConfigValue('type'));
         $this->assertTrue($age->getConfigValue('unsigned'));
@@ -34,7 +34,7 @@ class NumberTest extends ResourceTestCase
 
         $height = $res->getField('height');
 
-        $this->assertEquals('number', $height->getType());
+        $this->assertEquals('number', $height->getFieldType());
         $this->assertEquals('decimal', $height->getConfigValue('type'));
         $this->assertEquals(['numeric', 'required'], $res->parseFieldRules('height'));
 

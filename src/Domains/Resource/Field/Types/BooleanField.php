@@ -2,29 +2,26 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
-use SuperV\Platform\Domains\Resource\Field\Field;
+use Closure;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
+use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class BooleanField extends Field implements NeedsDatabaseColumn
+class BooleanField extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier
 {
-    protected function boot()
-    {
-        $this->on('form.accessing', $this->accessor());
-        $this->on('form.mutating', $this->accessor());
-//        $this->on('view.presenting', $this->presenter());
-    }
 
-    protected function accessor()
+    public function getAccessor(): Closure
     {
         return function ($value) {
             return ($value === 'false' || ! $value) ? false : true;
         };
     }
 
-    protected function presenter()
+    public function getModifier(): Closure
     {
         return function ($value) {
-            return $value ? 'Yes' : 'No';
+            return ($value === 'false' || ! $value) ? false : true;
         };
     }
 }

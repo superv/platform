@@ -106,6 +106,9 @@ class ResourceIndexTest extends ResourceTestCase
         Resource::extend('t_posts')->with(function (Resource $resource) {
             $resource->getField('user')
                      ->showOnIndex()
+                     ->setPresenter(function (EntryContract $entry) {
+                         return $entry->user->email;
+                     })
                      ->setCallback('table.presenting', function (EntryContract $entry) {
                          return $entry->user->email;
                      });
