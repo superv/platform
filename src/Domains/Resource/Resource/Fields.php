@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -40,6 +41,11 @@ class Fields
         });
 
         return $this;
+    }
+
+    public function has($name)
+    {
+        return ! is_null($this->find($name));
     }
 
     public function find($name): ?Field
