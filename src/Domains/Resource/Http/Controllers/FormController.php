@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Http\Controllers\BaseApiController;
@@ -17,10 +17,11 @@ class FormController extends BaseApiController
 
         if ($res = array_get($for, 'res')) {
             $resource = ResourceFactory::make($res);
-            $form = Form::for($resource)
-                        ->setUrl($resource->route('store'))
-                        ->setRequest($this->request)
-                        ->make();
+
+            $form = FormBuilder::buildFromResource($resource);
+            $form->setUrl($resource->route('store'))
+                 ->setRequest($this->request)
+                 ->make();
 
             if ($callback = $resource->getCallback('creating')) {
                 app()->call($callback, ['form' => $form]);

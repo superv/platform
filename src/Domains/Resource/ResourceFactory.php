@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
-use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
@@ -33,6 +32,25 @@ class ResourceFactory
     {
         $this->handle = $handle;
         $this->entry = $entry;
+    }
+
+    public static function attributesFor(string $handle, ?EntryContract $entry = null): array
+    {
+        return (new static($handle, $entry))->get();
+    }
+
+    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    public static function make($handle)
+    {
+        if ($handle instanceof EntryContract) {
+            $handle = $handle->getTable();
+        }
+
+        $resource = new Resource(static::attributesFor($handle));
+
+        Extension::extend($resource);
+
+        return $resource;
     }
 
     protected function getFieldsProvider()
@@ -74,30 +92,14 @@ class ResourceFactory
         }
 
         $attributes = array_merge($this->model->toArray(), [
-            'handle'    => $this->model->getHandle(),
-            'fields'    => $this->getFieldsProvider(),
-            'relations' => $this->getRelationsProvider(),
+            'handle'        => $this->model->getHandle(),
+            'fields'        => $this->getFieldsProvider(),
+            'field_entries' => function () {
+                return $this->model->getFields();
+            },
+            'relations'     => $this->getRelationsProvider(),
         ]);
 
         return $attributes;
-    }
-
-    public static function attributesFor(string $handle, ?EntryContract $entry = null): array
-    {
-        return (new static($handle, $entry))->get();
-    }
-
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
-    public static function make($handle)
-    {
-        if ($handle instanceof EntryContract) {
-            $handle = $handle->getTable();
-        }
-
-        $resource = new Resource(static::attributesFor($handle));
-
-        Extension::extend($resource);
-
-        return $resource;
     }
 }

@@ -363,26 +363,4 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
     {
         return $this->uuid;
     }
-
-    public static function for($arg, $fields = null): self
-    {
-        if (is_string($arg)) {
-            $resource = sv_resource($arg);
-        }
-
-        if ($arg instanceof EntryContract) {
-            $entry = $arg;
-            $resource = sv_resource($entry);
-        }
-
-        $resource = $resource ?? $arg;
-
-        $form = new static();
-        $form->setIdentifier($resource->getResourceKey());
-        $form->setFields($fields ?? $resource->getFields());
-        $form->setResource($resource);
-        $form->setEntry($entry ?? $resource->newEntryInstance());
-
-        return $form;
-    }
 }

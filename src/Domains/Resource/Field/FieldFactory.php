@@ -45,8 +45,10 @@ class FieldFactory
         /** @var \SuperV\Platform\Domains\Resource\Field\FieldType $fieldType */
         $fieldType = new $fieldTypeClass();
 
+        $fieldClass = $resolveFrom ?? Field::class;
+
         /** @var \SuperV\Platform\Domains\Resource\Field\Field $field */
-        $field = new Field($fieldType, $this->params);
+        $field = new $fieldClass($fieldType, $this->params);
 
         if (! $field->hasFlag('nullable')) {
             $field->addFlag('required');

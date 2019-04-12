@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Action\ModalAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class HasMany extends Relation implements ProvidesTable, ProvidesForm
@@ -27,8 +28,9 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
 
     public function makeForm(): Form
     {
-        return Form::for($childEntry = $this->newQuery()->make())
-                   ->hideField(sv_resource($this->parentEntry)->getResourceKey())
+        $form = FormBuilder::buildFromEntry($childEntry = $this->newQuery()->make());
+
+        return $form->hideField(sv_resource($this->parentEntry)->getResourceKey())
                    ->make();
     }
 

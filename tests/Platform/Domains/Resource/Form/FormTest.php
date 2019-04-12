@@ -12,6 +12,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FormTest extends ResourceTestCase
@@ -19,27 +20,13 @@ class FormTest extends ResourceTestCase
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $users;
 
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->users = $this->create('t_users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->unsignedInteger('age');
-        });
-    }
-
     function test__config()
     {
         $fields = $this->makeFields();
         $watcher = new FormTestUser(['name' => 'Omar', 'age' => 33]);
-////
-////        $config = FormConfig::make()
-////                            ->addGroup($fields, $watcher, 'default')
-//                            ->hideField('age');
 
-        $form = Form::for($watcher)->setFields($fields)->hideField('age')->make();
+        $form = FormBuilder::buildFromEntry($watcher);
+        $form = $form->setFields($fields)->hideField('age')->make();
 
         $this->assertInstanceOf(Form::class, $form);
         $this->assertEquals(2, $form->getFields()->count());
@@ -51,27 +38,21 @@ class FormTest extends ResourceTestCase
     {
         $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
         $fields = $this->makeFields();
-
-        $form = Form::for($testUser, $fields)->make();
+        $form = FormBuilder::buildFromEntry($testUser);
+        $form->setFields($fields)->make();
 
         $this->assertEquals('Omar', $this->getComposedValue($form->getField('name'), $form));
         $this->assertEquals(33, $this->getComposedValue($form->getField('age'), $form));
-    }
-
-    protected function getComposedValue($field, $form = null)
-    {
-        return (new FieldComposer($field))->forForm($form)->get('value');
     }
 
     function test__saves_form()
     {
         $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
         $fields = $this->makeFields();
-
-        $form = Form::for($testUser, $fields)
-                    ->make()
-                    ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                    ->save();
+        $form = FormBuilder::buildFromEntry($testUser);
+        $form->setFields($fields)->make();
+        $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
+             ->save();
 
         $this->assertEquals('Omar', $form->composeField('name', $form)->get('value'));
         $this->assertEquals(33, $form->composeField('age', $form)->get('value'));
@@ -81,12 +62,13 @@ class FormTest extends ResourceTestCase
     {
         $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
         $fields = $this->makeFields();
+        $form = FormBuilder::buildFromEntry($testUser);
+        $form->setFields($fields)->make();
 
-        $form = Form::for($testUser, $fields)
-                    ->hideField('name')
-                    ->make()
-                    ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 99]))
-                    ->save();
+        $form->hideField('name')
+             ->make()
+             ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 99]))
+             ->save();
 
         $nameField = $form->getField('name');
         $this->assertTrue($nameField->isHidden());
@@ -103,11 +85,10 @@ class FormTest extends ResourceTestCase
     {
         $testUser = new FormTestUser;
         $fields = $this->makeFields();
-
-        $form = Form::for($testUser, $fields)
-                    ->make()
-                    ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                    ->save();
+        $form = FormBuilder::buildFromEntry($testUser);
+        $form->setFields($fields)->make();
+        $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
+             ->save();
 
         $this->assertEquals('Omar', $form->composeField('name', $form)->get('value'));
         $this->assertEquals(33, $form->composeField('age', $form)->get('value'));
@@ -147,18 +128,34 @@ class FormTest extends ResourceTestCase
         ];
 
         $file = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
+        $form = FormBuilder::buildFromEntry($testUser = new FormTestUser);
+        $form->setFields($fields)->make();
 
-        $form = Form::for($testUser = new FormTestUser, $fields)
-                    ->make()
-                    ->setRequest($this->makePostRequest(['name'   => 'Omar',
-                                                         'age'    => 33,
-                                                         'avatar' => $file]));
+        $form->setRequest($this->makePostRequest(['name'   => 'Omar',
+                                                  'age'    => 33,
+                                                  'avatar' => $file]));
 
         $form->getField('avatar');
         $form->save();
         $this->assertNull($testUser->avatar);
 
         $this->assertEquals(1, Media::count());
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->users = $this->create('t_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->unsignedInteger('age');
+        });
+    }
+
+    protected function getComposedValue($field, $form = null)
+    {
+        return (new FieldComposer($field))->forForm($form)->get('value');
     }
 
     protected function makeFields(): array

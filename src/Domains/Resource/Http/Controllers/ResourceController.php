@@ -25,8 +25,8 @@ class ResourceController extends BaseApiController
         }
 
 
-        if ($field instanceof HandlesRpc) {
-            return $field->getRpcResult(['method' => $rpcMethod], $this->request->toArray());
+        if ($field->getFieldType() instanceof HandlesRpc) {
+            return $field->getFieldType()->getRpcResult(['method' => $rpcMethod], $this->request->toArray());
         }
 
         return abort(404);
