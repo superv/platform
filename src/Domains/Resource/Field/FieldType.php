@@ -55,10 +55,6 @@ class FieldType
 
         $class = $base."\\".studly_case($type);
 
-        if ($type === 'belongs_to') {
-            $base .= "\\".studly_case($type);
-        }
-
         if (! class_exists($class)) {
             $class = $base."\\".studly_case($type.'_field');
         }
