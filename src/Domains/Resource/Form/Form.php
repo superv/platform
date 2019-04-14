@@ -66,17 +66,21 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
 
     protected $title;
 
-    public function make()
+    public function make($uuid = null)
     {
-        $this->uuid = uuid();
+        $this->uuid = $uuid ?? uuid();
 
         if (is_null($this->fields)) {
             if ($this->entry) {
                 $this->fields = $this->provideFields($this->entry);
+            } else {
+                $this->fields = collect();
             }
         }
 
         $this->fields->map(function (Field $field) {
+            $field->setForm($this);
+
             if ($this->hasEntry()) {
                 $field->setWatcher($this->getEntry());
             }
@@ -218,7 +222,7 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
 
         if (is_array($fields)) {
             $fields = collect($fields)->map(function ($field) {
-                return is_array($field) ?  FieldFactory::createFromArray($field, FormField::class) : $field;
+                return is_array($field) ? FieldFactory::createFromArray($field, FormField::class) : $field;
             });
         }
 

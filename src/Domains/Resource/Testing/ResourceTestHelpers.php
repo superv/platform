@@ -14,9 +14,17 @@ use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
 
 trait ResourceTestHelpers
 {
-    protected function getPageFromUrl($url)
+    protected function getUserPage($url)
     {
         $response = $this->getJsonUser($url);
+        $response->assertOk();
+
+        return HelperComponent::from($response->decodeResponseJson('data'));
+    }
+
+    protected function getPublicPage($url)
+    {
+        $response = $this->getJson($url);
         $response->assertOk();
 
         return HelperComponent::from($response->decodeResponseJson('data'));

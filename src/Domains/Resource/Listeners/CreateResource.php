@@ -58,7 +58,7 @@ class CreateResource
     protected function createResourceEntry($config, $addon)
     {
         /** @var ResourceModel $entry */
-        ResourceModel::create(array_filter(
+       return ResourceModel::create(array_filter(
             [
                 'slug'       => $this->table,
                 'handle'     => $this->table,

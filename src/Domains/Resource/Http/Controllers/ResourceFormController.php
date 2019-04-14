@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
-use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\UI\Page\Page;

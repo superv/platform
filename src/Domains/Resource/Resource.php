@@ -65,6 +65,11 @@ final class Resource implements
     protected $fields;
 
     /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $fieldEntries;
+
+    /**
      * @var Collection
      */
     protected $columns;
@@ -281,6 +286,11 @@ final class Resource implements
         return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
     }
 
+    public function isOwned()
+    {
+        return !is_null($this->getConfigValue('owner_key'));
+    }
+
     public function getKeyName()
     {
         return $this->getConfigValue('key_name', str_singular($this->getHandle()));
@@ -290,9 +300,9 @@ final class Resource implements
     {
         $base = 'sv/res/'.$this->getHandle();
 
-
         if ($route === 'fields') {
             $params = array_merge($params, ['resource' => $this->getHandle()]);
+
             return sv_route('resource.fields', $params);
         }
         if ($route === 'create') {
@@ -441,6 +451,17 @@ final class Resource implements
     public function getAddon(): string
     {
         return $this->addon;
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getFieldEntries(): \Illuminate\Support\Collection
+    {
+        if (is_callable($this->fieldEntries))
+            $this->fieldEntries = ($this->fieldEntries)();
+
+        return $this->fieldEntries;
     }
 
     public function uuid(): string

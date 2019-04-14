@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
+use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -19,6 +20,7 @@ class Field implements FieldContract
     use FiresCallbacks;
     use HasConfig;
     use FieldFlags;
+
     /**
      * @var \SuperV\Platform\Domains\Resource\Field\FieldType
      */
@@ -82,6 +84,9 @@ class Field implements FieldContract
      */
     protected $resource;
 
+    /** @var Form */
+    protected $form;
+
     public function __construct(FieldType $fieldType, array $attributes = [])
     {
         $this->fieldType = $fieldType;
@@ -98,10 +103,19 @@ class Field implements FieldContract
         }
 
         $this->boot();
-
     }
 
     protected function boot() { }
+
+    public function getForm(): Form
+    {
+        return $this->form;
+    }
+
+    public function setForm(Form $form): void
+    {
+        $this->form = $form;
+    }
 
     public function setHint($hint)
     {
@@ -184,6 +198,7 @@ class Field implements FieldContract
         if (method_exists($this->fieldType, 'getColumnName')) {
             return $this->fieldType->getColumnName();
         }
+
         return $this->columnName ?? $this->getName();
     }
 
@@ -288,6 +303,11 @@ class Field implements FieldContract
         return $this->setConfigValue('classes', trim($class.' '.$previous));
     }
 
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
     /**
      * @return \SuperV\Platform\Domains\Resource\Resource
      */
@@ -302,10 +322,5 @@ class Field implements FieldContract
     public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void
     {
         $this->resource = $resource;
-    }
-
-    public function getType(): string
-    {
-       return $this->type;
     }
 }

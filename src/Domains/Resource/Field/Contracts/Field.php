@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
 
 interface Field
 {
@@ -65,6 +66,10 @@ interface Field
     public function getComposer($for);
 
     public function getMutator($for);
+
+    public function getForm(): Form;
+
+    public function setForm(Form $form): void;
 
     public function setPresenter(Closure $callback): Field;
 

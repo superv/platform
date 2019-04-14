@@ -29,7 +29,7 @@ class ResourceIndexTest extends ResourceTestCase
     {
         $users = $this->schema()->users();
 
-        $page = $this->getPageFromUrl($users->route('index'));
+        $page = $this->getUserPage($users->route('index'));
         $table = HelperComponent::from($page->getProp('blocks.0'));
 
         $this->assertEquals('sv-loader', $table->getName());

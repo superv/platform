@@ -58,7 +58,7 @@ class MakePageTest
                     })
                     ->register();
 
-        $page = $this->getPageFromUrl('sv/pages/abc');
+        $page = $this->getUserPage('sv/pages/abc');
         $this->assertNotNull($page);
         $form = HelperComponent::from($page->getProp('blocks.0'));
         $this->assertEquals(count($fields), count($form->getProp('fields')));

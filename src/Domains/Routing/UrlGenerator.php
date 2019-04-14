@@ -13,12 +13,7 @@ class UrlGenerator extends \Illuminate\Routing\UrlGenerator
      */
     public function current()
     {
-//        $port = Current::port();
-//        if (! $port || ! $prefix = $port->prefix()) {
-//            return $this->to($this->request->getPathInfo());
-//        }
-
-        return $this->to($this->getPathInfo());
+        return $this->to($this->path());
     }
 
     /**
@@ -41,7 +36,7 @@ class UrlGenerator extends \Illuminate\Routing\UrlGenerator
         return parent::formatRoot($scheme, $root);
     }
 
-    public function getPathInfo()
+    public function path()
     {
         $pathInfo = $this->request->getPathInfo();
         $port = Current::port();

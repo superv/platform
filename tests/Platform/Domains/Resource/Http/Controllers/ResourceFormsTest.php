@@ -27,7 +27,7 @@ class ResourceFormsTest extends ResourceTestCase
 
         // Get Create form
         //
-        $page = $this->getPageFromUrl($users->route('create'));
+        $page = $this->getUserPage($users->route('create'));
 
         $form = HelperComponent::from($page->getProp('blocks.0'));
         $this->assertEquals(7, $form->countProp('fields'));
@@ -59,7 +59,7 @@ class ResourceFormsTest extends ResourceTestCase
 
         // Get Create form
         //
-        $page = $this->getPageFromUrl($users->route('create'));
+        $page = $this->getUserPage($users->route('create'));
 
         $form = HelperComponent::from($page->getProp('blocks.0'));
         $this->assertEquals(3, $form->countProp('fields'));

@@ -18,7 +18,7 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
     {
         return $this->getRelatedResource()->resolveTable()
                     ->setQuery($this)
-                    ->setDataUrl(sv_url()->getPathInfo().'/data')
+                    ->setDataUrl(sv_url()->path().'/data')
                     ->addContextAction(
                         ModalAction::make('New '.str_singular(str_unslug($this->getName())))
                                    ->setModalUrl($this->route('create', $this->parentEntry))

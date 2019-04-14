@@ -19,6 +19,9 @@ class CreateResourcesTables extends Migration
         LaravelSchema::create('sv_fields', function (LaravelBlueprint $table) {
             Blueprints::fields($table);
         });
+        LaravelSchema::create('sv_forms', function (LaravelBlueprint $table) {
+            Blueprints::forms($table);
+        });
         LaravelSchema::create('sv_relations', function (LaravelBlueprint $table) {
             Blueprints::relations($table);
         });
@@ -46,6 +49,9 @@ class CreateResourcesTables extends Migration
         });
         Schema::run('sv_fields', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::fields($table, $resource);
+        });
+        Schema::run('sv_forms', function (Blueprint $table, ResourceConfig $resource) {
+            Blueprints::forms($table, $resource);
         });
         Schema::run('sv_relations', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::relations($table, $resource);

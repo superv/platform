@@ -12,6 +12,7 @@ use Illuminate\Support\Fluent;
  * @method ResourceConfig nav($nav)
  * @method ResourceConfig keyName($name)
  * @method ResourceConfig resourceKey($key)
+ * @method ResourceConfig ownedBy($ownerKey)
  * @method ResourceConfig entryLabel($entryLabel)
  */
 class ResourceConfig extends Fluent

@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
+use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
@@ -72,11 +73,13 @@ class BelongsToField extends FieldType implements RequiresDbColumn, ProvidesFilt
                 }
             }
             $this->buildOptions();
-            $payload->set('meta.options', $this->field->getResource()->route('fields', null,
-                [
-                    'field' => $this->getName(),
-                    'rpc'   => 'options',
-                ]));
+            $url = sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
+            $payload->set('meta.options', $url);
+//            $payload->set('meta.options', $this->field->getResource()->route('fields', null,
+//                [
+//                    'field' => $this->getName(),
+//                    'rpc'   => 'options',
+//                ]));
 //            $payload->set('meta.options', $this->options);
             $payload->set('placeholder', 'Select '.$this->relatedResource->getSingularLabel());
         };
