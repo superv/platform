@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Closure;
+use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
@@ -39,6 +40,7 @@ final class Resource implements
     use LabelConcern;
     use RepoConcern;
     use FiresCallbacks;
+    use ResourceCallbacks;
 
     /**
      * Database id
@@ -119,6 +121,9 @@ final class Resource implements
         $this->hydrate($attributes);
 
         $this->fields = (new Fields($this, $this->fields));
+        if (is_null($this->relations)) {
+            throw new Exception('aa');
+        }
         $this->relations = ($this->relations)($this);
         $this->actions = collect();
     }
@@ -288,7 +293,7 @@ final class Resource implements
 
     public function isOwned()
     {
-        return !is_null($this->getConfigValue('owner_key'));
+        return ! is_null($this->getConfigValue('owner_key'));
     }
 
     public function getKeyName()
@@ -458,8 +463,9 @@ final class Resource implements
      */
     public function getFieldEntries(): \Illuminate\Support\Collection
     {
-        if (is_callable($this->fieldEntries))
+        if (is_callable($this->fieldEntries)) {
             $this->fieldEntries = ($this->fieldEntries)();
+        }
 
         return $this->fieldEntries;
     }

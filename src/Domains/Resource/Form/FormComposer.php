@@ -37,6 +37,18 @@ class FormComposer
         return $payload;
     }
 
+    public function setRequest(?Request $request): FormComposer
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    public static function make(Form $form): FormComposer
+    {
+        return (new static($form));
+    }
+
     protected function composeActions()
     {
         $actions = $this->getActions();
@@ -65,15 +77,12 @@ class FormComposer
                           })->values()->all();
     }
 
-    public function setRequest(?Request $request): FormComposer
-    {
-        $this->request = $request;
-
-        return $this;
-    }
-
     protected function getActions()
     {
+        if ($this->form->getActions()) {
+            return $this->form->getActions();
+        }
+        
         if ($this->form->getEntry() && $this->form->getEntry()->exists) {
             return [
                 [
@@ -113,10 +122,5 @@ class FormComposer
                 'color'      => 'success',
             ],
         ];
-    }
-
-    public static function make(Form $form): FormComposer
-    {
-        return (new static($form));
     }
 }

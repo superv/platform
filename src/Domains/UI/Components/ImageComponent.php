@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\UI\Components;
 
-class Image extends BaseComponent
+class ImageComponent extends BaseComponent
 {
     protected $name = 'sv-image';
 

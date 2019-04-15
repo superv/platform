@@ -3,12 +3,13 @@
 namespace SuperV\Platform\Domains\Resource\Extension;
 
 use Illuminate\Events\Dispatcher;
-use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsMatchingResources;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsMultipleResources;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsResource;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesEntryCreating;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesEntryRetrieved;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesEntrySaved;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesEntrySaving;
+use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatingEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntryRetrievedEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
@@ -102,6 +103,15 @@ class Extension
                 function (EntryRetrievedEvent $event) use ($extension) {
                     if ($event->entry->getTable() === $extension->extends()) {
                         $extension->retrieved($event->entry);
+                    }
+                });
+        }
+
+        if ($extension instanceof ObservesEntryCreating) {
+            $this->events->listen(EntryCreatingEvent::class,
+                function (EntryCreatingEvent $event) use ($extension) {
+                    if ($event->entry->getTable() === $extension->extends()) {
+                        $extension->creating($event->entry);
                     }
                 });
         }

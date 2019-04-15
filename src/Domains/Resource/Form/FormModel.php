@@ -74,8 +74,13 @@ class FormModel extends ResourceEntry
                     });
     }
 
-    public static function findByUuid($uuid)
+    public static function findByUuid($uuid): FormModel
     {
         return static::query()->where('uuid', $uuid)->first();
+    }
+
+    public static function findByResource($id): FormModel
+    {
+        return static::query()->where('resource_id', $id)->first();
     }
 }

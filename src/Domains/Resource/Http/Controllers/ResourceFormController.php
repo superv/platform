@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Http\Controllers\BaseApiController;
@@ -16,13 +17,16 @@ class ResourceFormController extends BaseApiController
         $resource = $this->resolveResource();
 
         $form = $builder->setResource($resource)->build();
+        $formData = FormModel::findByResource($resource->id());
+
         $form->setUrl($resource->route('store'))
-             ->setRequest($this->request)
-             ->make();
+             ->setRequest($this->request);
 
         if ($callback = $resource->getCallback('creating')) {
             app()->call($callback, ['form' => $form]);
         }
+
+        $form->make($formData ? $formData->uuid : null);
 
         $page = Page::make('Create new '.$resource->getSingularLabel());
         $page->addBlock($form);
@@ -44,12 +48,12 @@ class ResourceFormController extends BaseApiController
     public function edit(FormBuilder $builder)
     {
         $resource = $this->resolveResource();
-        $form = $builder->setEntry($this->entry)
-                        ->build();
+        $form = $builder->setEntry($this->entry)->build();
+        $formData = FormModel::findByResource($resource->id());
 
         $form->setUrl($resource->route('update', $this->entry))
              ->setRequest($this->request)
-             ->make();
+             ->make($formData ? $formData->uuid : null);
 
         if ($callback = $resource->getCallback('editing')) {
             app()->call($callback, ['form' => $form, 'entry' => $this->entry]);

@@ -2,7 +2,6 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Feature\FeatureBus;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
@@ -14,7 +13,6 @@ use SuperV\Platform\Domains\UI\Nucleo\SvTabs;
 use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
-
 
 function dump_callers($limit = 10)
 {
@@ -80,7 +78,17 @@ function array_set_if($condition, &$array, $key, $value)
 
 function array_filter_null(array $array = [])
 {
-    return array_filter($array, function ($item) { return ! is_null($item); });
+    return array_filter($array, function ($item) {
+        if (is_null($item)) {
+            return false;
+        }
+
+        if (is_array($item) && count($item) === 0) {
+            return false;
+        }
+
+        return true;
+    });
 }
 
 function html_attributes($attributes)
@@ -117,8 +125,8 @@ if (! function_exists('superv')) {
     /**
      * Get the available container instance.
      *
-     * @param  string $abstract
-     * @param  array  $parameters
+     * @param string $abstract
+     * @param array  $parameters
      * @return mixed|\Illuminate\Foundation\Application
      */
     function superv($abstract = null, array $parameters = [])
@@ -173,7 +181,7 @@ function sv_guard($guardable)
 /**
  * Create a collection from the given value.
  *
- * @param  mixed $value
+ * @param mixed $value
  * @return \Illuminate\Support\Collection
  */
 function sv_collect($value = null)

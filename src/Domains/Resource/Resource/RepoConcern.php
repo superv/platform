@@ -13,10 +13,23 @@ trait RepoConcern
 {
     protected $with = [];
 
+    protected $scopes = [];
+
+    public function addScope($scope)
+    {
+        $this->scopes[] = $scope;
+    }
+
     /** @return \Illuminate\Database\Eloquent\Builder */
     public function newQuery()
     {
-        return $this->newEntryInstance()->newQuery()->with($this->with);
+        $query = $this->newEntryInstance()->newQuery()->with($this->with);
+
+        foreach ($this->scopes as $scope) {
+            $scope($query);
+        }
+
+        return $query;
     }
 
     public function with($relation)

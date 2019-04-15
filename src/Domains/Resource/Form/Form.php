@@ -62,6 +62,8 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
     /** @var EntryContract */
     protected $entry;
 
+    protected $actions = [];
+
     protected $postSaveCallbacks = [];
 
     protected $title;
@@ -165,7 +167,9 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
     public function mergeFields($fields)
     {
         $fields = $this->provideFields($fields);
-        $this->fields->merge($fields);
+        $this->fields = $this->fields->merge($fields);
+
+        return $this;
     }
 
     public function hideField(string $fieldName): self
@@ -207,11 +211,30 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
         return $this;
     }
 
+    public function addField($field)
+    {
+        return $this->addFields([$field]);
+    }
+
     public function addFields($fields): self
     {
-        $this->mergeFields($fields);
+        return $this->mergeFields($fields);
+    }
 
-        return $this;
+    /**
+     * @return array
+     */
+    public function getActions(): array
+    {
+        return $this->actions;
+    }
+
+    /**
+     * @param array $actions
+     */
+    public function setActions(array $actions): void
+    {
+        $this->actions = $actions;
     }
 
     protected function provideFields($fields)

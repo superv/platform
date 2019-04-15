@@ -25,8 +25,8 @@ class FormControllerTest extends ResourceTestCase
 
     function test__form_page_with_uuid()
     {
-        $page = $this->getUserPage('sv/forms/'.$this->formEntry->uuid);
-        $form = HelperComponent::from($page->getProp('blocks.0'));
+        $form = $this->getUserPage('sv/forms/'.$this->formEntry->uuid);
+//        $form = HelperComponent::from($page->getProp('blocks.0'));
 
         $this->assertEquals('sv-form', $form->getName());
         $this->assertEquals($this->posts->getFields()->count(), $form->countProp('fields'));

@@ -12,7 +12,7 @@ class UsersExtension implements ExtendsResource
     {
         $resource->searchable(['email']);
 
-        $resource->on('index.config', function (ResourceTable $table) {
+        $resource->onIndexConfig(function (ResourceTable $table) {
         });
 
         $fields = $resource->indexFields();

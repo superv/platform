@@ -24,11 +24,11 @@ class ResourceActivityExtension implements ExtendsResource
     {
 
 
-        $resource->on('index.page', function (ResourcePage $page) {
+        $resource->onIndexPage(function (ResourcePage $page) {
             $page->setActions([]);
         });
 
-        $resource->on('index.config', function (ResourceTable $table) {
+        $resource->onIndexConfig(function (ResourceTable $table) {
             $table->addRowAction(DeleteEntryAction::class);
         });
         $fields = $resource->indexFields();

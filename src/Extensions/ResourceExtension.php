@@ -14,11 +14,11 @@ class ResourceExtension implements ExtendsResource
         $fields = $resource->indexFields();
         $fields->get('addon')->copyToFilters();
 
-        $resource->on('index.config', function (ResourceTable $table) {
+        $resource->onIndexConfig(function (ResourceTable $table) {
             $table->showIdColumn();
         });
 
-        $resource->on('index.data', function (ResourceTable $table) {
+        $resource->onIndexData(function (ResourceTable $table) {
             $table->setOption('limit', 50);
         });
     }

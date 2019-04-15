@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
+use Hub;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
@@ -52,7 +53,7 @@ class ResourceFormsTest extends ResourceTestCase
         // extend resource creation form
         //
         Resource::extend('t_users')->with(function (Resource $resource) {
-            $resource->on('creating', function (Form $form) {
+            $resource->onCreating(function (Form $form) {
                 $form->onlyFields('name', 'email', 'group');
             });
         });
@@ -143,7 +144,7 @@ class ResourceFormsTest extends ResourceTestCase
         // extend resource edit form
         //
         Resource::extend('t_users')->with(function (Resource $resource) {
-            $resource->on('editing', function (Form $form) {
+            $resource->onEditing(function (Form $form) {
                 $form->onlyFields('name', 'email', 'group');
             });
         });
@@ -157,13 +158,15 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__posts_create_form()
     {
+        $this->withoutExceptionHandling();
         $users = $this->schema()->users();
         $post = [
             'name'     => 'Ali',
             'email'    => 'ali@superv.io',
             'group_id' => 1,
         ];
-        $response = $this->postJsonUser($users->route('store'), $post);
+
+        $response = $this->postJsonUser($users->route('store') , $post);
         $response->assertOk();
 
         $user = $users->first();

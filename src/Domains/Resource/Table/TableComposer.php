@@ -37,9 +37,10 @@ class TableComposer
         ]);
 
         if ($this->table instanceof EntryTable) {
-            $payload->set('config.filters', $this->table->getFilters()->map(function (Filter $filter) {
-                return (new FieldComposer($filter))->forForm();
-            }));
+            $payload->set('config.filters', $this->table->getFilters()
+                                                        ->map(function (Filter $filter) {
+                                                            return (new FieldComposer($filter))->forForm();
+                                                        }));
         }
 
         return $payload->get();

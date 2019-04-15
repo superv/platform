@@ -3,11 +3,9 @@
 namespace SuperV\Platform\Domains\UI\Page;
 
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Action\RestoreEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Contracts\RequiresEntry;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
@@ -71,7 +69,6 @@ class EntryPage extends ResourcePage
                 return sv_parse($section, ['entry' => $this->entry]);
             });
     }
-
 
     protected function getRelationsSections(): Collection
     {

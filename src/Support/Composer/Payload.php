@@ -51,7 +51,7 @@ class Payload implements Arrayable, Composable
     public function get($key = null, $default = null)
     {
         if (is_null($key)) {
-            return $this->filterNull ? array_filter($this->params) : $this->params;
+            return $this->filterNull ? array_filter_null($this->params) : $this->params;
         }
 
         return array_get($this->params, $key, $default);
