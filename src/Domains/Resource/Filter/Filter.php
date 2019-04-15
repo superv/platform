@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Filter;
 
+use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter as FilterContract;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -122,7 +123,7 @@ abstract class Filter implements FilterContract, ProvidesField
      * @param mixed $callback
      * @return Filter
      */
-    public function setApplyCallback($callback): FilterContract
+    public function setApplyCallback(Closure $callback): FilterContract
     {
         $this->callback = $callback;
 
