@@ -15,6 +15,8 @@ class FormModel extends ResourceEntry
 
     protected $ownerResource;
 
+    protected $casts = ['public' => 'boolean'];
+
     protected static function boot()
     {
         parent::boot();

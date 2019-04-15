@@ -53,7 +53,7 @@ class FormController extends BaseController
              ->setRequest($this->request)
              ->make($formEntry->uuid);
 
-        if ($callback = $resource->getCallback('creating')) {
+        if ($resource && $callback = $resource->getCallback('creating')) {
             app()->call($callback, ['form' => $form]);
         }
 
