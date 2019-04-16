@@ -2,7 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
-use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
+use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class RelationIndexTest extends ResourceTestCase

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource\Fixtures;
+namespace SuperV\Platform\Testing;
 
 use SuperV\Platform\Domains\UI\Components\BaseComponent;
 

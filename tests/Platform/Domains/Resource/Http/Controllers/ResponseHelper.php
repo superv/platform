@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
+use SuperV\Platform\Testing\HelperComponent;
 
 trait ResponseHelper
 {

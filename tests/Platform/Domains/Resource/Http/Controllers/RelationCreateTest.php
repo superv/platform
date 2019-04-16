@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Resource;
-use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
+use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class RelationCreateTest extends ResourceTestCase
