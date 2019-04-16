@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\Fixtures\Blueprints;
-use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
+use SuperV\Platform\Testing\HelperComponent;
 
 trait ResourceTestHelpers
 {
