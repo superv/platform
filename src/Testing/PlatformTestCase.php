@@ -4,8 +4,6 @@ namespace SuperV\Platform\Testing;
 
 use Current;
 use Hub;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
@@ -15,9 +13,7 @@ use SuperV\Platform\Domains\Addon\Locator;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\PlatformServiceProvider;
-use Tests\CreatesApplication;
 use Tests\Platform\ComposerLoader;
-use Tests\TestCase;
 
 class PlatformTestCase extends OrchestraTestCase
 {
@@ -34,7 +30,7 @@ class PlatformTestCase extends OrchestraTestCase
     protected $packageProviders = [];
 
     protected $appConfig = [
-        'app.key' => 'base64:SkW/b3Bg7pb2vvIOad6noSrFSR7eUS8ZdCXl0LoRQNI='
+        'app.key' => 'base64:SkW/b3Bg7pb2vvIOad6noSrFSR7eUS8ZdCXl0LoRQNI=',
     ];
 
     protected $shouldInstallPlatform = true;
@@ -42,6 +38,11 @@ class PlatformTestCase extends OrchestraTestCase
     protected $installs = [];
 
     protected $handleExceptions = true;
+
+    public function basePath($path = null)
+    {
+        return __DIR__.($path ? '/'.$path : '');
+    }
 
     protected function getPackageProviders($app)
     {
@@ -73,15 +74,9 @@ class PlatformTestCase extends OrchestraTestCase
 
         $this->loadLaravelMigrations();
 
-//        $this->withFactories(__DIR__.'/../database/factories');
-
-        $this->loadFactoriesUsing($this->app, __DIR__.'/../../tests/database/factories');
-
         $this->makeTmpDirectory();
 
         $this->setUpMacros();
-
-//        $this->app->setBasePath(realpath(__DIR__.'/../../'));
 
         if ($this->shouldInstallPlatform()) {
             $this->installSuperV();
@@ -169,11 +164,6 @@ class PlatformTestCase extends OrchestraTestCase
         return $port;
     }
 
-    public function basePath($path = null)
-    {
-        return __DIR__.($path ? '/'.$path : '');
-    }
-
     protected function makeRequest($path = null)
     {
         $this->app->extend('request', function () use ($path) {
@@ -188,17 +178,13 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected function installAddons(): void
     {
-        $basePath = base_path();
-
         $this->app->setBasePath(realpath(__DIR__.'/../../../../../'));
 
         foreach ($this->installs as $addon) {
-            $addon = app(Installer::class)
+            app(Installer::class)
                 ->setLocator(new Locator(realpath(__DIR__.'/../../../../')))
                 ->setSlug($addon)
                 ->install();
-
-//            $addon->boot();
         }
     }
 
@@ -228,39 +214,3 @@ class PlatformTestCase extends OrchestraTestCase
         return $this->shouldInstallPlatform && method_exists($this, 'refreshDatabase');
     }
 }
-
-//class PlatformTestCase extends TestCase
-//{
-//    use RefreshDatabase;
-//    use CreatesApplication;
-//    use DispatchesJobs;
-//    use TestHelpers;
-//
-//    protected $installs = [];
-//
-//    protected $port;
-//
-//    protected $theme;
-//
-//    protected function setUp()
-//    {
-//        parent::setUp();
-//
-//        $this->artisan('superv:install');
-//        config(['superv.installed' => true]);
-//
-//        $this->handlePostInstallCallbacks();
-//
-//        foreach ($this->installs as $addon) {
-//            app(Installer::class)->setLocator(new Locator())
-//                                 ->setSlug($addon)
-//                                 ->install();
-//        }
-//
-//        (new PlatformServiceProvider($this->app))->boot();
-//
-//        $this->setUpMacros();
-//
-//        $this->loadFactoriesUsing($this->app, __DIR__.'/../../tests/database/factories');
-//    }
-//}
