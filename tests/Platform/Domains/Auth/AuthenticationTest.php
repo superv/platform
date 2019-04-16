@@ -26,7 +26,7 @@ class AuthenticationTest extends TestCase
     {
         $this->setUpPort('web', 'localhost', null, ['client']);
         $this->makeRoute('web');
-        $user = $this->makeUser('user@superv.io');
+        $user = $this->newUser();
         $user->assign('client');
 
         $response = $this->login('user@superv.io', 'secret');
@@ -40,7 +40,7 @@ class AuthenticationTest extends TestCase
     {
         $this->setUpPort('acp', 'localhost', null, ['admin']);
         $this->makeRoute('acp');
-        $this->makeUser('user@superv.io')->assign('client');
+        $this->newUser()->assign('client');
 
         $response = $this->login('user@superv.io', 'secret');
 
@@ -58,7 +58,7 @@ class AuthenticationTest extends TestCase
         $this->setUpPort('web', 'localhost', null, ['client'], Client::class);
         $this->makeRoute('web');
 
-        $user = $this->makeUser('user@superv.io');
+        $user = $this->newUser();
         $user->assign('client');
         Client::create(['user_id' => $user->id]);
 
@@ -79,7 +79,7 @@ class AuthenticationTest extends TestCase
     {
         $this->setUpPort('web', 'localhost', null, ['client']);
         $this->makeRoute('web');
-        $this->makeUser('user@superv.io');
+        $this->newUser();
 
         $response = $this->login('user@superv.io', 'not-the-right-password');
 
@@ -93,13 +93,13 @@ class AuthenticationTest extends TestCase
     {
         $this->setUpPort('api', 'localhost', null, ['client', 'admin']);
         $this->makeRoute('api');
-        $user = $this->makeUser('user@superv.io');
+        $user = $this->newUser();
         $user->assign('client');
 
-        $admin = $this->makeUser('admin@superv.io');
+        $admin = $this->newUser(['email' => 'admin@superv.io']);
         $admin->assign('admin');
 
-        $response = $this->login('user@superv.io', 'secret');
+        $response = $this->login($user->getEmail(), 'secret');
         $response->assertRedirect();
 
         $this->assertAuthenticatedAs($user, 'sv-api');
@@ -129,18 +129,6 @@ class AuthenticationTest extends TestCase
     protected function makeRoute($port)
     {
         $this->route('post@login', LoginControllerStub::class.'@login', $port);
-    }
-
-    /**
-     * @param $email
-     * @return \SuperV\Platform\Domains\Auth\Contracts\User
-     */
-    protected function makeUser($email)
-    {
-        return factory(User::class)->create([
-            'id'    => rand(9, 999),
-            'email' => $email,
-        ]);
     }
 }
 

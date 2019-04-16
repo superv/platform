@@ -81,7 +81,7 @@ class PlatformTestCase extends OrchestraTestCase
 
         $this->setUpMacros();
 
-        $this->app->setBasePath(realpath(__DIR__.'/../../'));
+//        $this->app->setBasePath(realpath(__DIR__.'/../../'));
 
         if ($this->shouldInstallPlatform()) {
             $this->installSuperV();
