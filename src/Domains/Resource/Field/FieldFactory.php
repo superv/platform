@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
+use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Exceptions\PlatformException;
 
 class FieldFactory
@@ -50,8 +51,10 @@ class FieldFactory
         /** @var \SuperV\Platform\Domains\Resource\Field\Field $field */
         $field = new $fieldClass($fieldType, $this->params);
 
-        if (! $field->hasFlag('nullable')) {
-            $field->addFlag('required');
+        if ($fieldType instanceof RequiresDbColumn) {
+            if (! $field->hasFlag('nullable')) {
+                $field->addFlag('required');
+            }
         }
 
         return $field;
