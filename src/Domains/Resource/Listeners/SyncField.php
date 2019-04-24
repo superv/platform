@@ -65,7 +65,7 @@ class SyncField
         $this->column->ignore();
 
         if ($relationConfig->hasPivotTable()) {
-            CreatePivotTable::dispatch($relationConfig);
+            (new CreatePivotTable)($relationConfig);
         }
 
         $this->resourceEntry->resourceRelations()->create([
