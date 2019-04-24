@@ -99,10 +99,10 @@ class Blueprints
             $table->hasUuid()->showOnIndex();
             $table->createdBy()->updatedBy();
 
-            $table->belongsToMany('sv_fields', 'fields',
-                'sv_form_fields',
-                'form_id',
-                'field_id');
+            $table->belongsToMany('sv_fields', 'fields')
+                  ->pivotTable('sv_form_fields')
+                  ->pivotForeignKey('form_id')
+                  ->pivotRelatedKey('field_id');
         } else {
             $table->unsignedInteger('resource_id')->nullable();
             $table->uuid('uuid');
