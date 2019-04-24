@@ -50,8 +50,7 @@ class MorphOneTest extends ResourceTestCase
         });
     }
 
-    /** @test */
-    function create_morph_one_relation()
+    function test__create_morph_one_relation()
     {
         $this->assertColumnDoesNotExist('t_users', 'address');
         $this->assertColumnDoesNotExist('t_users', 'address_id');
@@ -116,8 +115,7 @@ class MorphOneTest extends ResourceTestCase
         (new FormTester($this->basePath()))->test($form);
     }
 
-    /** @test */
-    function return_none_eloquent_model_if_provided()
+    function test__return_none_eloquent_model_if_provided()
     {
         $this->create('t_profiles', function (Blueprint $table) {
             $table->increments('id');

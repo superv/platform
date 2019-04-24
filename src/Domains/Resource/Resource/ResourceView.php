@@ -45,8 +45,6 @@ class ResourceView implements ProvidesUIComponent
     {
         return Component::make('sv-resource-view')
                         ->setProps([
-                            'entry'    => sv_compose($this->entry),
-                            'edit-url' => sv_url($this->resource->route('edit', $this->entry)),
                             'heading'  => [
                                 'imageUrl' => $imageUrl ?? '',
                                 'header'   => $this->resource->getEntryLabel($this->entry),
