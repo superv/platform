@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
-use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
@@ -44,6 +43,8 @@ class BelongsToField extends FieldType implements RequiresDbColumn, ProvidesFilt
 
     public function makeFilter(?array $params = [])
     {
+        $this->relatedResource = $this->resolveRelatedResource();
+
         $this->buildOptions($params['query'] ?? null);
 
         return SelectFilter::make($this->getName(), $this->relatedResource->getSingularLabel())
@@ -72,7 +73,7 @@ class BelongsToField extends FieldType implements RequiresDbColumn, ProvidesFilt
                     $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
                 }
             }
-            $this->buildOptions();
+            $this->relatedResource = $this->resolveRelatedResource();
             $url = sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
             $payload->set('meta.options', $url);
 //            $payload->set('meta.options', $this->field->getResource()->route('fields', null,
@@ -87,6 +88,8 @@ class BelongsToField extends FieldType implements RequiresDbColumn, ProvidesFilt
 
     protected function rpcOptions(array $params, array $request = [])
     {
+        $this->relatedResource = $this->resolveRelatedResource();
+
         return $this->buildOptions($request['query'] ?? []);
     }
 
@@ -136,8 +139,6 @@ class BelongsToField extends FieldType implements RequiresDbColumn, ProvidesFilt
 
     public function buildOptions(?array $queryParams = [])
     {
-        $this->relatedResource = $this->resolveRelatedResource();
-
         $query = $this->relatedResource->newQuery();
         if ($queryParams) {
             $query->where($queryParams);
