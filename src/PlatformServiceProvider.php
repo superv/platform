@@ -138,6 +138,9 @@ class PlatformServiceProvider extends BaseServiceProvider
         // Register routes needed by platform
         //
         $this->registerPlatformRoutes();
+
+        $this->loadTranslationsFrom($this->platform->realPath('resources/lang'), 'sv');
+
     }
 
     protected function bindUserModel(): void

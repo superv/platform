@@ -43,7 +43,7 @@ class Section extends Entry
         $colophon = $this->getColophon();
 
         $payload = new Payload([
-            'title'    => $this->title,
+            'title'    => $this->addon ? trans( $this->addon.'::'.$this->title) : $this->title,
             'handle'   => $this->handle,
             'colophon' => $withColophon ? $colophon : null,
             'icon'     => $this->icon,

@@ -82,7 +82,8 @@ class BelongsToField extends FieldType implements RequiresDbColumn, ProvidesFilt
 //                    'rpc'   => 'options',
 //                ]));
 //            $payload->set('meta.options', $this->options);
-            $payload->set('placeholder', 'Select '.$this->relatedResource->getSingularLabel());
+            $payload->set('placeholder', trans('sv::resource.select', ['resource' => $this->relatedResource->getSingularLabel()]));
+
         };
     }
 

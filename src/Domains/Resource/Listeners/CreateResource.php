@@ -4,7 +4,9 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Resource\Nav\Section;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class CreateResource
@@ -18,6 +20,9 @@ class CreateResource
     /** @var string */
     protected $addon;
 
+    /** @var \SuperV\Platform\Domains\Resource\Resource */
+    protected $resource;
+
     public function handle(TableCreatingEvent $event)
     {
         if (! $event->addon) {
@@ -30,6 +35,8 @@ class CreateResource
 
         $this->createResourceEntry($this->blueprint->config($this->table, $event->columns), $event->addon);
 
+        $this->resource = ResourceFactory::make($this->table);
+
         $this->createNavSections();
     }
 
@@ -37,11 +44,11 @@ class CreateResource
     {
         if ($nav = $this->blueprint->nav) {
             if (is_string($nav)) {
-                Section::createFromString($handle = $nav.'.'.$this->table);
+                Section::createFromString($handle = $nav.'.'.$this->table, null, $this->addon);
                 $section = Section::get($handle);
                 $section->update([
                     'url'    => 'sv/res/'.$this->table,
-                    'title'  => $this->blueprint->label,
+                    'title'  =>  $this->table.'.label',
                     'handle' => str_slug($this->blueprint->label, '_'),
                 ]);
             } elseif (is_array($nav)) {
