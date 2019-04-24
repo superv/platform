@@ -182,7 +182,7 @@ class PlatformTestCase extends OrchestraTestCase
 
         foreach ($this->installs as $addon) {
             app(Installer::class)
-                ->setLocator(new Locator(realpath(__DIR__.'/../../../../')))
+                ->setLocator(new Locator())
                 ->setSlug($addon)
                 ->install();
         }
