@@ -14,6 +14,13 @@ class ResourcePage extends Page
 
     public function build($tokens = [])
     {
+        $this->buildActions();
+
+        return parent::build($tokens);
+    }
+
+    protected function buildActions(): void
+    {
         $this->actions = collect($this->actions)->map(function ($action) {
             if (is_string($action)) {
                 if (! $action = $this->resource->getAction($action)) {
@@ -27,8 +34,6 @@ class ResourcePage extends Page
 
             return $action;
         })->filter()->values()->all();
-
-        return parent::build($tokens);
     }
 
     public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): ResourcePage

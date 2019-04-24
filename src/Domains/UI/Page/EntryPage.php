@@ -45,23 +45,6 @@ class EntryPage extends ResourcePage
                      ]);
     }
 
-    protected function buildActions(): void
-    {
-        $this->actions = collect($this->actions)->map(function ($action) {
-            if (is_string($action)) {
-                if (! $action = $this->resource->getAction($action)) {
-                    return null;
-                }
-            }
-
-            if ($action instanceof RequiresEntry) {
-                $action->setEntry($this->entry);
-            }
-
-            return $action;
-        })->filter()->values()->all();
-    }
-
     protected function buildSections()
     {
         return collect($this->getRelationsSections())
