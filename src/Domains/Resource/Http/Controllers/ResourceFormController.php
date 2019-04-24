@@ -16,6 +16,28 @@ class ResourceFormController extends BaseApiController
     {
         $resource = $this->resolveResource();
 
+//        $form = $builder->setResource($resource)->build();
+//        $formData = FormModel::findByResource($resource->id());
+//
+//        $form->setUrl($resource->route('store'))
+//             ->setRequest($this->request);
+//
+//        if ($callback = $resource->getCallback('creating')) {
+//            app()->call($callback, ['form' => $form]);
+//        }
+//
+//        $form->make($formData ? $formData->uuid : null);
+
+        $page = Page::make('Create new '.$resource->getSingularLabel());
+        $page->addBlock(sv_loader('sv/forms/'.$resource->getHandle()));
+
+        return $page->build();
+    }
+
+    public function create__X(FormBuilder $builder)
+    {
+        $resource = $this->resolveResource();
+
         $form = $builder->setResource($resource)->build();
         $formData = FormModel::findByResource($resource->id());
 
