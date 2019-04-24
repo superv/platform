@@ -25,6 +25,12 @@ interface Field
 
     public function getValue();
 
+    public function setValue($value): void;
+
+    public function getDefaultValue();
+
+    public function setDefaultValue($defaultValue): void;
+
     public function getConfig();
 
     public function getConfigValue($key, $default = null);

@@ -65,6 +65,9 @@ class Field implements FieldContract
 
     protected $value;
 
+
+    protected $defaultValue;
+
     /**
      * @var \SuperV\Platform\Domains\Database\Model\Contracts\Watcher
      */
@@ -163,12 +166,33 @@ class Field implements FieldContract
             $entry->setAttribute($this->getColumnName(), $value);
         }
 
-        $this->value = $value;
+        $this->setValue($value);
     }
 
     public function getValue()
     {
-        return $this->value;
+        return $this->value ?? $this->defaultValue;
+    }
+
+    public function setValue($value): void
+    {
+        $this->value = $value;
+    }
+
+
+    public function resolveFromEntry($entry)
+    {
+        $attribute = $this->getColumnName();
+
+        if ($entry instanceof EntryContract) {
+            return $entry->getAttribute($attribute);
+        } elseif ($entry instanceof stdClass) {
+            return $entry->{$attribute};
+        } elseif (is_array($entry)) {
+            return $entry[$attribute] ?? null;
+        }
+
+        return null;
     }
 
     public function fillFromEntry(EntryContract $entry)
@@ -205,21 +229,6 @@ class Field implements FieldContract
     public function getRules()
     {
         return $this->rules;
-    }
-
-    public function resolveFromEntry($entry)
-    {
-        $attribute = $this->getColumnName();
-
-        if ($entry instanceof EntryContract) {
-            return $entry->getAttribute($attribute);
-        } elseif ($entry instanceof stdClass) {
-            return $entry->{$attribute};
-        } elseif (is_array($entry)) {
-            return $entry[$attribute] ?? null;
-        }
-
-        return null;
     }
 
     public function getPlaceholder()
@@ -290,12 +299,6 @@ class Field implements FieldContract
         return $this->alterQueryCallback;
     }
 
-    /**
-     * Add css class(es)
-     *
-     * @param string $class
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
-     */
     public function addClass(string $class): FieldContract
     {
         $previous = $this->getConfigValue('classes');
@@ -308,19 +311,23 @@ class Field implements FieldContract
         return $this->type;
     }
 
-    /**
-     * @return \SuperV\Platform\Domains\Resource\Resource
-     */
     public function getResource(): \SuperV\Platform\Domains\Resource\Resource
     {
         return $this->resource;
     }
 
-    /**
-     * @param \SuperV\Platform\Domains\Resource\Resource $resource
-     */
     public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void
     {
         $this->resource = $resource;
+    }
+
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    public function setDefaultValue($defaultValue): void
+    {
+        $this->defaultValue = $defaultValue;
     }
 }

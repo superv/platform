@@ -42,9 +42,9 @@ class FieldComposer
             'uuid'        => $field->uuid(),
             'name'        => $field->getName(),
             'label'       => $field->getLabel(),
-            'hint'        => $field->getConfigValue('hint'),
             'placeholder' => $field->getPlaceholder(),
             'value'       => $value ?? $field->getValue(),
+            'hint'        => $field->getConfigValue('hint'),
             'meta'        => $field->getConfigValue('meta'),
 
         ]))->setFilterNull(true);
