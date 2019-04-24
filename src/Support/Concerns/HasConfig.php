@@ -52,7 +52,7 @@ trait HasConfig
 
     public function mergeConfig(array $config)
     {
-        $this->config = array_merge_recursive($this->config, $config);
+        $this->config = array_replace_recursive($this->config, $config);
 
         return $this;
     }
