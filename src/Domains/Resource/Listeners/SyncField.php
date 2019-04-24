@@ -5,10 +5,11 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
-use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Jobs\CreatePivotTable;
+use SuperV\Platform\Domains\Resource\Relation\Contracts\ProvidesField;
+use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
@@ -64,6 +65,8 @@ class SyncField
         $relationConfig = $this->column->getRelationConfig();
         $this->column->ignore();
 
+        $relationType = Relation::resolve($relationConfig->getType());
+
         if ($relationConfig->hasPivotTable()) {
             (new CreatePivotTable)($relationConfig);
         }
@@ -74,7 +77,7 @@ class SyncField
             'config' => $relationConfig->toArray(),
         ]);
 
-        if ($relationConfig->type()->isBelongsTo()) {
+        if ($relationType instanceof ProvidesField) { //$relationConfig->type()->isBelongsTo()
             $this->column->ignore(false);
             $this->column->config($relationConfig->toArray());
 

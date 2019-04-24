@@ -8,9 +8,10 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
+use SuperV\Platform\Domains\Resource\Relation\Contracts\ProvidesField;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
-class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter
+class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter, ProvidesField
 {
     protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
     {
@@ -36,4 +37,5 @@ class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter
                            ->setOptions($options)
                            ->setAttribute($this->getRelationConfig()->getForeignKey());
     }
+
 }
