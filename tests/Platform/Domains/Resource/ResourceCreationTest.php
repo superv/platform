@@ -147,7 +147,6 @@ class ResourceCreationTest extends ResourceTestCase
 
         $email = $resource->getField('email');
         $this->assertTrue($email->isUnique());
-        $this->assertArrayContains(['unique'], $email->getRules());
 
         /** make sure we call the parent method for db unique index **/
         $columnDefinition = new ColumnDefinition(new ResourceConfig());

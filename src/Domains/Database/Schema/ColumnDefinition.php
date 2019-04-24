@@ -92,8 +92,6 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
     {
         parent::unique();
 
-        $this->addRule('unique');
-
         return $this->addFlag('unique');
     }
 
