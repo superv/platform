@@ -24,8 +24,9 @@ class CreateResourceForm
         $resource = ResourceFactory::make($event->table);
 
         $this->formEntry = app(FormFactory::class)->create([
+            'uuid'        => $resource->getHandle(),
             'resource_id' => $resource->id(),
-            'title'       => $resource->getLabel(). ' Form',
+            'title'       => $resource->getLabel().' Form',
         ]);
 
         $resource->getFieldEntries()
