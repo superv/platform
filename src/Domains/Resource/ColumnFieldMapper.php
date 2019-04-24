@@ -197,8 +197,4 @@ class ColumnFieldMapper
         $this->fieldType = 'datetime';
         $this->setConfigValue('time', true);
     }
-
-//    protected function mapBelongsTo()
-//    {
-//    }
 }

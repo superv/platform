@@ -90,6 +90,10 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
 
     public function unique()
     {
+        parent::unique();
+
+        $this->addRule('unique');
+
         return $this->addFlag('unique');
     }
 
@@ -130,6 +134,15 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         $flags = $this->flags;
         $flags[] = $flag;
         $this->flags = $flags;
+
+        return $this;
+    }
+
+    public function addRule($rule)
+    {
+        $rules = $this->rules;
+        $rules[] = $rule;
+        $this->rules = $rules;
 
         return $this;
     }

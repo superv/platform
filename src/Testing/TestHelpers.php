@@ -94,7 +94,7 @@ trait TestHelpers
 
     protected function assertArrayContains(array $needle, array $haystack)
     {
-        $this->assertEquals($needle, array_intersect($needle, $haystack));
+        $this->assertEquals($needle, array_intersect($needle, $haystack), 'Failed asserting array contains');
     }
 
     protected function assertColumnDoesNotExist(string $table, string $column)
