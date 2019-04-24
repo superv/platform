@@ -35,6 +35,7 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
     public function entryLabel()
     {
         $this->resourceConfig->entryLabel('{'.$this->name.'}');
+        $this->resourceConfig->entryLabelField($this->name);
 
         return $this;
     }

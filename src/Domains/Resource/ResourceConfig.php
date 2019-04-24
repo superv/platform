@@ -14,6 +14,7 @@ use Illuminate\Support\Fluent;
  * @method ResourceConfig resourceKey($key)
  * @method ResourceConfig ownedBy($ownerKey)
  * @method ResourceConfig entryLabel($entryLabel)
+ * @method ResourceConfig entryLabelField($fieldName)
  */
 class ResourceConfig extends Fluent
 {
