@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\UI\Page;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Contracts\RequiresEntry;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
@@ -56,6 +55,9 @@ class EntryPage extends ResourcePage
     protected function getRelationsSections(): Collection
     {
         return $this->resource->getRelations()
+                              ->filter(function (Relation $relation) {
+                                  return ! $relation->hasFlag('view.hide');
+                              })
                               ->map(function (Relation $relation) {
                                   if ($url = $relation->getConfigValue('view.url')) {
                                       $portal = true;

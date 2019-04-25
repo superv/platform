@@ -31,6 +31,8 @@ class EntryTable extends Table implements EntryTableContract
 
     protected $request;
 
+    protected $orderBy;
+
     public function __construct(DataProvider $provider)
     {
         $this->provider = $provider;
@@ -144,7 +146,16 @@ class EntryTable extends Table implements EntryTableContract
                 $query->orderBy($table.'.'.$column, $direction);
             }
         } else {
-            $query->orderBy($table.'.'.$keyName, 'DESC');
+
+            if ($this->orderBy) {
+                $query->orderBy(
+                    $this->orderBy['column'], $this->orderBy['direction']
+                );
+            } else {
+                $query->orderBy(
+                    $table.'.'.$keyName, 'DESC'
+                );
+            }
         }
     }
 

@@ -33,6 +33,18 @@ class ResourceTable extends EntryTable
         $this->resource->fire('table.querying', ['query' => $query]);
     }
 
+    protected function applyOptions($query)
+    {
+        if ($field = $this->resource->fields()->getEntryLabelField()) {
+            $this->orderBy = [
+                'column' => $field->getColumnName(),
+                'direction' => 'ASC'
+            ];
+        }
+
+        parent::applyOptions($query);
+    }
+
     public function getDataUrl()
     {
         if ($this->dataUrl) {
@@ -40,7 +52,6 @@ class ResourceTable extends EntryTable
         }
 
         return $this->resource->route('index.table').'/data';
-//        return sv_url($this->resource->route('index.table').'/data');
     }
 
     protected function getRowKeyName()

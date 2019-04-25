@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\Jobs\MakeForm;
 use SuperV\Platform\Domains\Resource\Form\Jobs\SaveForm;
-use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Http\Controllers\BaseController;
 use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 
@@ -17,7 +16,7 @@ class FormController extends BaseController
 {
     public function fields($uuid, $field, $rpc = null, FormBuilder $builder)
     {
-        $formEntry =  $this->getFormEntry($uuid);
+        $formEntry = $this->getFormEntry($uuid);
 
         if ($resource = $formEntry->getOwnerResource()) {
             $builder->setResource($resource);
@@ -29,9 +28,13 @@ class FormController extends BaseController
         $field = FieldFactory::createFromEntry($fieldEntry);
         $field->setForm($form);
 
+        if ($resource) {
+            $field->setResource($resource);
+        }
+
         if (! $rpcMethod = $this->route->parameter('rpc')) {
             return [
-                'data' => (new FieldComposer($field))->forForm()->get()
+                'data' => (new FieldComposer($field))->forForm()->get(),
             ];
         }
 
@@ -44,9 +47,9 @@ class FormController extends BaseController
 
     public function show($uuid)
     {
-        $formEntry =  $this->getFormEntry($uuid);
+        $formEntry = $this->getFormEntry($uuid);
 
-        $form =  MakeForm::dispatch($formEntry, $this->request);
+        $form = MakeForm::dispatch($formEntry, $this->request);
 
         return $form->makeComponent();
     }
@@ -62,8 +65,9 @@ class FormController extends BaseController
 
     protected function getFormEntry($uuid): FormModel
     {
-        if (!$formEntry = FormModel::findByUuid($uuid))
+        if (! $formEntry = FormModel::findByUuid($uuid)) {
             abort(404);
+        }
 
         if (! $formEntry->isPublic()) {
             app(PlatformAuthenticate::class)->guard($this->request, 'sv-api');

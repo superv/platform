@@ -65,6 +65,11 @@ class Fields
         return $field;
     }
 
+    public function getEntryLabelField()
+    {
+        return $this->find($this->resource->getConfigValue('entry_label_field'));
+    }
+
     public function showOnIndex($name): Field
     {
         return $this->get($name)->showOnIndex();

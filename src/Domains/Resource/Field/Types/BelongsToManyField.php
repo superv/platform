@@ -27,14 +27,14 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
     public function getModifier(): Closure
     {
         return function ($value, EntryContract $entry) {
-            $this->value = explode(',', $value);
+            $this->value =  $value ? explode(',', $value) : [];
 
             return function () use ($entry) {
-                if (! $this->value || ! $entry) {
+                if (! $entry) {
                     return null;
                 }
 
-                $entry->{$this->getName()}()->sync($this->value);
+                $entry->{$this->getName()}()->sync($this->value ?? []);
             };
         };
     }
@@ -42,25 +42,29 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
     protected function formComposer()
     {
         return function (Payload $payload, ?EntryContract $entry = null) {
+            $this->relatedResource = $this->resolveRelatedResource();
+
             if ($entry) {
                 if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                     $resource = sv_resource($relatedEntry);
                     $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
                 }
             }
-            $this->relatedResource = $this->resolveRelatedResource();
 
-            $url = sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
-            $payload->set('meta.options', $url);
-//            $payload->set('meta.options', $this->field->getResource()->route('fields', null,
-//                [
-//                    'field' => $this->getName(),
-//                    'rpc'   => 'options',
-//                ]));
-//            $payload->set('meta.options', $this->options);
+
+            $payload->set('meta.options', $this->getOptionsUrl($entry));
+            $payload->set('meta.values', $this->getValuesUrl($entry));
             $payload->set('meta.full', true);
             $payload->set('placeholder', 'Select '.$this->relatedResource->getSingularLabel());
         };
+    }
+
+    public function getOptionsUrl(?EntryContract $entry = null) {
+        return sprintf("sv/forms/%s/fields/%s/options?entry=%o", $this->field->getForm()->uuid(), $this->getName(), $entry ? $entry->getId() : null);
+    }
+
+    public function getValuesUrl(?EntryContract $entry = null) {
+        return sprintf("sv/forms/%s/fields/%s/values?entry=%o", $this->field->getForm()->uuid(), $this->getName(), $entry ? $entry->getId() : null);
     }
 
     /**
@@ -73,31 +77,53 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
         return sv_resource($relationConfig->getRelatedResource());
     }
 
-    public function buildOptions(?array $queryParams = [])
+
+    protected function rpcOptions(array $params, array $request = [])
     {
-        $query = $this->relatedResource->newQuery();
-        if ($queryParams) {
+        $entry  = $this->field->getResource()->find($request['entry']);
+
+        $resource = $this->resolveRelatedResource();
+        $query = $resource->newQuery();
+
+        if ($queryParams = $request['query'] ?? null) {
             $query->where($queryParams);
         }
 
-        $entryLabel = $this->relatedResource->getConfigValue('entry_label', '#{id}');
+        $keyName = $query->getModel()->getKeyName();
+        $alreadyAttachedItems = $entry->{$this->getName()}()
+                                      ->pluck($resource->getHandle().'.'.$keyName);
 
-        $this->options = $query->get()->map(function (EntryContract $item) use ($entryLabel) {
-            if ($keyName = $this->relatedResource->getConfigValue('key_name')) {
+
+        $query->whereNotIn($keyName, $alreadyAttachedItems);
+
+        $entryLabel = $resource->getConfigValue('entry_label', '#{id}');
+
+        return $query->get()->map(function (EntryContract $item) use ($resource, $entryLabel) {
+            if ($keyName = $resource->getConfigValue('key_name')) {
                 $item->setKeyName($keyName);
             }
 
             return ['value' => $item->getId(), 'text' => sv_parse($entryLabel, $item->toArray())];
         })->all();
-
-        return $this->options;
     }
 
-    protected function rpcOptions(array $params, array $request = [])
+    protected function rpcValues(array $params, array $request = [])
     {
-        $this->relatedResource = $this->resolveRelatedResource();
+        $entry  = $this->field->getResource()->find($request['entry']);
 
-        return $this->buildOptions($request['query'] ?? []);
+        $resource = $this->resolveRelatedResource();
+
+        $entryLabel = $resource->getConfigValue('entry_label', '#{id}');
+     return  $entry->{$this->getName()}()
+            ->get()->map(function (EntryContract $item) use ($resource, $entryLabel) {
+                if ($keyName = $resource->getConfigValue('key_name')) {
+                    $item->setKeyName($keyName);
+                }
+
+                return ['value' => $item->getId(), 'text' => sv_parse($entryLabel, $item->toArray())];
+            })->all();
+
+
     }
 
     public function getRpcResult(array $params, array $request = [])
