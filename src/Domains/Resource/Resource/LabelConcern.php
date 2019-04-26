@@ -14,7 +14,7 @@ trait LabelConcern
             return $label;
         }
 
-        return trans($label);
+        return sv_trans($label);
     }
 
     public function getEntryLabel(EntryContract $entry)
@@ -24,7 +24,7 @@ trait LabelConcern
 
     public function getSingularLabel()
     {
-        return trans($this->addon.'::'.$this->getHandle().'.singular_label');
+        return sv_trans($this->addon.'::'.$this->getHandle().'.singular_label');
 
         return $this->getConfigValue('singular_label', str_singular($this->getConfigValue('label')));
     }

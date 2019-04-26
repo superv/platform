@@ -48,7 +48,7 @@ class CreateResource
                 $section = Section::get($handle);
                 $section->update([
                     'url'    => 'sv/res/'.$this->table,
-                    'title'  =>  $this->table.'.label',
+                    'title'  =>  $this->table,
                     'handle' => str_slug($this->blueprint->label, '_'),
                 ]);
             } elseif (is_array($nav)) {

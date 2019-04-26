@@ -14,6 +14,18 @@ use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
 
+function sv_trans($key = null, $replace = [], $locale = null)
+{
+    $line = trans($key, $replace, $locale);
+
+    if ($line !== $key) {
+        return $line;
+    }
+
+    $parts = explode('.', $key);
+    return end($parts);
+}
+
 function dump_callers($limit = 10)
 {
     $callers = get_callers($limit);
