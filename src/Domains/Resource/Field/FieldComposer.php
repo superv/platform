@@ -46,6 +46,7 @@ class FieldComposer
             'value'       => $value ?? $field->getValue(),
             'hint'        => $field->getConfigValue('hint'),
             'meta'        => $field->getConfigValue('meta'),
+            'presenting'  => $field->getConfigValue('presenting'),
 
         ]))->setFilterNull(true);
 
