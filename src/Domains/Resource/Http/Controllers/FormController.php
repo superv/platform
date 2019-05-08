@@ -58,9 +58,7 @@ class FormController extends BaseController
     {
         $formEntry = $this->getFormEntry($uuid);
 
-        SaveForm::dispatch($formEntry, $this->request);
-
-        return ['status' => 'ok'];
+        return SaveForm::dispatch($formEntry, $this->request);
     }
 
     protected function getFormEntry($uuid): FormModel
