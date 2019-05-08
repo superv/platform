@@ -73,6 +73,10 @@ class BelongsToField extends FieldType implements RequiresDbColumn, ProvidesFilt
 
         $entryLabel = $this->relatedResource->getConfigValue('entry_label', '#{id}');
 
+        if ($entryLabelField = $this->relatedResource->fields()->getEntryLabelField()) {
+            $query->orderBy($entryLabelField->getColumnName(), 'ASC');
+        }
+
         $this->options = $query->get()->map(function (EntryContract $item) use ($entryLabel) {
             if ($keyName = $this->relatedResource->getConfigValue('key_name')) {
                 $item->setKeyName($keyName);
