@@ -251,7 +251,7 @@ class Field implements FieldContract
             $this->mergeConfig([
                 'meta' => [
                     'query'     => [$parent->getColumnName() => $entry->{$parent->getColumnName()}],
-                    'autofetch' => true,
+                    'autofetch' => false,
                 ],
             ]);
         }

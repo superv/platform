@@ -11,7 +11,8 @@ class TestCase extends PlatformTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->app->setBasePath(realpath(__DIR__.'/../../'));
+
+        $this->setBasePath();
     }
 
     protected function installAddons(): void
@@ -27,5 +28,12 @@ class TestCase extends PlatformTestCase
     public function basePath($path = null)
     {
         return __DIR__.($path ? '/'.$path : '');
+    }
+
+    protected function setBasePath(): void
+    {
+        $basePath = realpath(__DIR__.'/../../');
+
+        $this->app->setBasePath($basePath);
     }
 }

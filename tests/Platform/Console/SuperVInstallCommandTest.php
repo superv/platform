@@ -93,9 +93,11 @@ class SuperVInstallCommandTest extends TestCase
 
     protected function tearDown()
     {
-        parent::tearDown();
-
         file_put_contents(base_path('.env'), '');
+
+        $this->setBasePath();
+
+        parent::tearDown();
     }
 
     protected function envPath($name)

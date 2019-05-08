@@ -22,8 +22,6 @@ class ResourceActivityExtension implements ExtendsResource
 
     public function extend(Resource $resource)
     {
-
-
         $resource->onIndexPage(function (ResourcePage $page) {
             $page->setActions([]);
         });

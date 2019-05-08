@@ -35,7 +35,7 @@ class CreateResource
 
         $this->createResourceEntry($this->blueprint->config($this->table, $event->columns), $event->addon);
 
-        $this->resource = ResourceFactory::make($this->table);
+//        $this->resource = ResourceFactory::make($this->table);
 
         $this->createNavSections();
     }
