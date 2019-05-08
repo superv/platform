@@ -34,7 +34,7 @@ class SaveForm
         }
         $form = $builder->build();
 
-        $form->setRequest($this->request)
+        return $form->setRequest($this->request)
              ->make()
              ->save();
     }
