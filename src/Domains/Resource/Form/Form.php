@@ -25,6 +25,8 @@ use SuperV\Platform\Support\Concerns\FiresCallbacks;
 class Form implements FormContract, ProvidesUIComponent, Responsable
 {
     use FiresCallbacks;
+    const MODE_CREATE = 'create';
+    const MODE_UPDATE = 'update';
 
     /** @var string */
     protected $identifier;
@@ -68,6 +70,8 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
 
     protected $title;
 
+    protected $mode = Form::MODE_CREATE;
+
     public function make($uuid = null)
     {
         $this->uuid = $uuid ?? uuid();
@@ -109,6 +113,10 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
             $this->validate();
         }
 
+        if ($this->hasEntry() && $this->entry->exists) {
+            $this->mode = Form::MODE_UPDATE;
+        }
+
         $this->fields->map(function (Field $field) {
             if ($field->isHidden()) {
                 return;
@@ -126,6 +134,11 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
         });
 
         return $this;
+    }
+
+    public function isUpdating()
+    {
+        return $this->mode === Form::MODE_UPDATE;
     }
 
     public function validate()
@@ -339,6 +352,7 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
 
         return response()->json([
             'data' => [
+                'message' => $this->isUpdating() ? 'Kayıt güncellendi' : 'Kayıt oluşturuldu',
                 'action'      => $action,
                 'redirect_to' => $route ?? $this->resource->route('index'),
             ],
