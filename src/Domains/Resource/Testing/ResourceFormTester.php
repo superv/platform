@@ -122,7 +122,7 @@ class ResourceFormTester extends Assert
     /**
      * @return \Illuminate\Http\UploadedFile
      */
-    protected function getTestFile(): \Illuminate\Http\UploadedFile
+    protected function getTestFile(): UploadedFile
     {
         return new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
     }

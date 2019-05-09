@@ -48,6 +48,7 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
     {
         $fields = $this->makeFields();
 
+        $this->rows = collect();
         $this->rows = $this->buildRows($fields);
 
         return $this;

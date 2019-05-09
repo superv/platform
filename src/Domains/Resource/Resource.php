@@ -461,7 +461,7 @@ final class Resource implements
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function getFieldEntries(): \Illuminate\Support\Collection
+    public function getFieldEntries(): Collection
     {
         if (is_callable($this->fieldEntries)) {
             $this->fieldEntries = ($this->fieldEntries)();

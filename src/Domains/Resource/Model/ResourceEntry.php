@@ -175,7 +175,7 @@ class ResourceEntry extends Entry
         return $field->setWatcher($this);
     }
 
-    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): ResourceEntry
+    public function setResource(Resource $resource): ResourceEntry
     {
         $this->resource = $resource;
 
