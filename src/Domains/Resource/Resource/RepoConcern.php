@@ -25,6 +25,10 @@ trait RepoConcern
     {
         $query = $this->newEntryInstance()->newQuery()->with($this->with);
 
+        if ($this->isRestorable()) {
+            $query->whereNull('deleted_at');
+        }
+
         foreach ($this->scopes as $scope) {
             $scope($query);
         }
