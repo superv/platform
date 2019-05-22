@@ -12,6 +12,8 @@ class AddonInstalledListener
 
         superv('addons')->put($addon->slug(), $addon);
 
+        $addon->boot();
+
         $addon->fire('installed');
     }
 }

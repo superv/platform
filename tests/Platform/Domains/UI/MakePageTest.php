@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
 use SuperV\Platform\Domains\UI\Page\MakeFormPage;
 use SuperV\Platform\Domains\UI\Page\MakeTablePage;
-use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
+use SuperV\Platform\Testing\HelperComponent;
 
 class MakePageTest
 {
@@ -58,7 +58,7 @@ class MakePageTest
                     })
                     ->register();
 
-        $page = $this->getPageFromUrl('sv/pages/abc');
+        $page = $this->getUserPage('sv/pages/abc');
         $this->assertNotNull($page);
         $form = HelperComponent::from($page->getProp('blocks.0'));
         $this->assertEquals(count($fields), count($form->getProp('fields')));

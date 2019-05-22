@@ -18,6 +18,11 @@ abstract class ValueObject
             throw new InvalidArgumentException("Invalid value: [{$value}]");
         }
 
+        $this->setValue($value);
+    }
+
+    public function setValue(string $value)
+    {
         $this->value = $value;
     }
 

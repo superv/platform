@@ -26,9 +26,6 @@ class CreateAddonsTable extends Migration
             $table->boolean('enabled')->showOnIndex();
 
             $table->createdBy()->updatedBy();
-            $table->restorable();
-
-
         });
     }
 

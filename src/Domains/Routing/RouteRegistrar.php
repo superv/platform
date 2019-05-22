@@ -44,13 +44,14 @@ class RouteRegistrar
      *
      * @param array $routes
      */
-    public function register(array $routes): self
+    public function register(array $routes)
     {
+        $registered = collect();
         foreach ($routes as $uri => $action) {
-            $this->registerRoute($uri, $action);
+            $registered = $this->registerRoute($uri, $action)->merge($registered);
         }
 
-        return $this;
+        return $registered;
     }
 
     /**
@@ -64,7 +65,7 @@ class RouteRegistrar
     {
         /** Register this route for every port available */
         if ($this->globally) {
-            $ports = Hub::ports()->merge(new Port);
+            $ports = Hub::ports()->merge([new Port]);
         } else {
             $ports = collect([$this->port]);
         }

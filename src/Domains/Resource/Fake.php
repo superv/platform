@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use Closure;
 use Faker\Generator;
 use Illuminate\Http\UploadedFile;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -46,6 +47,27 @@ class Fake
         return array_filter_null($this->attributes);
     }
 
+    public static function field(Field $field)
+    {
+        return (new static)->fake($field);
+    }
+
+    public static function create(Resource $resource, array $overrides = [], Closure $callback = null)
+    {
+        $entry = $resource->create(static::make($resource, $overrides));
+
+        if ($callback) {
+            $callback($entry);
+        }
+
+        return $entry;
+    }
+
+    public static function make(Resource $resource, array $overrides = [])
+    {
+        return (new static())->__invoke($resource, $overrides);
+    }
+
     protected function shouldFake(Field $field)
     {
         return ! $field->isHidden()
@@ -56,6 +78,10 @@ class Fake
     protected function fake(Field $field)
     {
         if ($value = array_get($this->overrides, $field->getColumnName())) {
+            if (is_callable($value)) {
+                return $value();
+            }
+
             return $value;
         }
         if (method_exists($this, $method = camel_case('fake_'.$field->getType()))) {
@@ -71,7 +97,7 @@ class Fake
 
         if ($relatedResource->count() === 0) {
             if ($relatedResource->getHandle() === $this->resource->getHandle()) {
-                return rand(1, 5); // otherwise causes dead recursionr
+                return rand(1, 5); // otherwise causes dead recursion
             } else {
                 $relatedResource->fake([]);
             }
@@ -83,7 +109,9 @@ class Fake
 
     protected function fakeFile()
     {
-        return new UploadedFile(SV_TEST_BASE.'/__fixtures__/square.png', 'square.png');
+        if (defined('SV_TEST_BASE')) {
+            return new UploadedFile(SV_TEST_BASE.'/__fixtures__/square.png', 'square.png');
+        }
     }
 
     protected function fakeText(Field $field)
@@ -102,6 +130,10 @@ class Fake
                 'color',
                 'domain']) && $fake = $this->faker->__get(camel_case($fieldName.'_name'))) {
             return $fake;
+        }
+
+        if ($fieldName === 'slug') {
+            return str_slug($this->faker->unique()->name, '_');
         }
 
         if (ends_with($fieldName, '_name') || $fieldName === 'name') {
@@ -136,7 +168,7 @@ class Fake
             return $this->faker->randomFloat(2, 0.5, 100);
         }
 
-        if ($fieldName === 'quantity' || $fieldName === 'qty' || $fieldName === 'count') {
+        if (ends_with($fieldName, '_count') || $fieldName === 'quantity' || $fieldName === 'qty' || $fieldName === 'count') {
             return $this->faker->randomNumber(2);
         }
 
@@ -177,20 +209,5 @@ class Fake
     protected function fakeDatetime(Field $field)
     {
         return $field->getConfigValue('time') ? $this->faker->dateTime : $this->faker->date();
-    }
-
-    public static function field(Field $field)
-    {
-        return (new static)->fake($field);
-    }
-
-    public static function create(Resource $resource, array $overrides = [])
-    {
-        return $resource->create(static::make($resource, $overrides));
-    }
-
-    public static function make(Resource $resource, array $overrides = [])
-    {
-        return (new static())->__invoke($resource, $overrides);
     }
 }

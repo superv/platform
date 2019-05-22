@@ -5,6 +5,7 @@ namespace SuperV\Platform\Http\Controllers;
 use SuperV\Platform\Domains\Resource\Nav\Nav;
 use SuperV\Platform\Domains\Resource\Nav\NavGuard;
 use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\Support\Composer\Payload;
 
 class DataController extends BaseApiController
 {
@@ -45,10 +46,14 @@ class DataController extends BaseApiController
         // @TODO.dali
         $nav = (new NavGuard(auth()->user(), Nav::get('acp')))->compose();
 
+        $payload = new Payload([
+            'nav' => $nav,
+        ]);
+
+        $this->events->fire('nav.composed', $payload);
+
         return [
-            'data' => [
-                'nav' => $nav,
-            ],
+            'data' => $payload->toArray(),
         ];
     }
 }

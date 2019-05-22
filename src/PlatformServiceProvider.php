@@ -95,11 +95,11 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->registerListeners($this->listeners);
 
-        $this->registerListeners([
-            'platform.registered' => function () {
-                $this->registerProviders($this->providers);
-            },
-        ]);
+//        $this->registerListeners([
+//            'platform.registered' => function () {
+//                $this->registerProviders($this->providers);
+//            },
+//        ]);
 
         $this->registerCollectionMacros();
 
@@ -110,6 +110,7 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->registerDefaultPort();
 
         event('platform.registered');
+        $this->registerProviders($this->providers);
     }
 
     public function boot()
@@ -123,7 +124,7 @@ class PlatformServiceProvider extends BaseServiceProvider
             return;
         }
 
-        superv('addons')->put('superv.platform', Platform::instance());
+        superv('addons')->put('superv.platform', $this->platform);
 
         // Register platform resources before boot
         // so that addons can override them
@@ -132,11 +133,14 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         // Boot all addons
         //
-        Platform::boot();
+        $this->platform->boot();
 
         // Register routes needed by platform
         //
         $this->registerPlatformRoutes();
+
+        $this->loadTranslationsFrom($this->platform->realPath('resources/lang'), 'sv');
+
     }
 
     protected function bindUserModel(): void

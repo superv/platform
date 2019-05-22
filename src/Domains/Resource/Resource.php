@@ -3,10 +3,9 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Closure;
+use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
-use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
@@ -39,6 +38,7 @@ final class Resource implements
     use LabelConcern;
     use RepoConcern;
     use FiresCallbacks;
+    use ResourceCallbacks;
 
     /**
      * Database id
@@ -55,9 +55,19 @@ final class Resource implements
     protected $uuid;
 
     /**
+     * @var string
+     */
+    protected $addon;
+
+    /**
      * @var \SuperV\Platform\Domains\Resource\Resource\Fields
      */
     protected $fields;
+
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $fieldEntries;
 
     /**
      * @var Collection
@@ -93,7 +103,9 @@ final class Resource implements
 
     protected $filters = [];
 
-    /** @var \SuperV\Platform\Domains\Resource\Resource\IndexFields */
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Resource\IndexFields
+     */
     protected $indexFields;
 
     protected $onCreatedCallbacks = [];
@@ -107,6 +119,9 @@ final class Resource implements
         $this->hydrate($attributes);
 
         $this->fields = (new Fields($this, $this->fields));
+        if (is_null($this->relations)) {
+            throw new Exception('aa');
+        }
         $this->relations = ($this->relations)($this);
         $this->actions = collect();
     }
@@ -274,9 +289,25 @@ final class Resource implements
         return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
     }
 
+    public function isOwned()
+    {
+        return ! is_null($this->getConfigValue('owner_key'));
+    }
+
+    public function getKeyName()
+    {
+        return $this->getConfigValue('key_name', str_singular($this->getHandle()));
+    }
+
     public function route($route, ?EntryContract $entry = null, array $params = [])
     {
         $base = 'sv/res/'.$this->getHandle();
+
+        if ($route === 'fields') {
+            $params = array_merge($params, ['resource' => $this->getHandle()]);
+
+            return sv_route('resource.fields', $params);
+        }
         if ($route === 'create') {
             return $base.'/create';
         }
@@ -364,10 +395,7 @@ final class Resource implements
 
     public function resolveTable(): ResourceTable
     {
-        $table = app(ResourceTable::class)
-            ->setResource($this)
-            ->addRowAction(DeleteEntryAction::class)
-            ->addRowAction(ViewEntryAction::class);
+        $table = app(ResourceTable::class)->setResource($this);
 
         $this->fire('table.resolved', ['table' => $table]);
 
@@ -415,6 +443,26 @@ final class Resource implements
     public function isSortable(): bool
     {
         return $this->sortable;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddon(): string
+    {
+        return $this->addon;
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getFieldEntries(): Collection
+    {
+        if (is_callable($this->fieldEntries)) {
+            $this->fieldEntries = ($this->fieldEntries)();
+        }
+
+        return $this->fieldEntries;
     }
 
     public function uuid(): string

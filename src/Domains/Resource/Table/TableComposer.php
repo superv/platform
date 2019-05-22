@@ -26,6 +26,7 @@ class TableComposer
             'config' => [
                 'title'             => $this->table->getTitle(),
                 'selectable'        => $this->table->isSelectable(),
+                'show_id_column'    => $this->table->shouldShowIdColumn(),
                 'data_url'          => $this->makeDataUrl(),
                 'fields'            => $this->makeFields(),
                 'row_actions'       => $this->makeRowActions(),
@@ -36,7 +37,10 @@ class TableComposer
         ]);
 
         if ($this->table instanceof EntryTable) {
-            $payload->set('config.filters', $this->makeFilters());
+            $payload->set('config.filters', $this->table->getFilters()
+                                                        ->map(function (Filter $filter) {
+                                                            return (new FieldComposer($filter))->forForm();
+                                                        }));
         }
 
         return $payload->get();
@@ -83,16 +87,6 @@ class TableComposer
                               })->values();
 
         return $fields;
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function makeFilters()
-    {
-        return $this->table->getFilters()->map(function (Filter $filter) {
-            return (new FieldComposer($filter))->forForm();
-        });
     }
 
     /**

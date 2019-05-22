@@ -18,8 +18,8 @@ class TextTest extends ResourceTestCase
 
         $field = $res->getField('name');
 
-        $this->assertEquals('text', $field->getType());
+        $this->assertEquals('text', $field->getFieldType());
         $this->assertEquals(['max:255', 'required'], $res->parseFieldRules('name'));
-        $this->assertEquals('text', $field->getType());
+        $this->assertEquals('text', $field->getFieldType());
     }
 }

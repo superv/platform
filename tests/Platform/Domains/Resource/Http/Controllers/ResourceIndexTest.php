@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
 use SuperV\Platform\Domains\Resource\Resource;
-use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
+use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ResourceIndexTest extends ResourceTestCase
@@ -29,11 +29,11 @@ class ResourceIndexTest extends ResourceTestCase
     {
         $users = $this->schema()->users();
 
-        $page = $this->getPageFromUrl($users->route('index'));
+        $page = $this->getUserPage($users->route('index'));
         $table = HelperComponent::from($page->getProp('blocks.0'));
 
         $this->assertEquals('sv-loader', $table->getName());
-        $this->assertEquals(sv_url($users->route('index.table')), $table->getProp('url'));
+        $this->assertEquals($users->route('index.table'), $table->getProp('url'));
     }
 
     function test__index_table_config()
@@ -43,7 +43,7 @@ class ResourceIndexTest extends ResourceTestCase
         $response = $this->getJsonUser($users->route('index.table'))->assertOk();
         $table = HelperComponent::from($response->decodeResponseJson('data'));
 
-        $this->assertEquals(sv_url($users->route('index.table').'/data'), $table->getProp('config.data_url'));
+        $this->assertEquals($users->route('index.table').'/data', $table->getProp('config.data_url'));
 
         $fields = $table->getProp('config.fields');
         $this->assertEquals(3, count($fields));
@@ -106,6 +106,9 @@ class ResourceIndexTest extends ResourceTestCase
         Resource::extend('t_posts')->with(function (Resource $resource) {
             $resource->getField('user')
                      ->showOnIndex()
+                     ->setPresenter(function (EntryContract $entry) {
+                         return $entry->user->email;
+                     })
                      ->setCallback('table.presenting', function (EntryContract $entry) {
                          return $entry->user->email;
                      });

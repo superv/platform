@@ -12,7 +12,7 @@ class Entry extends Model implements EntryContract
     /**
      * Create a new Eloquent query builder for the model.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param \Illuminate\Database\Query\Builder $query
      * @return \SuperV\Platform\Domains\Database\Model\EloquentQueryBuilder|static
      */
     public function newEloquentBuilder($query)
@@ -42,6 +42,11 @@ class Entry extends Model implements EntryContract
     public function getId()
     {
         return $this->getKey();
+    }
+
+    public function wasRecentlyCreated(): bool
+    {
+        return $this->wasRecentlyCreated;
     }
 
     /**

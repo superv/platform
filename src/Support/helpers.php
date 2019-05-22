@@ -2,7 +2,6 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Feature\FeatureBus;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
@@ -15,18 +14,16 @@ use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
 
-/**
- * @param null  $handler
- * @param array $input
- * @return FeatureBus
- */
-function feature($handler = null, array $input = [])
+function sv_trans($key = null, $replace = [], $locale = null)
 {
-    if ($handler) {
-        return \Feature::handler($handler)->merge($input);
+    $line = trans($key, $replace, $locale);
+
+    if ($line !== $key) {
+        return $line;
     }
 
-    return app(FeatureBus::class);
+    $parts = explode('.', $key);
+    return end($parts);
 }
 
 function dump_callers($limit = 10)
@@ -93,7 +90,17 @@ function array_set_if($condition, &$array, $key, $value)
 
 function array_filter_null(array $array = [])
 {
-    return array_filter($array, function ($item) { return ! is_null($item); });
+    return array_filter($array, function ($item) {
+        if (is_null($item)) {
+            return false;
+        }
+
+        if (is_array($item) && count($item) === 0) {
+            return false;
+        }
+
+        return true;
+    });
 }
 
 function html_attributes($attributes)
@@ -130,8 +137,8 @@ if (! function_exists('superv')) {
     /**
      * Get the available container instance.
      *
-     * @param  string $abstract
-     * @param  array  $parameters
+     * @param string $abstract
+     * @param array  $parameters
      * @return mixed|\Illuminate\Foundation\Application
      */
     function superv($abstract = null, array $parameters = [])
@@ -151,8 +158,16 @@ if (! function_exists('superv')) {
     }
 }
 
-function sv_addon($addon)
+/**
+ * @param null $addon
+ * @return \SuperV\Platform\Domains\Addon\Addon|\SuperV\Platform\Domains\Addon\AddonCollection
+ */
+function sv_addons($addon = null)
 {
+    if (is_null($addon)) {
+        return superv('addons');
+    }
+
     return superv('addons')->get($addon);
 }
 
@@ -178,7 +193,7 @@ function sv_guard($guardable)
 /**
  * Create a collection from the given value.
  *
- * @param  mixed $value
+ * @param mixed $value
  * @return \Illuminate\Support\Collection
  */
 function sv_collect($value = null)
@@ -283,13 +298,15 @@ function sv_block($url = null)
     return SvBlock::make()->url($url);
 }
 
-function sv_loader($url)
+function sv_loader($url, array $props = [])
 {
     if (! starts_with($url, 'http')) {
-        $url = sv_url($url);
+//        $url = sv_url($url);
     }
 
-    return Component::make('sv-loader')->setProp('url', $url);
+    $props['url'] = $url;
+
+    return Component::make('sv-loader')->setProps($props);
 }
 
 function sv_field(array $params)

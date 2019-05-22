@@ -97,7 +97,7 @@ class RegistrationTest extends TestCase
      */
     function email_must_be_unique()
     {
-        factory(User::class)->create(['email' => 'client@example.com']);
+        $this->newUser(['email' => 'client@example.com']);
 
         app('router')->post('register', ControllerStub::class.'@register');
 

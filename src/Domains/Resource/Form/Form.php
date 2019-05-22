@@ -13,15 +13,20 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Field\FormField;
+use SuperV\Platform\Domains\Resource\Form\Contracts\Form as FormContract;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-class Form implements ProvidesUIComponent, Responsable
+class Form implements FormContract, ProvidesUIComponent, Responsable
 {
     use FiresCallbacks;
+    const MODE_CREATE = 'create';
+    const MODE_UPDATE = 'update';
 
     /** @var string */
     protected $identifier;
@@ -59,21 +64,29 @@ class Form implements ProvidesUIComponent, Responsable
     /** @var EntryContract */
     protected $entry;
 
+    protected $actions = [];
+
     protected $postSaveCallbacks = [];
 
     protected $title;
 
-    public function make()
+    protected $mode = Form::MODE_CREATE;
+
+    public function make($uuid = null)
     {
-        $this->uuid = uuid();
+        $this->uuid = $uuid ?? uuid();
 
         if (is_null($this->fields)) {
             if ($this->entry) {
                 $this->fields = $this->provideFields($this->entry);
+            } else {
+                $this->fields = collect();
             }
         }
 
         $this->fields->map(function (Field $field) {
+            $field->setForm($this);
+
             if ($this->hasEntry()) {
                 $field->setWatcher($this->getEntry());
             }
@@ -100,6 +113,10 @@ class Form implements ProvidesUIComponent, Responsable
             $this->validate();
         }
 
+        if ($this->hasEntry() && $this->entry->exists) {
+            $this->mode = Form::MODE_UPDATE;
+        }
+
         $this->fields->map(function (Field $field) {
             if ($field->isHidden()) {
                 return;
@@ -117,6 +134,11 @@ class Form implements ProvidesUIComponent, Responsable
         });
 
         return $this;
+    }
+
+    public function isUpdating()
+    {
+        return $this->mode === Form::MODE_UPDATE;
     }
 
     public function validate()
@@ -158,7 +180,9 @@ class Form implements ProvidesUIComponent, Responsable
     public function mergeFields($fields)
     {
         $fields = $this->provideFields($fields);
-        $this->fields->merge($fields);
+        $this->fields = $this->fields->merge($fields);
+
+        return $this;
     }
 
     public function hideField(string $fieldName): self
@@ -200,11 +224,30 @@ class Form implements ProvidesUIComponent, Responsable
         return $this;
     }
 
+    public function addField($field)
+    {
+        return $this->addFields([$field]);
+    }
+
     public function addFields($fields): self
     {
-        $this->mergeFields($fields);
+        return $this->mergeFields($fields);
+    }
 
-        return $this;
+    /**
+     * @return array
+     */
+    public function getActions(): array
+    {
+        return $this->actions;
+    }
+
+    /**
+     * @param array $actions
+     */
+    public function setActions(array $actions): void
+    {
+        $this->actions = $actions;
     }
 
     protected function provideFields($fields)
@@ -215,7 +258,7 @@ class Form implements ProvidesUIComponent, Responsable
 
         if (is_array($fields)) {
             $fields = collect($fields)->map(function ($field) {
-                return is_array($field) ? sv_field($field) : $field;
+                return is_array($field) ? FieldFactory::createFromArray($field, FormField::class) : $field;
             });
         }
 
@@ -309,6 +352,7 @@ class Form implements ProvidesUIComponent, Responsable
 
         return response()->json([
             'data' => [
+                'message' => $this->isUpdating() ? 'Kayıt güncellendi' : 'Kayıt oluşturuldu',
                 'action'      => $action,
                 'redirect_to' => $route ?? $this->resource->route('index'),
             ],
@@ -359,27 +403,5 @@ class Form implements ProvidesUIComponent, Responsable
     public function uuid(): string
     {
         return $this->uuid;
-    }
-
-    public static function for($arg, $fields = null): self
-    {
-        if (is_string($arg)) {
-            $resource = sv_resource($arg);
-        }
-
-        if ($arg instanceof EntryContract) {
-            $entry = $arg;
-            $resource = sv_resource($entry);
-        }
-
-        $resource = $resource ?? $arg;
-
-        $form = new static();
-        $form->setIdentifier($resource->getResourceKey());
-        $form->setFields($fields ?? $resource->getFields());
-        $form->setResource($resource);
-        $form->setEntry($entry ?? $resource->newEntryInstance());
-
-        return $form;
     }
 }

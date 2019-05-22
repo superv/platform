@@ -1,9 +1,11 @@
 <?php
 
+use SuperV\Platform\Domains\Auth\Access\Role;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Nav\Section;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class CreateAuthorizationTables extends Migration
 {
@@ -15,9 +17,10 @@ class CreateAuthorizationTables extends Migration
             'handle' => 'auth',
             'icon'   => 'auth',
         ]);
-        Schema::create('sv_auth_roles', function (Blueprint $table) {
-            $table->resourceConfig()->label('Roles');
-            $table->resourceConfig()->nav('acp.platform.auth');
+        Schema::create('sv_auth_roles', function (Blueprint $table, ResourceConfig $resource) {
+            $resource->label('Roles');
+            $resource->model(Role::class);
+            $resource->nav('acp.platform.auth');
 
             $table->increments('id');
             $table->string('slug')->unique();

@@ -8,29 +8,26 @@ use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
+use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-/**
- * Class Field
- * No closures allowed here..
- *
- * @package SuperV\Platform\Domains\Resource\Field
- */
 class Field implements FieldContract
 {
     use Hydratable;
     use FiresCallbacks;
     use HasConfig;
-
     use FieldFlags;
 
     /**
-     * @var string
+     * @var \SuperV\Platform\Domains\Resource\Field\FieldType
      */
-    protected $type = 'text';
+    protected $fieldType;
+
+    /** @var string */
+    protected $type;
 
     /**
      * @var string
@@ -50,6 +47,9 @@ class Field implements FieldContract
     protected $mutator;
 
     /** @var Closure */
+    protected $modifier;
+
+    /** @var Closure */
     protected $accessor;
 
     /** @var Closure */
@@ -65,6 +65,9 @@ class Field implements FieldContract
 
     protected $value;
 
+
+    protected $defaultValue;
+
     /**
      * @var \SuperV\Platform\Domains\Database\Model\Contracts\Watcher
      */
@@ -73,8 +76,6 @@ class Field implements FieldContract
     protected $rules;
 
     protected $alterQueryCallback;
-
-    protected $doesNotInteractWithTable;
 
     /** @var \SuperV\Platform\Support\Composer\Payload */
     protected $payload;
@@ -86,18 +87,38 @@ class Field implements FieldContract
      */
     protected $resource;
 
-    public function __construct(array $attributes = [])
+    /** @var Form */
+    protected $form;
+
+    public function __construct(FieldType $fieldType, array $attributes = [])
     {
-//        $this->flags = array_pull($attributes, 'config.flags', []);
+        $this->fieldType = $fieldType;
+        $this->fieldType->setField($this);
 
         $this->hydrate($attributes);
 
         $this->uuid = $this->uuid ?? uuid();
 
+        if (method_exists($this->fieldType, 'makeRules')) {
+            if ($rules = $this->fieldType->makeRules()) {
+                $this->rules = Rules::make($rules)->merge(wrap_array($this->rules))->get();
+            }
+        }
+
         $this->boot();
     }
 
     protected function boot() { }
+
+    public function getForm(): Form
+    {
+        return $this->form;
+    }
+
+    public function setForm(Form $form): void
+    {
+        $this->form = $form;
+    }
 
     public function setHint($hint)
     {
@@ -106,7 +127,11 @@ class Field implements FieldContract
 
     public function getLabel(): string
     {
-        return $this->label ?? str_unslug($this->name);
+        if ($this->resource) {
+            return sv_trans($this->resource->getAddon().'::'.$this->resource->getHandle().'.'.$this->name,[]);
+        }
+
+        return $this->label ?? str_unslug($this->getName());
     }
 
     public function setLabel(string $label): FieldContract
@@ -127,24 +152,47 @@ class Field implements FieldContract
             $value = $request->__get($this->getName());
         }
 
-        if ($mutator = $this->getMutator('form')) {
+        if ($this->fieldType instanceof HasModifier) {
+            $value = (new Modifier($this->fieldType))->set(['entry' => $entry, 'value' => $value]);
+        } elseif ($mutator = $this->getMutator('form')) {
             $value = ($mutator)($value, $entry);
-
-            if ($value instanceof Closure) {
-                return $value;
-            }
         }
 
-        if ($entry && ! $this->doesNotInteractWithTable) {
+        if ($value instanceof Closure) {
+            return $value;
+        }
+
+        if ($entry && ! $this->doesNotInteractWithTable()) {
             $entry->setAttribute($this->getColumnName(), $value);
         }
 
-        $this->value = $value;
+        $this->setValue($value);
     }
 
     public function getValue()
     {
-        return $this->value;
+        return $this->value ?? $this->defaultValue;
+    }
+
+    public function setValue($value): void
+    {
+        $this->value = $value;
+    }
+
+
+    public function resolveFromEntry($entry)
+    {
+        $attribute = $this->getColumnName();
+
+        if ($entry instanceof EntryContract) {
+            return $entry->getAttribute($attribute);
+        } elseif ($entry instanceof stdClass) {
+            return $entry->{$attribute};
+        } elseif (is_array($entry)) {
+            return $entry[$attribute] ?? null;
+        }
+
+        return null;
     }
 
     public function fillFromEntry(EntryContract $entry)
@@ -159,9 +207,9 @@ class Field implements FieldContract
         return $this;
     }
 
-    public function getType(): string
+    public function getFieldType(): FieldType
     {
-        return $this->type;
+        return $this->fieldType;
     }
 
     public function getName(): string
@@ -169,43 +217,44 @@ class Field implements FieldContract
         return $this->name;
     }
 
-    public function getColumnName()
+    public function getColumnName(): ?string
     {
-        return $this->columnName ?? $this->name;
-//        return $this->fieldType()->getColumnName();
+        if (method_exists($this->fieldType, 'getColumnName')) {
+            return $this->fieldType->getColumnName();
+        }
+
+        return $this->columnName ?? $this->getName();
     }
 
     public function getRules()
     {
         return $this->rules;
-//        $fieldTypeRules = $this->fieldType()->makeRules();
-//
-//        return Rules::make(wrap_array($this->rules))->merge($fieldTypeRules)->get();
-    }
-
-    public function resolveFromEntry($entry)
-    {
-        $attribute = $this->getColumnName();
-
-        if ($entry instanceof EntryContract) {
-            return $entry->getAttribute($attribute);
-        } elseif ($entry instanceof stdClass) {
-            return $entry->{$attribute};
-        } elseif (is_array($entry)) {
-            return $entry[$attribute] ?? null;
-        }
     }
 
     public function getPlaceholder()
     {
-        return $this->placeholder;
+        return $this->placeholder ?? $this->getLabel();
     }
 
-    public function resolveFieldType(): FieldType
+    public function observe(FieldContract $parent, ?EntryContract $entry = null)
     {
-        $class = FieldType::resolveClass($this->type);
+        $parent->setConfigValue('meta.on_change_event', $parent->getName().':'.$parent->getColumnName().'={value}');
 
-        return new $class($this);
+        $this->mergeConfig([
+            'meta' => [
+                'listen_event' => $parent->getName(),
+                'autofetch'    => false,
+            ],
+        ]);
+
+        if ($entry) {
+            $this->mergeConfig([
+                'meta' => [
+                    'query'     => [$parent->getColumnName() => $entry->{$parent->getColumnName()}],
+                    'autofetch' => false,
+                ],
+            ]);
+        }
     }
 
     public function copyToFilters(array $params = []): FieldContract
@@ -222,54 +271,17 @@ class Field implements FieldContract
         return $this->setConfigValue('sort_order', $order);
     }
 
-    public function bindFieldType()
-    {
-        $type = $this->resolveFieldType();
-
-        $this->columnName = $type->getColumnName();
-        $this->doesNotInteractWithTable = $type instanceof DoesNotInteractWithTable;
-
-        if (method_exists($type, 'makeRules')) {
-            if ($rules = $type->makeRules()) {
-                $this->rules = Rules::make($rules)->merge(wrap_array($this->rules))->get();
-            }
-        }
-        if (method_exists($type, 'mergeConfig')) {
-            if ($config = $type->mergeConfig()) {
-                $this->config = array_merge($this->config, $config);
-            }
-        }
-
-        $this->mergeCallbacks($type->getCallbacks());
-
-        return $type;
-    }
-
-    public function removeWatcher()
-    {
-        $this->watcher = null;
-
-        return $this;
-    }
-
     public function uuid(): string
     {
         return $this->uuid;
     }
 
-    public function setPresenter(Closure $callback)
+    public function setPresenter(Closure $callback): FieldContract
     {
-        $this->on('presenting', $callback);
-    }
+        $this->presenter = $callback;
 
-    public function getPresenter($for)
-    {
-        return $this->getCallback("{$for}.presenting");
-    }
-
-    public function getAccessor($for)
-    {
-        return $this->getCallback("{$for}.accessing");
+        return $this;
+//        $this->on('presenting', $callback);
     }
 
     public function getComposer($for)
@@ -287,16 +299,35 @@ class Field implements FieldContract
         return $this->alterQueryCallback;
     }
 
-    /**
-     * Add css class(es)
-     *
-     * @param string $class
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
-     */
     public function addClass(string $class): FieldContract
     {
         $previous = $this->getConfigValue('classes');
 
         return $this->setConfigValue('classes', trim($class.' '.$previous));
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function getResource(): \SuperV\Platform\Domains\Resource\Resource
+    {
+        return $this->resource;
+    }
+
+    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void
+    {
+        $this->resource = $resource;
+    }
+
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    public function setDefaultValue($defaultValue): void
+    {
+        $this->defaultValue = $defaultValue;
     }
 }

@@ -15,7 +15,7 @@ class ApiAuthenticationTest extends TestCase
     /** @var \SuperV\Platform\Domains\Port\Port */
     protected $port;
 
-    protected $user;
+//    protected $user;
 
     protected function setUp()
     {
@@ -28,11 +28,11 @@ class ApiAuthenticationTest extends TestCase
             'middlewares' => ['sv.auth:sv-api'],
         ]);
 
-        $this->user = factory(User::class)->create([
-            'id'         => rand(9, 999),
-            'email'      => 'user@superv.io',
-            'password'   => bcrypt('secret'),
-        ]);
+//        $this->user = factory(User::class)->create([
+//            'id'         => rand(9, 999),
+//            'email'      => 'user@superv.io',
+//            'password'   => bcrypt('secret'),
+//        ]);
 
         Route::get('login', ['as' => 'login', 'uses' => function() { return 'login'; }]);
     }
@@ -40,9 +40,9 @@ class ApiAuthenticationTest extends TestCase
     /** @test */
     function returns_proper_token_response()
     {
-        $this->withoutExceptionHandling();
-        $response = $this->json('post', 'login', [
-            'email'      => 'user@superv.io',
+        $user = $this->newUser();
+        $response = $this->postJson('login', [
+            'email'      => $user->getEmail(),
             'password'   => 'secret',
         ]);
 
@@ -56,7 +56,7 @@ class ApiAuthenticationTest extends TestCase
     /** @test */
     function authenticates_with_the_valid_access_token()
     {
-        $token = app('tymon.jwt')->fromUser($this->user);
+        $token = app('tymon.jwt')->fromUser($this->newUser());
 
         app(RouteRegistrar::class)->setPort($this->port)
                                   ->registerRoute('me', function () {
@@ -70,7 +70,7 @@ class ApiAuthenticationTest extends TestCase
 
         $me = $response->decodeResponseJson('me');
         $this->assertNotNull($me);
-        $this->assertEquals('user@superv.io', $me['email']);
+        $this->assertEquals($this->testUser->getEmail(), $me['email']);
     }
 
     /** @test */

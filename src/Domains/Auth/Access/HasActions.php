@@ -12,6 +12,10 @@ use SuperV\Platform\Domains\Auth\Access\Guard\Guardable;
  */
 trait HasActions
 {
+    public function getRoles()
+    {
+        return $this->roles;
+    }
     public function roles()
     {
         return $this->morphToMany(Role::class, 'owner', 'sv_auth_assigned_roles');

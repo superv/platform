@@ -2,9 +2,11 @@
 
 namespace Tests\Platform;
 
+use DB;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
 /**
  * Class ToDoTest
- *
  * Temporary location for todos
  *
  * @package Tests\Platform
@@ -12,11 +14,16 @@ namespace Tests\Platform;
  */
 class ToDoTest extends TestCase
 {
-    /** @test */
-    function current_global_handler()
+    use RefreshDatabase;
+
+    function test__pdo()
     {
-        $this->addToAssertionCount(1);
+        $conn = DB::connection()->getDoctrineConnection();
+
+        $this->newUser();
+        $this->assertEquals(1, count($conn->fetchAll("SELECT * FROM users")));
     }
+
 
     /** @test */
     function platform_detects_active_module_from_route_data()
@@ -30,11 +37,6 @@ class ToDoTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    /** @test */
-    function seeder_seeds_addon_seeds()
-    {
-        $this->addToAssertionCount(1);
-    }
 
     /** @test */
     function installer_uninstalls_subaddons_when_a_addon_is_uninstalled()

@@ -25,7 +25,7 @@ class BelongsToTest extends ResourceTestCase
         $this->assertColumnExists('t_users', 'group_id');
         $belongsTo = $users->getField('group');
 
-        $this->assertEquals('belongs_to', $belongsTo->getType());
+        $this->assertEquals('belongs_to', $belongsTo->getFieldType());
         $this->assertEquals('t_groups', $belongsTo->getConfigValue('related_resource'));
         $this->assertEquals('group_id', $belongsTo->getConfigValue('foreign_key'));
     }
@@ -44,7 +44,7 @@ class BelongsToTest extends ResourceTestCase
         $fakeUser = BelongsToTestUser::create(['name' => 'J', 'group_id' => 100]);
         $belongsTo = $users->getField('group');
 
-        $callback = $belongsTo->getPresenter('table');
+        $callback = $belongsTo->getFieldType()->getPresenter('table');
         $this->assertInstanceOf(Closure::class, $callback);
 
         $this->assertEquals('Users', $callback($fakeUser));
@@ -82,5 +82,10 @@ class BelongsToTestUser extends Model implements EntryContract
         $relation->acceptParentEntry($this);
 
         return $relation->newQuery();
+    }
+
+    public function wasRecentlyCreated(): bool
+    {
+        // TODO: Implement wasRecentlyCreated() method.
     }
 }

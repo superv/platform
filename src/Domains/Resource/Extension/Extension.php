@@ -3,12 +3,13 @@
 namespace SuperV\Platform\Domains\Resource\Extension;
 
 use Illuminate\Events\Dispatcher;
-use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsMatchingResources;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsMultipleResources;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsResource;
-use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesRetrieved;
-use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaved;
-use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesSaving;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesEntryCreating;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesEntryRetrieved;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesEntrySaved;
+use SuperV\Platform\Domains\Resource\Extension\Contracts\ObservesEntrySaving;
+use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatingEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntryRetrievedEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavedEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
@@ -47,29 +48,6 @@ class Extension
             foreach ((array)$pattern as $key) {
                 static::$map[$key] = $extension;
             }
-        }
-    }
-
-    protected function registerSingle(ExtendsResource $extension)
-    {
-        static::$map[$extension->extends()] = $extension;
-
-        if ($extension instanceof ObservesRetrieved) {
-            $this->events->listen(EntryRetrievedEvent::class, function (EntryRetrievedEvent $event) use ($extension) {
-                $extension->retrieved($event->entry);
-            });
-        }
-
-        if ($extension instanceof ObservesSaving) {
-            $this->events->listen(EntrySavingEvent::class, function (EntrySavingEvent $event) use ($extension) {
-                $extension->saving($event->entry);
-            });
-        }
-
-        if ($extension instanceof ObservesSaved) {
-            $this->events->listen(EntrySavedEvent::class, function (EntrySavedEvent $event) use ($extension) {
-                $extension->saved($event->entry);
-            });
         }
     }
 
@@ -114,5 +92,46 @@ class Extension
     public static function flush()
     {
         static::$map = [];
+    }
+
+    protected function registerSingle(ExtendsResource $extension)
+    {
+        static::$map[$extension->extends()] = $extension;
+
+        if ($extension instanceof ObservesEntryRetrieved) {
+            $this->events->listen(EntryRetrievedEvent::class,
+                function (EntryRetrievedEvent $event) use ($extension) {
+                    if ($event->entry->getTable() === $extension->extends()) {
+                        $extension->retrieved($event->entry);
+                    }
+                });
+        }
+
+        if ($extension instanceof ObservesEntryCreating) {
+            $this->events->listen(EntryCreatingEvent::class,
+                function (EntryCreatingEvent $event) use ($extension) {
+                    if ($event->entry->getTable() === $extension->extends()) {
+                        $extension->creating($event->entry);
+                    }
+                });
+        }
+
+        if ($extension instanceof ObservesEntrySaving) {
+            $this->events->listen(EntrySavingEvent::class,
+                function (EntrySavingEvent $event) use ($extension) {
+                    if ($event->entry->getTable() === $extension->extends()) {
+                        $extension->saving($event->entry);
+                    }
+                });
+        }
+
+        if ($extension instanceof ObservesEntrySaved) {
+            $this->events->listen(EntrySavedEvent::class,
+                function (EntrySavedEvent $event) use ($extension) {
+                    if ($event->entry->getTable() === $extension->extends()) {
+                        $extension->saved($event->entry);
+                    }
+                });
+        }
     }
 }

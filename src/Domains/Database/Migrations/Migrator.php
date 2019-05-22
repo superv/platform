@@ -13,12 +13,12 @@ use Illuminate\Database\Migrations\Migrator as BaseMigrator;
  */
 class Migrator extends BaseMigrator
 {
-    protected $scope;
+    protected $addon;
 
     public function paths()
     {
         $paths = parent::paths();
-        if ($this->scope && $path = Scopes::path($this->scope)) {
+        if ($this->addon && $path = Scopes::path($this->addon)) {
             $paths[] = $path;
         }
 
@@ -32,8 +32,8 @@ class Migrator extends BaseMigrator
 
     protected function runUp($file, $batch, $pretend)
     {
-        if ($scope = Scopes::key(pathinfo($file, PATHINFO_DIRNAME))) {
-            $this->setScope($scope);
+        if ($addon = Scopes::key(pathinfo($file, PATHINFO_DIRNAME))) {
+            $this->setAddon($addon);
         }
 
         parent::runUp($file, $batch, $pretend);
@@ -42,21 +42,21 @@ class Migrator extends BaseMigrator
     protected function runMigration($migration, $method)
     {
         $this->repository->setMigration($migration);
-        if ($migration instanceof InScope) {
-            $migration->setScope($this->scope);
+        if ($migration instanceof AddonMigration) {
+            $migration->setAddon($this->addon);
 
-            Current::setMigrationScope($this->scope);
+            Current::setMigrationScope($this->addon);
         } else {
             Current::setMigrationScope(null);
         }
         parent::runMigration($migration, $method);
     }
 
-    public function setScope($scope)
+    public function setAddon($addon)
     {
-        $this->repository->setScope($scope);
+        $this->repository->setAddon($addon);
 
-        $this->scope = $scope;
+        $this->addon = $addon;
 
         return $this;
     }

@@ -2,7 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
-use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
+use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class RelationIndexTest extends ResourceTestCase
@@ -28,6 +28,8 @@ class RelationIndexTest extends ResourceTestCase
 
         // get the relation table over http
         //
+        $this->withoutExceptionHandling();
+
         $url = route('relation.index', ['resource' => 't_users', 'id' => $userA->getId(), 'relation' => 'posts']);
         $response = $this->getJsonUser($url);
         $response->assertOk();

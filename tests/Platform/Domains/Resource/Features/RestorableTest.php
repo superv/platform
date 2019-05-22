@@ -48,13 +48,15 @@ class RestorableTest extends ResourceTestCase
 
     function test__restore_over_http()
     {
+        // ARRANGE
         $entries = $this->createEntriesResource();
         $entry = $entries->create([]);
-
         $this->deleteJsonUser($entry->route('delete'))->assertOk();
 
+        // ACT
         $this->postJsonUser($entry->route('restore'))->assertOk();
 
+        // ASSERT
         $restored = $entry->fresh();
         $this->assertNull($restored->deleted_at);
         $this->assertNull($restored->deleted_by_id);

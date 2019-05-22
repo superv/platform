@@ -74,24 +74,18 @@ trait CreatesRelations
                     );
     }
 
-    public function belongsToMany(
-        $related,
-        $relationName,
-        $pivotTable,
-        $pivotForeignKey,
-        $pivotRelatedKey,
-        Closure $pivotColumns = null
-    ) {
-        return $this->addColumn(null, $relationName, ['nullable' => true])
-                    ->relation(
-                        Config::belongsToMany()
-                              ->relationName($relationName)
-                              ->related($related)
-                              ->pivotTable($pivotTable)
-                              ->pivotForeignKey($pivotForeignKey)
-                              ->pivotRelatedKey($pivotRelatedKey)
-                              ->pivotColumns($pivotColumns)
-                    );
+    public function belongsToMany($related, $relation): Config
+    {
+        $config = Config::belongsToMany()
+                        ->relationName($relation)
+                        ->related($related);
+
+        $this->addColumn(null, $relation, ['nullable' => true])
+             ->fieldType('belongs_to_many')
+             ->fieldName($relation)
+             ->relation($config);
+
+        return $config;
     }
 
     public function hasMany($related, $relationName, $foreignKey = null, $localKey = null): ColumnDefinition

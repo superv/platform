@@ -33,13 +33,25 @@ class ResourceTable extends EntryTable
         $this->resource->fire('table.querying', ['query' => $query]);
     }
 
+    protected function applyOptions($query)
+    {
+        if ($field = $this->resource->fields()->getEntryLabelField()) {
+            $this->orderBy = [
+                'column' => $field->getColumnName(),
+                'direction' => 'ASC'
+            ];
+        }
+
+        parent::applyOptions($query);
+    }
+
     public function getDataUrl()
     {
         if ($this->dataUrl) {
             return $this->dataUrl;
         }
 
-        return sv_url($this->resource->route('index.table').'/data');
+        return $this->resource->route('index.table').'/data';
     }
 
     protected function getRowKeyName()

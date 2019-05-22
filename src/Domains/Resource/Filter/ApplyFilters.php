@@ -56,8 +56,9 @@ class ApplyFilters
         }
 
         $this->filters->map(function (Filter $filter) use ($request) {
-            if ($filterValue = array_get($request, $filter->getIdentifier())) {
-                $filter->apply($this->query, $filterValue);
+            $filterValue = array_get($request, $filter->getIdentifier());
+            if (!is_null($filterValue)) {
+                $filter->applyQuery($this->query, $filterValue);
             }
         });
     }

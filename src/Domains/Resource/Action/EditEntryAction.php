@@ -19,7 +19,7 @@ class EditEntryAction extends Action
 
     public function getUrl()
     {
-        return $this->url ?? 'sv/res/{res.handle}/{entry.id}/edit';
+        return $this->url ?? 'sv/res/{res.handle}/{entry.id}/edit-page';
     }
 
     public function setUrl($url)

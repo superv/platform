@@ -20,8 +20,8 @@ class ResetCommandTest extends TestCase
         );
         $command->setLaravel($this->app);
 
-        $migrator->shouldReceive('setScope')->with('test-scope')->once();
+        $migrator->shouldReceive('setAddon')->with('test-addon')->once();
 
-        $this->runCommand($command, ['--scope' => 'test-scope']);
+        $this->runCommand($command, ['--addon' => 'test-addon']);
     }
 }

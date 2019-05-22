@@ -17,7 +17,7 @@ use SuperV\Platform\Domains\Resource\Visibility\Visibility;
 class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
 {
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
-    protected $blueprint;
+    protected $resourceConfig;
 
     public function __construct(ResourceConfig $blueprint, $attributes = [])
     {
@@ -29,12 +29,13 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         $this->attributes['rules'] = [];
         $this->attributes['flags'] = [];
 
-        $this->blueprint = $blueprint;
+        $this->resourceConfig = $blueprint;
     }
 
     public function entryLabel()
     {
-        $this->blueprint->entryLabel('{'.$this->name.'}');
+        $this->resourceConfig->entryLabel('{'.$this->name.'}');
+        $this->resourceConfig->entryLabelField($this->name);
 
         return $this;
     }
@@ -74,6 +75,13 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this->addFlag('required');
     }
 
+    public function primary()
+    {
+        $this->resourceConfig->keyName($this->name);
+
+        return $this;
+    }
+
     public function nullable()
     {
         $this->nullable = true;
@@ -83,6 +91,8 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
 
     public function unique()
     {
+        parent::unique();
+
         return $this->addFlag('unique');
     }
 
@@ -123,6 +133,15 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         $flags = $this->flags;
         $flags[] = $flag;
         $this->flags = $flags;
+
+        return $this;
+    }
+
+    public function addRule($rule)
+    {
+        $rules = $this->rules;
+        $rules[] = $rule;
+        $this->rules = $rules;
 
         return $this;
     }

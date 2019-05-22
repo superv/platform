@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Contracts\Filter;
 
+use Closure;
 use SuperV\Platform\Domains\Resource\Resource;
 
 interface Filter
@@ -14,7 +15,9 @@ interface Filter
 
     public function getPlaceholder();
 
+    public function setApplyCallback(Closure $callback): Filter;
+
     public function setResource(Resource $resource): Filter;
 
-    public function apply($query, $value);
+    public function applyQuery($query, $value);
 }

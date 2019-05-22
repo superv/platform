@@ -11,13 +11,13 @@ class FieldExtension implements ExtendsResource
     {
         $resource->searchable(['name']);
 
-        $resource->on('index.config', function (ResourceTable $table) use ($resource) {
+        $resource->onIndexConfig(function (ResourceTable $table) use ($resource) {
             $fields = $resource->indexFields();
             $fields->getField('resource')->copyToFilters();
             $fields->getField('type')->copyToFilters();
         });
 
-        $resource->on('index.data', function (ResourceTable $table) {
+        $resource->onIndexData(function (ResourceTable $table) {
             $table->setOption('limit', 50);
         });
     }

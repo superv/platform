@@ -1,5 +1,7 @@
 <?php
 
+use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceEditController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceFormController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceIndexController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceViewController;
@@ -18,10 +20,46 @@ return [
         'uses' => ResourceFormController::at('store'),
     ],
 
+    /**
+     * Edit
+     */
+
     'GET@'.'sv/res/{resource}/{id}/edit' => [
-        'as'   => 'resource.edit',
-        'uses' => ResourceFormController::at('edit'),
+        'as'    => 'resource.edit',
+        'uses'  => ResourceFormController::at('edit'),
+        'where' => ['id' => '[0-9]*'],
     ],
+
+    'GET@'.'sv/res/{resource}/{id}/edit-page' => [
+        'as'    => 'resource.edit.page',
+        'uses'  => ResourceEditController::at('page'),
+        'where' => ['id' => '[0-9]*'],
+    ],
+
+    /**
+     * view
+     */
+
+    'GET@'.'sv/res/{resource}/{id}/view-page' => [
+        'as'    => 'resource.view.page',
+        'uses'  => ResourceViewController::at('page'),
+        'where' => ['id' => '[0-9]*'],
+    ],
+
+    'GET@'.'sv/res/{resource}/{id}/view' => [
+        'as'    => 'resource.view',
+        'uses'  => ResourceViewController::at('view'),
+        'where' => ['id' => '[0-9]*'],
+    ],
+
+    'GET@'.'sv/res/{resource}/{id}' => [
+        'uses'  => ResourceViewController::at('page'),
+        'where' => ['id' => '[0-9]*'],
+    ],
+
+    /**
+     *
+     */
 
     'POST@'.'sv/res/{resource}/{id}' => [
         'as'   => 'resource.update',
@@ -38,16 +76,9 @@ return [
         'uses' => ResourceIndexController::at('restore'),
     ],
 
-    'sv/res/{resource}/{id}' => [
-        'as'    => 'resource.view.page',
-        'uses'  => ResourceViewController::at('page'),
-        'where' => ['id' => '[0-9]*'],
-    ],
-
-    'sv/res/{resource}/{id}/view' => [
-        'as'    => 'resource.view',
-        'uses'  => ResourceViewController::at('view'),
-        'where' => ['id' => '[0-9]*'],
+    'ANY@'.'sv/res/{resource}/fields/{field?}/{rpc?}' => [
+        'as'   => 'resource.fields',
+        'uses' => ResourceController::at('fields'),
     ],
 
     'GET@'.'sv/res/{resource}' => [

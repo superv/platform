@@ -17,7 +17,7 @@ class CreateEntryAction extends Action
         $payload->set('url', 'sv/res/{res.handle}/create');
         $payload->set('button', [
             'color' => 'green',
-            'title' => 'New'
+            'title' => sv_trans('sv::actions.create')
         ]);
     }
 }

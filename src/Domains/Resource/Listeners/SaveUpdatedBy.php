@@ -19,7 +19,7 @@ class SaveUpdatedBy
 
         $resource = ResourceFactory::make($entry);
 
-        if ($resource->fields()->find('updated_by')) {
+        if ($resource->fields()->has('updated_by')) {
             if ($user = auth()->user()) {
                 $entry->updated_by_id = $user->id;
             } elseif (Current::isConsole()) {

@@ -69,6 +69,7 @@ abstract class BaseComponent implements ComponentContract, Composable, Responsab
 
         return $this;
     }
+
     public function mergeProps($props): ComponentContract
     {
         $this->props->merge($props);
@@ -82,7 +83,7 @@ abstract class BaseComponent implements ComponentContract, Composable, Responsab
             'component' => $this->getName(),
             'uuid'      => $this->uuid(),
             'props'     => $this->getProps(),
-            'classes'   => implode(' ', $this->getClasses()),
+            'classes'   => count($this->getClasses()) ? implode(' ', $this->getClasses()) : null,
         ]);
 
         $this->fire('composed', ['payload' => $payload]);

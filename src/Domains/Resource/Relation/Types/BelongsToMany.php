@@ -9,10 +9,11 @@ use SuperV\Platform\Domains\Resource\Action\AttachEntryAction;
 use SuperV\Platform\Domains\Resource\Action\DetachEntryAction;
 use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
+use SuperV\Platform\Domains\Resource\Relation\Contracts\ProvidesField;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Table\ResourceTable;
 
-class BelongsToMany extends Relation implements ProvidesTable
+class BelongsToMany extends Relation implements ProvidesTable, ProvidesField
 {
     protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
     {

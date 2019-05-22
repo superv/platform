@@ -25,7 +25,7 @@ class ViewEntryAction extends Action
 
     public function getUrl()
     {
-        return $this->url ?? 'sv/res/{res.handle}/{entry.id}';
+        return $this->url ?? 'sv/res/{res.handle}/{entry.id}/view-page';
     }
 
     public function setUrl($url)

@@ -3,22 +3,23 @@
 namespace SuperV\Platform\Domains\UI\Page;
 
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Action\RestoreEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Contracts\RequiresEntry;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
 class EntryPage extends ResourcePage
 {
+    protected $editable = true;
+
+    protected $viewable = true;
+
     public function build($tokens = [])
     {
         $this->buildSections();
 
-        $this->actions[] = RestoreEntryAction::make();
+//        $this->actions[] = RestoreEntryAction::make();
 
         $this->buildActions();
 
@@ -37,31 +38,30 @@ class EntryPage extends ResourcePage
                      ->setName('sv-page')
                      ->mergeProps([
                          'sections' => $this->buildSections(),
-                         'links'    => [
-                             'image'  => $imageUrl ?? '',
-                             'create' => $this->resource->route('create'),
-                             'edit'   => sv_url($this->resource->route('edit', $this->entry)),
-                             'view'   => sv_url($this->resource->route('view', $this->entry)),
-                             'index'  => $this->resource->route('index'),
-                         ],
+                         'links'    => array_filter_null(
+                             [
+                                 'image'  => $imageUrl ?? '',
+                                 'create' => $this->creatable ? $this->resource->route('create') : null,
+                                 'edit'   => $this->editable ? $this->resource->route('edit', $this->entry) : null,
+                                 'view'   => $this->viewable ? $this->resource->route('view', $this->entry) : null,
+                                 'index'  => $this->resource->route('index'),
+                             ]
+                         ),
                      ]);
     }
 
-    protected function buildActions(): void
+    public function notEditable(): EntryPage
     {
-        $this->actions = collect($this->actions)->map(function ($action) {
-            if (is_string($action)) {
-                if (! $action = $this->resource->getAction($action)) {
-                    return null;
-                }
-            }
+        $this->editable = false;
 
-            if ($action instanceof RequiresEntry) {
-                $action->setEntry($this->entry);
-            }
+        return $this;
+    }
 
-            return $action;
-        })->filter()->values()->all();
+    public function notViewable(): EntryPage
+    {
+        $this->viewable = false;
+
+        return $this;
     }
 
     protected function buildSections()
@@ -72,10 +72,12 @@ class EntryPage extends ResourcePage
             });
     }
 
-
     protected function getRelationsSections(): Collection
     {
         return $this->resource->getRelations()
+                              ->filter(function (Relation $relation) {
+                                  return ! $relation->hasFlag('view.hide');
+                              })
                               ->map(function (Relation $relation) {
                                   if ($url = $relation->getConfigValue('view.url')) {
                                       $portal = true;

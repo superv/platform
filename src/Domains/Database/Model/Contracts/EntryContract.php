@@ -21,4 +21,6 @@ interface EntryContract extends Watcher
     public function load($relations);
 
     public function getRelation($key);
+
+    public function wasRecentlyCreated(): bool;
 }

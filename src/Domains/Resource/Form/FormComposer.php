@@ -37,6 +37,18 @@ class FormComposer
         return $payload;
     }
 
+    public function setRequest(?Request $request): FormComposer
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    public static function make(Form $form): FormComposer
+    {
+        return (new static($form));
+    }
+
     protected function composeActions()
     {
         $actions = $this->getActions();
@@ -60,63 +72,55 @@ class FormComposer
                           })
                           ->map(function (Field $field) {
                               return array_filter(
-                                  (new FieldComposer($field))->forForm($this->form->getEntry() ?? null)->get()
+                                  (new FieldComposer($field))->forForm($this->form)->get()
                               );
                           })->values()->all();
     }
 
-    public function setRequest(?Request $request): FormComposer
-    {
-        $this->request = $request;
-
-        return $this;
-    }
-
     protected function getActions()
     {
+        if ($this->form->getActions()) {
+            return $this->form->getActions();
+        }
+        
         if ($this->form->getEntry() && $this->form->getEntry()->exists) {
             return [
-                [
-                    'identifier' => 'view',
-                    'title'      => '& View',
-                    'color'      => 'light',
-                ],
-                [
-                    'identifier' => 'edit_next',
-                    'title'      => '& Edit Next',
-                    'color'      => 'light',
-                ],
+//                [
+//                    'identifier' => 'view',
+//                    'title'      => '& View',
+//                    'color'      => 'light',
+//                ],
+//                [
+//                    'identifier' => 'edit_next',
+//                    'title'      => '& Edit Next',
+//                    'color'      => 'light',
+//                ],
                 [
                     'default'    => true,
                     'identifier' => 'save',
-                    'title'      => 'Save Changes',
+                    'title'      => 'Kaydet',
                     'color'      => 'primary',
                 ],
             ];
         }
 
         return [
-            [
-                'identifier' => 'view',
-                'title'      => '& View',
-                'color'      => 'light',
-            ],
-            [
-                'identifier' => 'create_another',
-                'title'      => '& Another',
-                'color'      => 'light',
-            ],
+//            [
+//                'identifier' => 'view',
+//                'title'      => '& View',
+//                'color'      => 'light',
+//            ],
+//            [
+//                'identifier' => 'create_another',
+//                'title'      => '& Another',
+//                'color'      => 'light',
+//            ],
             [
                 'default'    => true,
                 'identifier' => 'create',
-                'title'      => 'Create',
+                'title'      => 'Oluştur',
                 'color'      => 'success',
             ],
         ];
-    }
-
-    public static function make(Form $form): FormComposer
-    {
-        return (new static($form));
     }
 }

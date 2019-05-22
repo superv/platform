@@ -6,21 +6,30 @@ use Closure;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
 
 interface Field
 {
     public function getName();
 
-    public function getColumnName();
+    public function getType(): string;
+
+    public function getColumnName(): ?string;
 
     public function getLabel(): string;
 
     public function setLabel(string $label): Field;
 
-    public function getType();
+    public function getFieldType(): FieldType;
 
     public function getValue();
+
+    public function setValue($value): void;
+
+    public function getDefaultValue();
+
+    public function setDefaultValue($defaultValue): void;
 
     public function getConfig();
 
@@ -42,6 +51,8 @@ interface Field
 
     public function hide();
 
+    public function observe(Field $parent, ?EntryContract $entry = null);
+
     public function getAlterQueryCallback();
 
     public function getRules();
@@ -58,17 +69,15 @@ interface Field
 
     public function resolveFromEntry($entry);
 
-    public function resolveFieldType(): FieldType;
-
-    public function getAccessor($for);
-
     public function getComposer($for);
-
-    public function getPresenter($for);
 
     public function getMutator($for);
 
-    public function setPresenter(Closure $callback);
+    public function getForm(): Form;
+
+    public function setForm(Form $form): void;
+
+    public function setPresenter(Closure $callback): Field;
 
     /**
      * Add a flag to hide the field on forms
@@ -87,6 +96,7 @@ interface Field
     /**
      * Generate filter from field and add to filters
      *
+     * @param array $params
      * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
      */
     public function copyToFilters(array $params = []): Field;
@@ -130,4 +140,6 @@ interface Field
      * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
      */
     public function removeFlag(string $flag): Field;
+
+    public function uuid();
 }

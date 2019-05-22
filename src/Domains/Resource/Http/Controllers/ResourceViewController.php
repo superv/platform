@@ -3,10 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
-use SuperV\Platform\Domains\Resource\Resource\ResourceView;
 use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use SuperV\Platform\Domains\UI\Page\EntryPage;
-use SuperV\Platform\Domains\UI\Page\ResourcePage;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
 class ResourceViewController extends BaseApiController
@@ -21,10 +19,11 @@ class ResourceViewController extends BaseApiController
         $page->setResource($resource);
         $page->setEntry($this->entry);
 
+        $page->addBlock(sv_loader($this->resource->route('view', $this->entry)));
+
         if ($callback = $resource->getCallback('view.page')) {
             app()->call($callback, ['page' => $page, 'entry' => $this->entry]);
         }
-
 
         return $page->build(['res' => $resource->toArray(), 'entry' => $this->entry]);
     }
@@ -34,6 +33,5 @@ class ResourceViewController extends BaseApiController
         $resource = $this->resolveResource();
 
         return MakeComponentTree::dispatch($resource->resolveView($this->entry));
-
     }
 }

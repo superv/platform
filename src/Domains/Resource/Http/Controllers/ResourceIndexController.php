@@ -35,11 +35,15 @@ class ResourceIndexController extends BaseApiController
 
         $page = ResourcePage::make($resource->getLabel());
         $page->setResource($resource);
-        $page->addBlock(sv_loader($resource->route('index.table')));
-        $page->addAction(CreateEntryAction::make('New '.$resource->getSingularLabel()));
 
         if ($callback = $resource->getCallback('index.page')) {
             app()->call($callback, ['page' => $page]);
+        }
+
+        $page->addBlock(sv_loader($resource->route('index.table')));
+
+        if ($page->isCreatable()) {
+            $page->addAction(CreateEntryAction::make('New '.$resource->getSingularLabel()));
         }
 
         return $page->build(['res' => $resource->toArray()]);
@@ -68,15 +72,16 @@ class ResourceIndexController extends BaseApiController
     {
         $table = ($resource = $this->resolveResource())->resolveTable();
 
+        if ($callback = $resource->getCallback('index.config')) {
+            app()->call($callback, ['table' => $table]);
+        }
+
         if ($this->route->parameter('data')) {
             if ($callback = $resource->getCallback('index.data')) {
                 app()->call($callback, ['table' => $table]);
             }
-            return $table->setRequest($this->request)->build();
-        }
 
-        if ($callback = $resource->getCallback('index.config')) {
-            app()->call($callback, ['table' => $table]);
+            return $table->setRequest($this->request)->build();
         }
 
         return MakeComponentTree::dispatch($table)->withTokens(['res' => $resource->toArray()]);

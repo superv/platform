@@ -124,12 +124,12 @@ class IndexFields
         }
 
         if ($this->hideLabelField === false) {
-            $this->fields->push($this->makeLabelField());
+//            $this->fields->push($this->makeLabelField());
         }
 
         return $this->fields
             ->filter(function (Field $field) {
-                return $field->hasFlag('table.show');
+                return $field->hasFlag('table.show') || $field->getName() === $this->resource->getConfigValue('entry_label_field');
             })
             ->values()
             ->sortBy(function (Field $field, $key) {

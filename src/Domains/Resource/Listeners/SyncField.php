@@ -4,10 +4,14 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
-use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
+use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Rules;
-use SuperV\Platform\Domains\Resource\Field\Types\FieldType;
+use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Jobs\CreatePivotTable;
+use SuperV\Platform\Domains\Resource\Relation\Contracts\ProvidesField;
+use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
@@ -16,8 +20,8 @@ class SyncField
     /** @var \SuperV\Platform\Domains\Resource\ResourceModel */
     protected $resourceEntry;
 
-    /** @var \SuperV\Platform\Domains\Resource\Field\Types\FieldType */
-    protected $fieldType;
+    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field */
+    protected $field;
 
     protected $fieldWithoutEloquent = true;
 
@@ -51,7 +55,13 @@ class SyncField
 
         $this->checkMustBeCreated();
 
-        $this->syncWithEloquent();
+        $field = $this->syncWithEloquent();
+
+        $formEntry = FormModel::findByResource($this->resourceEntry->getId());
+
+        if ($formEntry) {
+            $formEntry->fields()->attach($field->getId());
+        }
     }
 
     protected function handleRelations()
@@ -63,8 +73,10 @@ class SyncField
         $relationConfig = $this->column->getRelationConfig();
         $this->column->ignore();
 
+        $relationType = Relation::resolve($relationConfig->getType());
+
         if ($relationConfig->hasPivotTable()) {
-            CreatePivotTable::dispatch($relationConfig);
+            (new CreatePivotTable)($relationConfig);
         }
 
         $this->resourceEntry->resourceRelations()->create([
@@ -73,7 +85,7 @@ class SyncField
             'config' => $relationConfig->toArray(),
         ]);
 
-        if ($relationConfig->type()->isBelongsTo()) {
+        if ($relationType instanceof ProvidesField) { //$relationConfig->type()->isBelongsTo()
             $this->column->ignore(false);
             $this->column->config($relationConfig->toArray());
 
@@ -118,10 +130,10 @@ class SyncField
             );
         }
 
-        $this->fieldType = FieldType::resolve($this->column->fieldType);
+        $this->field = FieldType::resolveType($this->column->fieldType);
     }
 
-    protected function syncWithEloquent()
+    protected function syncWithEloquent(): FieldModel
     {
         $column = $this->column;
 
@@ -152,7 +164,7 @@ class SyncField
         $field->rules = Rules::make($column->getRules())->get();
         $field->save();
 
-        return $field->toArray();
+        return $field;
     }
 
     protected function setResourceEntry($event): void
@@ -173,9 +185,8 @@ class SyncField
 
     protected function checkMustBeCreated()
     {
-        if (! $this->fieldType instanceof NeedsDatabaseColumn) {
+        if (! $this->field instanceof RequiresDbColumn) {
             $this->column->ignore();
         }
     }
-
 }

@@ -10,7 +10,7 @@ class DummyClass extends Migration
     {
         $this->create('DummyTable',
             function (Blueprint $table, ResourceConfig $resource) {
-                // $resource->label('');
+                // $resource->label('{resource.label}');
                 // $resource->nav('');
                 // $resource->resourceKey('');
 

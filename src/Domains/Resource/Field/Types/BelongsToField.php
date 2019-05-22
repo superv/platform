@@ -2,20 +2,143 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
+use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
+use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Support\Composer\Payload;
 
-class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
+class BelongsToField extends FieldType implements RequiresDbColumn, ProvidesFilter, HandlesRpc, HasPresenter
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $resource;
+    protected $relatedResource;
 
     /** @var array */
     protected $options;
+
+    protected function boot()
+    {
+//        $this->field->on('form.presenting', $this->presenter());
+        $this->field->on('form.composing', $this->formComposer());
+
+        $this->field->on('view.presenting', $this->viewPresenter());
+        $this->field->on('view.composing', $this->viewComposer());
+
+        $this->field->on('table.presenting', $this->presenter());
+        $this->field->on('table.composing', $this->tableComposer());
+        $this->field->on('table.querying', function ($query) {
+            $query->with($this->getName());
+        });
+    }
+
+    public function getColumnName(): ?string
+    {
+        return $this->getConfigValue('foreign_key', $this->getName().'_id');
+    }
+
+    public function makeFilter(?array $params = [])
+    {
+        $this->relatedResource = $this->resolveRelatedResource();
+
+        $this->buildOptions($params['query'] ?? null);
+
+        return SelectFilter::make($this->getName(), $this->relatedResource->getSingularLabel())
+                           ->setAttribute($this->getColumnName())
+                           ->setOptions($this->options)
+                           ->setDefaultValue($params['default_value'] ?? null);
+    }
+
+    public function getRpcResult(array $params, array $request = [])
+    {
+        if (! $method = $params['method'] ?? null) {
+            return;
+        }
+
+        if (method_exists($this, $method = 'rpc'.studly_case($method))) {
+            return call_user_func_array([$this, $method], [$params, $request]);
+        }
+    }
+
+    public function buildOptions(?array $queryParams = [])
+    {
+        $query = $this->relatedResource->newQuery();
+        if ($queryParams) {
+            $query->where($queryParams);
+        }
+
+        $entryLabel = $this->relatedResource->getConfigValue('entry_label', '#{id}');
+
+        if ($entryLabelField = $this->relatedResource->fields()->getEntryLabelField()) {
+            $query->orderBy($entryLabelField->getColumnName(), 'ASC');
+        }
+
+        $this->options = $query->get()->map(function (EntryContract $item) use ($entryLabel) {
+            if ($keyName = $this->relatedResource->getConfigValue('key_name')) {
+                $item->setKeyName($keyName);
+            }
+
+            return ['value' => $item->getId(), 'text' => sv_parse($entryLabel, $item->toArray())];
+        })->all();
+
+        return $this->options;
+    }
+
+    /**
+     * @return \SuperV\Platform\Domains\Resource\Resource
+     */
+    public function resolveRelatedResource()
+    {
+        $relationConfig = RelationConfig::create($this->field->getType(), $this->field->getConfig());
+
+        return sv_resource($relationConfig->getRelatedResource());
+    }
+
+    public function getPresenter(): Closure
+    {
+        return function (EntryContract $entry) {
+            if (! $entry->relationLoaded($this->getName())) {
+                $entry->load($this->getName());
+            }
+
+            if ($relatedEntry = $entry->getRelation($this->getName())) {
+                return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
+            }
+        };
+    }
+
+    protected function formComposer()
+    {
+        return function (Payload $payload, ?EntryContract $entry = null) {
+            if ($entry) {
+                if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
+                    $resource = sv_resource($relatedEntry);
+                    $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
+                }
+            }
+            $this->relatedResource = $this->resolveRelatedResource();
+
+            $options = $this->getConfigValue('meta.options');
+            if (! is_null($options)) {
+                $payload->set('meta.options', $options);
+            } else {
+                $url = sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
+                $payload->set('meta.options', $url);
+            }
+            $payload->set('placeholder', sv_trans('sv::resource.select', ['resource' => $this->relatedResource->getSingularLabel()]));
+        };
+    }
+
+    protected function rpcOptions(array $params, array $request = [])
+    {
+        $this->relatedResource = $this->resolveRelatedResource();
+
+        return $this->buildOptions($request['query'] ?? []);
+    }
 
     protected function presenter()
     {
@@ -36,26 +159,6 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
                 return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
             }
         };
-    }
-
-    public function getColumnName(): ?string
-    {
-        return $this->getConfigValue('foreign_key', $this->field->getName().'_id');
-    }
-
-    protected function boot()
-    {
-        $this->on('form.presenting', $this->presenter());
-        $this->on('form.composing', $this->composer());
-
-        $this->on('view.presenting', $this->viewPresenter());
-        $this->on('view.composing', $this->viewComposer());
-
-        $this->on('table.presenting', $this->presenter());
-        $this->on('table.composing', $this->tableComposer());
-        $this->on('table.querying', function ($query) {
-            $query->with($this->getName());
-        });
     }
 
     protected function viewComposer()
@@ -79,63 +182,5 @@ class BelongsToField extends FieldType implements NeedsDatabaseColumn, ProvidesF
                 $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
             }
         };
-    }
-
-    protected function composer()
-    {
-        return function (Payload $payload, ?EntryContract $entry = null) {
-            if ($entry) {
-                if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
-                    $resource = sv_resource($relatedEntry);
-                    $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
-                }
-            }
-            $this->buildOptions();
-            $payload->set('meta.options', $this->options);
-            $payload->set('placeholder', 'Select '.$this->resource->getSingularLabel());
-        };
-
-        //        if ($this->hasCallback('querying')) {
-        //            $this->fire('querying', ['query' => $query]);
-        //
-        //            // If parent exists, make sure we get the
-        //            // current related entry in the list
-        //            if ($this->entry->exists) {
-        //                $query->orWhere($query->getModel()->getQualifiedKeyName(), $this->entry->getAttribute($this->getName()));
-        //            }
-        //        } else {
-        //            $query->get();
-        //        }
-        //
-    }
-
-    protected function buildOptions(?array $queryParams = [])
-    {
-        $relationConfig = RelationConfig::create($this->getType(), $this->getConfig());
-        $this->resource = sv_resource($relationConfig->getRelatedResource());
-
-        $query = $this->resource->newQuery();
-        if ($queryParams) {
-            $query->where($queryParams);
-        }
-
-        $entryLabel = $this->resource->getConfigValue('entry_label', '#{id}');
-        $this->options = $query->get()->map(function (EntryContract $item) use ($entryLabel) {
-            if ($keyName = $this->resource->getConfigValue('key_name')) {
-                $item->setKeyName($keyName);
-            }
-
-            return ['value' => $item->getId(), 'text' => sv_parse($entryLabel, $item->toArray())];
-        })->all();
-    }
-
-    public function makeFilter(?array $params = [])
-    {
-        $this->buildOptions($params['query'] ?? null);
-
-        return SelectFilter::make($this->getName(), $this->resource->getSingularLabel())
-                           ->setAttribute($this->getColumnName())
-                           ->setOptions($this->options)
-                           ->setDefaultValue($params['default_value'] ?? null);
     }
 }

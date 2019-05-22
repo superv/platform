@@ -12,9 +12,9 @@ class AddonRunMigrationCommand extends Command
     public function handle()
     {
         if (! $addon = $this->option('addon')) {
-            $addon = $this->choice('Addon ?', AddonModel::enabled()->latest()->get()->pluck('slug')->all());
+            $addon = $this->choice('Select Addon to Run Migrations', sv_addons()->enabled()->slugs()->all());
         }
 
-        $this->call('migrate', ['--scope' => $addon]);
+        $this->call('migrate', ['--addon' => $addon]);
     }
 }

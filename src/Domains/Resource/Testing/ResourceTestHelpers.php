@@ -10,13 +10,21 @@ use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\Fixtures\Blueprints;
-use Tests\Platform\Domains\Resource\Fixtures\HelperComponent;
+use SuperV\Platform\Testing\HelperComponent;
 
 trait ResourceTestHelpers
 {
-    protected function getPageFromUrl($url)
+    protected function getUserPage($url)
     {
         $response = $this->getJsonUser($url);
+        $response->assertOk();
+
+        return HelperComponent::from($response->decodeResponseJson('data'));
+    }
+
+    protected function getPublicPage($url)
+    {
+        $response = $this->getJson($url);
         $response->assertOk();
 
         return HelperComponent::from($response->decodeResponseJson('data'));
@@ -27,7 +35,11 @@ trait ResourceTestHelpers
         return new Blueprints;
     }
 
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    /**
+     * @param               $table
+     * @param \Closure|null $callback
+     * @return \SuperV\Platform\Domains\Resource\Resource
+     */
     protected function create($table, Closure $callback = null)
     {
         if ($table instanceof Closure) {
@@ -37,6 +49,17 @@ trait ResourceTestHelpers
         $table = $table ?? Str::random(4);
 
         Schema::create($table, $callback);
+
+        return ResourceFactory::make($table);
+    }
+
+    /**
+     * @param \Closure|null $callback
+     * @return \SuperV\Platform\Domains\Resource\Resource
+     */
+    protected function randomTable(Closure $callback = null)
+    {
+        Schema::create($table = Str::random(8), $callback);
 
         return ResourceFactory::make($table);
     }

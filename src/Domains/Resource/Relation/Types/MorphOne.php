@@ -9,10 +9,38 @@ use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequests
 {
+    public function makeForm(): Form
+    {
+        $form = FormBuilder::buildFromEntry($this->getRelatedEntry());
+
+        return $form->make();
+    }
+
+    public function getFormTitle(): string
+    {
+        return $this->getName();
+    }
+
+    /**
+     * Create and return an un-saved instance of the related model.
+     *
+     * @param array $attributes
+     */
+    public function make(array $attributes = [])
+    {
+        return $this->newQuery()->make($attributes);
+    }
+
+    public function handleRequest(\Illuminate\Http\Request $request)
+    {
+        return $this->makeForm()->setRequest($request)->save();
+    }
+
     protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
     {
         $morphName = $this->relationConfig->getMorphName();
@@ -24,32 +52,5 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequ
             $morphName.'_id',
             $this->parentEntry->getKeyName()
         );
-    }
-
-    public function makeForm(): Form
-    {
-        return Form::for($this->getRelatedEntry())
-                   ->make();
-    }
-
-    public function getFormTitle(): string
-    {
-        return $this->getName();
-    }
-
-    /**
-     * Create and return an un-saved instance of the related model.
-     *
-     * @param  array $attributes
-     * @return \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract
-     */
-    public function make(array $attributes = [])
-    {
-        return $this->newQuery()->make($attributes);
-    }
-
-    public function handleRequest(\Illuminate\Http\Request $request)
-    {
-        return $this->makeForm()->setRequest($request)->save();
     }
 }

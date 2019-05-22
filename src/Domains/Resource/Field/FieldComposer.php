@@ -4,6 +4,9 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Support\Composer\Payload;
 
 class FieldComposer
@@ -18,14 +21,18 @@ class FieldComposer
         $this->field = $field instanceof ProvidesField ? $field->makeField() : $field;
     }
 
-    public function forForm($entry = null)
+    public function forForm(Form $form = null)
     {
         $field = $this->field;
+
+        $entry = $form ? $form->getEntry() : null;
 
         if ($entry) {
             $value = $field->resolveFromEntry($entry);
 
-            if ($callback = $field->getCallback('form.accessing')) {
+            if ($field instanceof HasAccessor) {
+                $value = (new Accessor($field))->get(['entry' => $entry, 'value' => $value]);
+            } elseif ($callback = $field->getCallback('form.accessing')) {
                 $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
             }
         }
@@ -35,16 +42,16 @@ class FieldComposer
             'uuid'        => $field->uuid(),
             'name'        => $field->getName(),
             'label'       => $field->getLabel(),
-            'hint'        => $field->getConfigValue('hint'),
             'placeholder' => $field->getPlaceholder(),
             'value'       => $value ?? $field->getValue(),
-            'meta'        => [
-                'on_change_event' => $field->getConfigValue('on_change_event'),
-            ],
+            'hint'        => $field->getConfigValue('hint'),
+            'meta'        => $field->getConfigValue('meta'),
+            'presenting'  => $field->getConfigValue('presenting'),
+
         ]))->setFilterNull(true);
 
         if ($callback = $field->getCallback('form.composing')) {
-            app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
+            app()->call($callback, ['form' => $form, 'entry' => $entry, 'payload' => $payload]);
         }
 
         return $payload;
@@ -74,7 +81,9 @@ class FieldComposer
             $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
         }
 
-        if ($callback = $field->getCallback('table.presenting')) {
+        if ($field instanceof HasPresenter) {
+            $value = app()->call($field->getPresenter(), ['entry' => $entry, 'value' => $value]);
+        } elseif ($callback = $field->getCallback('table.presenting')) {
             $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
         }
 

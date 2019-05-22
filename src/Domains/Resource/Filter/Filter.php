@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Filter;
 
+use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter as FilterContract;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -61,23 +62,33 @@ abstract class Filter implements FilterContract, ProvidesField
 
     public function __construct($identifier = null, $label = null)
     {
-        $this->identifier = $identifier;
-        $this->label = $label;
+        if ($identifier) {
+            $this->identifier = $identifier;
+        }
+
+        if ($label) {
+            $this->label = $label;
+        }
 
         $this->boot();
     }
 
     protected function boot() { }
 
-    public function apply($query, $value)
+    public function applyQuery($query, $value)
     {
         if ($this->callback) {
             return ($this->callback)($query, $value);
         }
 
+        if (method_exists($this, 'apply')) {
+            return $this->apply($query, $value);
+        }
+
         if (str_contains($this->getIdentifier(), '.')) {
             return $this->applyRelationQuery($query, $this->getIdentifier(), $value);
         }
+
         $query->where($this->getAttribute(), '=', $value);
     }
 
@@ -108,12 +119,15 @@ abstract class Filter implements FilterContract, ProvidesField
         return $this->label ?? str_unslug($this->identifier);
     }
 
-    protected function applyRelationQuery($query, $slug, $value, $operator = '=', $method = 'whereHas')
+    /**
+     * @param mixed $callback
+     * @return Filter
+     */
+    public function setApplyCallback(Closure $callback): FilterContract
     {
-        list($relation, $column) = explode('.', $slug);
-        $query->{$method}($relation, function ($query) use ($column, $value, $operator) {
-            $query->where($column, $operator, $value);
-        });
+        $this->callback = $callback;
+
+        return $this;
     }
 
     public function onFieldBuilt(Field $field) { }
@@ -127,6 +141,9 @@ abstract class Filter implements FilterContract, ProvidesField
             'value'       => $this->getDefaultValue(),
 
         ]);
+
+//        if ($this->getIdentifier() === 'assigned')
+//        dd($field, $this->getDefaultValue());
 
         $this->fire('field.built', ['field' => $field]);
 
@@ -160,5 +177,13 @@ abstract class Filter implements FilterContract, ProvidesField
     public static function make($identifier = null, $label = null)
     {
         return new static($identifier, $label);
+    }
+
+    protected function applyRelationQuery($query, $slug, $value, $operator = '=', $method = 'whereHas')
+    {
+        list($relation, $column) = explode('.', $slug);
+        $query->{$method}($relation, function ($query) use ($column, $value, $operator) {
+            $query->where($column, $operator, $value);
+        });
     }
 }

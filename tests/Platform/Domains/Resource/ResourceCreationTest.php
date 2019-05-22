@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Resource;
 
 use Exception;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -103,13 +104,6 @@ class ResourceCreationTest extends ResourceTestCase
         $this->assertArrayContains(['min:16', 'max:64'], $nameField->getRules());
     }
 
-    function cancelled__does_not_create_fields_for_timestamp_columns()
-    {
-        $resource = $this->makeResourceModel('test_users', ['name', 'timestamps']);
-
-        $this->assertEquals(1, $resource->fields()->count());
-    }
-
     function test__deletes_field_when_a_column_is_dropped()
     {
         $resource = $this->makeResourceModel('test_users', ['name', 'title']);
@@ -144,15 +138,20 @@ class ResourceCreationTest extends ResourceTestCase
         $this->assertTrue($resource->getField('name')->isRequired());
     }
 
-    function xxxx__marks_unique_columns()
+    function test__marks_unique_columns()
     {
-        $resource = $this->makeResource('test_users', ['name', 'slug' => 'unique'])->build();
+        $resource = $this->create('test_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('email')->unique();
+        });
 
-        $slugField = $resource->getField('slug')->fieldType();
-        $this->assertTrue($slugField->isUnique());
+        $email = $resource->getField('email');
+        $this->assertTrue($email->isUnique());
 
-        $rules = $slugField->getRules();
-        $this->assertArraySubset(['unique:{res.handle},slug,{entry.id},id'], $rules);
+        /** make sure we call the parent method for db unique index **/
+        $columnDefinition = new ColumnDefinition(new ResourceConfig());
+        $columnDefinition->unique();
+        $this->assertTrue($columnDefinition->unique);
     }
 
     function test__marks_searchable_columns()

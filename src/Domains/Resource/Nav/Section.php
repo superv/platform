@@ -22,8 +22,7 @@ class Section extends Entry
         });
 
         static::deleted(function (Section $entry) {
-            // if parent has no child other than this
-            // delete it too
+            // delete parent if it has no child except this
             //
             if ($parent = $entry->getParent()) {
                 if ($parent->children()->count() === 0) {
@@ -43,7 +42,7 @@ class Section extends Entry
         $colophon = $this->getColophon();
 
         $payload = new Payload([
-            'title'    => $this->title,
+            'title'    => $this->addon ? sv_trans($this->addon.'::'.$this->title.'.label') : $this->title,
             'handle'   => $this->handle,
             'colophon' => $withColophon ? $colophon : null,
             'icon'     => $this->icon,

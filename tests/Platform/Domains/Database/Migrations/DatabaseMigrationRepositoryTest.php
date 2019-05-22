@@ -14,11 +14,11 @@ class DatabaseMigrationRepositoryTest extends TestCase
     function filters_migrations_by_scope()
     {
         \DB::table(config('database.migrations'))->insert([
-                ['migration' => '2018_0001_migration_A', 'batch' => 101, 'scope' => null],
-                ['migration' => '2018_0002_migration_B', 'batch' => 102, 'scope' => 'foo'],
-                ['migration' => '2018_0003_migration_C', 'batch' => 103, 'scope' => 'bar'],
-                ['migration' => '2018_0004_migration_D', 'batch' => 104, 'scope' => 'foo'],
-                ['migration' => '2018_0005_migration_E', 'batch' => 104, 'scope' => 'foo'],
+                ['migration' => '2018_0001_migration_A', 'batch' => 101, 'addon' => null],
+                ['migration' => '2018_0002_migration_B', 'batch' => 102, 'addon' => 'foo'],
+                ['migration' => '2018_0003_migration_C', 'batch' => 103, 'addon' => 'bar'],
+                ['migration' => '2018_0004_migration_D', 'batch' => 104, 'addon' => 'foo'],
+                ['migration' => '2018_0005_migration_E', 'batch' => 104, 'addon' => 'foo'],
             ]
         );
 
@@ -41,10 +41,10 @@ class DatabaseMigrationRepositoryTest extends TestCase
     function filters_last_migrations_by_scope()
     {
         \DB::table(config('database.migrations'))->insert([
-                ['migration' => '2018_0002_migration_B', 'batch' => 102, 'scope' => 'bar'],
-                ['migration' => '2018_0003_migration_C', 'batch' => 103, 'scope' => 'bar'],
-                ['migration' => '2018_0004_migration_D', 'batch' => 103, 'scope' => 'foo'],
-                ['migration' => '2018_0005_migration_E', 'batch' => 103, 'scope' => 'foo'],
+                ['migration' => '2018_0002_migration_B', 'batch' => 102, 'addon' => 'bar'],
+                ['migration' => '2018_0003_migration_C', 'batch' => 103, 'addon' => 'bar'],
+                ['migration' => '2018_0004_migration_D', 'batch' => 103, 'addon' => 'foo'],
+                ['migration' => '2018_0005_migration_E', 'batch' => 103, 'addon' => 'foo'],
             ]
         );
 
@@ -91,7 +91,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
      */
     protected function repositoryWithScope($scope = null)
     {
-        return app('migration.repository')->setScope($scope);
+        return app('migration.repository')->setAddon($scope);
     }
 
     protected function toArray($migrations)

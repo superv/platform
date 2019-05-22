@@ -8,7 +8,8 @@ trait AuthenticatesUsers
 {
     public function login(Request $request)
     {
-        $guard = auth()->guard('platform');
+        $guard = auth()->guard('sv-api');
+
         if (! $guard->attempt($request->only(['email', 'password']))) {
             return redirect()->back()
                              ->withInput(request(['email']))

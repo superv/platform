@@ -2,20 +2,19 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use SuperV\Platform\Domains\Resource\Contracts\NeedsDatabaseColumn;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
+use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 use SuperV\Platform\Support\Composer\Payload;
 
-class SelectField extends FieldType implements NeedsDatabaseColumn, ProvidesFilter
+class SelectField extends FieldType implements RequiresDbColumn, ProvidesFilter
 {
-    protected $placeholder;
-
     protected function boot()
     {
-        $this->on('form.composing', $this->composer());
-        $this->on('view.presenting', $this->presenter());
-        $this->on('table.presenting', $this->presenter());
+        $this->field->on('form.composing', $this->composer());
+        $this->field->on('view.presenting', $this->presenter());
+        $this->field->on('table.presenting', $this->presenter());
     }
 
     protected function presenter()
@@ -31,32 +30,21 @@ class SelectField extends FieldType implements NeedsDatabaseColumn, ProvidesFilt
     {
         return function (Payload $payload) {
             $options = static::parseOptions(($this->getOptions()));
-            // Add a null value placeholder if not exists
-//            if (! is_null(array_first($options)['value'])) {
-//                $options = array_merge([['value' => null, 'text' => $this->getPlaceholder()]],
-//                    $options
-//                );
-//            }
 
             $payload->set('meta.options', $options);
-            $payload->set('placeholder', 'Select '.$this->getPlaceholder());
+            $payload->set('placeholder', sv_trans('sv::resource.select', ['resource' => $this->field->getPlaceholder()]));
         };
     }
 
     public function makeFilter(?array $params = [])
     {
-        return SelectFilter::make($this->getName(), $this->getLabel())
+        return SelectFilter::make($this->getName(), $this->field->getLabel())
                            ->setOptions($this->getOptions());
     }
 
     public function getOptions()
     {
-        return $this->field->getConfigValue('options', []);
-    }
-
-    public function getPlaceholder()
-    {
-        return $this->field->getPlaceholder() ?? $this->getLabel();
+        return $this->getConfigValue('options', []);
     }
 
     public static function parseOptions(array $options = [])

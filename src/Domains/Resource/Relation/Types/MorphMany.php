@@ -9,22 +9,12 @@ use SuperV\Platform\Domains\Resource\Action\ModalAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Table\ResourceTable;
 
 class MorphMany extends Relation implements ProvidesTable, ProvidesForm
 {
-    protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
-    {
-        return new EloquentMorphMany(
-            $relatedEntryInstance->newQuery(),
-            $this->parentEntry,
-            $this->relationConfig->getMorphName().'_type',
-            $this->relationConfig->getMorphName().'_id',
-            'id'
-        );
-    }
-
     public function makeTable()
     {
         return app(ResourceTable::class)
@@ -40,12 +30,24 @@ class MorphMany extends Relation implements ProvidesTable, ProvidesForm
 
     public function makeForm(): Form
     {
-        return Form::for($childEntry = $this->newQuery()->make())
-                   ->hideField(sv_resource($this->parentEntry)->getResourceKey())
-                   ->make();
+        $form = FormBuilder::buildFromEntry($childEntry = $this->newQuery()->make());
+
+        return $form->hideField(sv_resource($this->parentEntry)->getResourceKey())
+                    ->make();
     }
 
     public function getFormTitle(): string
     {
+    }
+
+    protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
+    {
+        return new EloquentMorphMany(
+            $relatedEntryInstance->newQuery(),
+            $this->parentEntry,
+            $this->relationConfig->getMorphName().'_type',
+            $this->relationConfig->getMorphName().'_id',
+            'id'
+        );
     }
 }

@@ -2,6 +2,16 @@
     "name": "superv/platform",
     "description": "SuperV Platform Package",
     "license": "MIT",
+    "keywords": [
+        "laravel",
+        "admin",
+        "laravel-admin",
+        "php",
+        "dashboard",
+        "admin-panel",
+        "modular",
+        "laravel-extension"
+    ],
     "autoload": {
         "psr-4": {
             "SuperV\\Platform\\": "src/"

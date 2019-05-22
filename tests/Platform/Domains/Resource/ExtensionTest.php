@@ -60,25 +60,35 @@ class ExtensionTest extends ResourceTestCase
     function test__observes_retrieved()
     {
         $this->makeResource('t_users');
+        $this->makeResource('t_posts');
         Extension::register(TestUserResourceExtension::class);
 
-        $this->assertEquals(sv_resource('t_users')->fake()->fresh(), TestUserResourceExtension::$called['retrieved']);
+        $user = sv_resource('t_users')->fake()->fresh();
+        sv_resource('t_posts')->fake();
+
+        $this->assertEquals($user, TestUserResourceExtension::$called['retrieved']);
     }
 
     function test__observes_saving()
     {
         $this->makeResource('t_users');
+        $this->makeResource('t_posts');
         Extension::register(TestUserResourceExtension::class);
 
-        $this->assertEquals(sv_resource('t_users')->fake(), TestUserResourceExtension::$called['saving']);
+        $user = sv_resource('t_users')->fake();
+        sv_resource('t_posts')->fake();
+        $this->assertEquals($user, TestUserResourceExtension::$called['saving']);
     }
 
     function test__observes_saved()
     {
         $this->makeResource('t_users');
+        $this->makeResource('t_posts');
         Extension::register(TestUserResourceExtension::class);
 
-        $this->assertEquals(sv_resource('t_users')->fake(), TestUserResourceExtension::$called['saved']);
+        $user = sv_resource('t_users')->fake();
+        sv_resource('t_posts')->fake();
+        $this->assertEquals($user, TestUserResourceExtension::$called['saved']);
     }
 
     function test__registers_extensions_from_path()

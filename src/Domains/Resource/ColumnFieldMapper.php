@@ -16,11 +16,6 @@ class ColumnFieldMapper
 
     protected $rules = [];
 
-    public static function for(string $columnType): self
-    {
-        return (new static())->setColumnType($columnType);
-    }
-
     /**
      * @param mixed $columnType
      * @return ColumnFieldMapper
@@ -55,14 +50,6 @@ class ColumnFieldMapper
         return $this;
     }
 
-    protected function mapString()
-    {
-        $this->fieldType = 'text';
-        if ($length = $this->getParameter('length')) {
-            $this->setConfigValue('length', $length);
-        }
-    }
-
     public function getParameter($key)
     {
         return array_get($this->parameters, $key);
@@ -72,6 +59,43 @@ class ColumnFieldMapper
     {
         $this->rules[] = $rule;
         $this->rules = array_unique($this->rules);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFieldType()
+    {
+        return $this->fieldType;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRules()
+    {
+        return $this->rules;
+    }
+
+    public static function for(string $columnType): self
+    {
+        return (new static())->setColumnType($columnType);
+    }
+
+    protected function mapString()
+    {
+        $this->fieldType = 'text';
+        if ($length = $this->getParameter('length')) {
+            $this->setConfigValue('length', $length);
+        }
+    }
+
+    protected function mapChar()
+    {
+        $this->fieldType = 'text';
+        if ($length = $this->getParameter('length')) {
+            $this->setConfigValue('length', $length);
+        }
     }
 
     protected function mapMediumText()
@@ -172,25 +196,5 @@ class ColumnFieldMapper
     {
         $this->fieldType = 'datetime';
         $this->setConfigValue('time', true);
-    }
-
-    protected function mapBelongsTo()
-    {
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFieldType()
-    {
-        return $this->fieldType;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRules()
-    {
-        return $this->rules;
     }
 }

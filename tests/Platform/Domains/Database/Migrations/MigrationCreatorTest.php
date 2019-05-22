@@ -25,17 +25,17 @@ class MigrationCreatorTest extends TestCase
     function adds_scope_data_if_supplied()
     {
         $file = $this->creator()
-                     ->setScope('blank')
+                     ->setAddon('blank')
                      ->create('Create', $this->tmpDirectory);
         $this->assertContains("\$scope = 'blank'", file_get_contents($file));
 
         $file = $this->creator()
-                     ->setScope('create')
+                     ->setAddon('create')
                      ->create('Create', $this->tmpDirectory, 'FooTable', $create = true);
         $this->assertContains("\$scope = 'create'", file_get_contents($file));
 
         $file = $this->creator()
-                     ->setScope('update')
+                     ->setAddon('update')
                      ->create('Update', $this->tmpDirectory, 'FooTable');
         $this->assertContains("\$scope = 'update'", file_get_contents($file));
     }

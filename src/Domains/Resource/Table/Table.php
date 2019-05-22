@@ -5,6 +5,8 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Action\Action;
+use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
+use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
@@ -35,6 +37,12 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
 
     protected $selectable = true;
 
+    protected $deletable = true;
+
+    protected $viewable = true;
+
+    protected $showIdColumn = false;
+
     public function mergeFields($fields)
     {
         $this->mergeFields = $fields;
@@ -46,6 +54,7 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
     {
         $fields = $this->makeFields();
 
+        $this->rows = collect();
         $this->rows = $this->buildRows($fields);
 
         return $this;
@@ -72,12 +81,32 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
         return $this;
     }
 
-    protected function copyMergeFields()
+    public function make()
     {
-        return wrap_collect($this->mergeFields)
-            ->map(function (Field $field) {
-                return clone $field;
-            });
+        if ($this->deletable) {
+            $this->addRowAction(DeleteEntryAction::class);
+        }
+
+        if ($this->viewable) {
+            $this->addRowAction(ViewEntryAction::class);
+        }
+
+        return $this;
+    }
+
+    public function removeRowAction($actionName)
+    {
+        $this->rowActions = collect($this->rowActions)->map(function ($action) use ($actionName) {
+            if (is_string($action) && $action === $actionName) {
+                return null;
+            }
+
+            if ($action instanceof Action && $action->getName() === $actionName) {
+                return null;
+            }
+
+            return $action;
+        })->filter()->all();
     }
 
     public function compose(Tokens $tokens = null)
@@ -99,12 +128,39 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
         return $this;
     }
 
+    public function shouldShowIdColumn(): bool
+    {
+        return $this->showIdColumn;
+    }
+
     public function toResponse($request)
     {
         return response()->json([
 //            'data' => sv_compose($this->compose(), $this->makeTokens()),
             'data' => $this->compose(),
         ]);
+    }
+
+    public function notDeletable(): Table
+    {
+        $this->deletable = false;
+
+        return $this;
+    }
+
+    public function notViewable(): Table
+    {
+        $this->viewable = false;
+
+        return $this;
+    }
+
+    protected function copyMergeFields()
+    {
+        return wrap_collect($this->mergeFields)
+            ->map(function (Field $field) {
+                return clone $field;
+            });
     }
 
     protected function makeTokens(): array
@@ -146,6 +202,8 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
 
     public function makeComponent(): ComponentContract
     {
+        $this->make();
+
         return Component::make('sv-table')->card()->setProps($this->composeConfig());
     }
 
@@ -178,7 +236,7 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
             return $this->dataUrl;
         }
 
-        return url()->current().'/data';
+        return request()->path().'/data';
     }
 
     public function setDataUrl($url): TableContract
@@ -231,5 +289,10 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
         $this->title = $title;
 
         return $this;
+    }
+
+    public function showIdColumn()
+    {
+        $this->showIdColumn = true;
     }
 }

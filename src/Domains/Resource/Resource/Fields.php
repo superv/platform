@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -24,7 +26,7 @@ class Fields
     public function __construct(Resource $resource, $fields)
     {
         $this->resource = $resource;
-        $this->fields = $fields instanceof Closure ? $fields() : $fields;
+        $this->fields = $fields instanceof Closure ? $fields($resource) : $fields;
     }
 
     public function getAll()
@@ -39,6 +41,11 @@ class Fields
         });
 
         return $this;
+    }
+
+    public function has($name)
+    {
+        return ! is_null($this->find($name));
     }
 
     public function find($name): ?Field
@@ -56,6 +63,11 @@ class Fields
         }
 
         return $field;
+    }
+
+    public function getEntryLabelField()
+    {
+        return $this->find($this->resource->getConfigValue('entry_label_field'));
     }
 
     public function showOnIndex($name): Field
@@ -83,9 +95,8 @@ class Fields
             ->filter(function (Field $field) {
                 return $field->hasFlag('filter');
             })->map(function (Field $field) {
-                $fieldType = $field->resolveFieldType();
-                if ($fieldType instanceof ProvidesFilter) {
-                    return $fieldType->makeFilter($field->getConfigValue('filter'));
+                if ($field->getFieldType() instanceof ProvidesFilter) {
+                    return $field->getFieldType()->makeFilter($field->getConfigValue('filter'));
                 }
             });
 

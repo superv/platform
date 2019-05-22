@@ -11,8 +11,8 @@ class RollbackCommand extends \Illuminate\Database\Console\Migrations\RollbackCo
 
     public function handle()
     {
-        if ($this->option('scope')) {
-            $this->migrator->setScope($this->option('scope'));
+        if ($this->option('addon')) {
+            $this->migrator->setAddon($this->option('addon'));
         }
         parent::handle();
     }
@@ -22,7 +22,7 @@ class RollbackCommand extends \Illuminate\Database\Console\Migrations\RollbackCo
         return array_merge(
             parent::getOptions(),
             [
-                ['scope', null, InputOption::VALUE_OPTIONAL, 'The scope to rollback for.'],
+                ['addon', null, InputOption::VALUE_OPTIONAL, 'The scope to rollback for.'],
             ]
         );
     }

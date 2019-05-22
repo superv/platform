@@ -29,7 +29,7 @@ class ActionsTest extends TestCase
         $user = $this->newUser();
 
         /** @var \SuperV\Platform\Domains\Auth\User $user */
-        $admin = factory(User::class)->create();
+        $admin = $this->newUser();
         $admin->assign('admin');
 
         Role::withSlug('admin')->allow('*');

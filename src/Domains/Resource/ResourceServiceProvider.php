@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Addon\Events\AddonUninstallingEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
+use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
@@ -21,6 +22,7 @@ class ResourceServiceProvider extends BaseServiceProvider
         ColumnUpdatedEvent::class              => Listeners\SyncField::class,
         ColumnDroppedEvent::class              => Listeners\DeleteField::class,
         TableCreatingEvent::class              => Listeners\CreateResource::class,
+        TableCreatedEvent::class              => Listeners\CreateResourceForm::class,
         AddonBootedEvent::class                => Listeners\RegisterExtensions::class,
         Model\Events\EntrySavingEvent::class   => [
             Listeners\ValidateSavingEntry::class,

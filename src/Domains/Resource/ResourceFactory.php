@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
-use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
@@ -35,12 +34,33 @@ class ResourceFactory
         $this->entry = $entry;
     }
 
+    public static function attributesFor(string $handle, ?EntryContract $entry = null): array
+    {
+        return (new static($handle, $entry))->get();
+    }
+
+    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    public static function make($handle)
+    {
+        if ($handle instanceof EntryContract) {
+            $handle = $handle->getTable();
+        }
+
+        $resource = new Resource(static::attributesFor($handle));
+
+        Extension::extend($resource);
+
+        return $resource;
+    }
+
     protected function getFieldsProvider()
     {
-        return function () {
+        return function (Resource $resource) {
             $fields = $this->model->getFields()
-                                  ->map(function (FieldModel $fieldEntry) {
+                                  ->map(function (FieldModel $fieldEntry) use ($resource) {
                                       $field = FieldFactory::createFromEntry($fieldEntry);
+
+                                      $field->setResource($resource);
 
                                       return $field;
                                   });
@@ -72,30 +92,14 @@ class ResourceFactory
         }
 
         $attributes = array_merge($this->model->toArray(), [
-            'handle'    => $this->model->getHandle(),
-            'fields'    => $this->getFieldsProvider(),
-            'relations' => $this->getRelationsProvider(),
+            'handle'        => $this->model->getHandle(),
+            'fields'        => $this->getFieldsProvider(),
+            'field_entries' => function () {
+                return $this->model->getFields();
+            },
+            'relations'     => $this->getRelationsProvider(),
         ]);
 
         return $attributes;
-    }
-
-    public static function attributesFor(string $handle, ?EntryContract $entry = null): array
-    {
-        return (new static($handle, $entry))->get();
-    }
-
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
-    public static function make($handle)
-    {
-        if ($handle instanceof EntryContract) {
-            $handle = $handle->getTable();
-        }
-
-        $resource = new Resource(static::attributesFor($handle));
-
-        Extension::extend($resource);
-
-        return $resource;
     }
 }

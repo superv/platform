@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factory as ModelFactory;
 use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\Assert;
+use SuperV\Platform\Domains\Auth\Contracts\Users;
 use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
@@ -21,10 +22,37 @@ trait TestHelpers
     /** @var \SuperV\Platform\Domains\Auth\User */
     protected $testUser;
 
+    public function postJsonUser($uri, array $data = []): TestResponse
+    {
+        if (! $this->testUser) {
+            $this->newUser();
+        }
+
+        return $this->postJson($uri, $data, $this->getHeaderWithAccessToken());
+    }
+
+    public function getJsonUser($uri): TestResponse
+    {
+        if (! $this->testUser) {
+            $this->newUser();
+        }
+
+        return $this->getJson($uri, $this->getHeaderWithAccessToken());
+    }
+
+    public function deleteJsonUser($uri): TestResponse
+    {
+        if (! $this->testUser) {
+            $this->newUser();
+        }
+
+        return $this->json('DELETE', $uri, [], $this->getHeaderWithAccessToken());
+    }
+
     /**
      * Load model factories from path.
      *
-     * @param  string $path
+     * @param string $path
      * @return $this
      */
     protected function withFactories(string $path)
@@ -35,8 +63,8 @@ trait TestHelpers
     /**
      * Load model factories from path using Application.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application $app
-     * @param  string                                       $path
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param string                                       $path
      * @return $this
      */
     protected function loadFactoriesUsing($app, string $path)
@@ -66,7 +94,7 @@ trait TestHelpers
 
     protected function assertArrayContains(array $needle, array $haystack)
     {
-        $this->assertEquals($needle, array_intersect($needle, $haystack));
+        $this->assertEquals($needle, array_intersect($needle, $haystack), 'Failed asserting array contains');
     }
 
     protected function assertColumnDoesNotExist(string $table, string $column)
@@ -168,7 +196,11 @@ trait TestHelpers
      */
     protected function newUser(array $overrides = [])
     {
-        $this->testUser = factory(User::class)->create($overrides);
+        $this->testUser = app(Users::class)->create(array_merge([
+            'name'     => 'test user',
+            'email'    => sprintf("user-%s@superv.io", str_random(6)),
+            'password' => '$2y$10$lEElUpT9ssdSw4XVVEUt5OaJnBzgcmcE6MJ2Rrov4dKPEjuRD6dd.',
+        ], $overrides));
         $this->testUser->assign('user');
 
         return $this->testUser->fresh();
@@ -182,32 +214,6 @@ trait TestHelpers
     protected function getAccessToken(User $user)
     {
         return app('tymon.jwt')->fromUser($user);
-    }
-
-    public function postJsonUser($uri, array $data = []): TestResponse
-    {
-        if (! $this->testUser) {
-            $this->newUser();
-        }
-
-        return $this->postJson($uri, $data, $this->getHeaderWithAccessToken());
-    }
-
-    public function getJsonUser($uri): TestResponse
-    {
-        if (! $this->testUser) {
-            $this->newUser();
-        }
-
-        return $this->getJson($uri, $this->getHeaderWithAccessToken());
-    }
-
-    public function deleteJsonUser($uri): TestResponse
-    {
-        if (! $this->testUser) {
-            $this->newUser();
-        }
-        return $this->json('DELETE', $uri, [], $this->getHeaderWithAccessToken());
     }
 
     protected function makePostRequest($uri, array $data = []): Request

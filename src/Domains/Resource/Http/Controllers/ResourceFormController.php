@@ -2,7 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Http\Controllers\BaseApiController;
@@ -11,18 +12,44 @@ class ResourceFormController extends BaseApiController
 {
     use ResolvesResource;
 
-    public function create()
+    public function create(FormBuilder $builder)
     {
         $resource = $this->resolveResource();
 
-        $form = Form::for($resource)
-                    ->setUrl($resource->route('store'))
-                    ->setRequest($this->request)
-                    ->make();
+//        $form = $builder->setResource($resource)->build();
+//        $formData = FormModel::findByResource($resource->id());
+//
+//        $form->setUrl($resource->route('store'))
+//             ->setRequest($this->request);
+//
+//        if ($callback = $resource->getCallback('creating')) {
+//            app()->call($callback, ['form' => $form]);
+//        }
+//
+//        $form->make($formData ? $formData->uuid : null);
+
+        $page = Page::make(trans('sv::resource.create', ['resource' => $resource->getSingularLabel()]));
+//        $page = Page::make('Create new '.$resource->getSingularLabel());
+        $page->addBlock(sv_loader('sv/forms/'.$resource->getHandle()));
+
+        return $page->build();
+    }
+
+    public function create__X(FormBuilder $builder)
+    {
+        $resource = $this->resolveResource();
+
+        $form = $builder->setResource($resource)->build();
+        $formData = FormModel::findByResource($resource->id());
+
+        $form->setUrl($resource->route('store'))
+             ->setRequest($this->request);
 
         if ($callback = $resource->getCallback('creating')) {
             app()->call($callback, ['form' => $form]);
         }
+
+        $form->make($formData ? $formData->uuid : null);
 
         $page = Page::make('Create new '.$resource->getSingularLabel());
         $page->addBlock($form);
@@ -30,38 +57,43 @@ class ResourceFormController extends BaseApiController
         return $page->build();
     }
 
-    public function store()
+    public function store(FormBuilder $builder)
     {
-        $resource = $this->resolveResource();
+        $form = $builder->setResource($this->resolveResource())
+                        ->setEntry($this->entry)
+                        ->build();
 
-        return Form::for($this->entry ?? $resource)
-                   ->setRequest($this->request)
-                   ->make()
-                   ->save();
+        return $form->setRequest($this->request)
+                    ->make()
+                    ->save();
     }
 
-    public function edit()
+    public function edit(FormBuilder $builder)
     {
         $resource = $this->resolveResource();
-        $form = Form::for($this->entry)
-                    ->setUrl($resource->route('update', $this->entry))
-                    ->setRequest($this->request)
-                    ->make();
+        $form = $builder->setEntry($this->entry)->build();
+        $formData = FormModel::findByResource($resource->id());
+
+        $form->setUrl($resource->route('update', $this->entry))
+             ->setRequest($this->request)
+             ->make($formData ? $formData->uuid : null);
 
         if ($callback = $resource->getCallback('editing')) {
-            app()->call($callback, ['form' => $form]);
+            app()->call($callback, ['form' => $form, 'entry' => $this->entry]);
         }
 
         return $form->makeComponent();
     }
 
-    public function update()
+    public function update(FormBuilder $builder)
     {
         $this->resolveResource();
 
-        return Form::for($this->entry)
-                   ->setRequest($this->request)
-                   ->make()
-                   ->save();
+        $form = $builder->setEntry($this->entry)
+                        ->build();
+
+        return $form->setRequest($this->request)
+                    ->make()
+                    ->save();
     }
 }
