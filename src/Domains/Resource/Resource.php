@@ -6,8 +6,6 @@ use Closure;
 use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
-use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
@@ -397,10 +395,7 @@ final class Resource implements
 
     public function resolveTable(): ResourceTable
     {
-        $table = app(ResourceTable::class)
-            ->setResource($this)
-            ->addRowAction(DeleteEntryAction::class)
-            ->addRowAction(ViewEntryAction::class);
+        $table = app(ResourceTable::class)->setResource($this);
 
         $this->fire('table.resolved', ['table' => $table]);
 

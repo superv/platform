@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use SuperV\Platform\Domains\UI\Page\EntryPage;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
-class ResourceViewController extends BaseApiController
+class ResourceEditController extends BaseApiController
 {
     use ResolvesResource;
 
@@ -19,16 +19,16 @@ class ResourceViewController extends BaseApiController
         $page->setResource($resource);
         $page->setEntry($this->entry);
 
-        $page->addBlock(sv_loader($this->resource->route('view', $this->entry)));
+        $page->addBlock(sv_loader($this->resource->route('edit', $this->entry)));
 
-        if ($callback = $resource->getCallback('view.page')) {
+        if ($callback = $resource->getCallback('edit.page')) {
             app()->call($callback, ['page' => $page, 'entry' => $this->entry]);
         }
 
         return $page->build(['res' => $resource->toArray(), 'entry' => $this->entry]);
     }
 
-    public function view()
+    public function edit()
     {
         $resource = $this->resolveResource();
 

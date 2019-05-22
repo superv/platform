@@ -11,6 +11,10 @@ use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
 class EntryPage extends ResourcePage
 {
+    protected $editable = true;
+
+    protected $viewable = true;
+
     public function build($tokens = [])
     {
         $this->buildSections();
@@ -34,14 +38,30 @@ class EntryPage extends ResourcePage
                      ->setName('sv-page')
                      ->mergeProps([
                          'sections' => $this->buildSections(),
-                         'links'    => [
-                             'image'  => $imageUrl ?? '',
-                             'create' => $this->resource->route('create'),
-                             'edit'   => $this->resource->route('edit', $this->entry),
-                             'view'   => $this->resource->route('view', $this->entry),
-                             'index'  => $this->resource->route('index'),
-                         ],
+                         'links'    => array_filter_null(
+                             [
+                                 'image'  => $imageUrl ?? '',
+                                 'create' => $this->creatable ? $this->resource->route('create') : null,
+                                 'edit'   => $this->editable ? $this->resource->route('edit', $this->entry) : null,
+                                 'view'   => $this->viewable ? $this->resource->route('view', $this->entry) : null,
+                                 'index'  => $this->resource->route('index'),
+                             ]
+                         ),
                      ]);
+    }
+
+    public function notEditable(): EntryPage
+    {
+        $this->editable = false;
+
+        return $this;
+    }
+
+    public function notViewable(): EntryPage
+    {
+        $this->viewable = false;
+
+        return $this;
     }
 
     protected function buildSections()
