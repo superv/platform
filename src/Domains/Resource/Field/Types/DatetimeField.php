@@ -14,6 +14,7 @@ class DatetimeField extends FieldType implements RequiresDbColumn, HasPresenter
 {
     protected function boot()
     {
+        $this->field->on('table.presenting', $this->getPresenter());
         $this->field->on('view.accessing', $this->formPresenter());
         $this->field->on('form.accessing', $this->formPresenter());
         $this->field->on('form.composing', $this->formComposer());
@@ -40,7 +41,6 @@ class DatetimeField extends FieldType implements RequiresDbColumn, HasPresenter
             return $value->format('Y-m-d H:i:s');
         };
     }
-
 
     protected function getFormat()
     {
