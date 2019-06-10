@@ -16,6 +16,7 @@ use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FormField;
 use SuperV\Platform\Domains\Resource\Form\Contracts\Form as FormContract;
+use SuperV\Platform\Domains\Resource\Form\Jobs\ValidateForm;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
@@ -143,25 +144,7 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
 
     public function validate()
     {
-        $data = $this->request->all();
-        $rules = $this->getFields()->map(function (Field $field) {
-            return [$field->getName(), $this->parseFieldRules($field)];
-        })->filter()->toAssoc()->all();
-
-        app(Validator::class)->make($data, $rules);
-    }
-
-    public function parseFieldRules(Field $field)
-    {
-        $rules = $field->getRules();
-
-        if ($field->isRequired()) {
-            $rules[] = 'required';
-        } else {
-            $rules[] = 'nullable';
-        }
-
-        return $rules;
+        ValidateForm::dispatch($this, $this->request->all());
     }
 
     public function compose(): Payload
