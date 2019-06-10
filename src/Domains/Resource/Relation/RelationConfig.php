@@ -308,7 +308,7 @@ class RelationConfig
 
     public function getTargetModel(): ?string
     {
-        return $this->targetModel;
+        return $this->targetModel ?? $this->getRelatedModel();
     }
 
     public function toArray()
