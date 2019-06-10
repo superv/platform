@@ -23,7 +23,7 @@ class CreateAuthorizationTables extends Migration
             $resource->nav('acp.platform.auth');
 
             $table->increments('id');
-            $table->string('slug')->unique();
+            $table->string('slug')->unique()->entryLabel();
             $table->createdBy()->updatedBy();
             $table->restorable();
 
@@ -48,7 +48,7 @@ class CreateAuthorizationTables extends Migration
             $table->resourceConfig()->nav('acp.platform.auth');
 
             $table->increments('id');
-            $table->string('slug')->unique();
+            $table->string('slug')->unique()->entryLabel();
             $table->createdBy()->updatedBy();
             $table->restorable();
         });
