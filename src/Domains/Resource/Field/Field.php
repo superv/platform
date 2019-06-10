@@ -65,7 +65,6 @@ class Field implements FieldContract
 
     protected $value;
 
-
     protected $defaultValue;
 
     /**
@@ -120,15 +119,10 @@ class Field implements FieldContract
         $this->form = $form;
     }
 
-    public function setHint($hint)
-    {
-        $this->setConfigValue('hint', $hint);
-    }
-
     public function getLabel(): string
     {
         if ($this->resource) {
-            return sv_trans($this->resource->getAddon().'::'.$this->resource->getHandle().'.'.$this->name,[]);
+            return sv_trans($this->resource->getAddon().'::'.$this->resource->getHandle().'.'.$this->name, []);
         }
 
         return $this->label ?? str_unslug($this->getName());
@@ -179,7 +173,6 @@ class Field implements FieldContract
         $this->value = $value;
     }
 
-
     public function resolveFromEntry($entry)
     {
         $attribute = $this->getColumnName();
@@ -229,6 +222,20 @@ class Field implements FieldContract
     public function getRules()
     {
         return $this->rules;
+    }
+
+    public function removeRules(): FieldContract
+    {
+        $this->rules = [];
+
+        return $this;
+    }
+
+    public function addRule($rule): FieldContract
+    {
+        $this->rules[] = $rule;
+
+        return $this;
     }
 
     public function getPlaceholder()
@@ -311,16 +318,6 @@ class Field implements FieldContract
         return $this->type;
     }
 
-    public function getResource(): \SuperV\Platform\Domains\Resource\Resource
-    {
-        return $this->resource;
-    }
-
-    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void
-    {
-        $this->resource = $resource;
-    }
-
     public function getDefaultValue()
     {
         return $this->defaultValue;
@@ -329,5 +326,20 @@ class Field implements FieldContract
     public function setDefaultValue($defaultValue): void
     {
         $this->defaultValue = $defaultValue;
+    }
+
+    public function setHint($hint)
+    {
+        $this->setConfigValue('hint', $hint);
+    }
+
+    public function getResource(): \SuperV\Platform\Domains\Resource\Resource
+    {
+        return $this->resource;
+    }
+
+    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void
+    {
+        $this->resource = $resource;
     }
 }

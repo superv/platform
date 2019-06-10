@@ -57,6 +57,10 @@ interface Field
 
     public function getRules();
 
+    public function removeRules(): Field;
+
+    public function addRule($rule): Field;
+
     public function getPlaceholder();
 
     public function fillFromEntry(EntryContract $entry);

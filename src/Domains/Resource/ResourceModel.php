@@ -117,7 +117,7 @@ class ResourceModel extends Entry implements ProvidesFields
 
     public function uuid()
     {
-        return $this->uuid;
+        return $this->uuid ?? null;
     }
 
     public static function withModel($model): ?self

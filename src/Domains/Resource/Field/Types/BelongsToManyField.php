@@ -41,7 +41,7 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
     public function getOptionsUrl(?EntryContract $entry = null)
     {
         if ($entry && $entry->exists) {
-            return sprintf("sv/forms/%s/fields/%s/options?entry=%o", $this->field->getForm()->uuid(), $this->getName(), $entry->getId());
+            return sprintf("sv/forms/%s/fields/%s/options?entry=%d", $this->field->getForm()->uuid(), $this->getName(), $entry->getId());
         }
 
         return sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
@@ -50,7 +50,7 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
     public function getValuesUrl(?EntryContract $entry = null)
     {
         if ($entry && $entry->exists) {
-            return sprintf("sv/forms/%s/fields/%s/values?entry=%o", $this->field->getForm()->uuid(), $this->getName(), $entry->getId());
+            return sprintf("sv/forms/%s/fields/%s/values?entry=%d", $this->field->getForm()->uuid(), $this->getName(), $entry->getId());
         }
 
         return sprintf("sv/forms/%s/fields/%s/values", $this->field->getForm()->uuid(), $this->getName());

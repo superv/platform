@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Contracts\Validator;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
 use SuperV\Platform\Domains\Resource\Resource;
 
@@ -41,6 +42,13 @@ class ValidateSavingEntry
 
         $data = $this->entry->getAttributes();
 
-        $this->validator->make($data, $rules, []);
+        $attributes = $resource->getFields()
+                               ->map(function (Field $field) use ($resource) {
+                                   return [$field->getColumnName(), $field->getLabel()];
+                               })->filter()
+                               ->toAssoc()
+                               ->all();
+
+        $this->validator->make($data, $rules, [], $attributes);
     }
 }
