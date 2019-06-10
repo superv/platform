@@ -9,6 +9,8 @@ use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\Jobs\MakeForm;
 use SuperV\Platform\Domains\Resource\Form\Jobs\SaveForm;
+use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Http\Controllers\BaseController;
 use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 
@@ -45,11 +47,28 @@ class FormController extends BaseController
         return abort(404);
     }
 
-    public function show($uuid)
+    public function show($uuid, FormBuilder $builder)
     {
-        $formEntry = $this->getFormEntry($uuid);
+        if($formEntry = $this->getFormEntry($uuid)) {
+            $form = MakeForm::dispatch($formEntry, $this->request);
 
-        $form = MakeForm::dispatch($formEntry, $this->request);
+            return $form->makeComponent();
+        }
+
+        // dumb fix for platform resources >:/
+        //
+        $resource = ResourceFactory::make($uuid);
+
+        $form = $builder->setResource($resource)->build();
+
+        $form->setUrl($resource->route('store'))
+             ->setRequest($this->request);
+
+        if ($callback = $resource->getCallback('creating')) {
+            app()->call($callback, ['form' => $form]);
+        }
+
+        $form->make();
 
         return $form->makeComponent();
     }
@@ -61,10 +80,10 @@ class FormController extends BaseController
         return SaveForm::dispatch($formEntry, $this->request);
     }
 
-    protected function getFormEntry($uuid): FormModel
+    protected function getFormEntry($uuid): ?FormModel
     {
         if (! $formEntry = FormModel::findByUuid($uuid)) {
-            abort(404);
+            return null;
         }
 
         if (! $formEntry->isPublic()) {
