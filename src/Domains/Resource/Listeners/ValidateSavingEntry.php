@@ -39,6 +39,7 @@ class ValidateSavingEntry
         }
 
         $rules = $resource->getRules($this->entry);
+        $messages = $resource->getRuleMessages();
 
         $data = $this->entry->getAttributes();
 
@@ -49,6 +50,6 @@ class ValidateSavingEntry
                                ->toAssoc()
                                ->all();
 
-        $this->validator->make($data, $rules, [], $attributes);
+        $this->validator->make($data, $rules, $messages, $attributes);
     }
 }

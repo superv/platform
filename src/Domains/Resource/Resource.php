@@ -241,21 +241,56 @@ final class Resource implements
 
     public function getRules(EntryContract $entry = null)
     {
-        $rules = $this->getFields()
-                      ->filter(function (Field $field) {
-                          return ! $field->isUnbound();
-                      })
-                      ->keyBy(function (Field $field) {
-                          return $field->getColumnName();
-                      })
-                      ->map(function (Field $field) use ($entry) {
-                          $rules = $this->parseFieldRules($field, $entry);
+        return $this->getFields()
+                    ->filter(function (Field $field) {
+                        return ! $field->isUnbound();
+                    })
+                    ->keyBy(function (Field $field) {
+                        return $field->getColumnName();
+                    })
+                    ->map(function (Field $field) use ($entry) {
+                        return $this->parseFieldRules($field, $entry);
+                    })
+                    ->filter()
+                    ->all();
+    }
 
-                          return $rules;
-                      });
+    public function getRuleMessages()
+    {
+        return $this->getFields()
+                    ->filter(function (Field $field) {
+                        return ! $field->isUnbound();
+                    })
+                    ->map(function (Field $field) {
+                        return $this->parseFieldRuleMessages($field);
+                    })
+                    ->filter()
+                    ->reduce(function ($pass, $pair) {
+                        return $pass->merge($pair);
+                    }, collect())
+                    ->reduce(function ($pass, $pair) {
+                        return $pass->merge($pair);
+                    }, collect())
+                    ->all();
+    }
 
-        return $rules->filter()
-                     ->all();
+    public function parseFieldRuleMessages(Field $field)
+    {
+        return collect($field->getRules())
+            ->map(function ($rule) use ($field) {
+                if (is_array($rule)) {
+                    $key = $rule['rule'];
+                    if (str_contains($key, ':')) {
+                        $key = explode(':',$rule['rule'])[0];
+                    }
+
+                    return [$field->getColumnName().'.'.$key=> $rule['message']];
+                }
+
+                return null;
+            })
+            ->filter()
+            ->all();
     }
 
     public function parseFieldRules($field, ?EntryContract $entry = null)
@@ -281,7 +316,16 @@ final class Resource implements
             $rules[] = 'nullable';
         }
 
-        return $rules;
+        return collect($rules)
+            ->map(function ($rule) {
+                if (is_array($rule)) {
+                    return $rule['rule'];
+                }
+
+                return $rule;
+            })
+            ->filter()
+            ->all();
     }
 
     public function getResourceKey()
