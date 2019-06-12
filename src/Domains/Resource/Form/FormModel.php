@@ -63,8 +63,8 @@ class FormModel extends ResourceEntry
     public function compileFields(): Collection
     {
         return $this->getFormFields()
-                    ->map(function (FieldModel $fielEntry)  {
-                        $field = FieldFactory::createFromEntry($fielEntry);
+                    ->map(function (FieldModel $fieldEntry)  {
+                        $field = FieldFactory::createFromEntry($fieldEntry);
 
                         if ($this->resource_id > 0) {
                             $field->setResource($this->getOwnerResource());
