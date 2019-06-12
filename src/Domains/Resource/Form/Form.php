@@ -4,10 +4,8 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Closure;
 use Exception;
-use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Contracts\Validator;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
@@ -23,7 +21,7 @@ use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-class Form implements FormContract, ProvidesUIComponent, Responsable
+class Form implements FormContract, ProvidesUIComponent
 {
     use FiresCallbacks;
     const MODE_CREATE = 'create';
@@ -104,7 +102,7 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
         return $this;
     }
 
-    public function save(): self
+    public function save(): FormResponse
     {
         // If this is a no-entry form then we will
         // have to validate on our own since the
@@ -134,7 +132,12 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
             $callback();
         });
 
-        return $this;
+        return new FormResponse($this, $this->resource, $this->getEntry());
+    }
+
+    public function uuid(): string
+    {
+        return $this->uuid;
     }
 
     public function isUpdating()
@@ -233,21 +236,6 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
         $this->actions = $actions;
     }
 
-    protected function provideFields($fields)
-    {
-        if ($fields instanceof ProvidesFields) {
-            $fields = $fields->provideFields();
-        }
-
-        if (is_array($fields)) {
-            $fields = collect($fields)->map(function ($field) {
-                return is_array($field) ? FieldFactory::createFromArray($field, FormField::class) : $field;
-            });
-        }
-
-        return $fields;
-    }
-
     public function getFields()
     {
         return $this->fields;
@@ -318,30 +306,6 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
         return $this->hiddenFields;
     }
 
-    public function toResponse($request)
-    {
-        $action = $request->get('__form_action');
-
-        if ($action === 'view') {
-            $route = $this->resource->route('view.page', $this->getEntry());
-        } elseif ($action === 'create_another') {
-            $route = $this->resource->route('create');
-        } elseif ($action === 'edit_next') {
-            $next = $this->resource->newQuery()->where('id', '>', $this->getEntry()->getId())->first();
-            if ($next) {
-                $route = $this->resource->route('edit', $next).'?action=edit_next';
-            }
-        }
-
-        return response()->json([
-            'data' => [
-                'message' => $this->isUpdating() ? 'Kayıt güncellendi' : 'Kayıt oluşturuldu',
-                'action'      => $action,
-                'redirect_to' => $route ?? $this->resource->route('index'),
-            ],
-        ]);
-    }
-
     public function getEntry(): ?EntryContract
     {
         return $this->entry;
@@ -383,8 +347,18 @@ class Form implements FormContract, ProvidesUIComponent, Responsable
         return $this;
     }
 
-    public function uuid(): string
+    protected function provideFields($fields)
     {
-        return $this->uuid;
+        if ($fields instanceof ProvidesFields) {
+            $fields = $fields->provideFields();
+        }
+
+        if (is_array($fields)) {
+            $fields = collect($fields)->map(function ($field) {
+                return is_array($field) ? FieldFactory::createFromArray($field, FormField::class) : $field;
+            });
+        }
+
+        return $fields;
     }
 }
