@@ -41,7 +41,11 @@ class FieldFactory
             PlatformException::fail('Missing parameter [name] for field');
         }
 
-        $fieldTypeClass = FieldType::resolveTypeClass($this->params['type']);
+        if (str_contains($this->params['type'], '\\') && class_exists($this->params['type'])) {
+            $fieldTypeClass = $this->params['type'];
+        } else {
+            $fieldTypeClass = FieldType::resolveTypeClass($this->params['type']);
+        }
 
         /** @var \SuperV\Platform\Domains\Resource\Field\FieldType $fieldType */
         $fieldType = new $fieldTypeClass();

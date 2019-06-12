@@ -319,7 +319,7 @@ class Field implements FieldContract
 
     public function getType(): string
     {
-        return $this->type;
+        return $this->fieldType->getType() ?? $this->type;
     }
 
     public function setType(string $type): FieldContract

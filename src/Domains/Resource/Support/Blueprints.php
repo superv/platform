@@ -102,7 +102,10 @@ class Blueprints
             $table->belongsToMany('sv_fields', 'fields')
                   ->pivotTable('sv_form_fields')
                   ->pivotForeignKey('form_id')
-                  ->pivotRelatedKey('field_id');
+                  ->pivotRelatedKey('field_id')
+            ->pivotColumns(function(Blueprint $pivotTable) {
+                $pivotTable->unsignedInteger('sort_order')->nullable();
+            });
         } else {
             $table->unsignedInteger('resource_id')->nullable();
             $table->uuid('uuid');

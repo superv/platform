@@ -23,7 +23,7 @@ class FormBuilder
             $form->setEntry($this->entry);
         }
 
-        if ($this->resource && !$this->entry) {
+        if ($this->resource && ! $this->entry) {
             $form->setEntry($this->resource->newEntryInstance());
         }
 
@@ -36,24 +36,16 @@ class FormBuilder
         return $form;
     }
 
-    public static function buildFromEntry(EntryContract $entry): Form
-    {
-        return (new static)->setEntry($entry)->build();
-    }
-
-    public static function buildFromResource(Resource $resource): Form
-    {
-        return (new static())->setResource($resource)->build();
-    }
-
     public function getResource(): Resource
     {
         return $this->resource;
     }
 
-    public function setResource(Resource $resource): FormBuilder
+    public function setResource(?Resource $resource): FormBuilder
     {
-        $this->resource = $resource;
+        if ($resource) {
+            $this->resource = $resource;
+        }
 
         return $this;
     }
@@ -68,5 +60,15 @@ class FormBuilder
         $this->entry = $entry;
 
         return $this;
+    }
+
+    public static function buildFromEntry(EntryContract $entry): Form
+    {
+        return (new static)->setEntry($entry)->build();
+    }
+
+    public static function buildFromResource(Resource $resource): Form
+    {
+        return (new static())->setResource($resource)->build();
     }
 }

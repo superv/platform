@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Support\Composer\Payload;
 
@@ -67,14 +66,27 @@ class FormComposer
     protected function composeFields()
     {
         return $this->form->getFields()
-                          ->filter(function (Field $field) {
+                          ->filter(function (FormField $field) {
+                              $field = $field->base();
+
                               return ! $field->isHidden() && ! $field->hasFlag('form.hide');
                           })
-                          ->map(function (Field $field) {
-                              return array_filter(
+                          ->sortBy(function (FormField $field) {
+                              if ($location = $field->getLocation()) {
+                                  return $location->row;
+                              }
+
+                              return 0;
+                          })
+                          ->map(function (FormField $field) {
+                              $composed = array_filter(
                                   (new FieldComposer($field))->forForm($this->form)->get()
                               );
-                          })->values()->all();
+
+                              return $composed;
+                          })
+                          ->values()
+                          ->all();
     }
 
     protected function getActions()
@@ -82,7 +94,7 @@ class FormComposer
         if ($this->form->getActions()) {
             return $this->form->getActions();
         }
-        
+
         if ($this->form->getEntry() && $this->form->getEntry()->exists) {
             return [
 //                [

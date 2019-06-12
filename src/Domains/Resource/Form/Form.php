@@ -12,7 +12,6 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
-use SuperV\Platform\Domains\Resource\Field\FormField;
 use SuperV\Platform\Domains\Resource\Form\Contracts\Form as FormContract;
 use SuperV\Platform\Domains\Resource\Form\Jobs\ValidateForm;
 use SuperV\Platform\Domains\Resource\Resource;
@@ -83,7 +82,9 @@ class Form implements FormContract, ProvidesUIComponent
             }
         }
 
-        $this->fields->map(function (Field $field) {
+        $this->fields->map(function (FormField $formField) {
+            $field = $formField->base();
+
             $field->setForm($this);
 
             if ($this->hasEntry()) {
@@ -116,12 +117,12 @@ class Form implements FormContract, ProvidesUIComponent
             $this->mode = Form::MODE_UPDATE;
         }
 
-        $this->fields->map(function (Field $field) {
+        $this->fields->map(function (FormField $field) {
             if ($field->isHidden()) {
                 return;
             }
 
-            $this->postSaveCallbacks[] = $field->resolveRequest($this->request, $this->getEntry());
+            $this->postSaveCallbacks[] = $field->base()->resolveRequest($this->request, $this->getEntry());
         });
 
         if ($this->hasEntry()) {
@@ -287,9 +288,11 @@ class Form implements FormContract, ProvidesUIComponent
         return $this->method;
     }
 
-    public function setRequest(Request $request): self
+    public function setRequest(?Request $request): self
     {
-        $this->request = $request;
+        if ($request) {
+            $this->request = $request;
+        }
 
         return $this;
     }
@@ -354,11 +357,20 @@ class Form implements FormContract, ProvidesUIComponent
         }
 
         if (is_array($fields)) {
-            $fields = collect($fields)->map(function ($field) {
-                return is_array($field) ? FieldFactory::createFromArray($field, FormField::class) : $field;
-            });
+            $fields = collect($fields)
+                ->map(function ($field) {
+                    $field = is_array($field) ? FieldFactory::createFromArray($field) : $field;
+
+                    return $field;
+                });
         }
 
-        return $fields;
+        return collect($fields)->map(function ($field) {
+            if ($field instanceof Field) {
+                return (new FormField($field))->setForm($this);
+            }
+
+            return $field;
+        });
     }
 }

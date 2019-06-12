@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
@@ -40,7 +39,7 @@ class FormModel extends ResourceEntry
 
     public function getOwnerResource()
     {
-        if ($this->resource_id > 0 && !$this->ownerResource) {
+        if ($this->resource_id > 0 && ! $this->ownerResource) {
             $this->load('resource');
             $resourceEntry = $this->getRelation('resource');
 
@@ -63,7 +62,7 @@ class FormModel extends ResourceEntry
     public function compileFields(): Collection
     {
         return $this->getFormFields()
-                    ->map(function (FieldModel $fieldEntry)  {
+                    ->map(function (FieldModel $fieldEntry) {
                         $field = FieldFactory::createFromEntry($fieldEntry);
 
                         if ($this->resource_id > 0) {

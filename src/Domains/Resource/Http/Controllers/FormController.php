@@ -19,9 +19,8 @@ class FormController extends BaseController
     {
         $formEntry = $this->getFormEntry($uuid);
 
-        if ($resource = $formEntry->getOwnerResource()) {
-            $builder->setResource($resource);
-        }
+        $builder->setResource($resource = $formEntry->getOwnerResource());
+
         $form = $builder->build();
         $form->make($formEntry->uuid);
 
@@ -48,7 +47,7 @@ class FormController extends BaseController
 
     public function show($uuid, FormBuilder $builder)
     {
-        if($formEntry = $this->getFormEntry($uuid)) {
+        if ($formEntry = $this->getFormEntry($uuid)) {
             $form = MakeForm::dispatch($formEntry, $this->request);
 
             return $form->makeComponent();

@@ -3,7 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
 use Illuminate\Http\Request;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Support\Dispatchable;
 
@@ -29,15 +31,18 @@ class MakeForm
 
     public function handle(FormBuilder $builder)
     {
-        if ($resource = $this->formData->getOwnerResource()) {
-            $builder->setResource($resource);
-        }
-        $form = $builder->build();
-        if ($this->request) {
-            $form->setRequest($this->request);
-        }
+        $builder->setResource($resource = $this->formData->getOwnerResource());
 
-        $form->setFields($this->formData->compileFields())
+        $form = $builder->build()->setRequest($this->request);
+
+        // wrap field with formField
+        //
+        $formFields = $this->formData->compileFields()
+                                     ->map(function (Field $field) use ($form) {
+                                         return (new FormField($field))->setForm($form);
+                                     });
+
+        $form->setFields($formFields)
              ->setUrl(sv_url()->path())
              ->make($this->formData->uuid);
 

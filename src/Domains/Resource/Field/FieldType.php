@@ -2,25 +2,23 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field as Field;
+
 class FieldType
 {
-    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field */
-    protected $field;
+    protected $type;
 
-    public function __construct()
-    {
-    }
+    /** @var Field */
+    protected $field;
 
     public function __toString()
     {
-      return  $this->field->getType();
+      return $this->type ?? $this->field->getType();
     }
 
     protected function boot() {}
-    /**
-     * @param \SuperV\Platform\Domains\Resource\Field\Contracts\Field $field
-     */
-    public function setField(\SuperV\Platform\Domains\Resource\Field\Contracts\Field $field): void
+
+    public function setField(Field $field): void
     {
         $this->field = $field;
 
@@ -40,6 +38,11 @@ class FieldType
     public function getConfigValue($key, $default = null)
     {
         return $this->field->getConfigValue($key, $default);
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
     }
 
     public static function resolveType($type)
