@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\UI\Page\Page;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
 class ResourceFormController extends BaseApiController

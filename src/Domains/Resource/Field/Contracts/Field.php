@@ -15,6 +15,8 @@ interface Field
 
     public function getType(): string;
 
+    public function setType(string $type): Field;
+
     public function getColumnName(): ?string;
 
     public function getLabel(): string;
@@ -59,7 +61,7 @@ interface Field
 
     public function removeRules(): Field;
 
-    public function addRule($rule): Field;
+    public function addRule($rule, $message = null): Field;
 
     public function getPlaceholder();
 
