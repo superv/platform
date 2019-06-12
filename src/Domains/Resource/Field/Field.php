@@ -231,9 +231,13 @@ class Field implements FieldContract
         return $this;
     }
 
-    public function addRule($rule): FieldContract
+    public function addRule($rule, $message = null): FieldContract
     {
-        $this->rules[] = $rule;
+        if ($message) {
+            $this->rules[] = ['rule' => $rule, 'message' => $message];
+        } else {
+            $this->rules[] = $rule;
+        }
 
         return $this;
     }
@@ -316,6 +320,13 @@ class Field implements FieldContract
     public function getType(): string
     {
         return $this->type;
+    }
+
+    public function setType(string $type): FieldContract
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     public function getDefaultValue()

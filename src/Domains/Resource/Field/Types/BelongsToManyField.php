@@ -89,6 +89,7 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
                 }
             }
 
+
             $payload->set('meta.options', $this->getOptionsUrl($entry));
 
             if ($entry && $entry->exists) {
