@@ -140,6 +140,16 @@ class ColumnFieldMapper
         $this->mapInteger();
     }
 
+    protected function mapMediumint()
+    {
+        $this->mapInteger();
+    }
+
+    protected function mapMediumInteger()
+    {
+        $this->mapInteger();
+    }
+    
     protected function mapBigInt()
     {
         $this->mapInteger();
