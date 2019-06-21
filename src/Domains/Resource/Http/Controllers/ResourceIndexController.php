@@ -42,7 +42,7 @@ class ResourceIndexController extends BaseApiController
 
         $page->addBlock(sv_loader($resource->route('index.table')));
 
-        if ($page->isCreatable()) {
+        if ($page->isCreatable() && empty($page->getActions())) {
             $page->addAction(CreateEntryAction::make('New '.$resource->getSingularLabel()));
         }
 
