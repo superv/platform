@@ -2,8 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Model\MakesEntry;

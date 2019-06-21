@@ -83,12 +83,14 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
 
     public function make()
     {
-        if ($this->deletable) {
-            $this->addRowAction(DeleteEntryAction::class);
-        }
+        if (empty($this->rowActions)) {
+            if ($this->deletable) {
+                $this->addRowAction(DeleteEntryAction::class);
+            }
 
-        if ($this->viewable) {
-            $this->addRowAction(ViewEntryAction::class);
+            if ($this->viewable) {
+                $this->addRowAction(ViewEntryAction::class);
+            }
         }
 
         return $this;

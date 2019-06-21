@@ -44,11 +44,12 @@ class CreateResource
     {
         if ($nav = $this->blueprint->nav) {
             if (is_string($nav)) {
-                Section::createFromString($handle = $nav.'.'.$this->table, null, $this->addon);
+//                Section::createFromString($handle = $nav.'.'.$this->table, null, $this->addon);
+                Section::createFromString($handle = $nav.'.'.$this->table);
                 $section = Section::get($handle);
                 $section->update([
                     'url'    => 'sv/res/'.$this->table,
-                    'title'  =>  $this->table,
+                    'title'  =>  $this->blueprint->label,
                     'handle' => str_slug($this->blueprint->label, '_'),
                 ]);
             } elseif (is_array($nav)) {

@@ -8,6 +8,8 @@ trait LabelConcern
 {
     public function getLabel($translated = true)
     {
+        return $this->getConfigValue('label');
+
         $label = $this->addon.'::'.$this->getHandle().'.label';
 
         if (! $translated) {
@@ -24,7 +26,7 @@ trait LabelConcern
 
     public function getSingularLabel()
     {
-        return sv_trans($this->addon.'::'.$this->getHandle().'.singular_label');
+//        return sv_trans($this->addon.'::'.$this->getHandle().'.singular_label');
 
         return $this->getConfigValue('singular_label', str_singular($this->getConfigValue('label')));
     }
