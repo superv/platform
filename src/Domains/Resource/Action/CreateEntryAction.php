@@ -10,14 +10,21 @@ class CreateEntryAction extends Action
 
     protected $title = 'Create';
 
-    protected $routeUrl;
+    protected $url;
 
     public function onComposed(Payload $payload)
     {
-        $payload->set('url', 'sv/res/{res.handle}/create');
+        $payload->set('url', $this->url ?? 'sv/res/{res.handle}/create');
         $payload->set('button', [
             'color' => 'green',
             'title' => sv_trans('sv::actions.create')
         ]);
+    }
+
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
     }
 }
