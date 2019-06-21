@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
@@ -46,11 +47,14 @@ class ResourceFactory
             $handle = $handle->getTable();
         }
 
-        $resource = new Resource(static::attributesFor($handle));
+        try {
+            $resource = new Resource(static::attributesFor($handle));
+            Extension::extend($resource);
 
-        Extension::extend($resource);
-
-        return $resource;
+            return $resource;
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
     protected function getFieldsProvider()
