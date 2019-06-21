@@ -17,4 +17,6 @@ interface EntryTable extends Table
     public function setQuery($query): EntryTable;
 
     public function getPagination(): array;
+
+    public function orderByLatest();
 }

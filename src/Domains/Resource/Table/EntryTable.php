@@ -123,6 +123,11 @@ class EntryTable extends Table implements EntryTableContract
         return $this;
     }
 
+    public function orderByLatest()
+    {
+        $this->setOption('order_by', ['created_at' => 'desc']);
+    }
+
     protected function applyFilters($query)
     {
         ApplyFilters::dispatch($this->getFilters(), $query, $this->getRequest());
