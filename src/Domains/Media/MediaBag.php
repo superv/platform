@@ -86,24 +86,39 @@ class MediaBag
 
     public function addFromBase64(
         $base64EncodedData,
+        $path,
         $filename,
         $diskName = 'local',
-        $visibility = 'private',
-        $folder = ''
+        $visibility = 'private'
+
     ) {
         if (! preg_match('/^data:((\w+)\/(\w+));base64,/', $base64EncodedData, $type)) {
             return;
         }
+
+        return $this->addFile($this->reverseTransform($base64EncodedData, $filename), MediaOptions::one('photo')->disk($diskName)->visibility($visibility)->path($path));
+
+
+
         $data = substr($base64EncodedData, strpos($base64EncodedData, ',') + 1);
         $mimeType = strtolower($type[1]); // jpg, png, gif
         $extension = strtolower($type[3]); // jpg, png, gif
-        $target = ($folder ? $folder.'/' : '').md5($filename.uniqid()).'.'.$extension;
+        $target = ($path ? $path.'/' : '').md5($filename.uniqid()).'.'.$extension;
 //        $uploadSuccess = Storage::disk($diskName)->put($target, base64_decode($data));
-        $uploadSuccess = Storage::disk($diskName)->put($target, base64_decode($data), $visibility);
+//        $uploadSuccess = Storage::disk($diskName)->put($target, base64_decode($data), $visibility);
+
+        $name = Str::random(40).'.'.$extension;
+        $uploadSuccess =  Storage::disk($diskName)
+               ->putFileAs(
+                   $path,
+                   $this->reverseTransform($base64EncodedData),
+                   $name,
+                   $visibility
+               );
 
         if ($uploadSuccess) {
             $media = new Media([
-                'filename'   => $target,
+                'filename'   => $name,
                 'disk'       => $diskName,
                 'original'   => $filename,
                 'owner_type' => $this->owner->getMorphClass(),
@@ -117,6 +132,24 @@ class MediaBag
 
             return $media;
         }
+    }
+
+    public function reverseTransform($value, $filename)
+    {
+        $tmpFilePath = tempnam(sys_get_temp_dir(), 'lackom');
+
+        $tmp = fopen($tmpFilePath, 'wb+');
+
+        $matches = [];
+        preg_match('/^data:([\w-]+\/[\w-]+);base64,(.+)$/', $value, $matches);
+
+        $size = fwrite($tmp, base64_decode($matches[2]));
+
+        fclose($tmp);
+
+        $mimeType = strtolower($matches[1]); // jpg, png, gif
+
+        return new UploadedFile($tmpFilePath,  $filename, $mimeType, $size, 0, true);
     }
 
     /**
