@@ -42,19 +42,21 @@ class Section extends Entry
         $colophon = $this->getColophon();
 
         $payload = new Payload([
-            'title'    => $this->addon ? sv_trans($this->addon.'::'.$this->title.'.label') : $this->title,
+            'title'    => $this->getTitle(),
+            'titles'   => $this->addon ? sv_trans($this->addon.'::'.$this->title.'.label') : $this->title,
             'handle'   => $this->handle,
             'colophon' => $withColophon ? $colophon : null,
             'icon'     => $this->icon,
             'url'      => $this->url,
-            'sections' => $this->children()
-                               ->with('children')
-                               ->get()
-                               ->map(function (Section $section) use ($withColophon) {
-                                   return $section->setRoot($this->root)->compose($withColophon);
-                               })
-                               ->filter()
-                               ->all(),
+            'sections' => $sections = $this->children()
+                                           ->with('children')
+                                           ->get()
+                                           ->map(function (Section $section) use ($withColophon) {
+                                               return $section->setRoot($this->root)->compose($withColophon);
+                                           })
+                                           ->filter()
+                                           ->keyBy('handle')
+                                           ->all(),
         ]);
 
         if ($callbacks = (Nav::$callbacks[$colophon] ?? [])) {

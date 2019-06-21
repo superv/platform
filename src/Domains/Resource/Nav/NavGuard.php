@@ -51,6 +51,7 @@ class NavGuard
             $sections[$key] = array_filter($section);
         }
 
-        return array_values($sections);
+        return $sections;
+//        return array_values($sections);
     }
 }
