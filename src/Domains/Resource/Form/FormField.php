@@ -16,6 +16,8 @@ class FormField implements ProvidesField
     /** @var \SuperV\Platform\Domains\Resource\Form\FieldLocation */
     protected $location;
 
+    protected $temporal = false;
+
     public function __construct(Field $field)
     {
         $this->base = $field;
@@ -24,6 +26,16 @@ class FormField implements ProvidesField
     public function isHidden()
     {
         return $this->base->isHidden();
+    }
+
+    public function getLabel()
+    {
+        return $this->base->getLabel();
+    }
+
+    public function getIdentifier()
+    {
+        return $this->base->getColumnName();
     }
 
     public function makeField(): Field
@@ -49,6 +61,18 @@ class FormField implements ProvidesField
     public function setForm(Form $form): FormField
     {
         $this->form = $form;
+
+        return $this;
+    }
+
+    public function isTemporal(): bool
+    {
+        return $this->temporal;
+    }
+
+    public function setTemporal(bool $temporal): FormField
+    {
+        $this->temporal = $temporal;
 
         return $this;
     }

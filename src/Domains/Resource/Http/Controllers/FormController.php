@@ -17,7 +17,9 @@ class FormController extends BaseController
 {
     public function fields($uuid, $field, $rpc = null, FormBuilder $builder)
     {
-        $formEntry = $this->getFormEntry($uuid);
+        if (! $formEntry = $this->getFormEntry($uuid)) {
+            abort(404, 'Form entry not found');
+        }
 
         $builder->setResource($resource = $formEntry->getOwnerResource());
 
@@ -42,7 +44,7 @@ class FormController extends BaseController
             return $field->getFieldType()->getRpcResult(['method' => $rpcMethod], $this->request->toArray());
         }
 
-        return abort(404);
+        abort(404);
     }
 
     public function show($uuid, FormBuilder $builder)

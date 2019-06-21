@@ -17,6 +17,7 @@ use SuperV\Platform\Domains\Resource\Form\Jobs\ValidateForm;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
@@ -105,6 +106,31 @@ class Form implements FormContract, ProvidesUIComponent
 
     public function save(): FormResponse
     {
+
+        if ($this->hasEntry() && $this->entry->exists) {
+            $this->mode = Form::MODE_UPDATE;
+        }
+
+        if ($this->isCreating()) {
+            if ($this->resource && $callback = $this->resource->getCallback('creating')) {
+                app()->call($callback, ['form' => $this]);
+            }
+        }
+
+
+
+        $this->fields->map(function (FormField $field) {
+            if ($field->isHidden() && !$field->isTemporal()) {
+                return;
+            }
+
+            $field->base()->fire('before.saving', ['request' => $this->request]);
+        });
+
+
+
+
+
         // If this is a no-entry form then we will
         // have to validate on our own since the
         // model events wont fire
@@ -113,12 +139,8 @@ class Form implements FormContract, ProvidesUIComponent
             $this->validate();
         }
 
-        if ($this->hasEntry() && $this->entry->exists) {
-            $this->mode = Form::MODE_UPDATE;
-        }
-
         $this->fields->map(function (FormField $field) {
-            if ($field->isHidden()) {
+            if ($field->isHidden() && !$field->isTemporal()) {
                 return;
             }
 
@@ -128,6 +150,7 @@ class Form implements FormContract, ProvidesUIComponent
         if ($this->hasEntry()) {
             $this->getEntry()->save();
         }
+
 
         collect($this->postSaveCallbacks)->filter()->map(function (Closure $callback) {
             $callback();
@@ -144,6 +167,11 @@ class Form implements FormContract, ProvidesUIComponent
     public function isUpdating()
     {
         return $this->mode === Form::MODE_UPDATE;
+    }
+
+    public function isCreating()
+    {
+        return $this->mode === Form::MODE_CREATE;
     }
 
     public function validate()
@@ -178,7 +206,7 @@ class Form implements FormContract, ProvidesUIComponent
             throw new Exception('Field not found: '.$fieldName);
         }
 
-        $field->hide();
+        $field->base()->hide();
 
         $this->hiddenFields[] = $fieldName;
 
@@ -211,8 +239,12 @@ class Form implements FormContract, ProvidesUIComponent
         return $this;
     }
 
-    public function addField($field)
+    public function addField(FormField $field)
     {
+        // Fields added on the fly should be marked as temporal
+        //
+        $field->setTemporal(true);
+
         return $this->addFields([$field]);
     }
 
@@ -249,11 +281,11 @@ class Form implements FormContract, ProvidesUIComponent
         return $this;
     }
 
-    public function getField(string $name): ?Field
+    public function getField(string $name): ?FormField
     {
         return $this->fields->first(
-            function (Field $field) use ($name) {
-                return $field->getName() === $name;
+            function (FormField $field) use ($name) {
+                return $field->base()->getName() === $name;
             });
     }
 
