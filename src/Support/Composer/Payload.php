@@ -33,6 +33,11 @@ class Payload implements Arrayable, Composable
         array_set($this->params, $key, $value);
     }
 
+    public function remove($key)
+    {
+        array_forget($this->params, $key);
+    }
+
     public function push($key, $value)
     {
         $parent = $this->get($key, []);
