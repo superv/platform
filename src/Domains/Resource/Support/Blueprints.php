@@ -26,6 +26,7 @@ class Blueprints
         if ($table instanceof Blueprint) {
             $resource->model(ResourceModel::class);
             $resource->label('Resources');
+            $resource->entryLabel('{handle}');
             $resource->resourceKey('resource');
             $resource->nav('acp.platform.system');
 
