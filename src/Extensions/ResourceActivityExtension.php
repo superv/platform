@@ -28,6 +28,7 @@ class ResourceActivityExtension implements ExtendsResource
 
         $resource->onIndexConfig(function (ResourceTable $table) {
             $table->addRowAction(DeleteEntryAction::class);
+            $table->orderByLatest();
         });
         $fields = $resource->indexFields();
         $fields->show('entry');
