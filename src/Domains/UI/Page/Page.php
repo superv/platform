@@ -94,7 +94,7 @@ class Page implements ProvidesUIComponent, Responsable
 
     public function setActions($actions): Page
     {
-        $this->actions = $actions;
+        $this->actions = wrap_array($actions);
 
         return $this;
     }
