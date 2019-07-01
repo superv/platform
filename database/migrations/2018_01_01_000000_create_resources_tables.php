@@ -68,6 +68,8 @@ class CreateResourcesTables extends Migration
     {
         Schema::dropIfExists('sv_resources');
         Schema::dropIfExists('sv_fields');
+        Schema::dropIfExists('sv_forms');
+        Schema::dropIfExists('sv_form_fields');
         Schema::dropIfExists('sv_relations');
         Schema::dropIfExists('sv_navigation');
         Schema::dropIfExists('sv_activities');
