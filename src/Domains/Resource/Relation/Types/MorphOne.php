@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequests
@@ -17,8 +18,12 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequ
     public function makeForm(): Form
     {
         $form = FormBuilder::buildFromEntry($this->getRelatedEntry());
+        $formData = FormModel::findByUuid($this->getRelatedResource()->getHandle());
 
-        return $form->make();
+        return $form
+            ->hideField($this->relationConfig->getMorphName())
+            ->hideFields(['xcountry', 'xphone_country'])
+            ->make($formData ? $formData->uuid : null);
     }
 
     public function getFormTitle(): string

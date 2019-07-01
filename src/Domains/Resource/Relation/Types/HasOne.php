@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class HasOne extends Relation implements ProvidesForm, HandlesRequests
@@ -16,9 +17,10 @@ class HasOne extends Relation implements ProvidesForm, HandlesRequests
     public function makeForm(): Form
     {
         $form = FormBuilder::buildFromEntry($this->getRelatedEntry());
+        $formData = FormModel::findByUuid($this->getRelatedResource()->getHandle());
 
         return $form->hideField(sv_resource($this->parentEntry)->getResourceKey())
-                    ->make();
+                    ->make($formData ? $formData->uuid : null);
     }
 
     public function getFormTitle(): string
