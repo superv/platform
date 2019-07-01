@@ -47,7 +47,7 @@ class FormResponse implements Responsable
 
         return response()->json([
             'data' => [
-                'message' => $this->form->isUpdating() ? 'Kayıt güncellendi' : 'Kayıt oluşturuldu',
+                'message' => $this->form->isUpdating() ? 'Entry updated' : 'Entry created',
                 'action'      => $action,
                 'redirect_to' => $route ?? $this->resource->route('index'),
             ],
