@@ -27,9 +27,9 @@ trait CreatesFields
                                          ->all());
     }
 
-    public function select($name): ColumnDefinition
+    public function select($name, $options = []): ColumnDefinition
     {
-        return $this->string($name)->fieldType('select');
+        return $this->string($name)->fieldType('select')->setConfigValue('options', $options);
     }
 
     public function status($valueObjectClass = null)
