@@ -97,6 +97,28 @@ class IndexFields
         return $this;
     }
 
+    public function get($name = null)
+    {
+        if ($name) {
+            return $this->getField($name);
+        }
+
+        $fields = $this->fields
+            ->filter(function (Field $field) {
+                return $field->hasFlag('table.show') || $field->getName() === $this->resource->getConfigValue('entry_label_field');
+            })
+            ->values()
+            ->sortBy(function (Field $field, $key) {
+                return $field->getConfigValue('sort_order', $key);
+            });
+
+        if ($this->hideLabelField === false && $fields->isEmpty()) {
+            $fields->push($this->resource->fields()->getEntryLabelField());
+        }
+
+        return $fields->filter();
+    }
+
     protected function makeLabelField()
     {
         $fieldParams = [
@@ -115,25 +137,5 @@ class IndexFields
                                })
                            ->showOnIndex()
                            ->displayOrder(-1);
-    }
-
-    public function get($name = null)
-    {
-        if ($name) {
-            return $this->getField($name);
-        }
-
-        if ($this->hideLabelField === false) {
-//            $this->fields->push($this->makeLabelField());
-        }
-
-        return $this->fields
-            ->filter(function (Field $field) {
-                return $field->hasFlag('table.show') || $field->getName() === $this->resource->getConfigValue('entry_label_field');
-            })
-            ->values()
-            ->sortBy(function (Field $field, $key) {
-                return $field->getConfigValue('sort_order', $key);
-            });
     }
 }

@@ -2,9 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
+use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Validator;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Support\Dispatchable;
 
@@ -22,30 +21,34 @@ class ValidateForm
      */
     protected $data;
 
-    public function __construct(Form $form, array $data)
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $fields;
+
+    public function __construct(Collection $fields, array $data)
     {
-        $this->form = $form;
         $this->data = $data;
+        $this->fields = $fields;
     }
 
     public function handle(Validator $validator)
     {
-        $rules = $this->form->getFields()
-                            ->map(function (FormField $field) {
-                                return [$field->getIdentifier(), $this->parseFieldRules($field)];
-                            })->filter()
-                              ->toAssoc()
-                              ->all();
+        $rules = $this->fields
+            ->map(function (FormField $field) {
+                return [$field->getIdentifier(), $this->parseFieldRules($field)];
+            })->filter()
+            ->toAssoc()
+            ->all();
 
-        $attributes = $this->form->getFields()
-                            ->map(function (FormField $field) {
-                                return [$field->getIdentifier(), $field->getLabel()];
-                            })->filter()
-                            ->toAssoc()
-                            ->all();
+        $attributes = $this->fields
+            ->map(function (FormField $field) {
+                return [$field->getIdentifier(), $field->getLabel()];
+            })->filter()
+            ->toAssoc()
+            ->all();
 
-
-        $validator->make($this->data, $rules,[], $attributes);
+        $validator->make($this->data, $rules, [], $attributes);
     }
 
     private function parseFieldRules(FormField $field)

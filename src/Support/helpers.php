@@ -14,6 +14,10 @@ use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
 
+function ddh() {
+    dd('Over here! '. date('H:i:s'), func_get_args());
+}
+
 function sv_trans($key = null, $replace = [], $locale = null)
 {
     $line = trans($key, $replace, $locale);

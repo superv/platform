@@ -17,7 +17,6 @@ use SuperV\Platform\Domains\Resource\Form\Jobs\ValidateForm;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
-use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
@@ -106,30 +105,13 @@ class Form implements FormContract, ProvidesUIComponent
 
     public function save(): FormResponse
     {
+        $this->setFormMode();
 
-        if ($this->hasEntry() && $this->entry->exists) {
-            $this->mode = Form::MODE_UPDATE;
-        }
+        $this->applyCallbacks();
 
-        if ($this->isCreating()) {
-            if ($this->resource && $callback = $this->resource->getCallback('creating')) {
-                app()->call($callback, ['form' => $this]);
-            }
-        }
+        $this->validateTemporalFields();
 
-
-
-        $this->fields->map(function (FormField $field) {
-            if ($field->isHidden() && !$field->isTemporal()) {
-                return;
-            }
-
-            $field->base()->fire('before.saving', ['request' => $this->request]);
-        });
-
-
-
-
+        $this->fireBeforeSavingCallbacks();
 
         // If this is a no-entry form then we will
         // have to validate on our own since the
@@ -139,22 +121,13 @@ class Form implements FormContract, ProvidesUIComponent
             $this->validate();
         }
 
-        $this->fields->map(function (FormField $field) {
-            if ($field->isHidden() && !$field->isTemporal()) {
-                return;
-            }
-
-            $this->postSaveCallbacks[] = $field->base()->resolveRequest($this->request, $this->getEntry());
-        });
+        $this->resolveFieldValuesFromRequest();
 
         if ($this->hasEntry()) {
             $this->getEntry()->save();
         }
 
-
-        collect($this->postSaveCallbacks)->filter()->map(function (Closure $callback) {
-            $callback();
-        });
+        $this->runPostSaveCallbacks();
 
         return new FormResponse($this, $this->resource, $this->getEntry());
     }
@@ -176,7 +149,7 @@ class Form implements FormContract, ProvidesUIComponent
 
     public function validate()
     {
-        ValidateForm::dispatch($this, $this->request->all());
+        ValidateForm::dispatch($this->getFields(), $this->request->all());
     }
 
     public function compose(): Payload
@@ -217,9 +190,9 @@ class Form implements FormContract, ProvidesUIComponent
     {
         $fields = is_array($fields) ? $fields : func_get_args();
 
-        $this->getFields()->map(function (Field $field) use ($fields) {
-            if (in_array($field->getName(), $fields)) {
-                $field->hide();
+        $this->getFields()->map(function (FormField $field) use ($fields) {
+            if (in_array($field->base()->getName(), $fields)) {
+                $field->base()->hide();
             }
         });
 
@@ -239,8 +212,11 @@ class Form implements FormContract, ProvidesUIComponent
         return $this;
     }
 
-    public function addField(FormField $field)
+    public function addField($field)
     {
+        if (is_array($field)) {
+            $field = new FormField(FieldFactory::createFromArray($field));
+        }
         // Fields added on the fly should be marked as temporal
         //
         $field->setTemporal(true);
@@ -403,6 +379,65 @@ class Form implements FormContract, ProvidesUIComponent
             }
 
             return $field;
+        });
+    }
+
+    protected function validateTemporalFields(): void
+    {
+        $temporalFields = $this->fields->filter(function (FormField $field) {
+            return $field->isTemporal();
+        });
+        ValidateForm::dispatch($temporalFields, $this->request->all());
+    }
+
+    protected function applyCallbacks(): void
+    {
+        if ($this->isCreating()) {
+            if ($this->resource && $callback = $this->resource->getCallback('creating')) {
+                app()->call($callback, ['form' => $this]);
+            }
+        }
+
+        if ($this->isUpdating()) {
+            if ($this->resource && $callback = $this->resource->getCallback('editing')) {
+                app()->call($callback, ['form' => $this]);
+            }
+        }
+    }
+
+    protected function setFormMode(): void
+    {
+        if ($this->hasEntry() && $this->entry->exists) {
+            $this->mode = Form::MODE_UPDATE;
+        }
+    }
+
+    protected function fireBeforeSavingCallbacks(): void
+    {
+        $this->fields->map(function (FormField $field) {
+            if ($field->isHidden() && ! $field->isTemporal()) {
+                return;
+            }
+
+            $field->base()->fire('before.saving', ['request' => $this->request]);
+        });
+    }
+
+    protected function resolveFieldValuesFromRequest(): void
+    {
+        $this->fields->map(function (FormField $field) {
+            if ($field->isHidden() && ! $field->isTemporal() || $field->isTemporal()) {
+                return;
+            }
+
+            $this->postSaveCallbacks[] = $field->base()->resolveRequest($this->request, $this->getEntry());
+        });
+    }
+
+    protected function runPostSaveCallbacks(): void
+    {
+        collect($this->postSaveCallbacks)->filter()->map(function (Closure $callback) {
+            $callback();
         });
     }
 }
