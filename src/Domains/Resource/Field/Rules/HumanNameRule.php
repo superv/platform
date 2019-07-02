@@ -8,7 +8,7 @@ class HumanNameRule implements Rule
 {
     public function passes($attribute, $value)
     {
-        return preg_match('/^[A-Za-z\s\-]+$/u', $value);
+        return preg_match('/^[A-Za-zÇŞĞÜÖİçşğüöı\s\-]+$/u', $value);
     }
 
     public function message()
