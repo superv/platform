@@ -20,6 +20,9 @@ class SelectField extends FieldType implements RequiresDbColumn, ProvidesFilter
     protected function presenter()
     {
         return function ($value) {
+            if (is_null($value))
+                return null;
+
             $options = $this->getOptions();
 
             return array_get($options, $value, $value);

@@ -11,19 +11,22 @@ use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class DictionaryField extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier
 {
-//    protected function boot()
-//    {
-//        $this->field->on('form.accessing', $this->accessor());
-//        $this->field->on('form.mutating', $this->mutator());
-//        $this->field->on('view.presenting', $this->accessor());
-//        $this->field->on('table.presenting', $this->accessor());
-//    }
+    protected function boot()
+    {
+        $this->field->on('form.accessing', $this->getAccessor());
+        $this->field->on('form.mutating', $this->getModifier());
+        $this->field->on('view.presenting', $this->getAccessor());
+        $this->field->on('table.presenting', $this->getAccessor());
+    }
 
     public function getAccessor(): Closure
     {
         return function ($value) {
+
             if (is_string($value)) {
+
                 return json_decode($value, true);
+            } else {
             }
 
             return $value;
