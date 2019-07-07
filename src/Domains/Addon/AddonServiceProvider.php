@@ -48,6 +48,7 @@ class AddonServiceProvider extends BaseServiceProvider
 
         $this->loadTranslationsFrom($this->addon->realPath('resources/lang'), $this->addon()->slug());
 
+        $this->loadJsonTranslationsFrom($this->addon->realPath('resources/lang'));
     }
 
     protected function registerViewNamespaces(): void
