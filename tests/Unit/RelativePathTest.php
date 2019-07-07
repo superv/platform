@@ -8,8 +8,7 @@ use SuperV\Platform\Support\RelativePath;
 
 class RelativePathTest extends TestCase
 {
-    /** @test */
-    function return_original_path_if_not_a_real_path()
+    function test__return_original_path_if_not_a_real_path()
     {
         $base = '/some/path';
         $path = 'resources/views';
@@ -19,8 +18,7 @@ class RelativePathTest extends TestCase
         $this->assertEquals('resources/views', $relative);
     }
 
-    /** @test */
-    function fail_if_given_base_path_is_not_a_real_path()
+    function test__fail_if_given_base_path_is_not_a_real_path()
     {
         $base = 'some/relative/path';
         $path = 'resources/views';
@@ -32,8 +30,7 @@ class RelativePathTest extends TestCase
         $this->assertEquals('resources/views', $relative);
     }
 
-    /** @test */
-    function get_relative_path()
+    function test__get_relative_path()
     {
         $base = '/addons/superv/platform';
         $path = '/addons/superv/platform/resources/views';
@@ -43,8 +40,7 @@ class RelativePathTest extends TestCase
         $this->assertEquals('resources/views', $relative);
     }
 
-    /** @test */
-    function get_relative_path_when_same()
+    function test__get_relative_path_when_same()
     {
         $base = '/addons/superv/platform';
         $path = '/addons/superv/platform';
@@ -54,8 +50,7 @@ class RelativePathTest extends TestCase
         $this->assertEquals('./', $relative);
     }
 
-    /** @test */
-    function get_relative_path_when_outside_base_by_one_level()
+    function test__get_relative_path_when_outside_base_by_one_level()
     {
         $base = '/addons/superv/platform';
         $path = '/addons/superv/modules/guard';
@@ -65,8 +60,7 @@ class RelativePathTest extends TestCase
         $this->assertEquals('../modules/guard', $relative);
     }
 
-    /** @test */
-    function get_relative_path_when_outside_base_by_two_levels()
+    function test__get_relative_path_when_outside_base_by_two_levels()
     {
         $base = '/addons/superv/platform/src';
         $path = '/addons/superv/modules/guard';

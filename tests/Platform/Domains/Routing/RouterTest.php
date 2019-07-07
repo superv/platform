@@ -7,10 +7,15 @@ use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use Tests\Platform\TestCase;
 
+/**
+ * Class RouterTest
+ *
+ * @package Tests\Platform\Domains\Routing
+ * @group   resource
+ */
 class RouterTest extends TestCase
 {
-    /** @test */
-    function registers_route_files()
+    function test__registers_route_files()
     {
         $_SERVER['test.routes.web.foo'] = [
             'foo/bar' => 'FooWebController@bar',
@@ -23,8 +28,7 @@ class RouterTest extends TestCase
         app(Router::class)->loadFromFile('tests/Platform/__fixtures__/routes/web/foo.php');
     }
 
-    /** @test */
-    function loads_route_files_from_a_path()
+    function test__loads_route_files_from_a_path()
     {
         $path = base_path('tests/Platform/__fixtures__/routes');
         $files = app(Router::class)->portFilesIn($path);
@@ -44,8 +48,7 @@ class RouterTest extends TestCase
         ], $files);
     }
 
-    /** @test */
-    function registers_routes_from_path()
+    function test__registers_routes_from_path()
     {
         $this->setUpPorts();
 
@@ -55,7 +58,6 @@ class RouterTest extends TestCase
         $_SERVER['test.routes.api.foo'] = ['bom/bor' => 'BomAcpController@bor'];
 
         $loader = $this->bindMock(RouteRegistrar::class);
-
 
         $loader->shouldReceive('setPort')->with(Hub::get('acp'))->once();
         $loader->shouldReceive('globally')->with(false)->once();

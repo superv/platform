@@ -75,6 +75,11 @@ class BelongsToTestUser extends Model implements EntryContract
         return $this->getKey();
     }
 
+    public function wasRecentlyCreated(): bool
+    {
+        // TODO: Implement wasRecentlyCreated() method.
+    }
+
     public function group()
     {
         $relation = ResourceFactory::make('t_users')->getRelation('group');
@@ -82,10 +87,5 @@ class BelongsToTestUser extends Model implements EntryContract
         $relation->acceptParentEntry($this);
 
         return $relation->newQuery();
-    }
-
-    public function wasRecentlyCreated(): bool
-    {
-        // TODO: Implement wasRecentlyCreated() method.
     }
 }

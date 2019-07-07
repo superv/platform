@@ -10,17 +10,15 @@ use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Support\Composer\Payload;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class NavTest
+ *
+ * @package Tests\Platform\Domains\Resource\Nav
+ * @group   resource
+ */
 class NavTest extends ResourceTestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        Section::truncate();
-    }
-
-    /** @test */
-    function build_section()
+    function test__build_section()
     {
         $nav = Nav::create('acp');
         $navEntry = $nav->entry()->fresh();
@@ -49,8 +47,7 @@ class NavTest extends ResourceTestCase
         $marketing->getChildren()->assertEquals([$marketingCrm, $marketingPromotions]);
     }
 
-    /** @test */
-    function easy_create()
+    function test__easy_create()
     {
         $nav = Nav::create('Acp');
         // level 1
@@ -83,8 +80,7 @@ class NavTest extends ResourceTestCase
         $this->assertEquals(1, $config->children()->count());
     }
 
-    /** @test */
-    function deep_level()
+    function test__deep_level()
     {
         $nav = Nav::create('sv');
 
@@ -96,8 +92,7 @@ class NavTest extends ResourceTestCase
         $this->assertEquals(18, Section::count());
     }
 
-    /** @test */
-    function this_is_soo_easy()
+    function test__this_is_soo_easy()
     {
         Nav::create('a.b.c.d.e.f');
         $this->assertEquals(6, Section::count());
@@ -109,8 +104,7 @@ class NavTest extends ResourceTestCase
         $this->assertEquals(9, Section::count());
     }
 
-    /** @test */
-    function composes_nav()
+    function test__composes_nav()
     {
         $nav = Nav::create('acp');
         $nav->add('foo.bar');
@@ -161,8 +155,7 @@ class NavTest extends ResourceTestCase
         ], Nav::get('acp')->compose());
     }
 
-    /** @test */
-    function get_from_full_handle()
+    function test__get_from_full_handle()
     {
         Nav::create('acp.settings.auth');
 
@@ -176,8 +169,7 @@ class NavTest extends ResourceTestCase
         $this->assertEquals(1, $e->children()->count());
     }
 
-    /** @test */
-    function creates_from_resource_blueprint()
+    function test__creates_from_resource_blueprint()
     {
         Schema::create('t_users', function (Blueprint $table, ResourceConfig $resource) {
             $table->increments('id');
@@ -254,5 +246,12 @@ class NavTest extends ResourceTestCase
                 ],
             ],
         ], Nav::get('acp')->compose($withColophon = true));
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        Section::truncate();
     }
 }

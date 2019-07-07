@@ -69,10 +69,10 @@ class SuperVInstallCommandTest extends TestCase
 
     function test_runs_callbacks_when_platform_is_installed()
     {
-        $_SERVER['__switch__'] =  'off';
+        $_SERVER['__switch__'] = 'off';
 
-        Platform::on('install',function() {
-            $_SERVER['__switch__'] =  'on';
+        Platform::on('install', function () {
+            $_SERVER['__switch__'] = 'on';
         });
 
         $installer = app(InstallSuperV::class);
@@ -81,8 +81,6 @@ class SuperVInstallCommandTest extends TestCase
 
         $this->assertEquals('on', $_SERVER['__switch__']);
     }
-
-
 
     protected function setUp()
     {

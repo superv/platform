@@ -5,6 +5,12 @@ namespace Tests\Platform\Domains\Resource\Relation\Types;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class MorphToTest
+ *
+ * @package Tests\Platform\Domains\Resource\Relation\Types
+ * @group   resource
+ */
 class MorphToTest extends ResourceTestCase
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
@@ -12,6 +18,16 @@ class MorphToTest extends ResourceTestCase
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $relatedResource;
+
+    function test__create_morph_to_relation()
+    {
+        $this->assertColumnExists('t_files', 'owner_type');
+        $this->assertColumnExists('t_files', 'owner_id');
+
+        $relation = $this->relatedResource->getRelation('owner');
+        $this->assertEquals('morph_to', $relation->getType());
+        $this->assertEquals(['morph_name' => 'owner'], $relation->getRelationConfig()->toArray());
+    }
 
     protected function setUp()
     {
@@ -27,16 +43,5 @@ class MorphToTest extends ResourceTestCase
             $table->increments('id');
             $table->morphTo('owner');
         });
-    }
-
-    /** @test */
-    function create_morph_to_relation()
-    {
-        $this->assertColumnExists('t_files', 'owner_type');
-        $this->assertColumnExists('t_files', 'owner_id');
-
-        $relation = $this->relatedResource->getRelation('owner');
-        $this->assertEquals('morph_to', $relation->getType());
-        $this->assertEquals(['morph_name' => 'owner'], $relation->getRelationConfig()->toArray());
     }
 }

@@ -5,6 +5,12 @@ namespace Tests\Platform\Platform\Domains\Resource\Features;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class RestorableTest
+ *
+ * @package Tests\Platform\Platform\Domains\Resource\Features
+ * @group   resource
+ */
 class RestorableTest extends ResourceTestCase
 {
     function test__creates_table_columns_and_sets_config()

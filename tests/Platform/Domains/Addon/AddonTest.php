@@ -16,8 +16,7 @@ class AddonTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function creates_addon_instance()
+    function test__creates_addon_instance()
     {
         $this->setUpAddon();
 
@@ -29,8 +28,7 @@ class AddonTest extends TestCase
         $this->assertEquals($entry, $addon->entry());
     }
 
-    /** @test */
-    function creates_service_provider_instance()
+    function test__creates_service_provider_instance()
     {
         $this->setUpAddon();
 
@@ -44,8 +42,7 @@ class AddonTest extends TestCase
         $this->assertEquals($addon, $provider->addon());
     }
 
-    /** @test */
-    function dispatches_event_when_booted()
+    function test__dispatches_event_when_booted()
     {
         $this->setUpAddon();
         $entry = AddonModel::bySlug('superv.addons.sample');

@@ -12,8 +12,7 @@ class ResetCommandTest extends TestCase
 {
     use TestsConsoleCommands;
 
-    /** @test */
-    function reset_command_calls_migrator_with_proper_arguments()
+    function test__reset_command_calls_migrator_with_proper_arguments()
     {
         $command = new ResetCommand(
             $migrator = m::mock(Migrator::class)->shouldIgnoreMissing()

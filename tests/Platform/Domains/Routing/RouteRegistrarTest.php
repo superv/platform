@@ -8,10 +8,15 @@ use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use Tests\Platform\TestCase;
 
+/**
+ * Class RouteRegistrarTest
+ *
+ * @package Tests\Platform\Domains\Routing
+ * @group   resource
+ */
 class RouteRegistrarTest extends TestCase
 {
-    /** @test */
-    function registers_routes_from_array()
+    function test__registers_routes_from_array()
     {
         app(RouteRegistrar::class)
             ->register([
@@ -53,11 +58,9 @@ class RouteRegistrarTest extends TestCase
 
         $this->assertNotNull($route = $getRoutes['localhostdata'] ?? null, 'Route not found');
         $this->assertEquals('local', $route->getAction('port'));
-
     }
 
-    /** @test */
-    function registers_routes_for_a_port()
+    function test__registers_routes_for_a_port()
     {
         $this->setUpPorts();
 
@@ -84,8 +87,7 @@ class RouteRegistrarTest extends TestCase
         $this->assertNull($apiRoute->getPrefix());
     }
 
-    /** @test */
-    function registers_global_routes()
+    function test__registers_global_routes()
     {
         // set up 3 sample ports
         $this->setUpPorts();
@@ -100,7 +102,6 @@ class RouteRegistrarTest extends TestCase
         $this->assertEquals(8, count($routeList));
 
         $routes = $this->router()->getRoutes()->get('GET');
-
 
         $this->assertNotNull($routes['key/kol']);
         $this->assertNotNull($routes[sv_config('hostname').'bar/foo']);
@@ -118,8 +119,7 @@ class RouteRegistrarTest extends TestCase
         $this->assertEquals(3, Hub::ports()->count());
     }
 
-    /** @test */
-    function registers_ports_middlewares()
+    function test__registers_ports_middlewares()
     {
         Hub::register((new Port)->hydrate([
             'slug'        => 'web',

@@ -18,33 +18,28 @@ class MigrationServiceProviderTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function get_registered_with_platform()
+    function test__get_registered_with_platform()
     {
         $this->assertProviderRegistered(MigrationServiceProvider::class);
     }
 
-    /** @test */
-    function extends_database_migration_repository()
+    function test__extends_database_migration_repository()
     {
         $this->assertInstanceOf(\Illuminate\Database\MigrationServiceProvider::class, new MigrationServiceProvider($this->app));
         $this->assertInstanceOf(DatabaseMigrationRepository::class, $this->app['migration.repository']);
     }
 
-    /** @test */
-    function extends_migrator()
+    function test__extends_migrator()
     {
         $this->assertInstanceOf(Migrator::class, $this->app['migrator']);
     }
 
-    /** @test */
-    function extends_migration_creator()
+    function test__extends_migration_creator()
     {
         $this->assertInstanceOf(MigrationCreator::class, $this->app['migration.creator']);
     }
 
-    /** @test */
-    function extends_migration_console_commands()
+    function test__extends_migration_console_commands()
     {
         $this->assertInstanceOf(MigrateCommand::class, $this->app['command.migrate']);
         $this->assertInstanceOf(MigrateMakeCommand::class, $this->app['command.migrate.make']);

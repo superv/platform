@@ -10,21 +10,14 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class ResourceIndexTest
+ *
+ * @package Tests\Platform\Domains\Resource\Http\Controllers
+ * @group   resource
+ */
 class ResourceIndexTest extends ResourceTestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->withoutExceptionHandling();
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        Extension::flush();
-    }
-
     function test__bsmllh()
     {
         $users = $this->schema()->users();
@@ -232,9 +225,9 @@ class ResourceIndexTest extends ResourceTestCase
         $this->assertEquals('gender', $filter['name']);
         $this->assertEquals('select', $filter['type']);
         $this->assertEquals([
-                ['value' => 'm', 'text' => 'Male'],
-                ['value' => 'f', 'text' => 'Female']
-            ], $table->getProp('config.filters.0.meta.options')
+            ['value' => 'm', 'text' => 'Male'],
+            ['value' => 'f', 'text' => 'Female'],
+        ], $table->getProp('config.filters.0.meta.options')
         );
         $this->assertEquals('Select Gender', $filter['placeholder']);
     }
@@ -259,11 +252,24 @@ class ResourceIndexTest extends ResourceTestCase
             [
                 ['value' => 'tic', 'text' => 'tic'],
                 ['value' => 'tac', 'text' => 'tac'],
-                ['value' => 'toe', 'text' => 'toe']
+                ['value' => 'toe', 'text' => 'toe'],
             ],
             $table->getProp('config.filters.0.meta.options')
         );
         $this->assertEquals('Select Name', $filter['placeholder']);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->withoutExceptionHandling();
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        Extension::flush();
     }
 }
 

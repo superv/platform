@@ -31,5 +31,4 @@ class TestBear implements Hibernatable
     {
         return ['doo' => 'fun'];
     }
-
 }

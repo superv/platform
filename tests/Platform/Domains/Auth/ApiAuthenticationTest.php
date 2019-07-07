@@ -4,7 +4,6 @@ namespace Tests\Platform\Domains\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Route;
-use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 use Tests\Platform\TestCase;
 
@@ -17,33 +16,12 @@ class ApiAuthenticationTest extends TestCase
 
 //    protected $user;
 
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->port = $this->setUpPort([
-            'slug'        => 'api',
-            'hostname'    => 'localhost',
-            'guard'       => 'sv-api',
-            'middlewares' => ['sv.auth:sv-api'],
-        ]);
-
-//        $this->user = factory(User::class)->create([
-//            'id'         => rand(9, 999),
-//            'email'      => 'user@superv.io',
-//            'password'   => bcrypt('secret'),
-//        ]);
-
-        Route::get('login', ['as' => 'login', 'uses' => function() { return 'login'; }]);
-    }
-
-    /** @test */
-    function returns_proper_token_response()
+    function test__returns_proper_token_response()
     {
         $user = $this->newUser();
         $response = $this->postJson('login', [
-            'email'      => $user->getEmail(),
-            'password'   => 'secret',
+            'email'    => $user->getEmail(),
+            'password' => 'secret',
         ]);
 
         $this->assertEquals([
@@ -53,8 +31,7 @@ class ApiAuthenticationTest extends TestCase
         ], array_keys($response->decodeResponseJson('data')));
     }
 
-    /** @test */
-    function authenticates_with_the_valid_access_token()
+    function test__authenticates_with_the_valid_access_token()
     {
         $token = app('tymon.jwt')->fromUser($this->newUser());
 
@@ -73,8 +50,7 @@ class ApiAuthenticationTest extends TestCase
         $this->assertEquals($this->testUser->getEmail(), $me['email']);
     }
 
-    /** @test */
-    function authentication_fails_with_invalid_credentials()
+    function test__authentication_fails_with_invalid_credentials()
     {
         $response = $this->json('post', '/login', [
             'email'    => 'user@superv.io',
@@ -86,8 +62,7 @@ class ApiAuthenticationTest extends TestCase
         $this->assertNotNull($response->decodeResponseJson('error'));
     }
 
-    /** @test */
-    function unauthenticated_users_handled_properly()
+    function test__unauthenticated_users_handled_properly()
     {
         $this->route('me', function () {
             return response()->json(['me' => auth()->user()]);
@@ -95,5 +70,25 @@ class ApiAuthenticationTest extends TestCase
 
         $response = $this->json('get', 'me');
         $response->assertStatus(401);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->port = $this->setUpPort([
+            'slug'        => 'api',
+            'hostname'    => 'localhost',
+            'guard'       => 'sv-api',
+            'middlewares' => ['sv.auth:sv-api'],
+        ]);
+
+//        $this->user = factory(User::class)->create([
+//            'id'         => rand(9, 999),
+//            'email'      => 'user@superv.io',
+//            'password'   => bcrypt('secret'),
+//        ]);
+
+        Route::get('login', ['as' => 'login', 'uses' => function () { return 'login'; }]);
     }
 }

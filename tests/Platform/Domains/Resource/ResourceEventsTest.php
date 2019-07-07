@@ -11,6 +11,12 @@ use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatingEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Resource;
 
+/**
+ * Class ResourceEventsTest
+ *
+ * @package Tests\Platform\Domains\Resource
+ * @group   resource
+ */
 class ResourceEventsTest extends ResourceTestCase
 {
     function test__dispatches_event_when_a_resource_entry_is_creating()
@@ -20,12 +26,12 @@ class ResourceEventsTest extends ResourceTestCase
             $table->string('name');
         });
 
-        app('events')->listen(EntryCreatingEvent::class, function(EntryCreatingEvent $event) {
-             $this->assertFalse($event->entry->exists);
-             $this->assertEquals('Test User', $event->entry->name);
+        app('events')->listen(EntryCreatingEvent::class, function (EntryCreatingEvent $event) {
+            $this->assertFalse($event->entry->exists);
+            $this->assertEquals('Test User', $event->entry->name);
         });
 
-       $res->create(['name' => 'Test User']);
+        $res->create(['name' => 'Test User']);
     }
 
     function test__dispatches_event_when_a_resource_entry_is_created()
@@ -42,8 +48,6 @@ class ResourceEventsTest extends ResourceTestCase
         Event::assertDispatched(EntryCreatedEvent::class, function (EntryCreatedEvent $event) use ($fake) {
             return $event->entry->id === $fake->id;
         });
-
-
     }
 
     function test__dispatches_event_when_a_resource_entry_is_deleted()

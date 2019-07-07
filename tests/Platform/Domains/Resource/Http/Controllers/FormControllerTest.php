@@ -10,6 +10,12 @@ use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class FormControllerTest
+ *
+ * @package Tests\Platform\Platform\Domains\Resource\Http\Controllers
+ * @group   resource
+ */
 class FormControllerTest extends ResourceTestCase
 {
     /**
@@ -71,7 +77,7 @@ class FormControllerTest extends ResourceTestCase
 
         $form = $this->makePublicForm();
 
-        $response = $this->getJson($form->getUrl(). '/fields/name');
+        $response = $this->getJson($form->getUrl().'/fields/name');
         $response->assertOk();
 
         $fieldArray = $response->decodeResponseJson('data');
@@ -93,9 +99,11 @@ class FormControllerTest extends ResourceTestCase
 
         $formEntry->fields()->attach(FieldModel::create(['type' => 'text', 'name' => 'name']));
         $formEntry->fields()->attach(FieldModel::create(['type' => 'text', 'name' => 'email']));
-        $formEntry->fields()->attach(FieldModel::create(['type' => 'belongs_to', 'name' => 'user', 'config' =>[
-            'related_resource' => 'users',
-        ] ]));
+        $formEntry->fields()->attach(FieldModel::create(['type'   => 'belongs_to',
+                                                         'name'   => 'user',
+                                                         'config' => [
+                                                             'related_resource' => 'users',
+                                                         ]]));
 
         return $formEntry;
     }

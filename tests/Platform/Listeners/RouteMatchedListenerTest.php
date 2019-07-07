@@ -10,8 +10,7 @@ use Tests\Platform\TestCase;
 
 class RouteMatchedListenerTest extends TestCase
 {
-    /** @test */
-    function invokes_port_detector_when_dispatched()
+    function test__invokes_port_detector_when_dispatched()
     {
         $detector = m::mock(PortDetector::class);
         $this->app->singleton(PortDetector::class, function () use ($detector) { return $detector; });

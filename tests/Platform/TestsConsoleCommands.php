@@ -44,8 +44,7 @@ class ApplicationStub extends Application
 class InputMatcher extends \Mockery\Matcher\MatcherAbstract
 {
     /**
-     * @param  \Symfony\Component\Console\Input\ArrayInput $actual
-     *
+     * @param \Symfony\Component\Console\Input\ArrayInput $actual
      * @return bool
      */
     public function match(&$actual)

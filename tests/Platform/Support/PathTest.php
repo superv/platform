@@ -7,10 +7,8 @@ use Tests\Platform\TestCase;
 
 class PathTest extends TestCase
 {
-    /** @test */
-    function parses_namespace_from_filename()
+    function test__parses_namespace_from_filename()
     {
-
         $namespace = 'SuperV\\Platform';
         $checkPath = '/Volumes/Users/dali/Projects/Lakcom/lakcom-project/_workbench/superv/platform/src/Resources/UserResource.php';
         $namespaceBasePath = '/Volumes/Users/dali/Projects/Lakcom/lakcom-project/_workbench/superv/platform/src';

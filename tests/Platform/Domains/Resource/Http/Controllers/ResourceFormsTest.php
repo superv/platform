@@ -11,6 +11,12 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class ResourceFormsTest
+ *
+ * @package Tests\Platform\Domains\Resource\Http\Controllers
+ * @group   resource
+ */
 class ResourceFormsTest extends ResourceTestCase
 {
     use FieldTestHelper;
@@ -165,7 +171,7 @@ class ResourceFormsTest extends ResourceTestCase
             'group_id' => 1,
         ];
 
-        $response = $this->postJsonUser($users->route('store') , $post);
+        $response = $this->postJsonUser($users->route('store'), $post);
         $response->assertOk();
 
         $user = $users->first();

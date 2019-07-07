@@ -7,7 +7,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Auth\Access\Guard\Guard;
 use SuperV\Platform\Domains\Auth\Access\Guard\Guardable;
 use SuperV\Platform\Domains\Auth\Access\Guard\HasGuardableItems;
-use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use Tests\Platform\TestCase;
@@ -16,8 +15,7 @@ class GuardableTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function checks_if_a_user_can_access_a_guardable_item()
+    function test__checks_if_a_user_can_access_a_guardable_item()
     {
         $user = $this->beUser();
         $user->allow('use.item');
@@ -32,8 +30,7 @@ class GuardableTest extends TestCase
         $this->assertFalse($yetAnotherUser->canAccess(new GuardableItem));
     }
 
-    /** @test */
-    function returns_true_if_item_is_not_guardable()
+    function test__returns_true_if_item_is_not_guardable()
     {
         $user = $this->beUser();
         $user->forbid('*');
@@ -41,8 +38,7 @@ class GuardableTest extends TestCase
         $this->assertTrue($user->canAccess(new NonGuardableItem));
     }
 
-    /** @test */
-    function filters_guardable_items_in_an_array()
+    function test__filters_guardable_items_in_an_array()
     {
         $user = $this->beUser();
         $user->forbid('*');
@@ -54,8 +50,7 @@ class GuardableTest extends TestCase
         $this->assertEquals([new NonGuardableItem], $guard->filter($items));
     }
 
-    /** @test */
-    function filters_guardable_items_in_a_collection()
+    function test__filters_guardable_items_in_a_collection()
     {
         $user = $this->beUser();
         $user->forbid('*');
@@ -67,8 +62,7 @@ class GuardableTest extends TestCase
         $this->assertEquals(collect([new NonGuardableItem]), $guard->filter($items));
     }
 
-    /** @test */
-    function filters_guardable_items_in_array_of_mixed()
+    function test__filters_guardable_items_in_array_of_mixed()
     {
         $user = $this->beUser();
         $user->forbid('*');
@@ -80,8 +74,7 @@ class GuardableTest extends TestCase
         $this->assertEquals([new NonGuardableItem, collect([new NonGuardableItem])], $guard->filter($items));
     }
 
-    /** @test */
-    function filters_guardable_items_in_an_object()
+    function test__filters_guardable_items_in_an_object()
     {
         $user = $this->beUser();
         $user->forbid('*');
@@ -95,8 +88,7 @@ class GuardableTest extends TestCase
         $this->assertEquals([new NonGuardableItem], $object->getGuardableItems());
     }
 
-    /** @test */
-    function filters_guardable_items_in_collection_in_an_object()
+    function test__filters_guardable_items_in_collection_in_an_object()
     {
         $user = $this->beUser();
         $user->forbid('*');
@@ -104,16 +96,15 @@ class GuardableTest extends TestCase
 
         $object = new GuardableObject;
         $object->setGuardableItems([new GuardableItem,
-            new NonGuardableItem,
-            collect([new GuardableItem, new NonGuardableItem])]);
+                                    new NonGuardableItem,
+                                    collect([new GuardableItem, new NonGuardableItem])]);
 
         $guard->filter($object);
 
         $this->assertEquals([new NonGuardableItem, collect([new NonGuardableItem])], $object->getGuardableItems());
     }
 
-    /** @test */
-    function guards_entries()
+    function test__guards_entries()
     {
         $order = new TestOrder();
         $order->setUp();
@@ -127,8 +118,7 @@ class GuardableTest extends TestCase
         $this->assertTrue($user->can($entryPublic));
     }
 
-    /** @test */
-    function guards_entries_in_collection()
+    function test__guards_entries_in_collection()
     {
         $order = new TestOrder();
         $order->setUp();

@@ -7,8 +7,7 @@ use Tests\Platform\TestCase;
 
 class UserRegistrarTest extends TestCase
 {
-    /** @test */
-    function can_set_additional_rules()
+    function test__can_set_additional_rules()
     {
         $registar = app(UserRegistrar::class);
         $rules = $registar->rules();

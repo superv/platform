@@ -8,6 +8,12 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class RelationCreateTest
+ *
+ * @package Tests\Platform\Domains\Resource\Http\Controllers
+ * @group   resource
+ */
 class RelationCreateTest extends ResourceTestCase
 {
     function test__display_standard_form()

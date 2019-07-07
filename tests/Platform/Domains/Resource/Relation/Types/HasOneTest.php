@@ -10,6 +10,12 @@ use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\Testing\FormTester;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class HasOneTest
+ *
+ * @package Tests\Platform\Domains\Resource\Relation\Types
+ * @group   resource
+ */
 class HasOneTest extends ResourceTestCase
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
@@ -17,25 +23,6 @@ class HasOneTest extends ResourceTestCase
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $related;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->parent = $this->create('t_users', function (Blueprint $table, ResourceConfig $resource) {
-            $resource->resourceKey('user');
-
-            $table->increments('id');
-            $table->string('name');
-            $table->hasOne('t_profiles', 'profile', 'user_id');
-        });
-
-        $this->related = $this->create('t_profiles', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('address');
-            $table->belongsTo('t_users', 'user', 'user_id');
-        });
-    }
 
     function test__creates_relation()
     {
@@ -75,7 +62,25 @@ class HasOneTest extends ResourceTestCase
 
         $this->withoutExceptionHandling();
         (new FormTester($this->basePath()))->test($form);
+    }
 
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->parent = $this->create('t_users', function (Blueprint $table, ResourceConfig $resource) {
+            $resource->resourceKey('user');
+
+            $table->increments('id');
+            $table->string('name');
+            $table->hasOne('t_profiles', 'profile', 'user_id');
+        });
+
+        $this->related = $this->create('t_profiles', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('address');
+            $table->belongsTo('t_users', 'user', 'user_id');
+        });
     }
 }
 

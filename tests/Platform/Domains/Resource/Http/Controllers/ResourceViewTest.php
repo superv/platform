@@ -3,10 +3,15 @@
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use Storage;
-use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class ResourceViewTest
+ *
+ * @package Tests\Platform\Domains\Resource\Http\Controllers
+ * @group   resource
+ */
 class ResourceViewTest extends ResourceTestCase
 {
     use ResponseHelper;

@@ -13,6 +13,12 @@ use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\Testing\FormTester;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class MorphOneTest
+ *
+ * @package Tests\Platform\Domains\Resource\Relation\Types
+ * @group   resource
+ */
 class MorphOneTest extends ResourceTestCase
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
@@ -20,35 +26,6 @@ class MorphOneTest extends ResourceTestCase
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $related;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->parent = $this->create('t_users', function (Blueprint $table, ResourceConfig $resource) {
-            $resource->resourceKey('user');
-
-            $table->increments('id');
-            $table->string('name');
-            $table->morphOne('t_tags', 'tag', 'owner');
-            $table->morphOne('t_tacs', 'tac', 'owner');
-            $table->morphOne('t_profiles', 'profile', 'owner', TestProfileRepository::class);
-        });
-
-        $this->related = $this->create('t_tags', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('label');
-            $table->morphTo('owner');
-        });
-
-        $this->create('t_tacs', function (Blueprint $table, ResourceConfig $resource) {
-            $resource->model(TestTac::class);
-
-            $table->increments('id');
-            $table->string('label');
-            $table->morphTo('owner');
-        });
-    }
 
     function test__create_morph_one_relation()
     {
@@ -136,6 +113,35 @@ class MorphOneTest extends ResourceTestCase
         $this->assertEquals('Admin', $profile->entry->title);
         $this->assertEquals($user->getId(), $profile->entry->owner_id);
         $this->assertEquals($user->getMorphClass(), $profile->entry->owner_type);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->parent = $this->create('t_users', function (Blueprint $table, ResourceConfig $resource) {
+            $resource->resourceKey('user');
+
+            $table->increments('id');
+            $table->string('name');
+            $table->morphOne('t_tags', 'tag', 'owner');
+            $table->morphOne('t_tacs', 'tac', 'owner');
+            $table->morphOne('t_profiles', 'profile', 'owner', TestProfileRepository::class);
+        });
+
+        $this->related = $this->create('t_tags', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('label');
+            $table->morphTo('owner');
+        });
+
+        $this->create('t_tacs', function (Blueprint $table, ResourceConfig $resource) {
+            $resource->model(TestTac::class);
+
+            $table->increments('id');
+            $table->string('label');
+            $table->morphTo('owner');
+        });
     }
 }
 

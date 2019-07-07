@@ -6,6 +6,12 @@ use Storage;
 use SuperV\Platform\Domains\Media\Media;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class ResourceUpdateTest
+ *
+ * @package Tests\Platform\Domains\Resource\Http\Controllers
+ * @group   resource
+ */
 class ResourceUpdateTest extends ResourceTestCase
 {
     use ResponseHelper;
@@ -15,8 +21,8 @@ class ResourceUpdateTest extends ResourceTestCase
         $user = $this->schema()->users()->fake(['group_id' => 1]);
 
         $post = [
-            'name'     => 'Ali',
-            'email'    => 'ali@superv.io',
+            'name'  => 'Ali',
+            'email' => 'ali@superv.io',
             'group' => 2,
         ];
         $response = $this->postJsonUser($user->route('update'), $post);

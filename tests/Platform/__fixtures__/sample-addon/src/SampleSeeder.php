@@ -1,4 +1,5 @@
 <?php
+
 namespace SuperV\Addons\Sample;
 
 class SampleSeeder

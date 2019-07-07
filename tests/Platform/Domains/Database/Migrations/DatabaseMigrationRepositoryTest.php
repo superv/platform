@@ -10,8 +10,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function filters_migrations_by_scope()
+    function test__filters_migrations_by_scope()
     {
         \DB::table(config('database.migrations'))->insert([
                 ['migration' => '2018_0001_migration_A', 'batch' => 101, 'addon' => null],
@@ -37,8 +36,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
         $this->assertCount(1, $this->repositoryWithScope('bar')->getMigrations($steps = 5));
     }
 
-    /** @test */
-    function filters_last_migrations_by_scope()
+    function test__filters_last_migrations_by_scope()
     {
         \DB::table(config('database.migrations'))->insert([
                 ['migration' => '2018_0002_migration_B', 'batch' => 102, 'addon' => 'bar'],
@@ -68,8 +66,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
         $this->assertCount(2, $this->repositoryWithScope('foo')->getLast());
     }
 
-    /** @test */
-    function applies_scope_filter_on_ran_migrations()
+    function test__applies_scope_filter_on_ran_migrations()
     {
         Scopes::register('bar', __DIR__.'/migrations');
         $this->app['migrator']->run(__DIR__.'/migrations');
@@ -84,21 +81,20 @@ class DatabaseMigrationRepositoryTest extends TestCase
         );
     }
 
-    /**
-     * @param null $scope
-     *
-     * @return \SuperV\Platform\Domains\Database\Migrations\DatabaseMigrationRepository
-     */
-    protected function repositoryWithScope($scope = null)
-    {
-        return app('migration.repository')->setAddon($scope);
-    }
-
     protected function toArray($migrations)
     {
         return collect($migrations)
             ->map(function ($obj) {
                 return ['migration' => $obj->migration];
             })->all();
+    }
+
+    /**
+     * @param null $scope
+     * @return \SuperV\Platform\Domains\Database\Migrations\DatabaseMigrationRepository
+     */
+    protected function repositoryWithScope($scope = null)
+    {
+        return app('migration.repository')->setAddon($scope);
     }
 }

@@ -7,8 +7,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class TextareaTest extends ResourceTestCase
 {
-    /** @test */
-    function type_textarea()
+    function test__type_textarea()
     {
         $res = $this->create(function (Blueprint $table) {
             $table->increments('id');

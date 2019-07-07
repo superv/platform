@@ -5,6 +5,12 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class RelationLookupTest
+ *
+ * @package Tests\Platform\Domains\Resource\Http\Controllers
+ * @group   resource
+ */
 class RelationLookupTest extends ResourceTestCase
 {
     function test__lookup_data()
@@ -33,7 +39,6 @@ class RelationLookupTest extends ResourceTestCase
         $fields = $table->getProp('config.fields');
         $this->assertEquals(1, count($fields));
 
-
         $response = $this->getJsonUser($table->getProp('config.data_url'))->assertOk();
         $rows = $response->decodeResponseJson('data.rows');
 
@@ -42,5 +47,4 @@ class RelationLookupTest extends ResourceTestCase
         //
         $this->assertEquals(2, count($rows));
     }
-
 }

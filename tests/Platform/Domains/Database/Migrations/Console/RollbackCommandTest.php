@@ -13,8 +13,7 @@ class RollbackCommandTest extends TestCase
 {
     use TestsConsoleCommands;
 
-    /** @test */
-    function rollback_command_calls_migrator_with_proper_arguments()
+    function test__rollback_command_calls_migrator_with_proper_arguments()
     {
         $command = new RollbackCommand(
             $migrator = m::mock(Migrator::class)->shouldIgnoreMissing()
@@ -30,8 +29,7 @@ class RollbackCommandTest extends TestCase
         $this->runCommand($command, ['--addon' => 'test-addon']);
     }
 
-    /** @test */
-    function rollback_with_steps_and_scope()
+    function test__rollback_with_steps_and_scope()
     {
         $this->installSuperV();
 

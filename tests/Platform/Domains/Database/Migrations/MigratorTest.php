@@ -12,8 +12,7 @@ class MigratorTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function extends_original_migrator()
+    function test__extends_original_migrator()
     {
         $migrator = new Migrator(app('migration.repository'), app('db'), app('files'));
 

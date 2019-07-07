@@ -28,7 +28,7 @@ class ComposerTest extends TestCase
     {
         $action = new TestComposable(['url' => '{resource}/{entry}'], ['entry' => 123]);
         $parent = new TestComposable(['context' => '{context}',
-                                                'action'  => $action], ['resource' => 'users']);
+                                      'action'  => $action], ['resource' => 'users']);
 
         $composed = sv_compose($parent, ['context' => 'table']);
 
@@ -68,7 +68,6 @@ class TestComposable implements Composable
      * @var array
      */
     public $tokens;
-
 
     public function __construct(array $data, array $tokens = [])
     {

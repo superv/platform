@@ -8,7 +8,6 @@ use Mockery as m;
 use SuperV\Platform\Domains\Database\Migrations\Console\RefreshCommand;
 use SuperV\Platform\Domains\Database\Migrations\Console\RollbackCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
-use Tests\Platform\TestCase;
 use Tests\Platform\TestsConsoleCommands;
 
 class RefreshCommandTest

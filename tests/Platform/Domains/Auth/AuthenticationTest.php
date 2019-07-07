@@ -10,17 +10,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Schema;
 use SuperV\Platform\Domains\Auth\Concerns\AuthenticatesUsers;
 use SuperV\Platform\Domains\Auth\PlatformUserProvider;
-use SuperV\Platform\Domains\Auth\User;
 use Tests\Platform\TestCase;
 
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp()
-    {
-        parent::setUp();
-    }
 
     function authenticates_valid_user_successfully()
     {
@@ -88,8 +82,7 @@ class AuthenticationTest extends TestCase
         $this->assertNotAuthenticated();
     }
 
-    /** @test */
-    function can_authenticate_multiple_user_types()
+    function test__can_authenticate_multiple_user_types()
     {
         $this->setUpPort('api', 'localhost', null, ['client', 'admin']);
         $this->makeRoute('api');
@@ -106,10 +99,15 @@ class AuthenticationTest extends TestCase
 
         Auth::logout();
 
-        $response =  $this->login('admin@superv.io', 'secret');
+        $response = $this->login('admin@superv.io', 'secret');
         $response->assertRedirect();
 
         $this->assertAuthenticatedAs($admin, 'sv-api');
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
     }
 
     protected function login($email, $password)

@@ -5,12 +5,18 @@ namespace Tests\Platform\Domains\UI\Component;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Contracts\Hibernatable;
 use SuperV\Platform\Domains\UI\Components\BaseComponent;
-use SuperV\Platform\Domains\UI\Components\Props;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
+use SuperV\Platform\Domains\UI\Components\Props;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Concerns\HibernatableConcern;
 use Tests\Platform\TestCase;
 
+/**
+ * Class BaseUIComponentTest
+ *
+ * @package Tests\Platform\Domains\UI\Component
+ * @group   resource
+ */
 class BaseUIComponentTest extends TestCase
 {
     use RefreshDatabase;
@@ -32,17 +38,15 @@ class BaseUIComponentTest extends TestCase
 
         $this->assertEquals(
             ['w-full', 'relative'],
-            $component->getClasses())
-        ;
+            $component->getClasses());
 
         $this->assertEquals([
             'component' => 'sv-test',
             'uuid'      => $component->uuid(),
             'props'     => $component->getProps(),
-            'classes'     => implode(' ', $component->getClasses()),
+            'classes'   => implode(' ', $component->getClasses()),
         ], $component->compose());
     }
-
 }
 
 class TestComponent extends BaseComponent implements Hibernatable

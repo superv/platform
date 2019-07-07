@@ -5,6 +5,12 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class RelationIndexTest
+ *
+ * @package Tests\Platform\Domains\Resource\Http\Controllers
+ * @group   resource
+ */
 class RelationIndexTest extends ResourceTestCase
 {
     function test__index_listing_with_has_many_relations()

@@ -8,8 +8,7 @@ use Tests\Platform\TestCase;
 
 class AddonInstallCommandTest extends TestCase
 {
-    /** @test */
-    function calls_installer_with_proper_arguments_if_path_given()
+    function test__calls_installer_with_proper_arguments_if_path_given()
     {
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
         $installer->shouldReceive('setCommand')->once()->andReturnSelf();
@@ -23,8 +22,7 @@ class AddonInstallCommandTest extends TestCase
         ]);
     }
 
-    /** @test */
-    function calls_installer_with_proper_arguments_if_no_path_is_given()
+    function test__calls_installer_with_proper_arguments_if_no_path_is_given()
     {
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
         $installer->shouldReceive('setCommand')->once()->andReturnSelf();
@@ -37,15 +35,14 @@ class AddonInstallCommandTest extends TestCase
         ]);
     }
 
-    /** @test */
-    function runs_seeder_after_installation_if_provided()
+    function test__runs_seeder_after_installation_if_provided()
     {
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
         $installer->shouldIgnoreMissing();
         $installer->shouldReceive('seed')->once();
 
         $this->artisan('addon:install', [
-            'addon' => 'vendor.addons.slug',
+            'addon'  => 'vendor.addons.slug',
             '--seed' => true,
         ]);
     }

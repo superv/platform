@@ -7,8 +7,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class BooleanTest extends ResourceTestCase
 {
-    /** @test */
-    function type_boolean()
+    function test__type_boolean()
     {
         $res = $this->create(function (Blueprint $table) {
             $table->increments('id');

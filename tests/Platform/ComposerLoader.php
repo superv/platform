@@ -8,6 +8,7 @@ class ComposerLoader
 {
     /** @var ClassLoader */
     protected $loader;
+
     protected $composer;
 
     public function __construct()
@@ -18,28 +19,22 @@ class ComposerLoader
             }
         }
 
-        if (!$this->loader) {
+        if (! $this->loader) {
             throw new \Exception("The ClassLoader could not be found.");
         }
     }
 
-    public static function load($path)
-    {
-        return (new self())->loadFromPath($path);
-    }
-
     public function getComposerJson($path)
     {
-        if (!file_exists($path . '/composer.json')) {
+        if (! file_exists($path.'/composer.json')) {
             throw new \Exception("Composer file does not exist at {$path}/composer.json");
         }
 
-        if (!$composer = json_decode(file_get_contents($path . '/composer.json'), true)) {
+        if (! $composer = json_decode(file_get_contents($path.'/composer.json'), true)) {
             throw new \Exception("A JSON syntax error was encountered in {$path}/composer.json");
         }
 
-
-        if (!array_key_exists('autoload', $composer)) {
+        if (! array_key_exists('autoload', $composer)) {
             return false;
         }
 
@@ -50,7 +45,7 @@ class ComposerLoader
     {
         $composer = $this->getComposerJson($path);
 
-        if (!array_key_exists('autoload', $composer)) {
+        if (! array_key_exists('autoload', $composer)) {
             return null;
         }
 
@@ -62,7 +57,12 @@ class ComposerLoader
     public function loadComposer(array $composer, $path)
     {
         foreach (array_get($composer['autoload'], 'psr-4', []) as $namespace => $autoload) {
-            $this->loader->addPsr4($namespace, $path . '/' . $autoload, false);
+            $this->loader->addPsr4($namespace, $path.'/'.$autoload, false);
         }
+    }
+
+    public static function load($path)
+    {
+        return (new self())->loadFromPath($path);
     }
 }

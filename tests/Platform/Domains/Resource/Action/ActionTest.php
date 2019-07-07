@@ -18,6 +18,12 @@ interface ProvidesActionTestEntry
     public function provideActionTestEntry();
 }
 
+/**
+ * Class ActionTest
+ *
+ * @package Tests\Platform\Domains\Resource\Action
+ * @group   resource
+ */
 class ActionTest extends ResourceTestCase
 {
     function test__construct()

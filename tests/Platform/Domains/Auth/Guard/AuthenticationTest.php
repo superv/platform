@@ -6,21 +6,10 @@ use Hub;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Port\Port;
-use Tests\Platform\TestCase;
 
 class AuthenticationTest
 {
     use RefreshDatabase;
-
-    protected function setUp()
-    {
-        $this->afterPlatformInstalled(function () {
-            Hub::register(ApiV1Port::class);
-            Hub::register(ApiV2Port::class);
-        });
-
-        parent::setUp();
-    }
 
     function ensures_tokens_are_valid_per_port()
     {
@@ -39,6 +28,16 @@ class AuthenticationTest
         $response = $this->getJson('http://localhost/api/v2/guard', ['HTTP_Authorization' => 'Bearer '.$accessToken]);
 
         $response->assertStatus(401);
+    }
+
+    protected function setUp()
+    {
+        $this->afterPlatformInstalled(function () {
+            Hub::register(ApiV1Port::class);
+            Hub::register(ApiV2Port::class);
+        });
+
+        parent::setUp();
     }
 
     /**

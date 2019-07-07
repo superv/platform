@@ -11,7 +11,6 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FileTest extends ResourceTestCase
 {
-
     function test_type_file_is_not_required_by_default()
     {
         $res = $this->create(null, function (Blueprint $table) {
@@ -23,8 +22,7 @@ class FileTest extends ResourceTestCase
         $this->assertFalse($avatar->isRequired());
     }
 
-    /** @test */
-    function type_file()
+    function test__type_file()
     {
         $res = $this->create(function (Blueprint $table) {
             $table->increments('id');
@@ -54,7 +52,7 @@ class FileTest extends ResourceTestCase
         $media = $callback();
         $this->assertNotNull($media);
 
-        $this->assertNotNull( (new FieldComposer($field))->forView($fake)->get('image_url'));
+        $this->assertNotNull((new FieldComposer($field))->forView($fake)->get('image_url'));
 
         $this->assertFileExists($media->filePath());
     }

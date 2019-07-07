@@ -9,8 +9,7 @@ use Tests\Platform\TestCase;
 
 class BaseServiceProviderTest extends TestCase
 {
-    /** @test */
-    function registers_bindings()
+    function test__registers_bindings()
     {
         (new TestServiceProvider($this->app))->registerBindings([
             'foo' => Foo::class,
@@ -27,8 +26,7 @@ class BaseServiceProviderTest extends TestCase
         $this->assertFalse($bar['shared']);
     }
 
-    /** @test */
-    function registers_singletons()
+    function test__registers_singletons()
     {
         (new TestServiceProvider($this->app))->registerSingletons([
             Foo::class => Foo::class,
@@ -50,8 +48,7 @@ class BaseServiceProviderTest extends TestCase
         $this->assertTrue($baz['shared']);
     }
 
-    /** @test */
-    function registers_aliases()
+    function test__registers_aliases()
     {
         (new TestServiceProvider($this->app))->registerAliases([
             'Foo' => Foo::class,
@@ -63,8 +60,7 @@ class BaseServiceProviderTest extends TestCase
         $this->assertEquals(Bar::class, $aliases['Bar']);
     }
 
-    /** @test */
-    function registers_event_listeners()
+    function test__registers_event_listeners()
     {
         unset($_SERVER['__event.class']);
         (new TestServiceProvider($this->app))->registerListeners([
@@ -81,8 +77,7 @@ class BaseServiceProviderTest extends TestCase
         $this->assertEquals(AnotherEvent::class, $_SERVER['__event.class']);
     }
 
-    /** @test */
-    function registers_console_commands()
+    function test__registers_console_commands()
     {
         (new TestServiceProvider($this->app))->registerCommands(
             [FooTestCommand::class, BarTestCommand::class]
@@ -98,8 +93,7 @@ class BaseServiceProviderTest extends TestCase
         }
     }
 
-    /** @test */
-    function adds_view_namespaces()
+    function test__adds_view_namespaces()
     {
         (new TestServiceProvider($this->app))->addViewNamespaces([
             'hintA' => 'path/A',

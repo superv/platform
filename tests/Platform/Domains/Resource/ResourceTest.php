@@ -8,6 +8,12 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use Tests\Platform\Domains\Resource\Fixtures\TestResourceEntry;
 
+/**
+ * Class ResourceTest
+ *
+ * @package Tests\Platform\Domains\Resource
+ * @group   resource
+ */
 class ResourceTest extends ResourceTestCase
 {
     function test__creates_anonymous_model_class_if_not_provided()

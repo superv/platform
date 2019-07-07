@@ -2,9 +2,6 @@
 
 namespace Tests\Platform\Domains\Database\Migrations\Console;
 
-use Mockery as m;
-use SuperV\Platform\Domains\Database\Migrations\Console\MigrateMakeCommand;
-use SuperV\Platform\Domains\Database\Migrations\MigrationCreator;
 use SuperV\Platform\Domains\Database\Migrations\Scopes;
 use Tests\Platform\TestCase;
 use Tests\Platform\TestsConsoleCommands;
@@ -32,7 +29,6 @@ class MakeCommandTest extends TestCase
 
     /**
      * @test
-     *
      * @group filesystem
      */
     function sets_path_from_registered_scopes()

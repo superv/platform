@@ -11,6 +11,12 @@ use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\Fixtures\TestUser;
 
+/**
+ * Class ResourceCreationTest
+ *
+ * @package Tests\Platform\Domains\Resource
+ * @group   resource
+ */
 class ResourceCreationTest extends ResourceTestCase
 {
     function test__creates_resource_model_entry_when_a_table_is_created()

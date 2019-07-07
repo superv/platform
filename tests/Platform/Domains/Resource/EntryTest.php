@@ -4,6 +4,12 @@ namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 
+/**
+ * Class EntryTest
+ *
+ * @package Tests\Platform\Domains\Resource
+ * @group   resource
+ */
 class EntryTest extends ResourceTestCase
 {
     function test__saves_created_by_field_when_an_entry_is_created()

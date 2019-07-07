@@ -8,10 +8,15 @@ use Tests\Platform\Domains\Resource\Fixtures\TestPost;
 use Tests\Platform\Domains\Resource\Fixtures\TestRole;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class RelationsTest
+ *
+ * @package Tests\Platform\Domains\Resource\Relation
+ * @group   resource
+ */
 class RelationsTest extends ResourceTestCase
 {
-    /** @test */
-    function creates_belongs_to_relations()
+    function test__creates_belongs_to_relations()
     {
         $groups = $this->create('t_groups', function (Blueprint $table) {
             $table->increments('id');
@@ -35,8 +40,7 @@ class RelationsTest extends ResourceTestCase
         ], $relation->getRelationConfig()->toArray());
     }
 
-    /** @test */
-    function creates_has_many_relations()
+    function test__creates_has_many_relations()
     {
         $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
@@ -57,8 +61,7 @@ class RelationsTest extends ResourceTestCase
         ], $relation->getRelationConfig()->toArray());
     }
 
-    /** @test */
-    function creates_belongs_to_many_relations()
+    function test__creates_belongs_to_many_relations()
     {
         /** @test */
         $this->create('t_users', function (Blueprint $table) {
@@ -87,9 +90,7 @@ class RelationsTest extends ResourceTestCase
         ], $relation->getRelationConfig()->toArray());
     }
 
-
-    /** @test */
-    function saves_pivot_columns_even_if_pivot_table_is_created_before()
+    function test__saves_pivot_columns_even_if_pivot_table_is_created_before()
     {
         $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');

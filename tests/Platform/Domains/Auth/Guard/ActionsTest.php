@@ -12,8 +12,7 @@ class ActionsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function assigns_roles_to_user()
+    function test__assigns_roles_to_user()
     {
         $user = $this->newUser();
 
@@ -23,8 +22,7 @@ class ActionsTest extends TestCase
         $this->assertTrue($user->isNotAn('admin'));
     }
 
-    /** @test */
-    function add_actions_to_role()
+    function test__add_actions_to_role()
     {
         $user = $this->newUser();
 
@@ -42,8 +40,7 @@ class ActionsTest extends TestCase
         $this->assertTrue($admin->can('user.action'));
     }
 
-    /** @test */
-    function allow_user_for_actions()
+    function test__allow_user_for_actions()
     {
         /** @var \SuperV\Platform\Domains\Auth\User $user */
         $user = $this->newUser();
@@ -53,8 +50,7 @@ class ActionsTest extends TestCase
         $this->assertTrue($user->can('user.action'));
     }
 
-    /** @test */
-    function forbid_user_from_actions()
+    function test__forbid_user_from_actions()
     {
         /** @var \SuperV\Platform\Domains\Auth\User $user */
         $user = $this->newUser();
@@ -65,8 +61,7 @@ class ActionsTest extends TestCase
         $this->assertTrue($user->cannot('forbidden.action'));
     }
 
-    /** @test */
-    function supports_wildcard_actions()
+    function test__supports_wildcard_actions()
     {
         $userA = $this->newUser();
         $userA->allow('moduleA.*');
@@ -85,8 +80,7 @@ class ActionsTest extends TestCase
         $this->assertTrue($userA->cannot('moduleB.write'));
     }
 
-    /** @test */
-    function forbid_precedes_over_wildcard()
+    function test__forbid_precedes_over_wildcard()
     {
         $user = $this->newUser();
         $user->allow('*');
@@ -99,8 +93,7 @@ class ActionsTest extends TestCase
         $this->assertFalse($user->can('smoke'));
     }
 
-    /** @test */
-    function user_has_the_assigned_role()
+    function test__user_has_the_assigned_role()
     {
         $this->newUser();
 

@@ -24,22 +24,17 @@ class ToDoTest extends TestCase
         $this->assertEquals(1, count($conn->fetchAll("SELECT * FROM users")));
     }
 
-
-    /** @test */
-    function platform_detects_active_module_from_route_data()
+    function test__platform_detects_active_module_from_route_data()
     {
         $this->addToAssertionCount(1);
     }
 
-    /** @test */
-    function platform_add_view_hint_module_for_active_module()
+    function test__platform_add_view_hint_module_for_active_module()
     {
         $this->addToAssertionCount(1);
     }
 
-
-    /** @test */
-    function installer_uninstalls_subaddons_when_a_addon_is_uninstalled()
+    function test__installer_uninstalls_subaddons_when_a_addon_is_uninstalled()
     {
         $this->addToAssertionCount(1);
     }

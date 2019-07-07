@@ -7,15 +7,14 @@ use SuperV\Platform\Domains\Resource\Nav\NavGuard;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class NavGuardTest
+ *
+ * @package Tests\Platform\Domains\Resource\Nav
+ * @group   resource
+ */
 class NavGuardTest extends ResourceTestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        Section::truncate();
-    }
-
     function test__filters_nav()
     {
         $nav = Nav::create('acp');
@@ -42,6 +41,13 @@ class NavGuardTest extends ResourceTestCase
                 ]),
             ]),
         ], $filtered['sections']);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        Section::truncate();
     }
 }
 

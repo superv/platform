@@ -7,6 +7,12 @@ use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class FormFactoryTest
+ *
+ * @package Tests\Platform\Platform\Domains\Resource\Form
+ * @group   resource
+ */
 class FormFactoryTest extends ResourceTestCase
 {
     function test__create_form_entry()

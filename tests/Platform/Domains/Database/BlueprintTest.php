@@ -4,21 +4,20 @@ namespace Tests\Platform\Domains\Database;
 
 use Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Events\TableDroppedEvent;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use Tests\Platform\TestCase;
 
 class BlueprintTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    function dispatch_event_when_a_table_is_created()
+    function test__dispatch_event_when_a_table_is_created()
     {
         $this->app['migrator']->run(__DIR__.'/migrations');
 
@@ -58,8 +57,7 @@ class BlueprintTest extends TestCase
         $this->assertTrue($dispatchedEvents->tableCreated);
     }
 
-    /** @test */
-    function dispatch_event_when_a_table_is_dropped()
+    function test__dispatch_event_when_a_table_is_dropped()
     {
         Event::fake(TableDroppedEvent::class);
 
@@ -74,8 +72,7 @@ class BlueprintTest extends TestCase
         });
     }
 
-    /** @test */
-    function dispatch_event_when_a_column_is_created()
+    function test__dispatch_event_when_a_column_is_created()
     {
         Event::fake(ColumnCreatedEvent::class);
 
@@ -105,8 +102,7 @@ class BlueprintTest extends TestCase
         $this->assertEquals($columns->count(), $dispatchedColumns->count());
     }
 
-    /** @test */
-    function dispatch_event_when_a_column_is_updated()
+    function test__dispatch_event_when_a_column_is_updated()
     {
         Event::fake(ColumnUpdatedEvent::class);
 
@@ -126,8 +122,7 @@ class BlueprintTest extends TestCase
         });
     }
 
-    /** @test */
-    function dispatch_event_when_a_column_is_dropped()
+    function test__dispatch_event_when_a_column_is_dropped()
     {
         Event::fake(ColumnDroppedEvent::class);
         \SuperV\Platform\Domains\Database\Schema\Schema::create('tasks', function (Blueprint $table) {

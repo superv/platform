@@ -10,7 +10,6 @@ use Tests\Platform\TestCase;
 
 class SuperVUninstallCommandTest extends TestCase
 {
-
     function test__drops_platform_tables()
     {
         $this->artisan('superv:install');
@@ -46,7 +45,6 @@ class SuperVUninstallCommandTest extends TestCase
         $this->artisan('superv:uninstall');
 
         Event::assertDispatched(AddonUninstallingEvent::class);
-
     }
 
     protected function envPath($name)

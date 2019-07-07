@@ -15,6 +15,12 @@ use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * Class FormTest
+ *
+ * @package Tests\Platform\Domains\Resource\Form
+ * @group   resource
+ */
 class FormTest extends ResourceTestCase
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */

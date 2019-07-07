@@ -15,16 +15,14 @@ class MigrateCommandTest extends TestCase
     use RefreshDatabase;
     use TestsConsoleCommands;
 
-    /** @test */
-    function migrate_command_calls_migrator_with_proper_arguments()
+    function test__migrate_command_calls_migrator_with_proper_arguments()
     {
         $migrateCommand = new MigrateCommand(
             $migrator = m::mock(Migrator::class)->shouldIgnoreMissing()
         );
         $migrateCommand->setLaravel($this->app);
 
-
-        Scopes::register('test-addon', __DIR__ . '/../migrations/baz');
+        Scopes::register('test-addon', __DIR__.'/../migrations/baz');
 
         $migrator->shouldReceive('repositoryExists')->once()->andReturn(true);
         $migrator->shouldReceive('setAddon')->with('test-addon')->once();
@@ -33,8 +31,7 @@ class MigrateCommandTest extends TestCase
         $this->runCommand($migrateCommand, ['--addon' => 'test-addon']);
     }
 
-    /** @test */
-    function migrate_command_get_path_from_registered_scopes()
+    function test__migrate_command_get_path_from_registered_scopes()
     {
         Scopes::register('superv.addons.sample', base_path('tests/Platform/__fixtures__/sample-addon/database/migrations'));
 

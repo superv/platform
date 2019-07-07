@@ -9,6 +9,12 @@ use Tests\Platform\Domains\Resource\Fixtures\Extension\TestMultipleResourcesArra
 use Tests\Platform\Domains\Resource\Fixtures\Extension\TestMultipleResourcesPatternExtension;
 use Tests\Platform\Domains\Resource\Fixtures\Extension\TestUserResourceExtension;
 
+/**
+ * Class ExtensionTest
+ *
+ * @package Tests\Platform\Domains\Resource
+ * @group   resource
+ */
 class ExtensionTest extends ResourceTestCase
 {
     function test__extends_resource()

@@ -21,24 +21,20 @@ class DatabaseListenerTest extends TestCase
 
         Event::fake([TableInsertEvent::class, TableUpdateEvent::class]);
 
-
         Listener::listen();
 
         $pick = $pickles->fake();
 
         Event::assertDispatched(TableInsertEvent::class,
-            function(TableInsertEvent $event)  {
-            return $event->table === 'pickles' ;
-        });
+            function (TableInsertEvent $event) {
+                return $event->table === 'pickles';
+            });
 
         $pick->setAttribute('name', 'pixel')->save();
 
         Event::assertDispatched(TableUpdateEvent::class,
-            function(TableUpdateEvent $event) use ($pick) {
-            return $event->table === 'pickles' && $event->rowId === $pick->getId();
-        });
-
+            function (TableUpdateEvent $event) use ($pick) {
+                return $event->table === 'pickles' && $event->rowId === $pick->getId();
+            });
     }
-
-
 }

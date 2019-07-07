@@ -7,6 +7,12 @@ use SuperV\Platform\Domains\Routing\UrlGenerator;
 use Tests\Platform\TestCase;
 use URL;
 
+/**
+ * Class UrlGeneratorTest
+ *
+ * @package Tests\Platform\Domains\Routing
+ * @group   resource
+ */
 class UrlGeneratorTest extends TestCase
 {
     use RefreshDatabase;
@@ -23,8 +29,7 @@ class UrlGeneratorTest extends TestCase
         $this->assertInstanceOf(UrlGenerator::class, app('url'));
     }
 
-    /** @test */
-    function generates_urls_based_on_the_active_port_with_prefix()
+    function test__generates_urls_based_on_the_active_port_with_prefix()
     {
         $this->setUpCustomPort('api.superv.io', 'v2');
         $this->makeRequest('users');
@@ -37,8 +42,7 @@ class UrlGeneratorTest extends TestCase
         $this->assertEquals('http://api.superv.io/v2/users', sv_url('users'));
     }
 
-    /** @test */
-    function generates_urls_based_on_the_active_port_without_prefix()
+    function test__generates_urls_based_on_the_active_port_without_prefix()
     {
         $this->setUpCustomPort('api.superv.io');
         $this->makeRequest('users');
@@ -47,5 +51,4 @@ class UrlGeneratorTest extends TestCase
         $this->assertEquals('http://api.superv.io/users', URL::current());
         $this->assertEquals('http://api.superv.io/users', URL::to('users'));
     }
-
 }

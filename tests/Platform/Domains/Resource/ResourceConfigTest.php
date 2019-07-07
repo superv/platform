@@ -7,6 +7,12 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
+/**
+ * Class ResourceConfigTest
+ *
+ * @package Tests\Platform\Domains\Resource
+ * @group   resource
+ */
 class ResourceConfigTest extends ResourceTestCase
 {
     function test__sortable()
@@ -76,7 +82,6 @@ class ResourceConfigTest extends ResourceTestCase
             $table->increments('id');
         });
         $this->assertEquals('id', $resource->getKeyName());
-
     }
 
     function test__builds_label_from_table_name()
