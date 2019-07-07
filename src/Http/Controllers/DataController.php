@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Http\Controllers;
 
+use Platform;
 use SuperV\Platform\Domains\Resource\Nav\Nav;
 use SuperV\Platform\Domains\Resource\Nav\NavGuard;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -28,7 +29,8 @@ class DataController extends BaseApiController
 
         return [
             'data' => [
-                'user' => $userArray,
+                'user'         => $userArray,
+                'translations' => $this->getTranslations(),
             ],
         ];
     }
@@ -55,5 +57,18 @@ class DataController extends BaseApiController
         return [
             'data' => $payload->toArray(),
         ];
+    }
+
+    protected function getTranslations()
+    {
+        $file = Platform::realPath('resources/lang/'.app()->getLocale().'.json');
+
+        if (! is_readable($file)) {
+            return [];
+        }
+
+        $string = file_get_contents($file);
+
+        return ['data' => json_decode($string, true), 'hash' => md5($string)];
     }
 }

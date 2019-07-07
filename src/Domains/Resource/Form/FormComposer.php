@@ -110,7 +110,7 @@ class FormComposer
                 [
                     'default'    => true,
                     'identifier' => 'save',
-                    'title'      => 'Save',
+                    'title'      =>  __('Save'),
                     'color'      => 'primary',
                 ],
             ];
@@ -130,7 +130,7 @@ class FormComposer
             [
                 'default'    => true,
                 'identifier' => 'create',
-                'title'      => 'Create',
+                'title'      => __('Create'),
                 'color'      => 'success',
             ],
         ];

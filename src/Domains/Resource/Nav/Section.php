@@ -42,8 +42,8 @@ class Section extends Entry
         $colophon = $this->getColophon();
 
         $payload = new Payload([
-            'title'    => $this->getTitle(),
-            'titles'   => $this->addon ? sv_trans($this->addon.'::'.$this->title.'.label') : $this->title,
+            'title'    => __($this->getTitle()),
+//            'titles'   => $this->addon ? sv_trans($this->addon.'::'.$this->title.'.label') : $this->title,
             'handle'   => $this->handle,
             'colophon' => $withColophon ? $colophon : null,
             'icon'     => $this->icon,

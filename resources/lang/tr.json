@@ -1,0 +1,19 @@
+{
+    "Create": "Oluştur",
+    "Create New": "Yeni :Object Oluştur",
+    "Save": "Kaydet",
+    "Select Resource": ":Resource Seç",
+    "Select All": "Tümünü Seç",
+    "Remove All": "Tümünü Kaldır",
+    ":Entry was updated": ":Entry güncellendi.",
+    ":Entry was created": ":Entry oluşturuldu.",
+    ":Entry was deleted": ":Entry silindi.",
+    "Are you sure?": "Emin misiniz?",
+    "You won't be able to revert this!": "Bunu geri alma imkanınız olmayabilir!",
+    "Yes, delete it!": "Evet, sil!",
+    "Cancel": "İptal",
+    "System": "Sistem",
+    "Resources": "Kaynaklar",
+    "Forms": "Formlar",
+    "Auth": "Auth"
+}

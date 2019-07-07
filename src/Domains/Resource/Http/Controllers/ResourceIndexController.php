@@ -17,9 +17,11 @@ class ResourceIndexController extends BaseApiController
 
     public function delete()
     {
-        $this->resolveResource();
+        $resource = $this->resolveResource();
 
         $this->entry->delete();
+
+        return ['data' => ['message' => __(':Entry was deleted', ['Entry' => $resource->getSingularLabel()]) ]];
     }
 
     public function restore()

@@ -121,9 +121,13 @@ class Field implements FieldContract
 
     public function getLabel(): string
     {
-//        if ($this->resource) {
-//            return sv_trans($this->resource->getAddon().'::'.$this->resource->getHandle().'.'.$this->name, []);
-//        }
+        if ($this->resource) {
+            $key = $this->resource->getAddon().'::resources.'.$this->resource->getHandle().'.fields.'.$this->name;
+            $value = trans($key);
+            if ($value && isset($value['label'])) {
+                return $value['label'];
+            }
+        }
 
         return $this->label ?? str_unslug($this->getName());
     }

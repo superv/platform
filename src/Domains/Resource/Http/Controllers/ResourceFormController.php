@@ -29,7 +29,8 @@ class ResourceFormController extends BaseApiController
 //
 //        $form->make($formData ? $formData->uuid : null);
 
-        $page = Page::make(trans('sv::resource.create', ['resource' => $resource->getSingularLabel()]));
+//        $page = Page::make(trans('sv::resource.create', ['resource' => $resource->getSingularLabel()]));
+        $page = Page::make(__('Create New', ['object' => $resource->getSingularLabel()]));
 //        $page = Page::make('Create new '.$resource->getSingularLabel());
         $page->addBlock(sv_loader('sv/forms/'.$resource->getHandle()));
 

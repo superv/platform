@@ -1,0 +1,17 @@
+{
+    "Create": "Create",
+    "Create New": "Create New :Object",
+    "Select Resource": "Select :Resource",
+    "Save": "Save",
+    "Select All": "Select All",
+    "Remove All": "Remove All",
+    ":Entry was updated": ":Entry was updated.",
+    ":Entry was created": ":Entry was created.",
+    ":Entry was deleted": ":Entry was deleted.",
+    "Are you sure?": "Are you sure?",
+    "You won't be able to revert this!": "You won't be able to revert this!",
+    "Yes, delete it!": "Yes, delete it!",
+    "Cancel": "Cancel",
+    "Forms": "Forms",
+    "Auth": "Auth"
+}

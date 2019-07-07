@@ -47,7 +47,7 @@ class FormResponse implements Responsable
 
         return response()->json([
             'data' => [
-                'message' => $this->form->isUpdating() ? 'Entry updated' : 'Entry created',
+                'message' =>  __($this->form->isUpdating() ? ':Entry was updated' : ':Entry was created', ['Entry' => $this->resource->getSingularLabel()]),
                 'action'      => $action,
                 'redirect_to' => $route ?? $this->resource->route('index'),
             ],
