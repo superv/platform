@@ -52,6 +52,9 @@ class RestorableTest extends ResourceTestCase
         $this->assertNull($entry->fresh()->deleted_by_id);
     }
 
+    /**
+     * @group http
+     */
     function test__restore_over_http()
     {
         // ARRANGE

@@ -16,6 +16,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
  *
  * @package Tests\Platform\Domains\Resource\Http\Controllers
  * @group   resource
+ * @group   http
  */
 class ResourceFormsTest extends ResourceTestCase
 {

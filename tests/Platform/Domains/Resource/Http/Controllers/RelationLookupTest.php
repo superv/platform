@@ -13,6 +13,9 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
  */
 class RelationLookupTest extends ResourceTestCase
 {
+    /**
+     * @group http
+     */
     function test__lookup_data()
     {
         $this->withoutExceptionHandling();

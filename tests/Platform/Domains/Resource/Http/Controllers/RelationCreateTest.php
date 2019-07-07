@@ -13,9 +13,13 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
  *
  * @package Tests\Platform\Domains\Resource\Http\Controllers
  * @group   resource
+ * @group   http
  */
 class RelationCreateTest extends ResourceTestCase
 {
+    /**
+     * @group http
+     */
     function test__display_standard_form()
     {
         $this->withoutExceptionHandling();

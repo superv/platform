@@ -32,15 +32,16 @@ class NavGuardTest extends ResourceTestCase
 
         $filtered = (new NavGuard($user, Nav::get('acp')))->compose();
 
-        $this->assertEquals([
-            __section('foo', [
-                __section('baz'),
-                __section('bom', [
-                    __section('tac'),
-                    __section('tic'),
-                ]),
-            ]),
-        ], $filtered['sections']);
+        $baz = __section('baz');
+        $bom = __section('bom', [
+           'tac' => __section('tac'),
+           'tic' => __section('tic'),
+        ]);
+        $expected = ['foo' => __section('foo', [
+            'baz' => $baz,
+            'bom' => $bom,
+        ])];
+        $this->assertEquals($expected, $filtered['sections']);
     }
 
     protected function setUp()
@@ -58,4 +59,9 @@ function __section($handle, array $sections = null)
         'handle'   => $handle,
         'sections' => $sections,
     ]);
+    return [$handle => array_filter([
+        'title'    => ucwords(str_unslug($handle)),
+        'handle'   => $handle,
+        'sections' => $sections,
+    ])];
 }

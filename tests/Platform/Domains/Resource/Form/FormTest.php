@@ -105,6 +105,9 @@ class FormTest extends ResourceTestCase
         $this->assertTrue($user->wasRecentlyCreated());
     }
 
+    /**
+     * @group http
+     */
     function test__resource_create_over_http()
     {
         $response = $this->getJsonUser($this->users->route('create'));
