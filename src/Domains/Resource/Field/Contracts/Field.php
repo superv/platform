@@ -53,8 +53,6 @@ interface Field
 
     public function hide();
 
-    public function observe(Field $parent, ?EntryContract $entry = null);
-
     public function getAlterQueryCallback();
 
     public function getRules();

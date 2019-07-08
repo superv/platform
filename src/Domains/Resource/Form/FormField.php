@@ -2,8 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 
 class FormField implements ProvidesField
 {
@@ -75,5 +77,28 @@ class FormField implements ProvidesField
         $this->temporal = $temporal;
 
         return $this;
+    }
+
+    public function observe(FormField $parent, ?EntryContract $entry = null)
+    {
+        $parent = $parent->base();
+
+        $parent->setConfigValue('meta.on_change_event', $parent->getName().':'.$parent->getColumnName().'={value}');
+
+        $this->base()->mergeConfig([
+            'meta' => [
+                'listen_event' => $parent->getName(),
+                'autofetch'    => false,
+            ],
+        ]);
+
+        if ($entry) {
+            $this->base()->mergeConfig([
+                'meta' => [
+                    'query'     => [$parent->getColumnName() => $entry->{$parent->getColumnName()}],
+                    'autofetch' => false,
+                ],
+            ]);
+        }
     }
 }

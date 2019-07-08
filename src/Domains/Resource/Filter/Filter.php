@@ -137,13 +137,10 @@ abstract class Filter implements FilterContract, ProvidesField
         $field = FieldFactory::createFromArray([
             'type'        => $this->getType(),
             'name'        => $this->getIdentifier(),
-            'placeholder' => $this->getPlaceholder(),
+            'placeholder' => __($this->getPlaceholder()),
             'value'       => $this->getDefaultValue(),
 
         ]);
-
-//        if ($this->getIdentifier() === 'assigned')
-//        dd($field, $this->getDefaultValue());
 
         $this->fire('field.built', ['field' => $field]);
 

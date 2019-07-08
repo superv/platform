@@ -26,9 +26,13 @@ trait LabelConcern
 
     public function getSingularLabel()
     {
+        $key = $this->getAddon().'::resources.'.$this->getHandle().'.singular';
+        if ($value = trans($key)) {
+            return __($value);
+        }
 //        return sv_trans($this->addon.'::'.$this->getHandle().'.singular_label');
 
-        return $this->getConfigValue('singular_label', str_singular($this->getConfigValue('label')));
+        return __($this->getConfigValue('singular_label', str_singular($this->getConfigValue('label'))));
     }
 
     public function getEntryLabelTemplate()

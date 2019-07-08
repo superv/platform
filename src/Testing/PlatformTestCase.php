@@ -39,6 +39,8 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected $handleExceptions = true;
 
+    protected $basePath;
+
     public function basePath($path = null)
     {
         return __DIR__.($path ? '/'.$path : '');
@@ -178,7 +180,7 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected function installAddons(): void
     {
-        $this->app->setBasePath(realpath(__DIR__.'/../../../../../'));
+        $this->app->setBasePath($this->basePath ?? realpath(__DIR__.'/../../../../../'));
 
         foreach ($this->installs as $addon) {
             app(Installer::class)

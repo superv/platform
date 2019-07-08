@@ -1,4 +1,12 @@
 {
+    "Yes": "Evet",
+    "No": "Hayır",
+    "Created": "Oluşturuldu",
+    "Updated": "Güncellendi",
+    "Deleted": "Silindi",
+    "Search": "Ara",
+    "No results found": "Hiç sonuç bulunamadı",
+    "Upload": "Yükle",
     "Create": "Oluştur",
     "Create New": "Yeni :Object Oluştur",
     "Save": "Kaydet",
@@ -16,5 +24,6 @@
     "Resources": "Kaynaklar",
     "Forms": "Formlar",
     "Auth": "Auth",
-    "Showing :num Records": ":num kayıt gösteriliyor"
+    "Showing :num Records": ":num kayıt gösteriliyor",
+    "Login successful": "Giriş başarılı"
 }

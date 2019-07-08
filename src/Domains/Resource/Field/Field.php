@@ -124,12 +124,12 @@ class Field implements FieldContract
         if ($this->resource) {
             $key = $this->resource->getAddon().'::resources.'.$this->resource->getHandle().'.fields.'.$this->name;
             $value = trans($key);
-            if ($value && isset($value['label'])) {
-                return $value['label'];
+            if ($value !== $key) {
+                return $value['label'] ?? $value;
             }
         }
 
-        return $this->label ?? str_unslug($this->getName());
+        return __($this->label ?? str_unslug($this->getName()));
     }
 
     public function setLabel(string $label): FieldContract
@@ -249,27 +249,6 @@ class Field implements FieldContract
     public function getPlaceholder()
     {
         return $this->placeholder ?? $this->getLabel();
-    }
-
-    public function observe(FieldContract $parent, ?EntryContract $entry = null)
-    {
-        $parent->setConfigValue('meta.on_change_event', $parent->getName().':'.$parent->getColumnName().'={value}');
-
-        $this->mergeConfig([
-            'meta' => [
-                'listen_event' => $parent->getName(),
-                'autofetch'    => false,
-            ],
-        ]);
-
-        if ($entry) {
-            $this->mergeConfig([
-                'meta' => [
-                    'query'     => [$parent->getColumnName() => $entry->{$parent->getColumnName()}],
-                    'autofetch' => false,
-                ],
-            ]);
-        }
     }
 
     public function copyToFilters(array $params = []): FieldContract

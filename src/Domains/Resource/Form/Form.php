@@ -387,6 +387,7 @@ class Form implements FormContract, ProvidesUIComponent
         $temporalFields = $this->fields->filter(function (FormField $field) {
             return $field->isTemporal();
         });
+
         ValidateForm::dispatch($temporalFields, $this->request->all());
     }
 
@@ -400,7 +401,7 @@ class Form implements FormContract, ProvidesUIComponent
 
         if ($this->isUpdating()) {
             if ($this->resource && $callback = $this->resource->getCallback('editing')) {
-                app()->call($callback, ['form' => $this]);
+                app()->call($callback, ['form' => $this, 'entry' => $this->getEntry()]);
             }
         }
     }
