@@ -15,5 +15,6 @@
     "System": "Sistem",
     "Resources": "Kaynaklar",
     "Forms": "Formlar",
-    "Auth": "Auth"
+    "Auth": "Auth",
+    "Showing :num Records": ":num kayıt gösteriliyor"
 }

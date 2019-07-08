@@ -35,7 +35,7 @@ class ResourceIndexController extends BaseApiController
     {
         $resource = $this->resolveResource();
 
-        $page = ResourcePage::make($resource->getLabel());
+        $page = ResourcePage::make(__($resource->getLabel()));
         $page->setResource($resource);
 
         if ($callback = $resource->getCallback('index.page')) {

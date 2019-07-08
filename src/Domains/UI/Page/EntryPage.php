@@ -19,8 +19,6 @@ class EntryPage extends ResourcePage
     {
         $this->buildSections();
 
-//        $this->actions[] = RestoreEntryAction::make();
-
         $this->buildActions();
 
         return parent::build($tokens);
