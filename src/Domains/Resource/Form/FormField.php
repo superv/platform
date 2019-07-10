@@ -29,6 +29,21 @@ class FormField implements ProvidesField
         return $this->base->isHidden();
     }
 
+    public function isVisible()
+    {
+        return $this->base->isVisible();
+    }
+
+    public function doesNotInteractWithTable()
+    {
+        return $this->base->doesNotInteractWithTable();
+    }
+
+    public function getColumnName()
+    {
+        return $this->base->getColumnName();
+    }
+
     public function getLabel()
     {
         return $this->base->getLabel();

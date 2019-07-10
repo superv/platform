@@ -52,6 +52,7 @@ class ResourceTest extends ResourceTestCase
             'group_id' => ['required'],
             'age'      => ['integer', 'min:0', 'nullable'],
             'avatar'   => ['nullable'],
+            'roles'   => ['nullable'],
         ], $users->getRules());
     }
 
@@ -68,6 +69,7 @@ class ResourceTest extends ResourceTestCase
             'group_id' => ['sometimes', 'required'],
             'age'      => ['integer', 'min:0', 'nullable'],
             'avatar'   => ['nullable'],
+            'roles'   => ['nullable'],
         ], $users->getRules($user));
     }
 

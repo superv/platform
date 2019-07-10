@@ -86,25 +86,25 @@ class ResourceConfigTest extends ResourceTestCase
 
     function test__builds_label_from_table_name()
     {
-        $this->create('customers', function (Blueprint $table) {
+        $customers = $this->create('customers', function (Blueprint $table) {
             $table->increments('id');
         });
 
-        $this->assertEquals('Customers', ResourceFactory::make('customers')->getLabel());
-        $this->assertEquals('Customer', ResourceFactory::make('customers')->getSingularLabel());
+        $this->assertEquals('Customers', $customers->getLabel());
+        $this->assertEquals('platform::resources.customers.singular', $customers->getSingularLabel());
     }
 
     function test__builds_label_from_given()
     {
-        $this->create('customers', function (Blueprint $table, ResourceConfig $resource) {
+        $customers = $this->create('customers', function (Blueprint $table, ResourceConfig $resource) {
             $table->increments('id');
 
             $resource->label('SuperV Customers');
             $resource->singularLabel('Customer');
         });
 
-        $this->assertEquals('SuperV Customers', ResourceFactory::make('customers')->getLabel());
-        $this->assertEquals('Customer', ResourceFactory::make('customers')->getSingularLabel());
+        $this->assertEquals('SuperV Customers', $customers->getLabel());
+        $this->assertEquals('platform::resources.customers.singular', $customers->getSingularLabel());
     }
 
     function test__builds_label_for_resource_entry()

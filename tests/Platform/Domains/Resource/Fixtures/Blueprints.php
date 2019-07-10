@@ -32,10 +32,14 @@ class Blueprints
                 $table->file('avatar')->config(['disk' => 'fakedisk']);
 
                 $table->belongsTo('t_groups', 'group')->showOnIndex();
-                $table->belongsToMany('t_roles', 'roles', 'assigned_roles', 'user_id', 'role_id',
-                    function (Blueprint $pivotTable) {
-                        $pivotTable->string('notes');
-                    });
+                $table->belongsToMany('t_roles', 'roles')
+                    ->pivotTable('assigned_roles')
+                    ->pivotForeignKey('user_id')
+                    ->pivotRelatedKey('role_id')
+                    ->pivotColumns(
+                        function (Blueprint $pivotTable) {
+                            $pivotTable->string('notes');
+                        });
 
                 $table->morphToMany('t_actions', 'actions', 'owner', 'assigned_actions', 'action',
                     function (Blueprint $pivotTable) {

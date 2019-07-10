@@ -66,11 +66,14 @@ class RelationsTest extends ResourceTestCase
         /** @test */
         $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
-            $table->belongsToMany(
-                TestRole::class, 'roles', 't_user_roles', 'user_id', 'role_id',
-                function (Blueprint $pivotTable) {
-                    $pivotTable->string('status');
-                });
+            $table->belongsToMany(TestRole::class, 'roles')
+                  ->pivotTable('t_user_roles')
+                  ->pivotForeignKey('user_id')
+                  ->pivotRelatedKey('role_id')
+                  ->pivotColumns(
+                      function (Blueprint $pivotTable) {
+                          $pivotTable->string('status');
+                      });
         });
 
         $users = ResourceFactory::make('t_users');

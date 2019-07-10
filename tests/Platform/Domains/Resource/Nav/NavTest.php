@@ -117,38 +117,45 @@ class NavTest extends ResourceTestCase
             'title'    => 'Acp',
             'handle'   => 'acp',
             'sections' => [
-                [
-                    'title'    => 'Foo',
-                    'handle'   => 'foo',
-                    'sections' => [
-                        [
-                            'title'  => 'Bar',
-                            'handle' => 'bar',
-                        ],
-                        [
-                            'title'    => 'Baz',
-                            'handle'   => 'baz',
-                            'sections' => [
+                'foo' =>
+                    [
+                        'title'    => 'Foo',
+                        'handle'   => 'foo',
+                        'sections' => [
+                            'bar' =>
                                 [
-                                    'title'  => 'Bom',
-                                    'handle' => 'bom',
+                                    'title'  => 'Bar',
+                                    'handle' => 'bar',
                                 ],
-                            ],
+                            'baz' =>
+                                [
+                                    'title'    => 'Baz',
+                                    'handle'   => 'baz',
+                                    'sections' => [
+                                        'bom' =>
+                                            [
+                                                'title'  => 'Bom',
+                                                'handle' => 'bom',
+                                            ],
+                                    ],
+                                ],
                         ],
                     ],
-                ],
+                'bar' =>
                 [
                     'title'    => 'Bar',
                     'handle'   => 'bar',
                     'sections' => [
-                        [
-                            'title'  => 'Baz',
-                            'handle' => 'baz',
-                        ],
-                        [
-                            'title'  => 'Foo',
-                            'handle' => 'foo',
-                        ],
+                        'baz' =>
+                            [
+                                'title'  => 'Baz',
+                                'handle' => 'baz',
+                            ],
+                        'foo' =>
+                            [
+                                'title'  => 'Foo',
+                                'handle' => 'foo',
+                            ],
                     ],
                 ],
             ],
@@ -212,7 +219,7 @@ class NavTest extends ResourceTestCase
         Nav::building('acp.settings', 'Bar', 'bar');
 
         $composed = Nav::get('acp')->compose();
-        $this->assertEquals(3, count(array_get($composed, 'sections.0.sections')));
+        $this->assertEquals(3, count(array_get($composed, 'sections.settings.sections')));
     }
 
     function test__adds_full_colophon_for_authorization_check()
@@ -225,23 +232,25 @@ class NavTest extends ResourceTestCase
             'handle'   => 'acp',
             'colophon' => 'acp',
             'sections' => [
-                [
+                'foo' => [
                     'title'    => 'Foo',
                     'handle'   => 'foo',
                     'colophon' => 'acp.foo',
                     'sections' => [
-                        [
-                            'title'    => 'Baz',
-                            'handle'   => 'baz',
-                            'colophon' => 'acp.foo.baz',
-                            'sections' => [
-                                [
-                                    'title'    => 'Bom',
-                                    'handle'   => 'bom',
-                                    'colophon' => 'acp.foo.baz.bom',
+                        'baz' =>
+                            [
+                                'title'    => 'Baz',
+                                'handle'   => 'baz',
+                                'colophon' => 'acp.foo.baz',
+                                'sections' => [
+                                    'bom' =>
+                                        [
+                                            'title'    => 'Bom',
+                                            'handle'   => 'bom',
+                                            'colophon' => 'acp.foo.baz.bom',
+                                        ],
                                 ],
                             ],
-                        ],
                     ],
                 ],
             ],
