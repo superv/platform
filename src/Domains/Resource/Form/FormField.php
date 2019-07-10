@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Resource\Form;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 
 class FormField implements ProvidesField
 {
@@ -48,6 +47,23 @@ class FormField implements ProvidesField
     public function base(): Field
     {
         return $this->base;
+    }
+
+    public function hide()
+    {
+        $this->base->hide();
+
+        return $this;
+    }
+
+    public function setConfigValue($key, $value)
+    {
+        $this->base->setConfigValue($key, $value);
+    }
+
+    public function setDefaultValue($value)
+    {
+        $this->base->setDefaultValue($value);
     }
 
     public function getLocation(): ?FieldLocation
