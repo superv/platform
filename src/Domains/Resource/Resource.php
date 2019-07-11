@@ -373,7 +373,7 @@ final class Resource implements
         }
 
         if ($route === 'view.page') {
-            return $base.'/'.$entry->getId();
+            return $base.'/'.$entry->getId().'/view-page';
         }
 
         if ($route === 'edit') {

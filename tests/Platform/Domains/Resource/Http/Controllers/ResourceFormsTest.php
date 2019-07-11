@@ -36,26 +36,22 @@ class ResourceFormsTest extends ResourceTestCase
         //
         $page = $this->getUserPage($users->route('create'));
 
-        $form = HelperComponent::from($page->getProp('blocks.0'));
-        $this->assertEquals(7, $form->countProp('fields'));
+        $formBlock = HelperComponent::from($page->getProp('blocks.0'));
+        $form = $this->getUserPage($formBlock->getProp('url'));
+        $this->assertEquals(8, $form->countProp('fields'));
 
         $fields = collect($form->getProp('fields'))->keyBy('name');
 
         $group = $fields->get('group');
         $this->assertEquals('belongs_to', $group['type']);
-//        $this->assertEquals(sv_resource('t_groups')->count(), count($group['meta']['options']));
 
-//        $first = sv_resource('t_groups')->first();
-//        $this->assertEquals(
-//            ['value' => $first->getId(), 'text' => $first->title],
-//            $group['meta']['options'][0]
-//        );
     }
 
     function test__displays_extended_create_form()
     {
         $users = $this->schema()->users();
 
+        $this->withoutExceptionHandling();
         // extend resource creation form
         //
         Resource::extend('t_users')->with(function (Resource $resource) {
@@ -67,8 +63,9 @@ class ResourceFormsTest extends ResourceTestCase
         // Get Create form
         //
         $page = $this->getUserPage($users->route('create'));
+        $formBlock = HelperComponent::from($page->getProp('blocks.0'));
+        $form = $this->getUserPage($formBlock->getProp('url'));
 
-        $form = HelperComponent::from($page->getProp('blocks.0'));
         $this->assertEquals(3, $form->countProp('fields'));
     }
 
@@ -101,7 +98,7 @@ class ResourceFormsTest extends ResourceTestCase
         $this->assertNotNull($form->getProp('fields.0'));
 
         $fields = collect($form->getProp('fields'))->keyBy('name');
-        $this->assertEquals(7, $fields->count());
+        $this->assertEquals(8, $fields->count());
 
         $name = $fields->get('name');
         $this->assertNotNull($name['uuid']);

@@ -203,7 +203,7 @@ class Form implements FormContract, ProvidesUIComponent
     {
         $fields = is_array($fields) ? $fields : func_get_args();
 
-        $this->getFields()->map(function (Field $field) use ($fields) {
+        $this->getFields()->map(function (FormField $field) use ($fields) {
             if (! in_array($field->getName(), $fields)) {
                 $field->hide();
             }

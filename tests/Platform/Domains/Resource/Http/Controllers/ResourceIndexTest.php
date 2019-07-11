@@ -40,6 +40,7 @@ class ResourceIndexTest extends ResourceTestCase
         $this->assertEquals($users->route('index.table').'/data', $table->getProp('config.data_url'));
 
         $fields = $table->getProp('config.fields');
+
         $this->assertEquals(3, count($fields));
         foreach ($fields as $key => $field) {
             $this->assertTrue(is_numeric($key));
@@ -55,7 +56,7 @@ class ResourceIndexTest extends ResourceTestCase
 
             $this->assertEquals('view', $rowActions[0]['props']['name']);
             $this->assertEquals('View', $rowActions[0]['props']['title']);
-            $this->assertEquals('sv/res/t_users/{entry.id}', $rowActions[0]['props']['url']);
+            $this->assertEquals('sv/res/t_users/{entry.id}/view-page', $rowActions[0]['props']['url']);
             $this->assertEquals('', $rowActions[0]['props']['button']['title']);
             $this->assertEquals('view', $rowActions[0]['props']['button']['icon']);
         }
@@ -65,8 +66,8 @@ class ResourceIndexTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
         $users = $this->schema()->users();
-        $userB = $users->fake(['group_id' => 2]);
-        $userA = $users->fake(['group_id' => 1]);
+        $userA = $users->fake(['id' => 1,'group_id' => 1]);
+        $userB = $users->fake(['id' => 2, 'group_id' => 2]);
 
         $rows = $this->getTableRowsOfResource($users);
         $this->assertEquals(2, count($rows));
@@ -76,7 +77,7 @@ class ResourceIndexTest extends ResourceTestCase
 
         $label = $rowA['fields'][0];
         $this->assertEquals('text', $label['type']);
-        $this->assertEquals('label', $label['name']);
+        $this->assertEquals('name', $label['name']);
         $this->assertEquals($users->getEntryLabel($userA), $label['value']);
 
         $age = $rowA['fields'][1];

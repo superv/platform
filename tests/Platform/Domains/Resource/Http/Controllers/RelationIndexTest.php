@@ -103,7 +103,7 @@ class RelationIndexTest extends ResourceTestCase
         $this->assertEquals(2, count($table->getProp('config.row_actions')));
         $action = HelperComponent::from($table->getProp('config.row_actions.1'));
 
-        $this->assertEquals('sv/res/t_roles/{entry.id}', $action->getProp('url'));
+        $this->assertEquals('sv/res/t_roles/{entry.id}/view-page', $action->getProp('url'));
 
         // Check context action ATTACH NEW
         //
@@ -177,8 +177,8 @@ class RelationIndexTest extends ResourceTestCase
         //
         $this->assertNotNull($rows[0]['fields'][1] ?? null);
 
-        $this->assertEquals('fail', $rows[0]['fields'][1]['value']);
+        $this->assertEquals('pass', $rows[0]['fields'][1]['value']);
         $this->assertEquals('fail', $rows[1]['fields'][1]['value']);
-        $this->assertEquals('pass', $rows[2]['fields'][1]['value']);
+        $this->assertEquals('fail', $rows[2]['fields'][1]['value']);
     }
 }

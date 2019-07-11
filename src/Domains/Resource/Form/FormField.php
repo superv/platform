@@ -49,6 +49,11 @@ class FormField implements ProvidesField
         return $this->base->getLabel();
     }
 
+    public function getName()
+    {
+        return $this->base->getName();
+    }
+
     public function getIdentifier()
     {
         return $this->base->getColumnName();

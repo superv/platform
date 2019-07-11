@@ -24,7 +24,7 @@ class Blueprints
                 $resource->label('Users');
 
                 $table->increments('id');
-                $table->string('name');
+                $table->string('name')->entryLabel();
                 $table->email('email')->unique();
                 $table->string('bio')->rules(['string'])->nullable();
                 $table->unsignedInteger('age')->nullable()->showOnIndex();
@@ -90,7 +90,7 @@ class Blueprints
         $roles = $this->create('t_roles', function (Blueprint $table, ResourceConfig $resource) {
             $resource->resourceKey('role');
             $table->increments('id');
-            $table->string('title')->unique();
+            $table->string('title')->unique()->entryLabel();
         });
 
         $roles->create(['id' => 1, 'title' => 'client']);
@@ -103,7 +103,7 @@ class Blueprints
     {
         $actions = $this->create('t_actions', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('action')->unique();
+            $table->string('action')->unique()->entryLabel();
         });
 
         $actions->create(['action' => 'create']);
