@@ -27,6 +27,10 @@ class CreateUsersResource extends Migration
             };
             $table->morphToMany('sv_auth_actions', 'actions', 'owner', 'sv_auth_assigned_actions', 'action_id', $pivotColumns);
         });
+
+        Schema::table('users', function(Blueprint $table) {
+            $table->restorable();
+        });
     }
 
     public function down()
