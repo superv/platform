@@ -2,8 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Http;
 
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -15,8 +13,7 @@ trait ResolvesResource
     /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
     protected $entry;
 
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
-    protected function resolveResource()
+    protected function resolveResource($resolveEntry = true)
     {
         if ($this->resource) {
             return $this->resource;
@@ -28,21 +25,13 @@ trait ResolvesResource
             throw new \Exception("Resource not found [{$resource}]");
         }
 
-        if ($id = request()->route()->parameter('id')) {
-            if (! $this->entry = $this->resource->find($id)) {
-                PlatformException::fail('Entry not found');
-            }
-            if ($keyName = $this->resource->getConfigValue('key_name')) {
-                $this->entry->setKeyName($keyName);
-            }
+        if ($resolveEntry) {
+            $this->resolveEntry();
         }
 
         return $this->resource;
     }
 
-    /**
-     * @return \SuperV\Platform\Domains\Resource\Relation\Relation|ProvidesForm|ProvidesTable
-     */
     protected function resolveRelation()
     {
         $relation = $this->resolveResource()->getRelation($this->route->parameter('relation'));
@@ -58,5 +47,19 @@ trait ResolvesResource
         return $this->resolveResource()
                     ->resolveTable()
                     ->getAction($this->route->parameter('action'));
+    }
+
+    protected function resolveEntry()
+    {
+        if ($id = request()->route()->parameter('id')) {
+            if (! $this->entry = $this->resource->find($id)) {
+                PlatformException::fail('Entry not found');
+            }
+            if ($keyName = $this->resource->getConfigValue('key_name')) {
+                $this->entry->setKeyName($keyName);
+            }
+        }
+
+        return $this->entry;
     }
 }

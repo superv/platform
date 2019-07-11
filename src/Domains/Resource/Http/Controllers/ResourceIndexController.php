@@ -26,9 +26,11 @@ class ResourceIndexController extends BaseApiController
 
     public function restore()
     {
-        $this->resolveResource();
+        $resource = $this->resolveResource(false);
 
-        $this->entry->restore();
+        $entry = $resource->newQuery(false)->withTrashed()->find(request()->route()->parameter('id'));
+
+        $entry->restore();
     }
 
     public function page()
