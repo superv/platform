@@ -3,9 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use Illuminate\Database\Eloquent\Model;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Database\Model\Entry;
 
-class FieldModel extends ResourceEntry
+class FieldModel extends Entry
 {
     protected $table = 'sv_fields';
 
