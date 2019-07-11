@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Model;
 
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Model\MakesEntry;
@@ -24,10 +25,8 @@ class ResourceEntry extends Entry
     {
         parent::boot();
 
-//        static::addGlobalScope(new SoftDeletingScope);
-
         static::saving(function (ResourceEntry $entry) {
-            if (!starts_with($entry->getTable(), 'sv_')) {
+            if (! starts_with($entry->getTable(), 'sv_')) {
                 if ($entry->getResource()->hasUuid() && is_null($entry->uuid)) {
                     $entry->setAttribute('uuid', uuid());
                 }
@@ -89,12 +88,21 @@ class ResourceEntry extends Entry
     /**
      * Create a new Eloquent query builder for the model.
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param \Illuminate\Database\Query\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder|static
      */
     public function newEloquentBuilder($query)
     {
         return new Builder($query);
+    }
+
+    public function newQuery()
+    {
+        if (optional($this->getResource())->isRestorable()) {
+            static::addGlobalScope(new SoftDeletingScope());
+        }
+
+        return parent::newQuery();
     }
 
     /**
@@ -132,20 +140,6 @@ class ResourceEntry extends Entry
         return $relation->newQuery();
     }
 
-    protected function resolveRelation($name)
-    {
-        if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
-            return null;
-        }
-
-        $relation = RelationBuilder::resolveFromRelationEntry($relation);
-        if ($relation instanceof AcceptsParentEntry) {
-            $relation->acceptParentEntry($this);
-        }
-
-        return $relation;
-    }
-
     /** @return \SuperV\Platform\Domains\Resource\Resource */
     public function getResource()
     {
@@ -154,6 +148,13 @@ class ResourceEntry extends Entry
         }
 
         return $this->resource;
+    }
+
+    public function setResource(Resource $resource): ResourceEntry
+    {
+        $this->resource = $resource;
+
+        return $this;
     }
 
     public function getHandle(): string
@@ -171,13 +172,6 @@ class ResourceEntry extends Entry
         $field = $this->getResource()->getField($name);
 
         return $field->setWatcher($this);
-    }
-
-    public function setResource(Resource $resource): ResourceEntry
-    {
-        $this->resource = $resource;
-
-        return $this;
     }
 
     public static function make(Resource $resource)
@@ -208,5 +202,19 @@ class ResourceEntry extends Entry
         $model->setResourceConfig($resource->getConfig());
 
         return $model;
+    }
+
+    protected function resolveRelation($name)
+    {
+        if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
+            return null;
+        }
+
+        $relation = RelationBuilder::resolveFromRelationEntry($relation);
+        if ($relation instanceof AcceptsParentEntry) {
+            $relation->acceptParentEntry($this);
+        }
+
+        return $relation;
     }
 }

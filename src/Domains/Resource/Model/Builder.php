@@ -13,7 +13,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder
     /**
      * Get the relation instance for the given relation name.
      *
-     * @param  string $name
+     * @param string $name
      * @return \Illuminate\Database\Eloquent\Relations\Relation
      */
     public function getRelation($name)

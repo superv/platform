@@ -33,9 +33,9 @@ class RestorableTest extends ResourceTestCase
         $this->deleteJsonUser($entry->route('delete'))->assertOk();
 
         $trashed = $entry->fresh();
-
         $this->assertNotNull($trashed->deleted_at);
         $this->assertNotNull($trashed->deleted_by_id);
+        $this->assertEquals(0, $entries->count());
     }
 
     function test__restore()
@@ -45,11 +45,13 @@ class RestorableTest extends ResourceTestCase
         $entry = $entries->create([]);
         $this->assertNull($entry->deleted_at);
         $entry->delete();
+        $this->assertEquals(0, $entries->count());
         $this->assertNotNull($entry->fresh()->deleted_at);
 
         $entry->restore();
         $this->assertNull($entry->fresh()->deleted_at);
         $this->assertNull($entry->fresh()->deleted_by_id);
+        $this->assertEquals(1, $entries->count());
     }
 
     /**
@@ -57,13 +59,17 @@ class RestorableTest extends ResourceTestCase
      */
     function test__restore_over_http()
     {
+        $this->withoutExceptionHandling();
+
         // ARRANGE
         $entries = $this->createEntriesResource();
         $entry = $entries->create([]);
+
         $this->deleteJsonUser($entry->route('delete'))->assertOk();
 
         // ACT
-        $this->postJsonUser($entry->route('restore'))->assertOk();
+        $response = $this->postJsonUser($entry->route('restore'));
+        $response->assertOk();
 
         // ASSERT
         $restored = $entry->fresh();

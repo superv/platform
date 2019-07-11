@@ -20,14 +20,9 @@ trait RepoConcern
         $this->scopes[] = $scope;
     }
 
-    /** @return \Illuminate\Database\Eloquent\Builder */
     public function newQuery()
     {
         $query = $this->newEntryInstance()->newQuery()->with($this->with);
-
-        if ($this->isRestorable()) {
-            $query->whereNull('deleted_at');
-        }
 
         foreach ($this->scopes as $scope) {
             $scope($query);
