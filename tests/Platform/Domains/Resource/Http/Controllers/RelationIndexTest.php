@@ -171,6 +171,9 @@ class RelationIndexTest extends ResourceTestCase
         $response->assertOk();
 
         $rows = $response->decodeResponseJson('data.rows');
+        // to avoid race condition
+        $rows = collect($rows)->sortBy('id')->values()->all();
+
         $this->assertEquals(3, count($rows));
 
         // first make sure we have the pivot fields on table

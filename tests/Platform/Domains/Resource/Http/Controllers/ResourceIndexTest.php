@@ -72,6 +72,9 @@ class ResourceIndexTest extends ResourceTestCase
         $rows = $this->getTableRowsOfResource($users);
         $this->assertEquals(2, count($rows));
 
+        // to avoid race condition
+        $rows = collect($rows)->sortBy('id')->values()->all();
+
         $rowA = $rows[0];
         $this->assertEquals($userA->getId(), $rowA['id']);
 
