@@ -205,6 +205,7 @@ class ResourceFormsTest extends ResourceTestCase
         });
 
         $form = FormBuilder::buildFromResource($users);
+        $form->make();
 
         $this->assertEquals(0, count($form->compose()->get('fields')));
     }

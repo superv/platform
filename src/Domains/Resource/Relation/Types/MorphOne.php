@@ -20,10 +20,9 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequ
         $form = FormBuilder::buildFromEntry($this->getRelatedEntry());
         $formData = FormModel::findByUuid($this->getRelatedResource()->getHandle());
 
-        return $form
-            ->hideField($this->relationConfig->getMorphName())
-            ->hideFields(['xcountry', 'xphone_country'])
-            ->make($formData ? $formData->uuid : null);
+        return $form->make($formData ? $formData->uuid : null)
+                    ->hideField($this->relationConfig->getMorphName())
+                    ->hideFields(['xcountry', 'xphone_country']);
     }
 
     public function getFormTitle(): string

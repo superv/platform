@@ -119,10 +119,12 @@ final class Resource implements
         $this->hydrate($attributes);
 
         $this->fields = (new Fields($this, $this->fields));
+
         if (is_null($this->relations)) {
             throw new Exception('aa');
         }
         $this->relations = ($this->relations)($this);
+
         $this->actions = collect();
     }
 
@@ -198,12 +200,17 @@ final class Resource implements
         return $this->fields()->get($name);
     }
 
+    public function getFieldEntries(): Collection
+    {
+        if (is_callable($this->fieldEntries)) {
+            $this->fieldEntries = ($this->fieldEntries)();
+        }
+
+        return $this->fieldEntries;
+    }
+
     public function getRelations(): Collection
     {
-//        if ($this->relations instanceof Closure) {
-//            $this->relations = ($this->relations)($this);
-//        }
-
         return $this->relations->merge(collect($this->mergeRelations));
     }
 
@@ -489,24 +496,9 @@ final class Resource implements
         return $this->sortable;
     }
 
-    /**
-     * @return string
-     */
     public function getAddon(): string
     {
         return $this->addon;
-    }
-
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    public function getFieldEntries(): Collection
-    {
-        if (is_callable($this->fieldEntries)) {
-            $this->fieldEntries = ($this->fieldEntries)();
-        }
-
-        return $this->fieldEntries;
     }
 
     public function uuid(): string
@@ -519,11 +511,6 @@ final class Resource implements
         return $this->id;
     }
 
-    /**
-     * Get the instance as an array.
-     *
-     * @return array
-     */
     public function toArray()
     {
         return [

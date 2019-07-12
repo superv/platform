@@ -77,10 +77,6 @@ interface Field
 
     public function getMutator($for);
 
-    public function getForm(): Form;
-
-    public function setForm(Form $form): void;
-
     public function setPresenter(Closure $callback): Field;
 
     /**

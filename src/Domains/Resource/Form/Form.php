@@ -13,6 +13,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Contracts\Form as FormContract;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Domains\Resource\Form\Jobs\ValidateForm;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
@@ -70,6 +71,8 @@ class Form implements FormContract, ProvidesUIComponent
 
     protected $mode = Form::MODE_CREATE;
 
+    protected $isMade = false;
+
     public function make($uuid = null)
     {
         $this->uuid = $uuid ?? uuid();
@@ -82,8 +85,15 @@ class Form implements FormContract, ProvidesUIComponent
             }
         }
 
-        $this->fields->map(function (FormField $formField) {
-            $field = $formField->base();
+//        $this->fields->transform(function ($field) {
+//            if ($field instanceof Field) {
+//                return (new FormField($field))->setForm($this);
+//            }
+//
+//            return $field;
+//        })
+
+                     $this->fields->map(function (FormField $field) {
 
             $field->setForm($this);
 
@@ -99,6 +109,8 @@ class Form implements FormContract, ProvidesUIComponent
                 $field->fillFromEntry($this->getEntry());
             }
         });
+
+        $this->isMade = true;
 
         return $this;
     }
@@ -168,6 +180,7 @@ class Form implements FormContract, ProvidesUIComponent
     public function mergeFields($fields)
     {
         $fields = $this->provideFields($fields);
+
         $this->fields = $this->fields->merge($fields);
 
         return $this;
@@ -179,7 +192,7 @@ class Form implements FormContract, ProvidesUIComponent
             throw new Exception('Field not found: '.$fieldName);
         }
 
-        $field->base()->hide();
+        $field->hide();
 
         $this->hiddenFields[] = $fieldName;
 
@@ -191,8 +204,8 @@ class Form implements FormContract, ProvidesUIComponent
         $fields = is_array($fields) ? $fields : func_get_args();
 
         $this->getFields()->map(function (FormField $field) use ($fields) {
-            if (in_array($field->base()->getName(), $fields)) {
-                $field->base()->hide();
+            if (in_array($field->getName(), $fields)) {
+                $field->hide();
             }
         });
 
@@ -212,11 +225,11 @@ class Form implements FormContract, ProvidesUIComponent
         return $this;
     }
 
-    public function addField($field)
+    public function addField(FormField $field)
     {
-        if (is_array($field)) {
-            $field = new FormField(FieldFactory::createFromArray($field));
-        }
+//        if (is_array($field)) {
+//            $field = new FormField(FieldFactory::createFromArray($field));
+//        }
         // Fields added on the fly should be marked as temporal
         //
         $field->setTemporal(true);
@@ -252,6 +265,9 @@ class Form implements FormContract, ProvidesUIComponent
 
     public function setFields($fields)
     {
+        if ($this->isMade) {
+            throw new Exception('Can not set fields after form is made');
+        }
         $this->fields = $this->provideFields($fields);
 
         return $this;
@@ -261,7 +277,7 @@ class Form implements FormContract, ProvidesUIComponent
     {
         return $this->fields->first(
             function (FormField $field) use ($name) {
-                return $field->base()->getName() === $name;
+                return $field->getName() === $name;
             });
     }
 
@@ -373,13 +389,7 @@ class Form implements FormContract, ProvidesUIComponent
                 });
         }
 
-        return collect($fields)->map(function ($field) {
-            if ($field instanceof Field) {
-                return (new FormField($field))->setForm($this);
-            }
-
-            return $field;
-        });
+        return wrap_collect($fields);
     }
 
     protected function validateTemporalFields(): void
@@ -420,7 +430,7 @@ class Form implements FormContract, ProvidesUIComponent
                 return;
             }
 
-            $field->base()->fire('before.saving', ['request' => $this->request]);
+            $field->fire('before.saving', ['request' => $this->request]);
         });
     }
 
@@ -431,7 +441,7 @@ class Form implements FormContract, ProvidesUIComponent
                 return;
             }
 
-            $this->postSaveCallbacks[] = $field->base()->resolveRequest($this->request, $this->getEntry());
+            $this->postSaveCallbacks[] = $field->resolveRequest($this->request, $this->getEntry());
         });
     }
 

@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
 use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Validator;
-use SuperV\Platform\Domains\Resource\Form\FormField;
+use SuperV\Platform\Domains\Resource\Form\OldFormField;
 use SuperV\Platform\Support\Dispatchable;
 
 class ValidateForm
@@ -35,14 +35,14 @@ class ValidateForm
     public function handle(Validator $validator)
     {
         $rules = $this->fields
-            ->map(function (FormField $field) {
+            ->map(function (OldFormField $field) {
                 return [$field->getIdentifier(), $this->parseFieldRules($field)];
             })->filter()
             ->toAssoc()
             ->all();
 
         $attributes = $this->fields
-            ->map(function (FormField $field) {
+            ->map(function (OldFormField $field) {
                 return [$field->getIdentifier(), $field->getLabel()];
             })->filter()
             ->toAssoc()
@@ -51,7 +51,7 @@ class ValidateForm
         $validator->make($this->data, $rules, [], $attributes);
     }
 
-    private function parseFieldRules(FormField $field)
+    private function parseFieldRules(OldFormField $field)
     {
         $rules = $field->base()->getRules();
 

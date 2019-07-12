@@ -109,16 +109,6 @@ class Field implements FieldContract
 
     protected function boot() { }
 
-    public function getForm(): Form
-    {
-        return $this->form;
-    }
-
-    public function setForm(Form $form): void
-    {
-        $this->form = $form;
-    }
-
     public function getLabel(): string
     {
         if ($this->resource) {

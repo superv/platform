@@ -67,7 +67,6 @@ class FormComposer
     {
         return $this->form->getFields()
                           ->filter(function (FormField $field) {
-                              $field = $field->base();
 
                               return ! $field->isHidden() && ! $field->hasFlag('form.hide');
                           })

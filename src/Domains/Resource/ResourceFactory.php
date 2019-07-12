@@ -83,6 +83,7 @@ class ResourceFactory
 
                                          return $relation;
                                      })->all();
+
             // get rid of eloquent collection
             //
             return collect($relations)->keyBy(function (Relation $relation) { return $relation->getName(); });
