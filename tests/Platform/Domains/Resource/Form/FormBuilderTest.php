@@ -22,9 +22,9 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
  * @package Tests\Platform\Domains\Resource\Form
  * @group   resource
  */
-class FormBuilderTest extends ResourceTestCase
+class FormBuilderTest
 {
-    function test__build()
+    function  __build()
     {
        $posts = $this->schema()->posts();
 
@@ -32,7 +32,7 @@ class FormBuilderTest extends ResourceTestCase
         $builder->setResource($posts);
 
         $form = $builder->build();
-
+        $this->assertNotEquals(0, $form->getFields()->count());
 //        dd($form->getFields());
     }
 }
