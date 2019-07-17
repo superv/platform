@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormField as FormFieldContract;
 
@@ -66,5 +67,10 @@ class FormField extends Field implements FormFieldContract
     public function isTemporal(): bool
     {
         return $this->temporal;
+    }
+
+    public static function make(array $params)
+    {
+        return FieldFactory::createFromArray($params, self::class);
     }
 }

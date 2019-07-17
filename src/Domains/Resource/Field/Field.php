@@ -204,6 +204,11 @@ class Field implements FieldContract
         return $this->name;
     }
 
+    public function getIdentifier()
+    {
+        return $this->getColumnName();
+    }
+
     public function getColumnName(): ?string
     {
         if (method_exists($this->fieldType, 'getColumnName')) {

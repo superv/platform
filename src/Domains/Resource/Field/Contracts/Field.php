@@ -13,6 +13,8 @@ interface Field
 {
     public function getName();
 
+    public function getIdentifier();
+
     public function getType(): string;
 
     public function setType(string $type): Field;
