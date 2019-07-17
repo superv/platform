@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Closure;
-use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
@@ -26,7 +25,6 @@ use SuperV\Platform\Domains\Resource\Resource\TestHelper;
 use SuperV\Platform\Domains\Resource\Table\ResourceTable;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
-use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 final class Resource implements
@@ -34,7 +32,7 @@ final class Resource implements
     Contracts\ProvidesQuery
 {
     use Hydratable;
-    use HasConfig;
+//    use HasConfig;
     use LabelConcern;
     use RepoConcern;
     use FiresCallbacks;
@@ -114,18 +112,29 @@ final class Resource implements
 
     protected $sortable = false;
 
+    /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
+    protected $config;
+
+    protected $extended = false;
+
+
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
 
+//        $this->config = new ResourceConfig($attributes['config']);
+
         $this->fields = (new Fields($this, $this->fields));
 
-        if (is_null($this->relations)) {
-            throw new Exception('aa');
-        }
         $this->relations = ($this->relations)($this);
 
         $this->actions = collect();
+    }
+
+    public function config(): ResourceConfig
+    {
+        return $this->config;
     }
 
     public function registerAction($identifier, $handler): Resource
@@ -288,10 +297,10 @@ final class Resource implements
                 if (is_array($rule)) {
                     $key = $rule['rule'];
                     if (str_contains($key, ':')) {
-                        $key = explode(':',$rule['rule'])[0];
+                        $key = explode(':', $rule['rule'])[0];
                     }
 
-                    return [$field->getColumnName().'.'.$key=> $rule['message']];
+                    return [$field->getColumnName().'.'.$key => $rule['message']];
                 }
 
                 return null;
@@ -335,14 +344,14 @@ final class Resource implements
             ->all();
     }
 
-    public function getResourceKey()
+    public function getResourceKey_xxxxx()
     {
         return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
     }
 
     public function isOwned()
     {
-        return ! is_null($this->getConfigValue('owner_key'));
+        return ! is_null($this->config()->getOwnerKey());
     }
 
     public function getKeyName()
@@ -486,11 +495,6 @@ final class Resource implements
         return $this->restorable;
     }
 
-    public function hasUuid(): bool
-    {
-        return $this->getConfigValue('has_uuid', false);
-    }
-
     public function isSortable(): bool
     {
         return $this->sortable;
@@ -499,6 +503,22 @@ final class Resource implements
     public function getAddon(): string
     {
         return $this->addon;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExtended(): bool
+    {
+        return $this->extended;
+    }
+
+    /**
+     * @param bool $extended
+     */
+    public function setExtended(bool $extended): void
+    {
+        $this->extended = $extended;
     }
 
     public function uuid(): string

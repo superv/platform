@@ -121,10 +121,10 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
             $query->whereNotIn($keyName, $alreadyAttachedItems);
         }
 
-        $entryLabel = $resource->getConfigValue('entry_label', '#{id}');
+        $entryLabel = $resource->config()->getEntryLabel('#{id}');
 
         return $query->get()->map(function (EntryContract $item) use ($resource, $entryLabel) {
-            if ($keyName = $resource->getConfigValue('key_name')) {
+            if ($keyName = $resource->config()->getKeyName()) {
                 $item->setKeyName($keyName);
             }
 
@@ -136,7 +136,7 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
     {
         $resource = $this->resolveRelatedResource();
 
-        $entryLabel = $resource->getConfigValue('entry_label', '#{id}');
+        $entryLabel = $resource->config()->getEntryLabel('#{id}');
 
         if (! $entry = $this->field->getResource()->find($request['entry'])) {
             return [];
@@ -144,7 +144,7 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
 
         return $entry->{$this->getName()}()
                      ->get()->map(function (EntryContract $item) use ($resource, $entryLabel) {
-                if ($keyName = $resource->getConfigValue('key_name')) {
+                if ($keyName = $resource->config()->getKeyName()) {
                     $item->setKeyName($keyName);
                 }
 

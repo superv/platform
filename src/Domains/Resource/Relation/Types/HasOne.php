@@ -21,7 +21,7 @@ class HasOne extends Relation implements ProvidesForm, HandlesRequests
 
         return $form
             ->make($formData ? $formData->uuid : null)
-            ->hideField(sv_resource($this->parentEntry)->getResourceKey());
+            ->hideField(sv_resource($this->parentEntry)->config()->getResourceKey());
     }
 
     public function getFormTitle(): string

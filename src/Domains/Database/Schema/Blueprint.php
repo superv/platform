@@ -76,7 +76,7 @@ class Blueprint extends LaravelBlueprint
                 if ($column->change) {
                     ColumnUpdatedEvent::dispatch($this->tableName(), $this, $column);
                 } else {
-                    ColumnCreatedEvent::dispatch($this->tableName(), $this, $column, $this->resourceConfig()->model);
+                    ColumnCreatedEvent::dispatch($this->tableName(), $this, $column, $this->resourceConfig()->getModel());
                 }
 
                 return $column->ignore ? null : $column;

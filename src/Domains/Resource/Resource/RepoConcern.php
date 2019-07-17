@@ -40,7 +40,7 @@ trait RepoConcern
 
     public function newEntryInstance()
     {
-        if ($model = $this->getConfigValue('model')) {
+        if ($model = $this->config->getModel()) {
             // Custom Entry Model
             $entry = new $model;
         } else {

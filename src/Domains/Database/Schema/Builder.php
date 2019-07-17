@@ -14,14 +14,14 @@ class Builder extends \Illuminate\Database\Schema\Builder
     protected $schema;
 
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
-    protected $resource;
+    protected $resourceConfig;
 
     public function __construct(Connection $connection, Schema $schema)
     {
         parent::__construct($connection);
 
         $this->schema = $schema;
-        $this->resource = new ResourceConfig();
+        $this->resourceConfig = new ResourceConfig();
     }
 
     public function create($table, Closure $callback)
@@ -31,19 +31,19 @@ class Builder extends \Illuminate\Database\Schema\Builder
         $this->build(tap($mainBlueprint, function ($blueprint) use ($table, $callback) {
             $blueprint->create();
 
-            $callback($blueprint, $this->resource->setTable($table));
+            $callback($blueprint, $this->resourceConfig->setTable($table));
         }));
     }
 
     public function table($table, Closure $callback)
     {
         $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($table, $callback) {
-            $callback($blueprint, $this->resource->setTable($table));
+            $callback($blueprint, $this->resourceConfig->setTable($table));
         }));
     }
 
     public function resource(): ?ResourceConfig
     {
-        return $this->resource;
+        return $this->resourceConfig;
     }
 }

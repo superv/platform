@@ -24,13 +24,13 @@ class TableCreatingEvent extends BaseEvent
     public $addon;
 
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
-    public $resourceBlueprint;
+    public $resourceConfig;
 
     public function __construct($table, Collection $columns, ResourceConfig $blueprint, $addon)
     {
         $this->table = $table;
         $this->columns = $columns;
-        $this->resourceBlueprint = $blueprint;
+        $this->resourceConfig = $blueprint;
         $this->addon = $addon;
     }
 }

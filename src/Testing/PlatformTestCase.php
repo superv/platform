@@ -3,10 +3,12 @@
 namespace SuperV\Platform\Testing;
 
 use Current;
+use Exception;
 use Hub;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use SuperV\Platform\Console\Jobs\InstallSuperV;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Addon\Locator;
@@ -200,7 +202,7 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected function installSuperV(): void
     {
-        $this->artisan('superv:install');
+        app(InstallSuperV::class)();
 
         $this->setConfigParams();
 

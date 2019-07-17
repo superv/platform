@@ -40,21 +40,29 @@ class ResourceFactory
         return (new static($handle, $entry))->get();
     }
 
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
-    public static function make($handle)
+    public static function make($handle): ?Resource
     {
         if ($handle instanceof EntryContract) {
             $handle = $handle->getTable();
         }
 
         try {
-            $resource = new Resource(static::attributesFor($handle));
+            $attributes = static::attributesFor($handle);
+            $attributes['config'] = new ResourceConfig($attributes['config']);
+
+            $attributes = Hook::attributes($handle, $attributes);
+
+            $resource = new Resource($attributes);
+
             Extension::extend($resource);
 
-            return $resource;
+            Hook::resource($resource);
+
         } catch (Exception $e) {
             return null;
         }
+
+        return $resource;
     }
 
     protected function getFieldsProvider()

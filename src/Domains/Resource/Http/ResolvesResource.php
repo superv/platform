@@ -55,7 +55,7 @@ trait ResolvesResource
             if (! $this->entry = $this->resource->find($id)) {
                 PlatformException::fail('Entry not found');
             }
-            if ($keyName = $this->resource->getConfigValue('key_name')) {
+            if ($keyName = $this->resource->config()->getKeyName()) {
                 $this->entry->setKeyName($keyName);
             }
         }

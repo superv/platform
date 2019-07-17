@@ -105,7 +105,7 @@ class IndexFields
 
         $fields = $this->fields
             ->filter(function (Field $field) {
-                return $field->hasFlag('table.show') || $field->getName() === $this->resource->getConfigValue('entry_label_field');
+                return $field->hasFlag('table.show') || $field->getName() === $this->resource->config()->getEntryLabelField();
             })
             ->values()
             ->sortBy(function (Field $field, $key) {
@@ -131,7 +131,7 @@ class IndexFields
                            ->setCallback('table.presenting',
                                function (EntryContract $entry) {
                                    return sv_parse(
-                                       $this->resource->getConfigValue('entry_label'),
+                                       $this->resource->config()->getEntryLabel(),
                                        $entry->toArray()
                                    );
                                })

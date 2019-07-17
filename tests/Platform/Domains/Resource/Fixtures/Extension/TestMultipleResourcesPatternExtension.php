@@ -14,7 +14,7 @@ class TestMultipleResourcesPatternExtension implements ExtendsMultipleResources
     public function __call($name, $arguments)
     {
         if (starts_with($name, 'extend')) {
-            return $arguments[0]->setConfigValue('extended', true);
+            return $arguments[0]->setExtended(true);
         }
     }
 }

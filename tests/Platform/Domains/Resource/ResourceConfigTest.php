@@ -22,7 +22,7 @@ class ResourceConfigTest extends ResourceTestCase
             $table->sortable();
         });
 
-        $this->assertTrue($res->isSortable());
+        $this->assertTrue($res->config()->isSortable());
         $this->assertColumnExists('t_users', 'sort_order');
     }
 
@@ -43,7 +43,7 @@ class ResourceConfigTest extends ResourceTestCase
         });
 
         $this->assertColumnExists('t_users', 'uuid');
-        $this->assertTrue($res->hasUuid());
+        $this->assertTrue($res->config()->hasUuid());
 
         $user = $res->create([]);
         $this->assertNotNull($user->uuid);
@@ -51,23 +51,23 @@ class ResourceConfigTest extends ResourceTestCase
 
     function test__saves_resource_key()
     {
-        $res = $this->create('t_users', function (Blueprint $table, ResourceConfig $resource) {
+        $res = $this->create('t_users', function (Blueprint $table, ResourceConfig $config) {
             $table->increments('id');
 
             // default resource key is singular table name
-            $this->assertEquals('t_user', $resource->getResourceKey());
+            $this->assertEquals('t_user', $config->getResourceKey());
 
             // but we can override it
-            $resource->resourceKey('user');
+            $config->resourceKey('user');
         });
 
-        $this->assertEquals('user', $res->getResourceKey());
+        $this->assertEquals('user', $res->config()->getResourceKey());
     }
 
     function test__saves_primary_key()
     {
         $assertKeySaved = function (Closure $callback) {
-            $this->assertEquals('entry_id', $this->randomTable($callback)->getKeyName());
+            $this->assertEquals('entry_id', $this->randomTable($callback)->config()->getKeyName());
         };
 
         $assertKeySaved(function (Blueprint $table) { $table->increments('entry_id'); });
@@ -81,7 +81,7 @@ class ResourceConfigTest extends ResourceTestCase
         $resource = $this->randomTable(function (Blueprint $table) {
             $table->increments('id');
         });
-        $this->assertEquals('id', $resource->getKeyName());
+        $this->assertEquals('id', $resource->config()->getKeyName());
     }
 
     function test__builds_label_from_table_name()
@@ -96,11 +96,11 @@ class ResourceConfigTest extends ResourceTestCase
 
     function test__builds_label_from_given()
     {
-        $customers = $this->create('customers', function (Blueprint $table, ResourceConfig $resource) {
+        $customers = $this->create('customers', function (Blueprint $table, ResourceConfig $config) {
             $table->increments('id');
 
-            $resource->label('SuperV Customers');
-            $resource->singularLabel('Customer');
+            $config->label('SuperV Customers');
+            $config->singularLabel('Customer');
         });
 
         $this->assertEquals('SuperV Customers', $customers->getLabel());

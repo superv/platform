@@ -35,7 +35,7 @@ class FormBuilder
 
             $form->setFields($this->buildFields($this->resource->getFieldEntries()));
             $form->setResource($this->resource);
-            $form->setIdentifier($this->resource->getResourceKey());
+            $form->setIdentifier($this->resource->config()->getResourceKey());
         }
 
         return $form;

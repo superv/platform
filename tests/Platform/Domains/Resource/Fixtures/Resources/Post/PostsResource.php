@@ -2,12 +2,12 @@
 
 namespace Tests\Platform\Platform\Domains\Resource\Fixtures\Resources\Post;
 
-use SuperV\Platform\Domains\Resource\Config;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class PostsResource
 {
-    public function config(Config $config)
+    public function config(ResourceConfig $config)
     {
-        $config->setLabel('Posts v2');
+        $config->label('Posts v2');
     }
 }

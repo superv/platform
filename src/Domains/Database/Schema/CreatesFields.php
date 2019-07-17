@@ -106,7 +106,7 @@ trait CreatesFields
 
     public function hasUuid($column = 'uuid')
     {
-        $this->resourceConfig()->hasUuid(true);
+        $this->resourceConfig()->setHasUuid(true);
         return $this->addColumn('uuid', $column);
     }
 

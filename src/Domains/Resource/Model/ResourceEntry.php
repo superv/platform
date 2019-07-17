@@ -27,7 +27,7 @@ class ResourceEntry extends Entry
 
         static::saving(function (ResourceEntry $entry) {
             if (! starts_with($entry->getTable(), 'sv_')) {
-                if ($entry->getResource()->hasUuid() && is_null($entry->uuid)) {
+                if ($entry->getResource()->config()->hasUuid() && is_null($entry->uuid)) {
                     $entry->setAttribute('uuid', uuid());
                 }
             }
@@ -121,7 +121,7 @@ class ResourceEntry extends Entry
 
     public function getForeignKey()
     {
-        return $this->getResource()->getResourceKey().'_id';
+        return $this->getResource()->config()->getResourceKey().'_id';
     }
 
     public function getMorphClass()
@@ -180,7 +180,8 @@ class ResourceEntry extends Entry
         {
             public $timestamps = false;
 
-            protected $resourceConfig = [];
+            /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
+            protected $resourceConfig;
 
             public function setResourceConfig($config)
             {
@@ -194,12 +195,16 @@ class ResourceEntry extends Entry
 
             public function getKeyName()
             {
-                return $this->resourceConfig['key_name'] ?? parent::getKeyName();
+                if ($this->resourceConfig) {
+                    return $this->resourceConfig->getKeyName();
+                }
+
+                return parent::getKeyName();
             }
         };
 
         $model->setTable($resource->getHandle());
-        $model->setResourceConfig($resource->getConfig());
+        $model->setResourceConfig($resource->config());
 
         return $model;
     }

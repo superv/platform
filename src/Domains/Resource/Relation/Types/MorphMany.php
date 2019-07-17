@@ -32,7 +32,7 @@ class MorphMany extends Relation implements ProvidesTable, ProvidesForm
     {
         $form = FormBuilder::buildFromEntry($childEntry = $this->newQuery()->make());
 
-        return $form->hideField(sv_resource($this->parentEntry)->getResourceKey())
+        return $form->hideField(sv_resource($this->parentEntry)->config()->getResourceKey())
                     ->make();
     }
 

@@ -4,24 +4,22 @@ namespace SuperV\Platform\Domains\Resource\Resource;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 
+/**
+ * Trait LabelConcern
+ *
+ * @package SuperV\Platform\Domains\Resource\Resource
+ * @method \SuperV\Platform\Domains\Resource\ResourceConfig config()
+ */
 trait LabelConcern
 {
-    public function getLabel($translated = true)
+    public function getLabel()
     {
-        return $this->getConfigValue('label');
-
-        $label = $this->addon.'::'.$this->getHandle().'.label';
-
-        if (! $translated) {
-            return $label;
-        }
-
-        return sv_trans($label);
+        return $this->config()->getLabel();
     }
 
     public function getEntryLabel(EntryContract $entry)
     {
-        return sv_parse($this->getConfigValue('entry_label'), $entry->toArray());
+        return sv_parse($this->config()->getEntryLabel(), $entry->toArray());
     }
 
     public function getSingularLabel()
@@ -30,13 +28,15 @@ trait LabelConcern
         if ($value = trans($key)) {
             return __($value);
         }
-//        return sv_trans($this->addon.'::'.$this->getHandle().'.singular_label');
+        if (! $singularLabel = $this->config()->getSingularLabel()) {
+            $singularLabel = str_singular($this->config()->getLabel());
+        }
 
-        return __($this->getConfigValue('singular_label', str_singular($this->getConfigValue('label'))));
+        return __($singularLabel);
     }
 
     public function getEntryLabelTemplate()
     {
-        return $this->getConfigValue('entry_label');
+        return $this->config()->getEntryLabel();
     }
 }

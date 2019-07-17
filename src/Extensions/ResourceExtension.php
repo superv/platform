@@ -10,7 +10,7 @@ class ResourceExtension implements ExtendsResource
 {
     public function extend(Resource $resource)
     {
-        $resource->setConfigValue('entry_label_field', 'handle');
+        $resource->config()->entryLabelField('handle');
         $resource->searchable(['handle']);
         $fields = $resource->indexFields();
         $fields->get('addon')->copyToFilters();

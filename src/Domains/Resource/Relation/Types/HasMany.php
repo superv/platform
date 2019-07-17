@@ -34,7 +34,7 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
 
         return $form
             ->make($formData ? $formData->uuid : null)
-            ->hideField(sv_resource($this->parentEntry)->getResourceKey());
+            ->hideField(sv_resource($this->parentEntry)->config()->getResourceKey());
     }
 
     public function getFormTitle(): string
