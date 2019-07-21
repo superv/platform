@@ -11,7 +11,7 @@ class ResourceConfig
 
     protected $table;
 
-    protected $hasUuid = false;
+    protected $hasUuid;
 
     protected $label;
 
@@ -33,9 +33,9 @@ class ResourceConfig
 
     protected $attributes;
 
-    protected $restorable = false;
+    protected $restorable;
 
-    protected $sortable = false;
+    protected $sortable;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\Resource
@@ -178,7 +178,7 @@ class ResourceConfig
 
     public function hasUuid(): bool
     {
-        return $this->hasUuid;
+        return $this->hasUuid ?? false;
     }
 
     public function setHasUuid(bool $hasUuid): ResourceConfig
@@ -197,12 +197,12 @@ class ResourceConfig
 
     public function isRestorable(): bool
     {
-        return $this->restorable;
+        return $this->restorable ?? false;
     }
 
     public function isSortable(): bool
     {
-        return $this->sortable;
+        return $this->sortable ?? false;
     }
 
     public function getNav()
@@ -257,5 +257,10 @@ class ResourceConfig
         }
 
         return array_except($attributes, 'resource');
+    }
+
+    public static function make(array $config, $overrideDefault = true)
+    {
+        return (new static)->hydrate($config, $overrideDefault);
     }
 }

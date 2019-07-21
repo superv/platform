@@ -40,6 +40,10 @@ class ResourceFactory
         return (new static($handle, $entry))->get();
     }
 
+    /**
+     * @param $handle
+     * @return \SuperV\Platform\Domains\Resource\Resource
+     */
     public static function make($handle): ?Resource
     {
         if ($handle instanceof EntryContract) {
@@ -48,16 +52,16 @@ class ResourceFactory
 
         try {
             $attributes = static::attributesFor($handle);
-            $attributes['config'] = new ResourceConfig($attributes['config']);
 
             $attributes = Hook::attributes($handle, $attributes);
+
+            if (is_array($attributes['config'])) {
+                $attributes['config'] = ResourceConfig::make($attributes['config']);
+            }
 
             $resource = new Resource($attributes);
 
             Extension::extend($resource);
-
-            Hook::resource($resource);
-
         } catch (Exception $e) {
             return null;
         }

@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Resource\Relation;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use Tests\Platform\Domains\Resource\Fixtures\TestPost;
+use Tests\Platform\Domains\Resource\Fixtures\TestPostModel;
 use Tests\Platform\Domains\Resource\Fixtures\TestRole;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -45,7 +45,7 @@ class RelationsTest extends ResourceTestCase
         $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->hasMany(TestPost::class, 'posts', 'user_id', 'post_id');
+            $table->hasMany(TestPostModel::class, 'posts', 'user_id', 'post_id');
         });
 
         $users = ResourceFactory::make('t_users');
@@ -55,7 +55,7 @@ class RelationsTest extends ResourceTestCase
         $this->assertEquals('has_many', $relation->getType());
 
         $this->assertEquals([
-            'related_model' => TestPost::class,
+            'related_model' => TestPostModel::class,
             'foreign_key'   => 'user_id',
             'local_key'     => 'post_id',
         ], $relation->getRelationConfig()->toArray());

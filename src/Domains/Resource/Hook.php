@@ -11,6 +11,11 @@ class Hook
         static::$map[$handle] = $base;
     }
 
+    public static function base($handle)
+    {
+       return   static::$map[$handle] ??  null;
+    }
+
     public static function unregister($handle)
     {
         unset(static::$map[$handle]);
@@ -18,14 +23,20 @@ class Hook
 
     public static function attributes($handle, array $attributes)
     {
-        if (! $base = static::$map[$handle] ?? null) {
+        if (! $baseNamespace = static::$map[$handle] ?? null) {
             return $attributes;
         }
 
-        $base = new $base();
 
-        if (method_exists($base, 'config')) {
-            $base->config($attributes['config']);
+        if ($resourceKey = $attributes['config']['resource_key']) {
+            $plural = str_plural($resourceKey);
+        } else {
+            $plural = $handle;
+        }
+
+        $configClass = $baseNamespace . "\\". studly_case($plural.'_config');
+        if (class_exists($configClass)) {
+            $attributes['config'] = $configClass::make($attributes['config']);
         }
 
         return $attributes;

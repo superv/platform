@@ -2,9 +2,10 @@
 
 namespace Tests\Platform\Domains\Resource;
 
+use SuperV\Platform\Domains\Resource\Extension\RegisterHooksInPath;
 use SuperV\Platform\Domains\Resource\Hook;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use Tests\Platform\Platform\Domains\Resource\Fixtures\Resources\Post\PostsResource;
+use Tests\Platform\Domains\Resource\Fixtures\TestPostModel;
 
 /**
  * Class HookTest
@@ -14,21 +15,30 @@ use Tests\Platform\Platform\Domains\Resource\Fixtures\Resources\Post\PostsResour
  */
 class HookTest extends ResourceTestCase
 {
-    function test__extends_resource()
+    function test__registers_extensions_from_path()
     {
-        $this->schema()->posts();
+        $this->registerHooksBase();
 
-        Hook::register('t_posts', PostsResource::class);
-
-        $posts = ResourceFactory::make('t_posts');
-
-        $this->assertEquals('Posts v2', $posts->config()->getLabel());
+        $this->assertNotNull(Hook::base('posts'));
     }
 
-    protected function tearDown()
+    function test_hooks_config()
     {
-        parent::tearDown();
+        $this->registerHooksBase();
 
-        Hook::unregister('t_posts');
+        $this->makeResource('posts');
+
+        $posts = ResourceFactory::make('posts');
+
+        $this->assertEquals('Posts v2', $posts->config()->getLabel());
+        $this->assertEquals(TestPostModel::class, $posts->config()->getModel());
+    }
+
+    protected function registerHooksBase(): void
+    {
+        RegisterHooksInPath::dispatch(
+            __DIR__.'/Fixtures/Resources',
+            'Tests\Platform\Domains\Resource\Fixtures\Resources'
+        );
     }
 }
