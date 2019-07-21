@@ -9,6 +9,8 @@ class DataControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $shouldBootPlatform = true;
+
     function test__returns_initial_user_data()
     {
         $response = $this->getJsonUser('data/init');

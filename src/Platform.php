@@ -6,11 +6,14 @@ use SuperV\Platform\Domains\Addon\Addon;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Events\PlatformBootedEvent;
+use SuperV\Platform\Events\PlatformBootingEvent;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
 class Platform extends Addon
 {
     use FiresCallbacks;
+
+    protected $booted = false;
 
     /**
      * @var \SuperV\Platform\Domains\Port\Port
@@ -27,6 +30,8 @@ class Platform extends Addon
      */
     public function boot()
     {
+        PlatformBootingEvent::dispatch();
+
         $entries = AddonModel::query()
                              ->where('enabled', true)
                              ->get();
@@ -38,6 +43,7 @@ class Platform extends Addon
             }
         }
 
+        $this->booted = true;
         PlatformBootedEvent::dispatch();
     }
 
@@ -119,6 +125,14 @@ class Platform extends Addon
 
             'sv_profiles',
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasBooted(): bool
+    {
+        return $this->booted;
     }
 }
 

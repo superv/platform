@@ -14,6 +14,8 @@ class ApiAuthenticationTest extends TestCase
     /** @var \SuperV\Platform\Domains\Port\Port */
     protected $port;
 
+    protected $shouldBootPlatform = true;
+
 //    protected $user;
 
     function test__returns_proper_token_response()

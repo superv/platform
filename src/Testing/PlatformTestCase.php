@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Testing;
 
 use Current;
-use Exception;
 use Hub;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -36,6 +35,8 @@ class PlatformTestCase extends OrchestraTestCase
     ];
 
     protected $shouldInstallPlatform = true;
+
+    protected $shouldBootPlatform = false;
 
     protected $installs = [];
 
@@ -208,7 +209,9 @@ class PlatformTestCase extends OrchestraTestCase
 
         $this->handlePostInstallCallbacks();
 
-        (new PlatformServiceProvider($this->app))->boot();
+        if ($this->shouldBootPlatform) {
+            (new PlatformServiceProvider($this->app))->boot();
+        }
 
         $this->installAddons();
     }

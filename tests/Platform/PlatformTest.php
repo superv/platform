@@ -7,11 +7,15 @@ use Illuminate\Support\Facades\Event;
 use Platform;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
+use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Events\PlatformBootedEvent;
+use SuperV\Platform\Events\PlatformBootingEvent;
 
 class PlatformTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected $shouldBootPlatform = false;
 
     function test_registers_service_providers_for_enabled_addons()
     {
@@ -24,13 +28,35 @@ class PlatformTest extends TestCase
         $this->assertContains($entry->resolveAddon()->providerClass(), array_keys(app()->getLoadedProviders()));
     }
 
+    function test_dispatches_event_before_platform_starts_booting()
+    {
+        app('events')->listen(PlatformBootingEvent::class, function (PlatformBootingEvent $event) {
+            $this->assertFalse(Platform::hasBooted());
+        });
+
+        Platform::boot();
+    }
+
     function test_dispatches_event_when_platform_has_booted()
     {
         Event::fake();
 
         Platform::boot();
 
-        Event::assertDispatched(PlatformBootedEvent::class);
+        Event::assertDispatched(PlatformBootedEvent::class, function (PlatformBootedEvent $event) {
+            $this->assertTrue(Platform::hasBooted());
+
+            return true;
+        });
+    }
+
+    function test__registers_platform_extensions_before_booting()
+    {
+        app('events')->listen(PlatformBootingEvent::class, function (PlatformBootingEvent $event) {
+            $this->assertNotNull(Extension::get('sv_resources'));
+        });
+
+        Platform::boot();
     }
 
     function test_gets_config_from_superv_namespace()
