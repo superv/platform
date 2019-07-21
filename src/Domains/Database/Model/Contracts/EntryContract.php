@@ -23,4 +23,6 @@ interface EntryContract extends Watcher
     public function getRelation($key);
 
     public function wasRecentlyCreated(): bool;
+
+    public function update(array $attributes = []);
 }

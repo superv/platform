@@ -63,6 +63,9 @@ class ResourceFactory
 
             Extension::extend($resource);
         } catch (Exception $e) {
+            if ($e->getMessage() !== 'Resource model entry not found for [sv_forms]') {
+                throw $e;
+            }
             return null;
         }
 

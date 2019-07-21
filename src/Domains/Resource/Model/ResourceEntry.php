@@ -21,6 +21,8 @@ class ResourceEntry extends Entry
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
 
+    public $timestamps = false;
+
     protected static function boot()
     {
         parent::boot();

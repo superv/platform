@@ -13,6 +13,7 @@ class ResourceExtension implements ExtendsResource
         $resource->config()->entryLabelField('handle');
         $resource->searchable(['handle']);
         $fields = $resource->indexFields();
+
         $fields->get('addon')->copyToFilters();
 
         $resource->onIndexConfig(function (ResourceTable $table) {
