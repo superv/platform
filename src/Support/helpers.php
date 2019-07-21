@@ -14,8 +14,9 @@ use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
 
-function ddh() {
-    dd('Over here! '. date('H:i:s'), func_get_args());
+function ddh()
+{
+    dd('Over here! '.date('H:i:s'), func_get_args());
 }
 
 function sv_trans($key = null, $replace = [], $locale = null)
@@ -27,6 +28,7 @@ function sv_trans($key = null, $replace = [], $locale = null)
     }
 
     $parts = explode('.', $key);
+
     return end($parts);
 }
 
@@ -37,7 +39,7 @@ function dump_callers($limit = 10)
     $callers->map(function ($caller) { dump($caller); });
 }
 
-function get_callers($limit = 10): \Illuminate\Support\Collection
+function get_callers($limit = 10): Collection
 {
     $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $limit);
     $callers = collect($stack)->map(function ($trace, $key) {
@@ -306,6 +308,10 @@ function sv_loader($url, array $props = [])
 {
     if (! starts_with($url, 'http')) {
 //        $url = sv_url($url);
+    }
+
+    if ($qs = request()->getQueryString()) {
+        $url .= '?'.$qs;
     }
 
     $props['url'] = $url;

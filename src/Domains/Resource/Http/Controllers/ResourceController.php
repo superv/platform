@@ -11,6 +11,26 @@ class ResourceController extends BaseApiController
 {
     use ResolvesResource;
 
+    public function delete()
+    {
+        $resource = $this->resolveResource();
+
+        $this->entry->delete();
+
+        return ['data' => [
+            'message' => __(':Resource :Entry was deleted', ['Entry'    => $resource->getEntryLabel($this->entry),
+                                                             'Resource' => $resource->getSingularLabel()])]];
+    }
+
+    public function restore()
+    {
+        $resource = $this->resolveResource(false);
+
+        $entry = $resource->newQuery(false)->withTrashed()->find(request()->route()->parameter('id'));
+
+        $entry->restore();
+    }
+
     public function fields()
     {
         $this->resolveResource();

@@ -41,13 +41,16 @@ class FormResponse implements Responsable
         } elseif ($action === 'edit_next') {
             $next = $this->resource->newQuery()->where('id', '>', $this->entry->getId())->first();
             if ($next) {
-                $route = $this->resource->route('edit', $next).'?action=edit_next';
+                $route = $this->resource->route('edit.page', $next).'?action=edit_next';
             }
         }
 
+        $entryLabel = $this->resource->getEntryLabel($this->entry);
+
         return response()->json([
             'data' => [
-                'message' =>  __($this->form->isUpdating() ? ':Entry was updated' : ':Entry was created', ['Entry' => $this->resource->getSingularLabel()]),
+                'message'     => __($this->form->isUpdating() ? ':Resource :Entry was updated' : ':Resource :Entry was created', ['Entry'    => $entryLabel,
+                                                                                                                                  'Resource' => $this->resource->getSingularLabel()]),
                 'action'      => $action,
                 'redirect_to' => $route ?? $this->resource->route('index'),
             ],

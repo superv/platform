@@ -67,7 +67,6 @@ class FormComposer
     {
         return $this->form->getFields()
                           ->filter(function (FormField $field) {
-
                               return ! $field->isHidden() && ! $field->hasFlag('form.hide');
                           })
                           ->sortBy(function (FormField $field) {
@@ -96,36 +95,36 @@ class FormComposer
 
         if ($this->form->getEntry() && $this->form->getEntry()->exists) {
             return [
-//                [
-//                    'identifier' => 'view',
-//                    'title'      => '& View',
-//                    'color'      => 'light',
-//                ],
-//                [
-//                    'identifier' => 'edit_next',
-//                    'title'      => '& Edit Next',
-//                    'color'      => 'light',
-//                ],
+                [
+                    'identifier' => 'view',
+                    'title'      => '& View',
+                    'color'      => 'light',
+                ],
+                [
+                    'identifier' => 'edit_next',
+                    'title'      => '& Edit Next',
+                    'color'      => 'light',
+                ],
                 [
                     'default'    => true,
                     'identifier' => 'save',
-                    'title'      =>  __('Save'),
+                    'title'      => __('Save'),
                     'color'      => 'primary',
                 ],
             ];
         }
 
         return [
-//            [
-//                'identifier' => 'view',
-//                'title'      => '& View',
-//                'color'      => 'light',
-//            ],
-//            [
-//                'identifier' => 'create_another',
-//                'title'      => '& Another',
-//                'color'      => 'light',
-//            ],
+            [
+                'identifier' => 'view',
+                'title'      => '& View',
+                'color'      => 'light',
+            ],
+            [
+                'identifier' => 'create_another',
+                'title'      => '& Another',
+                'color'      => 'light',
+            ],
             [
                 'default'    => true,
                 'identifier' => 'create',

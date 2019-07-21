@@ -393,14 +393,15 @@ final class Resource implements
         }
 
         if ($route === 'edit') {
-            return $base.'/'.$entry->getId().'/'.$route;
+            return $base.'/'.$entry->getId().'/edit';
+        }
+
+        if ($route === 'edit.page') {
+            return $base.'/'.$entry->getId().'/edit-page';
         }
 
         if ($route === 'update' || $route === 'delete') {
             return $base.'/'.$entry->getId();
-        }
-        if ($route === 'edit' || $route === 'view') {
-            return $base.'/'.$entry->getId().'/'.$route;
         }
 
         return sv_route('resource.'.$route, array_merge($params, ['id'       => $entry->getId(),
