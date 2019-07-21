@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource;
 use SuperV\Platform\Domains\Resource\Extension\RegisterHooksInPath;
 use SuperV\Platform\Domains\Resource\Hook;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use Tests\Platform\Domains\Resource\Fixtures\TestPostModel;
+use Tests\Platform\Domains\Resource\Fixtures\TestPost;
 
 /**
  * Class HookTest
@@ -31,7 +31,7 @@ class HookTest extends ResourceTestCase
         $posts = ResourceFactory::make('posts');
 
         $this->assertEquals('Posts v2', $posts->config()->getLabel());
-        $this->assertEquals(TestPostModel::class, $posts->config()->getModel());
+        $this->assertEquals(TestPost::class, $posts->config()->getModel());
     }
 
     protected function registerHooksBase(): void
