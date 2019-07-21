@@ -4,7 +4,7 @@ namespace SuperV\Platform\Support\Concerns;
 
 trait Hydratable
 {
-    public function hydrate(array $parameters)
+    public function hydrate(array $parameters, bool $overrideDefault = true)
     {
         $parameters = array_filter_null($parameters);
 
@@ -20,6 +20,9 @@ trait Hydratable
             if (is_null($value)) {
                 continue;
             }
+
+            if (!$overrideDefault && !is_null($this->$parameter))
+                continue;
 
             if (method_exists($this, $method = camel_case('set_'.$parameter))) {
                 $this->{$method}($value);
