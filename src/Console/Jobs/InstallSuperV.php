@@ -13,21 +13,20 @@ use SuperV\Platform\Events\PlatformInstalledEvent;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Platform;
 use SuperV\Platform\PlatformServiceProvider;
+use SuperV\Platform\Support\Dispatchable;
 
 class InstallSuperV
 {
+    use Dispatchable;
     /**
      * @var \SuperV\Platform\Platform
      */
     protected $platform;
 
-    public function __construct(Platform $platform)
+    public function handle(Platform $platform)
     {
         $this->platform = $platform;
-    }
-    
-    public function __invoke()
-    {
+
         $platformServiceProvider = new PlatformServiceProvider(app());
 
         DB::beginTransaction();

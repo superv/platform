@@ -18,7 +18,7 @@ class SuperVInstallCommand extends Command
         $this->comment('Installing SuperV');
 
         try {
-            app(InstallSuperV::class)();
+            InstallSuperV::dispatch();
 
             $this->comment("SuperV installed..! \n");
         } catch (Exception $e) {

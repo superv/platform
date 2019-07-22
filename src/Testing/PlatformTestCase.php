@@ -203,7 +203,7 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected function installSuperV(): void
     {
-        app(InstallSuperV::class)();
+        InstallSuperV::dispatch();
 
         $this->setConfigParams();
 
