@@ -10,17 +10,14 @@ use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class CreateResource
 {
-    /** @var string */
-    protected $table;
-
     /** @var ResourceConfig */
     protected $config;
 
-    /** @var string */
-    protected $addon;
-
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
+
+    /** @var \SuperV\Platform\Domains\Database\Events\TableCreatingEvent */
+    protected $event;
 
     public function handle(TableCreatingEvent $event)
     {
@@ -28,15 +25,13 @@ class CreateResource
             return;
         }
 
-        $this->addon = $event->addon;
-        $this->table = $event->table;
-        $this->config = $event->resourceConfig;
+        $this->event = $event;
 
-        if (! $this->config->getEntryLabel()) {
-            $this->guessEntryLabel($this->config, $event->columns);
-        }
+        $this->config = $event->config;
 
-        $this->createResourceEntry($this->config, $event->addon);
+        $this->processConfig();
+
+        $this->createResourceEntry();
 
 //        $this->resource = ResourceFactory::make($this->table);
 
@@ -58,40 +53,58 @@ class CreateResource
 
     protected function createNavSections()
     {
+        $table = $this->event->table;
+
         if ($nav = $this->config->getNav()) {
             if (is_string($nav)) {
 //                Section::createFromString($handle = $nav.'.'.$this->table, null, $this->addon);
-                Section::createFromString($handle = $nav.'.'.$this->table);
+                Section::createFromString($handle = $nav.'.'.$table);
                 $section = Section::get($handle);
                 $section->update([
-                    'url'    => 'sv/res/'.$this->table,
+                    'url'    => 'sv/res/'.$table,
                     'title'  => $this->config->getLabel(),
                     'handle' => str_slug($this->config->getLabel(), '_'),
                 ]);
             } elseif (is_array($nav)) {
                 if (! isset($nav['url'])) {
-                    $nav['url'] = 'sv/res/'.$this->table;
+                    $nav['url'] = 'sv/res/'.$table;
                 }
                 $section = Section::createFromArray($nav);
             }
 
-            $section->update(['addon' => $this->addon]);
+            $section->update(['addon' => $this->event->addon]);
         }
     }
 
-    protected function createResourceEntry(ResourceConfig $config, $addon)
+    protected function createResourceEntry()
     {
         /** @var ResourceModel $entry */
         return ResourceModel::create(array_filter(
             [
-                'slug'       => $this->table,
-                'handle'     => $this->table,
+                'slug'       => $this->event->table,
+                'handle'     => $this->event->table,
                 'model'      => $this->config->getModel(),
-                'config'     => $config->toArray(),
-                'addon'      => $addon,
+                'config'     => $this->config->toArray(),
+                'addon'      => $this->event->addon,
                 'restorable' => (bool)$this->config->isRestorable(),
                 'sortable'   => (bool)$this->config->isSortable(),
             ]
         ));
+    }
+
+    protected function processConfig(): void
+    {
+        if (! $this->config->getEntryLabel()) {
+            $this->guessEntryLabel($this->config, $this->event->columns);
+        }
+
+        if ($this->config->isRestorable()) {
+            $this->event->blueprint->nullableBelongsTo('users', 'deleted_by')->hideOnForms();
+            $this->event->blueprint->timestamp('deleted_at')->nullable()->hideOnForms();
+        }
+
+        if ($this->config->isSortable()) {
+            $this->event->blueprint->unsignedBigInteger('sort_order')->default(0);;
+        }
     }
 }

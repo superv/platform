@@ -113,14 +113,15 @@ trait CreatesFields
     public function restorable()
     {
         $this->resourceConfig()->restorable(true);
-        $this->nullableBelongsTo('users', 'deleted_by')->hideOnForms();
-        $this->timestamp('deleted_at')->nullable()->hideOnForms();
+
+//        $this->nullableBelongsTo('users', 'deleted_by')->hideOnForms();
+//        $this->timestamp('deleted_at')->nullable()->hideOnForms();
     }
 
     public function sortable()
     {
         $this->resourceConfig()->sortable(true);
-        $this->unsignedBigInteger('sort_order')->default(0);
+//        $this->unsignedBigInteger('sort_order')->default(0);
     }
 
     public function updatedBy(): self

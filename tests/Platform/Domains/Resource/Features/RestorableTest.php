@@ -3,6 +3,7 @@
 namespace Tests\Platform\Platform\Domains\Resource\Features;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
@@ -106,9 +107,9 @@ class RestorableTest extends ResourceTestCase
      */
     protected function createEntriesResource(): \SuperV\Platform\Domains\Resource\Resource
     {
-        $entries = $this->create('t_entries', function (Blueprint $table) {
+        $entries = $this->create('t_entries', function (Blueprint $table, ResourceConfig $config) {
             $table->increments('id');
-            $table->restorable();
+            $config->restorable();
         });
 
         return $entries;

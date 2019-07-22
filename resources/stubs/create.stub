@@ -9,14 +9,15 @@ class DummyClass extends Migration
     public function up()
     {
         $this->create('DummyTable',
-            function (Blueprint $table, ResourceConfig $resource) {
-                // $resource->label('{resource.label}');
-                // $resource->nav('');
-                // $resource->resourceKey('');
+            function (Blueprint $table, ResourceConfig $config) {
+                // $config->label('{resource.label}');
+                // $config->nav('');
+                // $config->resourceKey('');
+                // $config->restorable();
+                // $config->sortable();
 
                 $table->increments('id');
                 $table->createdBy()->updatedBy();
-                // $table->restorable();
             });
     }
 

@@ -210,7 +210,7 @@ class ResourceConfig
         return $this->nav;
     }
 
-    public function restorable(bool $restorable): ResourceConfig
+    public function restorable(bool $restorable = true): ResourceConfig
     {
         $this->restorable = $restorable;
 
