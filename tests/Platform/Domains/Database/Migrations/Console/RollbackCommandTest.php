@@ -24,7 +24,6 @@ class RollbackCommandTest extends TestCase
         $migrator->shouldReceive('paths')->once()->andReturn([__DIR__.'/migrations']);
         $migrator->shouldReceive('setOutput')->once()->andReturnSelf();
         $migrator->shouldReceive('rollback')->once();
-        $migrator->shouldReceive('getNotes')->andReturn([]);
 
         $this->runCommand($command, ['--addon' => 'test-addon']);
     }

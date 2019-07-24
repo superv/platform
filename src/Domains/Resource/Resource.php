@@ -123,8 +123,6 @@ final class Resource implements
     {
         $this->hydrate($attributes);
 
-//        $this->config = new ResourceConfig($attributes['config']);
-
         $this->fields = (new Fields($this, $this->fields));
 
         $this->relations = ($this->relations)($this);

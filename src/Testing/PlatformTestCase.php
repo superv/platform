@@ -73,6 +73,8 @@ class PlatformTestCase extends OrchestraTestCase
     {
         parent::setUp();
 
+        \Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
+
         if ($this->handleExceptions === false) {
             $this->withoutExceptionHandling();
         }
