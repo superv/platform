@@ -17,33 +17,11 @@ class SelectField extends FieldType implements RequiresDbColumn, ProvidesFilter
         $this->field->on('table.presenting', $this->presenter());
     }
 
-    protected function presenter()
-    {
-        return function ($value) {
-            if (is_null($value))
-                return null;
-
-            $options = $this->getOptions();
-
-            return array_get($options, $value, $value);
-        };
-    }
-
-    protected function composer()
-    {
-        return function (Payload $payload) {
-            $options = static::parseOptions(($this->getOptions()));
-
-            $payload->set('meta.options', $options);
-//            $payload->set('placeholder', sv_trans('sv::resource.select', ['resource' => $this->field->getPlaceholder()]));
-            $payload->set('placeholder', __('Select Resource', ['resource' => $this->field->getPlaceholder()]));
-        };
-    }
-
     public function makeFilter(?array $params = [])
     {
         return SelectFilter::make($this->getName(), $this->field->getLabel())
-                           ->setOptions($this->getOptions());
+                           ->setOptions($this->getOptions())
+                           ->setDefaultValue($params['default_value'] ?? null);
     }
 
     public function getOptions()
@@ -60,5 +38,29 @@ class SelectField extends FieldType implements RequiresDbColumn, ProvidesFilter
         }
 
         return $options;
+    }
+
+    protected function presenter()
+    {
+        return function ($value) {
+            if (is_null($value)) {
+                return null;
+            }
+
+            $options = $this->getOptions();
+
+            return array_get($options, $value, $value);
+        };
+    }
+
+    protected function composer()
+    {
+        return function (Payload $payload) {
+            $options = static::parseOptions(($this->getOptions()));
+
+            $payload->set('meta.options', $options);
+//            $payload->set('placeholder', sv_trans('sv::resource.select', ['resource' => $this->field->getPlaceholder()]));
+            $payload->set('placeholder', __('Select Resource', ['resource' => $this->field->getPlaceholder()]));
+        };
     }
 }
