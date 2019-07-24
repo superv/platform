@@ -384,6 +384,10 @@ final class Resource implements
             return $base;
         }
 
+        if ($route === 'actions') {
+            return $base.'/'.$entry->getId().'/actions';
+        }
+
         if ($route === 'view') {
             return $base.'/'.$entry->getId().'/view';
         }
