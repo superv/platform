@@ -119,7 +119,12 @@ class Field implements FieldContract
             }
         }
 
-        return __($this->label ?? str_unslug($this->getName()));
+        $label = __($this->label ?? str_unslug($this->getName()));
+
+        if (is_string($label))
+            return $label;
+
+        return str_unslug($this->getName());
     }
 
     public function setLabel(string $label): FieldContract
