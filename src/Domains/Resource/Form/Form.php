@@ -9,7 +9,6 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Contracts\Form as FormContract;
@@ -186,7 +185,7 @@ class Form implements FormContract, ProvidesUIComponent
         return $this;
     }
 
-    public function hideField(string $fieldName): self
+    public function hideField(string $fieldName): FormContract
     {
         if (! $field = $this->getField($fieldName)) {
             throw new Exception('Field not found: '.$fieldName);
