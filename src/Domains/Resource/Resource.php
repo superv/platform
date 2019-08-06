@@ -503,7 +503,7 @@ final class Resource implements
         return $this->sortable;
     }
 
-    public function getAddon(): string
+    public function getNamespace(): string
     {
         return $this->addon;
     }

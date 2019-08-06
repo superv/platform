@@ -21,26 +21,22 @@ class Field implements FieldContract
     use HasConfig;
     use FieldFlags;
 
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Field\FieldType
-     */
+    /** @var \SuperV\Platform\Domains\Resource\Field\FieldType */
     protected $fieldType;
 
     /** @var string */
     protected $type;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $uuid;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $name;
 
+    /** @var string */
     protected $columnName;
 
+    /** @var string */
     protected $placeholder;
 
     /** @var Closure */
@@ -112,7 +108,7 @@ class Field implements FieldContract
     public function getLabel(): string
     {
         if ($this->resource) {
-            $key = $this->resource->getAddon().'::resources.'.$this->resource->getHandle().'.fields.'.$this->name;
+            $key = $this->resource->getNamespace().'::resources.'.$this->resource->getHandle().'.fields.'.$this->name;
             $value = trans($key);
             if ($value !== $key) {
                 return $value['label'] ?? $value;
@@ -121,8 +117,9 @@ class Field implements FieldContract
 
         $label = __($this->label ?? str_unslug($this->getName()));
 
-        if (is_string($label))
+        if (is_string($label)) {
             return $label;
+        }
 
         return str_unslug($this->getName());
     }
