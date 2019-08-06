@@ -18,4 +18,14 @@ class UninstallAddonTest extends TestCase
 
         $this->assertDatabaseMissing('sv_addons', ['slug' => 'superv.addons.sample']);
     }
+
+    function test__rollback_migrations()
+    {
+        $this->setUpAddon(null, null);
+        $this->assertEquals(3, \DB::table('migrations')->where('addon', 'superv.addons.sample')->count());
+
+        UninstallAddonJob::dispatch('superv.addons.sample');
+
+        $this->assertEquals(0, \DB::table('migrations')->where('addon', 'superv.addons.sample')->count());
+    }
 }
