@@ -26,6 +26,14 @@ abstract class ValueObject
         $this->value = $value;
     }
 
+    /**
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
     protected function equals(self $another)
     {
         return $this->value === $another->value;
