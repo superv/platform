@@ -107,7 +107,7 @@ class InstallSuperV
 
         Log::error($e->getMessage());
 
-        PlatformException::fail($e->getMessage());
+        PlatformException::throw($e);
     }
 
     protected function commit(): void
