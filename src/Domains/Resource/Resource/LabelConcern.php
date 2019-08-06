@@ -24,7 +24,7 @@ trait LabelConcern
 
     public function getSingularLabel()
     {
-        $key = $this->getAddon().'::resources.'.$this->getHandle().'.singular';
+        $key = $this->getNamespace().'::resources.'.$this->getHandle().'.singular';
         if ($value = trans($key)) {
             return __($value);
         }

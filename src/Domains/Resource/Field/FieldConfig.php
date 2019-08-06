@@ -2,50 +2,27 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
-class FieldConfig
+use ReflectionClass;
+use ReflectionProperty;
+use SuperV\Platform\Contracts\Arrayable;
+
+class FieldConfig implements Arrayable
 {
-    protected $fieldName;
-
-    protected $rules = [];
-
-    protected $config = [];
-
-    public function __construct($fieldName)
+    /**
+     * Get the instance as an array.
+     *
+     * @return array
+     */
+    public function toArray()
     {
-        $this->fieldName = $fieldName;
-    }
+        return collect((new ReflectionClass(static::class))->getProperties())
+            ->map(function (ReflectionProperty $property) {
+                $value = $this->{$property->getName()};
+                if (is_object($value)) {
+                    $value = (string)$value;
+                }
 
-    public function getFieldName(): string
-    {
-        return $this->fieldName;
-    }
-
-    public function getRules(): array
-    {
-        return $this->rules;
-    }
-
-    public function mergeRules(array $rules): self
-    {
-        $this->rules = $rules;
-
-        return $this;
-    }
-
-    public function config(array $config): self
-    {
-        $this->config = $config;
-
-        return $this;
-    }
-
-    public function getConfig(): array
-    {
-        return $this->config;
-    }
-
-    public static function field($fieldName): self
-    {
-        return new static($fieldName);
+                return [snake_case($property->getName()), $value];
+            })->toAssoc()->all();
     }
 }

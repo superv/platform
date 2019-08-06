@@ -2,8 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
+use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
+use SuperV\Platform\Domains\Resource\Field\Contracts\AltersDatabaseTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
@@ -34,6 +36,9 @@ class SyncField
     /** @var \SuperV\Platform\Domains\Database\Schema\Blueprint */
     protected $blueprint;
 
+    /** @var array */
+    protected $config;
+
     public function handle($event)
     {
         /** @var \SuperV\Platform\Domains\Database\Schema\ColumnDefinition $column */
@@ -53,6 +58,8 @@ class SyncField
 
         $this->mapFieldType();
 
+        $this->makeConfig();
+
         $this->checkMustBeCreated();
 
         $field = $this->syncWithEloquent();
@@ -62,6 +69,15 @@ class SyncField
         if ($formEntry) {
             $formEntry->fields()->attach($field->getId());
         }
+    }
+
+    protected function makeConfig()
+    {
+        $this->config = $this->column->config instanceof Arrayable ? $this->column->config->toArray() : $this->column->config;
+
+        $this->config['default_value'] = $this->column->getDefaultValue();
+
+        $this->config = array_filter_null($this->config);
     }
 
     protected function handleRelations()
@@ -104,8 +120,8 @@ class SyncField
             $morphToField->fill([
                 'type'   => 'morph_to',
                 'config' => RelationConfig::morphTo()
-                                          ->relationName($name)
-                                          ->toArray(),
+                    ->relationName($name)
+                    ->toArray(),
                 'flags'  => ['nullable'],
             ]);
             $morphToField->save();
@@ -125,8 +141,8 @@ class SyncField
 
             $this->column->rules(
                 Rules::make($mapper->getRules())
-                     ->merge($this->column->getRules())
-                     ->get()
+                    ->merge($this->column->getRules())
+                    ->get()
             );
         }
 
@@ -147,21 +163,10 @@ class SyncField
 
         $field->type = $column->fieldType;
         $field->column_type = $column->type;
-//        $field->required = $column->isRequired();
-//        $field->unique = $column->isUnique();
-//        $field->searchable = $column->isSearchable();
-        $config = $column->config;
-
         $field->flags = $column->flags;
-
-//        if ($column->hide) {
-//            $config['hide.'.$column->hide] = true;
-//        }
-
-        $config['default_value'] = $column->getDefaultValue();
-
-        $field->config = array_filter_null($config);
         $field->rules = Rules::make($column->getRules())->get();
+
+        $field->config = $this->config;
         $field->save();
 
         return $field;
@@ -187,6 +192,10 @@ class SyncField
     {
         if (! $this->field instanceof RequiresDbColumn) {
             $this->column->ignore();
+        }
+
+        if ($this->field instanceof AltersDatabaseTable) {
+            $this->field->alterBlueprint($this->blueprint, $this->config);
         }
     }
 }

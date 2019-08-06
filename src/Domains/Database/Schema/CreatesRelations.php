@@ -3,10 +3,36 @@
 namespace SuperV\Platform\Domains\Database\Schema;
 
 use Closure;
+use SuperV\Platform\Domains\Resource\Field\Types\Relation\RelationFieldConfig;
+use SuperV\Platform\Domains\Resource\Field\Types\Relation\RelationType;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig as Config;
 
+/**
+ * Trait CreatesRelations
+ * @method ColumnDefinition addColumn($type, $name, array $parameters = [])
+ *
+ * @package SuperV\Platform\Domains\Database\Schema
+ */
 trait CreatesRelations
 {
+    public function relatedToOneOf($related, $relationName)
+    {
+        return $this->relation($relationName, RelationType::oneToOne())->related($related);
+    }
+
+    public function relation($relationName, RelationType $relationType): RelationFieldConfig
+    {
+        $config = RelationFieldConfig::make();
+        $config->type($relationType);
+
+        $this->addColumn(null, $relationName, ['nullable' => true])
+             ->fieldType('relation')
+             ->fieldName($relationName)
+             ->config($config);
+
+        return $config;
+    }
+
     public function nullableBelongsTo($related, $relation, $foreignKey = null, $ownerKey = null): ColumnDefinition
     {
         return $this->belongsTo($related, $relation, $foreignKey, $ownerKey)->nullable();
@@ -14,17 +40,6 @@ trait CreatesRelations
 
     public function belongsTo($related, $relationName, $foreignKey = null, $ownerKey = null): ColumnDefinition
     {
-//        return $this->addColumn(null, $relationName, ['nullable' => true])
-//                    ->relation(
-//                        Config::belongsTo()
-//                              ->relationName($relationName)
-//                              ->related($related)
-//                              ->foreignKey($foreignKey ?? $relationName.'_id')
-//                              ->ownerKey($ownerKey)
-//                    );
-
-        // field
-        //
         return $this->unsignedInteger($foreignKey ?? $relationName.'_id')
                     ->fieldType('belongs_to')
                     ->fieldName($relationName)
