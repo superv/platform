@@ -145,7 +145,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     protected function setupTranslations()
     {
-        $this->loadTranslationsFrom($this->platform->realPath('resources/lang'), 'superv');
+        $this->loadTranslationsFrom($this->platform->realPath('resources/lang'), 'platform');
 
         $this->loadJsonTranslationsFrom($this->platform->realPath('resources/lang'));
 
