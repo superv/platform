@@ -63,7 +63,6 @@ class RelationsTest extends ResourceTestCase
 
     function test__creates_belongs_to_many_relations()
     {
-        /** @test */
         $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->belongsToMany(TestRole::class, 'roles')
