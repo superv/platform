@@ -193,7 +193,8 @@ class ResourceEntry extends Entry
     {
         $field = $this->getResource()->getField($name);
 
-        return $field->setWatcher($this);
+        return $field;
+//        return $field->setWatcher($this);
     }
 
     public static function make(Resource $resource)
