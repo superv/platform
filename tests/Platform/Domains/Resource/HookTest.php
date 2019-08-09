@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Resource\Extension\RegisterHooksInPath;
 use SuperV\Platform\Domains\Resource\Hook;
-use Tests\Platform\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
+use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
 
 /**
  * Class HookTest

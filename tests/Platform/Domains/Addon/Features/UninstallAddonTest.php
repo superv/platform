@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Platform\Domains\Addon\Features;
+namespace Tests\Platform\Domains\Addon\Features;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Addon\Jobs\UninstallAddonJob;

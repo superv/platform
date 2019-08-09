@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Platform\Domains\Resource\Form;
+namespace Tests\Platform\Domains\Resource\Form;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Field;
@@ -10,7 +10,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 /**
  * Class FormFactoryTest
  *
- * @package Tests\Platform\Platform\Domains\Resource\Form
+ * @package Tests\Platform\Domains\Resource\Form
  * @group   resource
  */
 class FormFactoryTest extends ResourceTestCase

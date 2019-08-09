@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Fixtures\Resources\Posts;
 
 use SuperV\Platform\Domains\Resource\ResourceConfig;
-use Tests\Platform\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
+use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
 
 class PostsConfig extends ResourceConfig
 {

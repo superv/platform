@@ -4,11 +4,11 @@ namespace SuperV\Platform\Domains\Resource\Jobs;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
+use SuperV\Platform\Domains\Resource\Field\Types\Relation\RelationFieldConfig;
 
-class CreatePivotTable
+class CreatePivotTableV2
 {
-    public function __invoke(RelationConfig $relation)
+    public function __invoke(RelationFieldConfig $relation)
     {
         if ($pivotColumnsCallback = $relation->getPivotColumns()) {
             $pivotColumnsCallback($table = new Blueprint(''));
@@ -21,11 +21,7 @@ class CreatePivotTable
                 function (Blueprint $table) use ($pivotColumnsCallback, $relation) {
                     $table->increments('id');
 
-                    if ($relation->type()->isMorphToMany()) {
-                        $table->morphs($relation->getMorphName());
-                    } else {
-                        $table->unsignedBigInteger($relation->getPivotForeignKey());
-                    }
+                    $table->unsignedBigInteger($relation->getPivotForeignKey());
 
                     $table->unsignedBigInteger($relation->getPivotRelatedKey());
 

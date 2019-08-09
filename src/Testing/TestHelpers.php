@@ -102,7 +102,7 @@ trait TestHelpers
         $this->assertEquals($needle, $actual, 'Failed asserting array contains');
     }
 
-    protected function assertColumnDoesNotExist(string $table, string $column)
+    protected function assertColumnNotExists(string $table, string $column)
     {
         $this->assertFalse(in_array($column, \Schema::getColumnListing($table)));
     }

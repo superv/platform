@@ -23,7 +23,7 @@ class SyncField
     protected $resourceEntry;
 
     /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field */
-    protected $field;
+    protected $fieldType;
 
     protected $fieldWithoutEloquent = true;
 
@@ -62,17 +62,19 @@ class SyncField
 
         $this->checkMustBeCreated();
 
-        $field = $this->syncWithEloquent();
+        $fieldEntry = $this->syncWithEloquent();
 
-        $formEntry = FormModel::findByResource($this->resourceEntry->getId());
-
-        if ($formEntry) {
-            $formEntry->fields()->attach($field->getId());
+        if ($formEntry = FormModel::findByResource($this->resourceEntry->getId())) {
+            $formEntry->attachField($fieldEntry->getId());
         }
     }
 
     protected function makeConfig()
     {
+        if (method_exists($this->fieldType, 'onMakingConfig')) {
+            $this->fieldType->onMakingConfig($this->column->config);
+        }
+
         $this->config = $this->column->config instanceof Arrayable ? $this->column->config->toArray() : $this->column->config;
 
         $this->config['default_value'] = $this->column->getDefaultValue();
@@ -120,8 +122,8 @@ class SyncField
             $morphToField->fill([
                 'type'   => 'morph_to',
                 'config' => RelationConfig::morphTo()
-                    ->relationName($name)
-                    ->toArray(),
+                                          ->relationName($name)
+                                          ->toArray(),
                 'flags'  => ['nullable'],
             ]);
             $morphToField->save();
@@ -141,12 +143,12 @@ class SyncField
 
             $this->column->rules(
                 Rules::make($mapper->getRules())
-                    ->merge($this->column->getRules())
-                    ->get()
+                     ->merge($this->column->getRules())
+                     ->get()
             );
         }
 
-        $this->field = FieldType::resolveType($this->column->fieldType);
+        $this->fieldType = FieldType::resolveType($this->column->fieldType);
     }
 
     protected function syncWithEloquent(): FieldModel
@@ -190,12 +192,12 @@ class SyncField
 
     protected function checkMustBeCreated()
     {
-        if (! $this->field instanceof RequiresDbColumn) {
+        if (! $this->fieldType instanceof RequiresDbColumn) {
             $this->column->ignore();
         }
 
-        if ($this->field instanceof AltersDatabaseTable) {
-            $this->field->alterBlueprint($this->blueprint, $this->config);
+        if ($this->fieldType instanceof AltersDatabaseTable) {
+            $this->fieldType->alterBlueprint($this->blueprint, $this->config);
         }
     }
 }

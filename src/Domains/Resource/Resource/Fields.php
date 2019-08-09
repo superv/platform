@@ -7,9 +7,7 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Exceptions\PlatformException;
 
 class Fields
 {
@@ -56,13 +54,15 @@ class Fields
             });
     }
 
-    public function get($name): Field
+    public function get($name): ?Field
     {
-        if (! $field = $this->find($name)) {
-            PlatformException::fail("Field not found: [{$name}]");
-        }
-
-        return $field;
+        return $this->find($name);
+//
+//        if (! $field = $this->find($name)) {
+//            PlatformException::fail("Field not found: [{$name}]");
+//        }
+//
+//        return $field;
     }
 
     public function getEntryLabelField()

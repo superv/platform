@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Platform\Domains\Resource\Features;
+namespace Tests\Platform\Domains\Resource\Features;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
@@ -9,7 +9,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 /**
  * Class OwnedResourceTest
  *
- * @package Tests\Platform\Platform\Domains\Resource\Features
+ * @package Tests\Platform\Domains\Resource\Features
  * @group   resource
  */
 class OwnedResourceTest extends ResourceTestCase

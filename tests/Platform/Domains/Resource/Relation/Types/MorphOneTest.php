@@ -29,8 +29,8 @@ class MorphOneTest extends ResourceTestCase
 
     function test__create_morph_one_relation()
     {
-        $this->assertColumnDoesNotExist('t_users', 'address');
-        $this->assertColumnDoesNotExist('t_users', 'address_id');
+        $this->assertColumnNotExists('t_users', 'address');
+        $this->assertColumnNotExists('t_users', 'address_id');
 
         $relation = $this->parent->getRelation('tag');
         $this->assertEquals('morph_one', $relation->getType());

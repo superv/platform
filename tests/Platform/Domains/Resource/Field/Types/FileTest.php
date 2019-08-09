@@ -29,7 +29,7 @@ class FileTest extends ResourceTestCase
             $table->file('avatar')->config(['disk' => 'fakedisk']);
         });
 
-        $this->assertColumnDoesNotExist('avatar', $res->getHandle());
+        $this->assertColumnNotExists('avatar', $res->getHandle());
         $this->assertFalse(in_array('avatar', \Schema::getColumnListing($res->getHandle())));
 
         $fake = $res->fake();

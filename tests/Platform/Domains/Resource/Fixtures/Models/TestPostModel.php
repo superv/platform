@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Platform\Domains\Resource\Fixtures\Models;
+namespace Tests\Platform\Domains\Resource\Fixtures\Models;
 
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 

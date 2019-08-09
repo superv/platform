@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Database\Schema;
 
 use Closure;
+use SuperV\Platform\Domains\Resource\Field\Types\Polymorphic\PolymorphicFieldConfig;
 use SuperV\Platform\Domains\Resource\Field\Types\Relation\RelationFieldConfig;
 use SuperV\Platform\Domains\Resource\Field\Types\Relation\RelationType;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig as Config;
@@ -15,15 +16,51 @@ use SuperV\Platform\Domains\Resource\Relation\RelationConfig as Config;
  */
 trait CreatesRelations
 {
-    public function relatedToOneOf($related, $relationName)
+    public function polymorph($relationName): PolymorphicFieldConfig
     {
-        return $this->relation($relationName, RelationType::oneToOne())->related($related);
+        $config = PolymorphicFieldConfig::make();
+
+        $config->setSelf($this->resourceConfig()->getHandle());
+
+        $this->morphs('type');
+
+        $this->addColumn(null, $relationName, ['nullable' => true])
+             ->fieldType('polymorphic')
+             ->fieldName($relationName)
+             ->config($config);
+
+        return $config;
+    }
+
+    public function relatedToOne($related, string $relationName = null)
+    {
+        $relationName = $relationName ?? str_singular($related);
+
+        return $this->relation($relationName, RelationType::oneToOne())
+                    ->related($related);
+    }
+
+    public function relatedToMany($related, string $relationName = null)
+    {
+        $relationName = $relationName ?? $related;
+
+        return $this->relation($relationName, RelationType::oneToMany())
+                    ->related($related);
+    }
+
+    public function relatedManyToMany($related, string $relationName = null)
+    {
+        $relationName = $relationName ?? $related;
+
+        return $this->relation($relationName, RelationType::manyToMany())
+                    ->related($related);
     }
 
     public function relation($relationName, RelationType $relationType): RelationFieldConfig
     {
         $config = RelationFieldConfig::make();
         $config->type($relationType);
+        $config->setSelf($this->resourceConfig()->getHandle());
 
         $this->addColumn(null, $relationName, ['nullable' => true])
              ->fieldType('relation')
@@ -38,8 +75,10 @@ trait CreatesRelations
         return $this->belongsTo($related, $relation, $foreignKey, $ownerKey)->nullable();
     }
 
-    public function belongsTo($related, $relationName, $foreignKey = null, $ownerKey = null): ColumnDefinition
+    public function belongsTo($related, $relationName = null, $foreignKey = null, $ownerKey = null): ColumnDefinition
     {
+        $relationName = $relationName ?? str_singular($related);
+
         return $this->unsignedInteger($foreignKey ?? $relationName.'_id')
                     ->fieldType('belongs_to')
                     ->fieldName($relationName)

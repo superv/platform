@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
-use Illuminate\Support\Collection;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class ResourceConfig
@@ -78,6 +77,11 @@ class ResourceConfig
         return $this;
     }
 
+    public function getHandle()
+    {
+        return $this->table;
+    }
+
     public function label($label)
     {
         $this->label = $label;
@@ -94,26 +98,6 @@ class ResourceConfig
 //        foreach ($attributes as $key => $value) {
 //            $this->attributes[$key] = $value;
 //        }
-    }
-
-    public function configxxx($table, Collection $columns)
-    {
-        if (! $this->label) {
-            $this->label(ucwords(str_replace('_', ' ', $table)));
-        }
-
-        $attributes = [];
-
-        if (! $this->attributes || ! is_array($this->attributes)) {
-            dd('a');
-        }
-        foreach ($this->attributes as $key => $value) {
-            $attributes[snake_case($key)] = $value;
-        }
-
-        $attributes['key_name'] = $this->keyName;
-
-        return $attributes;
     }
 
     public function getKeyName($default = 'id')
@@ -223,7 +207,6 @@ class ResourceConfig
 
         return $this;
     }
-
 
     public function singularLabel($singularLabel)
     {

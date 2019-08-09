@@ -27,7 +27,7 @@ class MorphToManyTest extends ResourceTestCase
 
         $users = ResourceFactory::make('t_users');
 
-        $this->assertColumnDoesNotExist('t_users', 'roles');
+        $this->assertColumnNotExists('t_users', 'roles');
         $this->assertColumnsExist('t_assigned_roles', ['id',
                                                        'owner_type',
                                                        'owner_id',

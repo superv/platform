@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Model;
 
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Database\Model\Repository;
@@ -55,6 +54,13 @@ class ResourceEntry extends Entry
                     }
                 }
             }
+            if (! $this->isPlatformResource()) {
+                if ($field = $this->getResource()->getField($relationName)) {
+                    $fieldType = $field->getFieldType();
+
+                    return $fieldType->newQuery($this)->getResults()->first();
+                }
+            }
         }
 
         /**
@@ -82,6 +88,12 @@ class ResourceEntry extends Entry
             return $relation;
         } elseif ($relation = superv('relations')->get($this->getHandle().'.'.$name)) {
             return $relation->newQuery();
+        } elseif (! $this->isPlatformResource()) {
+            if ($field = $this->getResource()->getField($name)) {
+                $fieldType = $field->getFieldType();
+
+                return $fieldType->newQuery($this);
+            }
         }
 
         return parent::__call($name, $arguments);
@@ -107,19 +119,19 @@ class ResourceEntry extends Entry
         return parent::newQuery();
     }
 
-    /**
-     * Get a new query builder instance for the connection.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
-    protected function newBaseQueryBuilder()
-    {
-        $connection = $this->getConnection();
-
-        return new QueryBuilder(
-            $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
-        );
-    }
+//    /**
+//     * Get a new query builder instance for the connection.
+//     *
+//     * @return \Illuminate\Database\Query\Builder
+//     */
+//    protected function newBaseQueryBuilder()
+//    {
+//        $connection = $this->getConnection();
+//
+//        return new QueryBuilder(
+//            $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
+//        );
+//    }
 
     public function getForeignKey()
     {
@@ -134,7 +146,10 @@ class ResourceEntry extends Entry
     public function getRelationshipFromConfig($name)
     {
         if (! $relation = $this->resolveRelation($name)) {
-            if (! $relation = $this->resolveRelation(snake_case($name))) {
+            if (
+                snake_case($name) === $name ||
+                ! $relation = $this->resolveRelation(snake_case($name))
+            ) {
                 return null;
             }
         }
@@ -162,6 +177,11 @@ class ResourceEntry extends Entry
     public function getHandle(): string
     {
         return $this->getTable();
+    }
+
+    public function isPlatformResource()
+    {
+        return starts_with($this->getHandle(), 'sv_');
     }
 
     public function route($route)

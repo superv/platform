@@ -29,7 +29,7 @@ class RelationsTest extends ResourceTestCase
             $table->belongsTo('t_groups', 'group');
         });
 
-        $this->assertColumnDoesNotExist('t_users', 'posts');
+        $this->assertColumnNotExists('t_users', 'posts');
 
         $relation = $users->getRelation('group');
         $this->assertEquals('belongs_to', $relation->getType());
@@ -49,7 +49,7 @@ class RelationsTest extends ResourceTestCase
         });
 
         $users = ResourceFactory::make('t_users');
-        $this->assertColumnDoesNotExist('t_users', 'posts');
+        $this->assertColumnNotExists('t_users', 'posts');
 
         $relation = $users->getRelation('posts');
         $this->assertEquals('has_many', $relation->getType());
@@ -77,7 +77,7 @@ class RelationsTest extends ResourceTestCase
 
         $users = ResourceFactory::make('t_users');
 
-        $this->assertColumnDoesNotExist('t_users', 'roles');
+        $this->assertColumnNotExists('t_users', 'roles');
         $this->assertColumnsExist('t_user_roles', ['id', 'user_id', 'role_id', 'status', 'created_at', 'updated_at']);
 
         $relation = $users->getRelation('roles');

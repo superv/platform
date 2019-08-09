@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Platform\Domains\Resource\Http\Controllers;
+namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
@@ -13,7 +13,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 /**
  * Class FormControllerTest
  *
- * @package Tests\Platform\Platform\Domains\Resource\Http\Controllers
+ * @package Tests\Platform\Domains\Resource\Http\Controllers
  * @group   resource
  */
 class FormControllerTest extends ResourceTestCase

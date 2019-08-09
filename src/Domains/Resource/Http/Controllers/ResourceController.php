@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
 class ResourceController extends BaseApiController
@@ -26,7 +27,8 @@ class ResourceController extends BaseApiController
     {
         $resource = $this->resolveResource(false);
 
-        $entry = $resource->newQuery(false)->withTrashed()->find(request()->route()->parameter('id'));
+        /** @var    \SuperV\Platform\Domains\Resource\Model\ResourceEntry $entry */
+        $entry = $resource->newQuery()->withTrashed()->find(request()->route()->parameter('id'));
 
         $entry->restore();
     }
@@ -36,14 +38,15 @@ class ResourceController extends BaseApiController
         $this->resolveResource();
 
         $fieldName = $this->route->parameter('field');
-        $field = $this->resource->fields()->get($fieldName);
+        if (! $field = $this->resource->fields()->get($fieldName)) {
+            PlatformException::fail("Field not found : [{$fieldName}]");
+        }
 
         if (! $rpcMethod = $this->route->parameter('rpc')) {
             $composed = (new FieldComposer($field))->forForm();
 
             return ['data' => sv_compose($composed)];
         }
-
 
         if ($field->getFieldType() instanceof HandlesRpc) {
             return $field->getFieldType()->getRpcResult(['method' => $rpcMethod], $this->request->toArray());

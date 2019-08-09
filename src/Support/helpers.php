@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Container\Container;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -37,6 +38,11 @@ function dump_callers($limit = 10)
     $callers = get_callers($limit);
 
     $callers->map(function ($caller) { dump($caller); });
+}
+
+function ddq(Builder $query)
+{
+    dd($query->toSql(), $query->getBindings());
 }
 
 function get_callers($limit = 10): Collection
