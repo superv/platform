@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Http\Request;
 use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
@@ -62,11 +61,6 @@ class Field implements FieldContract
     protected $value;
 
     protected $defaultValue;
-
-    /**
-     * @var \SuperV\Platform\Domains\Database\Model\Contracts\Watcher
-     */
-    protected $watcher;
 
     protected $rules;
 
@@ -187,13 +181,6 @@ class Field implements FieldContract
     public function fillFromEntry(EntryContract $entry)
     {
         $this->value = $this->resolveFromEntry($entry);
-    }
-
-    public function setWatcher(Watcher $watcher)
-    {
-        $this->watcher = $watcher;
-
-        return $this;
     }
 
     public function getFieldType(): FieldType

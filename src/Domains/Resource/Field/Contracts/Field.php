@@ -5,9 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 use Closure;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
-use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
 
 interface Field
 {
@@ -40,8 +38,6 @@ interface Field
     public function getConfigValue($key, $default = null);
 
     public function setConfigValue($key, $value = null);
-
-    public function setWatcher(Watcher $watcher);
 
     public function isHidden();
 

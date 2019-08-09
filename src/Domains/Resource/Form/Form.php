@@ -84,21 +84,8 @@ class Form implements FormContract, ProvidesUIComponent
             }
         }
 
-//        $this->fields->transform(function ($field) {
-//            if ($field instanceof Field) {
-//                return (new FormField($field))->setForm($this);
-//            }
-//
-//            return $field;
-//        })
-
-                     $this->fields->map(function (FormField $field) {
-
+        $this->fields->map(function (FormField $field) {
             $field->setForm($this);
-
-            if ($this->hasEntry()) {
-                $field->setWatcher($this->getEntry());
-            }
 
             if (in_array($field->getColumnName(), $this->getHiddenFields())) {
                 $field->hide();
@@ -118,7 +105,7 @@ class Form implements FormContract, ProvidesUIComponent
     {
         $this->setFormMode();
 
-        $this->applyCallbacks();
+        $this->applyExtensionCallbacks();
 
         $this->validateTemporalFields();
 
@@ -146,6 +133,19 @@ class Form implements FormContract, ProvidesUIComponent
     public function uuid(): string
     {
         return $this->uuid;
+    }
+
+    public function hideField(string $fieldName): FormContract
+    {
+        if (! $field = $this->getField($fieldName)) {
+            throw new Exception('Field not found: '.$fieldName);
+        }
+
+        $field->hide();
+
+        $this->hiddenFields[] = $fieldName;
+
+        return $this;
     }
 
     public function isUpdating()
@@ -181,19 +181,6 @@ class Form implements FormContract, ProvidesUIComponent
         $fields = $this->provideFields($fields);
 
         $this->fields = $this->fields->merge($fields);
-
-        return $this;
-    }
-
-    public function hideField(string $fieldName): FormContract
-    {
-        if (! $field = $this->getField($fieldName)) {
-            throw new Exception('Field not found: '.$fieldName);
-        }
-
-        $field->hide();
-
-        $this->hiddenFields[] = $fieldName;
 
         return $this;
     }
@@ -400,7 +387,7 @@ class Form implements FormContract, ProvidesUIComponent
         ValidateForm::dispatch($temporalFields, $this->request->all());
     }
 
-    protected function applyCallbacks(): void
+    protected function applyExtensionCallbacks(): void
     {
         if ($this->isCreating()) {
             if ($this->resource && $callback = $this->resource->getCallback('creating')) {

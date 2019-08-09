@@ -2,7 +2,6 @@
 
 namespace Tests\Platform\Domains\Resource\Relation\Types;
 
-use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Model\Repository;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
@@ -145,7 +144,7 @@ class MorphOneTest extends ResourceTestCase
     }
 }
 
-class TestTac extends Entry implements Watcher
+class TestTac extends Entry
 {
     protected $table = 't_tacs';
 

@@ -5,7 +5,6 @@ namespace Tests\Platform\Domains\Resource\Form;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -200,7 +199,7 @@ class FormTest extends ResourceTestCase
     }
 }
 
-class FormTestUser extends Model implements Watcher, EntryContract
+class FormTestUser extends Model implements EntryContract
 {
     public $timestamps = false;
 

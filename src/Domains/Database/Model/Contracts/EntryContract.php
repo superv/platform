@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database\Model\Contracts;
 
-interface EntryContract extends Watcher
+interface EntryContract
 {
     public function getId();
 
@@ -25,4 +25,10 @@ interface EntryContract extends Watcher
     public function wasRecentlyCreated(): bool;
 
     public function update(array $attributes = []);
+
+    public function setAttribute($key, $value);
+
+    public function getAttribute($key);
+
+    public function save();
 }
