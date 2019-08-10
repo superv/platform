@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as Field;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class FieldType
 {
@@ -53,6 +54,9 @@ class FieldType
     public static function resolveType($type)
     {
         $class = static::resolveTypeClass($type);
+        if (! class_exists($class)) {
+            PlatformException::fail("Can not resolve field type from [".$class."]");
+        }
 
         return new $class;
     }

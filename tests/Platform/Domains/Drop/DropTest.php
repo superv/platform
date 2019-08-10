@@ -8,7 +8,6 @@ use SuperV\Platform\Domains\Drop\BaseRepoHandler;
 use SuperV\Platform\Domains\Drop\Contracts\Drop as DropContract;
 use SuperV\Platform\Domains\Drop\DropRepoModel;
 use SuperV\Platform\Domains\Drop\Drops;
-use SuperV\Platform\Domains\Drop\Factory as DropFactory;
 use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
 use SuperV\Platform\Testing\PlatformTestCase;
 
@@ -69,37 +68,6 @@ class DropTest extends PlatformTestCase
         $this->assertEquals('My Comment', $comment->getEntryValue());
     }
 
-    function test__resolve2()
-    {
-        $posts = $this->create('posts', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->text('content');
-        });
-        $post = $posts->create(['id' => 321, 'title' => 'My Post', 'content' => 'Post Content']);
-
-        DropFactory::repo('posts')->create('title');
-
-        $drop = DropResolver::resolve('posts::title', 321);
-    }
-
-    function t1est__()
-    {
-//        $resolvedDrop = Resolver::resolve('users::email', 23);
-//
-//        $builder = new Builder();
-//
-//        $builder->addResolver('users', $user)
-//            ->addResolver('user_profiles', $profile)
-//            ->addDrop('users::email')
-//            ->addDrop('users::type')
-//            ->addDrop(    'user_profiles::first_name')
-//            ->addDrop(    'user_profiles::last_name')
-//        ];
-//
-//        $drops = Drops::hydrate($drops, ['users' => 1, 'user_profiles' => 1]);
-
-    }
 
     protected function makeDropRepo(string $namespace, string $identifier, string $handler): DropRepoModel
     {
