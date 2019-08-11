@@ -34,6 +34,16 @@ class DropRepoModel extends Model
         return $this->handler;
     }
 
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    public function getFullKey()
+    {
+        return $this->getNamespace().'.'.$this->getIdentifier();
+    }
+
     public static function findWithFullKey($fullKey): DropRepoModel
     {
         [$namespace, $identifier] = explode('.', $fullKey);

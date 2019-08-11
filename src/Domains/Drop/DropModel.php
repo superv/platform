@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Drop;
 
+use Closure;
 use SuperV\Platform\Domains\Database\Model\Model;
 use SuperV\Platform\Domains\Drop\Contracts\Drop;
 
@@ -10,6 +11,8 @@ class DropModel extends Model implements Drop
     private $entryValue;
 
     private $entryId;
+
+    private $onUpdateCallback;
 
     protected $table = 'sv_drops';
 
@@ -20,6 +23,11 @@ class DropModel extends Model implements Drop
     public function repo()
     {
         return $this->belongsTo(DropRepoModel::class, 'repo_id');
+    }
+
+    public function getRepo(): DropRepoModel
+    {
+        return $this->repo;
     }
 
     public function getId()
@@ -35,6 +43,11 @@ class DropModel extends Model implements Drop
     public function getDropKey(): string
     {
         return $this->getAttribute('key');
+    }
+
+    public function getFullKey(): string
+    {
+        return $this->getRepo()->getFullKey().'::'.$this->getDropKey();
     }
 
     public function getRepoIdentifier(): string
@@ -65,5 +78,20 @@ class DropModel extends Model implements Drop
     public function setEntryId($entryId)
     {
         $this->entryId = $entryId;
+    }
+
+    public function updateEntryValue($value)
+    {
+        if ($this->onUpdateCallback) {
+            call_user_func_array($this->onUpdateCallback, [$this->getRepo()->getFullKey(), $value]);
+        }
+        $this->setEntryValue($value);
+    }
+
+    public function onUpdateCallback(Closure $callback): Drop
+    {
+        $this->onUpdateCallback = $callback;
+
+        return $this;
     }
 }

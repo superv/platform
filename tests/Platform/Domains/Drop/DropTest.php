@@ -26,6 +26,8 @@ class DropTest extends PlatformTestCase
         $this->assertEquals('posts', $drop->getRepoIdentifier());
         $this->assertEquals(BaseRepoHandler::class, $drop->getRepoHandler());
         $this->assertEquals('title', $drop->getDropKey());
+        $this->assertEquals('blog.posts::title', $drop->getFullKey());
+
     }
 
     function test__resolve()
@@ -68,6 +70,32 @@ class DropTest extends PlatformTestCase
         $this->assertEquals('My Comment', $comment->getEntryValue());
     }
 
+    function test__update()
+    {
+        $blogPostsRepo = $this->makeDropRepo('blog', 'posts', BaseRepoHandler::class);
+        $blogPostsRepo->createDrop(['key' => 'title']);
+        $blogPostsRepo->createDrop(['key' => 'content']);
+        $posts = $this->create('posts', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title');
+            $table->text('content');
+        });
+        $post = $posts->create(['id' => 321, 'title' => 'My Post', 'content' => 'Post Content']);
+
+        $drops = Drops::make(['blog.posts' => $post])
+                      ->resolve([
+                          'blog.posts::title',
+                          'blog.posts::content',
+                      ]);
+
+        $title = $drops->get('blog.posts::title');
+        $title->updateEntryValue('My Updated Title');
+        $this->assertEquals('My Updated Title', $post->getAttribute('title'));
+
+        $drops->push();
+
+        $this->assertEquals('My Updated Title', $post->fresh()->getAttribute('title'));
+    }
 
     protected function makeDropRepo(string $namespace, string $identifier, string $handler): DropRepoModel
     {

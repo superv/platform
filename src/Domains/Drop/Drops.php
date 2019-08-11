@@ -39,10 +39,26 @@ class Drops
             $drop->setEntryValue($value);
             $drop->setEntryId($this->entries[$repoKey]['id']);
 
+            $drop->onUpdateCallback(function ($repoFullKey, $value) use ($drop) {
+                $entry = $this->entries[$repoFullKey];
+
+                $entry->setAttribute($drop->getDropKey(), $value);
+            });
+
             $this->drops[$fullKey] = $drop;
         }
 
         return $this;
+    }
+
+    public function push()
+    {
+        /** @var \SuperV\Platform\Domains\Database\Model\Model $entry */
+        foreach ($this->entries as $entry) {
+            if ($entry->isDirty()) {
+                $entry->save();
+            }
+        }
     }
 
     public function add(Drop $drop)
@@ -52,7 +68,7 @@ class Drops
         return $this;
     }
 
-    public function get($fullKey)
+    public function get($fullKey): ?Drop
     {
         return $this->drops[$fullKey];
     }
