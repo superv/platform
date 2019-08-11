@@ -3,7 +3,7 @@
 use Illuminate\Container\Container;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
 use SuperV\Platform\Domains\UI\Components\Component;
@@ -327,7 +327,7 @@ function sv_loader($url, array $props = [])
 
 function sv_field(array $params)
 {
-    return FieldFactory::createFromArray($params);
+    return FormField::make($params);
 }
 
 function sv_resource($handle)

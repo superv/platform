@@ -10,9 +10,9 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Contracts\Form as FormContract;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
+use SuperV\Platform\Domains\Resource\Form\FormField as ConcreteFormField;
 use SuperV\Platform\Domains\Resource\Form\Jobs\ValidateForm;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
@@ -369,7 +369,7 @@ class Form implements FormContract, ProvidesUIComponent
         if (is_array($fields)) {
             $fields = collect($fields)
                 ->map(function ($field) {
-                    $field = is_array($field) ? FieldFactory::createFromArray($field) : $field;
+                    $field = is_array($field) ? ConcreteFormField::make($field) : $field;
 
                     return $field;
                 });
