@@ -53,7 +53,7 @@ class RelationField extends FieldType implements AltersDatabaseTable
                     $query,
                     $parent,
                     $config->getForeignKey(),
-                    'id',
+                    'id'
                 );
             }
         }
