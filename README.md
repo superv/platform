@@ -14,8 +14,8 @@ Please visit https://docs.superv.io for documentation
 - Ports; seperation of API access based on different hostnames or even same hostname but different prefixes.
 - Many more to be documented..
 
-## Contributing
-
+## Support
+If you any questions, feel free to contact me on [Twitter](https://twitter.com/daliselcuk).
 
 ## License
 [MIT](https://github.com/superv/superv-platform/blob/master/LICENSE.md)
