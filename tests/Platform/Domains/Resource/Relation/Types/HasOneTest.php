@@ -26,8 +26,8 @@ class HasOneTest extends ResourceTestCase
 
     function test__creates_relation()
     {
-        $this->assertColumnDoesNotExist('t_users', 'profile');
-        $this->assertColumnDoesNotExist('t_users', 'user_id');
+        $this->assertColumnNotExists('t_users', 'profile');
+        $this->assertColumnNotExists('t_users', 'user_id');
 
         /** @var \SuperV\Platform\Domains\Resource\Relation\Types\HasOne $relation */
         $relation = $this->parent->getRelation('profile');

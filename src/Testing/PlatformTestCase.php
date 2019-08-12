@@ -7,6 +7,7 @@ use Hub;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use SuperV\Platform\Console\Jobs\InstallSuperV;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Addon\Locator;
@@ -34,6 +35,8 @@ class PlatformTestCase extends OrchestraTestCase
     ];
 
     protected $shouldInstallPlatform = true;
+
+    protected $shouldBootPlatform = false;
 
     protected $installs = [];
 
@@ -69,6 +72,8 @@ class PlatformTestCase extends OrchestraTestCase
     protected function setUp()
     {
         parent::setUp();
+
+        \Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
 
         if ($this->handleExceptions === false) {
             $this->withoutExceptionHandling();
@@ -200,13 +205,15 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected function installSuperV(): void
     {
-        $this->artisan('superv:install');
+        InstallSuperV::dispatch();
 
         $this->setConfigParams();
 
         $this->handlePostInstallCallbacks();
 
-        (new PlatformServiceProvider($this->app))->boot();
+        if ($this->shouldBootPlatform) {
+            (new PlatformServiceProvider($this->app))->boot();
+        }
 
         $this->installAddons();
     }

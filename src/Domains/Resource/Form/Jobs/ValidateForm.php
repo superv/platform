@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
 use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Validator;
-use SuperV\Platform\Domains\Resource\Form\FormField;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Support\Dispatchable;
 
 class ValidateForm
@@ -53,9 +53,9 @@ class ValidateForm
 
     private function parseFieldRules(FormField $field)
     {
-        $rules = $field->base()->getRules();
+        $rules = $field->getRules();
 
-        if ($field->base()->isRequired()) {
+        if ($field->isRequired()) {
             $rules[] = 'required';
         } else {
             $rules[] = 'nullable';

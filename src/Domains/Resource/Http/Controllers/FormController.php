@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\Jobs\MakeForm;
 use SuperV\Platform\Domains\Resource\Form\Jobs\SaveForm;
@@ -27,7 +28,7 @@ class FormController extends BaseController
         $form->make($formEntry->uuid);
 
         $fieldEntry = $formEntry->getFormField($field);
-        $field = FieldFactory::createFromEntry($fieldEntry);
+        $field = FieldFactory::createFromEntry($fieldEntry, FormField::class);
         $field->setForm($form);
 
         if ($resource) {

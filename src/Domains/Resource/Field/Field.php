@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Http\Request;
 use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
@@ -21,26 +20,22 @@ class Field implements FieldContract
     use HasConfig;
     use FieldFlags;
 
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Field\FieldType
-     */
+    /** @var \SuperV\Platform\Domains\Resource\Field\FieldType */
     protected $fieldType;
 
     /** @var string */
     protected $type;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $uuid;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $name;
 
+    /** @var string */
     protected $columnName;
 
+    /** @var string */
     protected $placeholder;
 
     /** @var Closure */
@@ -66,11 +61,6 @@ class Field implements FieldContract
     protected $value;
 
     protected $defaultValue;
-
-    /**
-     * @var \SuperV\Platform\Domains\Database\Model\Contracts\Watcher
-     */
-    protected $watcher;
 
     protected $rules;
 
@@ -109,27 +99,23 @@ class Field implements FieldContract
 
     protected function boot() { }
 
-    public function getForm(): Form
-    {
-        return $this->form;
-    }
-
-    public function setForm(Form $form): void
-    {
-        $this->form = $form;
-    }
-
     public function getLabel(): string
     {
         if ($this->resource) {
-            $key = $this->resource->getAddon().'::resources.'.$this->resource->getHandle().'.fields.'.$this->name;
+            $key = $this->resource->getNamespace().'::resources.'.$this->resource->getHandle().'.fields.'.$this->name;
             $value = trans($key);
             if ($value !== $key) {
                 return $value['label'] ?? $value;
             }
         }
 
-        return __($this->label ?? str_unslug($this->getName()));
+        $label = __($this->label ?? str_unslug($this->getName()));
+
+        if (is_string($label)) {
+            return $label;
+        }
+
+        return str_unslug($this->getName());
     }
 
     public function setLabel(string $label): FieldContract
@@ -197,13 +183,6 @@ class Field implements FieldContract
         $this->value = $this->resolveFromEntry($entry);
     }
 
-    public function setWatcher(Watcher $watcher)
-    {
-        $this->watcher = $watcher;
-
-        return $this;
-    }
-
     public function getFieldType(): FieldType
     {
         return $this->fieldType;
@@ -212,6 +191,11 @@ class Field implements FieldContract
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getIdentifier()
+    {
+        return $this->getColumnName();
     }
 
     public function getColumnName(): ?string

@@ -18,7 +18,8 @@ class SuperVInstallCommandTest extends TestCase
     {
         file_put_contents(base_path('.env'), 'SV_INSTALLED=false');
 
-        $this->artisan('superv:install');
+        InstallSuperV::dispatch();
+
         $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
     }
 
@@ -60,9 +61,7 @@ class SuperVInstallCommandTest extends TestCase
     {
         Event::fake([PlatformInstalledEvent::class]);
 
-        $installer = app(InstallSuperV::class);
-
-        $installer();
+        InstallSuperV::dispatch();
 
         Event::assertDispatched(PlatformInstalledEvent::class);
     }
@@ -75,9 +74,7 @@ class SuperVInstallCommandTest extends TestCase
             $_SERVER['__switch__'] = 'on';
         });
 
-        $installer = app(InstallSuperV::class);
-
-        $installer();
+        InstallSuperV::dispatch();
 
         $this->assertEquals('on', $_SERVER['__switch__']);
     }

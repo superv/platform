@@ -68,12 +68,12 @@ return [
 
     'DELETE@'.'sv/res/{resource}/{id}' => [
         'as'   => 'resource.delete',
-        'uses' => ResourceIndexController::at('delete'),
+        'uses' => ResourceController::at('delete'),
     ],
 
     'POST@'.'sv/res/{resource}/{id}/restore' => [
         'as'   => 'resource.restore',
-        'uses' => ResourceIndexController::at('restore'),
+        'uses' => ResourceController::at('restore'),
     ],
 
     'ANY@'.'sv/res/{resource}/fields/{field?}/{rpc?}' => [

@@ -69,7 +69,7 @@ class RelationIndexTest extends ResourceTestCase
 
         // check the View Action Url
         //
-        $viewAction = HelperComponent::from($table->getProp('config.row_actions.0'));
+        $viewAction = HelperComponent::from($table->getProp('config.row_actions.1'));
         $firstPost = $userPosts->first();
         $this->assertEquals($firstPost->route('view.page'), str_replace('{entry.id}', $firstPost->getId(), $viewAction->getProp('url')));
     }

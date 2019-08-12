@@ -19,14 +19,15 @@ class BelongsToTest extends ResourceTestCase
         $users = $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->entryLabel();
-            $table->belongsTo('t_groups', 'group');
+            $table->belongsTo('groups');
         });
+
 
         $this->assertColumnExists('t_users', 'group_id');
         $belongsTo = $users->getField('group');
 
         $this->assertEquals('belongs_to', $belongsTo->getFieldType());
-        $this->assertEquals('t_groups', $belongsTo->getConfigValue('related_resource'));
+        $this->assertEquals('groups', $belongsTo->getConfigValue('related_resource'));
         $this->assertEquals('group_id', $belongsTo->getConfigValue('foreign_key'));
     }
 
@@ -38,7 +39,7 @@ class BelongsToTest extends ResourceTestCase
                 $resource->model(BelongsToTestUser::class);
                 $table->increments('id');
                 $table->string('name')->entryLabel();
-                $table->belongsTo('t_groups', 'group');
+                $table->belongsTo('groups', 'group');
             });
 
         $fakeUser = BelongsToTestUser::create(['name' => 'J', 'group_id' => 100]);
@@ -52,7 +53,7 @@ class BelongsToTest extends ResourceTestCase
 
     protected function makeGroupResource(): void
     {
-        $groups = $this->create('t_groups', function (Blueprint $table) {
+        $groups = $this->create('groups', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title')->entryLabel();
         });

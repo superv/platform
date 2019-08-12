@@ -74,8 +74,8 @@ class Blueprints
     /** @return Resource */
     public function posts()
     {
-        return $this->create('t_posts', function (Blueprint $table) {
-            $table->resourceConfig()->label('Posts');
+        return $this->create('t_posts', function (Blueprint $table, ResourceConfig $resource) {
+            $resource->label('Posts');
 
             $table->increments('id');
             $table->string('title');

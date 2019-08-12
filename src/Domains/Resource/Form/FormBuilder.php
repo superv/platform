@@ -2,7 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
+use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
@@ -28,12 +31,29 @@ class FormBuilder
         }
 
         if ($this->resource) {
-            $form->setFields($this->resource->getFields());
+//            $form->setFields($this->resource->getFields());
+
+            $form->setFields($this->buildFields($this->resource->getFieldEntries()));
             $form->setResource($this->resource);
-            $form->setIdentifier($this->resource->getResourceKey());
+            $form->setIdentifier($this->resource->config()->getResourceKey());
         }
 
         return $form;
+    }
+
+    public function buildFields(Collection $fields)
+    {
+        $fields = $fields->map(function (FieldModel $field) {
+            $field = FieldFactory::createFromEntry($field, FormField::class);
+
+            if ($this->resource) {
+                $field->setResource($this->resource);
+            }
+
+            return $field;
+        });
+
+        return $fields;
     }
 
     public function getResource(): Resource

@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Closure;
-use Exception;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
@@ -26,7 +25,6 @@ use SuperV\Platform\Domains\Resource\Resource\TestHelper;
 use SuperV\Platform\Domains\Resource\Table\ResourceTable;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
-use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 final class Resource implements
@@ -34,7 +32,7 @@ final class Resource implements
     Contracts\ProvidesQuery
 {
     use Hydratable;
-    use HasConfig;
+//    use HasConfig;
     use LabelConcern;
     use RepoConcern;
     use FiresCallbacks;
@@ -114,16 +112,27 @@ final class Resource implements
 
     protected $sortable = false;
 
+    /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
+    protected $config;
+
+    protected $extended = false;
+
+
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
 
         $this->fields = (new Fields($this, $this->fields));
-        if (is_null($this->relations)) {
-            throw new Exception('aa');
-        }
+
         $this->relations = ($this->relations)($this);
+
         $this->actions = collect();
+    }
+
+    public function config(): ResourceConfig
+    {
+        return $this->config;
     }
 
     public function registerAction($identifier, $handler): Resource
@@ -198,12 +207,17 @@ final class Resource implements
         return $this->fields()->get($name);
     }
 
+    public function getFieldEntries(): Collection
+    {
+        if (is_callable($this->fieldEntries)) {
+            $this->fieldEntries = ($this->fieldEntries)();
+        }
+
+        return $this->fieldEntries;
+    }
+
     public function getRelations(): Collection
     {
-//        if ($this->relations instanceof Closure) {
-//            $this->relations = ($this->relations)($this);
-//        }
-
         return $this->relations->merge(collect($this->mergeRelations));
     }
 
@@ -281,10 +295,10 @@ final class Resource implements
                 if (is_array($rule)) {
                     $key = $rule['rule'];
                     if (str_contains($key, ':')) {
-                        $key = explode(':',$rule['rule'])[0];
+                        $key = explode(':', $rule['rule'])[0];
                     }
 
-                    return [$field->getColumnName().'.'.$key=> $rule['message']];
+                    return [$field->getColumnName().'.'.$key => $rule['message']];
                 }
 
                 return null;
@@ -328,14 +342,14 @@ final class Resource implements
             ->all();
     }
 
-    public function getResourceKey()
+    public function getResourceKey_xxxxx()
     {
         return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
     }
 
     public function isOwned()
     {
-        return ! is_null($this->getConfigValue('owner_key'));
+        return ! is_null($this->config()->getOwnerKey());
     }
 
     public function getKeyName()
@@ -368,6 +382,10 @@ final class Resource implements
             return $base;
         }
 
+        if ($route === 'actions') {
+            return $base.'/'.$entry->getId().'/actions';
+        }
+
         if ($route === 'view') {
             return $base.'/'.$entry->getId().'/view';
         }
@@ -377,14 +395,15 @@ final class Resource implements
         }
 
         if ($route === 'edit') {
-            return $base.'/'.$entry->getId().'/'.$route;
+            return $base.'/'.$entry->getId().'/edit';
+        }
+
+        if ($route === 'edit.page') {
+            return $base.'/'.$entry->getId().'/edit-page';
         }
 
         if ($route === 'update' || $route === 'delete') {
             return $base.'/'.$entry->getId();
-        }
-        if ($route === 'edit' || $route === 'view') {
-            return $base.'/'.$entry->getId().'/'.$route;
         }
 
         return sv_route('resource.'.$route, array_merge($params, ['id'       => $entry->getId(),
@@ -479,34 +498,30 @@ final class Resource implements
         return $this->restorable;
     }
 
-    public function hasUuid(): bool
-    {
-        return $this->getConfigValue('has_uuid', false);
-    }
-
     public function isSortable(): bool
     {
         return $this->sortable;
     }
 
-    /**
-     * @return string
-     */
-    public function getAddon(): string
+    public function getNamespace(): string
     {
         return $this->addon;
     }
 
     /**
-     * @return \Illuminate\Support\Collection
+     * @return bool
      */
-    public function getFieldEntries(): Collection
+    public function isExtended(): bool
     {
-        if (is_callable($this->fieldEntries)) {
-            $this->fieldEntries = ($this->fieldEntries)();
-        }
+        return $this->extended;
+    }
 
-        return $this->fieldEntries;
+    /**
+     * @param bool $extended
+     */
+    public function setExtended(bool $extended): void
+    {
+        $this->extended = $extended;
     }
 
     public function uuid(): string
@@ -519,11 +534,6 @@ final class Resource implements
         return $this->id;
     }
 
-    /**
-     * Get the instance as an array.
-     *
-     * @return array
-     */
     public function toArray()
     {
         return [

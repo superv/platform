@@ -3,87 +3,50 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormField as FormFieldContract;
 
-class FormField implements ProvidesField
+class FormField extends Field implements FormFieldContract
 {
+    protected $temporal = false;
+
     /** @var \SuperV\Platform\Domains\Resource\Form\Form */
     protected $form;
-
-    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field */
-    protected $base;
 
     /** @var \SuperV\Platform\Domains\Resource\Form\FieldLocation */
     protected $location;
 
-    protected $temporal = false;
-
-    public function __construct(Field $field)
+    public function observe(FormFieldContract $parent, ?EntryContract $entry = null)
     {
-        $this->base = $field;
+        $parent->setConfigValue('meta.on_change_event', $parent->getName().':'.$parent->getColumnName().'={value}');
+
+        $this->mergeConfig([
+            'meta' => [
+                'listen_event' => $parent->getName(),
+                'autofetch'    => false,
+            ],
+        ]);
+
+        if ($entry) {
+            $this->mergeConfig([
+                'meta' => [
+                    'query'     => [$parent->getColumnName() => $entry->{$parent->getColumnName()}],
+                    'autofetch' => false,
+                ],
+            ]);
+        }
     }
 
-    public function isHidden()
+    public function getForm(): Form
     {
-        return $this->base->isHidden();
+        return $this->form;
     }
 
-    public function isVisible()
+    public function setForm(Form $form): void
     {
-        return $this->base->isVisible();
-    }
-
-    public function doesNotInteractWithTable()
-    {
-        return $this->base->doesNotInteractWithTable();
-    }
-
-    public function getColumnName()
-    {
-        return $this->base->getColumnName();
-    }
-
-    public function getLabel()
-    {
-        return $this->base->getLabel();
-    }
-
-    public function getName()
-    {
-        return $this->base->getName();
-    }
-
-    public function getIdentifier()
-    {
-        return $this->base->getColumnName();
-    }
-
-    public function makeField(): Field
-    {
-        return $this->base();
-    }
-
-    public function base(): Field
-    {
-        return $this->base;
-    }
-
-    public function hide()
-    {
-        $this->base->hide();
-
-        return $this;
-    }
-
-    public function setConfigValue($key, $value)
-    {
-        $this->base->setConfigValue($key, $value);
-    }
-
-    public function setDefaultValue($value)
-    {
-        $this->base->setDefaultValue($value);
+        $this->form = $form;
     }
 
     public function getLocation(): ?FieldLocation
@@ -96,11 +59,9 @@ class FormField implements ProvidesField
         $this->location = $location;
     }
 
-    public function setForm(Form $form): FormField
+    public function setTemporal($temporal)
     {
-        $this->form = $form;
-
-        return $this;
+        $this->temporal = $temporal;
     }
 
     public function isTemporal(): bool
@@ -108,33 +69,8 @@ class FormField implements ProvidesField
         return $this->temporal;
     }
 
-    public function setTemporal(bool $temporal): FormField
+    public static function make(array $params)
     {
-        $this->temporal = $temporal;
-
-        return $this;
-    }
-
-    public function observe(FormField $parent, ?EntryContract $entry = null)
-    {
-        $parent = $parent->base();
-
-        $parent->setConfigValue('meta.on_change_event', $parent->getName().':'.$parent->getColumnName().'={value}');
-
-        $this->base()->mergeConfig([
-            'meta' => [
-                'listen_event' => $parent->getName(),
-                'autofetch'    => false,
-            ],
-        ]);
-
-        if ($entry) {
-            $this->base()->mergeConfig([
-                'meta' => [
-                    'query'     => [$parent->getColumnName() => $entry->{$parent->getColumnName()}],
-                    'autofetch' => false,
-                ],
-            ]);
-        }
+        return FieldFactory::createFromArray($params, self::class);
     }
 }

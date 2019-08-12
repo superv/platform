@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Database\Events;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Events\BaseEvent;
 
@@ -24,13 +25,19 @@ class TableCreatingEvent extends BaseEvent
     public $addon;
 
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
-    public $resourceBlueprint;
+    public $config;
 
-    public function __construct($table, Collection $columns, ResourceConfig $blueprint, $addon)
+    /**
+     * @var \SuperV\Platform\Domains\Database\Schema\Blueprint
+     */
+    public $blueprint;
+
+    public function __construct($table, Collection $columns, ResourceConfig $config, $addon, Blueprint $blueprint)
     {
         $this->table = $table;
         $this->columns = $columns;
-        $this->resourceBlueprint = $blueprint;
+        $this->config = $config;
         $this->addon = $addon;
+        $this->blueprint = $blueprint;
     }
 }

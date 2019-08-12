@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Action\Contracts\ActionContract;
 use SuperV\Platform\Domains\UI\Components\ActionComponent;
 use SuperV\Platform\Support\Composer\Payload;
+use SuperV\Platform\Testing\PlatformTestCase;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 interface AcceptsActionTestEntry
@@ -24,7 +25,7 @@ interface ProvidesActionTestEntry
  * @package Tests\Platform\Domains\Resource\Action
  * @group   resource
  */
-class ActionTest extends ResourceTestCase
+class ActionTest extends PlatformTestCase
 {
     function test__construct()
     {

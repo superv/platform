@@ -5,7 +5,6 @@ namespace Tests\Platform\Domains\Resource\Form;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -13,6 +12,7 @@ use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -33,7 +33,7 @@ class FormTest extends ResourceTestCase
         $watcher = new FormTestUser(['name' => 'Omar', 'age' => 33]);
 
         $form = FormBuilder::buildFromEntry($watcher);
-        $form = $form->setFields($fields)->hideField('age')->make();
+        $form = $form->setFields($fields)->make()->hideField('age');
 
         $this->assertInstanceOf(Form::class, $form);
         $this->assertEquals(2, $form->getFields()->count());
@@ -50,6 +50,18 @@ class FormTest extends ResourceTestCase
 
         $this->assertEquals('Omar', $this->getComposedValue($form->getField('name'), $form));
         $this->assertEquals(33, $this->getComposedValue($form->getField('age'), $form));
+    }
+
+    function test__add_field()
+    {
+        $form = FormBuilder::buildFromEntry($testUser = new FormTestUser);
+        $this->assertEquals(2, $form->getFields()->count());
+
+        $form->addField(FieldFactory::createFromArray(['type' => 'text', 'name' => 'profession'], FormField::class));
+
+        $field = $form->getField('profession');
+        $this->assertNotNull($field);
+        $this->assertInstanceOf(\SuperV\Platform\Domains\Resource\Form\Contracts\FormField::class, $field);
     }
 
     function test__saves_form()
@@ -111,6 +123,8 @@ class FormTest extends ResourceTestCase
      */
     function test__resource_create_over_http()
     {
+        $this->withoutExceptionHandling();
+
         $response = $this->getJsonUser($this->users->route('create'));
         $response->assertOk();
 
@@ -174,18 +188,18 @@ class FormTest extends ResourceTestCase
     protected function makeFields(): array
     {
         return [
-            FieldFactory::createFromArray(['name' => 'name', 'type' => 'text']),
-            FieldFactory::createFromArray(['name' => 'age', 'type' => 'number']),
+            FieldFactory::createFromArray(['name' => 'name', 'type' => 'text'], FormField::class),
+            FieldFactory::createFromArray(['name' => 'age', 'type' => 'number'], FormField::class),
         ];
     }
 
     protected function makeField(array $params): Field
     {
-        return FieldFactory::createFromArray($params);
+        return FieldFactory::createFromArray($params, FormField::class);
     }
 }
 
-class FormTestUser extends Model implements Watcher, EntryContract
+class FormTestUser extends Model implements EntryContract
 {
     public $timestamps = false;
 

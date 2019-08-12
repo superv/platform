@@ -9,4 +9,6 @@ class ResourceTestCase extends \Tests\Platform\TestCase
 {
     use RefreshDatabase;
     use ResourceTestHelpers;
+
+    protected $shouldBootPlatform = true;
 }

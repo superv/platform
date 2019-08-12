@@ -2,50 +2,59 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
-class FieldConfig
+use ReflectionClass;
+use ReflectionProperty;
+use SuperV\Platform\Contracts\Arrayable;
+use SuperV\Platform\Support\Concerns\Hydratable;
+
+class FieldConfig implements Arrayable
 {
-    protected $fieldName;
+    use Hydratable;
 
-    protected $rules = [];
+    /**
+     * Self resource handle
+     *
+     * @var string
+     */
+    protected $self;
 
-    protected $config = [];
-
-    public function __construct($fieldName)
+    public function __construct(array $attributes = [])
     {
-        $this->fieldName = $fieldName;
+        if (! empty($attributes)) {
+            $this->hydrate($attributes);
+        }
     }
 
-    public function getFieldName(): string
+    /**
+     * @return string
+     */
+    public function getSelf(): string
     {
-        return $this->fieldName;
+        return $this->self;
     }
 
-    public function getRules(): array
+    public function setSelf(string $self): FieldConfig
     {
-        return $this->rules;
-    }
-
-    public function mergeRules(array $rules): self
-    {
-        $this->rules = $rules;
+        $this->self = $self;
 
         return $this;
     }
 
-    public function config(array $config): self
+    /**
+     * Get the instance as an array.
+     *
+     * @return array
+     */
+    public function toArray()
     {
-        $this->config = $config;
+        return collect((new ReflectionClass(static::class))->getProperties())
+            ->map(function (ReflectionProperty $property) {
+                $value = $this->{$property->getName()};
+                if (is_object($value)) {
+                    $value = (string)$value;
+                }
 
-        return $this;
-    }
-
-    public function getConfig(): array
-    {
-        return $this->config;
-    }
-
-    public static function field($fieldName): self
-    {
-        return new static($fieldName);
+                return [snake_case($property->getName()), $value];
+            })->toAssoc()->all();
     }
 }

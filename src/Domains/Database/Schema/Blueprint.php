@@ -31,7 +31,7 @@ class Blueprint extends LaravelBlueprint
     /** @var \Illuminate\Support\Collection|\Closure[] */
     protected $postBuildCallbacks;
 
-    public function __construct(string $table, ?\Closure $callback = null, Schema $builder = null)
+    public function __construct(string $table, ?Closure $callback = null, Schema $builder = null)
     {
         parent::__construct($table, $callback);
 
@@ -43,7 +43,7 @@ class Blueprint extends LaravelBlueprint
         // Here, while adding a column let's pass along
         // the resource blueprint to each column
         $this->columns[] = $column = new ColumnDefinition(
-            $this->builder ? $this->builder->resource() : new \SuperV\Platform\Domains\Resource\ResourceConfig,
+            $this->builder ? $this->builder->resource() : new ResourceConfig,
             array_merge(compact('type', 'name'), $parameters)
         );
 
@@ -66,7 +66,7 @@ class Blueprint extends LaravelBlueprint
         $this->columns = collect($this->columns)->keyBy('name');
 
         if ($this->creating()) {
-            TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->resourceConfig(), Current::migrationScope());
+            TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->resourceConfig(), Current::migrationScope(), $this);
         } else {
             $this->runDropOperations();
         }
@@ -76,7 +76,7 @@ class Blueprint extends LaravelBlueprint
                 if ($column->change) {
                     ColumnUpdatedEvent::dispatch($this->tableName(), $this, $column);
                 } else {
-                    ColumnCreatedEvent::dispatch($this->tableName(), $this, $column, $this->resourceConfig()->model);
+                    ColumnCreatedEvent::dispatch($this->tableName(), $this, $column, $this->resourceConfig()->getModel());
                 }
 
                 return $column->ignore ? null : $column;

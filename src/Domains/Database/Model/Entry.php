@@ -2,13 +2,8 @@
 
 namespace SuperV\Platform\Domains\Database\Model;
 
-use Illuminate\Database\Eloquent\Model;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-
-class Entry extends Model implements EntryContract
+class Entry extends Model
 {
-    protected $guarded = [];
-
     /**
      * Create a new Eloquent query builder for the model.
      *
@@ -27,26 +22,6 @@ class Entry extends Model implements EntryContract
         return new QueryBuilder(
             $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
         );
-    }
-
-//    public function getOwnerType()
-//    {
-//        return $this->getMorphClass();
-//    }
-//
-//    public function getOwnerId()
-//    {
-//        return $this->getKey();
-//    }
-
-    public function getId()
-    {
-        return $this->getKey();
-    }
-
-    public function wasRecentlyCreated(): bool
-    {
-        return $this->wasRecentlyCreated;
     }
 
     /**

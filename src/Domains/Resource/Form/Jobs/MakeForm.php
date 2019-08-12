@@ -3,9 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
-use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Support\Dispatchable;
 
@@ -37,10 +36,14 @@ class MakeForm
 
         // wrap field with formField
         //
-        $formFields = $this->formData->compileFields()
-                                     ->map(function (Field $field) use ($form) {
-                                         return (new FormField($field))->setForm($form);
-                                     });
+//        $formFields = $this->formData->compileFields()
+//                                     ->map(function (FormField $field) use ($form) {
+//                                         $field->setForm($form);
+//
+//                                         return $field;
+//                                     });
+
+        $formFields = $builder->buildFields($this->formData->getFormFields());
 
         $form->setFields($formFields)
              ->setUrl(sv_url()->path())

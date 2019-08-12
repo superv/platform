@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Container\Container;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
 use SuperV\Platform\Domains\UI\Components\Component;
@@ -14,8 +15,9 @@ use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
 
-function ddh() {
-    dd('Over here! '. date('H:i:s'), func_get_args());
+function ddh()
+{
+    dd('Over here! '.date('H:i:s'), func_get_args());
 }
 
 function sv_trans($key = null, $replace = [], $locale = null)
@@ -27,6 +29,7 @@ function sv_trans($key = null, $replace = [], $locale = null)
     }
 
     $parts = explode('.', $key);
+
     return end($parts);
 }
 
@@ -37,7 +40,12 @@ function dump_callers($limit = 10)
     $callers->map(function ($caller) { dump($caller); });
 }
 
-function get_callers($limit = 10): \Illuminate\Support\Collection
+function ddq(Builder $query)
+{
+    dd($query->toSql(), $query->getBindings());
+}
+
+function get_callers($limit = 10): Collection
 {
     $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $limit);
     $callers = collect($stack)->map(function ($trace, $key) {
@@ -308,6 +316,10 @@ function sv_loader($url, array $props = [])
 //        $url = sv_url($url);
     }
 
+    if ($qs = request()->getQueryString()) {
+        $url .= '?'.$qs;
+    }
+
     $props['url'] = $url;
 
     return Component::make('sv-loader')->setProps($props);
@@ -315,7 +327,7 @@ function sv_loader($url, array $props = [])
 
 function sv_field(array $params)
 {
-    return FieldFactory::createFromArray($params);
+    return FormField::make($params);
 }
 
 function sv_resource($handle)

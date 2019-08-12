@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Platform\Http;
+namespace Tests\Platform\Http;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Platform\TestCase;
@@ -8,6 +8,8 @@ use Tests\Platform\TestCase;
 class DataControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected $shouldBootPlatform = true;
 
     function test__returns_initial_user_data()
     {

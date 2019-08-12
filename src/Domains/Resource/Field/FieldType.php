@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field as Field;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class FieldType
 {
@@ -11,12 +12,12 @@ class FieldType
     /** @var Field */
     protected $field;
 
+    protected function boot() { }
+
     public function __toString()
     {
-      return $this->type ?? $this->field->getType();
+        return $this->type ?? $this->field->getType();
     }
-
-    protected function boot() {}
 
     public function setField(Field $field): void
     {
@@ -40,6 +41,11 @@ class FieldType
         return $this->field->getConfigValue($key, $default);
     }
 
+    public function setConfig(array $config)
+    {
+        return $this->field->setConfig($config);
+    }
+
     public function getType(): ?string
     {
         return $this->type;
@@ -48,6 +54,9 @@ class FieldType
     public static function resolveType($type)
     {
         $class = static::resolveTypeClass($type);
+        if (! class_exists($class)) {
+            PlatformException::fail("Can not resolve field type from [".$class."]");
+        }
 
         return new $class;
     }
@@ -56,10 +65,11 @@ class FieldType
     {
         $base = 'SuperV\Platform\Domains\Resource\Field\Types';
 
-        $class = $base."\\".studly_case($type);
+        $class = $base."\\".studly_case($type.'_field');
 
+        // custom directory
         if (! class_exists($class)) {
-            $class = $base."\\".studly_case($type.'_field');
+            $class = $base."\\".studly_case($type)."\\".studly_case($type.'_field');
         }
 
         return $class;

@@ -32,8 +32,9 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
         $form = FormBuilder::buildFromEntry($childEntry = $this->newQuery()->make());
         $formData = FormModel::findByUuid($this->getRelatedResource()->getHandle());
 
-        return $form->hideField(sv_resource($this->parentEntry)->getResourceKey())
-                   ->make($formData ? $formData->uuid : null);
+        return $form
+            ->make($formData ? $formData->uuid : null)
+            ->hideField(sv_resource($this->parentEntry)->config()->getResourceKey());
     }
 
     public function getFormTitle(): string

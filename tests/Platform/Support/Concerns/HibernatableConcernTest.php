@@ -10,6 +10,8 @@ class HibernatableConcernTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $shouldBootPlatform = true;
+
     function test__do()
     {
         $bear = new TestBear;

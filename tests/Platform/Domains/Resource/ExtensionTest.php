@@ -2,7 +2,6 @@
 
 namespace Tests\Platform\Domains\Resource;
 
-use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsMatchingResources;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Extension\RegisterExtensionsInPath;
 use Tests\Platform\Domains\Resource\Fixtures\Extension\TestMultipleResourcesArrayExtension;
@@ -41,9 +40,9 @@ class ExtensionTest extends ResourceTestCase
         $posts = sv_resource('test_posts');
         $forms = sv_resource('t_forms');
 
-        $this->assertTrue($users->getConfigValue('extended'));
-        $this->assertTrue($posts->getConfigValue('extended'));
-        $this->assertNotTrue($forms->getConfigValue('extended'));
+        $this->assertTrue($users->isExtended());
+        $this->assertTrue($posts->isExtended());
+        $this->assertNotTrue($forms->isExtended());
     }
 
     function test__extends_multiple_resources_with_array()
@@ -58,9 +57,9 @@ class ExtensionTest extends ResourceTestCase
         $posts = sv_resource('test_posts');
         $forms = sv_resource('t_forms');
 
-        $this->assertTrue($users->getConfigValue('extended'));
-        $this->assertTrue($posts->getConfigValue('extended'));
-        $this->assertNotTrue($forms->getConfigValue('extended'));
+        $this->assertTrue($users->isExtended());
+        $this->assertTrue($posts->isExtended());
+        $this->assertNotTrue($forms->isExtended());
     }
 
     function test__observes_retrieved()

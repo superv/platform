@@ -56,7 +56,7 @@ class ResourceTable extends EntryTable
 
     protected function getRowKeyName()
     {
-        return $this->resource->getConfigValue('key_name', 'id');
+        return $this->resource->config()->getKeyName() ?? 'id';
     }
 
     protected function getRowId($rowEntry)

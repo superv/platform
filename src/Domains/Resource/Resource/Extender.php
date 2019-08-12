@@ -6,6 +6,12 @@ use Closure;
 use SuperV\Platform\Domains\Resource\Extension\Contracts\ExtendsResource;
 use SuperV\Platform\Domains\Resource\Resource;
 
+/**
+ * Class Extender
+ * Extends resource without the need of an extension file
+ *
+ * @package SuperV\Platform\Domains\Resource\Resource
+ */
 class Extender implements ExtendsResource
 {
     protected $handle;

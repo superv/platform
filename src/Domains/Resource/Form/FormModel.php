@@ -27,6 +27,11 @@ class FormModel extends ResourceEntry
         });
     }
 
+    public function attachField($fieldEntryId)
+    {
+        $this->fields()->attach($fieldEntryId);
+    }
+
     public function isPublic()
     {
         return $this->public;

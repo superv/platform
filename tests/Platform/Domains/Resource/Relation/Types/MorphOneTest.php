@@ -2,7 +2,6 @@
 
 namespace Tests\Platform\Domains\Resource\Relation\Types;
 
-use SuperV\Platform\Domains\Database\Model\Contracts\Watcher;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Model\Repository;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
@@ -29,8 +28,8 @@ class MorphOneTest extends ResourceTestCase
 
     function test__create_morph_one_relation()
     {
-        $this->assertColumnDoesNotExist('t_users', 'address');
-        $this->assertColumnDoesNotExist('t_users', 'address_id');
+        $this->assertColumnNotExists('t_users', 'address');
+        $this->assertColumnNotExists('t_users', 'address_id');
 
         $relation = $this->parent->getRelation('tag');
         $this->assertEquals('morph_one', $relation->getType());
@@ -145,7 +144,7 @@ class MorphOneTest extends ResourceTestCase
     }
 }
 
-class TestTac extends Entry implements Watcher
+class TestTac extends Entry
 {
     protected $table = 't_tacs';
 

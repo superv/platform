@@ -6,59 +6,21 @@ use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\UI\Page\Page;
-use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
 class ResourceFormController extends BaseApiController
 {
     use ResolvesResource;
 
-    public function create(FormBuilder $builder)
+    public function create()
     {
         $resource = $this->resolveResource();
 
-//        $form = $builder->setResource($resource)->build();
-//        $formData = FormModel::findByResource($resource->id());
-//
-//        $form->setUrl($resource->route('store'))
-//             ->setRequest($this->request);
-//
-//        if ($callback = $resource->getCallback('creating')) {
-//            app()->call($callback, ['form' => $form]);
-//        }
-//
-//        $form->make($formData ? $formData->uuid : null);
-
-//        $page = Page::make(trans('sv::resource.create', ['resource' => $resource->getSingularLabel()]));
         $page = Page::make(__('Create New', ['object' => $resource->getSingularLabel()]));
-//        $page = Page::make('Create new '.$resource->getSingularLabel());
         $page->addBlock(sv_loader('sv/forms/'.$resource->getHandle()));
 
         return $page->build();
     }
-
-    public function create__X(FormBuilder $builder)
-    {
-        $resource = $this->resolveResource();
-
-        $form = $builder->setResource($resource)->build();
-        $formData = FormModel::findByResource($resource->id());
-
-        $form->setUrl($resource->route('store'))
-             ->setRequest($this->request);
-
-        if ($callback = $resource->getCallback('creating')) {
-            app()->call($callback, ['form' => $form]);
-        }
-
-        $form->make($formData ? $formData->uuid : null);
-
-        $page = Page::make('Create new '.$resource->getSingularLabel());
-        $page->addBlock($form);
-
-        return $page->build();
-    }
-
     public function store(FormBuilder $builder)
     {
         $form = $builder->setResource($this->resolveResource())

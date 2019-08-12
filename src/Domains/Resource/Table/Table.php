@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
+use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
 use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
@@ -91,6 +92,8 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
             if ($this->viewable) {
                 $this->addRowAction(ViewEntryAction::class);
             }
+
+            $this->addRowAction(EditEntryAction::class);
         }
 
         return $this;

@@ -106,21 +106,22 @@ trait CreatesFields
 
     public function hasUuid($column = 'uuid')
     {
-        $this->resourceConfig()->hasUuid(true);
+        $this->resourceConfig()->setHasUuid(true);
         return $this->addColumn('uuid', $column);
     }
 
     public function restorable()
     {
         $this->resourceConfig()->restorable(true);
-        $this->nullableBelongsTo('users', 'deleted_by')->hideOnForms();
-        $this->timestamp('deleted_at')->nullable()->hideOnForms();
+
+//        $this->nullableBelongsTo('users', 'deleted_by')->hideOnForms();
+//        $this->timestamp('deleted_at')->nullable()->hideOnForms();
     }
 
     public function sortable()
     {
         $this->resourceConfig()->sortable(true);
-        $this->unsignedBigInteger('sort_order')->default(0);
+//        $this->unsignedBigInteger('sort_order')->default(0);
     }
 
     public function updatedBy(): self

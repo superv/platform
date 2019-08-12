@@ -2,8 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
+use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
+use SuperV\Platform\Domains\Resource\Field\Contracts\AltersDatabaseTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
@@ -21,7 +23,7 @@ class SyncField
     protected $resourceEntry;
 
     /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field */
-    protected $field;
+    protected $fieldType;
 
     protected $fieldWithoutEloquent = true;
 
@@ -33,6 +35,9 @@ class SyncField
 
     /** @var \SuperV\Platform\Domains\Database\Schema\Blueprint */
     protected $blueprint;
+
+    /** @var array */
+    protected $config;
 
     public function handle($event)
     {
@@ -53,15 +58,28 @@ class SyncField
 
         $this->mapFieldType();
 
+        $this->makeConfig();
+
         $this->checkMustBeCreated();
 
-        $field = $this->syncWithEloquent();
+        $fieldEntry = $this->syncWithEloquent();
 
-        $formEntry = FormModel::findByResource($this->resourceEntry->getId());
-
-        if ($formEntry) {
-            $formEntry->fields()->attach($field->getId());
+        if ($formEntry = FormModel::findByResource($this->resourceEntry->getId())) {
+            $formEntry->attachField($fieldEntry->getId());
         }
+    }
+
+    protected function makeConfig()
+    {
+        if (method_exists($this->fieldType, 'onMakingConfig')) {
+            $this->fieldType->onMakingConfig($this->column->config);
+        }
+
+        $this->config = $this->column->config instanceof Arrayable ? $this->column->config->toArray() : $this->column->config;
+
+        $this->config['default_value'] = $this->column->getDefaultValue();
+
+        $this->config = array_filter_null($this->config);
     }
 
     protected function handleRelations()
@@ -130,7 +148,7 @@ class SyncField
             );
         }
 
-        $this->field = FieldType::resolveType($this->column->fieldType);
+        $this->fieldType = FieldType::resolveType($this->column->fieldType);
     }
 
     protected function syncWithEloquent(): FieldModel
@@ -147,21 +165,10 @@ class SyncField
 
         $field->type = $column->fieldType;
         $field->column_type = $column->type;
-//        $field->required = $column->isRequired();
-//        $field->unique = $column->isUnique();
-//        $field->searchable = $column->isSearchable();
-        $config = $column->config;
-
         $field->flags = $column->flags;
-
-//        if ($column->hide) {
-//            $config['hide.'.$column->hide] = true;
-//        }
-
-        $config['default_value'] = $column->getDefaultValue();
-
-        $field->config = array_filter_null($config);
         $field->rules = Rules::make($column->getRules())->get();
+
+        $field->config = $this->config;
         $field->save();
 
         return $field;
@@ -185,8 +192,12 @@ class SyncField
 
     protected function checkMustBeCreated()
     {
-        if (! $this->field instanceof RequiresDbColumn) {
+        if (! $this->fieldType instanceof RequiresDbColumn) {
             $this->column->ignore();
+        }
+
+        if ($this->fieldType instanceof AltersDatabaseTable) {
+            $this->fieldType->alterBlueprint($this->blueprint, $this->config);
         }
     }
 }

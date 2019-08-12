@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper as Mapper;
+use SuperV\Platform\Testing\PlatformTestCase;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
@@ -11,7 +12,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
  * @package Tests\Platform\Domains\Resource\Field
  * @group   resource
  */
-class ColumnFieldMapperTest extends ResourceTestCase
+class ColumnFieldMapperTest extends PlatformTestCase
 {
     function test__maps_string_column_to_text_field()
     {

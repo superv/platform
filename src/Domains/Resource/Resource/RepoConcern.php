@@ -40,7 +40,7 @@ trait RepoConcern
 
     public function newEntryInstance()
     {
-        if ($model = $this->getConfigValue('model')) {
+        if ($model = $this->config->getModel()) {
             // Custom Entry Model
             $entry = new $model;
         } else {
@@ -59,6 +59,7 @@ trait RepoConcern
 
     public function create(array $attributes = []): EntryContract
     {
+        return $this->newEntryInstance()->create($attributes);
         return $this->newEntryInstance()->setResource($this)->create($attributes);
     }
 

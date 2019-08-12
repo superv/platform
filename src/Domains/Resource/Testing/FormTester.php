@@ -60,7 +60,7 @@ class FormTester extends Assert
             }
 
             $fields[] = $form->composeField($field);
-            $post[$field->getColumnName()] = Fake::field($field->base());
+            $post[$field->getColumnName()] = Fake::field($field);
         }
 
 //        dd($form->getWatcher()->toArray(), $fields, $post);

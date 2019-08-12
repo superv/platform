@@ -40,21 +40,36 @@ class ResourceFactory
         return (new static($handle, $entry))->get();
     }
 
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
-    public static function make($handle)
+    /**
+     * @param $handle
+     * @return \SuperV\Platform\Domains\Resource\Resource
+     */
+    public static function make($handle): ?Resource
     {
         if ($handle instanceof EntryContract) {
             $handle = $handle->getTable();
         }
 
         try {
-            $resource = new Resource(static::attributesFor($handle));
-            Extension::extend($resource);
+            $attributes = static::attributesFor($handle);
 
-            return $resource;
+            $attributes = Hook::attributes($handle, $attributes);
+
+            if (is_array($attributes['config'])) {
+                $attributes['config'] = ResourceConfig::make($attributes['config']);
+            }
+
+            $resource = new Resource($attributes);
+
+            Extension::extend($resource);
         } catch (Exception $e) {
+            if ($e->getMessage() !== 'Resource model entry not found for [sv_forms]') {
+                throw $e;
+            }
             return null;
         }
+
+        return $resource;
     }
 
     protected function getFieldsProvider()
@@ -83,6 +98,7 @@ class ResourceFactory
 
                                          return $relation;
                                      })->all();
+
             // get rid of eloquent collection
             //
             return collect($relations)->keyBy(function (Relation $relation) { return $relation->getName(); });

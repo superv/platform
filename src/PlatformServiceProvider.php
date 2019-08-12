@@ -23,8 +23,9 @@ use SuperV\Platform\Domains\Addon\Listeners\AddonInstalledListener;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
-use SuperV\Platform\Domains\Resource\Extension\RegisterExtensionsInPath;
+use SuperV\Platform\Domains\Resource\Extension\RegisterExtensions;
 use SuperV\Platform\Domains\Routing\Router;
+use SuperV\Platform\Events\PlatformBootingEvent;
 use SuperV\Platform\Exceptions\PlatformExceptionHandler;
 use SuperV\Platform\Providers\BaseServiceProvider;
 
@@ -55,6 +56,9 @@ class PlatformServiceProvider extends BaseServiceProvider
         'SuperV\Platform\Domains\Port\PortDetectedEvent' => 'SuperV\Platform\Listeners\PortDetectedListener',
         AddonInstalledEvent::class                       => AddonInstalledListener::class,
         AddonBootedEvent::class                          => AddonBootedListener::class,
+        PlatformBootingEvent::class                      => [
+            RegisterExtensions::class,
+        ],
     ];
 
     protected $commands = [
@@ -126,10 +130,6 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         superv('addons')->put('superv.platform', $this->platform);
 
-        // Register platform resources before boot
-        // so that addons can override them
-        //
-        RegisterExtensionsInPath::dispatch(realpath(__DIR__.'/Extensions'), 'SuperV\Platform\Extensions');
 
         // Boot all addons
         //
@@ -145,7 +145,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     protected function setupTranslations()
     {
-        $this->loadTranslationsFrom($this->platform->realPath('resources/lang'), 'superv');
+        $this->loadTranslationsFrom($this->platform->realPath('resources/lang'), 'platform');
 
         $this->loadJsonTranslationsFrom($this->platform->realPath('resources/lang'));
 

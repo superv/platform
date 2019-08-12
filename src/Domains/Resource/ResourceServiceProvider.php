@@ -22,11 +22,15 @@ class ResourceServiceProvider extends BaseServiceProvider
         ColumnUpdatedEvent::class              => Listeners\SyncField::class,
         ColumnDroppedEvent::class              => Listeners\DeleteField::class,
         TableCreatingEvent::class              => Listeners\CreateResource::class,
-        TableCreatedEvent::class              => Listeners\CreateResourceForm::class,
+        TableCreatedEvent::class               => Listeners\CreateResourceForm::class,
         AddonBootedEvent::class                => Listeners\RegisterExtensions::class,
         Model\Events\EntrySavingEvent::class   => [
             Listeners\ValidateSavingEntry::class,
-            Listeners\SaveUpdatedBy::class
+            Listeners\SaveUpdatedBy::class,
+            Listeners\HookSaving::class,
+        ],
+        Model\Events\EntrySavedEvent::class    => [
+            Listeners\HookSaved::class,
         ],
         Model\Events\EntryCreatingEvent::class => Listeners\SaveCreatedBy::class,
         Resource\ResourceActivityEvent::class  => Listeners\RecordActivity::class,

@@ -4,8 +4,7 @@ namespace Tests\{addon.short_name};
 
 class {addon.short_name}Test extends TestCase
 {
-    /** @test */
-    function module_is_installed()
+    function test_addon_is_installed()
     {
         $this->assertNotNull(superv('addons')->get('{addon.slug}'));
     }
