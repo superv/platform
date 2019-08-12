@@ -1,6 +1,6 @@
 
 # SuperV Platform for Laravel [![Build Status](https://travis-ci.org/superv/platform.svg?branch=master)](https://travis-ci.org/superv/platform)
-‼️💥💥 This package is under heavy development ⛏ and may not be suitable for production use yet. 💥💥‼️
+‼️💥💥 This package is under heavy development ⛏ 💥💥‼️
 
 SuperV is a Laravel package that aims to be a rapid development platform.  
 
