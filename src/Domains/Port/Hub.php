@@ -49,7 +49,7 @@ class Hub
         }
     }
 
-    public function getDefaultPort(): Port
+    public function getDefaultPort(): ?Port
     {
         return $this->defaultPort;
     }
