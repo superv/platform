@@ -32,7 +32,7 @@ class BelongsToMany extends Relation implements ProvidesTable, ProvidesField
     {
         return app(ResourceTable::class)
             ->setResource($this->getRelatedResource())
-            ->setQuery($this)
+            ->setQuery($this->newQuery())
             ->addRowAction(ViewEntryAction::class)
             ->addRowAction(DetachEntryAction::make()->setRelation($this))
             ->setDataUrl(url()->current().'/data')

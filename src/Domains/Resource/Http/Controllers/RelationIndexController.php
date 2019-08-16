@@ -16,11 +16,10 @@ class RelationIndexController extends BaseApiController
     {
         $relation = $this->resolveRelation();
 
-        if ($relation instanceof ProvidesTable) {
-            $table = $relation->makeTable();
-        } else {
+        if (! $relation instanceof ProvidesTable) {
             throw new PlatformException('This relation does not provide a table');
         }
+        $table = $relation->makeTable();
 
         if ($this->route->parameter('data')) {
             return $table->setRequest($this->request)->build();

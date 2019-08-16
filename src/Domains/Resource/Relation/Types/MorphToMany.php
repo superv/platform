@@ -31,7 +31,7 @@ class MorphToMany extends Relation implements ProvidesTable
     {
         return app(ResourceTable::class)
             ->setResource($this->getRelatedResource())
-            ->setQuery($this)
+            ->setQuery($this->newQuery())
             ->addRowAction(DetachEntryAction::make()->setRelation($this))
             ->setDataUrl(url()->current().'/data')
             ->addContextAction(AttachEntryAction::make()->setRelation($this))
