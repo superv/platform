@@ -3,9 +3,10 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class NumberField extends FieldType implements RequiresDbColumn
+class NumberField extends FieldType implements RequiresDbColumn, SortsQuery
 {
     protected function boot()
     {
@@ -30,6 +31,11 @@ class NumberField extends FieldType implements RequiresDbColumn
 
             return (int)$value;
         };
+    }
+
+    public function sortQuery($query, $direction)
+    {
+        $query->orderBy($this->field->getColumnName(), $direction);
     }
 
     public function makeRules()

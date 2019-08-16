@@ -157,6 +157,20 @@ class ResourceEntry extends Entry
         return $relation->newQuery();
     }
 
+    protected function resolveRelation($name)
+    {
+        if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
+            return null;
+        }
+
+        $relation = RelationBuilder::resolveFromRelationEntry($relation);
+        if ($relation instanceof AcceptsParentEntry) {
+            $relation->acceptParentEntry($this);
+        }
+
+        return $relation;
+    }
+
     /** @return \SuperV\Platform\Domains\Resource\Resource */
     public function getResource()
     {
@@ -232,17 +246,5 @@ class ResourceEntry extends Entry
         return $model;
     }
 
-    protected function resolveRelation($name)
-    {
-        if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
-            return null;
-        }
 
-        $relation = RelationBuilder::resolveFromRelationEntry($relation);
-        if ($relation instanceof AcceptsParentEntry) {
-            $relation->acceptParentEntry($this);
-        }
-
-        return $relation;
-    }
 }

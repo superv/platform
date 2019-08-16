@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
+use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Support\Composer\Payload;
 
@@ -62,10 +63,11 @@ class FieldComposer
         $field = $this->field;
 
         $payload = (new Payload([
-            'uuid'    => $field->uuid(),
-            'name'    => $field->getName(),
-            'label'   => $field->getLabel(),
-            'classes' => $field->getConfigValue('classes'),
+            'uuid'     => $field->uuid(),
+            'name'     => $field->getName(),
+            'label'    => $field->getLabel(),
+            'classes'  => $field->getConfigValue('classes'),
+            'sortable' => $field->getFieldType() instanceof SortsQuery,
         ]))->setFilterNull(false);
 
         return $payload;

@@ -29,6 +29,7 @@ class EntryTable extends Table implements EntryTableContract
 
     protected $pagination = [];
 
+    /** @var \Illuminate\Http\Request */
     protected $request;
 
     protected $orderBy;
@@ -43,7 +44,7 @@ class EntryTable extends Table implements EntryTableContract
     {
         $fields = $this->makeFields();
 
-        $query = $this->newQuery();
+        $query = $this->getQuery();
         $this->fire('querying', ['query' => $query]);
         $this->applyFilters($query);
         $this->applyOptions($query);
@@ -101,7 +102,7 @@ class EntryTable extends Table implements EntryTableContract
 
     public function getQuery()
     {
-        return $this->query;
+        return $this->query ?? $this->newQuery();
     }
 
     public function setQuery($query): EntryTableContract

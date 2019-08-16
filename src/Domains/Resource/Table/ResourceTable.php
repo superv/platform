@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Table;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\Field\FieldQuerySorter;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class ResourceTable extends EntryTable
@@ -22,27 +23,32 @@ class ResourceTable extends EntryTable
 
     public function getQuery()
     {
-        return $this->query ?? $this->resource->newQuery();
-    }
-
-    public function onQuerying($query)
-    {
-        if ($this->resource->isRestorable()) {
-            $query->where('deleted_at', null);
+        if (! $this->query) {
+            $this->query = $this->resource->newQuery();
         }
-        $this->resource->fire('table.querying', ['query' => $query]);
+
+        return $this->query;
     }
 
     protected function applyOptions($query)
     {
-        if ($field = $this->resource->fields()->getEntryLabelField()) {
-            $this->orderBy = [
-                'column' => $field->getColumnName(),
-                'direction' => 'ASC'
-            ];
-        }
+        if ($this->request && $orderBy = $this->request->get('order_by')) {
+            [$column, $direction] = explode(':', $orderBy);
 
-        parent::applyOptions($query);
+            $field = $this->resource->getField($column);
+
+            $sorter = app(FieldQuerySorter::class);
+            $sorter->setField($field);
+            $sorter->setQuery($query);
+            $sorter->sort($direction);
+        } elseif ($field = $this->resource->fields()->getEntryLabelField()) {
+            $this->orderBy = [
+                'column'    => $field->getColumnName(),
+                'direction' => 'ASC',
+            ];
+        } else {
+            parent::applyOptions($query);
+        }
     }
 
     public function getDataUrl()
@@ -62,6 +68,14 @@ class ResourceTable extends EntryTable
     protected function getRowId($rowEntry)
     {
         return $rowEntry->getAttribute($this->getRowKeyName());
+    }
+
+    public function onQuerying($query)
+    {
+        if ($this->resource->isRestorable()) {
+            $query->where('deleted_at', null);
+        }
+        $this->resource->fire('table.querying', ['query' => $query]);
     }
 
     public function setResource(Resource $resource): ResourceTable

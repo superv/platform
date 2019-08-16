@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Illuminate\Database\Eloquent\Model;
 use SuperV\Platform\Domains\Database\Model\Entry;
+use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class FieldModel extends Entry
 {
@@ -25,6 +26,11 @@ class FieldModel extends Entry
         static::creating(function (Model $model) {
             $model->attributes['uuid'] = uuid();
         });
+    }
+
+    public function resource()
+    {
+        return $this->belongsTo(ResourceModel::class);
     }
 
     public function getConfig()
