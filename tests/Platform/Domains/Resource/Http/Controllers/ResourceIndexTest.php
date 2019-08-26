@@ -49,6 +49,7 @@ class ResourceIndexTest extends ResourceTestCase
                 'name',
                 'label',
                 'classes',
+                'sortable',
             ], array_keys($field));
 
             $rowActions = $table->getProp('config.row_actions');

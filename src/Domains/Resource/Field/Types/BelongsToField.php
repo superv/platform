@@ -8,12 +8,19 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Support\Composer\Payload;
 
-class BelongsToField extends FieldType implements RequiresDbColumn, ProvidesFilter, HandlesRpc, HasPresenter
+class BelongsToField extends FieldType implements
+    RequiresDbColumn,
+    ProvidesFilter,
+    HandlesRpc,
+    HasPresenter,
+    SortsQuery
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $relatedResource;
@@ -39,6 +46,29 @@ class BelongsToField extends FieldType implements RequiresDbColumn, ProvidesFilt
     public function getColumnName(): ?string
     {
         return $this->getConfigValue('foreign_key', $this->getName().'_id');
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param                                       $direction
+     * @throws \Exception
+     */
+    public function sortQuery($query, $direction)
+    {
+        $parentResource = $this->field->getResource();
+        $relation = RelationConfig::create($this->field->getType(), $this->field->getConfig());
+
+        $relatedResource = ResourceFactory::make($relation->getRelatedResource());
+        $labelField = $relatedResource->fields()->getEntryLabelField();
+        $labelFieldColumName = $labelField ? $labelField->getColumnName() : $relatedResource->config()->getKeyName();
+        $orderBy = $relatedResource->getHandle().'_1.'.$labelFieldColumName;
+
+        $joinType = 'leftJoin';
+        $query->getQuery()
+              ->{$joinType}($relatedResource->getHandle()." AS ".$relatedResource->getHandle()."_1",
+                  $relatedResource->getHandle().'_1.id', '=', $parentResource->getHandle().'.'.$relation->getForeignKey());
+
+        $query->orderBy($orderBy, $direction);
     }
 
     public function makeFilter(?array $params = [])

@@ -7,10 +7,11 @@ use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Support\Composer\Payload;
 
-class DatetimeField extends FieldType implements RequiresDbColumn, HasPresenter
+class DatetimeField extends FieldType implements RequiresDbColumn, HasPresenter, SortsQuery
 {
     protected function boot()
     {
@@ -42,6 +43,10 @@ class DatetimeField extends FieldType implements RequiresDbColumn, HasPresenter
         };
     }
 
+    public function sortQuery($query, $direction)
+    {
+        $query->orderBy($this->field->getColumnName(), $direction);
+    }
     protected function getFormat()
     {
         $default = $this->hasTime() ? 'M j, Y H:i' : 'M j, Y';

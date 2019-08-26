@@ -20,6 +20,9 @@ trait RepoConcern
         $this->scopes[] = $scope;
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function newQuery()
     {
         $query = $this->newEntryInstance()->newQuery()->with($this->with);
