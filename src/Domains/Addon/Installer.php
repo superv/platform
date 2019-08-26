@@ -15,7 +15,7 @@ class Installer
 {
     use HasPath;
 
-    protected $slug;
+    protected $namespace;
 
     protected $path;
 
@@ -55,12 +55,12 @@ class Installer
     {
         $this->ensureNotInstalledBefore();
 
-        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $this->slug)) {
-            throw new \Exception('Slug ['.$this->slug.'] should be snake case and formatted like: {vendor}.{type}.{name}');
+        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $this->namespace)) {
+            throw new \Exception('Namespace ['.$this->namespace.'] should be snake case and formatted like: {vendor}.{type}.{name}');
         }
 
         if ($this->locator) {
-            $this->path = $this->locator->locate($this->slug);
+            $this->path = $this->locator->locate($this->namespace);
         }
 
         $this->validate();
@@ -105,8 +105,8 @@ class Installer
 
     public function ensureNotInstalledBefore()
     {
-        if ($addon = AddonModel::bySlug($this->getSlug())) {
-            throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getSlug()));
+        if ($addon = AddonModel::byNamespace($this->getNamespace())) {
+            throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getNamespace()));
         }
     }
 
@@ -132,7 +132,7 @@ class Installer
 
     public function vendor()
     {
-        list($vendor, ,) = explode('.', $this->slug);
+        list($vendor, ,) = explode('.', $this->namespace);
 
         return $vendor;
     }
@@ -142,7 +142,7 @@ class Installer
      *
      * @return string
      */
-    public function namespace()
+    public function getPsrNamespace()
     {
         $namespace = array_keys($this->composer('autoload.psr-4'))[0];
 
@@ -184,20 +184,20 @@ class Installer
         return $this;
     }
 
-    public function getSlug()
+    public function getNamespace()
     {
-        return $this->slug;
+        return $this->namespace;
     }
 
     /**
      * Set addon slug
      *
-     * @param string $slug
+     * @param string $namespace
      * @return Installer
      */
-    public function setSlug($slug)
+    public function setNamespace($namespace)
     {
-        $this->slug = $slug;
+        $this->namespace = $namespace;
 
         return $this;
     }
@@ -208,13 +208,13 @@ class Installer
     protected function make()
     {
         $entry = AddonModel::query()->create([
-            'name'      => $this->name(),
-            'vendor'    => $this->vendor(),
-            'slug'      => $this->slug,
-            'path'      => $this->relativePath(),
-            'type'      => $this->type(),
-            'namespace' => $this->namespace(),
-            'enabled'   => true,
+            'name'          => $this->name(),
+            'vendor'        => $this->vendor(),
+            'namespace'     => $this->namespace,
+            'path'          => $this->relativePath(),
+            'type'          => $this->type(),
+            'psr_namespace' => $this->getPsrNamespace(),
+            'enabled'       => true,
         ]);
 
         /** @var \SuperV\Platform\Domains\Addon\AddonModel $entry */
@@ -236,7 +236,7 @@ class Installer
     {
         $this->console->call(
             'migrate',
-            ['--namespace' => $this->addon->slug(), '--force' => true],
+            ['--namespace' => $this->addon->getNamespace(), '--force' => true],
             $this->command ? $this->command->getOutput() : null
         );
     }
@@ -248,9 +248,11 @@ class Installer
     {
         if ($subAddons = $this->addon->installs()) {
             foreach ($subAddons as $slug => $path) {
-                app(self::class)->setSlug($slug)
-                                ->setPath($this->path.'/'.$path)
-                                ->install();
+                /** @var \SuperV\Platform\Domains\Addon\Installer $installer */
+                $installer = app(self::class);
+                $installer->setNamespace($slug)
+                          ->setPath($this->path.'/'.$path)
+                          ->install();
             }
         }
     }

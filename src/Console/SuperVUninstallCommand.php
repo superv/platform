@@ -18,10 +18,10 @@ class SuperVUninstallCommand extends Command
         $this->comment('Uninstalling SuperV');
 
         $addons->map(function (Addon $addon) {
-            if ($addon->slug() === 'platform') {
+            if ($addon->getNamespace() === 'platform') {
                 return;
             }
-            $this->comment('Uninstalling addon: ['.$addon->slug().']');
+            $this->comment('Uninstalling addon: ['.$addon->getNamespace().']');
             UninstallAddonJob::dispatch($addon);
         });
 

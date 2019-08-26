@@ -10,7 +10,7 @@ class AddonInstalledListener
     {
         $addon = $event->addon;
 
-        superv('addons')->put($addon->slug(), $addon);
+        superv('addons')->put($addon->getNamespace(), $addon);
 
         $addon->boot();
 

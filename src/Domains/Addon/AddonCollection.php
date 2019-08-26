@@ -18,7 +18,7 @@ class AddonCollection extends Collection
 
     public function slugs()
     {
-        return $this->map(function(Addon $addon) { return $addon->slug(); })->values();
+        return $this->map(function (Addon $addon) { return $addon->getNamespace(); })->values();
     }
 
     /**

@@ -16,7 +16,7 @@ class AddonInstallCommand extends Command
         try {
             $this->comment(sprintf('Installing %s', $this->argument('addon')));
             $installer->setCommand($this);
-            $installer->setSlug($this->argument('addon'));
+            $installer->setNamespace($this->argument('addon'));
 
             if ($this->option('path')) {
                 $installer->setPath($this->option('path'));

@@ -25,22 +25,28 @@ class AddonModel extends ResourceEntry
         }
     }
 
+    public function getPsrNamespace()
+    {
+        return $this->psr_namespace;
+    }
+
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
     /**
      * @return string
      */
     public function addonClass()
     {
-        return $this->namespace.'\\'.$this->name;
+        return $this->getPsrNamespace().'\\'.$this->name;
     }
 
-    public function fullSlug()
-    {
-        return $this->slug;
-    }
 
     public function shortSlug()
     {
-        $parts = explode('.', $this->slug);
+        $parts = explode('.', $this->getNamespace());
 
         return $parts[count($parts) - 1];
     }
@@ -55,22 +61,19 @@ class AddonModel extends ResourceEntry
         return $this->path;
     }
 
+    public function getVendor()
+    {
+        return $this->vendor;
+    }
+
     public function getRealPath()
     {
         return base_path($this->getRelativePath());
     }
 
-    /**
-     * @param $slug
-     * @return self
-     */
-    public static function bySlug($slug)
+    public static function byNamespace($namespace): ?AddonModel
     {
-        return static::query()->where('slug', $slug)->first();
+        return static::query()->where('namespace', $namespace)->first();
     }
 
-    public static function allKeyBySlug()
-    {
-        return static::query()->enabled()->get()->keyBy('slug');
-    }
 }

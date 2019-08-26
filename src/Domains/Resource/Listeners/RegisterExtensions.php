@@ -11,7 +11,7 @@ class RegisterExtensions
     {
         RegisterExtensionsInPath::dispatch(
             $event->addon->realPath('src/Extensions'),
-            $event->addon->namespace().'\Extensions'
+            $event->addon->getPsrNamespace().'\Extensions'
         );
     }
 }

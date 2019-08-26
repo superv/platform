@@ -13,7 +13,7 @@ class AddonInstallCommandTest extends TestCase
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
         $installer->shouldReceive('setCommand')->once()->andReturnSelf();
         $installer->shouldReceive('setPath')->with('path/to/addon')->once()->andReturnSelf();
-        $installer->shouldReceive('setSlug')->with('addon.slug')->once()->andReturnSelf();
+        $installer->shouldReceive('setNamespace')->with('addon.slug')->once()->andReturnSelf();
         $installer->shouldReceive('install')->once();
 
         $this->artisan('addon:install', [
@@ -27,7 +27,7 @@ class AddonInstallCommandTest extends TestCase
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
         $installer->shouldReceive('setCommand')->once()->andReturnSelf();
         $installer->shouldReceive('setLocator')->once()->andReturnSelf();
-        $installer->shouldReceive('setSlug')->with('vendor.addons.slug')->once()->andReturnSelf();
+        $installer->shouldReceive('setNamespace')->with('vendor.addons.slug')->once()->andReturnSelf();
         $installer->shouldReceive('install')->once();
 
         $this->artisan('addon:install', [
