@@ -43,7 +43,6 @@ class Section extends Entry
 
         $payload = new Payload([
             'title'    => __($this->getTitle()),
-//            'titles'   => $this->addon ? sv_trans($this->addon.'::'.$this->title.'.label') : $this->title,
             'handle'   => $this->handle,
             'colophon' => $withColophon ? $colophon : null,
             'icon'     => $this->icon,

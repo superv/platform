@@ -20,7 +20,7 @@ class Blueprints
         $table->uuid('uuid')->unique();
         $table->string('handle');
         $table->string('slug');
-        $table->string('addon')->showOnIndex();
+        $table->string('namespace')->showOnIndex();
         $table->string('model')->nullable();
 
         if ($table instanceof Blueprint) {
@@ -167,7 +167,7 @@ class Blueprints
 
         $table->string('title')->entryLabel();
         $table->string('handle');
-        $table->string('addon')->nullable();
+        $table->string('namespace')->nullable();
         $table->string('icon')->nullable();
         $table->string('url')->nullable();
 

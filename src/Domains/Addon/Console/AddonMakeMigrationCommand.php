@@ -27,15 +27,15 @@ class AddonMakeMigrationCommand extends Command
 
         if ($mode === 'Create') {
             $arguments = [
-                'name'     => "create_{$table}_table".$name,
-                '--create' => $table,
-                '--addon'  => $addon,
+                'name'        => "create_{$table}_table".$name,
+                '--create'    => $table,
+                '--namespace' => $addon,
             ];
         } else {
             $arguments = [
-                'name'    => "alter_{$table}_table".$name,
-                '--table' => $table,
-                '--addon' => $addon,
+                'name'        => "alter_{$table}_table".$name,
+                '--table'     => $table,
+                '--namespace' => $addon,
             ];
         }
 

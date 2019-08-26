@@ -99,9 +99,9 @@ class ResourceModel extends Entry implements ProvidesFields
         return array_get($this->config, 'model');
     }
 
-    public function getAddon()
+    public function getNamespace()
     {
-        return $this->addon;
+        return $this->namespace;
     }
 
     public function getHandle()

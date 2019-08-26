@@ -2,8 +2,9 @@
 
 namespace SuperV\Platform\Exceptions;
 
+use Exception;
+use Illuminate\Database\QueryException;
 use RuntimeException;
-use Throwable;
 
 class PlatformException extends \Exception
 {
@@ -21,9 +22,10 @@ class PlatformException extends \Exception
         throw new static($msg);
     }
 
-    public static function throw(Throwable $e)
+    public static function throw(Exception $e)
     {
-        throw new static($e->getMessage(), $e->getCode(), $e);
+        $code = ($e instanceof QueryException) ? '0' : $e->getCode();
+        throw new static($e->getMessage(), $code, $e);
     }
 
     public static function runtime(?string $msg)

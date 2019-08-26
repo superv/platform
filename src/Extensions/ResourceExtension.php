@@ -14,7 +14,7 @@ class ResourceExtension implements ExtendsResource
         $resource->searchable(['handle']);
         $fields = $resource->indexFields();
 
-        $fields->get('addon')->copyToFilters();
+        $fields->get('namespace')->copyToFilters();
 
         $resource->onIndexConfig(function (ResourceTable $table) {
             $table->showIdColumn();

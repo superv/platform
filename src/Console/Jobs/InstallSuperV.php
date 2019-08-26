@@ -18,6 +18,7 @@ use SuperV\Platform\Support\Dispatchable;
 class InstallSuperV
 {
     use Dispatchable;
+
     /**
      * @var \SuperV\Platform\Platform
      */
@@ -131,7 +132,7 @@ class InstallSuperV
         }
         if (! SchemaBuilder::hasColumn('migrations', 'addon')) {
             Schema::table('migrations', function (Blueprint $table) {
-                $table->string('addon')->nullable();
+                $table->string('namespace')->nullable();
             });
         }
         $this->setEnv('SV_INSTALLED=true');
@@ -139,6 +140,6 @@ class InstallSuperV
 
         $platformServiceProvider->register();
 
-        Artisan::call('migrate', ['--addon' => 'platform', '--force' => true]);
+        Artisan::call('migrate', ['--namespace' => 'platform', '--force' => true]);
     }
 }

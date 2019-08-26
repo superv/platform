@@ -13,11 +13,11 @@ class DeleteAddonResources
         $addon = $event->addon;
 
         ResourceModel::query()
-                     ->where('addon', $addon->slug())
+                     ->where('namespace', $addon->slug())
                      ->get()->map->delete();
 
         Section::query()
-               ->where('addon', $addon->slug())
+               ->where('namespace', $addon->slug())
                ->get()->map->delete();
     }
 }

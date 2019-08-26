@@ -21,7 +21,7 @@ class CreateResource
 
     public function handle(TableCreatingEvent $event)
     {
-        if (! $event->addon) {
+        if (! $event->namespace) {
             return;
         }
 
@@ -72,7 +72,7 @@ class CreateResource
                 $section = Section::createFromArray($nav);
             }
 
-            $section->update(['addon' => $this->event->addon]);
+            $section->update(['namespace' => $this->event->namespace]);
         }
     }
 
@@ -85,7 +85,7 @@ class CreateResource
                 'handle'     => $this->event->table,
                 'model'      => $this->config->getModel(),
                 'config'     => $this->config->toArray(),
-                'addon'      => $this->event->addon,
+                'namespace'  => $this->event->namespace,
                 'restorable' => (bool)$this->config->isRestorable(),
                 'sortable'   => (bool)$this->config->isSortable(),
             ]

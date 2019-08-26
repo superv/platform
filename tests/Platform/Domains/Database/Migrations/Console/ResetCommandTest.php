@@ -19,8 +19,8 @@ class ResetCommandTest extends TestCase
         );
         $command->setLaravel($this->app);
 
-        $migrator->shouldReceive('setAddon')->with('test-addon')->once();
+        $migrator->shouldReceive('setNamespace')->with('test-addon')->once();
 
-        $this->runCommand($command, ['--addon' => 'test-addon']);
+        $this->runCommand($command, ['--namespace' => 'test-addon']);
     }
 }

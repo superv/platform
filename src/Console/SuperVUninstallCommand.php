@@ -25,7 +25,7 @@ class SuperVUninstallCommand extends Command
             UninstallAddonJob::dispatch($addon);
         });
 
-        $this->call('migrate:rollback', ['--addon' => 'platform', '--force' => true]);
+        $this->call('migrate:rollback', ['--namespace' => 'platform', '--force' => true]);
 
         $this->setEnv('SV_INSTALLED=false');
 
