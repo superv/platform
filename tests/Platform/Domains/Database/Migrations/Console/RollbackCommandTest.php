@@ -20,12 +20,12 @@ class RollbackCommandTest extends TestCase
         );
         $command->setLaravel($this->app);
 
-        $migrator->shouldReceive('setAddon')->with('test-addon')->once();
+        $migrator->shouldReceive('setNamespace')->with('test-addon')->once();
         $migrator->shouldReceive('paths')->once()->andReturn([__DIR__.'/migrations']);
         $migrator->shouldReceive('setOutput')->once()->andReturnSelf();
         $migrator->shouldReceive('rollback')->once();
 
-        $this->runCommand($command, ['--addon' => 'test-addon']);
+        $this->runCommand($command, ['--namespace' => 'test-addon']);
     }
 
     function test__rollback_with_steps_and_scope()
@@ -35,10 +35,10 @@ class RollbackCommandTest extends TestCase
         Scopes::register('foo', __DIR__.'/../migrations/foo');
         Scopes::register('baz', __DIR__.'/../migrations/baz');
 
-        $this->artisan('migrate', ['--addon' => 'foo']);
-        $this->assertDatabaseHas('migrations', ['addon' => 'foo']);
+        $this->artisan('migrate', ['--namespace' => 'foo']);
+        $this->assertDatabaseHas('migrations', ['namespace' => 'foo']);
 
-        $this->artisan('migrate:rollback', ['--addon' => 'foo']);
-        $this->assertDatabaseMissing('migrations', ['addon' => 'foo']);
+        $this->artisan('migrate:rollback', ['--namespace' => 'foo']);
+        $this->assertDatabaseMissing('migrations', ['namespace' => 'foo']);
     }
 }

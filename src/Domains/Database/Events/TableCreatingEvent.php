@@ -22,7 +22,7 @@ class TableCreatingEvent extends BaseEvent
     /**
      * @var string
      */
-    public $addon;
+    public $namespace;
 
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
     public $config;
@@ -32,12 +32,12 @@ class TableCreatingEvent extends BaseEvent
      */
     public $blueprint;
 
-    public function __construct($table, Collection $columns, ResourceConfig $config, $addon, Blueprint $blueprint)
+    public function __construct($table, Collection $columns, ResourceConfig $config, $namespace, Blueprint $blueprint)
     {
         $this->table = $table;
         $this->columns = $columns;
         $this->config = $config;
-        $this->addon = $addon;
+        $this->namespace = $namespace;
         $this->blueprint = $blueprint;
     }
 }

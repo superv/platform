@@ -42,7 +42,9 @@ class AddonServiceProviderTest extends TestCase
         $addon = $this->setUpAddon();
 
         $hints = $this->app['view']->getFinder()->getHints();
+
         $this->assertContains(base_path($addon->resourcePath('views')), $hints['superv.addons.sample']);
+        $this->assertContains(resource_path('vendor/'.$addon->getVendor().'/'.$addon->getShortSlug().'/views'), $hints['superv.addons.sample']);
         $this->assertDirectoryExists(reset($hints['superv.addons.sample']));
     }
 
@@ -50,6 +52,6 @@ class AddonServiceProviderTest extends TestCase
     {
         $addon = $this->setUpAddon();
 
-        $this->assertEquals(base_path($addon->path('database/migrations')), Scopes::path($addon->slug()));
+        $this->assertEquals(base_path($addon->path('database/migrations')), Scopes::path($addon->getNamespace()));
     }
 }

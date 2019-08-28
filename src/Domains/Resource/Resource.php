@@ -53,9 +53,11 @@ final class Resource implements
     protected $uuid;
 
     /**
+     * Resource namespace
+     *
      * @var string
      */
-    protected $addon;
+    protected $namespace;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\Resource\Fields
@@ -505,7 +507,7 @@ final class Resource implements
 
     public function getNamespace(): string
     {
-        return $this->addon;
+        return $this->namespace;
     }
 
     /**

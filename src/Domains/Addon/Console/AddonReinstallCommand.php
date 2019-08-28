@@ -17,7 +17,7 @@ class AddonReinstallCommand extends Command
         }
 
         try {
-            $this->call('addon:uninstall', ['--addon' => $addon]);
+            $this->call('addon:uninstall', ['--namespace' => $addon]);
 
             $this->call('addon:install', [
                 'addon'  => $addon,

@@ -31,7 +31,7 @@ class BlueprintTest extends TestCase
         $this->app['events']->listen(
             TableCreatingEvent::class,
             function (TableCreatingEvent $event) use ($dispatchedEvents) {
-                $this->assertEquals('superv.platform', $event->addon);
+                $this->assertEquals('superv.platform', $event->namespace);
                 $this->assertEquals('tasks', $event->table);
                 $this->assertArrayContains(['id', 'title'], sv_collect($event->columns)->pluck('name')->all());
                 $this->assertFalse(\Schema::hasTable('tasks'));
@@ -49,8 +49,9 @@ class BlueprintTest extends TestCase
             $dispatchedEvents->tableCreated = true;
         });
 
+        /** @var \SuperV\Platform\Domains\Database\Migrations\Migrator $migrator */
         $migrator = $this->app['migrator'];
-        $migrator->setAddon('superv.platform');
+        $migrator->setNamespace('superv.platform');
         $migrator->run(__DIR__.'/__fixtures__/migrations');
 
         $this->assertTrue($dispatchedEvents->tableCreating);

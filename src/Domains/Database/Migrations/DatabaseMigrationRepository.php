@@ -6,7 +6,7 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
 {
     protected $migration;
 
-    protected $addon;
+    protected $namespace;
 
     public function getAll()
     {
@@ -58,8 +58,8 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
         ];
 
         if ($this->migration) {
-            if ($this->addon) {
-                array_set($record, 'addon', $this->addon);
+            if ($this->namespace) {
+                array_set($record, 'namespace', $this->namespace);
             }
         }
 
@@ -85,11 +85,11 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
     }
 
     /**
-     * @param mixed $addon
+     * @param mixed $namespace
      */
-    public function setAddon($addon)
+    public function setNamespace($namespace)
     {
-        $this->addon = $addon;
+        $this->namespace = $namespace;
 
         return $this;
     }
@@ -100,8 +100,8 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
      */
     protected function filterScope($query)
     {
-        if ($this->addon) {
-            $query->where('addon', $this->addon);
+        if ($this->namespace) {
+            $query->where('namespace', $this->namespace);
         }
 
         return $query;

@@ -1,6 +1,5 @@
 <?php
 
-use SuperV\Platform\Domains\Addon\Addon;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
@@ -19,9 +18,9 @@ class CreateAddonsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('vendor')->showOnIndex();
-            $table->string('slug')->showOnIndex();
+            $table->string('namespace')->showOnIndex();
             $table->string('path');
-            $table->string('namespace');
+            $table->string('psr_namespace');
             $table->string('type');
             $table->boolean('enabled')->showOnIndex();
 

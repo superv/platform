@@ -20,23 +20,23 @@ class MigrationCreatorTest extends TestCase
         $this->assertEquals(Platform::fullPath('resources/stubs'), $this->creator()->stubPath());
     }
 
-    function adds_scope_data_if_supplied()
-    {
-        $file = $this->creator()
-                     ->setAddon('blank')
-                     ->create('Create', $this->tmpDirectory);
-        $this->assertContains("\$scope = 'blank'", file_get_contents($file));
-
-        $file = $this->creator()
-                     ->setAddon('create')
-                     ->create('Create', $this->tmpDirectory, 'FooTable', $create = true);
-        $this->assertContains("\$scope = 'create'", file_get_contents($file));
-
-        $file = $this->creator()
-                     ->setAddon('update')
-                     ->create('Update', $this->tmpDirectory, 'FooTable');
-        $this->assertContains("\$scope = 'update'", file_get_contents($file));
-    }
+//    function adds_scope_data_if_supplied()
+//    {
+//        $file = $this->creator()
+//                     ->setAddon('blank')
+//                     ->create('Create', $this->tmpDirectory);
+//        $this->assertContains("\$scope = 'blank'", file_get_contents($file));
+//
+//        $file = $this->creator()
+//                     ->setAddon('create')
+//                     ->create('Create', $this->tmpDirectory, 'FooTable', $create = true);
+//        $this->assertContains("\$scope = 'create'", file_get_contents($file));
+//
+//        $file = $this->creator()
+//                     ->setAddon('update')
+//                     ->create('Update', $this->tmpDirectory, 'FooTable');
+//        $this->assertContains("\$scope = 'update'", file_get_contents($file));
+//    }
 
     /**
      * @return \SuperV\Platform\Domains\Database\Migrations\MigrationCreator

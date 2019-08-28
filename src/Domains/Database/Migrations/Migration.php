@@ -5,18 +5,18 @@ namespace SuperV\Platform\Domains\Database\Migrations;
 use Closure;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 
-class Migration extends \Illuminate\Database\Migrations\Migration implements AddonMigration
+class Migration extends \Illuminate\Database\Migrations\Migration implements PlatformMigration
 {
-    protected $addon;
+    protected $namespace;
 
-    public function getAddon()
+    public function getNamespace()
     {
-        return $this->addon;
+        return $this->namespace;
     }
 
-    public function setAddon($addon)
+    public function setNamespace($namespace)
     {
-        $this->addon = $addon;
+        $this->namespace = $namespace;
     }
 
     public function schema()

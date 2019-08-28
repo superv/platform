@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use SuperV\Platform\Console\Jobs\InstallSuperV;
+use SuperV\Platform\Domains\Addon\Addon;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Addon\Locator;
@@ -109,21 +110,21 @@ class PlatformTestCase extends OrchestraTestCase
         }
     }
 
-    protected function setUpAddon($slug = null, $path = null, $seed = false)
+    protected function setUpAddon($slug = null, $path = null, $seed = false): Addon
     {
         $path = $path ?? 'tests/Platform/__fixtures__/sample-addon';
         $slug = $slug ?? 'superv.addons.sample';
 
         ComposerLoader::load(base_path($path));
         $installer = $this->app->make(Installer::class)
-                               ->setSlug($slug)
+                               ->setNamespace($slug)
                                ->setPath($path);
         $installer->install();
         if ($seed === true) {
             $installer->seed();
         }
 
-        $entry = AddonModel::bySlug($slug);
+        $entry = AddonModel::byNamespace($slug);
 
         return $entry->resolveAddon();
     }

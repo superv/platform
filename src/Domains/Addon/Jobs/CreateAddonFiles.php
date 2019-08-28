@@ -35,7 +35,7 @@ class CreateAddonFiles
                 'class_name' => $addonClass = "{$name}{$type}",
                 'extends'    => ucwords($type),
                 'short_name' => $shortName = $this->model->shortName(),
-                'slug'       => $this->model->fullSlug(),
+                'slug'       => $this->model->getNamespace(),
             ],
             'model'       => $this->model->toArray(),
             'psr4_prefix' => str_replace('\\', '\\\\', $this->model->namespace),
