@@ -134,9 +134,9 @@ class EntryTable extends Table implements EntryTableContract
         ApplyFilters::dispatch($this->getFilters(), $query, $this->getRequest());
     }
 
+    /** @param \Illuminate\Database\Eloquent\Builder $query */
     protected function applyOptions($query)
     {
-        /** @var \Illuminate\Database\Eloquent\Builder $query */
         $table = $query->getModel()->getTable();
         $keyName = $query->getModel()->getKeyName();
 
@@ -152,6 +152,9 @@ class EntryTable extends Table implements EntryTableContract
                 $query->orderBy($table.'.'.$column, $direction);
             }
         } else {
+            $query->orderBy(
+                $table.'.'.$keyName, 'DESC'
+            );
 
             if ($this->orderBy) {
                 $query->orderBy(
