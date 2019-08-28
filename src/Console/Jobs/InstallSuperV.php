@@ -130,7 +130,7 @@ class InstallSuperV
         if (! SchemaBuilder::hasTable('migrations')) {
             Artisan::call('migrate', ['--force' => true]);
         }
-        if (! SchemaBuilder::hasColumn('migrations', 'addon')) {
+        if (! SchemaBuilder::hasColumn('migrations', 'namespace')) {
             Schema::table('migrations', function (Blueprint $table) {
                 $table->string('namespace')->nullable();
             });
