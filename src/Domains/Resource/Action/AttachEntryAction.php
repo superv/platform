@@ -23,15 +23,6 @@ class AttachEntryAction extends Action
                      ->setName('sv-attach-entry-action');
     }
 
-    protected function getPivotForm()
-    {
-        if ($pivotColumns = $this->relation->getRelationConfig()->getPivotColumns()) {
-            return $this->relation->getPivotFields()->map(function (Field $field) {
-                return (new FieldComposer($field))->forForm();
-            });
-        }
-    }
-
     public function onComposed(Payload $payload)
     {
         $payload->set('lookup-url', sv_url($this->getLookupUrl()));
@@ -42,25 +33,11 @@ class AttachEntryAction extends Action
     public function getLookupUrl()
     {
         return $this->relation->route('lookup', $this->relation->getParentEntry());
-
-        return sprintf(
-            'sv/res/%s/%s/%s/lookup',
-            $this->relation->getParentResourceHandle(),
-            $this->relation->getParentEntry()->getId(),
-            $this->relation->getName()
-        );
     }
 
     public function getAttachUrl()
     {
         return $this->relation->route('attach', $this->relation->getParentEntry());
-
-        return sprintf(
-            'sv/res/%s/%s/%s/attach',
-            $this->relation->getParentResourceHandle(),
-            $this->relation->getParentEntry()->getId(),
-            $this->relation->getName()
-        );
     }
 
     public function setRelation(Relation $relation): AttachEntryAction
@@ -68,5 +45,14 @@ class AttachEntryAction extends Action
         $this->relation = $relation;
 
         return $this;
+    }
+
+    protected function getPivotForm()
+    {
+        if ($pivotColumns = $this->relation->getRelationConfig()->getPivotColumns()) {
+            return $this->relation->getPivotFields()->map(function (Field $field) {
+                return (new FieldComposer($field))->forForm();
+            });
+        }
     }
 }

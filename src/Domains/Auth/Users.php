@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Auth;
 
+use Illuminate\Database\Eloquent\Builder;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Auth\Contracts\Users as UsersContract;
 
@@ -10,41 +11,42 @@ class Users implements UsersContract
     /** @var \Illuminate\Database\Eloquent\Builder */
     protected $query;
 
+    /** @var \SuperV\Platform\Domains\Auth\Contracts\User|\SuperV\Platform\Domains\Database\Model\Model  */
     protected $model;
 
     public function __construct(User $user)
     {
-        $this->query = $user->query();
+        $this->model = $user;
     }
 
-    public function query()
+    public function query(): Builder
     {
-        return $this->query;
+        return $this->model->newQuery();
     }
 
     public function count()
     {
-        return $this->query->count();
+        return $this->query()->count();
     }
 
     public function first()
     {
-        return $this->query->first();
+        return $this->query()->first();
     }
 
     public function withEmail($email): ?User
     {
-        return $this->query->whereEmail($email)->first();
+        return $this->query()->whereEmail($email)->first();
     }
 
     public function find($id, $columns = ['*'])
     {
-        return $this->query->find($id, $columns);
+        return $this->query()->find($id, $columns);
     }
 
     public function create(array $attributes = [])
     {
-        return $this->query->create($attributes);
+        return $this->query()->create($attributes);
     }
 
     public static function __callStatic($name, $arguments)
