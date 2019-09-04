@@ -14,13 +14,13 @@ class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateComm
                 {--pretend : Dump the SQL queries that would be run.}
                 {--seed : Indicates if the seed task should be re-run.}
                 {--step : Force the migrations to be run so they can be rolled back individually.}
-                {--namespace= : Addon of migrations to be run.}';
+                {--namespace= : The namespace of migrations to be run.}';
 
     public function handle()
     {
         if ($this->option('namespace')) {
             if (! $path = Scopes::path($this->option('namespace'))) {
-                $this->error('Addon scope not registered');
+                $this->error('Migration namespace not registered');
 
                 return;
             }

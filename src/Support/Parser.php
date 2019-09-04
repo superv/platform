@@ -126,4 +126,9 @@ class Parser
 
         return $data;
     }
+
+    public static function make()
+    {
+        return app(static::class);
+    }
 }

@@ -19,7 +19,7 @@ class ResetCommand extends \Illuminate\Database\Console\Migrations\ResetCommand
         return array_merge(
             parent::getOptions(),
             [
-                ['namespace', null, InputOption::VALUE_OPTIONAL, 'The scope to reset for.'],
+                ['namespace', null, InputOption::VALUE_OPTIONAL, 'The namespace to reset for.'],
             ]
         );
     }

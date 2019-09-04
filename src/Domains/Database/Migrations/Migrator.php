@@ -87,15 +87,16 @@ class Migrator extends BaseMigrator
         $scope = null;
 
         if ($migration instanceof PlatformMigration) {
-            if ($this->namespace) {
-                if (! $migration->getNamespace()) {
-                    $migration->setNamespace($this->namespace);
-                    $scope = $this->namespace;
-                }
+            if (! $migration->getNamespace()) {
+                $scope = $this->namespace;
             } else {
-                $scope = $migration->getNamespace();
+                $scope = $migration->getNamespace() ?? 'app';
             }
+
+            $migration->setNamespace($scope);
+            $this->setNamespace($scope);
         }
+
         Current::setMigrationScope($scope);
 
         return $scope;

@@ -1,0 +1,26 @@
+<?php
+
+use SuperV\Platform\Domains\Database\Migrations\Migration;
+use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\Jobs\DeleteResource;
+use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
+
+class {class_name} extends Migration
+{
+    protected $namespace = '{migration_namespace}';
+
+    public function up()
+    {
+        $this->run('{table_name}',
+            function (Blueprint $table, Config $config) {
+                {config}
+
+                {blueprint}
+            });
+    }
+
+    public function down()
+    {
+        DeleteResource::dispatch('{resource}');
+    }
+}

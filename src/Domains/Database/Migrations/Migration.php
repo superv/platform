@@ -34,6 +34,11 @@ class Migration extends \Illuminate\Database\Migrations\Migration implements Pla
         return $this->schema()->table($table, $callback);
     }
 
+    public function run($table, Closure $callback)
+    {
+        return $this->schema()->run($table, $callback);
+    }
+
     public function drop($table)
     {
         return $this->schema()->drop($table);
