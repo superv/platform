@@ -21,7 +21,7 @@ class ApiAuthenticationTest extends TestCase
     function test__returns_proper_token_response()
     {
         $user = $this->newUser();
-        $response = $this->postJson('login', [
+        $response = $this->postJson(route('sv.login'), [
             'email'    => $user->getEmail(),
             'password' => 'secret',
         ]);
@@ -54,7 +54,7 @@ class ApiAuthenticationTest extends TestCase
 
     function test__authentication_fails_with_invalid_credentials()
     {
-        $response = $this->json('post', '/login', [
+        $response = $this->postJson(route('sv.login'), [
             'email'    => 'user@superv.io',
             'password' => 'invalid-password',
         ]);

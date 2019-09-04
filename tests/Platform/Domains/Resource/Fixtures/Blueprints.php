@@ -78,7 +78,7 @@ class Blueprints
             $resource->label('Posts');
 
             $table->increments('id');
-            $table->string('title');
+            $table->string('title')->entryLabel();
 
             $table->belongsTo('t_users', 'user');
         });

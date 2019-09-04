@@ -13,7 +13,7 @@ class DataControllerTest extends TestCase
 
     function test__returns_initial_user_data()
     {
-        $response = $this->getJsonUser('data/init');
+        $response = $this->getJsonUser(route('sv.data.init'));
         $response->assertOk();
 
         $payload = $response->decodeResponseJson('data');

@@ -22,7 +22,7 @@ class RollbackCommand extends \Illuminate\Database\Console\Migrations\RollbackCo
         return array_merge(
             parent::getOptions(),
             [
-                ['namespace', null, InputOption::VALUE_OPTIONAL, 'The scope to rollback for.'],
+                ['namespace', null, InputOption::VALUE_OPTIONAL, 'The namespace to rollback for.'],
             ]
         );
     }

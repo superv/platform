@@ -7,12 +7,14 @@ use Platform;
 use SuperV\Platform\Console\Jobs\InstallSuperV;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Events\PlatformInstalledEvent;
+use SuperV\Platform\Testing\TestHelpers;
 use Tests\Platform\TestCase;
 use Tests\Platform\TestsConsoleCommands;
 
 class SuperVInstallCommandTest extends TestCase
 {
     use TestsConsoleCommands;
+    use TestHelpers;
 
     function test_sets_env_variable_existing_parameter()
     {
@@ -77,6 +79,13 @@ class SuperVInstallCommandTest extends TestCase
         InstallSuperV::dispatch();
 
         $this->assertEquals('on', $_SERVER['__switch__']);
+    }
+
+    function test__adds_namespace_column_to_migrations_table()
+    {
+        InstallSuperV::dispatch();
+
+        $this->assertColumnExists('migrations', 'namespace');
     }
 
     protected function setUp()

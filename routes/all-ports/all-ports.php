@@ -6,13 +6,19 @@ use SuperV\Platform\Http\Controllers\DataController;
 
 return [
 
-    'data/init'   => DataController::class.'@init',
-    'data/nav'    => DataController::class.'@nav',
-    'data/navold' => DataController::class.'@navold',
-    'post@login'  => [
+    'sv/data/init'  => [
+        'as'   => 'sv.data.init',
+        'uses' => DataController::class.'@init',
+    ],
+    'sv/data/nav'   => [
+        'as'   => 'sv.data.nav',
+        'uses' => DataController::class.'@nav',
+    ],
+    'post@sv/login' => [
+        'as'   => 'sv.login',
         'uses' => AuthController::class.'@login',
     ],
-    'platform'    => function () {
+    'sv/platform'   => function () {
         return 'SuperV Platform @'.Current::port()->slug();
     },
 

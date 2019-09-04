@@ -19,6 +19,9 @@ class CreateResource
     /** @var \SuperV\Platform\Domains\Database\Events\TableCreatingEvent */
     protected $event;
 
+    /** @var \SuperV\Platform\Domains\Resource\ResourceModel */
+    protected $resourceEntry;
+
     public function handle(TableCreatingEvent $event)
     {
         if (! $event->namespace) {
@@ -32,8 +35,6 @@ class CreateResource
         $this->processConfig();
 
         $this->createResourceEntry();
-
-//        $this->resource = ResourceFactory::make($this->table);
 
         $this->createNavSections();
     }
@@ -57,13 +58,13 @@ class CreateResource
 
         if ($nav = $this->config->getNav()) {
             if (is_string($nav)) {
-//                Section::createFromString($handle = $nav.'.'.$this->table, null, $this->addon);
                 Section::createFromString($handle = $nav.'.'.$table);
                 $section = Section::get($handle);
                 $section->update([
-                    'url'    => 'sv/res/'.$table,
-                    'title'  => $this->config->getLabel(),
-                    'handle' => str_slug($this->config->getLabel(), '_'),
+                    'resource_id' => $this->resourceEntry->getId(),
+                    'url'         => 'sv/res/'.$table,
+                    'title'       => $this->config->getLabel(),
+                    'handle'      => str_slug($this->config->getLabel(), '_'),
                 ]);
             } elseif (is_array($nav)) {
                 if (! isset($nav['url'])) {
@@ -79,7 +80,7 @@ class CreateResource
     protected function createResourceEntry()
     {
         /** @var ResourceModel $entry */
-        return ResourceModel::create(array_filter(
+        $this->resourceEntry = ResourceModel::create(array_filter(
             [
                 'slug'       => $this->event->table,
                 'handle'     => $this->event->table,

@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
 use SuperV\Platform\Domains\Resource\Relation\RelationCollection;
 use SuperV\Platform\Providers\BaseServiceProvider;
@@ -44,6 +45,8 @@ class ResourceServiceProvider extends BaseServiceProvider
     protected $_singletons = [
         'relations' => RelationCollection::class,
     ];
+
+    protected $commands = [ResourceImportCommand::class];
 
     public function register()
     {

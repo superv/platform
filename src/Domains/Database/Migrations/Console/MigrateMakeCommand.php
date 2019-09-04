@@ -15,7 +15,7 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
         {--create= : The table to be created.}
         {--table= : The table to migrate.}
         {--path= : The location where the migration file should be created.}
-        {--namespace= : The addon of the migration.}
+        {--namespace= : The namespace of the migration.}
         ';
 
     /** @var \SuperV\Platform\Domains\Database\Migrations\MigrationCreator */
