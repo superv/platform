@@ -190,7 +190,7 @@ class Installer
     }
 
     /**
-     * Set addon slug
+     * Set addon namespace
      *
      * @param string $namespace
      * @return Installer
@@ -274,5 +274,10 @@ class Installer
         }
 
         return $key ? array_get($this->composerJson, $key) : $this->composerJson;
+    }
+
+    public static function resolve(): Installer
+    {
+        return app(static::class);
     }
 }

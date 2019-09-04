@@ -189,10 +189,10 @@ class PlatformTestCase extends OrchestraTestCase
         $this->app->setBasePath($this->basePath ?? realpath(__DIR__.'/../../../../../'));
 
         foreach ($this->installs as $addon) {
-            app(Installer::class)
-                ->setLocator(new Locator())
-                ->setSlug($addon)
-                ->install();
+            Installer::resolve()
+                     ->setLocator(new Locator())
+                     ->setNamespace($addon)
+                     ->install();
         }
     }
 
