@@ -8,19 +8,19 @@ use SuperV\Platform\Domains\Addon\AddonCollection;
 
 class AddonReinstallCommand extends Command
 {
-    protected $signature = 'addon:reinstall {--addon=} {--seed}';
+    protected $signature = 'addon:reinstall {--namespace=} {--seed}';
 
     public function handle(AddonCollection $addons)
     {
-        if (! $addon = $this->option('addon')) {
-            $addon = $this->choice('Select Addon to Reinstall', $addons->enabled()->slugs()->all());
+        if (! $namespace = $this->option('namespace')) {
+            $namespace = $this->choice('Select Addon to Reinstall', $addons->enabled()->slugs()->all());
         }
 
         try {
-            $this->call('addon:uninstall', ['--namespace' => $addon]);
+            $this->call('addon:uninstall', ['--namespace' => $namespace]);
 
             $this->call('addon:install', [
-                'addon'  => $addon,
+                'namespace'  => $namespace,
                 '--seed' => $this->option('seed'),
             ]);
         } catch (Exception $e) {
