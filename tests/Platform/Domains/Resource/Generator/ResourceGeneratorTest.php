@@ -12,7 +12,7 @@ class ResourceGeneratorTest extends ResourceTestCase
 {
     protected $tmpDirectory = 'resource-generator';
 
-    function test__generates_resource_from_table()
+    function generates_resource_from_table()
     {
         $generator = ResourceGenerator::make();
         $generator->setTarget($this->tmpDirectory);

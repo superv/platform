@@ -17,8 +17,8 @@ class AddonInstallCommandTest extends TestCase
         $installer->shouldReceive('install')->once();
 
         $this->artisan('addon:install', [
-            '--path' => 'path/to/addon',
-            'addon'  => 'addon.slug',
+            '--path'    => 'path/to/addon',
+            'namespace' => 'addon.slug',
         ]);
     }
 
@@ -31,7 +31,7 @@ class AddonInstallCommandTest extends TestCase
         $installer->shouldReceive('install')->once();
 
         $this->artisan('addon:install', [
-            'addon' => 'vendor.addons.slug',
+            'namespace' => 'vendor.addons.slug',
         ]);
     }
 
@@ -42,8 +42,8 @@ class AddonInstallCommandTest extends TestCase
         $installer->shouldReceive('seed')->once();
 
         $this->artisan('addon:install', [
-            'addon'  => 'vendor.addons.slug',
-            '--seed' => true,
+            'namespace' => 'vendor.addons.slug',
+            '--seed'    => true,
         ]);
     }
 }
