@@ -2,20 +2,17 @@
 
 namespace SuperV\Platform\Domains\TaskManager;
 
-use Illuminate\Queue\SerializesModels;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\TaskManager\Contracts\Task;
 use SuperV\Platform\Domains\TaskManager\Contracts\TaskHandler;
 
 class TaskModel extends ResourceEntry implements Task
 {
-    use SerializesModels {
-        SerializesModels::__sleep as parentSleep;
-    }
-
     protected $table = 'sv_tasks';
 
     protected $casts = ['payload' => 'json'];
+
+    protected $attributes = ['status' => 'pending'];
 
     public $timestamps = true;
 
@@ -36,10 +33,23 @@ class TaskModel extends ResourceEntry implements Task
         return $this->payload ?? [];
     }
 
-    public function __sleep()
+    public function status(): TaskStatus
     {
-        $this->resource = null;
+        return new TaskStatus($this->status);
+    }
 
-        return $this->parentSleep();
+    public function getInfo(): ?string
+    {
+        return $this->info;
+    }
+
+    public function setStatus(TaskStatus $status): void
+    {
+        $this->update(['status' => $status]);
+    }
+
+    public function setInfo(string $info): void
+    {
+        $this->update(['info' => $info]);
     }
 }

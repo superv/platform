@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Model;
 
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Queue\SerializesModels;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Database\Model\Repository;
@@ -15,6 +16,16 @@ use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class ResourceEntry extends Entry
 {
+    use SerializesModels {
+        SerializesModels::__sleep as parentSleep;
+    }
+
+    public function __sleep()
+    {
+        $this->resource = null;
+
+        return $this->parentSleep();
+    }
     use Restorable;
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */

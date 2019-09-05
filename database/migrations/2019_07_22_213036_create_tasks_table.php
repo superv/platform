@@ -4,6 +4,7 @@ use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\TaskManager\TaskModel;
+use SuperV\Platform\Domains\TaskManager\TaskStatus;
 
 class CreateTasksTable extends Migration
 {
@@ -21,8 +22,9 @@ class CreateTasksTable extends Migration
                 $table->increments('id');
                 $table->string('title')->entryLabel();
                 $table->string('handler');
-                $table->select('status', ['pending', 'processing', 'done', 'error']);
+                $table->status(TaskStatus::class)->showOnIndex();
                 $table->dictionary('payload');
+                $table->text('info')->nullable()->showOnIndex();
                 $table->createdBy()->updatedBy();
             });
     }
