@@ -9,7 +9,7 @@ class CreateTasksTable extends Migration
 {
     public function up()
     {
-        $this->create('tasks',
+        $this->create('sv_tasks',
             function (Blueprint $table, ResourceConfig $config) {
                 // $config->label('{resource.label}');
                 $config->nav('acp.platform');
@@ -29,6 +29,6 @@ class CreateTasksTable extends Migration
 
     public function down()
     {
-        $this->dropIfExists('tasks');
+        $this->dropIfExists('sv_tasks');
     }
 }

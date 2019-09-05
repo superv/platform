@@ -13,7 +13,7 @@ class TaskModel extends ResourceEntry implements Task
         SerializesModels::__sleep as parentSleep;
     }
 
-    protected $table = 'tasks';
+    protected $table = 'sv_tasks';
 
     protected $casts = ['payload' => 'json'];
 

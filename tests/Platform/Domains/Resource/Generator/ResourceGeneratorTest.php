@@ -8,11 +8,14 @@ use Illuminate\Support\Facades\Schema;
 use SuperV\Platform\Domains\Resource\Generator\ResourceGenerator;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
+/**
+ * @group excluded
+ */
 class ResourceGeneratorTest extends ResourceTestCase
 {
     protected $tmpDirectory = 'resource-generator';
 
-    function generates_resource_from_table()
+    function test_generates_resource_from_table()
     {
         $generator = ResourceGenerator::make();
         $generator->setTarget($this->tmpDirectory);

@@ -15,7 +15,6 @@ class DeployerTest extends TestCase
 
         /** @var Deployer $deployer */
         $deployer = app(Deployer::class);
-
         $deployer->deploy($this->makeTaskModel($taskData));
     }
 }

@@ -3,11 +3,11 @@
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 
-class CreateTasksTable extends Migration
+class CreateTestingTasksTable extends Migration
 {
     public function up()
     {
-        $this->schema()->create('tasks', function (Blueprint $table) {
+        $this->schema()->create('testing_tasks', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
         });
@@ -15,6 +15,6 @@ class CreateTasksTable extends Migration
 
     public function down()
     {
-        $this->schema()->drop('tasks');
+        $this->schema()->drop('testing_tasks');
     }
 }

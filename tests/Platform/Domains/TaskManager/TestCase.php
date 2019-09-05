@@ -11,11 +11,9 @@ class TestCase extends PlatformTestCase
 {
     use RefreshDatabase;
 
-    protected $installs = ['superv.modules.task_manager'];
-
     protected function makeTaskModel(array $taskData = null): TaskModel
     {
-        return sv_resource('tasks')->create($taskData ?? $this->makeTaskData());
+        return sv_resource('sv_tasks')->create($taskData ?? $this->makeTaskData());
     }
 
     protected function makeTaskData(array $overrides = []): array
