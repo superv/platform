@@ -12,7 +12,7 @@ class CreateTasksTable extends Migration
     {
         $this->create('sv_tasks',
             function (Blueprint $table, ResourceConfig $config) {
-                // $config->label('{resource.label}');
+                $config->label('Tasks');
                 $config->nav('acp.platform');
                 // $config->resourceKey('');
                 // $config->restorable();
