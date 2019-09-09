@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
+use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceModel;
@@ -37,6 +38,8 @@ class CreateResource
         $this->createResourceEntry();
 
         $this->createNavSections();
+
+        ResourceCreatedEvent::fire($this->resourceEntry);
     }
 
     protected function guessEntryLabel(ResourceConfig $config, Collection $columns): void
@@ -82,6 +85,7 @@ class CreateResource
         /** @var ResourceModel $entry */
         $this->resourceEntry = ResourceModel::create(array_filter(
             [
+                'uuid'       => uuid(),
                 'slug'       => $this->event->table,
                 'handle'     => $this->event->table,
                 'model'      => $this->config->getModel(),

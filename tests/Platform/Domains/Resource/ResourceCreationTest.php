@@ -2,10 +2,12 @@
 
 namespace Tests\Platform\Domains\Resource;
 
+use Event;
 use Exception;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Schema\Schema;
+use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
@@ -28,7 +30,7 @@ class ResourceCreationTest extends ResourceTestCase
         $this->assertDatabaseHas('sv_resources', ['slug' => 'test_users']);
         $resource = ResourceModel::withHandle('test_users');
         $this->assertNotNull($resource);
-        $this->assertNotNull($resource->uuid());
+        $this->assertNotNull($resource->uuid);
         $this->assertEquals('platform', $resource->getNamespace());
     }
 
@@ -50,11 +52,11 @@ class ResourceCreationTest extends ResourceTestCase
 
         $nameField = $resource->getField('name');
         $this->assertEquals('string', $nameField->getColumnType());
-        $this->assertNotNull($nameField->uuid());
+        $this->assertNotNull($nameField->uuid);
 
         $ageField = $resource->getField('age');
         $this->assertEquals('integer', $ageField->getColumnType());
-        $this->assertNotNull($ageField->uuid());
+        $this->assertNotNull($ageField->uuid);
     }
 
     function test__fields_are_unique_per_resource()
@@ -175,6 +177,20 @@ class ResourceCreationTest extends ResourceTestCase
 
         $resource = ResourceModel::withHandle('test_users');
         $this->assertEquals('User', $resource->getField('title')->getDefaultValue());
+    }
+
+    function test__dispatches_event_when_created()
+    {
+        Event::fake([ResourceCreatedEvent::class]);
+
+        $this->schema()->posts();
+
+        Event::assertDispatched(ResourceCreatedEvent::class, function (ResourceCreatedEvent $event) {
+            $this->assertInstanceOf(ResourceModel::class, $event->resourceEntry);
+            $this->assertEquals('t_posts', $event->resourceEntry->getHandle());
+
+            return true;
+        });
     }
 }
 
