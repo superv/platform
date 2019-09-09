@@ -372,10 +372,6 @@ final class Resource implements
             return $base.'/create';
         }
 
-        if ($route === 'index.table') {
-            return $base.'/table';
-        }
-
         if ($route === 'index') {
             return $base;
         }
@@ -406,6 +402,19 @@ final class Resource implements
 
         if ($route === 'update' || $route === 'delete') {
             return $base.'/'.$entry->getId();
+        }
+
+        if (starts_with($route, 'forms.')) {
+            $form = explode('.', $route)[1];
+
+            $formUuid = $form === 'create' ? $this->getHandle() : null; // null ??
+
+            return sv_route('forms.show', ['uuid' => $formUuid]);
+        }
+
+        if ($route === 'index.table') {
+            return sv_route('resource.index.table', ['resource' => $this->getHandle()]);
+//            return $base.'/table';
         }
 
         return sv_route('resource.'.$route, array_merge($params, ['id'       => $entry->getId(),
