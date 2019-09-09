@@ -18,6 +18,8 @@ class Page implements ProvidesUIComponent, Responsable
 
     protected $actions = [];
 
+    protected $sections = [];
+
     protected $tokens;
 
     protected $component;
@@ -54,6 +56,13 @@ class Page implements ProvidesUIComponent, Responsable
     public function addBlock($block)
     {
         $this->blocks[] = $block;
+
+        return $this;
+    }
+
+    public function addSection($section)
+    {
+        $this->sections[] = $section;
 
         return $this;
     }
@@ -111,6 +120,19 @@ class Page implements ProvidesUIComponent, Responsable
         $this->componentName = $componentName;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSections(): array
+    {
+        return $this->sections;
+    }
+
+    public function setParent($parent)
+    {
+        return $this->setMeta('parent', $parent);
     }
 
     public function uuid(): string

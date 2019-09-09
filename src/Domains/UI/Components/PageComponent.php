@@ -31,9 +31,10 @@ class PageComponent extends BaseComponent
         $static = new static;
         $static->uuid = $page->uuid();
         $static->props->merge([
-            'meta'    => $page->getMeta(),
-            'actions' => $page->getActions(),
-            'blocks'  => $page->getBlocks(),
+            'meta'     => $page->getMeta(),
+            'actions'  => $page->getActions(),
+            'sections' => $page->getSections(),
+            'blocks'   => $page->getBlocks(),
         ]);
 
         return $static;
