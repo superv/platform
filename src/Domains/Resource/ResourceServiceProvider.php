@@ -14,6 +14,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
 use SuperV\Platform\Domains\Resource\Relation\RelationCollection;
+use SuperV\Platform\Events\PlatformInstalledEvent;
 use SuperV\Platform\Providers\BaseServiceProvider;
 
 class ResourceServiceProvider extends BaseServiceProvider
@@ -24,6 +25,7 @@ class ResourceServiceProvider extends BaseServiceProvider
         ColumnDroppedEvent::class              => Listeners\DeleteField::class,
         TableCreatingEvent::class              => Listeners\CreateResource::class,
         TableCreatedEvent::class               => Listeners\CreateResourceForm::class,
+        PlatformInstalledEvent::class          => Listeners\CreatePlatformResourceForms::class,
         AddonBootedEvent::class                => Listeners\RegisterExtensions::class,
         Model\Events\EntrySavingEvent::class   => [
             Listeners\ValidateSavingEntry::class,
