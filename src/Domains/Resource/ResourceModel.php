@@ -76,7 +76,7 @@ class ResourceModel extends Entry implements ProvidesFields
             throw new \Exception("Field with name [{$name}] already exists");
         }
 
-        return $this->fields()->make(['name' => $name]);
+        return $this->fields()->make(['name' => $name, 'uuid' => uuid()]);
     }
 
     public function hasField($name)
@@ -113,11 +113,6 @@ class ResourceModel extends Entry implements ProvidesFields
     {
         $cacheKey = 'sv:resources:'.$this->getHandle();
         cache()->forget($cacheKey);
-    }
-
-    public function uuid()
-    {
-        return $this->uuid ?? null;
     }
 
     public static function withModel($model): ?self

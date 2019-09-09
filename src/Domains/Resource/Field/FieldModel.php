@@ -101,11 +101,6 @@ class FieldModel extends Entry
         $this->attributes['rules'] = json_encode($rules);
     }
 
-    public function uuid()
-    {
-        return $this->uuid;
-    }
-
     public static function withUuid($uuid): self
     {
         return static::query()->where('uuid', $uuid)->firstOrFail();
