@@ -23,21 +23,21 @@ class ResourceIndexTest extends ResourceTestCase
     {
         $users = $this->schema()->users();
 
-        $page = $this->getUserPage($users->route('index'));
+        $page = $this->getUserPage($users->route('dashboard'));
         $table = HelperComponent::from($page->getProp('blocks.0'));
 
-        $this->assertEquals('sv-loader', $table->getName());
-        $this->assertEquals($users->route('index.table'), $table->getProp('url'));
+        $this->assertEquals('sv-router-portal', $table->getName());
+        $this->assertEquals($users->getHandle(), $table->getProp('name'));
     }
 
     function test__index_table_config()
     {
         $users = $this->schema()->users();
 
-        $response = $this->getJsonUser($users->route('index.table'))->assertOk();
+        $response = $this->getJsonUser($users->route('table'))->assertOk();
         $table = HelperComponent::from($response->decodeResponseJson('data'));
 
-        $this->assertEquals($users->route('index.table').'/data', $table->getProp('config.data_url'));
+        $this->assertEquals($users->route('table').'/data', $table->getProp('config.data_url'));
 
         $fields = $table->getProp('config.fields');
 
@@ -97,7 +97,7 @@ class ResourceIndexTest extends ResourceTestCase
         $groups = sv_resource('t_groups');
         $usersGroup = $groups->find(1);
         $this->assertSame($usersGroup->title, $group['value']);
-        $this->assertEquals($groups->route('view.page', $usersGroup), $group['meta']['link']);
+        $this->assertEquals($groups->route('entry.view', $usersGroup), $group['meta']['link']);
     }
 
     function test__fields_extending()
@@ -121,7 +121,7 @@ class ResourceIndexTest extends ResourceTestCase
         $posts->fake(['user_id' => $userA->getId()]);
         $posts->fake(['user_id' => $userA->getId()]);
 
-        $row = $this->getJsonUser($posts->route('index.table').'/data')->decodeResponseJson('data.rows.0');
+        $row = $this->getJsonUser($posts->route('dashboard').'/data')->decodeResponseJson('data.rows.0');
 
         $fields = collect($row['fields'])->keyBy('name');
         $this->assertEquals($userA->email, $fields->get('user_id')['value']);

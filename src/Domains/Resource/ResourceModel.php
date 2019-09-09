@@ -55,6 +55,11 @@ class ResourceModel extends Entry implements ProvidesFields
         return $this->config ?? [];
     }
 
+    public function getForeignKey()
+    {
+        return 'resource_id';
+    }
+
     public function getConfigValue($key, $default = null)
     {
         return array_get($this->getConfig(), $key, $default);

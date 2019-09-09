@@ -26,6 +26,7 @@ class ResourceEntry extends Entry
 
         return $this->parentSleep();
     }
+
     use Restorable;
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */
@@ -125,6 +126,8 @@ class ResourceEntry extends Entry
     {
         if (optional($this->getResource())->isRestorable()) {
             static::addGlobalScope(new SoftDeletingScope());
+        } else {
+            return parent::newQuery()->withoutGlobalScopes();
         }
 
         return parent::newQuery();
@@ -146,6 +149,10 @@ class ResourceEntry extends Entry
 
     public function getForeignKey()
     {
+//        if (! $resource = $this->getResource()) {
+//            return parent::getForeignKey();
+//        }
+
         return $this->getResource()->config()->getResourceKey().'_id';
     }
 
@@ -256,6 +263,4 @@ class ResourceEntry extends Entry
 
         return $model;
     }
-
-
 }

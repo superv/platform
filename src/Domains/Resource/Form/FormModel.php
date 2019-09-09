@@ -27,6 +27,10 @@ class FormModel extends ResourceEntry
         });
     }
 
+//    public function fields() {
+//        return $this->belongsToMany(FieldModel::class, 'sv_form_fields');
+//    }
+
     public function attachField($fieldEntryId)
     {
         $this->fields()->attach($fieldEntryId);
@@ -40,6 +44,11 @@ class FormModel extends ResourceEntry
     public function getUrl()
     {
         return sprintf("sv/forms/%s", $this->uuid);
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
     }
 
     public function getOwnerResource()

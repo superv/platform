@@ -31,6 +31,6 @@ class RecordActivity
     protected function shouldRecord($activity)
     {
         return starts_with($activity, ['resource.', 'relation'])
-            && ! in_array($activity, ['resource.index.table']);
+            && ! in_array($activity, ['resource.dashboard']);
     }
 }

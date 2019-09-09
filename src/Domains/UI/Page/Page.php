@@ -20,6 +20,10 @@ class Page implements ProvidesUIComponent, Responsable
 
     protected $sections = [];
 
+    protected $selectedSection;
+
+    protected $defaultSection;
+
     protected $tokens;
 
     protected $component;
@@ -133,6 +137,36 @@ class Page implements ProvidesUIComponent, Responsable
     public function setParent($parent)
     {
         return $this->setMeta('parent', $parent);
+    }
+
+    public function setSelectedSection($selectedSection)
+    {
+        $this->selectedSection = $selectedSection;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSelectedSection()
+    {
+        return $this->selectedSection;
+    }
+
+    public function setDefaultSection($defaultSection)
+    {
+        $this->defaultSection = $defaultSection;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefaultSection()
+    {
+        return $this->defaultSection;
     }
 
     public function uuid(): string

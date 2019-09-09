@@ -39,10 +39,10 @@ class EntryPage extends ResourcePage
                          'links'    => array_filter_null(
                              [
                                  'image'  => $imageUrl ?? '',
-                                 'create' => $this->creatable ? $this->resource->route('create') : null,
-                                 'edit'   => $this->editable ? $this->resource->route('edit', $this->entry) : null,
-                                 'view'   => $this->viewable ? $this->resource->route('view', $this->entry) : null,
-                                 'index'  => $this->resource->route('index'),
+                                 //                                 'create' => $this->creatable ? $this->resource->route('create') : null,
+                                 //                                 'edit'   => $this->editable ? $this->resource->route('edit', $this->entry) : null,
+                                 //                                 'view'   => $this->viewable ? $this->resource->route('view', $this->entry) : null,
+                                 //                                 'index'  => $this->resource->route('index'),
                              ]
                          ),
                      ]);
@@ -65,8 +65,19 @@ class EntryPage extends ResourcePage
     protected function buildSections()
     {
         return collect($this->getRelationsSections())
+            ->merge(collect($this->sections))
             ->map(function ($section) {
                 return sv_parse($section, ['entry' => $this->entry]);
+            })->map(function ($section) {
+                if ($section['identifier'] === $this->getSelectedSection()) {
+                    $section['default'] = true;
+                }
+
+                if (! $this->getSelectedSection() && $section['identifier'] == $this->getDefaultSection()) {
+                    $section['default'] = true;
+                }
+
+                return $section;
             });
     }
 
@@ -88,9 +99,10 @@ class EntryPage extends ResourcePage
                                   }
 
                                   return [
-                                      'url'    => $url,
-                                      'portal' => $portal ?? false,
-                                      'title'  => str_unslug($relation->getName()),
+                                      'identifier' => $relation->getName(),
+                                      'url'        => $url,
+                                      'target'     => 'portal:'.$this->resource->getHandle().':'.$this->entry->getId(),
+                                      'title'      => str_unslug($relation->getName()),
                                   ];
                               })
                               ->filter()->values();

@@ -2,9 +2,11 @@
 
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
+use Hub;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
+use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Resource;
@@ -34,17 +36,21 @@ class ResourceFormsTest extends ResourceTestCase
 
         // Get Create form
         //
-        $page = $this->getUserPage($users->route('create'));
+        Hub::register(new class extends Port
+        {
+            protected $slug = 'local';
 
-        $formBlock = HelperComponent::from($page->getProp('blocks.0'));
-        $form = $this->getUserPage($formBlock->getProp('url'));
+            protected $hostname = 'localhost:8000';
+        });
+
+        $form = $this->getUserPage($users->route('forms.create'));
+
         $this->assertEquals(8, $form->countProp('fields'));
 
         $fields = collect($form->getProp('fields'))->keyBy('name');
 
         $group = $fields->get('group');
         $this->assertEquals('belongs_to', $group['type']);
-
     }
 
     function test__displays_extended_create_form()
@@ -62,9 +68,7 @@ class ResourceFormsTest extends ResourceTestCase
 
         // Get Create form
         //
-        $page = $this->getUserPage($users->route('create'));
-        $formBlock = HelperComponent::from($page->getProp('blocks.0'));
-        $form = $this->getUserPage($formBlock->getProp('url'));
+        $form = $this->getUserPage($users->route('forms.create'));
 
         $this->assertEquals(3, $form->countProp('fields'));
     }
@@ -83,14 +87,14 @@ class ResourceFormsTest extends ResourceTestCase
         // Upload an avatar for the user
         //
         Storage::fake('fakedisk');
-        $this->postJsonUser($user->route('update'), ['avatar' => $this->makeUploadedFile()]);
+
+        $this->postJsonUser($user->route('forms.update'), ['avatar' => $this->makeUploadedFile()]);
 
         // Get Update form
         //
-        $response = $this->getJsonUser($user->route('edit'))->assertOk();
-        $form = HelperComponent::from($response->decodeResponseJson('data'));
+        $form = $this->getUserPage($user->route('forms.edit'));
 
-        $this->assertEquals($user->route('update'), $form->getProp('url'));
+        $this->assertEquals($user->route('forms.update'), $form->getProp('url'));
         $this->assertEquals('post', $form->getProp('method'));
 
         // make sure fields is an array, not an object
@@ -138,11 +142,11 @@ class ResourceFormsTest extends ResourceTestCase
     function test__displays_extended_update_form()
     {
         $user = $this->schema()
-                     ->users(function (Blueprint $table) {
-                         $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
-                         $table->createdBy()->updatedBy();
-                     })
-                     ->fake(['group_id' => 1]);
+            ->users(function (Blueprint $table) {
+                $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
+                $table->createdBy()->updatedBy();
+            })
+            ->fake(['group_id' => 1]);
 
         // extend resource edit form
         //
@@ -154,7 +158,7 @@ class ResourceFormsTest extends ResourceTestCase
 
         // Get Update form
         //
-        $response = $this->getJsonUser($user->route('edit'))->assertOk();
+        $response = $this->getJsonUser($user->route('forms.edit'))->assertOk();
         $form = HelperComponent::from($response->decodeResponseJson('data'));
         $this->assertEquals(3, $form->countProp('fields'));
     }
@@ -169,7 +173,7 @@ class ResourceFormsTest extends ResourceTestCase
             'group_id' => 1,
         ];
 
-        $response = $this->postJsonUser($users->route('store'), $post);
+        $response = $this->postJsonUser($users->route('forms.store'), $post);
         $response->assertOk();
 
         $user = $users->first();
@@ -187,7 +191,7 @@ class ResourceFormsTest extends ResourceTestCase
             'name'  => 'Ali Selcuk',
             'email' => 'ali@superv.io',
         ];
-        $response = $this->postJsonUser($users->route('store'), $post);
+        $response = $this->postJsonUser($users->route('forms.store'), $post);
         $response->assertStatus(422);
 
         $this->assertEquals(
@@ -208,15 +212,6 @@ class ResourceFormsTest extends ResourceTestCase
         $form->make();
 
         $this->assertEquals(0, count($form->compose()->get('fields')));
-    }
-
-    /**
-     * @param \SuperV\Platform\Domains\Resource\Resource $resource
-     * @return string
-     */
-    protected function getCreateRoute(Resource $resource): string
-    {
-        return route('resource.create', ['resource' => $resource->getHandle()]);
     }
 }
 

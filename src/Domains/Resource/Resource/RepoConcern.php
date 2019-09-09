@@ -63,7 +63,7 @@ trait RepoConcern
     public function create(array $attributes = []): EntryContract
     {
         return $this->newEntryInstance()->create($attributes);
-        return $this->newEntryInstance()->setResource($this)->create($attributes);
+//        return $this->newEntryInstance()->setResource($this)->create($attributes);
     }
 
     public function find($id): ?EntryContract

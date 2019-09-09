@@ -1,7 +1,10 @@
 <?php
 
 return [
-    'users' => [
+    'users'        => [
         'singular' => 'User',
+    ],
+    'sv_resources' => [
+        'singular' => 'Resource',
     ],
 ];

@@ -54,13 +54,13 @@ class Blueprints
     public static function fields($table, ResourceConfig $resource = null)
     {
         $table->increments('id');
-        $table->uuid('uuid');
 
         if ($table instanceof Blueprint) {
             $resource->model(FieldModel::class);
             $resource->label('Fields');
             $resource->resourceKey('field');
             $resource->nav('acp.platform.system');
+            $resource->hasUuid();
 
             $table->nullableBelongsTo('sv_resources', 'resource')->showOnIndex();
 
@@ -68,6 +68,7 @@ class Blueprints
             $table->dictionary('rules')->nullable();
             $table->dictionary('config')->nullable();
         } else {
+            $table->uuid('uuid');
             $table->unsignedInteger('resource_id')->nullable();
 
             $table->text('flags')->nullable();
@@ -191,14 +192,20 @@ class Blueprints
             $table->belongsTo('users', 'user')->showOnIndex();
             $table->nullableMorphTo('entry')->showOnIndex();
             $table->dictionary('payload');
+
+            $table->restorable();
         } else {
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('resource_id');
+            $table->unsignedInteger('deleted_by_id')->nullable();
             $table->nullableMorphs('entry');
             $table->text('payload')->nullable();
+
+            $table->softDeletes();
+
         }
 
         $table->string('activity')->entryLabel();
-        $table->timestamp('created_at')->showOnIndex();
+        $table->timestamp('created_at')->nullable()->showOnIndex();
     }
 }

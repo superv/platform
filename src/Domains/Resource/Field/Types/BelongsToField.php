@@ -147,7 +147,7 @@ class BelongsToField extends FieldType implements
             if ($entry) {
                 if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                     $resource = sv_resource($relatedEntry);
-                    $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
+                    $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
                 }
             }
             $this->relatedResource = $this->resolveRelatedResource();
@@ -197,7 +197,7 @@ class BelongsToField extends FieldType implements
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                 $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
+                $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
             }
         };
     }
@@ -210,7 +210,7 @@ class BelongsToField extends FieldType implements
             }
             if ($relatedEntry = $entry->getRelation($this->getName())) {
                 $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
+                $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
             }
         };
     }

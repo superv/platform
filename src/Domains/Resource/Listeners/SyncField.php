@@ -64,8 +64,10 @@ class SyncField
 
         $fieldEntry = $this->syncWithEloquent();
 
-        if ($formEntry = FormModel::findByResource($this->resourceEntry->getId())) {
-            $formEntry->attachField($fieldEntry->getId());
+        if ($event->table !== 'sv_forms') {
+            if ($formEntry = FormModel::findByResource($this->resourceEntry->getId())) {
+                $formEntry->attachField($fieldEntry->getId());
+            }
         }
     }
 
@@ -98,6 +100,7 @@ class SyncField
         }
 
         $this->resourceEntry->resourceRelations()->create([
+            'uuid'   => uuid(),
             'name'   => $relationConfig->getName(),
             'type'   => $relationConfig->getType(),
             'config' => $relationConfig->toArray(),

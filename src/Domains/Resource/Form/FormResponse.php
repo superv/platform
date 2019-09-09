@@ -35,13 +35,13 @@ class FormResponse implements Responsable
         $action = $request->get('__form_action');
 
         if ($action === 'view') {
-            $route = $this->resource->route('view.page', $this->entry);
+            $route = $this->resource->spaRoute('entry.dashboard', $this->entry, ['section' => 'view']);
         } elseif ($action === 'create_another') {
-            $route = $this->resource->route('create');
+            $route = $this->resource->spaRoute('dashboard', null, ['section' => 'create']);
         } elseif ($action === 'edit_next') {
             $next = $this->resource->newQuery()->where('id', '>', $this->entry->getId())->first();
             if ($next) {
-                $route = $this->resource->route('edit.page', $next).'?action=edit_next';
+                $route = $this->resource->route('forms.edit', $next).'?action=edit_next';
             }
         }
 
@@ -52,7 +52,7 @@ class FormResponse implements Responsable
                 'message'     => __($this->form->isUpdating() ? ':Resource :Entry was updated' : ':Resource :Entry was created', ['Entry'    => $entryLabel,
                                                                                                                                   'Resource' => $this->resource->getSingularLabel()]),
                 'action'      => $action,
-                'redirect_to' => $route ?? $this->resource->route('index'),
+                'redirect_to' => $route ?? $this->resource->spaRoute('dashboard'),
             ],
         ]);
     }

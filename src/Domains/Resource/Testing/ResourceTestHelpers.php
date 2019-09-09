@@ -9,8 +9,8 @@ use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
-use Tests\Platform\Domains\Resource\Fixtures\Blueprints;
 use SuperV\Platform\Testing\HelperComponent;
+use Tests\Platform\Domains\Resource\Fixtures\Blueprints;
 
 trait ResourceTestHelpers
 {
@@ -111,7 +111,7 @@ trait ResourceTestHelpers
 
     protected function getTableConfigOfResource($resource)
     {
-        $response = $this->getJsonUser($resource->route('index.table'));
+        $response = $this->getJsonUser($resource->route('dashboard'));
         $table = HelperComponent::from($response->decodeResponseJson('data'));
 
         return $table;
@@ -119,7 +119,7 @@ trait ResourceTestHelpers
 
     protected function getTableRowsOfResource($resource, $query = '')
     {
-        $url = $resource->route('index.table').'/data'.str_prefix($query, '?', '');
+        $url = $resource->route('dashboard').'/data'.str_prefix($query, '?', '');
         $response = $this->getJsonUser($url)->assertOk();
 
         return $response->decodeResponseJson('data.rows');

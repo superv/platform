@@ -3,9 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Form\FormFactory;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class CreateResourceForm
 {
@@ -17,21 +15,11 @@ class CreateResourceForm
 
     public function handle(TableCreatedEvent $event)
     {
-        if (starts_with($event->table, 'sv_')) {
+        $table = $event->table;
+        if (starts_with($table, 'sv_')) {
             return;
         }
 
-        $resource = ResourceFactory::make($event->table);
-
-        $this->formEntry = app(FormFactory::class)->create([
-            'uuid'        => $resource->getHandle(),
-            'resource_id' => $resource->id(),
-            'title'       => $resource->getLabel().' Form',
-        ]);
-
-        $resource->getFieldEntries()
-                 ->map(function (FieldModel $field) {
-                     $this->formEntry->fields()->attach($field->getId());
-                 });
+        FormFactory::createForResource($table);
     }
 }

@@ -204,6 +204,7 @@ class MediaBag
         $extension = $file instanceof UploadedFile ? $file->getClientOriginalExtension() : $file->getExtension();
 
         $mimeType = $file->getMimeType();
+
         if (! $extension && starts_with($mimeType, 'image/svg')) {
             $extension = 'svg';
         }

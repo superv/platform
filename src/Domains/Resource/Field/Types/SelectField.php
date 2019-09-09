@@ -60,7 +60,7 @@ class SelectField extends FieldType implements RequiresDbColumn, ProvidesFilter
 
             $payload->set('meta.options', $options);
 //            $payload->set('placeholder', sv_trans('sv::resource.select', ['resource' => $this->field->getPlaceholder()]));
-            $payload->set('placeholder', __('Select Resource', ['resource' => $this->field->getPlaceholder()]));
+            $payload->set('placeholder', __('Select :Object', ['object' => $this->field->getPlaceholder()]));
         };
     }
 }

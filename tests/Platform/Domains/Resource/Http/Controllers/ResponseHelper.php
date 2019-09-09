@@ -11,7 +11,7 @@ trait ResponseHelper
     public function getResourceView(EntryContract $entry): HelperComponent
     {
         $resource = ResourceFactory::make($entry);
-        $response = $this->getJsonUser($resource->route('view', $entry));
+        $response = $this->getJsonUser($resource->route('entry.view', $entry));
 
         return HelperComponent::from($response->decodeResponseJson('data'));
 

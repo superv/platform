@@ -119,8 +119,6 @@ final class Resource implements
 
     protected $extended = false;
 
-
-
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
@@ -359,6 +357,22 @@ final class Resource implements
         return $this->getConfigValue('key_name', str_singular($this->getHandle()));
     }
 
+    public function spaRoute($route, ?EntryContract $entry = null, array $params = [])
+    {
+        if (starts_with($route, 'forms.')) {
+            $form = explode('.', $route)[1];
+
+            $formUuid = $form === 'create' || $form === 'edit' ? $this->getHandle() : null; // null ??
+
+            $params['uuid'] = $formUuid;
+        }
+
+        $parameters = array_merge($params, ['id'       => $entry ? $entry->getId() : null,
+                                            'resource' => $this->getHandle()]);
+
+        return route('resource.'.$route, array_filter($parameters), false);
+    }
+
     public function route($route, ?EntryContract $entry = null, array $params = [])
     {
         $base = 'sv/res/'.$this->getHandle();
@@ -368,36 +382,9 @@ final class Resource implements
 
             return sv_route('resource.fields', $params);
         }
-        if ($route === 'create') {
-            return $base.'/create';
-        }
-
-        if ($route === 'index') {
-            return $base;
-        }
-
-        if ($route === 'store') {
-            return $base;
-        }
 
         if ($route === 'actions') {
             return $base.'/'.$entry->getId().'/actions';
-        }
-
-        if ($route === 'view') {
-            return $base.'/'.$entry->getId().'/view';
-        }
-
-        if ($route === 'view.page') {
-            return $base.'/'.$entry->getId().'/view-page';
-        }
-
-        if ($route === 'edit') {
-            return $base.'/'.$entry->getId().'/edit';
-        }
-
-        if ($route === 'edit.page') {
-            return $base.'/'.$entry->getId().'/edit-page';
         }
 
         if ($route === 'update' || $route === 'delete') {
@@ -407,18 +394,23 @@ final class Resource implements
         if (starts_with($route, 'forms.')) {
             $form = explode('.', $route)[1];
 
-            $formUuid = $form === 'create' ? $this->getHandle() : null; // null ??
+            $formUuid = in_array($form, ['create', 'update', 'store', 'edit']) ? $this->getHandle() : null; // null ??
+            $params['uuid'] = $formUuid;
 
-            return sv_route('forms.show', ['uuid' => $formUuid]);
+            $params['entry'] = $entry ? $entry->getId() : null;
+
+            return route('resource.'.$route, $params);
         }
 
-        if ($route === 'index.table') {
-            return sv_route('resource.index.table', ['resource' => $this->getHandle()]);
-//            return $base.'/table';
-        }
+//        if ($route === 'dashboard') {
+//            return sv_route('resource.dashboard', ['resource' => $this->getHandle()]);
+////            return $base.'/table';
+//        }
 
-        return sv_route('resource.'.$route, array_merge($params, ['id'       => $entry->getId(),
-                                                                  'resource' => $this->getHandle()]));
+        $parameters = array_merge($params, ['id'       => $entry ? $entry->getId() : null,
+                                            'resource' => $this->getHandle()]);
+
+        return sv_route('resource.'.$route, array_filter($parameters));
     }
 
     public function getHandle(): string

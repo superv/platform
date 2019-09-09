@@ -5,32 +5,32 @@ namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
-use SuperV\Platform\Domains\UI\Page\Page;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
 class ResourceFormController extends BaseApiController
 {
     use ResolvesResource;
 
-    public function create()
-    {
-        $resource = $this->resolveResource();
+//    public function create()
+//    {
+//        $resource = $this->resolveResource();
+//
+//        $page = Page::make(__('Create New', ['object' => $resource->getSingularLabel()]));
+//        $page->addBlock(sv_loader('sv/forms/'.$resource->getHandle()));
+//
+//        return $page->build();
+//    }
 
-        $page = Page::make(__('Create New', ['object' => $resource->getSingularLabel()]));
-        $page->addBlock(sv_loader('sv/forms/'.$resource->getHandle()));
-
-        return $page->build();
-    }
-    public function store(FormBuilder $builder)
-    {
-        $form = $builder->setResource($this->resolveResource())
-                        ->setEntry($this->entry)
-                        ->build();
-
-        return $form->setRequest($this->request)
-                    ->make()
-                    ->save();
-    }
+//    public function store(FormBuilder $builder)
+//    {
+//        $form = $builder->setResource($this->resolveResource())
+//                        ->setEntry($this->entry)
+//                        ->build();
+//
+//        return $form->setRequest($this->request)
+//                    ->make()
+//                    ->save();
+//    }
 
     public function edit(FormBuilder $builder)
     {

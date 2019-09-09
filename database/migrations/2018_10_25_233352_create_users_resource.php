@@ -26,10 +26,13 @@ class CreateUsersResource extends Migration
                 $pivotTable->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
             };
             $table->morphToMany('sv_auth_actions', 'actions', 'owner', 'sv_auth_assigned_actions', 'action_id', $pivotColumns);
+
+            $table->restorable();
         });
 
         Schema::table('users', function(Blueprint $table) {
-            $table->restorable();
+            $table->softDeletes();
+            $table->nullableBelongsTo('users', 'deleted_by');
         });
     }
 

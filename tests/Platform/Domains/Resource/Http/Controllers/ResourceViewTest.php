@@ -23,7 +23,7 @@ class ResourceViewTest extends ResourceTestCase
         $user = $users->fake(['name' => 'Ali Selcuk', 'age' => '40', 'group_id' => 1]);
 
         Storage::fake('fakedisk');
-        $this->postJsonUser($user->route('update'), ['avatar' => $this->makeUploadedFile()]);
+        $this->postJsonUser($user->route('forms.update'), ['avatar' => $this->makeUploadedFile()]);
 
         $this->withoutExceptionHandling();
         $view = $this->getResourceView($user);

@@ -13,8 +13,9 @@ class PlatformException extends \Exception
         return response()->json([
             'error' => [
                 'description' => $this->getMessage(),
+                'trace'       => $this->getTrace(),
             ],
-        ], 400);
+        ], 500);
     }
 
     public static function fail(?string $msg)
