@@ -160,7 +160,7 @@ class BelongsToField extends FieldType implements
                 $payload->set('meta.options', $url);
             }
 //            $payload->set('placeholder', sv_trans('sv::resource.select', ['resource' => $this->relatedResource->getSingularLabel()]));
-            $payload->set('placeholder', __('Select Resource', ['resource' =>  $this->relatedResource->getSingularLabel()]));
+            $payload->set('placeholder', __('Select :Object', ['object' => $this->relatedResource->getSingularLabel()]));
         };
     }
 
