@@ -29,11 +29,16 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
     protected function getMigrationPath()
     {
         if ($this->option('namespace')) {
-            if ($path = Scopes::path($this->option('namespace'))) {
-                return $path;
-            }
+            $path = Scopes::path($this->option('namespace'));
         }
 
-        return parent::getMigrationPath();
+        $path = $path ?? parent::getMigrationPath();
+
+        if (! file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+
+        return $path;
+
     }
 }
