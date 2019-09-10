@@ -47,7 +47,7 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $this->getRelatedEntry($entry)) {
                 $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view', $relatedEntry));
+                $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
             }
         };
     }
@@ -57,7 +57,7 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $this->getRelatedEntry($entry)) {
                 $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view', $relatedEntry));
+                $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
             }
         };
     }
