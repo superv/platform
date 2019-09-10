@@ -32,6 +32,7 @@ class Blueprints
 
             $table->hasMany('sv_fields', 'fields');
             $table->hasMany('sv_relations', 'relations');
+            $table->hasMany('sv_forms', 'forms');
             $table->hasMany('sv_activities', 'activities');
             $table->dictionary('config')->nullable();
 
