@@ -21,7 +21,7 @@ class ResourceExtension implements ExtendsResource
         });
 
         $resource->onIndexData(function (ResourceTable $table) {
-            $table->setOption('limit', 50);
+            $table->setOption('limit', 10);
         });
     }
 

@@ -120,6 +120,16 @@ class ResourceModel extends Entry implements ProvidesFields
         cache()->forget($cacheKey);
     }
 
+    public function created_by()
+    {
+        return $this->belongsTo(config('superv.auth.user.model'), 'created_by_id');
+    }
+
+    public function updated_by()
+    {
+        return $this->belongsTo(config('superv.auth.user.model'), 'created_by_id');
+    }
+
     public static function withModel($model): ?self
     {
         return static::query()->where('model', $model)->first();

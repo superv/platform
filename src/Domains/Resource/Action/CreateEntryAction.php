@@ -21,7 +21,7 @@ class CreateEntryAction extends Action
             'button' => [
                 'color' => 'green',
                 'size'  => 'sm',
-                'title' => __('Create', ['thing' => 'User']),
+                'title' => __('Create'),
             ],
         ]);
     }
