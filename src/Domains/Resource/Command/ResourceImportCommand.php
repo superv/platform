@@ -18,7 +18,6 @@ class ResourceImportCommand extends Command
 
         $generator->setTarget(base_path('database/migrations'));
 
-        dd($this->getFields('attrs'));
         $this->getTables()
              ->filter(function ($table) {
                  return true || starts_with($table, 'bill');
