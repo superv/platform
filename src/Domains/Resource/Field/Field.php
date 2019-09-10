@@ -321,4 +321,9 @@ class Field implements FieldContract
     {
         $this->resource = $resource;
     }
+
+    public function setNotRequired()
+    {
+        $this->removeFlag('required');
+    }
 }

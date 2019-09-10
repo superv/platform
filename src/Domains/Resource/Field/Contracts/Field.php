@@ -48,6 +48,8 @@ interface Field
 
     public function isRequired();
 
+    public function setNotRequired();
+
     public function isUnbound();
 
     public function doesNotInteractWithTable();
