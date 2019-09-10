@@ -26,7 +26,7 @@ class ResourceUpdateTest extends ResourceTestCase
             'email' => 'ali@superv.io',
             'group' => 2,
         ];
-        $response = $this->postJsonUser($user->route('update'), $post);
+        $response = $this->postJsonUser($user->route('forms.update'), $post);
         $response->assertOk();
 
         $user = $user->fresh();
@@ -40,8 +40,8 @@ class ResourceUpdateTest extends ResourceTestCase
     {
         $user = $this->schema()->users()->fake();
 
-        $this->postJsonUser($user->route('update'), ['name' => 'Ali'])->assertOk();
-        $this->postJsonUser($user->route('update'), ['email' => 'ali@superv.io'])->assertOk();
+        $this->postJsonUser($user->route('forms.update'), ['name' => 'Ali'])->assertOk();
+        $this->postJsonUser($user->route('forms.update'), ['email' => 'ali@superv.io'])->assertOk();
     }
 
     function test__fails_on_unique_validation()
@@ -51,7 +51,7 @@ class ResourceUpdateTest extends ResourceTestCase
         $users->fake(['email' => 'ali@superv.io']);
 
         $user = $users->fake();
-        $response = $this->postJsonUser($user->route('update'), ['email' => 'ali@superv.io']);
+        $response = $this->postJsonUser($user->route('forms.update'), ['email' => 'ali@superv.io']);
         $response->assertStatus(422);
 
         $this->assertEquals(['email'], array_keys($response->decodeResponseJson('errors')));
@@ -62,7 +62,7 @@ class ResourceUpdateTest extends ResourceTestCase
         $users = $this->schema()->users();
         $user = $users->fake();
 
-        $response = $this->postJsonUser($user->route('update'), ['name' => null]);
+        $response = $this->postJsonUser($user->route('forms.update'), ['name' => null]);
         $response->assertStatus(422);
 
         $this->assertEquals(['name'], array_keys($response->decodeResponseJson('errors')));
@@ -75,7 +75,7 @@ class ResourceUpdateTest extends ResourceTestCase
         $user = $users->fake();
 
         $this->withoutExceptionHandling();
-        $response = $this->postJsonUser($user->route('update'), ['avatar' => $this->makeUploadedFile()]);
+        $response = $this->postJsonUser($user->route('forms.update'), ['avatar' => $this->makeUploadedFile()]);
         $response->assertOk();
 
         $this->assertNotNull(Media::first());

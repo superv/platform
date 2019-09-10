@@ -399,7 +399,7 @@ final class Resource implements
 
             $params['entry'] = $entry ? $entry->getId() : null;
 
-            return route('resource.'.$route, $params);
+            return sv_route('resource.'.$route, $params);
         }
 
 //        if ($route === 'dashboard') {

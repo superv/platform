@@ -71,7 +71,8 @@ class RelationIndexTest extends ResourceTestCase
         //
         $viewAction = HelperComponent::from($table->getProp('config.row_actions.1'));
         $firstPost = $userPosts->first();
-        $this->assertEquals($firstPost->route('entry.view'), str_replace('{entry.id}', $firstPost->getId(), $viewAction->getProp('url')));
+        $actual = str_replace('{entry.id}', $firstPost->getId(), $viewAction->getProp('url'));
+        $this->assertEquals($firstPost->route('entry.dashboard', ['section' => 'view']), sv_url($actual));
     }
 
     function test__index_listing_with_belongs_to_many_relations()
@@ -103,7 +104,7 @@ class RelationIndexTest extends ResourceTestCase
         $this->assertEquals(2, count($table->getProp('config.row_actions')));
         $action = HelperComponent::from($table->getProp('config.row_actions.1'));
 
-        $this->assertEquals('sv/res/t_roles/{entry.id}/view-page', $action->getProp('url'));
+        $this->assertEquals('sv/res/t_roles/{entry.id}/view', $action->getProp('url'));
 
         // Check context action ATTACH NEW
         //

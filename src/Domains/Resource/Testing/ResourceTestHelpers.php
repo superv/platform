@@ -111,7 +111,7 @@ trait ResourceTestHelpers
 
     protected function getTableConfigOfResource($resource)
     {
-        $response = $this->getJsonUser($resource->route('dashboard'));
+        $response = $this->getJsonUser($resource->route('dashboard', null, ['section' => 'table']));
         $table = HelperComponent::from($response->decodeResponseJson('data'));
 
         return $table;
@@ -119,7 +119,7 @@ trait ResourceTestHelpers
 
     protected function getTableRowsOfResource($resource, $query = '')
     {
-        $url = $resource->route('dashboard').'/data'.str_prefix($query, '?', '');
+        $url = $resource->route('dashboard', null, ['section' => 'table']).'/data'.str_prefix($query, '?', '');
         $response = $this->getJsonUser($url)->assertOk();
 
         return $response->decodeResponseJson('data.rows');

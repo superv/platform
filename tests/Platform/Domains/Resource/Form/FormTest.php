@@ -13,7 +13,6 @@ use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormField;
-use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
@@ -125,12 +124,13 @@ class FormTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $response = $this->getJsonUser($this->users->route('create'));
+        $response = $this->getJsonUser($this->users->route('forms.create'));
         $response->assertOk();
 
-        $createPage = HelperComponent::from($response->decodeResponseJson('data'));
-        $formBlock = HelperComponent::from($createPage->getProp('blocks.0'));
-        $form = $this->getUserPage($formBlock->getProp('url'));
+//        $createPage = HelperComponent::from($response->decodeResponseJson('data'));
+//        $formBlock = HelperComponent::from($createPage->getProp('blocks.0'));
+        $form = $this->getUserPage($this->users->route('forms.create'));
+
 
         $this->assertEquals(['identifier', 'url', 'method', 'fields', 'actions'], array_keys($form->getProps()->compose()));
         $this->assertEquals(2,$form->countProp('fields'));

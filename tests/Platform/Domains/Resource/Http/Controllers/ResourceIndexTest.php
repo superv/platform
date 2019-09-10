@@ -57,7 +57,7 @@ class ResourceIndexTest extends ResourceTestCase
 
             $this->assertEquals('view', $rowActions[1]['props']['name']);
             $this->assertEquals('View', $rowActions[1]['props']['title']);
-            $this->assertEquals('sv/res/t_users/{entry.id}/view-page', $rowActions[1]['props']['url']);
+            $this->assertEquals('sv/res/t_users/{entry.id}/view', $rowActions[1]['props']['url']);
             $this->assertEquals('', $rowActions[1]['props']['button']['title']);
             $this->assertEquals('view', $rowActions[1]['props']['button']['icon']);
         }
@@ -121,7 +121,7 @@ class ResourceIndexTest extends ResourceTestCase
         $posts->fake(['user_id' => $userA->getId()]);
         $posts->fake(['user_id' => $userA->getId()]);
 
-        $row = $this->getJsonUser($posts->route('dashboard').'/data')->decodeResponseJson('data.rows.0');
+        $row = $this->getJsonUser($posts->route('dashboard', null, ['section' => 'table']).'/data')->decodeResponseJson('data.rows.0');
 
         $fields = collect($row['fields'])->keyBy('name');
         $this->assertEquals($userA->email, $fields->get('user_id')['value']);

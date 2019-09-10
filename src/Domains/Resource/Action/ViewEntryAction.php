@@ -10,7 +10,9 @@ class ViewEntryAction extends Action
 
     protected $title = 'View';
 
-    protected $url;
+    protected $type = 'redirect';
+
+    protected $url = 'sv/res/{res.handle}/{entry.id}/view';
 
     public function onComposed(Payload $payload)
     {
@@ -25,7 +27,7 @@ class ViewEntryAction extends Action
 
     public function getUrl()
     {
-        return $this->url ?? 'sv/res/{res.handle}/{entry.id}/view-page';
+        return $this->url;
     }
 
     public function setUrl($url)

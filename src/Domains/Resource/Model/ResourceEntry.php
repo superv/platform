@@ -216,9 +216,9 @@ class ResourceEntry extends Entry
         return starts_with($this->getHandle(), 'sv_');
     }
 
-    public function route($route)
+    public function route($route, array $params = [])
     {
-        return $this->getResource()->route($route, $this);
+        return $this->getResource()->route($route, $this, $params);
     }
 
     public function getField(string $name): ?Field
