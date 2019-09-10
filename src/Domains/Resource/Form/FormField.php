@@ -69,7 +69,7 @@ class FormField extends Field implements FormFieldContract
         return $this->temporal;
     }
 
-    public static function make(array $params)
+    public static function make(array $params): FormFieldContract
     {
         return FieldFactory::createFromArray($params, self::class);
     }
