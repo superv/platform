@@ -40,6 +40,11 @@ class ResourceFactory
         return (new static($handle, $entry))->get();
     }
 
+    /**
+     * @param $handle
+     * @return \SuperV\Platform\Domains\Resource\Resource|null
+     * @throws \Exception
+     */
     public static function make($handle): ?Resource
     {
         if ($handle instanceof EntryContract) {

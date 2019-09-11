@@ -19,7 +19,7 @@ class FormFactory
         $resource = ResourceFactory::make($resourceHandle);
 
         $formEntry = static::resolve()->create([
-            'uuid'        => $resource->getHandle(),
+            'uuid'        => $resource->getIdentifier(),
             'resource_id' => $resource->id(),
             'title'       => $resource->getLabel().' Form',
         ]);
