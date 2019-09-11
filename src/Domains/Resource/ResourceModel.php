@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 
@@ -27,6 +28,7 @@ class ResourceModel extends Entry implements ProvidesFields
 
         static::deleting(function (ResourceModel $entry) {
             $entry->fields->map->delete();
+            $entry->forms->map->delete();
             $entry->wipeCache();
         });
 
@@ -73,6 +75,11 @@ class ResourceModel extends Entry implements ProvidesFields
     public function fields()
     {
         return $this->hasMany(FieldModel::class, 'resource_id');
+    }
+
+    public function forms()
+    {
+        return $this->hasMany(FormModel::class, 'resource_id');
     }
 
     public function createField(string $name): FieldModel
