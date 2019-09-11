@@ -19,7 +19,7 @@ class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter, 
             $relatedEntryInstance->newQuery(),
             $this->parentEntry,
             $this->relationConfig->getForeignKey(),
-            'id',
+            $this->relationConfig->getOwnerKey() ?? 'id',
             $this->getName()
         );
     }

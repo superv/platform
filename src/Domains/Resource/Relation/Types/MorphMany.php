@@ -47,7 +47,7 @@ class MorphMany extends Relation implements ProvidesTable, ProvidesForm
             $this->parentEntry,
             $this->relationConfig->getMorphName().'_type',
             $this->relationConfig->getMorphName().'_id',
-            'id'
+            $this->relationConfig->getOwnerKey() ?? 'id',
         );
     }
 }
