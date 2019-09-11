@@ -69,7 +69,7 @@ class Blueprints
             $table->dictionary('rules')->nullable();
             $table->dictionary('config')->nullable();
         } else {
-            $table->uuid('uuid');
+            $table->uuid('uuid')->unique();
             $table->unsignedInteger('resource_id')->nullable();
 
             $table->text('flags')->nullable();
@@ -111,7 +111,7 @@ class Blueprints
             });
         } else {
             $table->unsignedInteger('resource_id')->nullable();
-            $table->uuid('uuid');
+            $table->uuid('uuid')->unique();
             $table->boolean('public')->default(false);
 
             $table->timestamps();
@@ -129,7 +129,7 @@ class Blueprints
     public static function relations($table, ResourceConfig $resource = null)
     {
         $table->increments('id');
-        $table->uuid('uuid');
+        $table->uuid('uuid')->unique();
         if ($table instanceof Blueprint) {
             $resource->label('Relations');
             $resource->resourceKey('relation');
