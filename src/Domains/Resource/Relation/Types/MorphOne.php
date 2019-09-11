@@ -18,7 +18,7 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequ
     public function makeForm(): Form
     {
         $form = FormBuilder::buildFromEntry($this->getRelatedEntry());
-        $formData = FormModel::findByUuid($this->getRelatedResource()->getHandle());
+        $formData = FormModel::findByUuid($this->getRelatedResource()->getIdentifier());
 
         return $form->make($formData ? $formData->uuid : null)
                     ->hideField($this->relationConfig->getMorphName())

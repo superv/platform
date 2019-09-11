@@ -47,7 +47,7 @@ class FieldQuerySorterTest extends ResourceTestCase
         $this->assertEquals('t_users AS t_users_1', $join->table);
 
         $this->assertEquals([
-            "column"    => $users->getHandle().'_1.'.$users->fields()->getEntryLabelField()->getColumnName(),
+            "column"    => $users->getIdentifier().'_1.'.$users->fields()->getEntryLabelField()->getColumnName(),
             "direction" => "asc",
         ], $postsQuery->getQuery()->orders[0]);
     }

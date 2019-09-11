@@ -27,7 +27,7 @@ class ResourceIndexTest extends ResourceTestCase
         $table = HelperComponent::from($page->getProp('blocks.0'));
 
         $this->assertEquals('sv-router-portal', $table->getName());
-        $this->assertEquals($users->getHandle(), $table->getProp('name'));
+        $this->assertEquals($users->getIdentifier(), $table->getProp('name'));
     }
 
     function test__index_table_config()

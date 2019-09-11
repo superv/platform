@@ -40,14 +40,10 @@ class ResourceFactory
         return (new static($handle, $entry))->get();
     }
 
-    /**
-     * @param $handle
-     * @return \SuperV\Platform\Domains\Resource\Resource
-     */
     public static function make($handle): ?Resource
     {
         if ($handle instanceof EntryContract) {
-            $handle = $handle->getTable();
+            $handle = ResourceModel::query()->where('handle', $handle->getTable())->value('identifier');
         }
 
         try {

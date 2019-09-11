@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceModel;
+use SuperV\Platform\Exceptions\ValidationException;
 
 class CreateResource
 {
@@ -35,7 +36,11 @@ class CreateResource
 
         $this->processConfig();
 
-        $this->createResourceEntry();
+        try {
+            $this->createResourceEntry();
+        } catch (ValidationException $e) {
+//            dd($e->all());
+        }
 
         $this->createNavSections();
 
@@ -57,21 +62,22 @@ class CreateResource
 
     protected function createNavSections()
     {
-        $table = $this->event->table;
+//        $table = $this->event->table;
+        $identifier = $this->config->getIdentifier();
 
         if ($nav = $this->config->getNav()) {
             if (is_string($nav)) {
-                Section::createFromString($handle = $nav.'.'.$table);
+                Section::createFromString($handle = $nav.'.'.$identifier);
                 $section = Section::get($handle);
                 $section->update([
                     'resource_id' => $this->resourceEntry->getId(),
-                    'url'         => 'sv/res/'.$table,
+                    'url'         => 'sv/res/'.$identifier,
                     'title'       => $this->config->getLabel(),
                     'handle'      => str_slug($this->config->getLabel(), '_'),
                 ]);
             } elseif (is_array($nav)) {
                 if (! isset($nav['url'])) {
-                    $nav['url'] = 'sv/res/'.$table;
+                    $nav['url'] = 'sv/res/'.$identifier;
                 }
                 $section = Section::createFromArray($nav);
             }
@@ -86,15 +92,26 @@ class CreateResource
         $this->resourceEntry = ResourceModel::create(array_filter(
             [
                 'uuid'       => uuid(),
-                'slug'       => $this->event->table,
+                'identifier' => $this->config->getIdentifier(),
                 'handle'     => $this->event->table,
                 'model'      => $this->config->getModel(),
-                'config'     => $this->config->toArray(),
+                'config'     => $this->getConfig(),
                 'namespace'  => $this->event->namespace,
                 'restorable' => (bool)$this->config->isRestorable(),
                 'sortable'   => (bool)$this->config->isSortable(),
             ]
         ));
+    }
+
+    protected function getDriverConfig()
+    {
+        return [
+            'type'   => 'mysql',
+            'params' => [
+                'connection' => 'default',
+                'table'      => $this->event->table,
+            ],
+        ];
     }
 
     protected function processConfig(): void
@@ -111,5 +128,17 @@ class CreateResource
         if ($this->config->isSortable()) {
             $this->event->blueprint->unsignedBigInteger('sort_order')->default(0);;
         }
+
+        if (! $this->config->getIdentifier()) {
+            $this->config->setIdentifier($this->event->table);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getConfig(): array
+    {
+        return array_merge($this->config->toArray(), ['driver' => $this->getDriverConfig()]);
     }
 }

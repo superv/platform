@@ -13,7 +13,7 @@ class NumberTest extends ResourceTestCase
             $table->increments('id');
             $table->unsignedInteger('age');
         });
-        $this->assertColumnExists($res->getHandle(), 'age');
+        $this->assertColumnExists($res->getIdentifier(), 'age');
 
         $age = $res->getField('age');
 
@@ -29,7 +29,7 @@ class NumberTest extends ResourceTestCase
             $table->increments('id');
             $table->decimal('height', 3, 2);
         });
-        $this->assertColumnExists($res->getHandle(), 'height');
+        $this->assertColumnExists($res->getIdentifier(), 'height');
 
         $height = $res->getField('height');
 

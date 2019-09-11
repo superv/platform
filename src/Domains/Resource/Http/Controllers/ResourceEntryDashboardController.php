@@ -27,24 +27,24 @@ class ResourceEntryDashboardController extends BaseApiController
         }
 
         $page->addBlock(Component::make('sv-router-portal')->setProps([
-            'name' => $resource->getHandle().':'.$this->entry->getId(),
+            'name' => $resource->getIdentifier().':'.$this->entry->getId(),
         ]));
 
         $page->addSection([
             'identifier' => 'view',
             'title'      => 'View',
             'url'        => $resource->route('entry.view', $this->entry),
-            'target'     => 'portal:'.$resource->getHandle().':'.$this->entry->getId(),
+            'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
         ]);
 
         $page->addSection([
             'identifier' => 'edit',
             'title'      => 'Edit',
             'url'        => $resource->route('forms.edit', $this->entry),
-            'target'     => 'portal:'.$resource->getHandle().':'.$this->entry->getId(),
+            'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
         ]);
 
-        $page->setMeta('url', 'sv/res/'.$resource->getHandle().'/'.$this->entry->getId());
+        $page->setMeta('url', 'sv/res/'.$resource->getIdentifier().'/'.$this->entry->getId());
 
         return $page->build(['res' => $resource->toArray(), 'entry' => $this->entry]);
     }

@@ -21,24 +21,28 @@ class Builder extends \Illuminate\Database\Schema\Builder
         parent::__construct($connection);
 
         $this->schema = $schema;
-        $this->resourceConfig = new ResourceConfig();
+        $this->resourceConfig = ResourceConfig::make();
     }
 
-    public function create($table, Closure $callback)
+    public function create($table, Closure $callback): ResourceConfig
     {
         $mainBlueprint = $this->createBlueprint($table);
 
         $this->build(tap($mainBlueprint, function ($blueprint) use ($table, $callback) {
             $blueprint->create();
 
-            $callback($blueprint, $this->resourceConfig->setTable($table));
+            $this->resourceConfig->setIdentifier($table);
+
+            $callback($blueprint, $this->resourceConfig);
         }));
+
+        return $this->resourceConfig;
     }
 
     public function table($table, Closure $callback)
     {
         $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($table, $callback) {
-            $callback($blueprint, $this->resourceConfig->setTable($table));
+            $callback($blueprint, $this->resourceConfig->setIdentifier($table));
         }));
     }
 

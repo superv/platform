@@ -10,6 +10,8 @@ class ResourceConfig
 
     protected $table;
 
+    protected $identifier;
+
     protected $hasUuid;
 
     protected $label;
@@ -36,14 +38,18 @@ class ResourceConfig
 
     protected $sortable;
 
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Resource
-     */
-    protected $resource;
+    /** @var \SuperV\Platform\Domains\Resource\ResourceDriver */
+    protected $driver;
 
-    public function __construct(array $attributes = [])
+    protected function __construct(array $attributes = [], $overrideDefault = true)
     {
-        $this->hydrate($attributes);
+        if (! empty($attributes)) {
+            if ($driver = array_get($attributes, 'driver')) {
+                $attributes['driver'] = new ResourceDriver($driver);
+            }
+            $this->hydrate($attributes, $overrideDefault);
+        }
+
     }
 
     public function getResourceKey()
@@ -56,8 +62,8 @@ class ResourceConfig
 //            return str_singular($this->resource->getHandle());
 //        }
 
-        if ($this->table) {
-            return str_singular($this->table);
+        if ($this->getIdentifier()) {
+            return str_singular($this->getIdentifier());
         }
 
         return null;
@@ -70,16 +76,21 @@ class ResourceConfig
         return $this;
     }
 
-    public function table($table)
+    public function getIdentifier()
     {
-        $this->table = $table;
-
-        return $this;
+        return $this->identifier;
     }
 
     public function getHandle()
     {
-        return $this->table;
+        return $this->getIdentifier();
+    }
+
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+
+        return $this;
     }
 
     public function label($label)
@@ -112,16 +123,9 @@ class ResourceConfig
         return $this;
     }
 
-    public function setTable($table)
-    {
-        $this->table = $table;
-
-        return $this;
-    }
-
     public function getLabel()
     {
-        return $this->label ?? ucwords(str_replace('_', ' ', $this->table));
+        return $this->label ?? ucwords(str_replace('_', ' ', $this->identifier));
     }
 
     public function getModel()
@@ -232,6 +236,14 @@ class ResourceConfig
         return $this->ownerKey;
     }
 
+    /**
+     * @return \SuperV\Platform\Domains\Resource\ResourceDriver
+     */
+    public function getDriver(): \SuperV\Platform\Domains\Resource\ResourceDriver
+    {
+        return $this->driver;
+    }
+
     public function toArray(): array
     {
         $attributes = [];
@@ -242,14 +254,14 @@ class ResourceConfig
         return array_except($attributes, 'resource');
     }
 
-    public static function make(array $config, $overrideDefault = true)
+    public static function make(array $config = [], $overrideDefault = true)
     {
-        return (new static)->hydrate($config, $overrideDefault);
+        return (new static($config, $overrideDefault));
     }
 
     public static function find($handle)
     {
-        $resourceEntry = ResourceModel::query()->where('handle', $handle)->first();
+        $resourceEntry = ResourceModel::query()->where('identifier', $handle)->first();
 
         return new ResourceConfig($resourceEntry->config);
     }

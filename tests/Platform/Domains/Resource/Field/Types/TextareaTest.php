@@ -13,7 +13,7 @@ class TextareaTest extends ResourceTestCase
             $table->increments('id');
             $table->text('bio');
         });
-        $this->assertColumnExists($res->getHandle(), 'bio');
+        $this->assertColumnExists($res->getIdentifier(), 'bio');
 
         $field = $res->getField('bio');
 

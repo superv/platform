@@ -101,7 +101,7 @@ class EntryPage extends ResourcePage
                                   return [
                                       'identifier' => $relation->getName(),
                                       'url'        => $url,
-                                      'target'     => 'portal:'.$this->resource->getHandle().':'.$this->entry->getId(),
+                                      'target'     => 'portal:'.$this->resource->getIdentifier().':'.$this->entry->getId(),
                                       'title'      => str_unslug($relation->getName()),
                                   ];
                               })

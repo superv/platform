@@ -16,7 +16,10 @@ class ResourceModel extends Entry implements ProvidesFields
 
     protected $guarded = [];
 
-    protected $casts = ['config' => 'array'];
+    protected $casts = [
+        'config' => 'array',
+        'driver' => 'array',
+    ];
 
     protected static function boot()
     {
@@ -40,6 +43,16 @@ class ResourceModel extends Entry implements ProvidesFields
     public function nav()
     {
         return $this->hasOne(Section::class, 'resource_id');
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    public function getDriver()
+    {
+        return $this->driver;
     }
 
     public function provideFields(): Collection
@@ -152,7 +165,7 @@ class ResourceModel extends Entry implements ProvidesFields
         $cacheKey = 'sv:resources:'.$handle;
 
         $entry = cache()->rememberForever($cacheKey, function () use ($handle) {
-            return static::query()->where('slug', $handle)->first();
+            return static::query()->where('identifier', $handle)->first();
         });
 
         return $entry;

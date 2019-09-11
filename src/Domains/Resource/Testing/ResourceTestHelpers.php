@@ -48,9 +48,9 @@ trait ResourceTestHelpers
         }
         $table = $table ?? Str::random(4);
 
-        Schema::create($table, $callback);
+        $config = Schema::create($table, $callback);
 
-        return ResourceFactory::make($table);
+        return ResourceFactory::make($config->getIdentifier());
     }
 
     /**
@@ -65,11 +65,11 @@ trait ResourceTestHelpers
     }
 
     /** @return \SuperV\Platform\Domains\Resource\Resource */
-    protected function makeResource($slug = 'test_users', array $columns = ['name'], array $resource = [])
+    protected function makeResource($identifier = 'test_users', array $columns = ['name'], array $resource = [])
     {
-        $this->makeResourceModel($slug, $columns, $resource);
+        $this->makeResourceModel($identifier, $columns, $resource);
 
-        return ResourceFactory::make($slug);
+        return ResourceFactory::make($identifier);
     }
 
     /** @return \SuperV\Platform\Domains\Resource\ResourceModel */

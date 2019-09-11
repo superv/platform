@@ -39,7 +39,7 @@ class RelationModel extends Entry
         $entry = cache()->rememberForever($cacheKey, function () use ($resourceHandle, $relationName) {
             return static::query()
                          ->whereHas('resource', function ($query) use ($resourceHandle) {
-                             $query->where('slug', $resourceHandle);
+                             $query->where('identifier', $resourceHandle);
                          })
                          ->where('name', $relationName)
                          ->first();

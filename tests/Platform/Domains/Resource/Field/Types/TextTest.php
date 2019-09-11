@@ -13,7 +13,7 @@ class TextTest extends ResourceTestCase
             $table->increments('id');
             $table->string('name');
         });
-        $this->assertColumnExists($res->getHandle(), 'name');
+        $this->assertColumnExists($res->getIdentifier(), 'name');
 
         $field = $res->getField('name');
 

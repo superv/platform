@@ -33,6 +33,7 @@ class AnonymousModel extends ResourceEntry
 
         $model->setTable($this->getTable());
         $model->setKeyName($this->getKeyName());
+        $model->setResourceIdentifier($this->getResourceIdentifier());
 
         return $model;
     }

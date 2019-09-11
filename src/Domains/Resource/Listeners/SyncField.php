@@ -22,6 +22,9 @@ class SyncField
     /** @var \SuperV\Platform\Domains\Resource\ResourceModel */
     protected $resourceEntry;
 
+    /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
+    protected $resourceConfig;
+
     /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field */
     protected $fieldType;
 
@@ -45,6 +48,8 @@ class SyncField
         $this->column = $event->column;
 
         $this->blueprint = $event->blueprint;
+
+        $this->resourceConfig = $event->config;
 
         if ($this->column->autoIncrement) {
             return;
@@ -183,11 +188,11 @@ class SyncField
             $resourceEntry = ResourceModel::withModel($event->model);
         }
         if (! isset($resourceEntry)) {
-            $resourceEntry = ResourceModel::withHandle($event->table);
+            $resourceEntry = ResourceModel::withHandle($this->resourceConfig->getIdentifier());
         }
 
         if (! $resourceEntry) {
-            throw new \Exception("Resource model entry not found for table [{$event->table}]");
+            throw new \Exception(sprintf("Resource model entry not found for table [%s]", $this->resourceConfig->getIdentifier()));
         }
 
         $this->resourceEntry = $resourceEntry;

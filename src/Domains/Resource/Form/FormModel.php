@@ -3,12 +3,13 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\ResourceModel;
 
-class FormModel extends ResourceEntry
+class FormModel extends Entry
 {
     protected $table = 'sv_forms';
 
@@ -20,16 +21,22 @@ class FormModel extends ResourceEntry
     {
         parent::boot();
 
-        static::saving(function (ResourceEntry $entry) {
+        static::saving(function (FormModel $entry) {
             if (is_null($entry->uuid)) {
                 $entry->setAttribute('uuid', uuid());
             }
         });
     }
 
-//    public function fields() {
-//        return $this->belongsToMany(FieldModel::class, 'sv_form_fields');
-//    }
+    public function fields()
+    {
+        return $this->belongsToMany(FieldModel::class, 'sv_form_fields', 'form_id', 'field_id');
+    }
+
+    public function resource()
+    {
+        return $this->belongsTo(ResourceModel::class, 'resource_id');
+    }
 
     public function attachField($fieldEntryId)
     {

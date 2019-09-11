@@ -117,7 +117,7 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
         $keyName = $query->getModel()->getKeyName();
         if ($entry) {
             $alreadyAttachedItems = $entry->{$this->getName()}()
-                                          ->pluck($resource->getHandle().'.'.$keyName);
+                                          ->pluck($resource->getIdentifier().'.'.$keyName);
             $query->whereNotIn($keyName, $alreadyAttachedItems);
         }
 

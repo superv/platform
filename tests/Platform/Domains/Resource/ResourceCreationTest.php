@@ -8,7 +8,8 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
-use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
+use SuperV\Platform\Domains\Resource\ResourceDriver;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\Domains\Resource\Fixtures\TestUser;
@@ -27,22 +28,75 @@ class ResourceCreationTest extends ResourceTestCase
             $table->increments('id');
         });
 
-        $this->assertDatabaseHas('sv_resources', ['slug' => 'test_users']);
-        $resource = ResourceModel::withHandle('test_users');
-        $this->assertNotNull($resource);
-        $this->assertNotNull($resource->uuid);
-        $this->assertEquals('platform', $resource->getNamespace());
+        $this->assertDatabaseHas('sv_resources', ['identifier' => 'test_users']);
+        $resourceEntry = ResourceModel::withHandle('test_users');
+        $this->assertNotNull($resourceEntry);
+        $this->assertNotNull($resourceEntry->uuid);
+        $this->assertEquals('test_users', $resourceEntry->getIdentifier());
+        $this->assertEquals('platform', $resourceEntry->getNamespace());
+
+        $this->assertEquals([
+            'type'   => 'mysql',
+            'params' => [
+                'connection' => 'default',
+                'table'      => 'test_users',
+            ],
+        ], $resourceEntry->getConfigValue('driver'));
     }
 
     function test__saves_resource_model_class_if_provided()
     {
-        Schema::create('test_users', function (Blueprint $table, ResourceConfig $resource) {
+        Schema::create('test_users', function (Blueprint $table, Config $resource) {
             $table->increments('id');
             $resource->model(TestUser::class);
         });
 
         $this->assertEquals(TestUser::class, ResourceModel::withHandle('test_users')->getModelClass());
         $this->assertInstanceOf(TestUser::class, ResourceFactory::make('test_users')->newEntryInstance());
+    }
+
+    function test__driver_config()
+    {
+        $resource = $this->create('core_servers', function (Blueprint $table, Config $config) {
+            $config->setIdentifier('servers');
+
+            $table->increments('id');
+        });
+
+        $config = $resource->config();
+        $this->assertEquals('servers', $config->getIdentifier());
+
+        $driver = $config->getDriver();
+        $this->assertInstanceOf(ResourceDriver::class, $driver);
+        $this->assertEquals('core_servers', $driver->getParam('table'));
+        $this->assertEquals('default', $driver->getParam('connection'));
+        $this->assertEquals('mysql', $driver->getType());
+    }
+
+    function test__identifier_is_different_from_table_name()
+    {
+        $this->create('core_locations', function (Blueprint $table, Config $config) {
+            $table->increments('id');
+
+            $table->belongsToMany('servers', 'servers')->pivotForeignKey('location_id')
+                  ->pivotRelatedKey('server_id')
+                  ->pivotTable('core_location_servers');
+        });
+
+        $this->create('core_servers', function (Blueprint $table, Config $config) {
+            $config->setIdentifier('servers');
+            $table->increments('id');
+
+            $table->belongsToMany('core_locations', 'locations')->pivotForeignKey('server_id')
+                  ->pivotRelatedKey('location_id')
+                  ->pivotTable('core_location_servers');
+        });
+
+        $resource = ResourceFactory::make('servers');
+        $this->assertNotNull($resource);
+
+        $server = $resource->create([]);
+        $this->assertTrue($server->exists());
     }
 
     function test__creates_field_when_a_database_column_is_created()
@@ -87,9 +141,9 @@ class ResourceCreationTest extends ResourceTestCase
             $table->select('status')->options(['closed' => 'Closed', 'open' => 'Open'])->default('open');
         });
 
-        $resource = ResourceModel::withHandle('test_users');
+        $resourceEntry = ResourceModel::withHandle('test_users');
 
-        $statusField = $resource->getField('status');
+        $statusField = $resourceEntry->getField('status');
         $this->assertEquals('string', $statusField->getColumnType());
         $this->assertEquals('select', $statusField->getType());
         $this->assertEquals(['closed' => 'Closed', 'open' => 'Open'], $statusField->getConfigValue('options'));
@@ -106,36 +160,36 @@ class ResourceCreationTest extends ResourceTestCase
         Schema::table('test_users', function (Blueprint $table) {
             $table->string('name')->change()->rules(['min:16', 'max:64']);
         });
-        $resource = ResourceModel::withHandle('test_users');
-        $nameField = $resource->getField('name');
+        $resourceEntry = ResourceModel::withHandle('test_users');
+        $nameField = $resourceEntry->getField('name');
 
         $this->assertArrayContains(['min:16', 'max:64'], $nameField->getRules());
     }
 
     function test__deletes_field_when_a_column_is_dropped()
     {
-        $resource = $this->makeResourceModel('test_users', ['name', 'title']);
+        $resourceEntry = $this->makeResourceModel('test_users', ['name', 'title']);
 
-        $this->assertNotNull($resource->getField('name'));
-        $this->assertNotNull($resource->getField('title'));
+        $this->assertNotNull($resourceEntry->getField('name'));
+        $this->assertNotNull($resourceEntry->getField('title'));
 
         Schema::table('test_users', function (Blueprint $table) {
             $table->dropColumn(['title', 'name']);
         });
-        $resource->load('fields');
-        $this->assertNull($resource->getField('name'));
-        $this->assertNull($resource->getField('title'));
+        $resourceEntry->load('fields');
+        $this->assertNull($resourceEntry->getField('name'));
+        $this->assertNull($resourceEntry->getField('title'));
     }
 
     function test__deletes_fields_when_a_resource_is_deleted()
     {
-        $resource = $this->makeResourceModel('test_users', ['name', 'title']);
+        $resourceEntry = $this->makeResourceModel('test_users', ['name', 'title']);
 
-        $this->assertEquals(2, $resource->fields()->count());
+        $this->assertEquals(2, $resourceEntry->fields()->count());
 
-        $resource->delete();
+        $resourceEntry->delete();
 
-        $this->assertEquals(0, $resource->fields()->count());
+        $this->assertEquals(0, $resourceEntry->fields()->count());
     }
 
     function test__marks_required_columns()
@@ -157,7 +211,7 @@ class ResourceCreationTest extends ResourceTestCase
         $this->assertTrue($email->isUnique());
 
         /** make sure we call the parent method for db unique index **/
-        $columnDefinition = new ColumnDefinition(new ResourceConfig());
+        $columnDefinition = new ColumnDefinition(Config::make());
         $columnDefinition->unique();
         $this->assertTrue($columnDefinition->unique);
     }

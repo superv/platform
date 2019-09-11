@@ -2,10 +2,10 @@
 
 namespace SuperV\Platform\Domains\Addon;
 
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Exceptions\PlatformException;
 
-class AddonModel extends ResourceEntry
+class AddonModel extends Entry
 {
     protected $table = 'sv_addons';
 

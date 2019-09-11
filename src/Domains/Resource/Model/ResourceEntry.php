@@ -14,17 +14,23 @@ use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class ResourceEntry extends Entry
 {
+    use Restorable;
+
     use SerializesModels {
         SerializesModels::__sleep as parentSleep;
     }
 
+    /**
+     * @var string
+     */
+    protected $resourceIdentifier;
+
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
-
-    use Restorable;
 
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
     protected $resourceConfig;
@@ -93,15 +99,19 @@ class ResourceEntry extends Entry
             }
         }
 
-        if ($relation = $this->getRelationshipFromConfig($name)) {
-            return $relation;
-        } elseif ($relation = superv('relations')->get($this->getHandle().'.'.$name)) {
-            return $relation->newQuery();
-        } elseif (! $this->isPlatformResource()) {
-            if ($field = $this->getResource()->getField($name)) {
-                $fieldType = $field->getFieldType();
+        if (! method_exists($this, $name)) {
+            if ($relation = $this->getRelationshipFromConfig($name)) {
+                return $relation;
+            } elseif ($relation = superv('relations')->get($this->getHandle().'.'.$name)) {
+                $relations = superv('relations');
 
-                return $fieldType->newQuery($this);
+                return $relation->newQuery();
+            } elseif (! $this->isPlatformResource()) {
+                if ($field = $this->getResource()->getField($name)) {
+                    $fieldType = $field->getFieldType();
+
+                    return $fieldType->newQuery($this);
+                }
             }
         }
 
@@ -121,7 +131,7 @@ class ResourceEntry extends Entry
 
     public function newQuery()
     {
-        if (optional($this->getResource())->isRestorable()) {
+        if (optional($this->getResourceConfig())->isRestorable()) {
             static::addGlobalScope(new SoftDeletingScope());
         } else {
             return parent::newQuery()->withoutGlobalScopes();
@@ -139,25 +149,6 @@ class ResourceEntry extends Entry
         return $this->getResourceConfig()->getResourceKey().'_id';
     }
 
-//    /**
-//     * Get a new query builder instance for the connection.
-//     *
-//     * @return \Illuminate\Database\Query\Builder
-//     */
-//    protected function newBaseQueryBuilder()
-//    {
-//        $connection = $this->getConnection();
-//
-//        return new QueryBuilder(
-//            $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
-//        );
-//    }
-
-    public function getKeyNameeee()
-    {
-        return $this->getResourceConfig()->getKeyName();
-    }
-
     public function getMorphClass()
     {
         return $this->getTable();
@@ -173,7 +164,7 @@ class ResourceEntry extends Entry
     public function getResourceConfig()
     {
         if (! $this->resourceConfig) {
-            $this->resourceConfig = ResourceConfig::find($this->getHandle());
+            $this->resourceConfig = ResourceConfig::find($this->getResourceIdentifier());
         }
 
         return $this->resourceConfig;
@@ -197,7 +188,7 @@ class ResourceEntry extends Entry
     public function getResource()
     {
         if (! $this->resource) {
-            $this->resource = ResourceFactory::make($this->getHandle());
+            $this->resource = ResourceFactory::make($this->getResourceConfig()->getIdentifier());
         }
 
         return $this->resource;
@@ -233,50 +224,39 @@ class ResourceEntry extends Entry
 //        return $field->setWatcher($this);
     }
 
+    /**
+     * @return string
+     */
+    public function getResourceIdentifier(): string
+    {
+        if (! $this->resourceIdentifier) {
+            $this->resourceIdentifier = ResourceModel::query()->where('handle', $this->getTable())->value('identifier');
+        }
+
+        return $this->resourceIdentifier;
+    }
+
+    /**
+     * @param string $resourceIdentifier
+     */
+    public function setResourceIdentifier(string $resourceIdentifier): void
+    {
+        $this->resourceIdentifier = $resourceIdentifier;
+    }
+
     public static function make(Resource $resource)
     {
         $model = new AnonymousModel();
-        $model->setTable($resource->getHandle());
+        $model->setTable($resource->config()->getDriver()->getParam('table'));
         $model->setKeyName($resource->getKeyName());
-
-        return $model;
-        $model = new class extends ResourceEntry
-        {
-            public $timestamps = false;
-
-//            /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
-//            protected $resourceConfig;
-//
-//            public function setResourceConfig($config)
-//            {
-//                $this->resourceConfig = $config;
-//            }
-
-            public function setTable($table)
-            {
-                return $this->table = $table;
-            }
-
-//            public function getKeyName()
-//            {
-//                if ($this->resourceConfig) {
-//                    return $this->resourceConfig->getKeyName();
-//                }
-//
-//                return parent::getKeyName();
-//            }
-        };
-
-        $model->setTable($resource->getHandle());
-
-//        $model->setResourceConfig($resource->config());
+        $model->setResourceIdentifier($resource->config()->getIdentifier());
 
         return $model;
     }
 
     protected function resolveRelation($name)
     {
-        if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
+        if (! $relation = RelationModel::fromCache($this->getResourceIdentifier(), $name)) {
             return null;
         }
 

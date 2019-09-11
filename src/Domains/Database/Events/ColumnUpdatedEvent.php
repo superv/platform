@@ -2,8 +2,8 @@
 
 namespace SuperV\Platform\Domains\Database\Events;
 
-use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Events\BaseEvent;
 
 class ColumnUpdatedEvent extends BaseEvent
@@ -23,10 +23,16 @@ class ColumnUpdatedEvent extends BaseEvent
      */
     public $blueprint;
 
-    public function __construct(string $table, Blueprint $blueprint, ColumnDefinition $column)
+    /**
+     * @var \SuperV\Platform\Domains\Resource\ResourceConfig
+     */
+    public $config;
+
+    public function __construct(ResourceConfig $config, $blueprint, ColumnDefinition $column)
     {
-        $this->table = $table;
+//        $this->table = $table;
         $this->column = $column;
         $this->blueprint = $blueprint;
+        $this->config = $config;
     }
 }

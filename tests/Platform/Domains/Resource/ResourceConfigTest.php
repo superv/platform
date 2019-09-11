@@ -157,7 +157,7 @@ class ResourceConfigTest extends ResourceTestCase
             $config->keyName('some_key');
         });
 
-        $config = ResourceConfig::find($res->getHandle());
+        $config = ResourceConfig::find($res->getIdentifier());
         $this->assertInstanceOf(ResourceConfig::class, $config);
         $this->assertEquals('some_key', $config->getKeyName());
     }

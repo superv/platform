@@ -13,7 +13,7 @@ class BooleanTest extends ResourceTestCase
             $table->increments('id');
             $table->boolean('active');
         });
-        $this->assertColumnExists($res->getHandle(), 'active');
+        $this->assertColumnExists($res->getIdentifier(), 'active');
 
         $field = $res->getField('active');
         $this->assertEquals('boolean', $field->getFieldType());

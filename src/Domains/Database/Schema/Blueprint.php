@@ -21,7 +21,7 @@ class Blueprint extends LaravelBlueprint
     use CreatesFields;
 
     /**
-     * @var \SuperV\Platform\Domains\Database\Schema\Schema
+     * @var \SuperV\Platform\Domains\Database\Schema\Builder
      */
     protected $builder;
 
@@ -43,7 +43,7 @@ class Blueprint extends LaravelBlueprint
         // Here, while adding a column let's pass along
         // the resource blueprint to each column
         $this->columns[] = $column = new ColumnDefinition(
-            $this->builder ? $this->builder->resource() : new ResourceConfig,
+            $this->builder ? $this->builder->resource() : ResourceConfig::make(),
             array_merge(compact('type', 'name'), $parameters)
         );
 
@@ -74,9 +74,9 @@ class Blueprint extends LaravelBlueprint
         $this->columns = $this->columns->map(
             function (ColumnDefinition $column) {
                 if ($column->change) {
-                    ColumnUpdatedEvent::dispatch($this->tableName(), $this, $column);
+                    ColumnUpdatedEvent::dispatch($this->resourceConfig(), $this, $column);
                 } else {
-                    ColumnCreatedEvent::dispatch($this->tableName(), $this, $column, $this->resourceConfig()->getModel());
+                    ColumnCreatedEvent::dispatch($this->resourceConfig(), $this, $column, $this->resourceConfig()->getModel());
                 }
 
                 return $column->ignore ? null : $column;
@@ -90,7 +90,8 @@ class Blueprint extends LaravelBlueprint
         }
 
         if ($this->creating()) {
-            TableCreatedEvent::dispatch($this->tableName(), $this->columns);
+//            TableCreatedEvent::dispatch($this->tableName(), $this->columns);
+            TableCreatedEvent::dispatch($this->resourceConfig()->getIdentifier(), $this->columns);
         }
     }
 

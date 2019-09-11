@@ -19,7 +19,7 @@ class Blueprints
         $table->increments('id');
         $table->uuid('uuid')->unique();
         $table->string('handle');
-        $table->string('slug');
+        $table->string('identifier')->unique();
         $table->string('namespace')->showOnIndex();
         $table->string('model')->nullable();
 

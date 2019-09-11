@@ -32,14 +32,14 @@ class ResourceDashboard
         }
 
         $page->addBlock(Component::make('sv-router-portal')->setProps([
-            'name' => $resource->getHandle(),
+            'name' => $resource->getIdentifier(),
         ]));
 
         $page->addSection([
             'identifier' => 'all',
             'title'      => 'All',
             'url'        => $resource->route('dashboard', null, ['section' => 'table']),
-            'target'     => 'portal:'.$resource->getHandle(),
+            'target'     => 'portal:'.$resource->getIdentifier(),
             'default'    => ! $section || $section === 'all',
         ]);
 
@@ -47,7 +47,7 @@ class ResourceDashboard
             'identifier' => 'create',
             'title'      => 'Create',
             'url'        => $resource->route('forms.create'),
-            'target'     => 'portal:'.$resource->getHandle(),
+            'target'     => 'portal:'.$resource->getIdentifier(),
             'default'    => $section === 'create',
         ]);
 
@@ -58,7 +58,7 @@ class ResourceDashboard
 //            $page->addAction($action);
 //        }
 
-        $page->setMeta('url', 'sv/res/'.$resource->getHandle());
+        $page->setMeta('url', 'sv/res/'.$resource->getIdentifier());
 
         return $page->build(['res' => $resource->toArray()]);
     }

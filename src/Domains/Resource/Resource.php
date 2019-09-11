@@ -159,7 +159,7 @@ final class Resource implements
     public function onCreated(Closure $callback): Resource
     {
         app('events')->listen(EntryCreatedEvent::class, function (EntryCreatedEvent $event) use ($callback) {
-            if ($event->entry->getTable() === $this->getHandle()) {
+            if ($event->entry->getTable() === $this->getIdentifier()) {
                 $callback($event->entry);
             }
         });
@@ -170,7 +170,7 @@ final class Resource implements
     public function onDeleted(Closure $callback): Resource
     {
         app('events')->listen(EntryDeletedEvent::class, function (EntryDeletedEvent $event) use ($callback) {
-            if ($event->entry->getTable() === $this->getHandle()) {
+            if ($event->entry->getTable() === $this->getIdentifier()) {
                 $callback($event->entry);
             }
         });
@@ -229,7 +229,7 @@ final class Resource implements
 
     public function getRelation($name, ?EntryContract $entry = null): ?Relation
     {
-        $key = $this->getHandle().'.'.$name;
+        $key = $this->getIdentifier().'.'.$name;
         if ($relation = superv('relations')->get($key)) {
             return $relation;
         }
@@ -249,7 +249,7 @@ final class Resource implements
 
     public function cacheRelation(Relation $relation)
     {
-        $key = $this->getHandle().'.'.$relation->getName();
+        $key = $this->getIdentifier().'.'.$relation->getName();
         superv('relations')->put($key, $relation);
     }
 
@@ -316,7 +316,7 @@ final class Resource implements
         if ($field->isUnique()) {
             $rules[] = sprintf(
                 'unique:%s,%s,%s,id',
-                $this->getHandle(),
+                $this->getIdentifier(),
                 $field->getColumnName(),
                 $entry ? $entry->getId() : 'NULL'
             );
@@ -344,7 +344,7 @@ final class Resource implements
 
     public function getResourceKey_xxxxx()
     {
-        return $this->getConfigValue('resource_key', str_singular($this->getHandle()));
+        return $this->getConfigValue('resource_key', str_singular($this->getIdentifier()));
     }
 
     public function isOwned()
@@ -362,23 +362,23 @@ final class Resource implements
         if (starts_with($route, 'forms.')) {
             $form = explode('.', $route)[1];
 
-            $formUuid = $form === 'create' || $form === 'edit' ? $this->getHandle() : null; // null ??
+            $formUuid = $form === 'create' || $form === 'edit' ? $this->getIdentifier() : null; // null ??
 
             $params['uuid'] = $formUuid;
         }
 
         $parameters = array_merge($params, ['id'       => $entry ? $entry->getId() : null,
-                                            'resource' => $this->getHandle()]);
+                                            'resource' => $this->getIdentifier()]);
 
         return route('resource.'.$route, array_filter($parameters), false);
     }
 
     public function route($route, ?EntryContract $entry = null, array $params = [])
     {
-        $base = 'sv/res/'.$this->getHandle();
+        $base = 'sv/res/'.$this->getIdentifier();
 
         if ($route === 'fields') {
-            $params = array_merge($params, ['resource' => $this->getHandle()]);
+            $params = array_merge($params, ['resource' => $this->getIdentifier()]);
 
             return sv_route('resource.fields', $params);
         }
@@ -394,7 +394,10 @@ final class Resource implements
         if (starts_with($route, 'forms.')) {
             $form = explode('.', $route)[1];
 
-            $formUuid = in_array($form, ['create', 'update', 'store', 'edit']) ? $this->getHandle() : null; // null ??
+            $formUuid = in_array($form, ['create',
+                                         'update',
+                                         'store',
+                                         'edit']) ? $this->getIdentifier() : null; // null ??
             $params['uuid'] = $formUuid;
 
             $params['entry'] = $entry ? $entry->getId() : null;
@@ -408,14 +411,14 @@ final class Resource implements
 //        }
 
         $parameters = array_merge($params, ['id'       => $entry ? $entry->getId() : null,
-                                            'resource' => $this->getHandle()]);
+                                            'resource' => $this->getIdentifier()]);
 
         return sv_route('resource.'.$route, array_filter($parameters));
     }
 
-    public function getHandle(): string
+    public function getIdentifier(): string
     {
-        return $this->handle;
+        return $this->config()->getIdentifier();
     }
 
     public function searchable(array $searchable)
@@ -541,7 +544,7 @@ final class Resource implements
     {
         return [
             'uuid'           => $this->uuid,
-            'handle'         => $this->getHandle(),
+            'handle'         => $this->getIdentifier(),
             'singular_label' => $this->getSingularLabel(),
         ];
     }

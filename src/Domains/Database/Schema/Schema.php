@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Database\Schema;
 
 /**
- * @method \Illuminate\Database\Schema\Builder create($table, \Closure $callback)
+ * @method \SuperV\Platform\Domains\Resource\ResourceConfig create($table, \Closure $callback)
  * @method static $this table($table, \Closure $callback)
  * @method static $this drop($table)
  * @method static $this dropIfExists($table)

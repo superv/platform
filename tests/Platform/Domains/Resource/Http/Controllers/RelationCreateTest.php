@@ -42,6 +42,7 @@ class RelationCreateTest extends ResourceTestCase
     function test__post_standard_form()
     {
         $users = $this->schema()->users();
+
         $this->schema()->comments();
         $user = $users->fake();
         $relation = $users->getRelation('comments');

@@ -27,14 +27,14 @@ class Hook
 
     public static function saving(EntryContract $entry, Resource $resource)
     {
-        if (! $baseNamespace = static::base($resource->getHandle())) {
+        if (! $baseNamespace = static::base($resource->getIdentifier())) {
             return;
         }
 
         if ($resourceKey = $resource->config()->getResourceKey()) {
             $plural = str_plural($resourceKey);
         } else {
-            $plural = $resource->getHandle();
+            $plural = $resource->getIdentifier();
         }
 
         $listener = $baseNamespace."\\".studly_case($plural.'_saving');
@@ -48,14 +48,14 @@ class Hook
 
     public static function saved(EntryContract $entry, Resource $resource)
     {
-        if (! $baseNamespace = static::base($resource->getHandle())) {
+        if (! $baseNamespace = static::base($resource->getIdentifier())) {
             return;
         }
 
         if ($resourceKey = $resource->config()->getResourceKey()) {
             $plural = str_plural($resourceKey);
         } else {
-            $plural = $resource->getHandle();
+            $plural = $resource->getIdentifier();
         }
 
         $listener = $baseNamespace."\\".studly_case($plural.'_saving');
@@ -98,7 +98,7 @@ class Hook
 
     public static function resource(Resource $resource)
     {
-        if (! $base = static::$map[$resource->getHandle()] ?? null) {
+        if (! $base = static::$map[$resource->getIdentifier()] ?? null) {
             return;
         }
 

@@ -69,11 +69,11 @@ class Extension
 
     public static function extend(Resource $resource)
     {
-        if ($extension = Extension::get($resource->getHandle())) {
+        if ($extension = Extension::get($resource->getIdentifier())) {
             if ($extension instanceof ExtendsResource) {
                 $extension->extend($resource);
             } elseif ($extension instanceof ExtendsMultipleResources) {
-                $method = camel_case('extend_'.$resource->getHandle());
+                $method = camel_case('extend_'.$resource->getIdentifier());
                 $extension->$method($resource);
             }
         }
