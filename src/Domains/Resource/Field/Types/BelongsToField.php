@@ -66,7 +66,7 @@ class BelongsToField extends FieldType implements
         $joinType = 'leftJoin';
         $query->getQuery()
               ->{$joinType}($relatedResource->getHandle()." AS ".$relatedResource->getHandle()."_1",
-                  $relatedResource->getHandle().'_1.id', '=', $parentResource->getHandle().'.'.$relation->getForeignKey());
+                  $relatedResource->getHandle().'_1.'.$relatedResource->getKeyName(), '=', $parentResource->getHandle().'.'.$relation->getForeignKey());
 
         $query->orderBy($orderBy, $direction);
     }
@@ -101,7 +101,7 @@ class BelongsToField extends FieldType implements
             $query->where($queryParams);
         }
 
-        $entryLabel = $this->relatedResource->config()->getEntryLabel('#{id}');
+        $entryLabel = $this->relatedResource->config()->getEntryLabel(sprintf("#%s", $this->relatedResource->getKeyName()));
 
         if ($entryLabelField = $this->relatedResource->fields()->getEntryLabelField()) {
             $query->orderBy($entryLabelField->getColumnName(), 'ASC');
@@ -197,6 +197,7 @@ class BelongsToField extends FieldType implements
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                 $resource = sv_resource($relatedEntry);
+
                 $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
             }
         };

@@ -149,4 +149,16 @@ class ResourceConfigTest extends ResourceTestCase
         $this->makeResource('customers', ['height:decimal', 'age:integer']);
         $this->assertEquals('Customer #{id}', ResourceFactory::make('customers')->getEntryLabelTemplate());
     }
+
+    function test__finds_by_resource_handle()
+    {
+        $res = $this->create(function (Blueprint $table, ResourceConfig $config) {
+            $table->increments('id');
+            $config->keyName('some_key');
+        });
+
+        $config = ResourceConfig::find($res->getHandle());
+        $this->assertInstanceOf(ResourceConfig::class, $config);
+        $this->assertEquals('some_key', $config->getKeyName());
+    }
 }

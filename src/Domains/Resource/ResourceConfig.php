@@ -246,4 +246,11 @@ class ResourceConfig
     {
         return (new static)->hydrate($config, $overrideDefault);
     }
+
+    public static function find($handle)
+    {
+        $resourceEntry = ResourceModel::query()->where('handle', $handle)->first();
+
+        return new ResourceConfig($resourceEntry->config);
+    }
 }

@@ -354,7 +354,7 @@ final class Resource implements
 
     public function getKeyName()
     {
-        return $this->getConfigValue('key_name', str_singular($this->getHandle()));
+        return $this->config()->getKeyName();
     }
 
     public function spaRoute($route, ?EntryContract $entry = null, array $params = [])

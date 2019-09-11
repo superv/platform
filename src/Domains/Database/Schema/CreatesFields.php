@@ -92,11 +92,6 @@ trait CreatesFields
         return $this;
     }
 
-    public function id($key = 'id')
-    {
-        $this->increments($key);
-    }
-
     public function increments($column)
     {
         $this->resourceConfig()->keyName($column);
@@ -107,6 +102,7 @@ trait CreatesFields
     public function hasUuid($column = 'uuid')
     {
         $this->resourceConfig()->setHasUuid(true);
+
         return $this->addColumn('uuid', $column);
     }
 
@@ -130,5 +126,10 @@ trait CreatesFields
         $this->timestamp('updated_at')->nullable()->hideOnForms();
 
         return $this;
+    }
+
+    public function id($key = 'id')
+    {
+        $this->increments($key);
     }
 }

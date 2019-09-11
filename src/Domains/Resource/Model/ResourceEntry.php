@@ -12,6 +12,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class ResourceEntry extends Entry
@@ -20,17 +21,13 @@ class ResourceEntry extends Entry
         SerializesModels::__sleep as parentSleep;
     }
 
-    public function __sleep()
-    {
-        $this->resource = null;
-
-        return $this->parentSleep();
-    }
+    /** @var \SuperV\Platform\Domains\Resource\Resource */
+    protected $resource;
 
     use Restorable;
 
-    /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $resource;
+    /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
+    protected $resourceConfig;
 
     public $timestamps = false;
 
@@ -133,6 +130,15 @@ class ResourceEntry extends Entry
         return parent::newQuery();
     }
 
+    public function getForeignKey()
+    {
+//        if (! $resource = $this->getResource()) {
+//            return parent::getForeignKey();
+//        }
+
+        return $this->getResourceConfig()->getResourceKey().'_id';
+    }
+
 //    /**
 //     * Get a new query builder instance for the connection.
 //     *
@@ -147,18 +153,30 @@ class ResourceEntry extends Entry
 //        );
 //    }
 
-    public function getForeignKey()
+    public function getKeyNameeee()
     {
-//        if (! $resource = $this->getResource()) {
-//            return parent::getForeignKey();
-//        }
-
-        return $this->getResource()->config()->getResourceKey().'_id';
+        return $this->getResourceConfig()->getKeyName();
     }
 
     public function getMorphClass()
     {
         return $this->getTable();
+    }
+
+    public function __sleep()
+    {
+        $this->resource = null;
+
+        return $this->parentSleep();
+    }
+
+    public function getResourceConfig()
+    {
+        if (! $this->resourceConfig) {
+            $this->resourceConfig = ResourceConfig::find($this->getHandle());
+        }
+
+        return $this->resourceConfig;
     }
 
     public function getRelationshipFromConfig($name)
@@ -173,20 +191,6 @@ class ResourceEntry extends Entry
         }
 
         return $relation->newQuery();
-    }
-
-    protected function resolveRelation($name)
-    {
-        if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
-            return null;
-        }
-
-        $relation = RelationBuilder::resolveFromRelationEntry($relation);
-        if ($relation instanceof AcceptsParentEntry) {
-            $relation->acceptParentEntry($this);
-        }
-
-        return $relation;
     }
 
     /** @return \SuperV\Platform\Domains\Resource\Resource */
@@ -231,36 +235,56 @@ class ResourceEntry extends Entry
 
     public static function make(Resource $resource)
     {
+        $model = new AnonymousModel();
+        $model->setTable($resource->getHandle());
+        $model->setKeyName($resource->getKeyName());
+
+        return $model;
         $model = new class extends ResourceEntry
         {
             public $timestamps = false;
 
-            /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
-            protected $resourceConfig;
-
-            public function setResourceConfig($config)
-            {
-                $this->resourceConfig = $config;
-            }
+//            /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
+//            protected $resourceConfig;
+//
+//            public function setResourceConfig($config)
+//            {
+//                $this->resourceConfig = $config;
+//            }
 
             public function setTable($table)
             {
                 return $this->table = $table;
             }
 
-            public function getKeyName()
-            {
-                if ($this->resourceConfig) {
-                    return $this->resourceConfig->getKeyName();
-                }
-
-                return parent::getKeyName();
-            }
+//            public function getKeyName()
+//            {
+//                if ($this->resourceConfig) {
+//                    return $this->resourceConfig->getKeyName();
+//                }
+//
+//                return parent::getKeyName();
+//            }
         };
 
         $model->setTable($resource->getHandle());
-        $model->setResourceConfig($resource->config());
+
+//        $model->setResourceConfig($resource->config());
 
         return $model;
+    }
+
+    protected function resolveRelation($name)
+    {
+        if (! $relation = RelationModel::fromCache($this->getTable(), $name)) {
+            return null;
+        }
+
+        $relation = RelationBuilder::resolveFromRelationEntry($relation);
+        if ($relation instanceof AcceptsParentEntry) {
+            $relation->acceptParentEntry($this);
+        }
+
+        return $relation;
     }
 }

@@ -22,7 +22,9 @@ class DeleteResource
 
     public function handle()
     {
-        $resourceEntry = ResourceModel::withHandle($this->resourceHandle);
+        if (! $resourceEntry = ResourceModel::withHandle($this->resourceHandle)) {
+            return;
+        }
         $resourceEntry->delete();
         $resourceEntry->wipeCache();
 
