@@ -8,19 +8,34 @@ use RuntimeException;
 
 class PlatformException extends \Exception
 {
+    protected $payload;
+
+    public function setPayload($payload)
+    {
+        $this->payload = $payload;
+
+        return $this;
+    }
+
     public function toResponse()
     {
         return response()->json([
-            'error' => [
+            'error' => array_filter([
                 'description' => $this->getMessage(),
+                'payload'     => $this->payload,
                 'trace'       => $this->getTrace(),
-            ],
+            ]),
         ], 500);
     }
 
     public static function fail(?string $msg)
     {
         throw new static($msg);
+    }
+
+    public static function debug($payload)
+    {
+        throw (new static)->setPayload($payload);
     }
 
     public static function throw(Exception $e)
