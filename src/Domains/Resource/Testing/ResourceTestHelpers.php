@@ -73,9 +73,9 @@ trait ResourceTestHelpers
     }
 
     /** @return \SuperV\Platform\Domains\Resource\ResourceModel */
-    protected function makeResourceModel($slug, array $columns, array $resource = [])
+    protected function makeResourceModel($identifier, array $columns, array $resource = [])
     {
-        Schema::create($slug, function (Blueprint $table, ResourceConfig $resourceBlueprint) use (
+        Schema::create($identifier, function (Blueprint $table, ResourceConfig $resourceBlueprint) use (
             $columns,
             $resource
         ) {
@@ -104,7 +104,7 @@ trait ResourceTestHelpers
 
             $resourceBlueprint->fill($resource);
         });
-        $resource = ResourceModel::withHandle($slug);
+        $resource = ResourceModel::withHandle($identifier);
 
         return $resource;
     }

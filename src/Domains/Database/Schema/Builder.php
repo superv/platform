@@ -37,7 +37,6 @@ class Builder extends \Illuminate\Database\Schema\Builder
     public function create($table, Closure $callback): ResourceConfig
     {
         $mainBlueprint = $this->createBlueprint($table);
-
         $this->build(tap($mainBlueprint, function ($blueprint) use ($table, $callback) {
             $this->resourceConfig->setIdentifier($table);
             $this->resourceConfig->getDriver()->setParam('table', $table);
@@ -55,7 +54,6 @@ class Builder extends \Illuminate\Database\Schema\Builder
         $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($table, $callback) {
             $this->resourceConfig->setIdentifier($table);
             $this->resourceConfig->getDriver()->setParam('table', $table);
-
             $callback($blueprint, $this->resourceConfig);
         }));
     }

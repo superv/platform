@@ -95,8 +95,11 @@ class ResourceCreationTest extends ResourceTestCase
         $resource = ResourceFactory::make('servers');
         $this->assertNotNull($resource);
 
-        $server = $resource->create([]);
+        $this->assertEquals('core_servers', $resource->config()->getDriver()->getParam('table'));
+
+        $server = sv_resource('servers')->create([]);
         $this->assertTrue($server->exists());
+        $this->assertEquals('core_servers', $server->getTable());
     }
 
     function test__creates_field_when_a_database_column_is_created()

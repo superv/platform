@@ -316,7 +316,7 @@ final class Resource implements
         if ($field->isUnique()) {
             $rules[] = sprintf(
                 'unique:%s,%s,%s,id',
-                $this->getIdentifier(),
+                $this->config()->getDriver()->getParam('table'),
                 $field->getColumnName(),
                 $entry ? $entry->getId() : 'NULL'
             );
@@ -340,11 +340,6 @@ final class Resource implements
             })
             ->filter()
             ->all();
-    }
-
-    public function getResourceKey_xxxxx()
-    {
-        return $this->getConfigValue('resource_key', str_singular($this->getIdentifier()));
     }
 
     public function isOwned()
