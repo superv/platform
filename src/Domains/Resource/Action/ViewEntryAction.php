@@ -12,7 +12,7 @@ class ViewEntryAction extends Action
 
     protected $type = 'redirect';
 
-    protected $url = 'sv/res/{res.handle}/{entry.id}/view';
+    protected $url = 'sv/res/{res.identifier}/{entry.id}/view';
 
     public function onComposed(Payload $payload)
     {
