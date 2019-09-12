@@ -12,7 +12,7 @@ class CreateEntryAction extends Action
 
     protected $type = 'redirect';
 
-    protected $url = 'sv/res/{res.handle}/create';
+    protected $url = 'sv/res/{res.identifier}/create';
 
     public function onComposed(Payload $payload)
     {

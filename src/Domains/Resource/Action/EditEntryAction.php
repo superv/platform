@@ -12,7 +12,7 @@ class EditEntryAction extends Action
 
     protected $type = 'redirect';
 
-    protected $url = 'sv/res/{res.handle}/{entry.id}';
+    protected $url = 'sv/res/{res.identifier}/{entry.id}';
 
     public function onComposed(Payload $payload)
     {
