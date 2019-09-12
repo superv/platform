@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class ResourceConfig
@@ -49,7 +50,6 @@ class ResourceConfig
             }
             $this->hydrate($attributes, $overrideDefault);
         }
-
     }
 
     public function getResourceKey()
@@ -81,16 +81,16 @@ class ResourceConfig
         return $this->identifier;
     }
 
-    public function getHandle()
-    {
-        return $this->getIdentifier();
-    }
-
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
 
         return $this;
+    }
+
+    public function getHandle()
+    {
+        return $this->getIdentifier();
     }
 
     public function label($label)
@@ -248,6 +248,9 @@ class ResourceConfig
     {
         $attributes = [];
         foreach ($this as $key => $value) {
+            if ($value instanceof Arrayable) {
+                $value = $value->toArray();
+            }
             $attributes[snake_case($key)] = $value;
         }
 

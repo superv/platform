@@ -21,7 +21,17 @@ class Builder extends \Illuminate\Database\Schema\Builder
         parent::__construct($connection);
 
         $this->schema = $schema;
-        $this->resourceConfig = ResourceConfig::make();
+        $this->resourceConfig = ResourceConfig::make(
+            [
+                'driver' =>
+                    [
+                        'type'   => 'database',
+                        'params' => [
+                            'connection' => $connection->getName(),
+                        ],
+                    ],
+            ]
+        );
     }
 
     public function create($table, Closure $callback): ResourceConfig
@@ -29,9 +39,10 @@ class Builder extends \Illuminate\Database\Schema\Builder
         $mainBlueprint = $this->createBlueprint($table);
 
         $this->build(tap($mainBlueprint, function ($blueprint) use ($table, $callback) {
-            $blueprint->create();
-
             $this->resourceConfig->setIdentifier($table);
+            $this->resourceConfig->getDriver()->setParam('table', $table);
+
+            $blueprint->create();
 
             $callback($blueprint, $this->resourceConfig);
         }));
@@ -42,7 +53,10 @@ class Builder extends \Illuminate\Database\Schema\Builder
     public function table($table, Closure $callback)
     {
         $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($table, $callback) {
-            $callback($blueprint, $this->resourceConfig->setIdentifier($table));
+            $this->resourceConfig->setIdentifier($table);
+            $this->resourceConfig->getDriver()->setParam('table', $table);
+
+            $callback($blueprint, $this->resourceConfig);
         }));
     }
 

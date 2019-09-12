@@ -61,12 +61,12 @@ class BelongsToField extends FieldType implements
         $relatedResource = ResourceFactory::make($relation->getRelatedResource());
         $labelField = $relatedResource->fields()->getEntryLabelField();
         $labelFieldColumName = $labelField ? $labelField->getColumnName() : $relatedResource->config()->getKeyName();
-        $orderBy = $relatedResource->getHandle().'_1.'.$labelFieldColumName;
+        $orderBy = $relatedResource->getIdentifier().'_1.'.$labelFieldColumName;
 
         $joinType = 'leftJoin';
         $query->getQuery()
-              ->{$joinType}($relatedResource->getHandle()." AS ".$relatedResource->getHandle()."_1",
-                  $relatedResource->getHandle().'_1.'.$relatedResource->getKeyName(), '=', $parentResource->getHandle().'.'.$relation->getForeignKey());
+              ->{$joinType}($relatedResource->getIdentifier()." AS ".$relatedResource->getIdentifier()."_1",
+                  $relatedResource->getIdentifier().'_1.'.$relatedResource->getKeyName(), '=', $parentResource->getIdentifier().'.'.$relation->getForeignKey());
 
         $query->orderBy($orderBy, $direction);
     }

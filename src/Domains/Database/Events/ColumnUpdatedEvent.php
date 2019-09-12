@@ -30,7 +30,7 @@ class ColumnUpdatedEvent extends BaseEvent
 
     public function __construct(ResourceConfig $config, $blueprint, ColumnDefinition $column)
     {
-//        $this->table = $table;
+        $this->table = $config->getDriver()->getParam('table');
         $this->column = $column;
         $this->blueprint = $blueprint;
         $this->config = $config;

@@ -35,7 +35,7 @@ class ColumnCreatedEvent extends BaseEvent
 
     public function __construct(ResourceConfig $config, $blueprint, ColumnDefinition $column, $model = null)
     {
-//        $this->table = $table;
+        $this->table = $config->getDriver()->getParam('table');
         $this->column = $column;
         $this->model = $model;
         $this->blueprint = $blueprint;

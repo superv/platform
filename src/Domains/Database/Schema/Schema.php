@@ -12,9 +12,6 @@ class Schema
 {
     public $justRun;
 
-    /** @var \SuperV\Platform\Domains\Database\Schema\Blueprint */
-    protected $resource;
-
     /** @var \SuperV\Platform\Domains\Database\Schema\Builder */
     protected $builder;
 

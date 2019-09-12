@@ -2,9 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-class ResourceDriver
+class ResourceDriver implements Arrayable
 {
     use Hydratable;
 
@@ -22,8 +23,28 @@ class ResourceDriver
         return array_get($this->params, $key);
     }
 
+    public function setParam($key, $value): ResourceDriver
+    {
+        $this->params[$key] = $value;
+
+        return $this;
+    }
+
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Get the instance as an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'type'   => $this->type,
+            'params' => $this->params,
+        ];
     }
 }

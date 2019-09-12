@@ -103,17 +103,6 @@ class CreateResource
         ));
     }
 
-    protected function getDriverConfig()
-    {
-        return [
-            'type'   => 'mysql',
-            'params' => [
-                'connection' => 'default',
-                'table'      => $this->event->table,
-            ],
-        ];
-    }
-
     protected function processConfig(): void
     {
         if (! $this->config->getEntryLabel()) {
@@ -139,6 +128,6 @@ class CreateResource
      */
     protected function getConfig(): array
     {
-        return array_merge($this->config->toArray(), ['driver' => $this->getDriverConfig()]);
+        return $this->config->toArray();
     }
 }

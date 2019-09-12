@@ -36,9 +36,9 @@ class ResourceCreationTest extends ResourceTestCase
         $this->assertEquals('platform', $resourceEntry->getNamespace());
 
         $this->assertEquals([
-            'type'   => 'mysql',
+            'type'   => 'database',
             'params' => [
-                'connection' => 'default',
+                'connection' => 'sqlite',
                 'table'      => 'test_users',
             ],
         ], $resourceEntry->getConfigValue('driver'));
@@ -69,8 +69,8 @@ class ResourceCreationTest extends ResourceTestCase
         $driver = $config->getDriver();
         $this->assertInstanceOf(ResourceDriver::class, $driver);
         $this->assertEquals('core_servers', $driver->getParam('table'));
-        $this->assertEquals('default', $driver->getParam('connection'));
-        $this->assertEquals('mysql', $driver->getType());
+        $this->assertEquals('sqlite', $driver->getParam('connection'));
+        $this->assertEquals('database', $driver->getType());
     }
 
     function test__identifier_is_different_from_table_name()
