@@ -62,9 +62,10 @@ class FormModel extends Entry
     {
         if ($this->resource_id > 0 && ! $this->ownerResource) {
             $this->load('resource');
+            /** @var ResourceModel $resourceEntry */
             $resourceEntry = $this->getRelation('resource');
 
-            $this->ownerResource = ResourceFactory::make($resourceEntry->getHandle());
+            $this->ownerResource = ResourceFactory::make($resourceEntry->getIdentifier());
         }
 
         return $this->ownerResource;
