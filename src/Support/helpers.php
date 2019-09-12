@@ -21,7 +21,7 @@ function ddh()
     dd('Over here! '.date('H:i:s'), func_get_args());
 }
 
-function fail($data)
+function fails($data)
 {
     PlatformException::fail($data);
 }

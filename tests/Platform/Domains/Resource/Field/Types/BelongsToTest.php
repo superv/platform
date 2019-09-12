@@ -3,8 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Field\Types;
 
 use Closure;
-use Illuminate\Database\Eloquent\Model;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -63,7 +62,7 @@ class BelongsToTest extends ResourceTestCase
     }
 }
 
-class BelongsToTestUser extends Model implements EntryContract
+class BelongsToTestUser extends Entry
 {
     public $timestamps = false;
 

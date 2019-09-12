@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
@@ -127,7 +126,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
     {
         $params = array_merge([
             'id'       => $entry->getId(),
-            'resource' => ResourceModel::query()->where('handle', $entry->getTable())->value('identifier'),
+            'resource' => $entry->getResourceIdentifier(),
             'relation' => $this->getName(),
         ], $params);
 

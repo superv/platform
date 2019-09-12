@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Database\Model;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 
-class Model extends Eloquent implements EntryContract
+abstract class Model extends Eloquent implements EntryContract
 {
     protected $guarded = [];
 

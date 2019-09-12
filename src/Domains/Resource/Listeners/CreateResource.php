@@ -93,7 +93,7 @@ class CreateResource
             [
                 'uuid'       => uuid(),
                 'identifier' => $this->config->getIdentifier(),
-                'handle'     => $this->event->table,
+                'dsn'        => $this->config->getDriver()->toDsn(),
                 'model'      => $this->config->getModel(),
                 'config'     => $this->getConfig(),
                 'namespace'  => $this->event->namespace,

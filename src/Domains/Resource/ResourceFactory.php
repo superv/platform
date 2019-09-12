@@ -17,7 +17,7 @@ class ResourceFactory
     /**
      * @var string
      */
-    protected $handle;
+    protected $identifier;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\ResourceModel
@@ -29,32 +29,32 @@ class ResourceFactory
      */
     protected $entry;
 
-    protected function __construct(string $handle, ?EntryContract $entry = null)
+    protected function __construct(string $identifier, ?EntryContract $entry = null)
     {
-        $this->handle = $handle;
+        $this->identifier = $identifier;
         $this->entry = $entry;
     }
 
-    public static function attributesFor(string $handle, ?EntryContract $entry = null): array
+    public static function attributesFor(string $identifier, ?EntryContract $entry = null): array
     {
-        return (new static($handle, $entry))->get();
+        return (new static($identifier, $entry))->get();
     }
 
     /**
-     * @param $handle
+     * @param $identifier
      * @return \SuperV\Platform\Domains\Resource\Resource|null
      * @throws \Exception
      */
-    public static function make($handle): ?Resource
+    public static function make($identifier): ?Resource
     {
-        if ($handle instanceof EntryContract) {
-            $handle = ResourceModel::query()->where('handle', $handle->getTable())->value('identifier');
+        if ($identifier instanceof EntryContract) {
+            $identifier = $identifier->getResourceIdentifier();
         }
 
         try {
-            $attributes = static::attributesFor($handle);
+            $attributes = static::attributesFor($identifier);
 
-            $attributes = Hook::attributes($handle, $attributes);
+            $attributes = Hook::attributes($identifier, $attributes);
 
             if (is_array($attributes['config'])) {
                 $attributes['config'] = ResourceConfig::make($attributes['config']);
@@ -67,6 +67,7 @@ class ResourceFactory
             if ($e->getMessage() !== 'Resource model entry not found for [sv_forms]') {
                 throw $e;
             }
+
             return null;
         }
 
@@ -108,12 +109,12 @@ class ResourceFactory
 
     protected function get()
     {
-        if (! $this->model = ResourceModel::withHandle($this->handle)) {
-            PlatformException::fail("Resource model entry not found for [{$this->handle}]");
+        if (! $this->model = ResourceModel::withHandle($this->identifier)) {
+            PlatformException::fail("Resource model entry not found for [{$this->identifier}]");
         }
 
         $attributes = array_merge($this->model->toArray(), [
-            'handle'        => $this->model->getHandle(),
+            'identifier'    => $this->model->getIdentifier(),
             'fields'        => $this->getFieldsProvider(),
             'field_entries' => function () {
                 return $this->model->getFields();

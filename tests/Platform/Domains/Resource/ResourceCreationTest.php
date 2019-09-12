@@ -42,6 +42,8 @@ class ResourceCreationTest extends ResourceTestCase
                 'table'      => 'test_users',
             ],
         ], $resourceEntry->getConfigValue('driver'));
+
+        $this->assertEquals('database@sqlite://test_users', $resourceEntry->getDsn());
     }
 
     function test__saves_resource_model_class_if_provided()
@@ -244,7 +246,7 @@ class ResourceCreationTest extends ResourceTestCase
 
         Event::assertDispatched(ResourceCreatedEvent::class, function (ResourceCreatedEvent $event) {
             $this->assertInstanceOf(ResourceModel::class, $event->resourceEntry);
-            $this->assertEquals('t_posts', $event->resourceEntry->getHandle());
+            $this->assertEquals('t_posts', $event->resourceEntry->getIdentifier());
 
             return true;
         });

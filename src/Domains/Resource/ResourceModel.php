@@ -55,6 +55,11 @@ class ResourceModel extends Entry implements ProvidesFields
         return $this->driver;
     }
 
+    public function getDsn()
+    {
+        return $this->dsn;
+    }
+
     public function provideFields(): Collection
     {
         return $this->getFields();
@@ -129,14 +134,9 @@ class ResourceModel extends Entry implements ProvidesFields
         return $this->namespace;
     }
 
-    public function getHandle()
-    {
-        return $this->handle;
-    }
-
     public function wipeCache()
     {
-        $cacheKey = 'sv:resources:'.$this->getHandle();
+        $cacheKey = 'sv:resources:'.$this->getIdentifier();
         cache()->forget($cacheKey);
     }
 

@@ -47,4 +47,9 @@ class ResourceDriver implements Arrayable
             'params' => $this->params,
         ];
     }
+
+    public function toDsn()
+    {
+        return sprintf("%s@%s://%s", $this->getType(), $this->getParam('connection'), $this->getParam('table'));
+    }
 }

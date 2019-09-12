@@ -24,10 +24,7 @@ class ResourceEntry extends Entry
         SerializesModels::__sleep as parentSleep;
     }
 
-    /**
-     * @var string
-     */
-    protected $resourceIdentifier;
+
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
@@ -118,6 +115,11 @@ class ResourceEntry extends Entry
         return parent::__call($name, $arguments);
     }
 
+    public function getConnectionName()
+    {
+        return parent::getConnectionName();
+    }
+
     /**
      * Create a new Eloquent query builder for the model.
      *
@@ -168,6 +170,16 @@ class ResourceEntry extends Entry
         }
 
         return $this->resourceConfig;
+    }
+
+    public function fetchResourceIdentifier()
+    {
+        return ResourceModel::query()->where('dns', $this->getResourceDsn())->value('identifier');
+    }
+
+    public function getResourceDsn()
+    {
+        return sprintf("%s@%s://%s", 'database', $this->getConnectionName(), $this->getTable());
     }
 
     public function getRelationshipFromConfig($name)
@@ -222,18 +234,6 @@ class ResourceEntry extends Entry
 
         return $field;
 //        return $field->setWatcher($this);
-    }
-
-    /**
-     * @return string
-     */
-    public function getResourceIdentifier(): string
-    {
-        if (! $this->resourceIdentifier) {
-            $this->resourceIdentifier = ResourceModel::query()->where('handle', $this->getTable())->value('identifier');
-        }
-
-        return $this->resourceIdentifier;
     }
 
     /**

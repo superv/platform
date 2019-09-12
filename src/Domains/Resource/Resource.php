@@ -45,6 +45,9 @@ final class Resource implements
      */
     protected $id;
 
+    /** @var string */
+    protected $identifier;
+
     /**
      * Database uuid
      *
@@ -92,9 +95,6 @@ final class Resource implements
      * @var Closure
      */
     protected $relationProvider;
-
-    /** @var string */
-    protected $handle;
 
     /** @var Closure */
     protected $viewResolver;
@@ -539,7 +539,7 @@ final class Resource implements
     {
         return [
             'uuid'           => $this->uuid,
-            'handle'         => $this->getIdentifier(),
+            'identifier'     => $this->getIdentifier(),
             'singular_label' => $this->getSingularLabel(),
         ];
     }
@@ -557,6 +557,6 @@ final class Resource implements
             $handle = $handle->getTable();
         }
 
-        return ResourceModel::query()->where('handle', $handle)->exists();
+        return ResourceModel::query()->where('identifier', $handle)->exists();
     }
 }

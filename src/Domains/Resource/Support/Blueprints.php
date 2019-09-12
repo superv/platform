@@ -18,15 +18,15 @@ class Blueprints
     {
         $table->increments('id');
         $table->uuid('uuid')->unique();
-        $table->string('handle');
         $table->string('identifier')->unique();
         $table->string('namespace')->showOnIndex();
         $table->string('model')->nullable();
+        $table->string('dsn');
 
         if ($table instanceof Blueprint) {
             $resource->model(ResourceModel::class);
             $resource->label('Resources');
-            $resource->entryLabel('{handle}');
+            $resource->entryLabel('{namespace}.{identifier}');
             $resource->resourceKey('resource');
             $resource->nav('acp.platform.system');
 

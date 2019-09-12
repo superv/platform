@@ -2,10 +2,10 @@
 
 namespace SuperV\Platform\Domains\Drop;
 
-use SuperV\Platform\Domains\Database\Model\Model;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Drop\Contracts\Drop;
 
-class DropRepoModel extends Model
+class DropRepoModel extends Entry
 {
     protected $table = 'sv_drop_repos';
 

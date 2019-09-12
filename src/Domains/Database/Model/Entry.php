@@ -2,8 +2,15 @@
 
 namespace SuperV\Platform\Domains\Database\Model;
 
-class Entry extends Model
+use SuperV\Platform\Domains\Resource\Jobs\GetEntryResource;
+
+abstract class Entry extends Model
 {
+    /**
+     * @var string
+     */
+    protected $resourceIdentifier;
+
     /**
      * Create a new Eloquent query builder for the model.
      *
@@ -31,5 +38,14 @@ class Entry extends Model
     public static function find($id)
     {
         return static::query()->find($id);
+    }
+
+    public function getResourceIdentifier(): string
+    {
+        if (! $this->resourceIdentifier) {
+            $this->resourceIdentifier = GetEntryResource::dispatch($this);
+        }
+
+        return $this->resourceIdentifier;
     }
 }
