@@ -25,5 +25,6 @@
     "Forms": "Formlar",
     "Auth": "Auth",
     "Showing :num Records": ":num kayıt gösteriliyor",
-    "Login successful": "Giriş başarılı"
+    "Login successful": "Giriş başarılı",
+    "Invalid credentials": "Hatalı şifre/email kombinasyonu"
 }
