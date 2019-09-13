@@ -18,7 +18,7 @@ class Blueprints
     {
         $table->increments('id');
         $table->uuid('uuid')->unique();
-        $table->string('identifier')->unique();
+        $table->string('identifier')->showOnIndex();
         $table->string('namespace')->showOnIndex();
         $table->string('model')->nullable();
         $table->string('dsn');
@@ -46,6 +46,8 @@ class Blueprints
         }
         $table->boolean('restorable')->default(false);
         $table->boolean('sortable')->default(false);
+
+        $table->unique(['identifier', 'namespace']);
     }
 
     /**
@@ -55,6 +57,9 @@ class Blueprints
     public static function fields($table, ResourceConfig $resource = null)
     {
         $table->increments('id');
+
+//        $table->string('identifier')->showOnIndex();
+//        $table->string('namespace')->showOnIndex();
 
         if ($table instanceof Blueprint) {
             $resource->model(FieldModel::class);
@@ -82,6 +87,7 @@ class Blueprints
         $table->string('type')->showOnIndex();;
 
         $table->timestamps();
+//        $table->unique(['identifier', 'namespace']);
     }
 
     /**

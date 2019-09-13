@@ -21,7 +21,7 @@ class AddonModel extends Entry
         if (class_exists($class)) {
             return new $class($this);
         } else {
-            PlatformException::runtime("Could not resolve addon: ". $class);
+            PlatformException::runtime("Could not resolve addon: ".$class);
         }
     }
 
@@ -35,35 +35,22 @@ class AddonModel extends Entry
         return $this->identifier;
     }
 
-    public function getPackage()
-    {
-        return $this->package;
-    }
-
     /**
      * @return string
      */
     public function addonClass()
     {
-        return $this->getPsrNamespace().'\\'.studly_case($this->getPackage().'_'.$this->getType());
-    }
-
-
-    public function shortSlug()
-    {
-        $parts = explode('/', $this->getPackage());
-
-        return $parts[count($parts) - 1];
-    }
-
-    public function shortName()
-    {
-        return studly_case($this->shortSlug());
+        return $this->getPsrNamespace().'\\'.studly_case($this->getName().'_'.$this->getType());
     }
 
     public function getRelativePath()
     {
         return $this->path;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 
     public function getVendor()
@@ -83,7 +70,7 @@ class AddonModel extends Entry
 
     public static function byIdentifier($identifier): ?AddonModel
     {
-        return static::query()->where('identifier', $identifier)->first();
+        return static::query()->where('identifier', $identifier)
+                     ->first();
     }
-
 }

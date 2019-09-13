@@ -16,15 +16,16 @@ class CreateAddonsTable extends Migration
             $config->nav('acp.platform.system');
 
             $table->increments('id');
-            $table->string('name');
-            $table->string('vendor')->showOnIndex();
-            $table->string('package')->showOnIndex();
+            $table->string('vendor');
+            $table->string('name')->showOnIndex();
+            $table->string('namespace')->showOnIndex();
             $table->string('identifier')->showOnIndex()->unique();
             $table->string('path');
             $table->string('psr_namespace')->nullable();
             $table->string('type');
             $table->boolean('enabled')->showOnIndex();
 //            $table->createdBy()->updatedBy();
+
         });
     }
 

@@ -77,11 +77,6 @@ class Addon
         return $this->entry->getIdentifier();
     }
 
-    public function getShortSlug()
-    {
-        return $this->entry->shortSlug();
-    }
-
     public function getPsrNamespace()
     {
         return $this->entry->getPsrNamespace();

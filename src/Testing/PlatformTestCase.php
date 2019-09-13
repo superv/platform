@@ -110,22 +110,23 @@ class PlatformTestCase extends OrchestraTestCase
         }
     }
 
-    protected function setUpAddon($identifier = null, $path = null, $seed = false): Addon
+    protected function setUpAddon($namespace = null, $name = null, $seed = false): Addon
     {
         $path = $path ?? 'tests/Platform/__fixtures__/sample-addon';
-        $identifier = $identifier ?? 'superv.sample';
+        $namespace = $namespace ?? 'superv.addons';
+        $name = $name ?? 'sample';
 
         ComposerLoader::load(base_path($path));
         $installer = $this->app->make(Installer::class)
-                               ->setIdentifier($identifier)
-                               ->setAddonType('addon')
-                               ->setPath($path);
+                               ->setPath($path)
+                               ->setNamespace($namespace)
+                               ->setName($name);
         $installer->install();
         if ($seed === true) {
             $installer->seed();
         }
 
-        $entry = AddonModel::byIdentifier($identifier);
+        $entry = AddonModel::byIdentifier('superv.addons.sample');
 
         return $entry->resolveAddon();
     }
@@ -192,7 +193,7 @@ class PlatformTestCase extends OrchestraTestCase
         foreach ($this->installs as $addon) {
             Installer::resolve()
                      ->setLocator(new Locator())
-                     ->setIdentifier($addon)
+                     ->setName($addon)
                      ->install();
         }
     }

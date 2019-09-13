@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Addon\Console;
 use Exception;
 use Illuminate\Console\Command;
 use SuperV\Platform\Domains\Addon\Installer;
-use SuperV\Platform\Domains\Addon\Locator;
 use SuperV\Platform\Exceptions\ValidationException;
 
 class AddonInstallCommand extends Command
@@ -18,12 +17,9 @@ class AddonInstallCommand extends Command
             $this->comment(sprintf('Installing %s', $this->argument('identifier')));
             $installer->setCommand($this);
             $installer->setIdentifier($this->argument('identifier'));
-            $installer->setAddonType($this->option('type'));
 
             if ($this->option('path')) {
                 $installer->setPath($this->option('path'));
-            } else {
-                $installer->setLocator(new Locator());
             }
 
             try {

@@ -45,7 +45,7 @@ class CreateAddonPaths
             "config",
             "database/migrations",
             "tests",
-            "tests/".studly_case($this->model->shortName()),
+            "tests/".studly_case($this->model->getIdentifier()),
         ];
     }
 }

@@ -20,7 +20,7 @@ class AddonTest extends TestCase
     {
         $this->setUpAddon();
 
-        $entry = AddonModel::byIdentifier('superv.sample');
+        $entry = AddonModel::byIdentifier('superv.addons.sample');
         $addon = $entry->resolveAddon();
 
         $this->assertInstanceOf(Addon::class, $addon);
@@ -32,7 +32,7 @@ class AddonTest extends TestCase
     {
         $this->setUpAddon();
 
-        $entry = AddonModel::byIdentifier('superv.sample');
+        $entry = AddonModel::byIdentifier('superv.addons.sample');
         $addon = $entry->resolveAddon();
         $provider = $addon->resolveProvider();
 
@@ -45,7 +45,7 @@ class AddonTest extends TestCase
     function test__dispatches_event_when_booted()
     {
         $this->setUpAddon();
-        $entry = AddonModel::byIdentifier('superv.sample');
+        $entry = AddonModel::byIdentifier('superv.addons.sample');
         $addon = $entry->resolveAddon();
 
         Event::fake(AddonBootedEvent::class);

@@ -37,7 +37,7 @@ class CreateAddonFiles
             'addon'       => [
                 'class_name' => $addonClass = "{$name}{$type}",
                 'extends'    => ucwords($type),
-                'short_name' => $shortName = $this->model->shortName(),
+                'short_name' => $shortName = $this->model->getIdentifier(),
                 'slug'       => $this->model->getPsrNamespace(),
             ],
             'model'       => $this->model->toArray(),

@@ -14,7 +14,7 @@ class AddonInstallCommandTest extends TestCase
         $installer->shouldReceive('setCommand')->once()->andReturnSelf();
         $installer->shouldReceive('setPath')->with('path/to/addon')->once()->andReturnSelf();
         $installer->shouldReceive('setIdentifier')->with('vendor/package')->once()->andReturnSelf();
-        $installer->shouldReceive('setAddonType')->with('addon')->once()->andReturnSelf();
+//        $installer->shouldReceive('setAddonType')->with('addon')->once()->andReturnSelf();
         $installer->shouldReceive('install')->once();
 
         $this->artisan('addon:install', [
@@ -28,9 +28,9 @@ class AddonInstallCommandTest extends TestCase
     {
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
         $installer->shouldReceive('setCommand')->once()->andReturnSelf();
-        $installer->shouldReceive('setLocator')->once()->andReturnSelf();
+//        $installer->shouldReceive('setLocator')->once()->andReturnSelf();
         $installer->shouldReceive('setIdentifier')->with('vendor/package')->once()->andReturnSelf();
-        $installer->shouldReceive('setAddonType')->with('module')->once()->andReturnSelf();
+//        $installer->shouldReceive('setAddonType')->with('module')->once()->andReturnSelf();
         $installer->shouldReceive('install')->once();
 
         $this->artisan('addon:install', [

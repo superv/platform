@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Addon;
 
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
 use RuntimeException;
@@ -17,7 +18,9 @@ class Installer
 {
     use HasPath;
 
-    protected $identifier;
+    protected $name;
+
+    protected $namespace;
 
     protected $path;
 
@@ -37,6 +40,8 @@ class Installer
     protected $locator;
 
     protected $addonType;
+
+    protected $vendor;
 
     public function __construct(Kernel $console)
     {
@@ -59,15 +64,23 @@ class Installer
     {
         $this->ensureNotInstalledBefore();
 
-        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $this->identifier)) {
-            throw new \Exception('Identifier should be in this format: {vendor}.{package}: '.$this->identifier);
+        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $this->namespace)) {
+            throw new \Exception('Identifier should be in this format: {vendor}.{package}: '.$this->namespace);
+        }
+
+        list($this->vendor, $pluralType) = explode('.', $this->namespace);
+
+        $this->addonType = str_singular($pluralType);
+
+        if (! $this->path) {
+            $this->path = \Platform::config('addons.location').sprintf("/%s/%s/%s", $this->vendor, $pluralType, $this->name);
         }
 
         $this->validatePath();
 
-        if ($this->locator) {
-            $this->path = $this->locator->locate($this->identifier, $this->getAddonType());
-        }
+//        if ($this->locator) {
+//            $this->path = $this->locator->locate($this->namespace, $this->getAddonType());
+//        }
 
         $this->getComposerJson();
 
@@ -120,8 +133,8 @@ class Installer
 
     public function ensureNotInstalledBefore()
     {
-        if ($addon = AddonModel::byIdentifier($this->getIdentifier())) {
-            throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getIdentifier()));
+        if ($addon = AddonModel::byIdentifier($this->getName(), $this->getNamespace())) {
+            throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getName()));
         }
     }
 
@@ -139,13 +152,6 @@ class Installer
     {
         return $this->addonType;
     }
-//
-//    public function vendor()
-//    {
-//        list($vendor,) = explode('/', $this->identifier);
-//
-//        return $vendor;
-//    }
 
     public function setAddonType($addonType)
     {
@@ -153,6 +159,13 @@ class Installer
 
         return $this;
     }
+//
+//    public function vendor()
+//    {
+//        list($vendor,) = explode('/', $this->identifier);
+//
+//        return $vendor;
+//    }
 
     /**
      * Parse PHP Namespace from composer config
@@ -201,20 +214,51 @@ class Installer
         return $this;
     }
 
-    public function getIdentifier()
+    public function getName()
     {
-        return $this->identifier;
+        return $this->name;
     }
 
     /**
      * Set addon namespace
      *
-     * @param string $identifier
+     * @param string $name
      * @return Installer
      */
-    public function setIdentifier($identifier)
+    public function setName($name)
     {
-        $this->identifier = $identifier;
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * @param mixed $namespace
+     */
+    public function setNamespace($namespace): Installer
+    {
+        $this->namespace = $namespace;
+
+        return $this;
+    }
+
+    public function setIdentifier($identifer)
+    {
+        try {
+            list($this->vendor, $pluralType, $this->name) = explode('.', $identifer);
+            $this->namespace = $this->vendor.'.'.$pluralType;
+            $this->addonType = str_singular($pluralType);
+        } catch (Exception $e) {
+            PlatformException::fail(sprintf("Can not parse identifier [%s]: ", $identifer, $e->getMessage()));
+        }
 
         return $this;
     }
@@ -226,19 +270,13 @@ class Installer
 
     protected function make()
     {
-        list($vendor, $package) = array_map(
-            function ($value) {
-                return strtolower($value);
-            },
-            explode('.', $this->identifier)
-        );
-
+//                'name'          => str_unslug(studly_case($this->name).'_'.$this->addonType),
         try {
             $entry = AddonModel::query()->create([
-                'name'          => str_unslug(studly_case($package).'_'.$this->addonType),
-                'vendor'        => $vendor,
-                'package'       => $package,
-                'identifier'    => $this->identifier,
+                'name'          => $this->name,
+                'vendor'        => $this->vendor,
+                'namespace'     => $this->namespace,
+                'identifier'    => $this->namespace.'.'.$this->name,
                 'path'          => $this->relativePath(),
                 'type'          => $this->getAddonType(),
                 'psr_namespace' => $this->getPsrNamespace(),
@@ -278,12 +316,11 @@ class Installer
     protected function installSubAddons()
     {
         if ($subAddons = $this->addon->installs()) {
-            foreach ($subAddons as $identifier => $subAddon) {
+            foreach ($subAddons as $identifier => $path) {
                 /** @var \SuperV\Platform\Domains\Addon\Installer $installer */
                 $installer = app(self::class);
                 $installer->setIdentifier($identifier)
-                          ->setPath($this->path.'/'.$subAddon['path'])
-                          ->setAddonType($subAddon['type'])
+                          ->setPath($this->path.'/'.$path)
                           ->install();
             }
         }
