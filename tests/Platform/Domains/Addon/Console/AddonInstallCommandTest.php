@@ -13,12 +13,14 @@ class AddonInstallCommandTest extends TestCase
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
         $installer->shouldReceive('setCommand')->once()->andReturnSelf();
         $installer->shouldReceive('setPath')->with('path/to/addon')->once()->andReturnSelf();
-        $installer->shouldReceive('setNamespace')->with('addon.slug')->once()->andReturnSelf();
+        $installer->shouldReceive('setIdentifier')->with('vendor/package')->once()->andReturnSelf();
+        $installer->shouldReceive('setAddonType')->with('addon')->once()->andReturnSelf();
         $installer->shouldReceive('install')->once();
 
         $this->artisan('addon:install', [
-            '--path'    => 'path/to/addon',
-            'namespace' => 'addon.slug',
+            '--path'     => 'path/to/addon',
+            'identifier' => 'vendor/package',
+            '--type'     => 'addon',
         ]);
     }
 
@@ -27,11 +29,12 @@ class AddonInstallCommandTest extends TestCase
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
         $installer->shouldReceive('setCommand')->once()->andReturnSelf();
         $installer->shouldReceive('setLocator')->once()->andReturnSelf();
-        $installer->shouldReceive('setNamespace')->with('vendor.addons.slug')->once()->andReturnSelf();
+        $installer->shouldReceive('setIdentifier')->with('vendor/package')->once()->andReturnSelf();
+        $installer->shouldReceive('setAddonType')->with('module')->once()->andReturnSelf();
         $installer->shouldReceive('install')->once();
 
         $this->artisan('addon:install', [
-            'namespace' => 'vendor.addons.slug',
+            'identifier' => 'vendor/package',
         ]);
     }
 
@@ -42,8 +45,8 @@ class AddonInstallCommandTest extends TestCase
         $installer->shouldReceive('seed')->once();
 
         $this->artisan('addon:install', [
-            'namespace' => 'vendor.addons.slug',
-            '--seed'    => true,
+            'identifier' => 'vendor/package',
+            '--seed'     => true,
         ]);
     }
 }

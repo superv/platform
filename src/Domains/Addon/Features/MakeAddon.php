@@ -2,22 +2,22 @@
 
 namespace SuperV\Platform\Domains\Addon\Features;
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\Addon\Events\MakingAddonEvent;
 use SuperV\Platform\Domains\Addon\Jobs\CreateAddonFiles;
 use SuperV\Platform\Domains\Addon\Jobs\CreateAddonPaths;
 use SuperV\Platform\Domains\Addon\Jobs\MakeAddonModel;
+use SuperV\Platform\Support\Dispatchable;
 
 class MakeAddon
 {
-    use DispatchesJobs;
+    use Dispatchable;
 
     /**
      * Slug of the addon as vendor.type.name.
      *
      * @var string
      */
-    private $slug;
+    private $identifier;
 
     /**
      * Target path of the addon.
@@ -26,20 +26,21 @@ class MakeAddon
      */
     private $path;
 
-    public function __construct($slug, $path = null)
+    protected $type;
+
+    public function __construct($identifier, $type, $path = null)
     {
-        $this->slug = $slug;
+        $this->identifier = $identifier;
         $this->path = $path;
+        $this->type = $type;
     }
 
     public function handle()
     {
-        $model = $this->dispatch(new MakeAddonModel($this->slug, $this->path));
+        $model = MakeAddonModel::dispatch($this->identifier, $this->type, $this->path);
 
-        $this->dispatch(new CreateAddonPaths($model));
-
-        $this->dispatch(new CreateAddonFiles($model));
-
+        CreateAddonPaths::dispatch($model);
+        CreateAddonFiles::dispatch($model);
         MakingAddonEvent::dispatch($model);
 
         exec("composer install  -d ".base_path());

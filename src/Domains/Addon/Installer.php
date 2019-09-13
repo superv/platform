@@ -9,13 +9,15 @@ use SuperV\Platform\Domains\Addon\Contracts\AddonLocator;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 use SuperV\Platform\Domains\Addon\Jobs\SeedAddon;
 use SuperV\Platform\Exceptions\PathNotFoundException;
+use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\Exceptions\ValidationException;
 use SuperV\Platform\Support\Concerns\HasPath;
 
 class Installer
 {
     use HasPath;
 
-    protected $namespace;
+    protected $identifier;
 
     protected $path;
 
@@ -33,6 +35,8 @@ class Installer
 
     /** @var AddonLocator */
     protected $locator;
+
+    protected $addonType;
 
     public function __construct(Kernel $console)
     {
@@ -55,15 +59,19 @@ class Installer
     {
         $this->ensureNotInstalledBefore();
 
-        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $this->namespace)) {
-            throw new \Exception('Namespace ['.$this->namespace.'] should be snake case and formatted like: {vendor}.{type}.{name}');
+        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $this->identifier)) {
+            throw new \Exception('Identifier should be in this format: {vendor}.{package}: '.$this->identifier);
         }
+
+        $this->validatePath();
 
         if ($this->locator) {
-            $this->path = $this->locator->locate($this->namespace);
+            $this->path = $this->locator->locate($this->identifier, $this->getAddonType());
         }
 
-        $this->validate();
+        $this->getComposerJson();
+
+//        $this->determineAddonType();
 
         $this->make();
 
@@ -78,10 +86,21 @@ class Installer
         return $this;
     }
 
-    /**
-     * Validate addon parameters
-     */
-    public function validate()
+    public function determineAddonType()
+    {
+        if ($this->addonType) {
+            return;
+        }
+        if (! $type = array_get($this->composerJson, 'type')) {
+            throw new \Exception('Composer type not provided in composer.json');
+        }
+
+        $this->addonType = explode('-', $type)[1];
+
+        return $this;
+    }
+
+    public function validatePath()
     {
         $realPath = $this->realPath();
 
@@ -92,10 +111,6 @@ class Installer
         if (! file_exists($realPath)) {
             throw new PathNotFoundException("Path does not exist: [{$realPath}]");
         }
-
-        if (! $this->composer('type')) {
-            throw new \Exception('Composer type not provided in composer.json');
-        }
     }
 
     public function seed()
@@ -105,8 +120,8 @@ class Installer
 
     public function ensureNotInstalledBefore()
     {
-        if ($addon = AddonModel::byNamespace($this->getNamespace())) {
-            throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getNamespace()));
+        if ($addon = AddonModel::byIdentifier($this->getIdentifier())) {
+            throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getIdentifier()));
         }
     }
 
@@ -120,21 +135,23 @@ class Installer
         return $this->addon;
     }
 
-    /**
-     * Parse addon type from composer config
-     *
-     * @return string
-     */
-    public function type()
+    public function getAddonType()
     {
-        return explode('-', $this->composer('type'))[1];
+        return $this->addonType;
     }
+//
+//    public function vendor()
+//    {
+//        list($vendor,) = explode('/', $this->identifier);
+//
+//        return $vendor;
+//    }
 
-    public function vendor()
+    public function setAddonType($addonType)
     {
-        list($vendor, ,) = explode('.', $this->namespace);
+        $this->addonType = $addonType;
 
-        return $vendor;
+        return $this;
     }
 
     /**
@@ -144,7 +161,7 @@ class Installer
      */
     public function getPsrNamespace()
     {
-        $namespace = array_keys($this->composer('autoload.psr-4'))[0];
+        $namespace = array_keys($this->getComposerValue('autoload.psr-4'))[0];
 
         return rtrim($namespace, '\\');
     }
@@ -156,7 +173,7 @@ class Installer
      */
     public function name()
     {
-        return studly_case(str_replace('-', '_', explode('/', $this->composer('name'))[1]));
+        return studly_case(str_replace('-', ' ', explode('/', $this->getComposerValue('name'))[1]));
     }
 
     /**
@@ -184,38 +201,52 @@ class Installer
         return $this;
     }
 
-    public function getNamespace()
+    public function getIdentifier()
     {
-        return $this->namespace;
+        return $this->identifier;
     }
 
     /**
      * Set addon namespace
      *
-     * @param string $namespace
+     * @param string $identifier
      * @return Installer
      */
-    public function setNamespace($namespace)
+    public function setIdentifier($identifier)
     {
-        $this->namespace = $namespace;
+        $this->identifier = $identifier;
 
         return $this;
     }
 
-    /**
-     * Make addon entry
-     */
+    public static function resolve(): Installer
+    {
+        return app(static::class);
+    }
+
     protected function make()
     {
-        $entry = AddonModel::query()->create([
-            'name'          => $this->name(),
-            'vendor'        => $this->vendor(),
-            'namespace'     => $this->namespace,
-            'path'          => $this->relativePath(),
-            'type'          => $this->type(),
-            'psr_namespace' => $this->getPsrNamespace(),
-            'enabled'       => true,
-        ]);
+        list($vendor, $package) = array_map(
+            function ($value) {
+                return strtolower($value);
+            },
+            explode('.', $this->identifier)
+        );
+
+        try {
+            $entry = AddonModel::query()->create([
+                'name'          => str_unslug(studly_case($package).'_'.$this->addonType),
+                'vendor'        => $vendor,
+                'package'       => $package,
+                'identifier'    => $this->identifier,
+                'path'          => $this->relativePath(),
+                'type'          => $this->getAddonType(),
+                'psr_namespace' => $this->getPsrNamespace(),
+                'enabled'       => true,
+            ]);
+        } catch (ValidationException $e) {
+            PlatformException::fail(sprintf("Could not create addon model [%s]", $e->getErrorsAsString()));
+        }
 
         /** @var \SuperV\Platform\Domains\Addon\AddonModel $entry */
         $this->addon = $entry->resolveAddon();
@@ -236,7 +267,7 @@ class Installer
     {
         $this->console->call(
             'migrate',
-            ['--namespace' => $this->addon->getNamespace(), '--force' => true],
+            ['--namespace' => $this->addon->getIdentifier(), '--force' => true],
             $this->command ? $this->command->getOutput() : null
         );
     }
@@ -247,11 +278,12 @@ class Installer
     protected function installSubAddons()
     {
         if ($subAddons = $this->addon->installs()) {
-            foreach ($subAddons as $slug => $path) {
+            foreach ($subAddons as $identifier => $subAddon) {
                 /** @var \SuperV\Platform\Domains\Addon\Installer $installer */
                 $installer = app(self::class);
-                $installer->setNamespace($slug)
-                          ->setPath($this->path.'/'.$path)
+                $installer->setIdentifier($identifier)
+                          ->setPath($this->path.'/'.$subAddon['path'])
+                          ->setAddonType($subAddon['type'])
                           ->install();
             }
         }
@@ -260,24 +292,24 @@ class Installer
     /**
      * Load composer config from addon path
      *
-     * @param null $key
      * @return array|string
      */
-    protected function composer($key = null)
+    protected function getComposerJson()
     {
         if (! $this->composerJson) {
             $composerFile = $this->realPath().'/composer.json';
             if (! file_exists($composerFile)) {
                 return null;
             }
+
             $this->composerJson = json_decode(file_get_contents($composerFile), true);
         }
 
-        return $key ? array_get($this->composerJson, $key) : $this->composerJson;
+        return $this->composerJson;
     }
 
-    public static function resolve(): Installer
+    protected function getComposerValue($key)
     {
-        return app(static::class);
+        return array_get($this->getComposerJson(), $key);
     }
 }

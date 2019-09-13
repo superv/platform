@@ -27,7 +27,7 @@ class Addon
     {
         app()->register($this->resolveProvider());
 
-        superv('addons')->put($this->getNamespace(), $this);
+        superv('addons')->put($this->getIdentifier(), $this);
 
         AddonBootedEvent::dispatch($this);
     }
@@ -72,9 +72,9 @@ class Addon
         return $this->entry;
     }
 
-    public function getNamespace()
+    public function getIdentifier()
     {
-        return $this->entry->getNamespace();
+        return $this->entry->getIdentifier();
     }
 
     public function getShortSlug()
@@ -90,6 +90,11 @@ class Addon
     public function getVendor()
     {
         return $this->entry->getVendor();
+    }
+
+    public function getType()
+    {
+        return $this->entry->getType();
     }
 
     /**
@@ -111,7 +116,7 @@ class Addon
             $fromModule = require $path;
             $merged = array_replace_recursive($fromModule, $config);
 
-            config()->set($this->getNamespace().'::'.$key, $merged);
+            config()->set($this->getIdentifier().'::'.$key, $merged);
         }
     }
 

@@ -21,7 +21,7 @@ class PlatformTest extends TestCase
     {
         $this->setUpAddon();
 
-        $entry = AddonModel::byNamespace('superv.addons.sample');
+        $entry = AddonModel::byIdentifier('superv.sample');
 
         Platform::boot();
 

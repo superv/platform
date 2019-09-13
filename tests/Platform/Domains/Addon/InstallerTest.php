@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\addon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use RuntimeException;
 use SuperV\Addons\Sample\SampleAddon;
+use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Addon\Locator;
@@ -31,13 +32,18 @@ class InstallerTest extends TestCase
             });
 
         $installer->setPath('tests/Platform/__fixtures__/sample-addon')
-                  ->setNamespace('superv.addons.sample')
+                  ->setIdentifier('superv.sample')
+                  ->setAddonType('addon')
                   ->install();
 
+        $addon = AddonModel::query()->whereVendor('superv')->wherePackage('sample')->first();
+        $this->assertNotNull($addon);
+
         $this->assertDatabaseHas('sv_addons', [
-            'name'          => 'SampleAddon',
+            'name'          => 'Sample Addon',
             'vendor'        => 'superv',
-            'namespace'     => 'superv.addons.sample',
+            'package'       => 'sample',
+            'identifier'    => 'superv.sample',
             'type'          => 'addon',
             'path'          => 'tests/Platform/__fixtures__/sample-addon',
             'enabled'       => true,
@@ -65,10 +71,11 @@ class InstallerTest extends TestCase
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-addon'));
 
         $this->installer()->setPath('tests/Platform/__fixtures__/sample-addon')
-             ->setNamespace('superv.addons.sample')
+             ->setIdentifier('superv.sample')
+             ->setAddonType('addon')
              ->install();
 
-        $addon = superv('addons')->get('superv.addons.sample');
+        $addon = superv('addons')->get('superv.sample');
         $this->assertNotNull($addon);
         $this->assertInstanceOf(SampleAddon::class, $addon);
     }
@@ -80,16 +87,17 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('tests/Platform/__fixtures__/superv/addons/another')
-             ->setNamespace('superv.addons.another')
+             ->setAddonType('addon')
+             ->setIdentifier('superv.another')
              ->install();
 
         $this->assertDatabaseHas('sv_addons', [
-            'name'      => 'AnotherAddon',
-            'namespace' => 'superv.addons.another',
+            'name'       => 'Another Addon',
+            'identifier' => 'superv.another',
         ]);
         $this->assertDatabaseHas('sv_addons', [
-            'name'          => 'AnotherSubAddon',
-            'namespace'     => 'superv.themes.another_sub',
+            'name'          => 'AnotherSub Addon',
+            'identifier'    => 'superv.another_sub',
             'type'          => 'addon',
             'path'          => 'tests/Platform/__fixtures__/superv/addons/another/addons/themes/another_sub-addon',
             'enabled'       => true,
@@ -103,7 +111,8 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('tests/Platform/__fixtures__/sample-addon')
-             ->setNamespace('superv.addons.sample')
+             ->setAddonType('addon')
+             ->setIdentifier('superv.sample')
              ->install();
 
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_addon_foo_migration']);
@@ -111,7 +120,7 @@ class InstallerTest extends TestCase
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200200_addon_baz_migration']);
     }
 
-    function test__locates_addon_from_slug_if_path_is_not_given()
+    function __locates_addon_from_slug_if_path_is_not_given()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another'));
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another/addons/themes/another_sub-addon'));
@@ -119,11 +128,12 @@ class InstallerTest extends TestCase
 
         $addon = $this->installer()
                       ->setLocator(new Locator())
-                      ->setNamespace('superv.addons.another')
+                      ->setIdentifier('superv.another')
+                      ->setAddonType('addon')
                       ->install()
                       ->getAddon();
 
-        $this->assertEquals('tests/Platform/__fixtures__/superv/addons/another', (new Locator())->locate('superv.addons.another'));
+        $this->assertEquals('tests/Platform/__fixtures__/superv/addons/another', (new Locator())->locate('superv.another', $addon->getType()));
         $this->assertEquals('tests/Platform/__fixtures__/superv/addons/another', $addon->path());
     }
 
@@ -133,7 +143,7 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('path/does/not/exist')
-             ->setNamespace('superv.addons.sample')
+             ->setIdentifier('superv.sample')
              ->install();
     }
 
@@ -143,7 +153,7 @@ class InstallerTest extends TestCase
         $installer->setPath('tests/Platform/__fixtures__/sample-addon');
 
         $this->assertEquals("SuperV\\Addons\\Sample", $installer->getPsrNamespace());
-        $this->assertEquals('addon', $installer->type());
+        $this->assertEquals('addon', $installer->determineAddonType()->getAddonType());
         $this->assertEquals('SampleAddon', $installer->name());
     }
 

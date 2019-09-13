@@ -59,7 +59,7 @@ class Platform extends Addon
         return $this->path($prefix);
     }
 
-    public function getNamespace()
+    public function getIdentifier()
     {
         return 'platform';
     }

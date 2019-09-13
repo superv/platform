@@ -1,4 +1,4 @@
-<?php namespace {model.namespace};
+<?php namespace {model.psr_namespace};
 
 use SuperV\Platform\Domains\Addon\Types\Agent;
 

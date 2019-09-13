@@ -7,14 +7,18 @@ use SuperV\Platform\Domains\Addon\Features\MakeAddon;
 
 class MakeAddonCommand extends Command
 {
-    protected $signature = 'make:addon {slug} {--path=}';
+    protected $signature = 'make:addon {identifier} {--type=module} {--path=}';
 
     public function handle()
     {
-        $slug = $this->argument('slug');
-        $path = $this->option('path');
-        $this->dispatch(new MakeAddon($slug, $path));
+        $identifier = $this->argument('identifier');
 
-        $this->info('The ['.$slug.'] addon was created.');
+        MakeAddon::dispatch(
+            $identifier,
+            $this->option('type'),
+            $this->option('path')
+        );
+
+        $this->info('The ['.$identifier.'] addon was created.');
     }
 }

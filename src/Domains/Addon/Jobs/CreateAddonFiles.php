@@ -5,10 +5,13 @@ namespace SuperV\Platform\Domains\Addon\Jobs;
 use Platform;
 use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Addon\AddonModel;
+use SuperV\Platform\Support\Dispatchable;
 use SuperV\Platform\Support\Parser;
 
 class CreateAddonFiles
 {
+    use Dispatchable;
+
     /** @var Filesystem */
     protected $filesystem;
 
@@ -35,10 +38,10 @@ class CreateAddonFiles
                 'class_name' => $addonClass = "{$name}{$type}",
                 'extends'    => ucwords($type),
                 'short_name' => $shortName = $this->model->shortName(),
-                'slug'       => $this->model->getNamespace(),
+                'slug'       => $this->model->getPsrNamespace(),
             ],
             'model'       => $this->model->toArray(),
-            'psr4_prefix' => str_replace('\\', '\\\\', $this->model->namespace),
+            'psr4_prefix' => str_replace('\\', '\\\\', $this->model->getPsrNamespace()),
         ];
 
         $this->makeStub('addons/'.strtolower($type).'.stub', $tokens, "src/{$addonClass}.php");

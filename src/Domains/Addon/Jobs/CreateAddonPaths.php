@@ -4,9 +4,12 @@ namespace SuperV\Platform\Domains\Addon\Jobs;
 
 use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Addon\AddonModel;
+use SuperV\Platform\Support\Dispatchable;
 
 class CreateAddonPaths
 {
+    use Dispatchable;
+
     /** @var \SuperV\Platform\Domains\Addon\AddonModel */
     private $model;
 

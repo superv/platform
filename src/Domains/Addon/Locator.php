@@ -16,16 +16,18 @@ class Locator implements AddonLocator
         $this->addonsPath = $addonsPath;
     }
 
-    public function locate(string $slug)
+    public function locate(string $identifier, string $type)
     {
-        list($vendor, $type, $name) = array_map(
+        list($vendor, $package) = array_map(
             function ($value) {
                 return strtolower($value);
             },
-            explode('.', $slug)
+            explode('.', $identifier)
         );
 
-        return $this->addonsPath()."/{$vendor}/{$type}/{$name}";
+        $type = str_plural($type);
+
+        return $this->addonsPath()."/{$vendor}/{$type}/{$package}";
     }
 
     protected function addonsPath()

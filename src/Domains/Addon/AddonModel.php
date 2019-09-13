@@ -30,9 +30,14 @@ class AddonModel extends Entry
         return $this->psr_namespace;
     }
 
-    public function getNamespace()
+    public function getIdentifier()
     {
-        return $this->namespace;
+        return $this->identifier;
+    }
+
+    public function getPackage()
+    {
+        return $this->package;
     }
 
     /**
@@ -40,13 +45,13 @@ class AddonModel extends Entry
      */
     public function addonClass()
     {
-        return $this->getPsrNamespace().'\\'.$this->name;
+        return $this->getPsrNamespace().'\\'.studly_case($this->getPackage().'_'.$this->getType());
     }
 
 
     public function shortSlug()
     {
-        $parts = explode('.', $this->getNamespace());
+        $parts = explode('/', $this->getPackage());
 
         return $parts[count($parts) - 1];
     }
@@ -66,14 +71,19 @@ class AddonModel extends Entry
         return $this->vendor;
     }
 
+    public function getType()
+    {
+        return $this->type;
+    }
+
     public function getRealPath()
     {
         return base_path($this->getRelativePath());
     }
 
-    public static function byNamespace($namespace): ?AddonModel
+    public static function byIdentifier($identifier): ?AddonModel
     {
-        return static::query()->where('namespace', $namespace)->first();
+        return static::query()->where('identifier', $identifier)->first();
     }
 
 }

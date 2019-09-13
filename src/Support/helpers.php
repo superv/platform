@@ -283,7 +283,7 @@ function uuid()
 
 function str_unslug(string $slug)
 {
-    return ucwords(str_replace('_', ' ', $slug));
+    return ucwords(str_replace(['_', '.'], ' ', $slug));
 }
 
 function str_prefix(?string $str, $prefix, $glue = '.')
