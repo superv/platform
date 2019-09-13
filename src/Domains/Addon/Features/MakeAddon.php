@@ -12,34 +12,28 @@ class MakeAddon
 {
     use Dispatchable;
 
-    /**
-     * Slug of the addon as vendor.type.name.
-     *
-     * @var string
-     */
-    private $identifier;
 
     /**
-     * Target path of the addon.
-     *
-     * @var null
+     * @var \SuperV\Platform\Domains\Addon\Features\MakeAddonRequest
      */
-    private $path;
+    protected $request;
 
-    protected $type;
+    /**
+     * @var bool
+     */
+    protected $force;
 
-    public function __construct($identifier, $type, $path = null)
+    public function __construct(MakeAddonRequest $request, bool $force = false)
     {
-        $this->identifier = $identifier;
-        $this->path = $path;
-        $this->type = $type;
+        $this->request = $request;
+        $this->force = $force;
     }
 
     public function handle()
     {
-        $model = MakeAddonModel::dispatch($this->identifier, $this->type, $this->path);
+        $model = MakeAddonModel::makeFromRequest($this->request);
 
-        CreateAddonPaths::dispatch($model);
+        CreateAddonPaths::dispatch($model, $this->force);
         CreateAddonFiles::dispatch($model);
         MakingAddonEvent::dispatch($model);
 

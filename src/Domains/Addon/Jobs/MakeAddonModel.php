@@ -3,59 +3,99 @@
 namespace SuperV\Platform\Domains\Addon\Jobs;
 
 use SuperV\Platform\Domains\Addon\AddonModel;
+use SuperV\Platform\Domains\Addon\Features\MakeAddonRequest;
 use SuperV\Platform\Support\Dispatchable;
 
 class MakeAddonModel
 {
     use Dispatchable;
 
-    private $identifier;
+    /**
+     * @var string
+     */
+    protected $vendor;
 
     /**
-     * @var null
+     * @var string
      */
-    private $path;
+    protected $name;
 
-    protected $type;
+    /**
+     * @var string
+     */
+    protected $addonType;
 
-    public function __construct($identifier, $type, $path = null)
+    protected $identifier;
+
+    protected $addonPath;
+
+    public function __construct(string $vendor, string $name, string $addonType)
     {
-        $this->identifier = $identifier;
-
-        $this->path = $path;
-
-        $this->type = $type;
+        $this->vendor = $vendor;
+        $this->name = $name;
+        $this->addonType = $addonType;
     }
 
-    public function handle()
+    public function make()
     {
-//        if (! str_is('*.*.*', $this->identifier)) {
-//            throw new \Exception('Slug should be snake case and formatted like: {vendor}.{type}.{name}');
-//        }
-
-        if (! preg_match('/^([a-zA-Z0-9_]+)\/([a-zA-Z0-9_]+)$/', $this->identifier)) {
-            throw new \Exception('Identifier should be in this format: {vendor}/{package}');
-        }
-
-        list($vendor, $package) = array_map(
-            function ($value) {
-                return str_slug(strtolower($value), '_');
-            },
-            explode('/', $this->identifier)
-        );
-
-        // single point of truth
-        $type = str_plural($this->type);
         $addonsDirectory = sv_config('addons.location');
 
+        if (! $this->identifier) {
+            $this->identifier = sprintf("%s.%s.%s", $this->vendor, str_plural($this->addonType), $this->name);
+        }
+
+        if (! $this->addonPath) {
+            $this->addonPath = sprintf("%s/%s/%s/%s", $addonsDirectory, $this->vendor, str_plural($this->addonType), $this->name);
+        }
+
+        $psrNamespace = ucfirst(camel_case(($this->vendor == 'superv' ? 'super_v' : $this->vendor))).'\\'.ucfirst(camel_case($this->addonType)).'\\'.ucfirst(camel_case($this->name));
+
         return new AddonModel([
-            'vendor'        => $vendor,
-            'package'       => $package,
-            'type'          => str_singular($type),
-            'name'          => $package,
-            'path'          => $this->path ?: "{$addonsDirectory}/{$vendor}/{$type}/{$package}",
-            'psr_namespace' => ucfirst(camel_case(($vendor == 'superv' ? 'super_v' : $vendor))).'\\'.ucfirst(camel_case($type)).'\\'.ucfirst(camel_case($package)),
+            'vendor'        => $this->vendor,
+            'name'          => $this->name,
+            'identifier'    => $this->identifier,
+            'type'          => str_singular($this->addonType),
+            'path'          => $this->addonPath,
+            'psr_namespace' => $psrNamespace,
             'enabled'       => false,
         ]);
+    }
+
+    /**
+     * @param mixed $identifier
+     */
+    public function setIdentifier($identifier): void
+    {
+        $this->identifier = $identifier;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAddonPath()
+    {
+        return $this->addonPath;
+    }
+
+    /**
+     * @param mixed $addonPath
+     */
+    public function setAddonPath($addonPath): void
+    {
+        $this->addonPath = $addonPath;
+    }
+
+    public static function makeFromRequest(MakeAddonRequest $request)
+    {
+        $self = new MakeAddonModel(
+            $request->getVendor(),
+            $request->getPackage(),
+            $request->getAddonType()
+        );
+
+        $self->setIdentifier($request->getIdentifier());
+        $self->setAddonPath($request->getTargetPath());
+
+        return $self->make();
     }
 }

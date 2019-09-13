@@ -15,6 +15,13 @@ class MigrateCommandTest extends TestCase
     use RefreshDatabase;
     use TestsConsoleCommands;
 
+    protected function setUp()
+    {
+        parent::setUp();
+
+        Scopes::clear();
+    }
+
     function test__migrate_command_calls_migrator_with_proper_arguments()
     {
         /** @var  \SuperV\Platform\Domains\Database\Migrations\Migrator $migrator */
@@ -36,6 +43,7 @@ class MigrateCommandTest extends TestCase
         Scopes::register('superv.addons.sample', base_path('tests/Platform/__fixtures__/sample-addon/database/migrations'));
 
         $this->artisan('migrate', ['--namespace' => 'superv.addons.sample']);
+
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_addon_foo_migration',
                                                 'namespace' => 'superv.addons.sample']);
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200100_addon_bar_migration',

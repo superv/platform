@@ -6,6 +6,11 @@ class Scopes
 {
     protected static $scopes = [];
 
+    public static function clear()
+    {
+        static::$scopes = [];
+    }
+
     public static function register($key, $path)
     {
         static::$scopes[$key] = $path;

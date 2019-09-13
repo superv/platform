@@ -6,8 +6,8 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
 use RuntimeException;
-use SuperV\Platform\Domains\Addon\Contracts\AddonLocator;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
+use SuperV\Platform\Domains\Addon\Jobs\MakeAddonModel;
 use SuperV\Platform\Domains\Addon\Jobs\SeedAddon;
 use SuperV\Platform\Exceptions\PathNotFoundException;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -36,23 +36,18 @@ class Installer
     /** @var array * */
     protected $composerJson;
 
-    /** @var AddonLocator */
-    protected $locator;
+    /** @var \SuperV\Platform\Domains\Addon\Features\MakeAddonRequest */
+    protected $request;
 
-    protected $addonType;
+    protected $addonType = 'addon';
 
     protected $vendor;
+
+    protected $identifier;
 
     public function __construct(Kernel $console)
     {
         $this->console = $console;
-    }
-
-    public function setLocator(AddonLocator $locator)
-    {
-        $this->locator = $locator;
-
-        return $this;
     }
 
     /**
@@ -64,16 +59,15 @@ class Installer
     {
         $this->ensureNotInstalledBefore();
 
-        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $this->namespace)) {
-            throw new \Exception('Identifier should be in this format: {vendor}.{package}: '.$this->namespace);
-        }
+//        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $this->namespace)) {
+//            throw new \Exception('Identifier should be in this format: {vendor}.{package}: '.$this->namespace);
+//        }
 
-        list($this->vendor, $pluralType) = explode('.', $this->namespace);
+//        list($this->vendor, $pluralType) = explode('.', $this->namespace);
 
-        $this->addonType = str_singular($pluralType);
 
         if (! $this->path) {
-            $this->path = \Platform::config('addons.location').sprintf("/%s/%s/%s", $this->vendor, $pluralType, $this->name);
+            $this->path = \Platform::config('addons.location').sprintf("/%s/%s/%s", $this->vendor, str_plural($this->addonType), $this->name);
         }
 
         $this->validatePath();
@@ -252,36 +246,65 @@ class Installer
 
     public function setIdentifier($identifer)
     {
+        $this->identifier = $identifer;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    public function parseFromIdentifier($identifier)
+    {
         try {
-            list($this->vendor, $pluralType, $this->name) = explode('.', $identifer);
-            $this->namespace = $this->vendor.'.'.$pluralType;
+            list($this->vendor, $pluralType, $this->name) = explode('.', $identifier);
             $this->addonType = str_singular($pluralType);
+
+            $this->identifier = $identifier;
         } catch (Exception $e) {
-            PlatformException::fail(sprintf("Can not parse identifier [%s]: ", $identifer, $e->getMessage()));
+            PlatformException::fail(sprintf("Can not parse from identifier [%s]: ", $identifier, $e->getMessage()));
         }
 
         return $this;
     }
 
-    public static function resolve(): Installer
+    protected function getVendor()
     {
-        return app(static::class);
+        return $this->vendor;
+    }
+
+    public function setVendor($vendor)
+    {
+        $this->vendor = $vendor;
+
+        return $this;
     }
 
     protected function make()
     {
-//                'name'          => str_unslug(studly_case($this->name).'_'.$this->addonType),
         try {
-            $entry = AddonModel::query()->create([
-                'name'          => $this->name,
-                'vendor'        => $this->vendor,
-                'namespace'     => $this->namespace,
-                'identifier'    => $this->namespace.'.'.$this->name,
+            $maker = new MakeAddonModel(
+                $this->getVendor(),
+                $this->getName(),
+                $this->getAddonType()
+            );
+
+            $maker->setIdentifier($this->getIdentifier());
+
+            $entry = $maker->make();
+
+            $entry->fill([
                 'path'          => $this->relativePath(),
-                'type'          => $this->getAddonType(),
                 'psr_namespace' => $this->getPsrNamespace(),
                 'enabled'       => true,
             ]);
+
+            $entry->save();
         } catch (ValidationException $e) {
             PlatformException::fail(sprintf("Could not create addon model [%s]", $e->getErrorsAsString()));
         }
@@ -319,7 +342,7 @@ class Installer
             foreach ($subAddons as $identifier => $path) {
                 /** @var \SuperV\Platform\Domains\Addon\Installer $installer */
                 $installer = app(self::class);
-                $installer->setIdentifier($identifier)
+                $installer->parseFromIdentifier($identifier)
                           ->setPath($this->path.'/'.$path)
                           ->install();
             }
@@ -331,7 +354,7 @@ class Installer
      *
      * @return array|string
      */
-    protected function getComposerJson()
+    public function getComposerJson()
     {
         if (! $this->composerJson) {
             $composerFile = $this->realPath().'/composer.json';
@@ -348,5 +371,10 @@ class Installer
     protected function getComposerValue($key)
     {
         return array_get($this->getComposerJson(), $key);
+    }
+
+    public static function resolve(): Installer
+    {
+        return app(static::class);
     }
 }

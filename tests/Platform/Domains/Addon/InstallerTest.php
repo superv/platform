@@ -32,7 +32,7 @@ class InstallerTest extends TestCase
             });
 
         $installer->setPath('tests/Platform/__fixtures__/sample-addon')
-                  ->setNamespace('superv.addons')
+                  ->setVendor('superv')
                   ->setName('sample')
                   ->install();
 
@@ -42,8 +42,26 @@ class InstallerTest extends TestCase
         $this->assertDatabaseHas('sv_addons', [
             'name'          => 'sample',
             'vendor'        => 'superv',
-            'namespace'     => 'superv.addons',
             'identifier'    => 'superv.addons.sample',
+            'type'          => 'addon',
+            'path'          => 'tests/Platform/__fixtures__/sample-addon',
+            'enabled'       => true,
+            'psr_namespace' => 'SuperV\\Addons\\Sample',
+        ]);
+    }
+
+    function test__install_with_custom_identifier()
+    {
+        $installer = $this->setUpAddonInstaller('sample');
+        $installer->setIdentifier('sv.sample');
+        $installer->install();
+
+        $entry = AddonModel::byIdentifier('sv.sample');
+        $this->assertNotNull($entry);
+        $this->assertDatabaseHas('sv_addons', [
+            'name'          => 'sample',
+            'vendor'        => 'superv',
+            'identifier'    => 'sv.sample',
             'type'          => 'addon',
             'path'          => 'tests/Platform/__fixtures__/sample-addon',
             'enabled'       => true,
@@ -71,7 +89,7 @@ class InstallerTest extends TestCase
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-addon'));
 
         $this->installer()->setPath('tests/Platform/__fixtures__/sample-addon')
-             ->setNamespace('superv.addons')
+             ->setVendor('superv')
              ->setName('sample')
              ->install();
 
@@ -87,7 +105,7 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('tests/Platform/__fixtures__/superv/addons/another')
-             ->setNamespace('superv.addons')
+             ->setVendor('superv')
              ->setName('another')
              ->install();
 
@@ -111,7 +129,7 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('tests/Platform/__fixtures__/sample-addon')
-             ->setNamespace('superv.addons')
+             ->setVendor('superv')
              ->setName('sample')
              ->install();
 
@@ -143,19 +161,9 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('path/does/not/exist')
-             ->setNamespace('superv.addons')
+             ->setVendor('superv')
              ->setName('sample')
              ->install();
-    }
-
-    function test__parses_composer_data()
-    {
-        $installer = $this->installer();
-        $installer->setPath('tests/Platform/__fixtures__/sample-addon');
-
-        $this->assertEquals("SuperV\\Addons\\Sample", $installer->getPsrNamespace());
-        $this->assertEquals('addon', $installer->determineAddonType()->getAddonType());
-        $this->assertEquals('SampleAddon', $installer->name());
     }
 
     /**
@@ -163,6 +171,6 @@ class InstallerTest extends TestCase
      */
     protected function installer()
     {
-        return app(Installer::class);
+        return Installer::resolve();
     }
 }

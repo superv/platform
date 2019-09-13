@@ -21,7 +21,8 @@ class AddonModel extends Entry
         if (class_exists($class)) {
             return new $class($this);
         } else {
-            PlatformException::runtime("Could not resolve addon: ".$class);
+            $this->update(['enabled' => false]);
+            PlatformException::runtime(sprintf("Disabled unresolvable addon: [%s]", $class));
         }
     }
 

@@ -20,6 +20,7 @@ class Blueprints
         $table->uuid('uuid')->unique();
         $table->string('identifier')->showOnIndex();
         $table->string('namespace')->showOnIndex();
+        $table->string('full_id')->showOnIndex();
         $table->string('model')->nullable();
         $table->string('dsn');
 

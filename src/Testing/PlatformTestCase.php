@@ -11,7 +11,6 @@ use SuperV\Platform\Console\Jobs\InstallSuperV;
 use SuperV\Platform\Domains\Addon\Addon;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\Installer;
-use SuperV\Platform\Domains\Addon\Locator;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\PlatformServiceProvider;
@@ -112,15 +111,7 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected function setUpAddon($namespace = null, $name = null, $seed = false): Addon
     {
-        $path = $path ?? 'tests/Platform/__fixtures__/sample-addon';
-        $namespace = $namespace ?? 'superv.addons';
-        $name = $name ?? 'sample';
-
-        ComposerLoader::load(base_path($path));
-        $installer = $this->app->make(Installer::class)
-                               ->setPath($path)
-                               ->setNamespace($namespace)
-                               ->setName($name);
+        $installer = $this->setUpAddonInstaller($namespace, $name);
         $installer->install();
         if ($seed === true) {
             $installer->seed();
@@ -138,8 +129,6 @@ class PlatformTestCase extends OrchestraTestCase
             protected $slug = 'web';
 
             protected $hostname = 'superv.io';
-
-            protected $theme = 'themes.starter';
         });
 
         Hub::register(new class extends Port
@@ -192,8 +181,7 @@ class PlatformTestCase extends OrchestraTestCase
 
         foreach ($this->installs as $addon) {
             Installer::resolve()
-                     ->setLocator(new Locator())
-                     ->setName($addon)
+                     ->setIdentifier($addon)
                      ->install();
         }
     }
@@ -224,5 +212,20 @@ class PlatformTestCase extends OrchestraTestCase
     protected function shouldInstallPlatform()
     {
         return $this->shouldInstallPlatform && method_exists($this, 'refreshDatabase');
+    }
+
+    protected function setUpAddonInstaller($name, $vendor = null, $path = null): Installer
+    {
+        $path = $path ?? 'tests/Platform/__fixtures__/sample-addon';
+        $vendor = $vendor ?? 'superv';
+        $name = $name ?? 'sample';
+
+        ComposerLoader::load(base_path($path));
+        $installer = $this->app->make(Installer::class)
+                               ->setPath($path)
+                               ->setVendor($vendor)
+                               ->setName($name);
+
+        return $installer;
     }
 }
