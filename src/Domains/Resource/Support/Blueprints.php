@@ -102,6 +102,7 @@ class Blueprints
         if ($table instanceof Blueprint) {
             $resource->label('Forms');
             $resource->resourceKey('form');
+            $resource->setName('forms');
             $resource->nav('acp.platform.forms');
             $resource->model(FormModel::class);
 

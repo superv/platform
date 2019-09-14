@@ -89,6 +89,7 @@ class Hook
         }
 
         $configClass = $baseNamespace."\\".studly_case($plural.'_config');
+
         if (class_exists($configClass)) {
             $attributes['config'] = $configClass::make($attributes['config']);
         }

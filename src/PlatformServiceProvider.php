@@ -24,6 +24,7 @@ use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
 use SuperV\Platform\Domains\Resource\Extension\RegisterExtensions;
+use SuperV\Platform\Domains\Resource\Extension\RegisterHooksInPath;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Events\PlatformBootingEvent;
 use SuperV\Platform\Exceptions\PlatformExceptionHandler;
@@ -134,6 +135,12 @@ class PlatformServiceProvider extends BaseServiceProvider
         // Boot all addons
         //
         $this->platform->boot();
+
+        RegisterHooksInPath::dispatch(
+            'platform',
+            $this->platform->realPath('src/Resources'),
+            $this->platform->getPsrNamespace().'\Resources'
+        );
 
         // Register routes needed by platform
         //

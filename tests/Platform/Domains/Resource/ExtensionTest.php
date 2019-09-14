@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Extension\RegisterExtensionsInPath;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\Fixtures\Extension\TestMultipleResourcesArrayExtension;
 use Tests\Platform\Domains\Resource\Fixtures\Extension\TestMultipleResourcesPatternExtension;
 use Tests\Platform\Domains\Resource\Fixtures\Extension\TestUserResourceExtension;
@@ -19,6 +20,8 @@ class ExtensionTest extends ResourceTestCase
     function test__extends_resource()
     {
         $this->makeResource('t_users');
+        ResourceFactory::wipe();
+
         Extension::register(TestUserResourceExtension::class);
 
         $extended = sv_resource('platform::t_users');
@@ -33,6 +36,7 @@ class ExtensionTest extends ResourceTestCase
         $this->makeResource('test_users');
         $this->makeResource('test_posts');
         $this->makeResource('t_forms');
+        ResourceFactory::wipe();
 
         Extension::register(TestMultipleResourcesPatternExtension::class);
 

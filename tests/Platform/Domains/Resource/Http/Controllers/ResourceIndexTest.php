@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -143,6 +144,8 @@ class ResourceIndexTest extends ResourceTestCase
     function test__filters_apply()
     {
         $users = $this->schema()->users();
+        ResourceFactory::wipe();
+
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
             $resource->searchable(['name']);
         });
@@ -156,6 +159,8 @@ class ResourceIndexTest extends ResourceTestCase
     function test__filters_apply_on_relations()
     {
         $users = $this->schema()->users();
+        ResourceFactory::wipe();
+
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
             $resource->searchable(['group.title']);
         });
@@ -180,9 +185,8 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__builds__filter_from_relation_fields_config()
     {
-        $this->withoutExceptionHandling();
-
         $users = $this->schema()->users();
+        ResourceFactory::wipe();
 
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
             $resource->getRelation('group')->addFlag('filter');
@@ -207,8 +211,9 @@ class ResourceIndexTest extends ResourceTestCase
         // dont merge with above. consecutive getJson
         // calls looses query on the second one
         //
-        $this->withoutExceptionHandling();
         $users = $this->schema()->users();
+        ResourceFactory::wipe();
+
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
             $resource->getRelation('group')->addFlag('filter');
         });
@@ -240,8 +245,9 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__builds__select_filter_from_text_fields_with_distinct_options()
     {
-        $this->withoutExceptionHandling();
         $users = $this->schema()->users();
+        ResourceFactory::wipe();
+
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
             $resource->getField('name')->addFlag('filter');
         });

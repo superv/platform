@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -56,8 +57,8 @@ class ResourceFormsTest extends ResourceTestCase
     function test__displays_extended_create_form()
     {
         $users = $this->schema()->users();
+        ResourceFactory::wipe();
 
-        $this->withoutExceptionHandling();
         // extend resource creation form
         //
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
@@ -147,6 +148,7 @@ class ResourceFormsTest extends ResourceTestCase
                 $table->createdBy()->updatedBy();
             })
             ->fake(['group_id' => 1]);
+        ResourceFactory::wipe();
 
         // extend resource edit form
         //

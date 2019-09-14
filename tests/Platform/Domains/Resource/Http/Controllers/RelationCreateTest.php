@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -64,6 +65,8 @@ class RelationCreateTest extends ResourceTestCase
     {
         $users = $this->schema()->users();
         $this->schema()->comments();
+        ResourceFactory::wipe();
+
 
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
             $resource->getRelation('comments')
@@ -88,6 +91,7 @@ class RelationCreateTest extends ResourceTestCase
     {
         $users = $this->schema()->users();
         $this->schema()->comments();
+        ResourceFactory::wipe();
 
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
             $resource->getRelation('comments')

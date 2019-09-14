@@ -29,6 +29,8 @@ class ResourceFactory
      */
     protected $entry;
 
+    public static $cache = [];
+
     protected function __construct(string $identifier, ?EntryContract $entry = null)
     {
         $this->identifier = $identifier;
@@ -47,8 +49,13 @@ class ResourceFactory
      */
     public static function make($identifier): ?Resource
     {
+
         if ($identifier instanceof EntryContract) {
             $identifier = $identifier->getResourceIdentifier();
+        }
+
+        if (isset(static::$cache[$identifier])) {
+            return static::$cache[$identifier];
         }
 
         try {
@@ -64,6 +71,7 @@ class ResourceFactory
 
             Extension::extend($resource);
         } catch (Exception $e) {
+            throw $e;
             if ($e->getMessage() !== 'Resource model entry not found for [sv_forms]') {
                 throw $e;
             }
@@ -71,7 +79,7 @@ class ResourceFactory
             return null;
         }
 
-        return $resource;
+        return static::$cache[$identifier] = $resource;
     }
 
     protected function getFieldsProvider()
@@ -124,5 +132,10 @@ class ResourceFactory
         ]);
 
         return $attributes;
+    }
+
+    public static function wipe()
+    {
+        static::$cache = [];
     }
 }

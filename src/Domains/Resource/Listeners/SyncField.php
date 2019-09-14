@@ -69,11 +69,11 @@ class SyncField
 
         $fieldEntry = $this->syncWithEloquent();
 
-        if ($event->table !== 'sv_forms') {
+//        if ($event->table !== 'sv_forms') {
             if ($formEntry = FormModel::findByResource($this->resourceEntry->getId())) {
                 $formEntry->attachField($fieldEntry->getId());
             }
-        }
+//        }
     }
 
     protected function makeConfig()
