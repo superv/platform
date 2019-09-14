@@ -9,3 +9,4 @@ composer.lock
 .phpstorm.meta.php
 _ide_helper.php
 notes.txt
+phpunit.xml.dist

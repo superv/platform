@@ -65,7 +65,11 @@ class PlatformTestCase extends OrchestraTestCase
         $app['config']->set('database.connections.sqlite', [
             'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+        ]);
+
+        $app['config']->set('database.connections.sqlite2', [
+            'driver'   => 'sqlite',
+            'database' => $this->basePath('sv-testing.sqlite'),
         ]);
     }
 

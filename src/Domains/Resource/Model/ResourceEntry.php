@@ -248,6 +248,7 @@ class ResourceEntry extends Entry
     {
         $model = new AnonymousModel();
         $model->setTable($resource->config()->getDriver()->getParam('table'));
+        $model->setConnection($resource->config()->getDriver()->getParam('connection'));
         $model->setKeyName($resource->getKeyName());
         $model->setResourceIdentifier($resource->config()->getIdentifier());
 

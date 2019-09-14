@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Database\Schema;
 use Closure;
 use Current;
 use Illuminate\Database\Connection;
+use Illuminate\Support\Facades\DB;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class Builder extends \Illuminate\Database\Schema\Builder
@@ -16,6 +17,16 @@ class Builder extends \Illuminate\Database\Schema\Builder
 
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
     protected $resourceConfig;
+
+    public function connection($connection)
+    {
+        $this->connection = DB::connection($connection);
+        $this->connection->useDefaultQueryGrammar();
+
+        $this->resourceConfig->getDriver()->setParam('connection', $connection);
+
+        return $this;
+    }
 
     public function __construct(Connection $connection, Schema $schema)
     {
@@ -61,6 +72,19 @@ class Builder extends \Illuminate\Database\Schema\Builder
             $callback($blueprint, $this->resourceConfig);
         }));
     }
+
+    /**
+     * Drop a table from the schema if it exists.
+     *
+     * @param string $table
+     * @return void
+     */
+//    public function dropIfExists($table)
+//    {
+//        $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($table) {
+//            $blueprint->drop();
+//        }));
+//    }
 
     public function resource(): ?ResourceConfig
     {

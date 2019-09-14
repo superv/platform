@@ -9,6 +9,11 @@ class Migration extends \Illuminate\Database\Migrations\Migration implements Pla
 {
     protected $namespace;
 
+    public function connection($connection)
+    {
+        return Schema::connection($connection);
+    }
+
     public function getNamespace()
     {
         return $this->namespace;

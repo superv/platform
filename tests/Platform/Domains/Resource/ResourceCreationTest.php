@@ -84,6 +84,23 @@ class ResourceCreationTest extends ResourceTestCase
 
         $config = $resource->config();
         $this->assertEquals('platform::servers', $config->getIdentifier());
+
+        $this->assertTrue((\Schema::connection('sqlite')->hasTable('core_servers')));
+    }
+
+    function test__custom_connection()
+    {
+        file_put_contents($this->basePath('sv-testing.sqlite'), '');
+        $resource = $this->create('core_servers2', function (Blueprint $table, Config $config) {
+            $table->increments('id');
+        }, 'sqlite2');
+
+        $this->assertTrue((\Schema::connection('sqlite2')->hasTable('core_servers2')));
+
+        $this->assertEquals('database@sqlite2://core_servers2', $resource->getDsn());
+
+        $server = $resource->fake();
+        $this->assertEquals('sqlite2', $server->getConnectionName());
     }
 
     function test__name_is_different_from_table_name()
@@ -261,6 +278,12 @@ class ResourceCreationTest extends ResourceTestCase
 
             return true;
         });
+    }
+
+    protected function tearDown()
+    {
+        @unlink($this->basePath('sv-testing.sqlite'));
+        parent::tearDown();
     }
 }
 

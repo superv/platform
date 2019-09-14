@@ -17,10 +17,15 @@ class Schema
 
     protected $columns;
 
-    public function __construct()
+    /** @var \Illuminate\Database\Connection */
+    protected $connection;
+
+    public function __construct($connection = null)
     {
         if (! $this->builder) {
-            $this->builder = new Builder(\DB::connection(), $this);
+            $this->connection = \DB::connection($connection);
+            $this->connection->useDefaultQueryGrammar();
+            $this->builder = new Builder($this->connection, $this);
 
             $this->builder->blueprintResolver(function ($table, $callback) {
                 return (new Blueprint($table, $callback, $this));

@@ -51,6 +51,13 @@ final class Resource implements
     protected $name;
 
     /**
+     * Database connection string
+     *
+     * @var string
+     */
+    protected $dsn;
+
+    /**
      * Database uuid
      *
      * @var string
@@ -533,6 +540,11 @@ final class Resource implements
     public function getName()
     {
         return $this->name;
+    }
+
+    public function getDsn()
+    {
+        return $this->dsn;
     }
 
     public function uuid(): string

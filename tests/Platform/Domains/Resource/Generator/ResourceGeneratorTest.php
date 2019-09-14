@@ -2,9 +2,6 @@
 
 namespace Tests\Platform\Domains\Resource\Generator;
 
-use Config;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use SuperV\Platform\Domains\Resource\Generator\ResourceGenerator;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -36,40 +33,40 @@ class ResourceGeneratorTest extends ResourceTestCase
     protected function setUp()
     {
         parent::setUp();
-        Config::set('database.connections.testing', [
-            'driver'   => 'mysql',
-            'host'     => 'localhost',
-            'database' => 'sv_testing',
-            'username' => 'superv',
-            'password' => 'secret',
-        ]);
+//        Config::set('database.connections.testing', [
+//            'driver'   => 'mysql',
+//            'host'     => 'localhost',
+//            'database' => 'sv_testing',
+//            'username' => 'superv',
+//            'password' => 'secret',
+//        ]);
 
-        Config::set('database.default', 'testing');
+//        Config::set('database.default', 'sqlite');
 
-        Schema::disableForeignKeyConstraints();
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('posts');
-        Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->integer('age');
-        });
-        Schema::create('posts', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->unsignedInteger('user_id');
-
-            $table->foreign('user_id')->references('id')->on('users');
-        });
+//        Schema::disableForeignKeyConstraints();
+//        Schema::dropIfExists('users');
+//        Schema::dropIfExists('posts');
+//        Schema::create('users', function (Blueprint $table) {
+//            $table->increments('id');
+//            $table->string('name');
+//            $table->integer('age');
+//        });
+//        Schema::create('posts', function (Blueprint $table) {
+//            $table->increments('id');
+//            $table->string('title');
+//            $table->unsignedInteger('user_id');
+//
+//            $table->foreign('user_id')->references('id')->on('users');
+//        });
     }
 
     protected function tearDown()
     {
-        Schema::disableForeignKeyConstraints();
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('posts');
-
-        Config::set('database.default', 'sqlite');
+//        Schema::disableForeignKeyConstraints();
+//        Schema::dropIfExists('users');
+//        Schema::dropIfExists('posts');
+//
+//        Config::set('database.default', 'sqlite');
         parent::tearDown();
     }
 

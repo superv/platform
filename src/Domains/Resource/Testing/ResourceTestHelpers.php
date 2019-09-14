@@ -40,7 +40,7 @@ trait ResourceTestHelpers
      * @param \Closure|null $callback
      * @return \SuperV\Platform\Domains\Resource\Resource
      */
-    protected function create($table, Closure $callback = null)
+    protected function create($table, Closure $callback = null, $connection = null)
     {
         if ($table instanceof Closure) {
             $callback = $table;
@@ -48,7 +48,11 @@ trait ResourceTestHelpers
         }
         $table = $table ?? Str::random(4);
 
-        $config = Schema::create($table, $callback);
+        if ($connection) {
+            $config = Schema::connection($connection)->create($table, $callback);
+        } else {
+            $config = Schema::create($table, $callback);
+        }
 
         return ResourceFactory::make($config->getIdentifier());
     }

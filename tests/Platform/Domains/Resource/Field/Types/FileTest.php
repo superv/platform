@@ -24,13 +24,13 @@ class FileTest extends ResourceTestCase
 
     function test__type_file()
     {
-        $res = $this->create(function (Blueprint $table) {
+        $res = $this->create('tmp_tbl', function (Blueprint $table) {
             $table->increments('id');
             $table->file('avatar')->config(['disk' => 'fakedisk']);
         });
 
-        $this->assertColumnNotExists('avatar', $res->getIdentifier());
-        $this->assertFalse(in_array('avatar', \Schema::getColumnListing($res->getIdentifier())));
+        $this->assertColumnNotExists('avatar', 'tmp_tbl');
+        $this->assertFalse(in_array('avatar', \Schema::getColumnListing('tmp_tbl')));
 
         $fake = $res->fake();
         /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field $field */

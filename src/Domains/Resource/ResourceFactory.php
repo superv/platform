@@ -123,6 +123,7 @@ class ResourceFactory
 
         $attributes = array_merge($this->model->toArray(), [
             'name'          => $this->model->getName(),
+            'dsn'           => $this->model->getDsn(),
             'identifier'    => $this->model->getIdentifier(),
             'fields'        => $this->getFieldsProvider(),
             'field_entries' => function () {
