@@ -152,7 +152,7 @@ class ResourceModel extends Entry implements ProvidesFields
 
     public function updated_by()
     {
-        return $this->belongsTo(config('superv.auth.user.model'), 'created_by_id');
+        return $this->belongsTo(config('superv.auth.user.model'), 'updated_by_id');
     }
 
     public static function withModel($model): ?self

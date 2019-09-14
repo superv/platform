@@ -21,7 +21,7 @@ trait CreatesRelations
     {
         $config = PolymorphicFieldConfig::make();
 
-        $config->setSelf($this->resourceConfig()->getDriverParam('table'));
+        $config->setSelf($this->resourceConfig()->getTable());
 
         $this->morphs('type');
 
@@ -64,7 +64,7 @@ trait CreatesRelations
     {
         $config = RelationFieldConfig::make();
         $config->type($relationType);
-        $config->setSelf($this->resourceConfig()->getDriverParam('table'));
+        $config->setSelf($this->resourceConfig()->getTable());
 
         $this->addColumn(null, $relationName, ['nullable' => true])
              ->fieldType('relation')

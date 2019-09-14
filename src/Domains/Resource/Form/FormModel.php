@@ -28,6 +28,16 @@ class FormModel extends Entry
         });
     }
 
+    public function created_by()
+    {
+        return $this->belongsTo(config('superv.auth.user.model'), 'created_by_id');
+    }
+
+    public function updated_by()
+    {
+        return $this->belongsTo(config('superv.auth.user.model'), 'updated_by_id');
+    }
+
     public function fields()
     {
         return $this->belongsToMany(FieldModel::class, 'sv_form_fields', 'form_id', 'field_id');

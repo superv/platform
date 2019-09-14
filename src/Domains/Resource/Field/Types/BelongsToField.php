@@ -61,7 +61,7 @@ class BelongsToField extends FieldType implements
         $relation = RelationConfig::create($this->field->getType(), $this->field->getConfig());
 
         $relatedResource = ResourceFactory::make($relation->getRelatedResource());
-        $relatedTable = $relatedResource->config()->getDriverParam('table');
+        $relatedTable = $relatedResource->config()->getTable();
 
         $labelField = $relatedResource->fields()->getEntryLabelField();
         $labelFieldColumName = $labelField ? $labelField->getColumnName() : $relatedResource->config()->getKeyName();

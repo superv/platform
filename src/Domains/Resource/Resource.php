@@ -161,7 +161,7 @@ final class Resource implements
     public function onCreated(Closure $callback): Resource
     {
         app('events')->listen(EntryCreatedEvent::class, function (EntryCreatedEvent $event) use ($callback) {
-            if ($event->entry->getTable() === $this->config()->getDriverParam('table')) {
+            if ($event->entry->getTable() === $this->config()->getTable()) {
                 $callback($event->entry);
             }
         });
@@ -172,7 +172,7 @@ final class Resource implements
     public function onDeleted(Closure $callback): Resource
     {
         app('events')->listen(EntryDeletedEvent::class, function (EntryDeletedEvent $event) use ($callback) {
-            if ($event->entry->getTable() === $this->config()->getDriverParam('table')) {
+            if ($event->entry->getTable() === $this->config()->getTable()) {
                 $callback($event->entry);
             }
         });
