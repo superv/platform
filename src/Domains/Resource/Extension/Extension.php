@@ -40,10 +40,8 @@ class Extension
         }
 
         if ($extension instanceof ExtendsResource) {
-            return $this->registerSingle($extension);
-        }
-
-        if ($extension instanceof ExtendsMultipleResources) {
+            $this->registerSingle($extension);
+        } elseif ($extension instanceof ExtendsMultipleResources) {
             $pattern = $extension->pattern();
             foreach ((array)$pattern as $key) {
                 static::$map[$key] = $extension;
@@ -101,7 +99,7 @@ class Extension
         if ($extension instanceof ObservesEntryRetrieved) {
             $this->events->listen(EntryRetrievedEvent::class,
                 function (EntryRetrievedEvent $event) use ($extension) {
-                    if ($event->entry->getTable() === $extension->extends()) {
+                    if ($event->entry->getResourceIdentifier() === $extension->extends()) {
                         $extension->retrieved($event->entry);
                     }
                 });
@@ -110,7 +108,7 @@ class Extension
         if ($extension instanceof ObservesEntryCreating) {
             $this->events->listen(EntryCreatingEvent::class,
                 function (EntryCreatingEvent $event) use ($extension) {
-                    if ($event->entry->getTable() === $extension->extends()) {
+                    if ($event->entry->getResourceIdentifier() === $extension->extends()) {
                         $extension->creating($event->entry);
                     }
                 });
@@ -119,7 +117,7 @@ class Extension
         if ($extension instanceof ObservesEntrySaving) {
             $this->events->listen(EntrySavingEvent::class,
                 function (EntrySavingEvent $event) use ($extension) {
-                    if ($event->entry->getTable() === $extension->extends()) {
+                    if ($event->entry->getResourceIdentifier() === $extension->extends()) {
                         $extension->saving($event->entry);
                     }
                 });
@@ -128,7 +126,7 @@ class Extension
         if ($extension instanceof ObservesEntrySaved) {
             $this->events->listen(EntrySavedEvent::class,
                 function (EntrySavedEvent $event) use ($extension) {
-                    if ($event->entry->getTable() === $extension->extends()) {
+                    if ($event->entry->getResourceIdentifier() === $extension->extends()) {
                         $extension->saved($event->entry);
                     }
                 });

@@ -170,7 +170,9 @@ class RelationFieldConfig extends FieldConfig
             return $this->pivotRelatedKey;
         }
 
-        return str_singular($this->getRelated()).'_id';
+        $related = $this->getRelated();
+
+        return str_singular(explode('::', $related)[1]).'_id';
     }
 
     public static function make()

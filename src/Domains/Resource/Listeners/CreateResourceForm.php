@@ -20,6 +20,6 @@ class CreateResourceForm
             return;
         }
 
-        FormFactory::createForResource($table);
+        FormFactory::createForResource($event->config->getIdentifier());
     }
 }

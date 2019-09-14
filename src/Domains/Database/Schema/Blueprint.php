@@ -92,7 +92,7 @@ class Blueprint extends LaravelBlueprint
 
         if ($this->creating()) {
 //            TableCreatedEvent::dispatch($this->tableName(), $this->columns);
-            TableCreatedEvent::dispatch($this->resourceConfig()->getIdentifier(), $this->columns);
+            TableCreatedEvent::dispatch($this->tableName(), $this->resourceConfig(), $this->columns);
         }
     }
 
@@ -145,7 +145,7 @@ class Blueprint extends LaravelBlueprint
         foreach ($this->commands as $command) {
             if ($command->name === 'dropColumn') {
                 sv_collect($command->columns)->map(function ($column) {
-                    ColumnDroppedEvent::dispatch($this->tableName(), $column);
+                    ColumnDroppedEvent::dispatch($this->resourceConfig(), $column);
                 });
             }
         }

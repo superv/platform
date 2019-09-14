@@ -25,7 +25,7 @@ class MorphToManyTest extends ResourceTestCase
             $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
         });
 
-        $users = ResourceFactory::make('t_users');
+        $users = ResourceFactory::make('platform::t_users');
 
         $this->assertColumnNotExists('t_users', 'roles');
         $this->assertColumnsExist('t_assigned_roles', ['id',

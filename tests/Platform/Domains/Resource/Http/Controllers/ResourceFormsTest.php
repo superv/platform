@@ -60,7 +60,7 @@ class ResourceFormsTest extends ResourceTestCase
         $this->withoutExceptionHandling();
         // extend resource creation form
         //
-        Resource::extend('t_users')->with(function (Resource $resource) {
+        Resource::extend('platform::t_users')->with(function (Resource $resource) {
             $resource->onCreating(function (Form $form) {
                 $form->onlyFields('name', 'email', 'group');
             });
@@ -130,9 +130,9 @@ class ResourceFormsTest extends ResourceTestCase
         $this->assertEquals('belongs_to', $group['type']);
         $this->assertEquals(1, $group['value']);
 
-//        $this->assertEquals(sv_resource('t_groups')->count(), count($group['meta']['options']));
+//        $this->assertEquals(sv_resource('platform::t_groups')->count(), count($group['meta']['options']));
 //
-//        $first = sv_resource('t_groups')->first();
+//        $first = sv_resource('platform::t_groups')->first();
 //        $this->assertEquals(
 //            ['value' => $first->getId(), 'text' => $first->title],
 //            $group['meta']['options'][0]
@@ -150,7 +150,7 @@ class ResourceFormsTest extends ResourceTestCase
 
         // extend resource edit form
         //
-        Resource::extend('t_users')->with(function (Resource $resource) {
+        Resource::extend('platform::t_users')->with(function (Resource $resource) {
             $resource->onEditing(function (Form $form) {
                 $form->onlyFields('name', 'email', 'group');
             });

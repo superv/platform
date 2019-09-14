@@ -2,8 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Jobs;
 
+use Illuminate\Support\Facades\DB;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Support\Dispatchable;
 
 class GetEntryResource
@@ -22,11 +22,9 @@ class GetEntryResource
 
     public function handle()
     {
-        $identifier = ResourceModel::query()->where('dsn', $this->getResourceDsn())->value('identifier');
+//        $identifier = ResourceModel::query()->where('dsn', $this->getResourceDsn())->value('identifier');
 
-        if (! $identifier) {
-            var_dump($this->getResourceDsn());
-        }
+        $identifier = DB::table('sv_resources')->where('dsn', $this->getResourceDsn())->value('identifier');
 
         return $identifier;
     }

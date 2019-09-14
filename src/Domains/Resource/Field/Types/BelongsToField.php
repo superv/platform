@@ -55,18 +55,23 @@ class BelongsToField extends FieldType implements
      */
     public function sortQuery($query, $direction)
     {
+        /** @var \SuperV\Platform\Domains\Resource\Resource $parentResource */
         $parentResource = $this->field->getResource();
+        $parentTable = $parentResource->getIdentifier();
         $relation = RelationConfig::create($this->field->getType(), $this->field->getConfig());
 
         $relatedResource = ResourceFactory::make($relation->getRelatedResource());
+        $relatedTable = $relatedResource->config()->getDriverParam('table');
+
         $labelField = $relatedResource->fields()->getEntryLabelField();
         $labelFieldColumName = $labelField ? $labelField->getColumnName() : $relatedResource->config()->getKeyName();
-        $orderBy = $relatedResource->getIdentifier().'_1.'.$labelFieldColumName;
+
+        $orderBy = $relatedTable.'_1.'.$labelFieldColumName;
 
         $joinType = 'leftJoin';
         $query->getQuery()
-              ->{$joinType}($relatedResource->getIdentifier()." AS ".$relatedResource->getIdentifier()."_1",
-                  $relatedResource->getIdentifier().'_1.'.$relatedResource->getKeyName(), '=', $parentResource->getIdentifier().'.'.$relation->getForeignKey());
+              ->{$joinType}($relatedTable." AS ".$relatedTable."_1",
+                  $relatedTable.'_1.'.$relatedResource->getKeyName(), '=', $parentTable.'.'.$relation->getForeignKey());
 
         $query->orderBy($orderBy, $direction);
     }

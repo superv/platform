@@ -55,6 +55,11 @@ class ResourceModel extends Entry implements ProvidesFields
         return $this->driver;
     }
 
+    public function getName()
+    {
+        return $this->name;
+    }
+
     public function getDsn()
     {
         return $this->dsn;
@@ -155,17 +160,17 @@ class ResourceModel extends Entry implements ProvidesFields
         return static::query()->where('model', $model)->first();
     }
 
-    public static function withHandle($table): ?self
+    public static function withIdentifier($identifier): ?self
     {
-        return static::fromCache($table);
+        return static::fromCache($identifier);
     }
 
-    public static function fromCache($handle)
+    public static function fromCache($identifier)
     {
-        $cacheKey = 'sv:resources:'.$handle;
+        $cacheKey = 'sv:resources:'.$identifier;
 
-        $entry = cache()->rememberForever($cacheKey, function () use ($handle) {
-            return static::query()->where('identifier', $handle)->first();
+        $entry = cache()->rememberForever($cacheKey, function () use ($identifier) {
+            return static::query()->where('identifier', $identifier)->first();
         });
 
         return $entry;

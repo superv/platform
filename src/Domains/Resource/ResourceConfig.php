@@ -9,7 +9,9 @@ class ResourceConfig
 {
     use Hydratable;
 
-    protected $table;
+    protected $name;
+
+    protected $namespace;
 
     protected $identifier;
 
@@ -62,8 +64,8 @@ class ResourceConfig
 //            return str_singular($this->resource->getHandle());
 //        }
 
-        if ($this->getIdentifier()) {
-            return str_singular($this->getIdentifier());
+        if ($this->getName()) {
+            return str_singular($this->getName());
         }
 
         return null;
@@ -78,7 +80,11 @@ class ResourceConfig
 
     public function getIdentifier()
     {
-        return $this->identifier;
+        if ($this->identifier) {
+            return $this->identifier;
+        }
+
+        return $this->getNamespace().'::'.$this->getName();
     }
 
     public function setIdentifier($identifier)
@@ -125,7 +131,7 @@ class ResourceConfig
 
     public function getLabel()
     {
-        return $this->label ?? ucwords(str_replace('_', ' ', $this->identifier));
+        return $this->label ?? ucwords(str_replace('_', ' ', $this->getName()));
     }
 
     public function getModel()
@@ -244,6 +250,48 @@ class ResourceConfig
         return $this->driver;
     }
 
+    public function getDriverParam($key)
+    {
+        return $this->getDriver()->getParam($key);
+    }
+
+    public function getTable()
+    {
+        return $this->getDriver()->getParam('table');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * @param mixed $namespace
+     */
+    public function setNamespace($namespace): void
+    {
+        $this->namespace = $namespace;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param mixed $name
+     */
+    public function setName($name): void
+    {
+        $this->name = $name;
+    }
+
     public function toArray(): array
     {
         $attributes = [];
@@ -262,9 +310,9 @@ class ResourceConfig
         return (new static($config, $overrideDefault));
     }
 
-    public static function find($handle)
+    public static function find($identifier)
     {
-        $resourceEntry = ResourceModel::query()->where('identifier', $handle)->first();
+        $resourceEntry = ResourceModel::query()->where('identifier', $identifier)->first();
 
         return new ResourceConfig($resourceEntry->config);
     }

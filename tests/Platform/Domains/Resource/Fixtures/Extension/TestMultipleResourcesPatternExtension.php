@@ -8,7 +8,7 @@ class TestMultipleResourcesPatternExtension implements ExtendsMultipleResources
 {
     public function pattern()
     {
-        return 'test_*';
+        return 'platform::test_*';
     }
 
     public function __call($name, $arguments)

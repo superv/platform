@@ -87,6 +87,15 @@ class RelationConfig
     protected $pivotRelatedKey;
 
     /**
+     * Pivot namespace
+     *
+     * @var string
+     */
+    protected $pivotNamespace;
+
+
+
+    /**
      * Pivot columns
      *
      * @var array|\Closure
@@ -245,6 +254,9 @@ class RelationConfig
 
     public function pivotTable(string $pivotTable): self
     {
+        if (str_contains($pivotTable, '::')) {
+            list($this->pivotNamespace, $pivotTable) = explode('::', $pivotTable);
+        }
         $this->pivotTable = $pivotTable;
 
         return $this;
@@ -256,7 +268,7 @@ class RelationConfig
             return $this->relatedModel($related);
         }
 
-        if ($resource = ResourceModel::withHandle($related)) {
+        if ($resource = ResourceModel::withIdentifier($related)) {
             if ($model = $resource->getConfigValue('model')) {
                 $this->relatedModel($model);
             }
@@ -309,6 +321,21 @@ class RelationConfig
     public function getTargetModel(): ?string
     {
         return $this->targetModel ?? $this->getRelatedModel();
+    }
+
+    public function pivotNamespace(string $pivotNamespace): RelationConfig
+    {
+        $this->pivotNamespace = $pivotNamespace;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPivotNamespace(): ?string
+    {
+        return $this->pivotNamespace;
     }
 
     public function toArray()

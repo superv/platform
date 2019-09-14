@@ -143,7 +143,9 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         if (! $pivotColumns = $this->getRelationConfig()->getPivotColumns()) {
             return [];
         }
-        $pivotResource = ResourceFactory::make($this->getRelationConfig()->getPivotTable());
+        $pivotResource = ResourceFactory::make(
+            sprintf("%s::%s", $this->getRelationConfig()->getPivotNamespace(), $this->getRelationConfig()->getPivotTable())
+        );
 
         return $pivotResource->fields()
                              ->keyByName()

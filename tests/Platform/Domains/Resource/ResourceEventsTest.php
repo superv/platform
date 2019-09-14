@@ -79,7 +79,7 @@ class ResourceEventsTest extends ResourceTestCase
             $table->timestamp('created_at');
         });
 
-        Resource::extend('t_confirmations')->with(function (Resource $resource) {
+        Resource::extend('platform::t_confirmations')->with(function (Resource $resource) {
             $resource->onCreated(function (EntryContract $entry) {
                 $entry->load('user')->user->update(['confirmed_at' => $entry->created_at]);
             });

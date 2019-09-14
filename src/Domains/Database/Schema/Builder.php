@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Database\Schema;
 
 use Closure;
+use Current;
 use Illuminate\Database\Connection;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
@@ -23,7 +24,8 @@ class Builder extends \Illuminate\Database\Schema\Builder
         $this->schema = $schema;
         $this->resourceConfig = ResourceConfig::make(
             [
-                'driver' =>
+                'namespace' => Current::migrationScope(),
+                'driver'    =>
                     [
                         'type'   => 'database',
                         'params' => [
@@ -38,12 +40,13 @@ class Builder extends \Illuminate\Database\Schema\Builder
     {
         $mainBlueprint = $this->createBlueprint($table);
         $this->build(tap($mainBlueprint, function ($blueprint) use ($table, $callback) {
-            $this->resourceConfig->setIdentifier($table);
+            $this->resourceConfig->setName($table);
             $this->resourceConfig->getDriver()->setParam('table', $table);
 
             $blueprint->create();
 
             $callback($blueprint, $this->resourceConfig);
+
         }));
 
         return $this->resourceConfig;
@@ -52,8 +55,9 @@ class Builder extends \Illuminate\Database\Schema\Builder
     public function table($table, Closure $callback)
     {
         $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($table, $callback) {
-            $this->resourceConfig->setIdentifier($table);
+            $this->resourceConfig->setName($table);
             $this->resourceConfig->getDriver()->setParam('table', $table);
+
             $callback($blueprint, $this->resourceConfig);
         }));
     }
@@ -61,5 +65,16 @@ class Builder extends \Illuminate\Database\Schema\Builder
     public function resource(): ?ResourceConfig
     {
         return $this->resourceConfig;
+    }
+
+    protected function fillResourceConfig($table)
+    {
+//        if (! $this->resourceConfig->getName()) {
+//            $this->resourceConfig->setName($table);
+//        }
+//        $this->resourceConfig->setIdentifier(
+//            $this->resourceConfig->getNamespace().'::'.$this->resourceConfig->getName()
+//        );
+
     }
 }

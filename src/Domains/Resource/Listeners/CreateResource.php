@@ -63,21 +63,21 @@ class CreateResource
     protected function createNavSections()
     {
 //        $table = $this->event->table;
-        $identifier = $this->config->getIdentifier();
+        $name = $this->config->getName();
 
         if ($nav = $this->config->getNav()) {
             if (is_string($nav)) {
-                Section::createFromString($handle = $nav.'.'.$identifier);
+                Section::createFromString($handle = $nav.'.'.$name);
                 $section = Section::get($handle);
                 $section->update([
                     'resource_id' => $this->resourceEntry->getId(),
-                    'url'         => 'sv/res/'.$identifier,
+                    'url'         => 'sv/res/'.$this->config->getIdentifier(),
                     'title'       => $this->config->getLabel(),
                     'handle'      => str_slug($this->config->getLabel(), '_'),
                 ]);
             } elseif (is_array($nav)) {
                 if (! isset($nav['url'])) {
-                    $nav['url'] = 'sv/res/'.$identifier;
+                    $nav['url'] = 'sv/res/'.$name;
                 }
                 $section = Section::createFromArray($nav);
             }
@@ -92,12 +92,12 @@ class CreateResource
         $this->resourceEntry = ResourceModel::create(array_filter(
             [
                 'uuid'       => uuid(),
-                'identifier' => $this->config->getIdentifier(),
-                'full_id'    => $this->event->namespace.'.'.$this->config->getIdentifier(),
+                'name'       => $this->config->getName(),
+                'namespace'  => $this->config->getNamespace(),
+                'identifier' => $this->config->getNamespace().'::'.$this->config->getName(),
                 'dsn'        => $this->config->getDriver()->toDsn(),
                 'model'      => $this->config->getModel(),
                 'config'     => $this->getConfig(),
-                'namespace'  => $this->event->namespace,
                 'restorable' => (bool)$this->config->isRestorable(),
                 'sortable'   => (bool)$this->config->isSortable(),
             ]
@@ -111,7 +111,7 @@ class CreateResource
         }
 
         if ($this->config->isRestorable()) {
-            $this->event->blueprint->nullableBelongsTo('users', 'deleted_by')->hideOnForms();
+            $this->event->blueprint->nullableBelongsTo('platform::users', 'deleted_by')->hideOnForms();
             $this->event->blueprint->timestamp('deleted_at')->nullable()->hideOnForms();
         }
 
@@ -119,9 +119,9 @@ class CreateResource
             $this->event->blueprint->unsignedBigInteger('sort_order')->default(0);;
         }
 
-        if (! $this->config->getIdentifier()) {
-            $this->config->setIdentifier($this->event->table);
-        }
+//        if (! $this->config->getIdentifier()) {
+//            $this->config->setIdentifier($this->event->table);
+//        }
     }
 
     /**

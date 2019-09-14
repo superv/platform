@@ -14,13 +14,13 @@ use SuperV\Platform\Domains\Resource\Resource;
  */
 class Extender implements ExtendsResource
 {
-    protected $handle;
+    protected $identifier;
 
     protected $callback;
 
-    public function __construct($handle)
+    public function __construct($identifier)
     {
-        $this->handle = $handle;
+        $this->identifier = $identifier;
     }
 
     public function extend(Resource $resource)
@@ -30,7 +30,7 @@ class Extender implements ExtendsResource
 
     public function extends(): string
     {
-        return $this->handle;
+        return $this->identifier;
     }
 
     public function with(Closure $callback)

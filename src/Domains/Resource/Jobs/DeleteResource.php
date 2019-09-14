@@ -22,7 +22,7 @@ class DeleteResource
 
     public function handle()
     {
-        if (! $resourceEntry = ResourceModel::withHandle($this->resourceHandle)) {
+        if (! $resourceEntry = ResourceModel::withIdentifier($this->resourceHandle)) {
             return;
         }
         $resourceEntry->delete();

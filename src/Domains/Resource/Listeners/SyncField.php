@@ -188,7 +188,7 @@ class SyncField
             $resourceEntry = ResourceModel::withModel($event->model);
         }
         if (! isset($resourceEntry)) {
-            $resourceEntry = ResourceModel::withHandle($this->resourceConfig->getIdentifier());
+            $resourceEntry = ResourceModel::withIdentifier($this->resourceConfig->getIdentifier());
         }
 
         if (! $resourceEntry) {

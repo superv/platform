@@ -16,14 +16,14 @@ class HookTest extends ResourceTestCase
 {
     function test__registers_extensions_from_path()
     {
-        $this->registerHooksBase();
+        $this->registerHooksBase('hook-ns');
 
-        $this->assertNotNull(Hook::base('posts'));
+        $this->assertNotNull(Hook::base('hook-ns::posts'));
     }
 
     function test_hook_config()
     {
-        $this->registerHooksBase();
+        $this->registerHooksBase('platform');
 
         $posts = $this->makeResource('posts');
 
@@ -33,7 +33,7 @@ class HookTest extends ResourceTestCase
 
     function test_hook_saving_event()
     {
-        $this->registerHooksBase();
+        $this->registerHooksBase('platform');
 
         $posts = $this->makeResource('posts', ['title:text']);
         $post = $posts->create(['title' => 'Post']);
@@ -42,16 +42,17 @@ class HookTest extends ResourceTestCase
 
     function test_hook_saved_event()
     {
-        $this->registerHooksBase();
+        $this->registerHooksBase('platform');
 
         $orders = $this->makeResource('orders', ['title:text']);
         $order = $orders->create(['title' => 'Order']);
         $this->assertEquals('Order After', $order->title);
     }
 
-    protected function registerHooksBase(): void
+    protected function registerHooksBase($namespace): void
     {
         RegisterHooksInPath::dispatch(
+            $namespace,
             __DIR__.'/Fixtures/Resources',
             'Tests\Platform\Domains\Resource\Fixtures\Resources'
         );

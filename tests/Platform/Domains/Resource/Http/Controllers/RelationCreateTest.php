@@ -65,7 +65,7 @@ class RelationCreateTest extends ResourceTestCase
         $users = $this->schema()->users();
         $this->schema()->comments();
 
-        Resource::extend('t_users')->with(function (Resource $resource) {
+        Resource::extend('platform::t_users')->with(function (Resource $resource) {
             $resource->getRelation('comments')
                      ->on('create.displaying', function (Form $form) {
                          $form->hideField('status');
@@ -89,7 +89,7 @@ class RelationCreateTest extends ResourceTestCase
         $users = $this->schema()->users();
         $this->schema()->comments();
 
-        Resource::extend('t_users')->with(function (Resource $resource) {
+        Resource::extend('platform::t_users')->with(function (Resource $resource) {
             $resource->getRelation('comments')
                      ->on('create.storing', function (Request $request, Form $form, $entry) {
                          $comment = $request->get('comment')." (by {$entry->name})";

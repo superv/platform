@@ -102,7 +102,7 @@ class FormControllerTest extends ResourceTestCase
         $formEntry->fields()->attach(FieldModel::create(['type'   => 'belongs_to',
                                                          'name'   => 'user',
                                                          'config' => [
-                                                             'related_resource' => 'users',
+                                                             'related_resource' => 'platform::users',
                                                          ]]));
 
         return $formEntry;

@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Resource\Relation\RelationConfig as Config;
 
 /**
  * Trait CreatesRelations
+ * @method \SuperV\Platform\Domains\Resource\ResourceConfig resourceConfig()
  * @method ColumnDefinition addColumn($type, $name, array $parameters = [])
  *
  * @package SuperV\Platform\Domains\Database\Schema
@@ -20,7 +21,7 @@ trait CreatesRelations
     {
         $config = PolymorphicFieldConfig::make();
 
-        $config->setSelf($this->resourceConfig()->getHandle());
+        $config->setSelf($this->resourceConfig()->getDriverParam('table'));
 
         $this->morphs('type');
 
@@ -34,33 +35,36 @@ trait CreatesRelations
 
     public function relatedToOne($related, string $relationName = null)
     {
+        list($namespace, $related) = $this->splitRelated($related);
         $relationName = $relationName ?? str_singular($related);
 
         return $this->relation($relationName, RelationType::oneToOne())
-                    ->related($related);
+                    ->related($namespace.'::'.$related);
     }
 
     public function relatedToMany($related, string $relationName = null)
     {
+        list($namespace, $related) = $this->splitRelated($related);
         $relationName = $relationName ?? $related;
 
         return $this->relation($relationName, RelationType::oneToMany())
-                    ->related($related);
+                    ->related($namespace.'::'.$related);
     }
 
     public function relatedManyToMany($related, string $relationName = null)
     {
+        list($namespace, $related) = $this->splitRelated($related);
         $relationName = $relationName ?? $related;
 
         return $this->relation($relationName, RelationType::manyToMany())
-                    ->related($related);
+                    ->related($namespace.'::'.$related);
     }
 
     public function relation($relationName, RelationType $relationType): RelationFieldConfig
     {
         $config = RelationFieldConfig::make();
         $config->type($relationType);
-        $config->setSelf($this->resourceConfig()->getHandle());
+        $config->setSelf($this->resourceConfig()->getDriverParam('table'));
 
         $this->addColumn(null, $relationName, ['nullable' => true])
              ->fieldType('relation')
@@ -77,6 +81,7 @@ trait CreatesRelations
 
     public function belongsTo($related, $relationName = null, $foreignKey = null, $ownerKey = null): ColumnDefinition
     {
+        list($namespace, $related) = $this->splitRelated($related);
         $relationName = $relationName ?? str_singular($related);
 
         return $this->unsignedInteger($foreignKey ?? $relationName.'_id')
@@ -85,10 +90,21 @@ trait CreatesRelations
                     ->relation(
                         Config::belongsTo()
                               ->relationName($relationName)
-                              ->related($related)
+                              ->related($namespace.'::'.$related)
                               ->foreignKey($foreignKey ?? $relationName.'_id')
                               ->ownerKey($ownerKey)
                     );
+    }
+
+    private function splitRelated($related)
+    {
+        if (str_contains($related, '::')) {
+            list($namespace, $related) = explode('::', $related);
+        } else {
+            $namespace = $this->resourceConfig()->getNamespace();
+        }
+
+        return [$namespace, $related];
     }
 
     public function nullableMorphTo($relationName)

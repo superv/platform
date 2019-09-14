@@ -40,7 +40,7 @@ abstract class Entry extends Model
         return static::query()->find($id);
     }
 
-    public function getResourceIdentifier(): string
+    public function getResourceIdentifier(): ?string
     {
         if (! $this->resourceIdentifier) {
             $this->resourceIdentifier = GetEntryResource::dispatch($this);

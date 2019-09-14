@@ -25,7 +25,7 @@ class LookupController extends BaseApiController
 
             $keyName = $query->getModel()->getKeyName();
             $alreadyAttachedItems = $this->entry->{$relation->getName()}()
-                                                ->pluck($resource->getIdentifier().'.'.$keyName);
+                                                ->pluck($resource->config()->getDriverParam('table').'.'.$keyName);
 
             $query->whereNotIn($keyName, $alreadyAttachedItems);
             $table->setQuery($query);

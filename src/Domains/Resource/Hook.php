@@ -34,7 +34,7 @@ class Hook
         if ($resourceKey = $resource->config()->getResourceKey()) {
             $plural = str_plural($resourceKey);
         } else {
-            $plural = $resource->getIdentifier();
+            $plural = $resource->getName();
         }
 
         $listener = $baseNamespace."\\".studly_case($plural.'_saving');
@@ -85,7 +85,7 @@ class Hook
         if ($resourceKey = $attributes['config']['resource_key']) {
             $plural = str_plural($resourceKey);
         } else {
-            $plural = $handle;
+            $plural = explode('::', $handle)[1];
         }
 
         $configClass = $baseNamespace."\\".studly_case($plural.'_config');

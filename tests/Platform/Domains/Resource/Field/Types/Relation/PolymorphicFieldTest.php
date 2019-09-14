@@ -11,8 +11,8 @@ class PolymorphicFieldTest extends ResourceTestCase
 {
     function test__creates_resources()
     {
-        $this->assertTrue(Resource::exists('contacts_sms'));
-        $this->assertTrue(Resource::exists('contacts_email'));
+        $this->assertTrue(Resource::exists('platform::contacts_sms'));
+        $this->assertTrue(Resource::exists('platform::contacts_email'));
 
         $this->assertTableExists('contacts_sms');
         $this->assertTableExists('contacts_email');
@@ -27,7 +27,7 @@ class PolymorphicFieldTest extends ResourceTestCase
 
     function __config()
     {
-        $selectTypeField = sv_resource('contacts')->getField('type');
+        $selectTypeField = sv_resource('platform::contacts')->getField('type');
 
 //        $this->assertEquals([
 //            'sms' => 'SMS Contacts',

@@ -21,7 +21,7 @@ class ExtensionTest extends ResourceTestCase
         $this->makeResource('t_users');
         Extension::register(TestUserResourceExtension::class);
 
-        $extended = sv_resource('t_users');
+        $extended = sv_resource('platform::t_users');
 
         $nameField = $extended->getField('name');
 
@@ -36,9 +36,9 @@ class ExtensionTest extends ResourceTestCase
 
         Extension::register(TestMultipleResourcesPatternExtension::class);
 
-        $users = sv_resource('test_users');
-        $posts = sv_resource('test_posts');
-        $forms = sv_resource('t_forms');
+        $users = sv_resource('platform::test_users');
+        $posts = sv_resource('platform::test_posts');
+        $forms = sv_resource('platform::t_forms');
 
         $this->assertTrue($users->isExtended());
         $this->assertTrue($posts->isExtended());
@@ -53,9 +53,9 @@ class ExtensionTest extends ResourceTestCase
 
         Extension::register(TestMultipleResourcesArrayExtension::class);
 
-        $users = sv_resource('test_users');
-        $posts = sv_resource('test_posts');
-        $forms = sv_resource('t_forms');
+        $users = sv_resource('platform::test_users');
+        $posts = sv_resource('platform::test_posts');
+        $forms = sv_resource('platform::t_forms');
 
         $this->assertTrue($users->isExtended());
         $this->assertTrue($posts->isExtended());
@@ -68,8 +68,8 @@ class ExtensionTest extends ResourceTestCase
         $this->makeResource('t_posts');
         Extension::register(TestUserResourceExtension::class);
 
-        $user = sv_resource('t_users')->fake()->fresh();
-        sv_resource('t_posts')->fake();
+        $user = sv_resource('platform::t_users')->fake()->fresh();
+//        sv_resource('platform::t_posts')->fake();
 
         $this->assertEquals($user, TestUserResourceExtension::$called['retrieved']);
     }
@@ -80,8 +80,8 @@ class ExtensionTest extends ResourceTestCase
         $this->makeResource('t_posts');
         Extension::register(TestUserResourceExtension::class);
 
-        $user = sv_resource('t_users')->fake();
-        sv_resource('t_posts')->fake();
+        $user = sv_resource('platform::t_users')->fake();
+        sv_resource('platform::t_posts')->fake();
         $this->assertEquals($user, TestUserResourceExtension::$called['saving']);
     }
 
@@ -91,8 +91,8 @@ class ExtensionTest extends ResourceTestCase
         $this->makeResource('t_posts');
         Extension::register(TestUserResourceExtension::class);
 
-        $user = sv_resource('t_users')->fake();
-        sv_resource('t_posts')->fake();
+        $user = sv_resource('platform::t_users')->fake();
+        sv_resource('platform::t_posts')->fake();
         $this->assertEquals($user, TestUserResourceExtension::$called['saved']);
     }
 
@@ -103,7 +103,7 @@ class ExtensionTest extends ResourceTestCase
             'Tests\Platform\Domains\Resource\Fixtures\Extensions'
         );
 
-        $this->assertNotNull(Extension::get('test_a'));
+        $this->assertNotNull(Extension::get('platform::test_a'));
     }
 
     protected function tearDown()

@@ -48,6 +48,8 @@ final class Resource implements
     /** @var string */
     protected $identifier;
 
+    protected $name;
+
     /**
      * Database uuid
      *
@@ -159,7 +161,7 @@ final class Resource implements
     public function onCreated(Closure $callback): Resource
     {
         app('events')->listen(EntryCreatedEvent::class, function (EntryCreatedEvent $event) use ($callback) {
-            if ($event->entry->getTable() === $this->getIdentifier()) {
+            if ($event->entry->getTable() === $this->config()->getDriverParam('table')) {
                 $callback($event->entry);
             }
         });
@@ -170,7 +172,7 @@ final class Resource implements
     public function onDeleted(Closure $callback): Resource
     {
         app('events')->listen(EntryDeletedEvent::class, function (EntryDeletedEvent $event) use ($callback) {
-            if ($event->entry->getTable() === $this->getIdentifier()) {
+            if ($event->entry->getTable() === $this->config()->getDriverParam('table')) {
                 $callback($event->entry);
             }
         });
@@ -525,6 +527,14 @@ final class Resource implements
         $this->extended = $extended;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
     public function uuid(): string
     {
         return $this->uuid;
@@ -544,19 +554,23 @@ final class Resource implements
         ];
     }
 
-    public static function extend($handle)
+    public static function extend($identifier)
     {
-        Extension::register($extender = new Extender($handle));
+        Extension::register($extender = new Extender($identifier));
 
         return $extender;
     }
 
-    public static function exists($handle): bool
+    public static function exists($identifier): bool
     {
-        if ($handle instanceof EntryContract) {
-            $handle = $handle->getTable();
+        if ($identifier instanceof EntryContract) {
+            $identifier = $identifier->getResourceIdentifier();
         }
 
-        return ResourceModel::query()->where('identifier', $handle)->exists();
+        if (! $identifier) {
+            return false;
+        }
+
+        return ResourceModel::query()->where('identifier', $identifier)->exists();
     }
 }

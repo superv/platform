@@ -17,7 +17,7 @@ class RecordActivity
         $resource = sv_resource($route->parameter('resource'));
         $entryType = $resource->newEntryInstance()->getMorphClass();
 
-        sv_resource('sv_activities')->create([
+        sv_resource('platform::sv_activities')->create([
             'user_id'     => $event->request->user()->getKey(),
             'resource_id' => $resource->id(),
             'entry_type'  => $entryType,

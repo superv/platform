@@ -13,7 +13,7 @@ class TestCase extends PlatformTestCase
 
     protected function makeTaskModel(array $taskData = null): Task
     {
-        return sv_resource('sv_tasks')->create($taskData ?? $this->makeTaskData());
+        return sv_resource('platform::sv_tasks')->create($taskData ?? $this->makeTaskData());
     }
 
     protected function makeTaskData(array $overrides = []): array

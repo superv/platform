@@ -109,11 +109,12 @@ class ResourceFactory
 
     protected function get()
     {
-        if (! $this->model = ResourceModel::withHandle($this->identifier)) {
+        if (! $this->model = ResourceModel::withIdentifier($this->identifier)) {
             PlatformException::fail("Resource model entry not found for [{$this->identifier}]");
         }
 
         $attributes = array_merge($this->model->toArray(), [
+            'name'          => $this->model->getName(),
             'identifier'    => $this->model->getIdentifier(),
             'fields'        => $this->getFieldsProvider(),
             'field_entries' => function () {

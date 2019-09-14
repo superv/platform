@@ -59,23 +59,23 @@ trait ResourceTestHelpers
      */
     protected function randomTable(Closure $callback = null)
     {
-        Schema::create($table = Str::random(8), $callback);
+        $config = Schema::create($table = Str::random(8), $callback);
 
-        return ResourceFactory::make($table);
+        return ResourceFactory::make($config->getIdentifier());
     }
 
     /** @return \SuperV\Platform\Domains\Resource\Resource */
-    protected function makeResource($identifier = 'test_users', array $columns = ['name'], array $resource = [])
+    protected function makeResource($table = 'test_users', array $columns = ['name'], array $resource = [])
     {
-        $this->makeResourceModel($identifier, $columns, $resource);
+        $this->makeResourceModel($table, $columns, $resource);
 
-        return ResourceFactory::make($identifier);
+        return ResourceFactory::make('platform::'.$table);
     }
 
     /** @return \SuperV\Platform\Domains\Resource\ResourceModel */
-    protected function makeResourceModel($identifier, array $columns, array $resource = [])
+    protected function makeResourceModel($table, array $columns, array $resource = [])
     {
-        Schema::create($identifier, function (Blueprint $table, ResourceConfig $resourceBlueprint) use (
+        Schema::create($table, function (Blueprint $table, ResourceConfig $config) use (
             $columns,
             $resource
         ) {
@@ -102,9 +102,9 @@ trait ResourceTestHelpers
                 }
             }
 
-            $resourceBlueprint->fill($resource);
+            $config->fill($resource);
         });
-        $resource = ResourceModel::withHandle($identifier);
+        $resource = ResourceModel::withIdentifier('platform::'.$table);
 
         return $resource;
     }
