@@ -100,6 +100,20 @@ class Blueprints
     }
 
     /** @return Resource */
+    public function orders($namespace = 'testing')
+    {
+        return $this->create('orders',
+            function (Blueprint $table, Config $config) use ($namespace) {
+                $config->label('Orders');
+                $config->setNamespace($namespace);
+
+                $table->increments('id');
+                $table->string('title')->entryLabel();
+            }
+        );
+    }
+
+    /** @return Resource */
     public function roles()
     {
         $roles = $this->create('t_roles', function (Blueprint $table, Config $resource) {

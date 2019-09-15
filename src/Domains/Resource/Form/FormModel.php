@@ -23,8 +23,9 @@ class FormModel extends Entry
 
         static::saving(function (FormModel $entry) {
             if (is_null($entry->uuid)) {
-                $entry->setAttribute('uuid', uuid());
+//                $entry->setAttribute('uuid', uuid());
             }
+            $entry->setAttribute('rev_id', uuid());
         });
     }
 
@@ -56,6 +57,26 @@ class FormModel extends Entry
     public function isPublic()
     {
         return $this->public;
+    }
+
+    public function isPrivate()
+    {
+        return ! $this->public;
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 
     public function getUrl()
@@ -105,6 +126,10 @@ class FormModel extends Entry
                     });
     }
 
+    public static function withIdentifier($identifier): ?FormModel
+    {
+        return static::query()->where('identifier', $identifier)->first();
+    }
     public static function findByUuid($uuid): ?FormModel
     {
         return static::query()->where('uuid', $uuid)->first();

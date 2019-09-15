@@ -15,9 +15,9 @@ class ObserverHookTest extends ResourceTestCase
 {
     function test_observes_before_creating()
     {
-        $_SERVER['__observer.creating'] = null;
+        $_SERVER['__hooks::observer.creating'] = null;
         $this->blueprints()->categories()->fake();
-        $this->assertEquals($_SERVER['__observer.creating'], [
+        $this->assertEquals($_SERVER['__hooks::observer.creating'], [
             'resource' => 'testing::categories',
             'exists'   => false,
         ]);
@@ -25,9 +25,9 @@ class ObserverHookTest extends ResourceTestCase
 
     function test_observes_after_created()
     {
-        $_SERVER['__observer.created'] = null;
+        $_SERVER['__hooks::observer.created'] = null;
         $this->blueprints()->categories()->fake();
-        $this->assertEquals($_SERVER['__observer.created'], [
+        $this->assertEquals($_SERVER['__hooks::observer.created'], [
             'resource' => 'testing::categories',
             'exists'   => true,
         ]);
@@ -35,22 +35,22 @@ class ObserverHookTest extends ResourceTestCase
 
     function test_observes_after_retrieved()
     {
-        $_SERVER['__observer.retrieved'] = null;
+        $_SERVER['__hooks::observer.retrieved'] = null;
         $post = $this->makeResource('testing::orders', ['title:text'])->fake();
         $post->fresh();
 
-        $this->assertEquals($_SERVER['__observer.retrieved'], [
+        $this->assertEquals($_SERVER['__hooks::observer.retrieved'], [
             'resource' => 'testing::orders',
         ]);
     }
 
     function test_observes_after_deleted()
     {
-        $_SERVER['__observer.deleted'] = null;
+        $_SERVER['__hooks::observer.deleted'] = null;
         $post = $this->makeResource('testing::orders', ['title:text'])->fake();
         $post->delete();
 
-        $this->assertEquals($_SERVER['__observer.deleted'], [
+        $this->assertEquals($_SERVER['__hooks::observer.deleted'], [
             'resource' => 'testing::orders',
             'fresh'    => null,
         ]);
@@ -67,7 +67,7 @@ class ObserverHookTest extends ResourceTestCase
     {
         $this->makeResource('testing::orders', ['title:text'])->fake();;
 
-        $this->assertEquals($_SERVER['__observer.saved'], [
+        $this->assertEquals($_SERVER['__hooks::observer.saved'], [
             'resource' => 'testing::orders',
             'saved'    => true,
         ]);

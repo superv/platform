@@ -10,12 +10,13 @@ use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\Jobs\MakeForm;
 use SuperV\Platform\Domains\Resource\Form\Jobs\SaveForm;
+use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Http\Controllers\BaseController;
 use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 
 class FormController extends BaseController
 {
-    public function fields($uuid, $field, $rpc = null, FormBuilder $builder)
+    public function fields($uuid, $field, $rpc = null, ResourceFormBuilder $builder)
     {
         if (! $formEntry = $this->getFormEntry($uuid)) {
             abort(404, 'Form entry not found');
@@ -47,7 +48,26 @@ class FormController extends BaseController
         abort(404);
     }
 
-    public function create($uuid, FormBuilder $builder)
+    public function show($namespace, $name)
+    {
+        if (! $formEntry = FormModel::withIdentifier($namespace.'::forms.'.$name)) {
+            abort(404, 'Form entry not found');
+        }
+
+        if (! $formEntry->isPublic()) {
+            app(PlatformAuthenticate::class)->guard($this->request, 'sv-api');
+        }
+
+        $builder = FormBuilder::resolve();
+        $builder->setFormEntry($formEntry)
+                ->setRequest($this->request);
+
+        $form = $builder->build();
+
+        return $form->makeComponent();
+    }
+
+    public function create($uuid)
     {
         if (! $formEntry = $this->getFormEntry($uuid)) {
             abort(404, 'Form entry not found');
@@ -56,10 +76,11 @@ class FormController extends BaseController
         /** @var \SuperV\Platform\Domains\Resource\Form\Form $form */
         $form = MakeForm::dispatch($formEntry, $this->request);
 
+
         return $form->makeComponent();
     }
 
-    public function edit($uuid, $entryId, FormBuilder $builder)
+    public function edit($uuid, $entryId, ResourceFormBuilder $builder)
     {
         if (! $formEntry = $this->getFormEntry($uuid)) {
             abort(404, 'Form entry not found');
@@ -72,7 +93,7 @@ class FormController extends BaseController
         }
         $formFields = $builder->buildFields($formEntry->getFormFields());
 
-        $form = FormBuilder::buildFromEntry($entry);
+        $form = ResourceFormBuilder::buildFromEntry($entry);
         $form->setUrl($resource->route('forms.edit', $entry))
              ->setRequest($this->request)
              ->setFields($formFields)
@@ -105,7 +126,7 @@ class FormController extends BaseController
             $entry->setKeyName($keyName);
         }
 
-        $form = FormBuilder::buildFromEntry($entry);
+        $form = ResourceFormBuilder::buildFromEntry($entry);
 
         return $form->setRequest($this->request)
                     ->make()

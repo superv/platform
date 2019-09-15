@@ -12,7 +12,7 @@ class CategoryObserver implements BeforeCreatingHook, AfterCreatedHook
 
     public function creating(EntryContract $entry)
     {
-        $_SERVER['__observer.creating'] = [
+        $_SERVER['__hooks::observer.creating'] = [
             'resource' => $entry->getResourceIdentifier(),
             'exists'   => $entry->exists(),
         ];
@@ -20,7 +20,7 @@ class CategoryObserver implements BeforeCreatingHook, AfterCreatedHook
 
     public function created(EntryContract $entry)
     {
-        $_SERVER['__observer.created'] = [
+        $_SERVER['__hooks::observer.created'] = [
             'resource' => $entry->getResourceIdentifier(),
             'exists'   => $entry->exists(),
         ];

@@ -5,11 +5,11 @@ namespace SuperV\Platform\Domains\Resource\Hook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\Hook as HookContract;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
-class ConfigHook implements HookContract
+class FormsHook implements HookContract
 {
     public function hook(string $identifier, string $hookHandler, string $subKey = null)
     {
-        $eventName = sprintf("%s::config.resolved", $identifier);
+        $eventName = sprintf("%s::forms.%s.resolved", $identifier, $subKey);
         app('events')->listen($eventName, function ($payload) use ($hookHandler) {
             $this->handle($hookHandler, $payload);
         });

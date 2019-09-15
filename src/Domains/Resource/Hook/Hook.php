@@ -64,39 +64,55 @@ class Hook
             }
 
             $className = str_replace('.php', '', $file->getFilename());
-            $class = $namespace.'\\'.$className;
+            $hookHandler = $namespace.'\\'.$className;
 
-            $identifier = isset($class::$identifier) ? $class::$identifier : null;
-
-            if (! $identifier) {
+            if (! ($identifier = isset($hookHandler::$identifier) ? $hookHandler::$identifier : null)) {
                 continue;
             }
-            $parts = explode('_', snake_case($className));
-            $type = end($parts);
 
-            $this->register($identifier, $type, $class);
+            $this->register($identifier, $hookHandler, $className);
         }
 
         return $this;
     }
 
-    public function hookType($identifier, $type, $hookHandler)
+    public function hookType($identifier, $type, $hookHandler, $subKey = null)
     {
         $typeHook = str_replace_last("\\Hook", "\\".studly_case($type.'_hook'), get_class($this));
         if (class_exists($typeHook)) {
-            app($typeHook)->hook($identifier, $hookHandler);
+            app($typeHook)->hook($identifier, $hookHandler, $subKey);
         }
     }
 
-
-    public function register($identifier, $key, $class)
+    public function register($identifier, $hookHandler, $className)
     {
+        if (str_is('*::*::*', $identifier)) {
+            $parts = explode('::', $identifier);
+            $identifier = sprintf('%s::%s', $parts[0], $parts[1]);
+
+            list($hookType, $subKey) = explode('.', $parts[2]);
+        } else {
+            $parts = explode('_', snake_case($className));
+            $hookType = end($parts);
+
+            $subKey = null;
+        }
+
         if (! isset($this->map[$identifier])) {
             $this->map[$identifier] = [];
         }
-        $this->map[$identifier][$key] = $class;
 
-        $this->hookType($identifier, $key, $class);
+        if (! $subKey) {
+            $this->map[$identifier][$hookType] = $hookHandler;
+        } else {
+            if (! isset($this->map[$identifier][$subKey])) {
+                $this->map[$identifier][$hookType][$subKey] = [];
+            }
+
+            $this->map[$identifier][$hookType][$subKey] = $hookHandler;
+        }
+
+        $this->hookType($identifier, $hookType, $hookHandler, $subKey);
 
         return $this;
     }

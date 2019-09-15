@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Testing\HelperComponent;
@@ -210,7 +210,7 @@ class ResourceFormsTest extends ResourceTestCase
             $table->restorable();
         });
 
-        $form = FormBuilder::buildFromResource($users);
+        $form = ResourceFormBuilder::buildFromResource($users);
         $form->make();
 
         $this->assertEquals(0, count($form->compose()->get('fields')));

@@ -6,6 +6,8 @@ use SuperV\Platform\Domains\Resource\Hook\Hook;
 use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersConfig;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFields;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormCustom;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormDefault;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsConfig;
@@ -22,20 +24,24 @@ class HookTest extends ResourceTestCase
     function test__resolves_from_container_as_a_singleton()
     {
         $hook = Hook::resolve();
-        $hook->register('sv::users', 'config', 'config_class');
-        $hook->register('sv::users', 'fields', 'fields_class');
+        $hook->register('sv::users', 'config_handler', 'UsersConfig');
+        $hook->register('sv::users::fields.title', 'title_field_handler', 'TitleField');
 
         $hook = Hook::resolve();
         $this->assertEquals(
             [
-                'config' => 'config_class',
-                'fields' => 'fields_class',
+                'config' => 'config_handler',
+                'fields' => [
+                    'title' => 'title_field_handler',
+                ],
             ],
             $hook->get('sv::users')
         );
 
-        $this->assertEquals('fields_class', $hook->get('sv::users', 'fields'));
-        $this->assertEquals('config_class', $hook->get('sv::users', 'config'));
+        $this->assertEquals([
+            'title' => 'title_field_handler',
+        ], $hook->get('sv::users', 'fields'));
+        $this->assertEquals('config_handler', $hook->get('sv::users', 'config'));
     }
 
     function test__scan_path_for_hooks()
@@ -46,6 +52,10 @@ class HookTest extends ResourceTestCase
             [
                 'config'   => OrdersConfig::class,
                 'fields'   => OrdersFields::class,
+                'forms'    => [
+                    'default' => OrdersFormDefault::class,
+                    'custom'  => OrdersFormCustom::class,
+                ],
                 'observer' => OrdersObserver::class,
             ],
             $hook->get('testing::orders')
@@ -57,7 +67,7 @@ class HookTest extends ResourceTestCase
         ], $hook->get('testing::posts'));
     }
 
-    function test_merges_config_from_hook()
+    function test_config_hook()
     {
         $orders = $this->makeResource('testing::orders');
         $posts = $this->makeResource('testing::posts');

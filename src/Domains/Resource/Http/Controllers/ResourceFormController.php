@@ -2,8 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
+use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
@@ -32,7 +32,7 @@ class ResourceFormController extends BaseApiController
 //                    ->save();
 //    }
 
-    public function edit(FormBuilder $builder)
+    public function edit(ResourceFormBuilder $builder)
     {
         $resource = $this->resolveResource();
         $form = $builder->setEntry($this->entry)->build();
@@ -49,7 +49,7 @@ class ResourceFormController extends BaseApiController
         return $form->makeComponent();
     }
 
-    public function update(FormBuilder $builder)
+    public function update(ResourceFormBuilder $builder)
     {
         $this->resolveResource();
 

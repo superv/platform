@@ -18,9 +18,12 @@ class Blueprints
     {
         $table->increments('id');
         $table->uuid('uuid')->unique();
+        $table->uuid('rev_id')->nullable()->unique();
+
         $table->string('name')->showOnIndex();
-        $table->string('identifier')->showOnIndex();
+        $table->string('identifier')->showOnIndex()->unique();
         $table->string('namespace')->showOnIndex();
+
         $table->string('model')->nullable();
         $table->string('dsn');
 
@@ -99,6 +102,15 @@ class Blueprints
     {
         $table->increments('id');
 
+        $table->uuid('uuid')->unique();
+        $table->uuid('rev_id')->nullable()->unique();
+
+        $table->string('name')->showOnIndex();
+        $table->string('identifier')->showOnIndex()->unique();
+        $table->string('namespace')->showOnIndex();
+
+        $table->boolean('public')->default(false);
+
         if ($table instanceof Blueprint) {
             $resource->label('Forms');
             $resource->resourceKey('form');
@@ -107,7 +119,8 @@ class Blueprints
             $resource->model(FormModel::class);
 
             $table->nullableBelongsTo('sv_resources', 'resource');
-            $table->hasUuid()->showOnIndex();
+//            $table->hasUuid()->showOnIndex();
+
             $table->createdBy()->updatedBy();
 
             $table->belongsToMany('platform::sv_fields', 'fields')
@@ -119,8 +132,7 @@ class Blueprints
             });
         } else {
             $table->unsignedInteger('resource_id')->nullable();
-            $table->uuid('uuid')->unique();
-            $table->boolean('public')->default(false);
+//            $table->uuid('uuid')->unique();
 
             $table->timestamps();
             $table->unsignedInteger('created_by_id')->nullable();

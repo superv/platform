@@ -91,8 +91,7 @@ class FormControllerTest extends ResourceTestCase
 
     protected function makeForm(array $overrides = []): FormModel
     {
-        $factory = app(FormFactory::class);
-        $formEntry = $factory->create(array_merge([
+        $formEntry = FormFactory::resolve()->create('testing', 'foo', array_merge([
             'title'  => 'Public Form',
             'public' => false,
         ], $overrides));

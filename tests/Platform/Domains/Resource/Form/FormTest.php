@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
@@ -10,8 +11,8 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormField;
+use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
@@ -30,7 +31,7 @@ class FormTest extends ResourceTestCase
         $fields = $this->makeFields();
         $watcher = new FormTestUser(['name' => 'Omar', 'age' => 33]);
 
-        $form = FormBuilder::buildFromEntry($watcher);
+        $form = ResourceFormBuilder::buildFromEntry($watcher);
         $form = $form->setFields($fields)->make()->hideField('age');
 
         $this->assertInstanceOf(Form::class, $form);
@@ -39,11 +40,26 @@ class FormTest extends ResourceTestCase
         $this->assertEquals(['age'], $form->getHiddenFields());
     }
 
+    function test__dispatches_event_when_resolved()
+    {
+        $this->withoutExceptionHandling();
+
+        $eventName = 'testing::categories::forms.default.resolved';
+        Event::fake($eventName);
+
+        $resource = $this->blueprints()->categories();
+
+        $response = $this->getJsonUser($resource->router()->createForm());
+        $response->assertOk();
+
+        Event::assertDispatched($eventName);
+    }
+
     function test_makes_update_form()
     {
         $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
         $fields = $this->makeFields();
-        $form = FormBuilder::buildFromEntry($testUser);
+        $form = ResourceFormBuilder::buildFromEntry($testUser);
         $form->setFields($fields)->make();
 
         $this->assertEquals('Omar', $this->getComposedValue($form->getField('name'), $form));
@@ -52,7 +68,7 @@ class FormTest extends ResourceTestCase
 
     function test__add_field()
     {
-        $form = FormBuilder::buildFromEntry($testUser = new FormTestUser);
+        $form = ResourceFormBuilder::buildFromEntry($testUser = new FormTestUser);
         $this->assertEquals(2, $form->getFields()->count());
 
         $form->addField(FieldFactory::createFromArray(['type' => 'text', 'name' => 'profession'], FormField::class));
@@ -66,7 +82,7 @@ class FormTest extends ResourceTestCase
     {
         $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
         $fields = $this->makeFields();
-        $form = FormBuilder::buildFromEntry($testUser);
+        $form = ResourceFormBuilder::buildFromEntry($testUser);
         $form->setFields($fields)->make();
         $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
              ->save();
@@ -79,7 +95,7 @@ class FormTest extends ResourceTestCase
     {
         $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
         $fields = $this->makeFields();
-        $form = FormBuilder::buildFromEntry($testUser);
+        $form = ResourceFormBuilder::buildFromEntry($testUser);
         $form->setFields($fields)->make();
 
         $form->hideField('name')
@@ -102,7 +118,7 @@ class FormTest extends ResourceTestCase
     {
         $testUser = new FormTestUser;
         $fields = $this->makeFields();
-        $form = FormBuilder::buildFromEntry($testUser);
+        $form = ResourceFormBuilder::buildFromEntry($testUser);
         $form->setFields($fields)->make();
         $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
              ->save();
@@ -154,7 +170,7 @@ class FormTest extends ResourceTestCase
         ];
 
         $file = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
-        $form = FormBuilder::buildFromEntry($testUser = new FormTestUser);
+        $form = ResourceFormBuilder::buildFromEntry($testUser = new FormTestUser);
         $form->setFields($fields)->make();
 
         $form->setRequest($this->makePostRequest(['name'   => 'Omar',

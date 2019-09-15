@@ -13,7 +13,7 @@ class OrdersObserver implements AfterSavedHook, AfterRetrievedHook, AfterDeleted
 
     public function saved(EntryContract $entry)
     {
-        $_SERVER['__observer.saved'] = [
+        $_SERVER['__hooks::observer.saved'] = [
             'resource' => $entry->getResourceIdentifier(),
             'saved'    => $entry->title === $entry->fresh()->title,
         ];
@@ -25,14 +25,14 @@ class OrdersObserver implements AfterSavedHook, AfterRetrievedHook, AfterDeleted
 
     public function retrieved(EntryContract $entry)
     {
-        $_SERVER['__observer.retrieved'] = [
+        $_SERVER['__hooks::observer.retrieved'] = [
             'resource' => $entry->getResourceIdentifier(),
         ];
     }
 
     public function deleted(EntryContract $entry)
     {
-        $_SERVER['__observer.deleted'] = [
+        $_SERVER['__hooks::observer.deleted'] = [
             'resource' => $entry->getResourceIdentifier(),
             'fresh'    => $entry->fresh(),
         ];

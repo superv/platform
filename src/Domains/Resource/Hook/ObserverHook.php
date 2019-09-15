@@ -34,7 +34,7 @@ class ObserverHook implements HookContract
         $this->dispatcher = $dispatcher;
     }
 
-    public function hook(string $identifier, string $hookHandler)
+    public function hook(string $identifier, string $hookHandler, string $subKey = null)
     {
         $observer = app($hookHandler);
 
