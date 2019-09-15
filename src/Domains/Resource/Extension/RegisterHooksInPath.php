@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Extension;
 
-use SuperV\Platform\Domains\Resource\Hook;
 use SuperV\Platform\Support\Dispatchable;
 use SuperV\Platform\Support\Path;
 use Symfony\Component\Finder\Finder;
@@ -44,7 +43,7 @@ class RegisterHooksInPath
         foreach ($finder->in($this->path)->directories()  as $directory) {
             $class = Path::parseClass($this->psrNamespace, $this->path, $directory);
             $identifier = $this->namespace.'::'.snake_case($directory->getBasename());
-            Hook::register($identifier, $class);
+            Hook::resolve()->register($identifier, $class);
         }
 
     }

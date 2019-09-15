@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
-use SuperV\Platform\Domains\Resource\Hook;
+use SuperV\Platform\Domains\Resource\Hook\Hook;
 use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;

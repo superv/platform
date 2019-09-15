@@ -60,21 +60,14 @@ class ResourceFactory
 
         try {
             $attributes = static::attributesFor($identifier);
+            $attributes['config'] = ResourceConfig::make($attributes['config']);
 
-            $attributes = Hook::attributes($identifier, $attributes);
-
-            if (is_array($attributes['config'])) {
-                $attributes['config'] = ResourceConfig::make($attributes['config']);
-            }
 
             $resource = new Resource($attributes);
 
             Extension::extend($resource);
         } catch (Exception $e) {
-            throw $e;
-            if ($e->getMessage() !== 'Resource model entry not found for [sv_forms]') {
-                throw $e;
-            }
+            PlatformException::throw($e);
 
             return null;
         }

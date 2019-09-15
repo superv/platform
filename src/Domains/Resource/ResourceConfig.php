@@ -2,7 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use Event;
 use SuperV\Platform\Contracts\Arrayable;
+use SuperV\Platform\Domains\Resource\Events\ResourceConfigResolvedEvent;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class ResourceConfig
@@ -12,8 +14,6 @@ class ResourceConfig
     protected $name;
 
     protected $namespace;
-
-    protected $identifier;
 
     protected $hasUuid;
 
@@ -80,16 +80,12 @@ class ResourceConfig
 
     public function getIdentifier()
     {
-        if ($this->identifier) {
-            return $this->identifier;
-        }
-
         return $this->getNamespace().'::'.$this->getName();
     }
 
     public function setIdentifier($identifier)
     {
-        $this->identifier = $identifier;
+        list($this->namespace, $this->name) = explode('::', $identifier);
 
         return $this;
     }
@@ -242,10 +238,7 @@ class ResourceConfig
         return $this->ownerKey;
     }
 
-    /**
-     * @return \SuperV\Platform\Domains\Resource\ResourceDriver
-     */
-    public function getDriver(): \SuperV\Platform\Domains\Resource\ResourceDriver
+    public function getDriver(): ?ResourceDriver
     {
         return $this->driver;
     }
@@ -299,10 +292,21 @@ class ResourceConfig
             if ($value instanceof Arrayable) {
                 $value = $value->toArray();
             }
+            $getter = 'get'.studly_case(snake_case($key));
+            if (! $value && method_exists($this, $getter)) {
+                $value = $this->{$getter}();
+            }
             $attributes[snake_case($key)] = $value;
         }
 
         return array_except($attributes, 'resource');
+    }
+
+    public function merge(string $otherClass)
+    {
+        $other = new $otherClass;
+
+        $this->fill($other->toArray());
     }
 
     public static function make(array $config = [], $overrideDefault = true)

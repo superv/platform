@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource\Fixtures;
 use Closure;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
 use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
 
 class Blueprints
@@ -19,7 +19,7 @@ class Blueprints
         $this->roles();
 
         $users = $this->create('t_users',
-            function (Blueprint $table, ResourceConfig $resource) use ($callback) {
+            function (Blueprint $table, Config $resource) use ($callback) {
                 $resource->resourceKey('user');
                 $resource->label('Users');
 
@@ -37,9 +37,9 @@ class Blueprints
                       ->pivotForeignKey('user_id')
                       ->pivotRelatedKey('role_id')
                       ->pivotColumns(
-                        function (Blueprint $pivotTable) {
-                            $pivotTable->string('notes');
-                        });
+                          function (Blueprint $pivotTable) {
+                              $pivotTable->string('notes');
+                          });
 
                 $table->morphToMany('platform::t_actions', 'actions', 'owner', 'platform::assigned_actions', 'action',
                     function (Blueprint $pivotTable) {
@@ -72,10 +72,11 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function posts()
+    public function posts($namespace = 'platform')
     {
-        return $this->create('t_posts', function (Blueprint $table, ResourceConfig $resource) {
-            $resource->label('Posts');
+        return $this->create('t_posts', function (Blueprint $table, Config $config) use ($namespace) {
+            $config->label('Posts');
+            $config->setNamespace($namespace);
 
             $table->increments('id');
             $table->string('title')->entryLabel();
@@ -85,9 +86,23 @@ class Blueprints
     }
 
     /** @return Resource */
+    public function categories($namespace = 'testing')
+    {
+        return $this->create('categories',
+            function (Blueprint $table, Config $config) use ($namespace) {
+                $config->label('Categories');
+                $config->setNamespace($namespace);
+
+                $table->increments('id');
+                $table->string('title')->entryLabel();
+            }
+        );
+    }
+
+    /** @return Resource */
     public function roles()
     {
-        $roles = $this->create('t_roles', function (Blueprint $table, ResourceConfig $resource) {
+        $roles = $this->create('t_roles', function (Blueprint $table, Config $resource) {
             $resource->resourceKey('role');
             $table->increments('id');
             $table->string('title')->unique()->entryLabel();
