@@ -15,6 +15,8 @@ class GetEntryResource
      */
     protected $entry;
 
+    protected static $cache = [];
+
     public function __construct(EntryContract $entry)
     {
         $this->entry = $entry;
@@ -22,10 +24,14 @@ class GetEntryResource
 
     public function handle()
     {
-        var_dump($this->getResourceDsn());
-        $identifier = DB::table('sv_resources')->where('dsn', $this->getResourceDsn())->value('identifier');
+        $dsn = $this->getResourceDsn();
+        if (! isset(static::$cache[$dsn])) {
+            $identifier = DB::table('sv_resources')->where('dsn', $dsn)->value('identifier');
 
-        return $identifier;
+            static::$cache[$dsn] = $identifier ?? false;
+        }
+
+        return static::$cache[$dsn];
     }
 
     protected function getResourceDsn()
