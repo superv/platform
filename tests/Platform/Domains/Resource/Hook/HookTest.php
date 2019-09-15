@@ -64,7 +64,7 @@ class HookTest extends ResourceTestCase
 
         $this->assertEquals('Orders Hooked', $orders->config()->getLabel());
 
-        $this->assertEquals('Posts v2', $posts->config()->getLabel());
+        $this->assertEquals('Posts Hooked', $posts->config()->getLabel());
         $this->assertEquals(TestPostModel::class, $posts->config()->getModel());
     }
 

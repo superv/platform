@@ -18,6 +18,12 @@ class ConfigHook implements HookContract
     protected function handle($hookHandler, $payload)
     {
         /** @var ResourceConfig $payload */
-        $payload->merge($hookHandler);
+        if (is_string($hookHandler)) {
+            $hookHandler = app($hookHandler);
+        }
+
+        if (method_exists($hookHandler, 'resolved')) {
+            $hookHandler->resolved($payload);
+        }
     }
 }

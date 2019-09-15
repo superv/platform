@@ -4,12 +4,12 @@ namespace Tests\Platform\Domains\Resource\Fixtures\Resources;
 
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
-class OrdersConfig extends ResourceConfig
+class OrdersConfig
 {
     public static $identifier = 'testing::orders';
 
-    public function getLabel()
+    public function resolved(ResourceConfig $config)
     {
-        return 'Orders Hooked';
+        $config->label('Orders Hooked');
     }
 }
