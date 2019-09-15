@@ -361,6 +361,11 @@ final class Resource implements
         return $this->config()->getKeyName();
     }
 
+    public function router(): Router
+    {
+        return new Router($this);
+    }
+
     public function spaRoute($route, ?EntryContract $entry = null, array $params = [])
     {
         if (starts_with($route, 'forms.')) {
