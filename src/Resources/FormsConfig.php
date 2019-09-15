@@ -4,12 +4,12 @@ namespace SuperV\Platform\Resources;
 
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
-class FormsConfig extends ResourceConfig
+class FormsConfig
 {
     public static $identifier = 'platform::forms';
 
-    public function getLabel()
+    public function resolved(ResourceConfig $config)
     {
-        return 'Form Entries';
+        $config->label('Form Entries');
     }
 }
