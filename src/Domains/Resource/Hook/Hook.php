@@ -210,6 +210,6 @@ class Hook
     /** @return static */
     public static function resolve()
     {
-        return app()->make(static::class);
+        return app(static::class);
     }
 }
