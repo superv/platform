@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Testing;
 
 use Closure;
+use Current;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
@@ -55,11 +56,13 @@ trait ResourceTestHelpers
      */
     protected function create($table, Closure $callback = null, $connection = null)
     {
-        if ($table instanceof Closure) {
-            $callback = $table;
-            $table = Str::random(8);
+        if (str_contains($table, '::')) {
+            list($namespace, $table) = explode('::', $table);
+        } else {
+            $namespace = 'platform';
         }
-        $table = $table ?? Str::random(4);
+
+        Current::setMigrationScope($namespace);
 
         if ($connection) {
             $config = Schema::connection($connection)->create($table, $callback);
