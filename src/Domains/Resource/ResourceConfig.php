@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource;
 use Event;
 use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Domains\Resource\Events\ResourceConfigResolvedEvent;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class ResourceConfig
@@ -322,7 +323,15 @@ class ResourceConfig
 
     public static function find($identifier)
     {
+        if (is_null($identifier)) {
+            PlatformException::runtime('Identifier can not be null');
+        }
+
         $resourceEntry = ResourceModel::query()->where('identifier', $identifier)->first();
+
+        if (is_null($resourceEntry)) {
+            PlatformException::runtime("Resource config not found for identifier: ".$identifier);
+        }
 
         return static::make($resourceEntry->config);
     }

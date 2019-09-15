@@ -22,8 +22,7 @@ class GetEntryResource
 
     public function handle()
     {
-//        $identifier = ResourceModel::query()->where('dsn', $this->getResourceDsn())->value('identifier');
-
+        var_dump($this->getResourceDsn());
         $identifier = DB::table('sv_resources')->where('dsn', $this->getResourceDsn())->value('identifier');
 
         return $identifier;

@@ -88,13 +88,6 @@ class Hook
         }
     }
 
-    public function hookTypeeee($identifier, $type, $payload)
-    {
-        $typeHook = str_replace_last("\\Hook", "\\".studly_case($type.'_hook'), get_class($this));
-        if (class_exists($typeHook)) {
-            (new $typeHook($identifier, $this->get($identifier, $type)))->hook($payload);
-        }
-    }
 
     public function register($identifier, $key, $class)
     {
@@ -120,9 +113,9 @@ class Hook
 
     public static function saving(EntryContract $entry, Resource $resource)
     {
-        if (! $baseNamespace = static::base($resource->getIdentifier())) {
-            return;
-        }
+//        if (! $baseNamespace = static::base($resource->getIdentifier())) {
+//            return;
+//        }
 
         if ($resourceKey = $resource->config()->getResourceKey()) {
             $plural = str_plural($resourceKey);
@@ -141,9 +134,9 @@ class Hook
 
     public static function saved(EntryContract $entry, Resource $resource)
     {
-        if (! $baseNamespace = static::base($resource->getIdentifier())) {
-            return;
-        }
+//        if (! $baseNamespace = static::base($resource->getIdentifier())) {
+//            return;
+//        }
 
         if ($resourceKey = $resource->config()->getResourceKey()) {
             $plural = str_plural($resourceKey);
@@ -166,44 +159,6 @@ class Hook
                 call_user_func_array([$listener, 'after'], [$entry, $resource]);
                 unset(static::$locks[$lock]);
             }
-        }
-    }
-
-    public static function attributes($handle, array $attributes)
-    {
-        if (! $baseNamespace = static::$map[$handle] ?? null) {
-            return $attributes;
-        }
-
-        if ($handle === 'platform::orders') {
-            dd($baseNamespace);
-        }
-
-        if ($resourceKey = $attributes['config']['resource_key']) {
-            $plural = str_plural($resourceKey);
-        } else {
-            $plural = explode('::', $handle)[1];
-        }
-
-        $configClass = $baseNamespace."\\".studly_case($plural.'_config');
-
-        if (class_exists($configClass)) {
-            $attributes['config'] = $configClass::make($attributes['config']);
-        }
-
-        return $attributes;
-    }
-
-    public static function resource_xxxx(Resource $resource)
-    {
-        if (! $base = static::$map[$resource->getIdentifier()] ?? null) {
-            return;
-        }
-
-        $base = new $base($resource);
-
-        if (method_exists($base, 'handle')) {
-            $base->handle($resource);
         }
     }
 

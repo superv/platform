@@ -31,10 +31,8 @@ class ResourceServiceProvider extends BaseServiceProvider
         Model\Events\EntrySavingEvent::class   => [
             Listeners\ValidateSavingEntry::class,
             Listeners\SaveUpdatedBy::class,
-            Listeners\HookSaving::class,
         ],
         Model\Events\EntrySavedEvent::class    => [
-            Listeners\HookSaved::class,
         ],
         Model\Events\EntryCreatingEvent::class => Listeners\SaveCreatedBy::class,
         Resource\ResourceActivityEvent::class  => Listeners\RecordActivity::class,

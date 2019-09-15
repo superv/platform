@@ -13,7 +13,14 @@ class OrdersObserver implements AfterSavedHook, AfterRetrievedHook, AfterDeleted
 
     public function saved(EntryContract $entry)
     {
-        $entry->setAttribute('title', 'Order Saved');
+        $_SERVER['__observer.saved'] = [
+            'resource' => $entry->getResourceIdentifier(),
+            'saved'    => $entry->title === $entry->fresh()->title,
+        ];
+
+        // make sure I have the right precautions
+        // in order not to lock myself here
+        $entry->save();
     }
 
     public function retrieved(EntryContract $entry)

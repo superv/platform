@@ -65,9 +65,12 @@ class ObserverHookTest extends ResourceTestCase
 
     function test_observes_after_saved()
     {
-        $posts = $this->makeResource('testing::orders', ['title:text']);
-        $post = $posts->create(['title' => 'Order']);
-        $this->assertEquals('Order Saved', $post->title);
+        $this->makeResource('testing::orders', ['title:text'])->fake();;
+
+        $this->assertEquals($_SERVER['__observer.saved'], [
+            'resource' => 'testing::orders',
+            'saved'    => true,
+        ]);
     }
 
     protected function setUp()

@@ -14,7 +14,6 @@ use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class ResourceEntry extends Entry
 {
@@ -96,12 +95,10 @@ class ResourceEntry extends Entry
             }
         }
 
-        if (! method_exists($this, $name)) {
+        if (! method_exists($this, $name) && ! in_array($name, ['create', 'first', 'find'])) {
             if ($relation = $this->getRelationshipFromConfig($name)) {
                 return $relation;
             } elseif ($relation = superv('relations')->get($this->getHandle().'.'.$name)) {
-                $relations = superv('relations');
-
                 return $relation->newQuery();
             } elseif (! $this->isPlatformResource()) {
                 if ($field = $this->getResource()->getField($name)) {
@@ -170,11 +167,6 @@ class ResourceEntry extends Entry
         }
 
         return $this->resourceConfig;
-    }
-
-    public function fetchResourceIdentifier()
-    {
-        return ResourceModel::query()->where('dns', $this->getResourceDsn())->value('identifier');
     }
 
     public function getResourceDsn()
