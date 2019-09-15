@@ -26,6 +26,26 @@ function fails($data)
     PlatformException::fail($data);
 }
 
+function get_ns_from_file($file)
+{
+    $fp = fopen($file, 'r');
+
+    $namespace = $buffer = '';
+    while (! $namespace) {
+        if (feof($fp)) {
+            break;
+        }
+
+        $buffer .= fgets($fp, 512);
+        $re = '/namespace\s+(((\w+\\\\)+)(\w+)\s*);/';
+        if (preg_match($re, $buffer, $matches)) {
+            $namespace = $matches[1];
+            break;
+        }
+    }
+
+    return $namespace;
+}
 function sv_trans($key = null, $replace = [], $locale = null)
 {
     $line = trans($key, $replace, $locale);
