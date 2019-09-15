@@ -11,7 +11,7 @@ class Users implements UsersContract
     /** @var \Illuminate\Database\Eloquent\Builder */
     protected $query;
 
-    /** @var \SuperV\Platform\Domains\Auth\Contracts\User|\SuperV\Platform\Domains\Database\Model\Model  */
+    /** @var \SuperV\Platform\Domains\Auth\Contracts\User|\SuperV\Platform\Domains\Database\Model\Entry */
     protected $model;
 
     public function __construct(User $user)
