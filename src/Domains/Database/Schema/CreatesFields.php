@@ -99,7 +99,7 @@ trait CreatesFields
         return parent::increments($column);
     }
 
-    public function hasUuid($column = 'uuid')
+    public function hasUuid($column = 'uuid'): ColumnDefinition
     {
         $this->resourceConfig()->setHasUuid(true);
 
