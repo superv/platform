@@ -3,7 +3,9 @@
 namespace Tests\Platform\Domains\Resource;
 
 use Closure;
+use Event;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\Events\ResourceConfigResolvedEvent as ResolvedEvent;
 use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
@@ -15,6 +17,22 @@ use SuperV\Platform\Domains\Resource\ResourceFactory;
  */
 class ResourceConfigTest extends ResourceTestCase
 {
+    function test__dispatches_event_when_resolved()
+    {
+        $resolvedEventName = 'testing::any_table::config.resolved';
+        Event::fake([ResolvedEvent::class, $resolvedEventName]);
+        $any = $this->anyTable();
+
+        Event::assertDispatched($resolvedEventName, function ($event, $config) use ($any) {
+            return $any->config()->toArray() === $config->toArray();
+        });
+
+        Event::assertDispatched(ResolvedEvent::class,
+            function (ResolvedEvent $event) use ($any) {
+                return $any->config()->toArray() === $event->config()->toArray();
+            });
+    }
+
     function test__sortable()
     {
         $res = $this->create('t_users', function (Blueprint $table) {

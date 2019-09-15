@@ -307,13 +307,19 @@ class ResourceConfig
 
     public static function make(array $config = [], $overrideDefault = true)
     {
-        return (new static($config, $overrideDefault));
+        $config = (new static($config, $overrideDefault));
+
+        ResourceConfigResolvedEvent::fire($config);
+
+        Event::fire(sprintf("%s::config.resolved", $config->getIdentifier()), $config);
+
+        return $config;
     }
 
     public static function find($identifier)
     {
         $resourceEntry = ResourceModel::query()->where('identifier', $identifier)->first();
 
-        return new ResourceConfig($resourceEntry->config);
+        return static::make($resourceEntry->config);
     }
 }
