@@ -170,7 +170,7 @@ class ResourceConfigTest extends ResourceTestCase
 
     function test__finds_by_resource_handle()
     {
-        $res = $this->create(function (Blueprint $table, Config $config) {
+        $res = $this->create('tmp_table', function (Blueprint $table, Config $config) {
             $table->increments('id');
             $config->keyName('some_key');
         });

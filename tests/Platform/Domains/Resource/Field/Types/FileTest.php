@@ -13,7 +13,7 @@ class FileTest extends ResourceTestCase
 {
     function test_type_file_is_not_required_by_default()
     {
-        $res = $this->create(null, function (Blueprint $table) {
+        $res = $this->create('tmp_table', function (Blueprint $table) {
             $table->increments('id');
             $table->file('avatar');
         });
