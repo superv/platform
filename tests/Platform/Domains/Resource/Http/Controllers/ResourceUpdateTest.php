@@ -19,7 +19,7 @@ class ResourceUpdateTest extends ResourceTestCase
 
     function test__updates_all_required()
     {
-        $user = $this->schema()->users()->fake(['group_id' => 1]);
+        $user = $this->blueprints()->users()->fake(['group_id' => 1]);
 
         $post = [
             'name'  => 'Ali',
@@ -38,7 +38,7 @@ class ResourceUpdateTest extends ResourceTestCase
 
     function test__updates_some_required()
     {
-        $user = $this->schema()->users()->fake();
+        $user = $this->blueprints()->users()->fake();
 
         $this->postJsonUser($user->route('forms.update'), ['name' => 'Ali'])->assertOk();
         $this->postJsonUser($user->route('forms.update'), ['email' => 'ali@superv.io'])->assertOk();
@@ -47,7 +47,7 @@ class ResourceUpdateTest extends ResourceTestCase
     function test__fails_on_unique_validation()
     {
         $this->withExceptionHandling();
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $users->fake(['email' => 'ali@superv.io']);
 
         $user = $users->fake();
@@ -59,7 +59,7 @@ class ResourceUpdateTest extends ResourceTestCase
 
     function test__fails_on_nullable_validation()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $user = $users->fake();
 
         $response = $this->postJsonUser($user->route('forms.update'), ['name' => null]);
@@ -71,7 +71,7 @@ class ResourceUpdateTest extends ResourceTestCase
     function test__uploads_files()
     {
         Storage::fake('fakedisk');
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $user = $users->fake();
 
         $this->withoutExceptionHandling();

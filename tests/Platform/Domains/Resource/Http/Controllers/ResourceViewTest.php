@@ -19,7 +19,7 @@ class ResourceViewTest extends ResourceTestCase
 
     function test__view_data()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $user = $users->fake(['name' => 'Ali Selcuk', 'age' => '40', 'group_id' => 1]);
 
         Storage::fake('fakedisk');

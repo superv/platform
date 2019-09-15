@@ -25,8 +25,8 @@ class RelationCreateTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $users = $this->schema()->users();
-        $this->schema()->comments();
+        $users = $this->blueprints()->users();
+        $this->blueprints()->comments();
         $user = $users->fake();
         $relation = $users->getRelation('comments');
 
@@ -42,9 +42,9 @@ class RelationCreateTest extends ResourceTestCase
 
     function test__post_standard_form()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
 
-        $this->schema()->comments();
+        $this->blueprints()->comments();
         $user = $users->fake();
         $relation = $users->getRelation('comments');
 
@@ -63,8 +63,8 @@ class RelationCreateTest extends ResourceTestCase
 
     function test__display_extended_form()
     {
-        $users = $this->schema()->users();
-        $this->schema()->comments();
+        $users = $this->blueprints()->users();
+        $this->blueprints()->comments();
         ResourceFactory::wipe();
 
 
@@ -89,8 +89,8 @@ class RelationCreateTest extends ResourceTestCase
 
     function test__post_extended_form()
     {
-        $users = $this->schema()->users();
-        $this->schema()->comments();
+        $users = $this->blueprints()->users();
+        $this->blueprints()->comments();
         ResourceFactory::wipe();
 
         Resource::extend('platform::t_users')->with(function (Resource $resource) {

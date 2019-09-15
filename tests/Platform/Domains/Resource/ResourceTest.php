@@ -43,7 +43,7 @@ class ResourceTest extends ResourceTestCase
 
     function test__get_creation_rules()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
 
         $this->assertEquals([
             'name'     => ['max:255', 'required'],
@@ -58,7 +58,7 @@ class ResourceTest extends ResourceTestCase
 
     function test__get_update_rules()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
 
         $user = $users->fake();
 
@@ -75,7 +75,7 @@ class ResourceTest extends ResourceTestCase
 
     function test__rules_for_dynamically_added_fields()
     {
-        $this->schema()->users();
+        $this->blueprints()->users();
         Resource::extend('platform::t_users')
                 ->with(function (Resource $resource) {
                     $resource->indexFields()->add(['type' => 'text', 'name' => 'isot']);

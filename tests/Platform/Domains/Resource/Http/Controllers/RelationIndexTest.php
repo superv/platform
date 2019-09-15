@@ -16,8 +16,8 @@ class RelationIndexTest extends ResourceTestCase
 {
     function test__index_listing_with_has_many_relations()
     {
-        $users = $this->schema()->users();
-        $posts = $this->schema()->posts();
+        $users = $this->blueprints()->users();
+        $posts = $this->blueprints()->posts();
 
         // seed the main user (parent)
         //
@@ -83,7 +83,7 @@ class RelationIndexTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
 
         $userA = $users->fake();
         $userA->roles()->attach([1 => ['notes' => 'note-1']]);
@@ -139,8 +139,8 @@ class RelationIndexTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $users = $this->schema()->users();
-        $this->schema()->actions();
+        $users = $this->blueprints()->users();
+        $this->blueprints()->actions();
 
         $userA = $users->fake();
 

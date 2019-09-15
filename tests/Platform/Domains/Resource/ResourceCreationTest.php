@@ -270,7 +270,7 @@ class ResourceCreationTest extends ResourceTestCase
     {
         Event::fake([ResourceCreatedEvent::class]);
 
-        $this->schema()->posts();
+        $this->blueprints()->posts();
 
         Event::assertDispatched(ResourceCreatedEvent::class, function (ResourceCreatedEvent $event) {
             $this->assertInstanceOf(ResourceModel::class, $event->resourceEntry);

@@ -9,7 +9,7 @@ class FieldQuerySorterTest extends ResourceTestCase
 {
     function test__regular()
     {
-        $posts = $this->schema()->posts();
+        $posts = $this->blueprints()->posts();
 
         /** @var \Illuminate\Database\Eloquent\Builder $postsQuery */
         $postsQuery = $posts->newQuery();
@@ -30,8 +30,8 @@ class FieldQuerySorterTest extends ResourceTestCase
 
     function test__belongs_to()
     {
-        $users = $this->schema()->users();
-        $posts = $this->schema()->posts();
+        $users = $this->blueprints()->users();
+        $posts = $this->blueprints()->posts();
 
         /** @var \Illuminate\Database\Eloquent\Builder $postsQuery */
         $postsQuery = $posts->newQuery();

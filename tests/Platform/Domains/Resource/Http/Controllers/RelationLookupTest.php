@@ -20,8 +20,8 @@ class RelationLookupTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $users = $this->schema()->users();
-        $this->schema()->actions();
+        $users = $this->blueprints()->users();
+        $this->blueprints()->actions();
 
         $userA = $users->fake();
 

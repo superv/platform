@@ -10,7 +10,7 @@ class ResourceTableTest extends ResourceTestCase
 {
     function test__relational_order_by()
     {
-        $posts = $this->schema()->posts();
+        $posts = $this->blueprints()->posts();
         $table = $posts->resolveTable();
 
         $sorter = $this->bindMock(FieldQuerySorter::class);
@@ -24,7 +24,7 @@ class ResourceTableTest extends ResourceTestCase
 
     function test__default_from_entry_label_field()
     {
-        $posts = $this->schema()->posts();
+        $posts = $this->blueprints()->posts();
         $table = $posts->resolveTable();
         $table->setRequest(new Request());
         $table->build();
@@ -37,7 +37,7 @@ class ResourceTableTest extends ResourceTestCase
 
     function test__override_from_table_options()
     {
-        $posts = $this->schema()->posts();
+        $posts = $this->blueprints()->posts();
         $table = $posts->resolveTable();
         $table->setOption('order_by', ['created_at' => 'ASC']);
 

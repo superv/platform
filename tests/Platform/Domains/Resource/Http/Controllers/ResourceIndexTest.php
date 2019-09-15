@@ -22,7 +22,7 @@ class ResourceIndexTest extends ResourceTestCase
 {
     function test__bsmllh()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
 
         $page = $this->getUserPage($users->route('dashboard'));
         $table = HelperComponent::from($page->getProp('blocks.0'));
@@ -33,7 +33,7 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__index_table_config()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
 
         $response = $this->getJsonUser($users->route('table'))->assertOk();
         $table = HelperComponent::from($response->decodeResponseJson('data'));
@@ -67,7 +67,7 @@ class ResourceIndexTest extends ResourceTestCase
     function test__index_table_data()
     {
         $this->withoutExceptionHandling();
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $userA = $users->fake(['id' => 1,'group_id' => 1]);
         $userB = $users->fake(['id' => 2, 'group_id' => 2]);
 
@@ -115,10 +115,10 @@ class ResourceIndexTest extends ResourceTestCase
         });
 
         $this->withExceptionHandling();
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $userA = $users->fake(['group_id' => 1]);
 
-        $posts = $this->schema()->posts();
+        $posts = $this->blueprints()->posts();
         $posts->fake(['user_id' => $userA->getId()]);
         $posts->fake(['user_id' => $userA->getId()]);
 
@@ -134,7 +134,7 @@ class ResourceIndexTest extends ResourceTestCase
             $resource->addFilter(new SearchFilter);
         });
 
-        $table = $this->getTableConfigOfResource($this->schema()->users());
+        $table = $this->getTableConfigOfResource($this->blueprints()->users());
 
         $filter = $table->getProp('config.filters.0');
         $this->assertEquals('search', $filter['name']);
@@ -143,7 +143,7 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__filters_apply()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         ResourceFactory::wipe();
 
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
@@ -158,7 +158,7 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__filters_apply_on_relations()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         ResourceFactory::wipe();
 
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
@@ -173,7 +173,7 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__builds_search_filter_from_searchable_fields()
     {
-        $users = $this->schema()->users(function (Blueprint $table) {
+        $users = $this->blueprints()->users(function (Blueprint $table) {
             $table->getColumn('name')->searchable();
         });
         $users->fake(['name' => 'none']);
@@ -185,7 +185,7 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__builds__filter_from_relation_fields_config()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         ResourceFactory::wipe();
 
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
@@ -211,7 +211,7 @@ class ResourceIndexTest extends ResourceTestCase
         // dont merge with above. consecutive getJson
         // calls looses query on the second one
         //
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         ResourceFactory::wipe();
 
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
@@ -226,7 +226,7 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__builds__filter_from_select_fields()
     {
-        $users = $this->schema()->users(function (Blueprint $table) {
+        $users = $this->blueprints()->users(function (Blueprint $table) {
             $table->select('gender')->options(['m' => 'Male', 'f' => 'Female'])->addFlag('filter');
         });
 
@@ -245,7 +245,7 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__builds__select_filter_from_text_fields_with_distinct_options()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         ResourceFactory::wipe();
 
         Resource::extend('platform::t_users')->with(function (Resource $resource) {

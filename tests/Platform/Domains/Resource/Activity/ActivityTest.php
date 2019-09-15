@@ -16,7 +16,7 @@ class ActivityTest extends ResourceTestCase
     {
         $this->setUpPort('acp', 'localhost');
         $this->withoutExceptionHandling();
-        $action = $this->schema()->actions()->first();
+        $action = $this->blueprints()->actions()->first();
 
         $this->getJsonUser($action->route('entry.view'))->assertOk();
 

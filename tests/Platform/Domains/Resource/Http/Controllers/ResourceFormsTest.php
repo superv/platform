@@ -29,7 +29,7 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__displays_create_form()
     {
-        $users = $this->schema()
+        $users = $this->blueprints()
                       ->users(function (Blueprint $table) {
                           $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
                           $table->createdBy()->updatedBy();
@@ -56,7 +56,7 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__displays_extended_create_form()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         ResourceFactory::wipe();
 
         // extend resource creation form
@@ -78,7 +78,7 @@ class ResourceFormsTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = $this->schema()
+        $user = $this->blueprints()
                      ->users(function (Blueprint $table) {
                          $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
                          $table->createdBy()->updatedBy();
@@ -142,12 +142,12 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__displays_extended_update_form()
     {
-        $user = $this->schema()
-            ->users(function (Blueprint $table) {
+        $user = $this->blueprints()
+                     ->users(function (Blueprint $table) {
                 $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
                 $table->createdBy()->updatedBy();
             })
-            ->fake(['group_id' => 1]);
+                     ->fake(['group_id' => 1]);
         ResourceFactory::wipe();
 
         // extend resource edit form
@@ -168,7 +168,7 @@ class ResourceFormsTest extends ResourceTestCase
     function test__posts_create_form()
     {
         $this->withoutExceptionHandling();
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $post = [
             'name'     => 'Ali',
             'email'    => 'ali@superv.io',
@@ -186,7 +186,7 @@ class ResourceFormsTest extends ResourceTestCase
     {
         $this->withExceptionHandling();
 
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $users->fake(['email' => 'ali@superv.io']);
 
         $post = [
