@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
 use SuperV\Platform\Domains\Resource\ResourceDriver;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -86,6 +87,20 @@ class ResourceCreationTest extends ResourceTestCase
         $this->assertEquals('platform::servers', $config->getIdentifier());
 
         $this->assertTrue((\Schema::connection('sqlite')->hasTable('core_servers')));
+    }
+
+    function test__custom_namespace()
+    {
+        $resource = $this->create('core_servers', function (Blueprint $table, Config $config) {
+            $config->setNamespace('supreme');
+            $config->setName('servers');
+            $table->increments('id');
+        });
+
+        $config = $resource->config();
+        $this->assertEquals('supreme::servers', $config->getIdentifier());
+
+        $this->assertTrue(Resource::exists('supreme::servers'));
     }
 
     function test__custom_connection()
