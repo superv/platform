@@ -2,7 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
+use SuperV\Platform\Contracts\Validator;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Jobs\GetRules;
 use SuperV\Platform\Domains\Resource\Form\Contracts\EntryForm as EntryFormContract;
 use SuperV\Platform\Domains\Resource\Resource;
 
@@ -36,6 +39,26 @@ class EntryForm extends Form implements EntryFormContract
         $this->resource = $resource;
 
         return $this;
+    }
+
+    public function validate()
+    {
+        /**
+         * @var \SuperV\Platform\Contracts\Validator $validator
+         */
+        $validator = app(Validator::class);
+
+        $rules = (new GetRules($this->getFields()))->get($this->getEntry());
+        $data = $this->entry->getAttributes();
+        $attributes = $this->fields
+            ->map(function (Field $field) {
+                return [$field->getColumnName(), $field->getLabel()];
+            })->filter()
+            ->toAssoc()
+            ->all();
+
+        $validator->make($data, $rules, [], $attributes);
+//        ValidateForm::dispatch($this->getFields(), $this->request->all());
     }
 
     protected function applyExtensionCallbacks(): void

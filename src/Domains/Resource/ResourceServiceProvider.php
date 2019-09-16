@@ -29,8 +29,8 @@ class ResourceServiceProvider extends BaseServiceProvider
         PlatformInstalledEvent::class          => Listeners\CreatePlatformResourceForms::class,
         AddonBootedEvent::class                => Listeners\RegisterExtensions::class,
         Model\Events\EntrySavingEvent::class   => [
-            Listeners\ValidateSavingEntry::class,
-            Listeners\SaveUpdatedBy::class,
+//            Listeners\ValidateSavingEntry::class,
+Listeners\SaveUpdatedBy::class,
         ],
         Model\Events\EntrySavedEvent::class    => [
         ],

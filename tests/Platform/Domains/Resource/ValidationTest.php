@@ -13,9 +13,9 @@ use SuperV\Platform\Exceptions\ValidationException;
  * @package Tests\Platform\Domains\Resource
  * @group   resource
  */
-class ValidationTest extends ResourceTestCase
+class ValidationTest
 {
-    function test_runs_validation_when_creating_resource_entry()
+    function _runs_validation_when_creating_resource_entry()
     {
         $resource = $this->create('tx_users', function (Blueprint $table) {
             $table->increments('id');

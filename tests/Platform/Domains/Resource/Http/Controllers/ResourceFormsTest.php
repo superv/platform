@@ -167,6 +167,7 @@ class ResourceFormsTest extends ResourceTestCase
             'email' => 'ali@superv.io',
         ];
         $response = $this->postJsonUser($users->route('forms.store'), $post);
+//        dd($response->decodeResponseJson());
         $response->assertStatus(422);
 
         $this->assertEquals(

@@ -139,7 +139,7 @@ class Form implements FormContract, ProvidesUIComponent
 
         $this->resolveFieldValuesFromRequest();
 
-//        $this->validate();
+        $this->validate();
 
         if ($this->hasEntry()) {
             $this->getEntry()->save();

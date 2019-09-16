@@ -27,6 +27,7 @@ class ResourceUpdateTest extends ResourceTestCase
             'group' => 2,
         ];
         $response = $this->postJsonUser($user->route('forms.update'), $post);
+//        dd($response->decodeResponseJson());
         $response->assertOk();
 
         $user = $user->fresh();
