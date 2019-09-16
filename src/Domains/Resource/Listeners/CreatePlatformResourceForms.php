@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
-use SuperV\Platform\Domains\Resource\Form\FormFactory;
+use SuperV\Platform\Domains\Resource\Form\FormRepository;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class CreatePlatformResourceForms
@@ -15,7 +15,7 @@ class CreatePlatformResourceForms
             if ($model->getIdentifier() === 'platform::users') {
                 return;
             }
-            FormFactory::createForResource($model->getIdentifier());
+            FormRepository::createForResource($model->getIdentifier());
         });
     }
 }

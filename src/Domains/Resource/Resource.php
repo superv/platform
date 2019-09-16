@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Contracts\RequiresResource;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Jobs\GetRules;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
 use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatedEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntryDeletedEvent;
@@ -264,18 +265,20 @@ final class Resource implements
 
     public function getRules(EntryContract $entry = null)
     {
-        return $this->getFields()
-                    ->filter(function (Field $field) {
-                        return ! $field->isUnbound();
-                    })
-                    ->keyBy(function (Field $field) {
-                        return $field->getColumnName();
-                    })
-                    ->map(function (Field $field) use ($entry) {
-                        return $this->parseFieldRules($field, $entry);
-                    })
-                    ->filter()
-                    ->all();
+        return (new GetRules($this->getFields()))->get($entry, $this->config()->getTable());
+//
+//        return $this->getFields()
+//                    ->filter(function (Field $field) {
+//                        return ! $field->isUnbound();
+//                    })
+//                    ->keyBy(function (Field $field) {
+//                        return $field->getColumnName();
+//                    })
+//                    ->map(function (Field $field) use ($entry) {
+//                        return $this->parseFieldRules($field, $entry);
+//                    })
+//                    ->filter()
+//                    ->all();
     }
 
     public function getRuleMessages()

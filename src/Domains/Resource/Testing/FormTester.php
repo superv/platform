@@ -9,7 +9,7 @@ use PHPUnit\Framework\Assert;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Fake;
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\EntryForm;
 use SuperV\Platform\Testing\TestHelpers;
 
 class FormTester extends Assert
@@ -49,7 +49,7 @@ class FormTester extends Assert
         return $this->basePath.str_prefix($path, '/', '');
     }
 
-    public function test(Form $form)
+    public function test(EntryForm $form)
     {
         $entryForHandle = $form->getEntry();
         $original = $entryForHandle->toArray();

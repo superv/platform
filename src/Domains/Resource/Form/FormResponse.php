@@ -4,12 +4,14 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class FormResponse implements Responsable
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Form\Form
+     * @var \SuperV\Platform\Domains\Resource\Form\EntryForm
      */
     protected $form;
 
@@ -23,7 +25,7 @@ class FormResponse implements Responsable
      */
     protected $entry;
 
-    public function __construct(Form $form, Resource $resource, EntryContract $entry)
+    public function __construct(Form $form, EntryContract $entry, ?Resource $resource = null)
     {
         $this->form = $form;
         $this->resource = $resource;
@@ -32,6 +34,9 @@ class FormResponse implements Responsable
 
     public function toResponse($request)
     {
+        if (! $this->resource) {
+            $this->resource = ResourceFactory::make($this->entry->getResourceIdentifier());
+        }
         $action = $request->get('__form_action');
 
         if ($action === 'view') {

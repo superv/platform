@@ -2,28 +2,54 @@
 
 namespace SuperV\Platform\Domains\Resource\Hook;
 
+use SuperV\Platform\Contracts\Dispatcher;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\FormResolvedHook;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\FormValidatingHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\Hook as HookContract;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class FormsHook implements HookContract
 {
-    public function hook(string $identifier, string $hookHandler, string $subKey = null)
+    /**
+     * @var \SuperV\Platform\Contracts\Dispatcher
+     */
+    protected $dispatcher;
+
+    protected $map = [
+        'resolved'   => FormResolvedHook::class,
+        'validating' => FormValidatingHook::class,
+    ];
+
+    public function __construct(Dispatcher $dispatcher)
     {
-        $eventName = sprintf("%s::forms.%s.resolved", $identifier, $subKey);
-        app('events')->listen($eventName, function ($payload) use ($hookHandler) {
-            $this->handle($hookHandler, $payload);
-        });
+        $this->dispatcher = $dispatcher;
     }
 
-    protected function handle($hookHandler, $payload)
+    public function hook(string $identifier, string $hookHandler, string $subKey = null)
+    {
+        $implements = class_implements($hookHandler);
+
+        foreach ($this->map as $eventType => $contract) {
+            if (! in_array($contract, $implements)) {
+                continue;
+            }
+            $eventName = sprintf("%s::forms.%s.%s", $identifier, $subKey, $eventType);
+            $this->dispatcher->listen(
+                $eventName,
+                function ($payload) use ($eventType, $hookHandler) {
+                    $this->handle($hookHandler, $eventType, $payload);
+                }
+            );
+        }
+    }
+
+    protected function handle($hookHandler, $eventType, $payload)
     {
         /** @var ResourceConfig $payload */
         if (is_string($hookHandler)) {
             $hookHandler = app($hookHandler);
         }
 
-        if (method_exists($hookHandler, 'resolved')) {
-            $hookHandler->resolved($payload);
-        }
+        $hookHandler->{$eventType}($payload);
     }
 }

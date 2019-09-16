@@ -2,12 +2,10 @@
 
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
-use Hub;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
-use SuperV\Platform\Domains\Port\Port;
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\EntryForm;
 use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -29,6 +27,8 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__displays_create_form()
     {
+        $this->withoutExceptionHandling();
+
         $users = $this->blueprints()
                       ->users(function (Blueprint $table) {
                           $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
@@ -37,13 +37,6 @@ class ResourceFormsTest extends ResourceTestCase
 
         // Get Create form
         //
-        Hub::register(new class extends Port
-        {
-            protected $slug = 'local';
-
-            protected $hostname = 'localhost:8000';
-        });
-
         $form = $this->getUserPage($users->route('forms.create'));
 
         $this->assertEquals(8, $form->countProp('fields'));
@@ -52,26 +45,6 @@ class ResourceFormsTest extends ResourceTestCase
 
         $group = $fields->get('group');
         $this->assertEquals('belongs_to', $group['type']);
-    }
-
-    function test__displays_extended_create_form()
-    {
-        $users = $this->blueprints()->users();
-        ResourceFactory::wipe();
-
-        // extend resource creation form
-        //
-        Resource::extend('platform::t_users')->with(function (Resource $resource) {
-            $resource->onCreating(function (Form $form) {
-                $form->onlyFields('name', 'email', 'group');
-            });
-        });
-
-        // Get Create form
-        //
-        $form = $this->getUserPage($users->route('forms.create'));
-
-        $this->assertEquals(3, $form->countProp('fields'));
     }
 
     function test__displays_update_form()
@@ -153,7 +126,7 @@ class ResourceFormsTest extends ResourceTestCase
         // extend resource edit form
         //
         Resource::extend('platform::t_users')->with(function (Resource $resource) {
-            $resource->onEditing(function (Form $form) {
+            $resource->onEditing(function (EntryForm $form) {
                 $form->onlyFields('name', 'email', 'group');
             });
         });
@@ -184,7 +157,7 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__validation()
     {
-        $this->withExceptionHandling();
+//        $this->withExceptionHandling();
 
         $users = $this->blueprints()->users();
         $users->fake(['email' => 'ali@superv.io']);

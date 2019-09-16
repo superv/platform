@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
@@ -32,15 +33,23 @@ class FormBuilder
         $this->dispatcher = $dispatcher;
     }
 
-    public function build(): Form
+    public function build(): EntryForm
     {
-        $form = new Form();
+        $form = EntryForm::resolve($this->formEntry->getIdentifier());
 
-        $form->setIdentifier($this->formEntry->getIdentifier());
+        if ($this->resource = $this->formEntry->getOwnerResource()) {
+            $form->setEntry($this->getEntry() ?? $this->resource->newEntryInstance());
+        }
+
+        $form->setRequest($this->getRequest());
 
         $form->setFields($this->buildFields($this->formEntry->getFormFields()))
              ->setUrl(sv_url()->path())
-             ->make($this->formEntry->uuid);
+             ->make($this->formEntry->getIdentifier());
+
+//        if ($this->resource && $callback = $this->resource->getCallback('creating')) {
+//            app()->call($callback, ['form' => $form]);
+//        }
 
         $this->dispatcher->dispatch($this->formEntry->getIdentifier().'.resolved', $form);
 
@@ -69,7 +78,7 @@ class FormBuilder
         return $fields;
     }
 
-    public function getEntry(): EntryContract
+    public function getEntry(): ?EntryContract
     {
         return $this->entry;
     }
@@ -88,11 +97,22 @@ class FormBuilder
         return $this;
     }
 
-    public function setRequest(\Illuminate\Http\Request $request): FormBuilder
+    public function setRequest($request): FormBuilder
     {
+        if (is_array($request)) {
+            $request = new Request($request);
+        }
         $this->request = $request;
 
         return $this;
+    }
+
+    /**
+     * @return \Illuminate\Http\Request
+     */
+    public function getRequest(): \Illuminate\Http\Request
+    {
+        return $this->request;
     }
 
     /** @return static */

@@ -25,6 +25,12 @@ class Hook
         $this->dispatcher = $dispatcher;
     }
 
+    public function flush()
+    {
+        $this->map = [];
+        static::$locks = [];
+    }
+
     /**
      * Return mapped hook path for the identifier
      *

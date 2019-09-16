@@ -84,4 +84,11 @@ class HookTest extends ResourceTestCase
 
         Hook::resolve()->scan(__DIR__.'/../Fixtures/Resources');
     }
+
+    protected function tearDown()
+    {
+        Hook::resolve()->flush();
+
+        parent::tearDown();
+    }
 }

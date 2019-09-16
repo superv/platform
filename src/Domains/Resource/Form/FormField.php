@@ -12,7 +12,7 @@ class FormField extends Field implements FormFieldContract
 {
     protected $temporal = false;
 
-    /** @var \SuperV\Platform\Domains\Resource\Form\Form */
+    /** @var \SuperV\Platform\Domains\Resource\Form\EntryForm */
     protected $form;
 
     /** @var \SuperV\Platform\Domains\Resource\Form\FieldLocation */

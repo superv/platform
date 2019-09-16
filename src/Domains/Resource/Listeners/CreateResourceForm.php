@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
-use SuperV\Platform\Domains\Resource\Form\FormFactory;
+use SuperV\Platform\Domains\Resource\Form\FormRepository;
 
 class CreateResourceForm
 {
@@ -20,6 +20,6 @@ class CreateResourceForm
             return;
         }
 
-        FormFactory::createForResource($event->config->getIdentifier());
+        FormRepository::createForResource($event->config->getIdentifier());
     }
 }

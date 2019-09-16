@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\EntryForm;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class HasOne extends Relation implements ProvidesForm, HandlesRequests
 {
-    public function makeForm(): Form
+    public function makeForm(): EntryForm
     {
         $form = ResourceFormBuilder::buildFromEntry($this->getRelatedEntry());
         $formData = FormModel::findByUuid($this->getRelatedResource()->getIdentifier());

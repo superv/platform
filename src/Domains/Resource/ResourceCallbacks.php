@@ -26,6 +26,11 @@ trait ResourceCallbacks
         $this->on('edit.page', $callable);
     }
 
+    public function onEntryDashboard(Closure $callable)
+    {
+        $this->on('entry.dashboard', $callable);
+    }
+
     public function onIndexPage(Closure $callable)
     {
         $this->on('index.page', $callable);

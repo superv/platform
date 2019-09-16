@@ -2,8 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
-use SuperV\Platform\Domains\Resource\Form\FormModel;
-use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
@@ -32,32 +30,32 @@ class ResourceFormController extends BaseApiController
 //                    ->save();
 //    }
 
-    public function edit(ResourceFormBuilder $builder)
-    {
-        $resource = $this->resolveResource();
-        $form = $builder->setEntry($this->entry)->build();
-        $formData = FormModel::findByResource($resource->id());
-
-        $form->setUrl($resource->route('update', $this->entry))
-             ->setRequest($this->request)
-             ->make($formData ? $formData->uuid : null);
-
-        if ($callback = $resource->getCallback('editing')) {
-            app()->call($callback, ['form' => $form, 'entry' => $this->entry]);
-        }
-
-        return $form->makeComponent();
-    }
-
-    public function update(ResourceFormBuilder $builder)
-    {
-        $this->resolveResource();
-
-        $form = $builder->setEntry($this->entry)
-                        ->build();
-
-        return $form->setRequest($this->request)
-                    ->make()
-                    ->save();
-    }
+//    public function edit(ResourceFormBuilder $builder)
+//    {
+//        $resource = $this->resolveResource();
+//        $form = $builder->setEntry($this->entry)->build();
+//        $formData = FormModel::findByResource($resource->id());
+//
+//        $form->setUrl($resource->route('update', $this->entry))
+//             ->setRequest($this->request)
+//             ->make($formData ? $formData->uuid : null);
+//
+//        if ($callback = $resource->getCallback('editing')) {
+//            app()->call($callback, ['form' => $form, 'entry' => $this->entry]);
+//        }
+//
+//        return $form->makeComponent();
+//    }
+//
+//    public function update(ResourceFormBuilder $builder)
+//    {
+//        $this->resolveResource();
+//
+//        $form = $builder->setEntry($this->entry)
+//                        ->build();
+//
+//        return $form->setRequest($this->request)
+//                    ->make()
+//                    ->save();
+//    }
 }

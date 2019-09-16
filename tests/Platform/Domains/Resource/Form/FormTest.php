@@ -10,9 +10,10 @@ use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\EntryForm;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
+use SuperV\Platform\Testing\FormComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
@@ -34,7 +35,7 @@ class FormTest extends ResourceTestCase
         $form = ResourceFormBuilder::buildFromEntry($watcher);
         $form = $form->setFields($fields)->make()->hideField('age');
 
-        $this->assertInstanceOf(Form::class, $form);
+        $this->assertInstanceOf(EntryForm::class, $form);
         $this->assertEquals(2, $form->getFields()->count());
         $this->assertEquals($watcher, $form->getEntry());
         $this->assertEquals(['age'], $form->getHiddenFields());
@@ -47,10 +48,9 @@ class FormTest extends ResourceTestCase
         $eventName = 'testing::categories::forms.default.resolved';
         Event::fake($eventName);
 
-        $resource = $this->blueprints()->categories();
+        $this->blueprints()->categories();
 
-        $response = $this->getJsonUser($resource->router()->createForm());
-        $response->assertOk();
+        FormComponent::get('testing::categories::forms.default', $this);
 
         Event::assertDispatched($eventName);
     }

@@ -48,9 +48,9 @@ class FormController extends BaseController
         abort(404);
     }
 
-    public function show($namespace, $name)
+    public function show($identifier, $name = null)
     {
-        if (! $formEntry = FormModel::withIdentifier($namespace.'::forms.'.$name)) {
+        if (! $formEntry = FormModel::withIdentifier($identifier)) {
             abort(404, 'Form entry not found');
         }
 
@@ -73,9 +73,23 @@ class FormController extends BaseController
             abort(404, 'Form entry not found');
         }
 
-        /** @var \SuperV\Platform\Domains\Resource\Form\Form $form */
-        $form = MakeForm::dispatch($formEntry, $this->request);
+        $builder = FormBuilder::resolve();
+        $builder->setFormEntry($formEntry)
+                ->setRequest($this->request);
 
+        $form = $builder->build();
+
+        return $form->makeComponent();
+    }
+
+    public function createxxx($uuid)
+    {
+        if (! $formEntry = $this->getFormEntry($uuid)) {
+            abort(404, 'Form entry not found');
+        }
+
+        /** @var \SuperV\Platform\Domains\Resource\Form\EntryForm $form */
+        $form = MakeForm::dispatch($formEntry, $this->request);
 
         return $form->makeComponent();
     }

@@ -22,7 +22,7 @@ class ResourceEntryDashboardController extends BaseApiController
         $page->setSelectedSection($this->route->parameter('section'));
         $page->setDefaultSection('view');
 
-        if ($callback = $resource->getCallback('view.page')) {
+        if ($callback = $resource->getCallback('entry.dashboard')) {
             app()->call($callback, ['page' => $page, 'entry' => $this->entry]);
         }
 

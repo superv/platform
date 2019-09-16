@@ -108,7 +108,10 @@ class Blueprints
                 $config->setNamespace($namespace);
 
                 $table->increments('id');
-                $table->string('title')->entryLabel();
+                $table->number('number')->entryLabel();
+                $table->string('status')->rules('min:99');
+                $table->money('items_total')->nullable();
+                $table->money('total')->nullable();
             }
         );
     }

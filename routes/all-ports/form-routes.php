@@ -4,6 +4,11 @@ use SuperV\Platform\Domains\Resource\Http\Controllers\FormController;
 
 return [
 
+    'sv/frm/{identifier}' => [
+        'as'   => 'sv::forms.show',
+        'uses' => FormController::at('show'),
+    ],
+
     'sv/forms/{uuid}/{entry}'         => [
         'as'    => 'resource.forms.edit',
         'uses'  => FormController::at('edit'),
@@ -15,17 +20,17 @@ return [
         'where' => ['entry' => '[0-9]*'],
     ],
 
-    'sv/forms/{namespace}/{name}' => [
-        'as'   => 'sv::forms.show',
-        'uses' => FormController::at('show'),
-    ],
+    //    'sv/forms/{namespace}/{name}' => [
+    //        'as'   => 'sv::forms.show',
+    //        'uses' => FormController::at('show'),
+    //    ],
 
-    'sv/forms/{uuid}'                               => [
+    'sv/forms/{uuid}' => [
         'as'   => 'resource.forms.create',
         'uses' => FormController::at('create'),
     ],
 
-    'POST@'.'sv/forms/{uuid}'                       => [
+    'POST@'.'sv/forms/{uuid}' => [
         'as'   => 'resource.forms.store',
         'uses' => FormController::at('store'),
     ],

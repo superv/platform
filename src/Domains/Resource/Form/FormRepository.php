@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Form;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
-class FormFactory
+class FormRepository
 {
     public function create($namespace, $name, array $attributes = [])
     {

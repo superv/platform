@@ -6,8 +6,8 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
+use SuperV\Platform\Domains\Resource\Form\FormRepository;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
@@ -91,7 +91,7 @@ class FormControllerTest extends ResourceTestCase
 
     protected function makeForm(array $overrides = []): FormModel
     {
-        $formEntry = FormFactory::resolve()->create('testing', 'foo', array_merge([
+        $formEntry = FormRepository::resolve()->create('testing', 'foo', array_merge([
             'title'  => 'Public Form',
             'public' => false,
         ], $overrides));

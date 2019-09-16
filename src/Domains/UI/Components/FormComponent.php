@@ -2,13 +2,13 @@
 
 namespace SuperV\Platform\Domains\UI\Components;
 
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\EntryForm;
 
 class FormComponent extends Component
 {
     protected $name = 'sv-form';
 
-    /** @var \SuperV\Platform\Domains\Resource\Form\Form */
+    /** @var \SuperV\Platform\Domains\Resource\Form\EntryForm */
     protected $form;
 
     public function getProps(): Props
@@ -21,7 +21,7 @@ class FormComponent extends Component
         return $this->form->uuid();
     }
 
-    public static function from(Form $form): self
+    public static function from(EntryForm $form): self
     {
         $static = new static;
         $static->form = $form;

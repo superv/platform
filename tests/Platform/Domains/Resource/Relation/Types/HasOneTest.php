@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource\Relation\Types;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\EntryForm;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\Testing\FormTester;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -34,7 +34,7 @@ class HasOneTest extends ResourceTestCase
         $this->assertEquals('has_one', $relation->getType());
 
         $this->assertEquals([
-            'related_resource' => 'platform::t_profiles',
+            'related_resource' => 'testing::t_profiles',
             'foreign_key'      => 'user_id',
         ], $relation->getRelationConfig()->toArray());
     }
@@ -51,9 +51,9 @@ class HasOneTest extends ResourceTestCase
         $this->assertInstanceOf(AcceptsParentEntry::class, $relation);
         $relation->acceptParentEntry($user);
 
-        /** @var Form $form */
+        /** @var EntryForm $form */
         $form = $relation->makeForm();
-        $this->assertInstanceOf(Form::class, $form);
+        $this->assertInstanceOf(EntryForm::class, $form);
         $this->assertEquals(2, $form->getFields()->count());
         $this->assertFalse($form->getField('user')->isVisible());
 
@@ -68,18 +68,18 @@ class HasOneTest extends ResourceTestCase
     {
         parent::setUp();
 
-        $this->parent = $this->create('t_users', function (Blueprint $table, ResourceConfig $resource) {
+        $this->parent = $this->create('testing::t_users', function (Blueprint $table, ResourceConfig $resource) {
             $resource->resourceKey('user');
 
             $table->increments('id');
             $table->string('name');
-            $table->hasOne('platform::t_profiles', 'profile', 'user_id');
+            $table->hasOne('testing::t_profiles', 'profile', 'user_id');
         });
 
-        $this->related = $this->create('t_profiles', function (Blueprint $table) {
+        $this->related = $this->create('testing::t_profiles', function (Blueprint $table) {
             $table->increments('id');
             $table->string('address');
-            $table->belongsTo('platform::t_users', 'user', 'user_id');
+            $table->belongsTo('testing::t_users', 'user', 'user_id');
         });
     }
 }

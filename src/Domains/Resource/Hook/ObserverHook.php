@@ -18,8 +18,6 @@ class ObserverHook implements HookContract
      */
     protected $dispatcher;
 
-    protected static $locks = [];
-
     protected $map = [
         'creating'  => BeforeCreatingHook::class,
         'created'   => AfterCreatedHook::class,
@@ -28,6 +26,8 @@ class ObserverHook implements HookContract
         'retrieved' => AfterRetrievedHook::class,
         'deleted'   => AfterDeletedHook::class,
     ];
+
+    protected static $locks = [];
 
     public function __construct(Dispatcher $dispatcher)
     {
@@ -39,22 +39,23 @@ class ObserverHook implements HookContract
         $observer = app($hookHandler);
 
         foreach ($this->map as $eventType => $contract) {
-            if ($observer instanceof $contract) {
-                $eventName = sprintf("%s::entry.%s", $identifier, $eventType);
-                $this->dispatcher->listen($eventName,
-                    function ($payload) use ($eventType, $hookHandler, $eventName) {
-                        $lock = md5($eventName);
-                        if (isset(static::$locks[$lock])) {
-                            return;
-                        }
-                        static::$locks[$lock] = true;
-
-                        app($hookHandler)->{$eventType}($payload);
-
-                        unset(static::$locks[$lock]);
-                    }
-                );
+            if (! $observer instanceof $contract) {
+                continue;
             }
+            $eventName = sprintf("%s::entry.%s", $identifier, $eventType);
+            $this->dispatcher->listen($eventName,
+                function ($payload) use ($eventType, $hookHandler, $eventName) {
+                    $lock = md5($eventName);
+                    if (isset(static::$locks[$lock])) {
+                        return;
+                    }
+                    static::$locks[$lock] = true;
+
+                    app($hookHandler)->{$eventType}($payload);
+
+                    unset(static::$locks[$lock]);
+                }
+            );
         }
     }
 }

@@ -4,12 +4,13 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
+use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
 use SuperV\Platform\Support\Composer\Payload;
 
 class FormComposer
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Form\Form
+     * @var \SuperV\Platform\Domains\Resource\Form\EntryForm
      */
     protected $form;
 
