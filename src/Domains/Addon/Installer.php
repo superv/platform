@@ -65,7 +65,6 @@ class Installer
 
 //        list($this->vendor, $pluralType) = explode('.', $this->namespace);
 
-
         if (! $this->path) {
             $this->path = \Platform::config('addons.location').sprintf("/%s/%s/%s", $this->vendor, str_plural($this->addonType), $this->name);
         }
@@ -127,7 +126,7 @@ class Installer
 
     public function ensureNotInstalledBefore()
     {
-        if ($addon = AddonModel::byIdentifier($this->getName(), $this->getNamespace())) {
+        if ($addon = AddonModel::byIdentifier($this->getIdentifier())) {
             throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getName()));
         }
     }
@@ -244,19 +243,29 @@ class Installer
         return $this;
     }
 
-    public function setIdentifier($identifer)
-    {
-        $this->identifier = $identifer;
-
-        return $this;
-    }
-
     /**
      * @return mixed
      */
     public function getIdentifier()
     {
-        return $this->identifier;
+        if ($this->identifier) {
+            return $this->identifier;
+        }
+
+        $identifier = $this->getVendor().'.'.str_plural($this->getAddonType()).'.'.$this->getName();
+
+        if ($identifier) {
+            return $identifier;
+        }
+
+        PlatformException::fail('Identifier not set');
+    }
+
+    public function setIdentifier($identifer)
+    {
+        $this->identifier = $identifer;
+
+        return $this;
     }
 
     public function parseFromIdentifier($identifier)
@@ -271,6 +280,30 @@ class Installer
         }
 
         return $this;
+    }
+
+    /**
+     * Load composer config from addon path
+     *
+     * @return array|string
+     */
+    public function getComposerJson()
+    {
+        if (! $this->composerJson) {
+            $composerFile = $this->realPath().'/composer.json';
+            if (! file_exists($composerFile)) {
+                return null;
+            }
+
+            $this->composerJson = json_decode(file_get_contents($composerFile), true);
+        }
+
+        return $this->composerJson;
+    }
+
+    public static function resolve(): Installer
+    {
+        return app(static::class);
     }
 
     protected function getVendor()
@@ -349,32 +382,8 @@ class Installer
         }
     }
 
-    /**
-     * Load composer config from addon path
-     *
-     * @return array|string
-     */
-    public function getComposerJson()
-    {
-        if (! $this->composerJson) {
-            $composerFile = $this->realPath().'/composer.json';
-            if (! file_exists($composerFile)) {
-                return null;
-            }
-
-            $this->composerJson = json_decode(file_get_contents($composerFile), true);
-        }
-
-        return $this->composerJson;
-    }
-
     protected function getComposerValue($key)
     {
         return array_get($this->getComposerJson(), $key);
-    }
-
-    public static function resolve(): Installer
-    {
-        return app(static::class);
     }
 }

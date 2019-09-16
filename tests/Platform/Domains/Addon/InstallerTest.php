@@ -3,13 +3,13 @@
 namespace Tests\Platform\Domains\addon;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use RuntimeException;
 use SuperV\Addons\Sample\SampleAddon;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Addon\Locator;
 use SuperV\Platform\Exceptions\PathNotFoundException;
-use SuperV\Platform\Exceptions\PlatformException;
 use Tests\Platform\ComposerLoader;
 use Tests\Platform\TestCase;
 
@@ -79,7 +79,7 @@ class InstallerTest extends TestCase
     {
         $this->setUpAddon();
 
-        $this->expectException(PlatformException::class);
+        $this->expectException(RuntimeException::class);
 
         $this->setUpAddon();
     }
