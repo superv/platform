@@ -105,13 +105,18 @@ class ResourceModel extends Entry implements ProvidesFields
         return $this->hasMany(FormModel::class, 'resource_id');
     }
 
-    public function createField(string $name): FieldModel
+    public function makeField(string $name): FieldModel
     {
         if ($this->hasField($name)) {
             throw new \Exception("Field with name [{$name}] already exists");
         }
 
-        return $this->fields()->make(['name' => $name, 'uuid' => uuid()]);
+        return $this->fields()->make([
+            'revision_id' => uuid(),
+            'namespace'   => $this->getIdentifier().'::fields',
+            'identifier'  => $this->getIdentifier().'::fields.'.$name,
+            'name'        => $name,
+        ]);
     }
 
     public function hasField($name)

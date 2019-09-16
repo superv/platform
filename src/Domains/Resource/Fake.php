@@ -71,7 +71,7 @@ class Fake
     protected function shouldFake(Field $field)
     {
         return ! $field->isHidden()
-            && ! $field->hasFlag('form.hide')
+//            && ! $field->hasFlag('form.hide')
             && ! $field->doesNotInteractWithTable();
     }
 

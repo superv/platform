@@ -156,4 +156,6 @@ trait ResourceTestHelpers
 
         return $response->decodeResponseJson('data.rows');
     }
+
+    protected function creatFieldEntry() { }
 }

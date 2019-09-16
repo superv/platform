@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class FormRepository
 {
-    public function create($namespace, $name, array $attributes = [])
+    public function create($namespace, $name, array $attributes = []): FormModel
     {
         $formEntry = FormModel::create(array_merge([
             'uuid'       => $namespace,

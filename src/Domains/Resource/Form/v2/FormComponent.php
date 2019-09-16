@@ -1,15 +1,21 @@
 <?php
 
-namespace SuperV\Platform\Domains\UI\Components;
+namespace SuperV\Platform\Domains\Resource\Form\v2;
 
 use SuperV\Platform\Domains\Resource\Form\EntryForm;
+use SuperV\Platform\Domains\UI\Components\BaseComponent;
+use SuperV\Platform\Domains\UI\Components\Props;
 
 class FormComponent extends BaseComponent
 {
-    protected $name = 'sv-form';
+    protected $name = 'sv-form-v2';
 
-    /** @var \SuperV\Platform\Domains\Resource\Form\EntryForm */
     protected $form;
+
+    public function __construct(Contracts\Form $form)
+    {
+        $this->form = $form;
+    }
 
     public function getProps(): Props
     {

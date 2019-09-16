@@ -28,10 +28,13 @@ class Field implements FieldContract
     protected $type;
 
     /** @var string */
-    protected $uuid;
+    protected $revisionId;
 
     /** @var string */
     protected $name;
+
+    /** @var string */
+    protected $identifier;
 
     /** @var string */
     protected $columnName;
@@ -192,11 +195,21 @@ class Field implements FieldContract
     public function getName(): string
     {
         return $this->name;
+
+//        if ($this->name) {
+//            return $this->name;
+//        }
+//
+//        if ($this->getIdentifier()) {
+//            return explode('::fields.', $this->getIdentifier())[1];
+//        }
+
+
     }
 
     public function getIdentifier()
     {
-        return $this->getColumnName();
+        return $this->identifier;
     }
 
     public function getColumnName(): ?string
@@ -250,9 +263,9 @@ class Field implements FieldContract
         return $this->setConfigValue('sort_order', $order);
     }
 
-    public function uuid(): string
+    public function revisionId(): ?string
     {
-        return $this->uuid;
+        return $this->revisionId;
     }
 
     public function setPresenter(Closure $callback): FieldContract
@@ -307,11 +320,6 @@ class Field implements FieldContract
         $this->defaultValue = $defaultValue;
     }
 
-    public function setHint($hint)
-    {
-        $this->setConfigValue('hint', $hint);
-    }
-
     public function getResource(): Resource
     {
         return $this->resource;
@@ -325,5 +333,77 @@ class Field implements FieldContract
     public function setNotRequired()
     {
         $this->removeFlag('required');
+    }
+
+    public function setHint($hint)
+    {
+        $this->setConfigValue('hint', $hint);
+    }
+
+
+    //////// FLAGS
+    ///
+    public function addFlag(string $flag): \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+    {
+        $this->flags[] = $flag;
+
+        return $this;
+    }
+
+    public function removeFlag(string $flag): FieldContract
+    {
+        $this->flags = array_diff($this->flags, [$flag]);
+
+        return $this;
+    }
+
+    public function hasFlag(string $flag): bool
+    {
+        return in_array($flag, $this->flags);
+    }
+
+    public function showOnIndex(): FieldContract
+    {
+        return $this->addFlag('table.show');
+    }
+
+    public function hide(): FieldContract
+    {
+        return $this->addFlag('hidden');
+    }
+
+    public function isHidden(): bool
+    {
+        return (bool)$this->hasFlag('hidden');
+    }
+
+    public function isUnique()
+    {
+        return $this->hasFlag('unique');
+    }
+
+    public function isRequired()
+    {
+        return $this->hasFlag('required');
+    }
+
+    public function isUnbound()
+    {
+        return $this->hasFlag('unbound');
+    }
+
+    public function isFilter()
+    {
+        return $this->hasFlag('filter');
+    }
+
+    public function isVisible(): bool
+    {
+        return ! $this->isHidden();
+    }
+
+    public function doesNotInteractWithTable()
+    {
+        return $this->fieldType instanceof DoesNotInteractWithTable;
     }
 }

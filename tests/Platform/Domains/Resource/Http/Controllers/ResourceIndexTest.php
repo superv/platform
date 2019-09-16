@@ -46,7 +46,8 @@ class ResourceIndexTest extends ResourceTestCase
         foreach ($fields as $key => $field) {
             $this->assertTrue(is_numeric($key));
             $this->assertEquals([
-                'uuid',
+                'identifier',
+                'revision_id',
                 'name',
                 'label',
                 'classes',

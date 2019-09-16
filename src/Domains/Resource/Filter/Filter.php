@@ -135,7 +135,9 @@ abstract class Filter implements FilterContract, ProvidesField
     public function makeField(): Field
     {
         $field = FieldFactory::createFromArray([
+            'revision_id' => uuid(),
             'type'        => $this->getType(),
+            'identifier'  => $this->getIdentifier(),
             'name'        => $this->getIdentifier(),
             'placeholder' => __($this->getPlaceholder()),
             'value'       => $this->getDefaultValue(),

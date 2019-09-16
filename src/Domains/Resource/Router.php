@@ -18,8 +18,7 @@ class Router
     {
         return sprintf(
             sv_route('sv::forms.show', [
-                'namespace' => $this->resource->getIdentifier(),
-                'name'      => 'default',
+                'identifier' => $this->resource->getIdentifier().'::forms.default',
             ])
         );
     }

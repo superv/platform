@@ -54,6 +54,21 @@ class FormModel extends Entry
         $this->fields()->attach($fieldEntryId);
     }
 
+    public function createField(array $params)
+    {
+        if (! isset($params['namespace'])) {
+            $params['namespace'] = $this->getIdentifier();
+        }
+
+        if (! isset($params['identifier'])) {
+            $params['identifier'] = $this->getIdentifier().'::fields.'.$params['name'];
+        }
+
+        $fieldEntry = $this->fields()->create($params);
+
+        return $fieldEntry;
+    }
+
     public function isPublic()
     {
         return $this->public;
@@ -130,6 +145,7 @@ class FormModel extends Entry
     {
         return static::query()->where('identifier', $identifier)->first();
     }
+
     public static function findByUuid($uuid): ?FormModel
     {
         return static::query()->where('uuid', $uuid)->first();

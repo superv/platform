@@ -2,13 +2,9 @@
 
 namespace SuperV\Platform\Domains\UI\Components;
 
-use Illuminate\Contracts\Support\Responsable;
-
 class Component extends BaseComponent
 {
     protected $name;
-
-
 
     public function getName(): string
     {

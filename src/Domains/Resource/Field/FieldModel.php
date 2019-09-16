@@ -13,7 +13,7 @@ class FieldModel extends Entry
     protected $casts = [
         'rules'      => 'array',
         'config'     => 'array',
-        'flags'     => 'array',
+        'flags'      => 'array',
         'required'   => 'bool',
         'unique'     => 'bool',
         'searchable' => 'bool',
@@ -23,9 +23,26 @@ class FieldModel extends Entry
     {
         parent::boot();
 
-        static::creating(function (Model $model) {
-            $model->attributes['uuid'] = uuid();
+        static::saving(function (Model $model) {
+            if (! isset($model->attributes['revision_id'])) {
+                $model->attributes['revision_id'] = uuid();
+            }
         });
+        static::creating(function (Model $model) {
+            if (! isset($model->attributes['identifier'])) {
+                $model->attributes['identifier'] = uuid();
+            }
+        });
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    public function getNamespace()
+    {
+        return $this->namespace;
     }
 
     public function resource()

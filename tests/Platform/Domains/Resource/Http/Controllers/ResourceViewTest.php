@@ -32,7 +32,7 @@ class ResourceViewTest extends ResourceTestCase
         $fields = $view->getProp('fields');
 
         $name = $fields['name'];
-        $this->assertNotNull($name['uuid']);
+        $this->assertNotNull($name['revision_id']);
         $this->assertFalse(isset($name['config']));
         $this->assertEquals('text', $name['type']);
         $this->assertEquals('name', $name['name']);

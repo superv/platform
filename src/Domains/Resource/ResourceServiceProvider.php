@@ -11,6 +11,12 @@ use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FieldComposer;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\Form as FormContract;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilder as FormBuilderContract;
+use SuperV\Platform\Domains\Resource\Form\v2\Form;
+use SuperV\Platform\Domains\Resource\Form\v2\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\v2\FormFieldComposer;
 use SuperV\Platform\Domains\Resource\Hook\Hook;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
 use SuperV\Platform\Domains\Resource\Listeners\RegisterEntryEventListeners;
@@ -21,8 +27,8 @@ use SuperV\Platform\Providers\BaseServiceProvider;
 class ResourceServiceProvider extends BaseServiceProvider
 {
     protected $listeners = [
-        ColumnCreatedEvent::class              => Listeners\SyncField::class,
-        ColumnUpdatedEvent::class              => Listeners\SyncField::class,
+        ColumnCreatedEvent::class              => Listeners\SaveFieldEntry::class,
+        ColumnUpdatedEvent::class              => Listeners\SaveFieldEntry::class,
         ColumnDroppedEvent::class              => Listeners\DeleteField::class,
         TableCreatingEvent::class              => Listeners\CreateResource::class,
         TableCreatedEvent::class               => Listeners\CreateResourceForm::class,
@@ -41,6 +47,10 @@ Listeners\SaveUpdatedBy::class,
 
     protected $_bindings = [
         Table\Contracts\DataProvider::class => Table\EloquentDataProvider::class,
+        FormContract::class                 => Form::class,
+        FormBuilderContract::class          => FormBuilder::class,
+        FieldComposer::class                => FormFieldComposer::class,
+
     ];
 
     protected $_singletons = [
@@ -53,7 +63,6 @@ Listeners\SaveUpdatedBy::class,
     public function register()
     {
         parent::register();
-
     }
 
     public function boot()

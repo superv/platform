@@ -47,9 +47,9 @@ class FormBuilder
              ->setUrl(sv_url()->path())
              ->make($this->formEntry->getIdentifier());
 
-//        if ($this->resource && $callback = $this->resource->getCallback('creating')) {
-//            app()->call($callback, ['form' => $form]);
-//        }
+        if ($this->resource && $callback = $this->resource->getCallback('creating')) {
+            app()->call($callback, ['form' => $form]);
+        }
 
         $this->dispatcher->dispatch($this->formEntry->getIdentifier().'.resolved', $form);
 

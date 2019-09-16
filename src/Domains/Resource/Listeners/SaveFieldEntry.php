@@ -17,7 +17,7 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
-class SyncField
+class SaveFieldEntry
 {
     /** @var \SuperV\Platform\Domains\Resource\ResourceModel */
     protected $resourceEntry;
@@ -70,9 +70,9 @@ class SyncField
         $fieldEntry = $this->syncWithEloquent();
 
 //        if ($event->table !== 'sv_forms') {
-            if ($formEntry = FormModel::findByResource($this->resourceEntry->getId())) {
-                $formEntry->attachField($fieldEntry->getId());
-            }
+        if ($formEntry = FormModel::findByResource($this->resourceEntry->getId())) {
+            $formEntry->attachField($fieldEntry->getId());
+        }
 //        }
     }
 
@@ -126,7 +126,7 @@ class SyncField
                     $blueprint->index(["{$name}_type", "{$name}_id"]);
                 });
 
-            $morphToField = $this->resourceEntry->createField($name);
+            $morphToField = $this->resourceEntry->makeField($name);
             $morphToField->fill([
                 'type'   => 'morph_to',
                 'config' => RelationConfig::morphTo()
@@ -168,7 +168,7 @@ class SyncField
         if ($this->resourceEntry->hasField($fieldName)) {
             $field = $this->resourceEntry->getField($fieldName);
         } else {
-            $field = $this->resourceEntry->createField($fieldName);
+            $field = $this->resourceEntry->makeField($fieldName);
         }
 
         $field->type = $column->fieldType;

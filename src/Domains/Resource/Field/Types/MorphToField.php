@@ -21,7 +21,7 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
 //            $query->with($this->getName());
         });
 
-        $this->addFlag('form.hide');
+        $this->field->hide();
     }
 
     protected function presenter()

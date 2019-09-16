@@ -79,7 +79,7 @@ class ResourceFormsTest extends ResourceTestCase
         $this->assertEquals(8, $fields->count());
 
         $name = $fields->get('name');
-        $this->assertNotNull($name['uuid']);
+        $this->assertNotNull($name['revision_id']);
         $this->assertEquals('text', $name['type']);
         $this->assertEquals('name', $name['name']);
         $this->assertEquals('Name', $name['label']);

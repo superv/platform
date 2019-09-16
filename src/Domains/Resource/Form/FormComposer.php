@@ -32,6 +32,7 @@ class FormComposer
             'fields'     => $this->composeFields(),
             'actions'    => $this->composeActions(),
         ]);
+
         $this->form->fire('composed', ['form' => $this, 'payload' => $payload]);
 
         return $payload;
@@ -68,7 +69,7 @@ class FormComposer
     {
         return $this->form->getFields()
                           ->filter(function (FormField $field) {
-                              return ! $field->isHidden() && ! $field->hasFlag('form.hide');
+                              return ! $field->isHidden();// && ! $field->hasFlag('form.hide')
                           })
                           ->sortBy(function (FormField $field) {
                               if ($location = $field->getLocation()) {

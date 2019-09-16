@@ -54,8 +54,6 @@ interface Field
 
     public function doesNotInteractWithTable();
 
-    public function hide();
-
     public function getAlterQueryCallback();
 
     public function getRules();
@@ -87,7 +85,7 @@ interface Field
      *
      * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
      */
-    public function hideOnForms(): Field;
+    public function hide(): Field;
 
     /**
      * Add a flag to show the field on index table
@@ -144,5 +142,5 @@ interface Field
      */
     public function removeFlag(string $flag): Field;
 
-    public function uuid();
+    public function revisionId(): ?string;
 }

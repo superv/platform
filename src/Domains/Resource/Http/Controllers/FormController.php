@@ -8,8 +8,6 @@ use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
-use SuperV\Platform\Domains\Resource\Form\Jobs\MakeForm;
-use SuperV\Platform\Domains\Resource\Form\Jobs\SaveForm;
 use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Http\Controllers\BaseController;
 use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
@@ -82,16 +80,18 @@ class FormController extends BaseController
         return $form->makeComponent();
     }
 
-    public function createxxx($uuid)
+    public function store($uuid, ResourceFormBuilder $builder)
     {
-        if (! $formEntry = $this->getFormEntry($uuid)) {
-            abort(404, 'Form entry not found');
+        $formEntry = $this->getFormEntry($uuid);
+
+        if ($resource = $formEntry->getOwnerResource()) {
+            $builder->setResource($resource);
         }
+        $form = $builder->build();
 
-        /** @var \SuperV\Platform\Domains\Resource\Form\EntryForm $form */
-        $form = MakeForm::dispatch($formEntry, $this->request);
-
-        return $form->makeComponent();
+        return $form->setRequest($this->request)
+                    ->make()
+                    ->save();
     }
 
     public function edit($uuid, $entryId, ResourceFormBuilder $builder)
@@ -118,14 +118,6 @@ class FormController extends BaseController
         }
 
         return $form->makeComponent();
-
-    }
-
-    public function store($uuid)
-    {
-        $formEntry = $this->getFormEntry($uuid);
-
-        return SaveForm::dispatch($formEntry, $this->request);
     }
 
     public function update($uuid, $entryId)

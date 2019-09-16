@@ -149,16 +149,17 @@ class ResourceCreationTest extends ResourceTestCase
 
     function test__creates_field_when_a_database_column_is_created()
     {
-        $resource = $this->makeResourceModel('test_users', ['name', 'age:integer', 'bio:text']);
+        $resource = $this->makeResourceModel('testing::test_users', ['username', 'age:integer', 'bio:text']);
         $this->assertEquals(3, $resource->fields()->count());
 
-        $nameField = $resource->getField('name');
-        $this->assertEquals('string', $nameField->getColumnType());
-        $this->assertNotNull($nameField->uuid);
+        $usernameField = $resource->getField('username');
+        $this->assertEquals('testing::test_users::fields', $usernameField->getNamespace());
+        $this->assertEquals('testing::test_users::fields.username', $usernameField->getIdentifier());
+        $this->assertEquals('username', $usernameField->getName());
+        $this->assertEquals('string', $usernameField->getColumnType());
 
         $ageField = $resource->getField('age');
         $this->assertEquals('integer', $ageField->getColumnType());
-        $this->assertNotNull($ageField->uuid);
     }
 
     function test__fields_are_unique_per_resource()
@@ -167,7 +168,7 @@ class ResourceCreationTest extends ResourceTestCase
         $this->assertEquals(1, $resourceEntry->fields()->count());
 
         $this->expectException(Exception::class);
-        $resourceEntry->createField('name');
+        $resourceEntry->makeField('name');
     }
 
     function test__saves_field_rules()

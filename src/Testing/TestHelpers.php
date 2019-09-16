@@ -221,7 +221,7 @@ trait TestHelpers
         return app('tymon.jwt')->fromUser($user);
     }
 
-    protected function makePostRequest($uri, array $data = []): Request
+    protected function makePostRequest($uri = '', array $data = []): Request
     {
         if (is_array($uri) && empty($data)) {
             $data = $uri;
@@ -229,5 +229,15 @@ trait TestHelpers
         }
 
         return Request::create($uri, 'POST', $data);
+    }
+
+    protected function makeGetRequest($uri = '', array $data = []): Request
+    {
+        if (is_array($uri) && empty($data)) {
+            $data = $uri;
+            $uri = '';
+        }
+
+        return Request::create($uri, 'GET', $data);
     }
 }

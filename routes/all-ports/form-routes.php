@@ -1,8 +1,14 @@
 <?php
 
+use SuperV\Platform\Domains\Resource\Form\v2\FormController as FormV2Controller;
 use SuperV\Platform\Domains\Resource\Http\Controllers\FormController;
 
 return [
+
+    'sv/forms-v2/{identifier}/{entry?}' => [
+        'as'   => 'sv::forms.v2.show',
+        'uses' => FormV2Controller::at('show'),
+    ],
 
     'sv/frm/{identifier}' => [
         'as'   => 'sv::forms.show',

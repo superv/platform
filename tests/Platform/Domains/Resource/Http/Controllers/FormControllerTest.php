@@ -5,7 +5,6 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\FormRepository;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -96,13 +95,13 @@ class FormControllerTest extends ResourceTestCase
             'public' => false,
         ], $overrides));
 
-        $formEntry->fields()->attach(FieldModel::create(['type' => 'text', 'name' => 'name']));
-        $formEntry->fields()->attach(FieldModel::create(['type' => 'text', 'name' => 'email']));
-        $formEntry->fields()->attach(FieldModel::create(['type'   => 'belongs_to',
+        $formEntry->createField(['type' => 'text', 'name' => 'name']);
+        $formEntry->createField(['type' => 'text', 'name' => 'email']);
+        $formEntry->createField(['type'                           => 'belongs_to',
                                                          'name'   => 'user',
                                                          'config' => [
                                                              'related_resource' => 'platform::users',
-                                                         ]]));
+                                                         ]]);
 
         return $formEntry;
     }

@@ -50,8 +50,12 @@ class FieldFactory
      */
     protected function create(string $resolveFrom = null)
     {
+        if (! isset($this->params['identifier'])) {
+            PlatformException::fail('Missing parameter [identifier] for field');
+        }
+
         if (! isset($this->params['name'])) {
-            PlatformException::fail('Missing parameter [name] for field');
+            $this->params['name'] = $this->params['identifier'];
         }
 
         if (str_contains($this->params['type'], '\\') && class_exists($this->params['type'])) {

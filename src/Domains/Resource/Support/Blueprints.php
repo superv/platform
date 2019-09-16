@@ -20,9 +20,9 @@ class Blueprints
         $table->uuid('uuid')->unique();
         $table->uuid('rev_id')->nullable()->unique();
 
-        $table->string('name')->showOnIndex();
+        $table->string('name')->showOnIndex()->entryLabel();
         $table->string('identifier')->showOnIndex()->unique();
-        $table->string('namespace')->showOnIndex();
+        $table->string('namespace');
 
         $table->string('model')->nullable();
         $table->string('dsn');
@@ -30,7 +30,6 @@ class Blueprints
         if ($table instanceof Blueprint) {
             $resource->model(ResourceModel::class);
             $resource->label('Resources');
-            $resource->entryLabel('{namespace}.{identifier}');
             $resource->resourceKey('resource');
             $resource->nav('acp.platform.system');
 
@@ -50,8 +49,6 @@ class Blueprints
         }
         $table->boolean('restorable')->default(false);
         $table->boolean('sortable')->default(false);
-
-        $table->unique(['identifier', 'namespace']);
     }
 
     /**
@@ -62,15 +59,16 @@ class Blueprints
     {
         $table->increments('id');
 
-//        $table->string('identifier')->showOnIndex();
-//        $table->string('namespace')->showOnIndex();
+        $table->string('identifier')->unique()->showOnIndex();
+        $table->string('namespace')->showOnIndex();
+
+        $table->uuid('revision_id')->unique();
 
         if ($table instanceof Blueprint) {
             $resource->model(FieldModel::class);
             $resource->label('Fields');
             $resource->resourceKey('field');
             $resource->nav('acp.platform.system');
-            $resource->hasUuid();
 
             $table->nullableBelongsTo('sv_resources', 'resource')->showOnIndex();
 
@@ -78,7 +76,6 @@ class Blueprints
             $table->dictionary('rules')->nullable();
             $table->dictionary('config')->nullable();
         } else {
-            $table->uuid('uuid')->unique();
             $table->unsignedInteger('resource_id')->nullable();
 
             $table->text('flags')->nullable();

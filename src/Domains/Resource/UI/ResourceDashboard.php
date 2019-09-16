@@ -46,6 +46,7 @@ class ResourceDashboard
         $page->addSection([
             'identifier' => 'create',
             'title'      => 'Create',
+            //            'url'        => $resource->router()->createForm(),
             'url'        => $resource->route('forms.create'),
             'target'     => 'portal:'.$resource->getIdentifier(),
             'default'    => $section === 'create',

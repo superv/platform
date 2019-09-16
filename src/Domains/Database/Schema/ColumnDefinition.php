@@ -19,7 +19,7 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
     protected $resourceConfig;
 
-    public function __construct(ResourceConfig $blueprint, $attributes = [])
+    public function __construct(ResourceConfig $config, $attributes = [])
     {
         foreach ($attributes as $key => $value) {
             $this->attributes[$key] = $value;
@@ -29,7 +29,7 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         $this->attributes['rules'] = [];
         $this->attributes['flags'] = [];
 
-        $this->resourceConfig = $blueprint;
+        $this->resourceConfig = $config;
     }
 
     public function entryLabel()
@@ -125,7 +125,7 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
 
     public function hideOnForms()
     {
-        return $this->addFlag('form.hide');
+        return $this->addFlag('hidden');
     }
 
     public function addFlag($flag)
@@ -194,9 +194,5 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
     {
         $visibility = new Visibility();
         $callback($visibility);
-    }
-
-    public function setWithEvent($event, $foreignKey, $localKey)
-    {
     }
 }
