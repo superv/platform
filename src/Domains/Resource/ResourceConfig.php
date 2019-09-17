@@ -81,12 +81,12 @@ class ResourceConfig
 
     public function getIdentifier()
     {
-        return $this->getNamespace().'::'.$this->getName();
+        return $this->getNamespace().'.'.$this->getName();
     }
 
     public function setIdentifier($identifier)
     {
-        list($this->namespace, $this->name) = explode('::', $identifier);
+        list($this->namespace, $this->name) = explode('.', $identifier);
 
         return $this;
     }

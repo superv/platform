@@ -93,8 +93,8 @@ class Hook
     public function register($identifier, $hookHandler, $className)
     {
         if (str_is('*::*::*', $identifier)) {
-            $parts = explode('::', $identifier);
-            $identifier = sprintf('%s::%s', $parts[0], $parts[1]);
+            $parts = explode('.', $identifier);
+            $identifier = sprintf('%s.%s', $parts[0], $parts[1]);
 
             list($hookType, $subKey) = explode('.', $parts[2]);
         } else {

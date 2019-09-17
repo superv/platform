@@ -106,7 +106,7 @@ class Field implements FieldContract
     public function getLabel(): string
     {
         if ($this->resource) {
-            $key = $this->resource->getNamespace().'::resources.'.$this->resource->getIdentifier().'.fields.'.$this->name;
+            $key = $this->resource->getNamespace().'.resources.'.$this->resource->getIdentifier().'.fields.'.$this->name;
             $value = trans($key);
             if ($value !== $key) {
                 return $value['label'] ?? $value;
@@ -201,7 +201,7 @@ class Field implements FieldContract
 //        }
 //
 //        if ($this->getIdentifier()) {
-//            return explode('::fields.', $this->getIdentifier())[1];
+//            return explode('.fields.', $this->getIdentifier())[1];
 //        }
 
 

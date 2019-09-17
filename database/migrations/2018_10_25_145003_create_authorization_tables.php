@@ -30,7 +30,7 @@ class CreateAuthorizationTables extends Migration
             $pivotColumns = function (Blueprint $pivotTable) {
                 $pivotTable->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
             };
-            $table->morphToMany('platform::sv_auth_actions', 'actions', 'owner', 'sv_auth_assigned_actions', 'action_id', $pivotColumns);
+            $table->morphToMany('platform.sv_auth_actions', 'actions', 'owner', 'sv_auth_assigned_actions', 'action_id', $pivotColumns);
         });
 
         Schema::create('sv_auth_assigned_roles', function (Blueprint $table) {

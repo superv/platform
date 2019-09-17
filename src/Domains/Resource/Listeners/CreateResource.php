@@ -94,7 +94,7 @@ class CreateResource
                 'uuid'       => uuid(),
                 'name'       => $this->config->getName(),
                 'namespace'  => $this->config->getNamespace(),
-                'identifier' => $this->config->getNamespace().'::'.$this->config->getName(),
+                'identifier' => $this->config->getNamespace().'.'.$this->config->getName(),
                 'dsn'        => $this->config->getDriver()->toDsn(),
                 'model'      => $this->config->getModel(),
                 'config'     => $this->getConfig(),
@@ -111,7 +111,7 @@ class CreateResource
         }
 
         if ($this->config->isRestorable()) {
-            $this->event->blueprint->nullableBelongsTo('platform::users', 'deleted_by')->hideOnForms();
+            $this->event->blueprint->nullableBelongsTo('platform.users', 'deleted_by')->hideOnForms();
             $this->event->blueprint->timestamp('deleted_at')->nullable()->hideOnForms();
         }
 

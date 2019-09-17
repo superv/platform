@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Hook\Contracts\FormValidatingHook;
 
 class OrdersFormDefault implements FormResolvedHook, FormValidatingHook
 {
-    public static $identifier = 'testing::orders::forms.default';
+    public static $identifier = 'testing.orders.forms.default';
 
     public function resolved(Form $form)
     {

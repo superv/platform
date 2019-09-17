@@ -26,7 +26,7 @@ class BelongsToTest extends ResourceTestCase
         $belongsTo = $users->getField('group');
 
         $this->assertEquals('belongs_to', $belongsTo->getFieldType());
-        $this->assertEquals('platform::groups', $belongsTo->getConfigValue('related_resource'));
+        $this->assertEquals('platform.groups', $belongsTo->getConfigValue('related_resource'));
         $this->assertEquals('group_id', $belongsTo->getConfigValue('foreign_key'));
     }
 
@@ -82,7 +82,7 @@ class BelongsToTestUser extends Entry
 
     public function group()
     {
-        $relation = ResourceFactory::make('platform::t_users')->getRelation('group');
+        $relation = ResourceFactory::make('platform.t_users')->getRelation('group');
 
         $relation->acceptParentEntry($this);
 

@@ -28,6 +28,6 @@ class UsersExtension implements ExtendsResource
 
     public function extends(): string
     {
-        return 'platform::users';
+        return 'platform.users';
     }
 }

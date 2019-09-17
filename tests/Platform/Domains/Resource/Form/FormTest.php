@@ -44,12 +44,12 @@ class FormTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $eventName = 'testing::categories::forms.default.resolved';
+        $eventName = 'testing.categories.forms.default.resolved';
         Event::fake($eventName);
 
         $this->blueprints()->categories();
 
-        FormComponent::get('testing::categories::forms.default', $this);
+        FormComponent::get('testing.categories.forms.default', $this);
 
         Event::assertDispatched($eventName);
     }

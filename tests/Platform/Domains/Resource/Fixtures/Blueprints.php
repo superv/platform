@@ -32,8 +32,8 @@ class Blueprints
                 $table->file('avatar')->config(['disk' => 'fakedisk']);
 
                 $table->belongsTo('t_groups', 'group')->showOnIndex();
-                $table->belongsToMany('platform::t_roles', 'roles')
-                      ->pivotTable('platform::assigned_roles')
+                $table->belongsToMany('platform.t_roles', 'roles')
+                      ->pivotTable('platform.assigned_roles')
                       ->pivotForeignKey('user_id')
                       ->pivotRelatedKey('role_id')
                       ->pivotColumns(
@@ -41,13 +41,13 @@ class Blueprints
                               $pivotTable->string('notes');
                           });
 
-                $table->morphToMany('platform::t_actions', 'actions', 'owner', 'platform::assigned_actions', 'action',
+                $table->morphToMany('platform.t_actions', 'actions', 'owner', 'platform.assigned_actions', 'action',
                     function (Blueprint $pivotTable) {
                         $pivotTable->string('provision');
                     });
 
-                $table->hasMany('platform::t_posts', 'posts');
-                $table->hasMany('platform::t_comments', 'comments');
+                $table->hasMany('platform.t_posts', 'posts');
+                $table->hasMany('platform.t_comments', 'comments');
 
                 if ($callback) {
                     $callback($table);

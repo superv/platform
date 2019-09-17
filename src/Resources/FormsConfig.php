@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class FormsConfig
 {
-    public static $identifier = 'platform::forms';
+    public static $identifier = 'platform.forms';
 
     public function resolved(ResourceConfig $config)
     {

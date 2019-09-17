@@ -32,7 +32,7 @@ class FormFieldCollection extends Collection
 
         if ($data instanceof EntryContract) {
             foreach ($data->toArray() as $name => $value) {
-                $identifier = $data->getResourceIdentifier().'::fields.'.$name;
+                $identifier = $data->getResourceIdentifier().'.fields.'.$name;
 
                 if ($this->has($identifier)) {
                     $this->setFieldValue($identifier, $value);

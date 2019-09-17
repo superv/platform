@@ -13,9 +13,9 @@ class CreateResourcesTables extends Migration
 {
     public function up()
     {
-        LaravelSchema::create('sv_namespaces', function (LaravelBlueprint $table) {
-            Blueprints::namespaces($table);
-        });
+//        LaravelSchema::create('sv_namespaces', function (LaravelBlueprint $table) {
+//            Blueprints::namespaces($table);
+//        });
         LaravelSchema::create('sv_resources', function (LaravelBlueprint $table) {
             Blueprints::resources($table);
         });
@@ -47,9 +47,9 @@ class CreateResourcesTables extends Migration
             'icon'   => 'system',
         ]);
 
-        Schema::run('sv_namespaces', function (Blueprint $table, ResourceConfig $resource) {
-            Blueprints::namespaces($table, $resource);
-        });
+//        Schema::run('sv_namespaces', function (Blueprint $table, ResourceConfig $resource) {
+//            Blueprints::namespaces($table, $resource);
+//        });
         Schema::run('sv_resources', function (Blueprint $table, ResourceConfig $resource) {
             Blueprints::resources($table, $resource);
         });

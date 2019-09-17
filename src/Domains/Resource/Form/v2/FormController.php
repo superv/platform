@@ -29,7 +29,7 @@ class FormController extends BaseApiController
             foreach ($entries as $entryResourceIdentifier => $entryId) {
                 if ($entry = ResourceFactory::make($entryResourceIdentifier)->find($entryId)) {
                     foreach ($entry->toArray() as $key => $value) {
-                        $data[$entryResourceIdentifier.'::fields.'.$key] = $value;
+                        $data[$entryResourceIdentifier.'.fields.'.$key] = $value;
                     }
 //                    $data[] = $entry;
                 }

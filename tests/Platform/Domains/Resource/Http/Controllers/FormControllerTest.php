@@ -100,7 +100,7 @@ class FormControllerTest extends ResourceTestCase
         $formEntry->createField(['type'                           => 'belongs_to',
                                                          'name'   => 'user',
                                                          'config' => [
-                                                             'related_resource' => 'platform::users',
+                                                             'related_resource' => 'platform.users',
                                                          ]]);
 
         return $formEntry;

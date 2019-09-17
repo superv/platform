@@ -86,7 +86,7 @@ trait CreatesFields
 
     public function createdBy(): self
     {
-        $this->nullableBelongsTo('platform::users', 'created_by')->hideOnForms();
+        $this->nullableBelongsTo('platform.users', 'created_by')->hideOnForms();
         $this->timestamp('created_at')->nullable()->hideOnForms();
 
         return $this;
@@ -122,7 +122,7 @@ trait CreatesFields
 
     public function updatedBy(): self
     {
-        $this->nullableBelongsTo('platform::users', 'updated_by')->hideOnForms();
+        $this->nullableBelongsTo('platform.users', 'updated_by')->hideOnForms();
         $this->timestamp('updated_at')->nullable()->hideOnForms();
 
         return $this;

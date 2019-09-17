@@ -26,7 +26,7 @@ class RelationsTest extends ResourceTestCase
         $users = $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->belongsTo('platform::t_groups', 'group');
+            $table->belongsTo('platform.t_groups', 'group');
         });
 
         $this->assertColumnNotExists('t_users', 'posts');
@@ -35,7 +35,7 @@ class RelationsTest extends ResourceTestCase
         $this->assertEquals('belongs_to', $relation->getType());
 
         $this->assertEquals([
-            'related_resource' => 'platform::t_groups',
+            'related_resource' => 'platform.t_groups',
             'foreign_key'      => 'group_id',
         ], $relation->getRelationConfig()->toArray());
     }
@@ -48,7 +48,7 @@ class RelationsTest extends ResourceTestCase
             $table->hasMany(TestPost::class, 'posts', 'user_id', 'post_id');
         });
 
-        $users = ResourceFactory::make('platform::t_users');
+        $users = ResourceFactory::make('platform.t_users');
         $this->assertColumnNotExists('t_users', 'posts');
 
         $relation = $users->getRelation('posts');
@@ -75,7 +75,7 @@ class RelationsTest extends ResourceTestCase
                       });
         });
 
-        $users = ResourceFactory::make('platform::t_users');
+        $users = ResourceFactory::make('platform.t_users');
 
         $this->assertColumnNotExists('t_users', 'roles');
         $this->assertColumnsExist('t_user_roles', ['id', 'user_id', 'role_id', 'status', 'created_at', 'updated_at']);
@@ -102,7 +102,7 @@ class RelationsTest extends ResourceTestCase
             $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
         });
 
-        $users = ResourceFactory::make('platform::t_users');
+        $users = ResourceFactory::make('platform.t_users');
         $roles = $users->getRelation('roles');
         $this->assertEquals(['status'], $roles->getRelationConfig()->getPivotColumns());
 
@@ -114,7 +114,7 @@ class RelationsTest extends ResourceTestCase
             $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
         });
 
-        $admins = ResourceFactory::make('platform::t_admins');
+        $admins = ResourceFactory::make('platform.t_admins');
         $roles = $admins->getRelation('roles');
         $this->assertEquals(['status'], $roles->getRelationConfig()->getPivotColumns());
     }

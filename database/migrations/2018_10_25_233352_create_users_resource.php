@@ -21,12 +21,12 @@ class CreateUsersResource extends Migration
             $table->string('remember_token')->nullable();
 
             $table->hasOne('sv_profiles', 'profile', 'user_id');
-            $table->morphToMany('platform::sv_auth_roles', 'roles', 'owner', 'sv_auth_assigned_roles', 'role_id');
+            $table->morphToMany('platform.sv_auth_roles', 'roles', 'owner', 'sv_auth_assigned_roles', 'role_id');
 
             $pivotColumns = function (Blueprint $pivotTable) {
                 $pivotTable->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
             };
-            $table->morphToMany('platform::sv_auth_actions', 'actions', 'owner', 'sv_auth_assigned_actions', 'action_id', $pivotColumns);
+            $table->morphToMany('platform.sv_auth_actions', 'actions', 'owner', 'sv_auth_assigned_actions', 'action_id', $pivotColumns);
 
             $table->restorable();
         });

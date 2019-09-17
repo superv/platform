@@ -42,7 +42,7 @@ class RegisterHooksInPath
         /** @var SplFileInfo $directory */
         foreach ($finder->in($this->path)->directories()  as $directory) {
             $class = Path::parseClass($this->psrNamespace, $this->path, $directory);
-            $identifier = $this->namespace.'::'.snake_case($directory->getBasename());
+            $identifier = $this->namespace.'.'.snake_case($directory->getBasename());
             Hook::resolve()->register($identifier, $class);
         }
 

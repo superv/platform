@@ -7,7 +7,7 @@ use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
 
 class PostsConfig
 {
-    public static $identifier = 'testing::posts';
+    public static $identifier = 'testing.posts';
 
     public function resolved(ResourceConfig $config)
     {

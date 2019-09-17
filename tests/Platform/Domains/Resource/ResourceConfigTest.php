@@ -19,7 +19,7 @@ class ResourceConfigTest extends ResourceTestCase
 {
     function test__dispatches_event_when_resolved()
     {
-        $resolvedEventName = 'testing::any_table::config.resolved';
+        $resolvedEventName = 'testing.any_table::config.resolved';
         Event::fake([ResolvedEvent::class, $resolvedEventName]);
         $any = $this->anyTable();
 
@@ -109,7 +109,7 @@ class ResourceConfigTest extends ResourceTestCase
         });
 
         $this->assertEquals('Customers', $customers->getLabel());
-        $this->assertEquals('platform::customers.singular', $customers->getSingularLabel());
+        $this->assertEquals('platform.customers.singular', $customers->getSingularLabel());
     }
 
     function test__builds_label_from_given()
@@ -122,7 +122,7 @@ class ResourceConfigTest extends ResourceTestCase
         });
 
         $this->assertEquals('SuperV Customers', $customers->getLabel());
-        $this->assertEquals('platform::customers.singular', $customers->getSingularLabel());
+        $this->assertEquals('platform.customers.singular', $customers->getSingularLabel());
     }
 
     function test__builds_label_for_resource_entry()
@@ -156,16 +156,16 @@ class ResourceConfigTest extends ResourceTestCase
     function test__guesses_entry_label_from_string_columns()
     {
         $this->makeResource('A_users', ['name']);
-        $this->assertEquals('{name}', ResourceFactory::make('platform::A_users')->getEntryLabelTemplate());
+        $this->assertEquals('{name}', ResourceFactory::make('platform.A_users')->getEntryLabelTemplate());
 
         $this->makeResource('B_users', ['address', 'age:integer', 'title']);
-        $this->assertEquals('{title}', ResourceFactory::make('platform::B_users')->getEntryLabelTemplate());
+        $this->assertEquals('{title}', ResourceFactory::make('platform.B_users')->getEntryLabelTemplate());
 
         $this->makeResource('C_users', ['height:decimal', 'age:integer', 'address']);
-        $this->assertEquals('{address}', ResourceFactory::make('platform::C_users')->getEntryLabelTemplate());
+        $this->assertEquals('{address}', ResourceFactory::make('platform.C_users')->getEntryLabelTemplate());
 
         $this->makeResource('customers', ['height:decimal', 'age:integer']);
-        $this->assertEquals('Customer #{id}', ResourceFactory::make('platform::customers')->getEntryLabelTemplate());
+        $this->assertEquals('Customer #{id}', ResourceFactory::make('platform.customers')->getEntryLabelTemplate());
     }
 
     function test__finds_by_resource_handle()

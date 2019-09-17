@@ -144,7 +144,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
             return [];
         }
         $pivotResource = ResourceFactory::make(
-            sprintf("%s::%s", $this->getRelationConfig()->getPivotNamespace(), $this->getRelationConfig()->getPivotTable())
+            sprintf("%s.%s", $this->getRelationConfig()->getPivotNamespace(), $this->getRelationConfig()->getPivotTable())
         );
 
         return $pivotResource->fields()

@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\Hook\Contracts\BeforeSavingHook;
 
 class PostObserver implements BeforeSavingHook
 {
-    public static $identifier = 'testing::posts';
+    public static $identifier = 'testing.posts';
 
     public function saving(EntryContract $entry)
     {

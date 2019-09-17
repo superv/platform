@@ -11,7 +11,7 @@ class ResourceRouterTest extends ResourceTestCase
         $router = $resource->router();
 
         $expected = sprintf(sv_route('sv::forms.show', [
-            'identifier' => $resource->getIdentifier().'::forms.default',
+            'identifier' => $resource->getIdentifier().'.forms.default',
         ]));
 
         $this->assertEquals($expected, $router->createForm());

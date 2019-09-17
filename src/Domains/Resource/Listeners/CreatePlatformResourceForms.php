@@ -12,7 +12,7 @@ class CreatePlatformResourceForms
         $platformResources = ResourceModel::query()->where('namespace', 'platform')->get();
 
         $platformResources->map(function (ResourceModel $model) {
-            if ($model->getIdentifier() === 'platform::users') {
+            if ($model->getIdentifier() === 'platform.users') {
                 return;
             }
             FormRepository::createForResource($model->getIdentifier());

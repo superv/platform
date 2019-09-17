@@ -13,7 +13,7 @@ class Factory
     public function create($dropKey): Drop
     {
         /** @var \SuperV\Platform\Domains\Drop\Contracts\Drop $drop */
-        $drop = sv_resource('platform::sv_drops')->create([
+        $drop = sv_resource('platform.sv_drops')->create([
             'key'      => $dropKey,
             'repo_key' => $this->repoKey,
         ]);

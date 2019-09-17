@@ -61,7 +61,7 @@ class FormModel extends Entry
         }
 
         if (! isset($params['identifier'])) {
-            $params['identifier'] = $this->getIdentifier().'::fields.'.$params['name'];
+            $params['identifier'] = $this->getIdentifier().'.fields.'.$params['name'];
         }
 
         $fieldEntry = $this->fields()->create($params);

@@ -172,7 +172,7 @@ class RelationFieldConfig extends FieldConfig
 
         $related = $this->getRelated();
 
-        return str_singular(explode('::', $related)[1]).'_id';
+        return str_singular(explode('.', $related)[1]).'_id';
     }
 
     public static function make()

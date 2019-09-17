@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class OrdersConfig
 {
-    public static $identifier = 'testing::orders';
+    public static $identifier = 'testing.orders';
 
     public function resolved(ResourceConfig $config)
     {

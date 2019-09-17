@@ -254,8 +254,8 @@ class RelationConfig
 
     public function pivotTable(string $pivotTable): self
     {
-        if (str_contains($pivotTable, '::')) {
-            list($this->pivotNamespace, $pivotTable) = explode('::', $pivotTable);
+        if (str_contains($pivotTable, '.')) {
+            list($this->pivotNamespace, $pivotTable) = explode('.', $pivotTable);
         }
         $this->pivotTable = $pivotTable;
 

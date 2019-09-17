@@ -58,8 +58,8 @@ class ResourceCreationTest extends ResourceTestCase
             $resource->model(TestUser::class);
         });
 
-        $this->assertEquals(TestUser::class, ResourceModel::withIdentifier('platform::test_users')->getModelClass());
-        $this->assertInstanceOf(TestUser::class, ResourceFactory::make('platform::test_users')->newEntryInstance());
+        $this->assertEquals(TestUser::class, ResourceModel::withIdentifier('platform.test_users')->getModelClass());
+        $this->assertInstanceOf(TestUser::class, ResourceFactory::make('platform.test_users')->newEntryInstance());
     }
 
     function test__driver_config()
@@ -84,7 +84,7 @@ class ResourceCreationTest extends ResourceTestCase
         });
 
         $config = $resource->config();
-        $this->assertEquals('platform::servers', $config->getIdentifier());
+        $this->assertEquals('platform.servers', $config->getIdentifier());
 
         $this->assertTrue((\Schema::connection('sqlite')->hasTable('core_servers')));
     }
@@ -92,15 +92,15 @@ class ResourceCreationTest extends ResourceTestCase
     function test__custom_namespace()
     {
         $resource = $this->create('core_servers', function (Blueprint $table, Config $config) {
-            $config->setNamespace('supreme');
+            $config->setNamespace('custom');
             $config->setName('servers');
             $table->increments('id');
         });
 
         $config = $resource->config();
-        $this->assertEquals('supreme::servers', $config->getIdentifier());
+        $this->assertEquals('custom.servers', $config->getIdentifier());
 
-        $this->assertTrue(Resource::exists('supreme::servers'));
+        $this->assertTrue(Resource::exists('custom.servers'));
     }
 
     function test__custom_connection()
@@ -137,24 +137,24 @@ class ResourceCreationTest extends ResourceTestCase
                   ->pivotTable('core_location_servers');
         });
 
-        $resource = ResourceFactory::make('platform::servers');
+        $resource = ResourceFactory::make('platform.servers');
         $this->assertNotNull($resource);
 
         $this->assertEquals('core_servers', $resource->config()->getDriver()->getParam('table'));
 
-        $server = ResourceFactory::make('platform::servers')->create([]);
+        $server = ResourceFactory::make('platform.servers')->create([]);
         $this->assertTrue($server->exists());
         $this->assertEquals('core_servers', $server->getTable());
     }
 
     function test__creates_field_when_a_database_column_is_created()
     {
-        $resource = $this->makeResourceModel('testing::test_users', ['username', 'age:integer', 'bio:text']);
+        $resource = $this->makeResourceModel('testing.test_users', ['username', 'age:integer', 'bio:text']);
         $this->assertEquals(3, $resource->fields()->count());
 
         $usernameField = $resource->getField('username');
-        $this->assertEquals('testing::test_users::fields', $usernameField->getNamespace());
-        $this->assertEquals('testing::test_users::fields.username', $usernameField->getIdentifier());
+        $this->assertEquals('testing.test_users.fields', $usernameField->getNamespace());
+        $this->assertEquals('testing.test_users.fields.username', $usernameField->getIdentifier());
         $this->assertEquals('username', $usernameField->getName());
         $this->assertEquals('string', $usernameField->getColumnType());
 
@@ -190,7 +190,7 @@ class ResourceCreationTest extends ResourceTestCase
             $table->select('status')->options(['closed' => 'Closed', 'open' => 'Open'])->default('open');
         });
 
-        $resourceEntry = ResourceModel::withIdentifier('platform::test_users');
+        $resourceEntry = ResourceModel::withIdentifier('platform.test_users');
 
         $statusField = $resourceEntry->getField('status');
         $this->assertEquals('string', $statusField->getColumnType());
@@ -209,7 +209,7 @@ class ResourceCreationTest extends ResourceTestCase
         Schema::table('test_users', function (Blueprint $table) {
             $table->string('name')->change()->rules(['min:16', 'max:64']);
         });
-        $resourceEntry = ResourceModel::withIdentifier('platform::test_users');
+        $resourceEntry = ResourceModel::withIdentifier('platform.test_users');
         $nameField = $resourceEntry->getField('name');
 
         $this->assertArrayContains(['min:16', 'max:64'], $nameField->getRules());
@@ -278,7 +278,7 @@ class ResourceCreationTest extends ResourceTestCase
             $table->string('title')->default('User');
         });
 
-        $resource = ResourceModel::withIdentifier('platform::test_users');
+        $resource = ResourceModel::withIdentifier('platform.test_users');
         $this->assertEquals('User', $resource->getField('title')->getDefaultValue());
     }
 
@@ -290,7 +290,7 @@ class ResourceCreationTest extends ResourceTestCase
 
         Event::assertDispatched(ResourceCreatedEvent::class, function (ResourceCreatedEvent $event) {
             $this->assertInstanceOf(ResourceModel::class, $event->resourceEntry);
-            $this->assertEquals('platform::t_posts', $event->resourceEntry->getIdentifier());
+            $this->assertEquals('platform.t_posts', $event->resourceEntry->getIdentifier());
 
             return true;
         });

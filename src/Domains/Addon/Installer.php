@@ -118,7 +118,7 @@ class Installer
     public function ensureNotInstalledBefore()
     {
         if ($addon = AddonModel::byIdentifier($this->getIdentifier())) {
-            return $addon->delete();
+//            return $addon->delete();
             throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getName()));
         }
     }

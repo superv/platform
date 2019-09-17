@@ -39,7 +39,7 @@ trait CreatesRelations
         $relationName = $relationName ?? str_singular($related);
 
         return $this->relation($relationName, RelationType::oneToOne())
-                    ->related($namespace.'::'.$related);
+                    ->related($namespace.'.'.$related);
     }
 
     public function relatedToMany($related, string $relationName = null)
@@ -48,7 +48,7 @@ trait CreatesRelations
         $relationName = $relationName ?? $related;
 
         return $this->relation($relationName, RelationType::oneToMany())
-                    ->related($namespace.'::'.$related);
+                    ->related($namespace.'.'.$related);
     }
 
     public function relatedManyToMany($related, string $relationName = null)
@@ -57,7 +57,7 @@ trait CreatesRelations
         $relationName = $relationName ?? $related;
 
         return $this->relation($relationName, RelationType::manyToMany())
-                    ->related($namespace.'::'.$related);
+                    ->related($namespace.'.'.$related);
     }
 
     public function relation($relationName, RelationType $relationType): RelationFieldConfig
@@ -90,7 +90,7 @@ trait CreatesRelations
                     ->relation(
                         Config::belongsTo()
                               ->relationName($relationName)
-                              ->related($namespace.'::'.$related)
+                              ->related($namespace.'.'.$related)
                               ->foreignKey($foreignKey ?? $relationName.'_id')
                               ->ownerKey($ownerKey)
                     );
@@ -98,8 +98,8 @@ trait CreatesRelations
 
     private function splitRelated($related)
     {
-        if (str_contains($related, '::')) {
-            list($namespace, $related) = explode('::', $related);
+        if (str_contains($related, '.')) {
+            list($namespace, $related) = explode('.', $related);
         } else {
             $namespace = $this->resourceConfig()->getNamespace();
         }

@@ -21,7 +21,7 @@ class DropTest extends PlatformTestCase
         $blogRepo = $this->makeDropRepo('blog', 'posts', BaseRepoHandler::class);
         $drop = $blogRepo->createDrop(['key' => 'title']);
 
-        $this->assertEquals(1, sv_resource('platform::sv_drops')->count());
+        $this->assertEquals(1, sv_resource('platform.sv_drops')->count());
         $this->assertInstanceOf(DropContract::class, $drop);
         $this->assertEquals('posts', $drop->getRepoIdentifier());
         $this->assertEquals(BaseRepoHandler::class, $drop->getRepoHandler());
@@ -100,7 +100,7 @@ class DropTest extends PlatformTestCase
     protected function makeDropRepo(string $namespace, string $identifier, string $handler): DropRepoModel
     {
         return
-            $repo = sv_resource('platform::sv_drop_repos')->create([
+            $repo = sv_resource('platform.sv_drop_repos')->create([
                 'namespace'  => $namespace,
                 'identifier' => $identifier,
                 'handler'    => $handler,

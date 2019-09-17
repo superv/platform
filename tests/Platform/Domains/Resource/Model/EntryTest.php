@@ -19,10 +19,10 @@ class EntryTest extends ResourceTestCase
 
     function test__dispatches_event_before_creating()
     {
-        $eventName = sprintf("testing::posts::entry.creating");
+        $eventName = sprintf("testing.posts::entry.creating");
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
-            $this->assertEquals('testing::posts', $entry->getResourceIdentifier());
+            $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
             $this->assertFalse($entry->exists());
             $this->assertEquals(['title' => 'My New Post'], $entry->toArray());
             $this->dispatchedEvents[$eventName] = true;
@@ -33,10 +33,10 @@ class EntryTest extends ResourceTestCase
 
     function test__dispatches_event_after_created()
     {
-        $eventName = sprintf("testing::posts::entry.created");
+        $eventName = sprintf("testing.posts::entry.created");
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
-            $this->assertEquals('testing::posts', $entry->getResourceIdentifier());
+            $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
             $this->assertTrue($entry->exists());
             $this->assertEquals('My New Post', $entry->getAttribute('title'));
             $this->dispatchedEvents[$eventName] = true;
@@ -47,11 +47,11 @@ class EntryTest extends ResourceTestCase
 
     function test__dispatches_event_before_saving()
     {
-        $eventName = sprintf("testing::posts::entry.saving");
+        $eventName = sprintf("testing.posts::entry.saving");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
-            $this->assertEquals('testing::posts', $entry->getResourceIdentifier());
+            $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
             $this->assertEquals('My Post', $entry->fresh()->title);
             $this->assertEquals('My Post v2', $entry->getAttribute('title'));
             $this->dispatchedEvents[$eventName] = true;
@@ -63,7 +63,7 @@ class EntryTest extends ResourceTestCase
 
     function test__dispatches_event_after_saved()
     {
-        $eventName = sprintf("testing::posts::entry.saved");
+        $eventName = sprintf("testing.posts::entry.saved");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
@@ -78,11 +78,11 @@ class EntryTest extends ResourceTestCase
 
     function test__dispatches_event_when_deleted()
     {
-        $eventName = sprintf("testing::posts::entry.deleted");
+        $eventName = sprintf("testing.posts::entry.deleted");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
-            $this->assertEquals('testing::posts', $entry->getResourceIdentifier());
+            $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
             $this->assertNull($entry->fresh());
             $this->dispatchedEvents[$eventName] = true;
         });
@@ -93,17 +93,17 @@ class EntryTest extends ResourceTestCase
 
     function test__dispatches_event_when_retrieved()
     {
-        $eventName = sprintf("testing::posts::entry.retrieved");
+        $eventName = sprintf("testing.posts::entry.retrieved");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($myPost, $eventName) {
-            $this->assertEquals('testing::posts', $entry->getResourceIdentifier());
+            $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
             $this->assertEquals($myPost->toArray(), $entry->toArray());
 
             $this->dispatchedEvents[$eventName] = true;
         });
 
-        sv_resource('testing::posts')->find($myPost->getId());
+        sv_resource('testing.posts')->find($myPost->getId());
         $this->assertArrayHasKey($eventName, $this->dispatchedEvents);
     }
 

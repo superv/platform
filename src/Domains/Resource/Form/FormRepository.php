@@ -12,7 +12,7 @@ class FormRepository
         $formEntry = FormModel::create(array_merge([
             'uuid'       => $namespace,
             'namespace'  => $namespace,
-            'identifier' => $namespace.'::forms.'.$name,
+            'identifier' => $namespace.'.forms.'.$name,
             'name'       => $name,
         ], $attributes));
 

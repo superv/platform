@@ -24,8 +24,8 @@ class HookTest extends ResourceTestCase
     function test__resolves_from_container_as_a_singleton()
     {
         $hook = Hook::resolve();
-        $hook->register('sv::users', 'config_handler', 'UsersConfig');
-        $hook->register('sv::users::fields.title', 'title_field_handler', 'TitleField');
+        $hook->register('sv.users', 'config_handler', 'UsersConfig');
+        $hook->register('sv.users::fields.title', 'title_field_handler', 'TitleField');
 
         $hook = Hook::resolve();
         $this->assertEquals(
@@ -35,13 +35,13 @@ class HookTest extends ResourceTestCase
                     'title' => 'title_field_handler',
                 ],
             ],
-            $hook->get('sv::users')
+            $hook->get('sv.users')
         );
 
         $this->assertEquals([
             'title' => 'title_field_handler',
-        ], $hook->get('sv::users', 'fields'));
-        $this->assertEquals('config_handler', $hook->get('sv::users', 'config'));
+        ], $hook->get('sv.users', 'fields'));
+        $this->assertEquals('config_handler', $hook->get('sv.users', 'config'));
     }
 
     function test__scan_path_for_hooks()
@@ -58,19 +58,19 @@ class HookTest extends ResourceTestCase
                 ],
                 'observer' => OrdersObserver::class,
             ],
-            $hook->get('testing::orders')
+            $hook->get('testing.orders')
         );
 
         $this->assertEquals([
             'config'   => PostsConfig::class,
             'observer' => PostObserver::class,
-        ], $hook->get('testing::posts'));
+        ], $hook->get('testing.posts'));
     }
 
     function test_config_hook()
     {
-        $orders = $this->makeResource('testing::orders');
-        $posts = $this->makeResource('testing::posts');
+        $orders = $this->makeResource('testing.orders');
+        $posts = $this->makeResource('testing.posts');
 
         $this->assertEquals('Orders Hooked', $orders->config()->getLabel());
 

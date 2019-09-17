@@ -59,7 +59,7 @@ class ResourceIndexTest extends ResourceTestCase
 
             $this->assertEquals('view', $rowActions[1]['props']['name']);
             $this->assertEquals('View', $rowActions[1]['props']['title']);
-            $this->assertEquals('sv/res/platform::t_users/{entry.id}/view', $rowActions[1]['props']['url']);
+            $this->assertEquals('sv/res/platform.t_users/{entry.id}/view', $rowActions[1]['props']['url']);
             $this->assertEquals('', $rowActions[1]['props']['button']['title']);
             $this->assertEquals('view', $rowActions[1]['props']['button']['icon']);
         }
@@ -96,7 +96,7 @@ class ResourceIndexTest extends ResourceTestCase
         $this->assertEquals('group_id', $group['name']);
         $this->assertNull(array_get($group, 'meta.options'));
 
-        $groups = sv_resource('platform::t_groups');
+        $groups = sv_resource('platform.t_groups');
         $usersGroup = $groups->find(1);
         $this->assertSame($usersGroup->title, $group['value']);
         $this->assertEquals($groups->route('entry.view', $usersGroup), $group['meta']['link']);
@@ -104,7 +104,7 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__fields_extending()
     {
-        Resource::extend('platform::t_posts')->with(function (Resource $resource) {
+        Resource::extend('platform.t_posts')->with(function (Resource $resource) {
             $resource->getField('user')
                      ->showOnIndex()
                      ->setPresenter(function (EntryContract $entry) {
@@ -131,7 +131,7 @@ class ResourceIndexTest extends ResourceTestCase
 
     function test__filters_in_table_config()
     {
-        Resource::extend('platform::t_users')->with(function (Resource $resource) {
+        Resource::extend('platform.t_users')->with(function (Resource $resource) {
             $resource->addFilter(new SearchFilter);
         });
 
@@ -147,7 +147,7 @@ class ResourceIndexTest extends ResourceTestCase
         $users = $this->blueprints()->users();
         ResourceFactory::wipe();
 
-        Resource::extend('platform::t_users')->with(function (Resource $resource) {
+        Resource::extend('platform.t_users')->with(function (Resource $resource) {
             $resource->searchable(['name']);
         });
         $users->fake(['name' => 'none']);
@@ -162,10 +162,10 @@ class ResourceIndexTest extends ResourceTestCase
         $users = $this->blueprints()->users();
         ResourceFactory::wipe();
 
-        Resource::extend('platform::t_users')->with(function (Resource $resource) {
+        Resource::extend('platform.t_users')->with(function (Resource $resource) {
             $resource->searchable(['group.title']);
         });
-        $group = sv_resource('platform::t_groups')->create(['title' => 'Ottomans']);
+        $group = sv_resource('platform.t_groups')->create(['title' => 'Ottomans']);
         $users->fake(['group_id' => $group->getId()], 2);
         $users->fake(['group_id' => 99], 3);
 
@@ -189,10 +189,10 @@ class ResourceIndexTest extends ResourceTestCase
         $users = $this->blueprints()->users();
         ResourceFactory::wipe();
 
-        Resource::extend('platform::t_users')->with(function (Resource $resource) {
+        Resource::extend('platform.t_users')->with(function (Resource $resource) {
             $resource->getRelation('group')->addFlag('filter');
         });
-        $group = sv_resource('platform::t_groups')->create(['title' => 'Ottomans']);
+        $group = sv_resource('platform.t_groups')->create(['title' => 'Ottomans']);
         $users->fake(['group_id' => $group->getId()], 2);
         $users->fake(['group_id' => 999], 3);
 
@@ -202,7 +202,7 @@ class ResourceIndexTest extends ResourceTestCase
         $this->assertEquals('group', $filter['name']);
         $this->assertEquals('select', $filter['type']);
         $this->assertEquals(
-            sv_resource('platform::t_groups')->testHelper()->asOptions(),
+            sv_resource('platform.t_groups')->testHelper()->asOptions(),
             $table->getProp('config.filters.0.meta.options')
         );
     }
@@ -215,10 +215,10 @@ class ResourceIndexTest extends ResourceTestCase
         $users = $this->blueprints()->users();
         ResourceFactory::wipe();
 
-        Resource::extend('platform::t_users')->with(function (Resource $resource) {
+        Resource::extend('platform.t_users')->with(function (Resource $resource) {
             $resource->getRelation('group')->addFlag('filter');
         });
-        $group = sv_resource('platform::t_groups')->create(['title' => 'Ottomans']);
+        $group = sv_resource('platform.t_groups')->create(['title' => 'Ottomans']);
         $users->fake(['group_id' => $group->getId()], 2);
         $users->fake(['group_id' => 999], 3);
 
@@ -249,7 +249,7 @@ class ResourceIndexTest extends ResourceTestCase
         $users = $this->blueprints()->users();
         ResourceFactory::wipe();
 
-        Resource::extend('platform::t_users')->with(function (Resource $resource) {
+        Resource::extend('platform.t_users')->with(function (Resource $resource) {
             $resource->getField('name')->addFlag('filter');
         });
         $users->fake(['name' => 'tic'], 2);

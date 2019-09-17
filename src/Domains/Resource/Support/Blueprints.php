@@ -62,10 +62,10 @@ class Blueprints
             $resource->resourceKey('resource');
             $resource->nav('acp.platform.system');
 
-            $table->hasMany('platform::sv_fields', 'fields');
-            $table->hasMany('platform::sv_relations', 'relations');
-            $table->hasMany('platform::sv_forms', 'forms');
-            $table->hasMany('platform::sv_activities', 'activities');
+            $table->hasMany('platform.sv_fields', 'fields');
+            $table->hasMany('platform.sv_relations', 'relations');
+            $table->hasMany('platform.sv_forms', 'forms');
+            $table->hasMany('platform.sv_activities', 'activities');
             $table->dictionary('config')->nullable();
 
             $table->createdBy()->updatedBy();
@@ -149,8 +149,8 @@ class Blueprints
 
             $table->createdBy()->updatedBy();
 
-            $table->belongsToMany('platform::sv_fields', 'fields')
-                  ->pivotTable('platform::sv_form_fields')
+            $table->belongsToMany('platform.sv_fields', 'fields')
+                  ->pivotTable('platform.sv_form_fields')
                   ->pivotForeignKey('form_id')
                   ->pivotRelatedKey('field_id')
                   ->pivotColumns(function(Blueprint $pivotTable) {
