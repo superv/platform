@@ -33,7 +33,7 @@ class FormsHook implements HookContract
             if (! in_array($contract, $implements)) {
                 continue;
             }
-            $eventName = sprintf("%s::forms.%s.%s", $identifier, $subKey, $eventType);
+            $eventName = sprintf("%s.forms.%s.%s", $identifier, $subKey, $eventType);
             $this->dispatcher->listen(
                 $eventName,
                 function ($payload) use ($eventType, $hookHandler) {

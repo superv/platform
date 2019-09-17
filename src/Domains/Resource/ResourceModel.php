@@ -40,6 +40,11 @@ class ResourceModel extends Entry implements ProvidesFields
         });
     }
 
+    public function getForeignKey()
+    {
+        return 'resource_id';
+    }
+
     public function nav()
     {
         return $this->hasOne(Section::class, 'resource_id');
@@ -78,11 +83,6 @@ class ResourceModel extends Entry implements ProvidesFields
     public function getConfig()
     {
         return $this->config ?? [];
-    }
-
-    public function getForeignKey()
-    {
-        return 'resource_id';
     }
 
     public function getConfigValue($key, $default = null)
@@ -167,6 +167,10 @@ class ResourceModel extends Entry implements ProvidesFields
 
     public static function withIdentifier($identifier): ?self
     {
+//        if (! str_contains($identifier, '.res.')) {
+//            $identifier = str_replace_last('.', '.res.', $identifier);
+//        }
+
         return static::fromCache($identifier);
     }
 

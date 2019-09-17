@@ -21,23 +21,22 @@ class CreateUsersResource extends Migration
             $table->string('remember_token')->nullable();
 
             $table->hasOne('sv_profiles', 'profile', 'user_id');
+
             $table->morphToMany('platform.auth_roles', 'roles', 'owner')
                   ->pivotTable('sv_auth_assigned_roles', 'platform.auth_assigned_roles')
                   ->pivotRelatedKey('role_id');
 
-            $pivotColumns = function (Blueprint $pivotTable) {
-                $pivotTable->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
-            };
-
             $table->morphToMany('platform.auth_actions', 'actions', 'owner')
                   ->pivotTable('sv_auth_assigned_actions', 'platform.auth_assigned_actions')
                   ->pivotRelatedKey('action_id')
-                  ->pivotColumns($pivotColumns);
+                  ->pivotColumns(function (Blueprint $pivotTable) {
+                      $pivotTable->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
+                  });
 
             $table->restorable();
         });
 
-        Schema::table('users', function(Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->softDeletes();
             $table->nullableBelongsTo('users', 'deleted_by');
         });

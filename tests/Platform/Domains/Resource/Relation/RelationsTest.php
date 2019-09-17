@@ -66,7 +66,7 @@ class RelationsTest extends ResourceTestCase
         $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->belongsToMany(TestRole::class, 'roles')
-                  ->pivotTable('t_user_roles')
+                  ->pivotTable('testing.t_user_roles')
                   ->pivotForeignKey('user_id')
                   ->pivotRelatedKey('role_id')
                   ->pivotColumns(
@@ -89,6 +89,8 @@ class RelationsTest extends ResourceTestCase
             'pivot_foreign_key' => 'user_id',
             'pivot_related_key' => 'role_id',
             'pivot_columns'     => ['status'],
+            'pivot_namespace'   => 'testing',
+            'pivot_identifier'  => 'testing.t_user_roles',
         ], $relation->getRelationConfig()->toArray());
     }
 

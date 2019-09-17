@@ -64,6 +64,12 @@ trait ResourceTestHelpers
 
         Current::setMigrationScope($namespace);
 
+//        $callback = function (Blueprint $table, ResourceConfig $config) use ($callback, $namespace) {
+//            $config->setNamespace($namespace.'.res');
+//
+//            $callback($table, $config);
+//        };
+
         if ($connection) {
             $config = Schema::connection($connection)->create($table, $callback);
         } else {

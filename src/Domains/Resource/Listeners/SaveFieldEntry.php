@@ -7,7 +7,6 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersDatabaseTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
@@ -42,6 +41,11 @@ class SaveFieldEntry
     /** @var array */
     protected $config;
 
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Field\FieldModel|null
+     */
+    protected $fieldEntry;
+
     public function handle($event)
     {
         /** @var \SuperV\Platform\Domains\Database\Schema\ColumnDefinition $column */
@@ -67,13 +71,14 @@ class SaveFieldEntry
 
         $this->checkMustBeCreated();
 
-        $fieldEntry = $this->syncWithEloquent();
+        $this->syncWithEloquent();
 
-//        if ($event->table !== 'sv_forms') {
+        /**
+         * Attach field to default resource form
+         */
         if ($formEntry = FormModel::findByResource($this->resourceEntry->getId())) {
-            $formEntry->attachField($fieldEntry->getId());
+            $formEntry->attachField($this->fieldEntry->getId());
         }
-//        }
     }
 
     protected function makeConfig()
@@ -159,27 +164,25 @@ class SaveFieldEntry
         $this->fieldType = FieldType::resolveType($this->column->fieldType);
     }
 
-    protected function syncWithEloquent(): FieldModel
+    protected function syncWithEloquent()
     {
         $column = $this->column;
 
         $fieldName = $column->getFieldName();
 
         if ($this->resourceEntry->hasField($fieldName)) {
-            $field = $this->resourceEntry->getField($fieldName);
+            $this->fieldEntry = $this->resourceEntry->getField($fieldName);
         } else {
-            $field = $this->resourceEntry->makeField($fieldName);
+            $this->fieldEntry = $this->resourceEntry->makeField($fieldName);
         }
 
-        $field->type = $column->fieldType;
-        $field->column_type = $column->type;
-        $field->flags = $column->flags;
-        $field->rules = Rules::make($column->getRules())->get();
+        $this->fieldEntry->type = $column->fieldType;
+        $this->fieldEntry->column_type = $column->type;
+        $this->fieldEntry->flags = $column->flags;
+        $this->fieldEntry->rules = Rules::make($column->getRules())->get();
 
-        $field->config = $this->config;
-        $field->save();
-
-        return $field;
+        $this->fieldEntry->config = $this->config;
+        $this->fieldEntry->save();
     }
 
     protected function setResourceEntry($event): void
@@ -192,7 +195,8 @@ class SaveFieldEntry
         }
 
         if (! $resourceEntry) {
-            throw new \Exception(sprintf("Resource model entry not found for table [%s]", $this->resourceConfig->getIdentifier()));
+//            dd(DB::table('sv_resources')->where('name','t_posts')->get());
+            throw new \Exception(sprintf("Error saving field entry [%s]: Resource model entry not found for table [%s]", $this->fieldEntry, $this->resourceConfig->getIdentifier()));
         }
 
         $this->resourceEntry = $resourceEntry;

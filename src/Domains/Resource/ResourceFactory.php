@@ -49,10 +49,13 @@ class ResourceFactory
      */
     public static function make($identifier): ?Resource
     {
-
         if ($identifier instanceof EntryContract) {
             $identifier = $identifier->getResourceIdentifier();
         }
+
+//        if (! str_contains($identifier, '.res.')) {
+//            $identifier = str_replace_last('.', '.res.', $identifier);
+//        }
 
         if (isset(static::$cache[$identifier])) {
             return static::$cache[$identifier];

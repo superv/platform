@@ -24,6 +24,9 @@ class FormHookTest extends ResourceTestCase
 
         $form = FormComponent::get(OrdersFormDefault::class, $this);
 
+//        dd( Hook::resolve()->get('testing.orders'));
+
+
         $this->assertNotNull($form);
 
         $this->assertEquals(2, $form->getFieldCount());

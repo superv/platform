@@ -5,7 +5,7 @@ use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Nav\Section;
-use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
 
 class CreateAuthorizationTables extends Migration
 {
@@ -17,10 +17,12 @@ class CreateAuthorizationTables extends Migration
             'handle' => 'auth',
             'icon'   => 'auth',
         ]);
-        Schema::create('sv_auth_roles', function (Blueprint $table, ResourceConfig $resource) {
-            $resource->label('Roles');
-            $resource->model(Role::class);
-            $resource->nav('acp.platform.auth');
+
+        $this->create('sv_auth_roles', function (Blueprint $table, Config $config) {
+            $config->label('Roles');
+            $config->setName('auth_roles');
+            $config->model(Role::class);
+            $config->nav('acp.platform.auth');
 
             $table->increments('id');
             $table->string('slug')->unique()->entryLabel();
@@ -37,8 +39,8 @@ class CreateAuthorizationTables extends Migration
                   ->pivotColumns($pivotColumns);
         });
 
-        Schema::create('sv_auth_assigned_roles', function (Blueprint $table) {
-            $table->resourceConfig()->label('Assigned Roles');
+        $this->create('sv_auth_assigned_roles', function (Blueprint $table, Config $config) {
+            $config->label('Assigned Roles');
 
             $table->increments('id');
             $table->morphTo('owner');
@@ -47,9 +49,10 @@ class CreateAuthorizationTables extends Migration
             $table->createdBy()->updatedBy();
         });
 
-        Schema::create('sv_auth_actions', function (Blueprint $table) {
-            $table->resourceConfig()->label('Actions');
-            $table->resourceConfig()->nav('acp.platform.auth');
+        $this->create('sv_auth_actions', function (Blueprint $table, Config $config) {
+            $config->label('Actions');
+            $config->setName('auth_actions');
+            $config->nav('acp.platform.auth');
 
             $table->increments('id');
             $table->string('slug')->unique()->entryLabel();

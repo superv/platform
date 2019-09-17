@@ -140,7 +140,6 @@ class PlatformBlueprints
         if ($table instanceof Blueprint) {
             $resource->label('Forms');
             $resource->resourceKey('form');
-            $resource->setName('forms');
             $resource->nav('acp.platform.forms');
             $resource->model(FormModel::class);
 
@@ -158,7 +157,6 @@ class PlatformBlueprints
             });
         } else {
             $table->unsignedInteger('resource_id')->nullable();
-//            $table->uuid('uuid')->unique();
 
             $table->timestamps();
             $table->unsignedInteger('created_by_id')->nullable();
@@ -181,7 +179,7 @@ class PlatformBlueprints
             $resource->resourceKey('relation');
             $resource->nav('acp.platform.system');
 
-            $table->belongsTo('sv_resources', 'resource')->showOnIndex();;
+            $table->belongsTo('platform.resources', 'resource')->showOnIndex();;
             $table->dictionary('config')->nullable();
         } else {
             $table->unsignedInteger('resource_id');

@@ -26,7 +26,7 @@ class InstallerTest extends TestCase
         app('events')->listen(
             AddonInstalledEvent::class,
             function (AddonInstalledEvent $event) use ($installer) {
-                if ($event->addon !== sv_addons('superv.sample')) {
+                if ($event->addon !== sv_addons('sample')) {
                     $this->fail('Failed to match addon in dispatched event');
                 }
             });
@@ -34,13 +34,13 @@ class InstallerTest extends TestCase
         $installer->setPath('tests/Platform/__fixtures__/sample-addon')
                   ->install();
 
-        $addon = AddonModel::query()->where('identifier', 'superv.sample')->first();
+        $addon = AddonModel::query()->where('identifier', 'sample')->first();
         $this->assertNotNull($addon);
 
         $this->assertDatabaseHas('sv_addons', [
             'name'          => 'sample',
             'vendor'        => 'superv',
-            'identifier'    => 'superv.sample',
+            'identifier'    => 'sample',
             'type'          => 'addon',
             'path'          => 'tests/Platform/__fixtures__/sample-addon',
             'enabled'       => true,
@@ -82,7 +82,7 @@ class InstallerTest extends TestCase
              ->setPath('tests/Platform/__fixtures__/sample-addon')
              ->install();
 
-        $addon = sv_addons('superv.sample');
+        $addon = sv_addons('sample');
         $this->assertNotNull($addon);
         $this->assertInstanceOf(SampleAddon::class, $addon);
     }

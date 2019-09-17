@@ -15,7 +15,7 @@ use Tests\Platform\Domains\Resource\Fixtures\Extension\TestUserResourceExtension
  * @package Tests\Platform\Domains\Resource
  * @group   resource
  */
-class ExtensionTest extends ResourceTestCase
+class ExtensionTest
 {
     function test__extends_resource()
     {

@@ -71,6 +71,9 @@ class AddonModel extends Entry
 
     public static function byIdentifier($identifier): ?AddonModel
     {
+        if (str_is('*.*', $identifier)) {
+            list($vendor, $identifier) = explode('.', $identifier);
+        }
         return static::query()->where('identifier', $identifier)
                      ->first();
     }

@@ -22,10 +22,6 @@ class Installer
      */
     protected $addonEntry;
 
-    protected $name;
-
-    protected $namespace;
-
     protected $path;
 
     /** @var \Illuminate\Contracts\Console\Kernel */
@@ -37,15 +33,7 @@ class Installer
     /** @var \SuperV\Platform\Domains\Addon\Addon */
     protected $addon;
 
-    /** @var array * */
-    protected $composerJson;
-
-    /** @var \SuperV\Platform\Domains\Addon\Features\MakeAddonRequest */
-    protected $request;
-
     protected $addonType = 'addon';
-
-    protected $vendor;
 
     protected $identifier;
 
@@ -72,8 +60,9 @@ class Installer
         $this->addonEntry = $maker->make();
 
         $this->addonEntry->fill([
-            'path'    => $this->relativePath(),
-            'enabled' => true,
+            'identifier' => $this->addonEntry->getName(),
+            'path'       => $this->relativePath(),
+            'enabled'    => true,
         ]);
 
         $this->ensureNotInstalledBefore();
@@ -84,13 +73,13 @@ class Installer
             PlatformException::fail(sprintf("Could not create addon model [%s]", $e->getErrorsAsString()));
         }
 
-        $addon = $this->addonEntry->resolveAddon();
+        $this->addon = $this->addonEntry->resolveAddon();
 
-        $this->register($addon);
+        $this->register($this->addon);
 
-        $this->migrate($addon);
+        $this->migrate($this->addon);
 
-        AddonInstalledEvent::dispatch($addon);
+        AddonInstalledEvent::dispatch($this->addon);
 
         return $this;
     }
@@ -112,14 +101,14 @@ class Installer
 
     public function seed()
     {
-        SeedAddon::dispatch(sv_addons($this->getIdentifier()));
+        SeedAddon::dispatch($this->addon);
     }
 
     public function ensureNotInstalledBefore()
     {
         if ($addon = AddonModel::byIdentifier($this->getIdentifier())) {
 //            return $addon->delete();
-            throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getName()));
+            throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getIdentifier()));
         }
     }
 
@@ -186,24 +175,6 @@ class Installer
     public function setCommand(Command $command)
     {
         $this->command = $command;
-
-        return $this;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set addon namespace
-     *
-     * @param string $name
-     * @return Installer
-     */
-    protected function setName($name)
-    {
-        $this->name = $name;
 
         return $this;
     }

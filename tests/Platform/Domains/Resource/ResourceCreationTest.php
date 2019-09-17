@@ -125,7 +125,7 @@ class ResourceCreationTest extends ResourceTestCase
 
             $table->belongsToMany('servers', 'servers')->pivotForeignKey('location_id')
                   ->pivotRelatedKey('server_id')
-                  ->pivotTable('core_location_servers');
+                  ->pivotTable('testing.ore_location_servers');
         });
 
         $this->create('core_servers', function (Blueprint $table, Config $config) {
@@ -134,7 +134,7 @@ class ResourceCreationTest extends ResourceTestCase
 
             $table->belongsToMany('core_locations', 'locations')->pivotForeignKey('server_id')
                   ->pivotRelatedKey('location_id')
-                  ->pivotTable('core_location_servers');
+                  ->pivotTable('testing.core_location_servers');
         });
 
         $resource = ResourceFactory::make('platform.servers');

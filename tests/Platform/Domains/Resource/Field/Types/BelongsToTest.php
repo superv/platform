@@ -15,25 +15,24 @@ class BelongsToTest extends ResourceTestCase
     {
         $this->makeGroupResource();
 
-        $users = $this->create('t_users', function (Blueprint $table) {
+        $users = $this->create('testing.abusers', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->entryLabel();
-            $table->belongsTo('groups');
+            $table->belongsTo('testing.groups');
         });
 
-
-        $this->assertColumnExists('t_users', 'group_id');
+        $this->assertColumnExists('abusers', 'group_id');
         $belongsTo = $users->getField('group');
 
         $this->assertEquals('belongs_to', $belongsTo->getFieldType());
-        $this->assertEquals('platform.groups', $belongsTo->getConfigValue('related_resource'));
+        $this->assertEquals('testing.groups', $belongsTo->getConfigValue('related_resource'));
         $this->assertEquals('group_id', $belongsTo->getConfigValue('foreign_key'));
     }
 
     function test__presenter()
     {
         $this->makeGroupResource();
-        $users = $this->create('t_users',
+        $users = $this->create('testing.abusers',
             function (Blueprint $table, ResourceConfig $resource) {
                 $resource->model(BelongsToTestUser::class);
                 $table->increments('id');
@@ -52,7 +51,7 @@ class BelongsToTest extends ResourceTestCase
 
     protected function makeGroupResource(): void
     {
-        $groups = $this->create('groups', function (Blueprint $table) {
+        $groups = $this->create('testing.groups', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title')->entryLabel();
         });
@@ -66,7 +65,7 @@ class BelongsToTestUser extends Entry
 {
     public $timestamps = false;
 
-    protected $table = 't_users';
+    protected $table = 'abusers';
 
     protected $guarded = [];
 
@@ -82,7 +81,7 @@ class BelongsToTestUser extends Entry
 
     public function group()
     {
-        $relation = ResourceFactory::make('platform.t_users')->getRelation('group');
+        $relation = ResourceFactory::make('testing.abusers')->getRelation('group');
 
         $relation->acceptParentEntry($this);
 

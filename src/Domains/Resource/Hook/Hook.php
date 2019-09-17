@@ -90,15 +90,18 @@ class Hook
 
     public function register($identifier, $hookHandler, $className)
     {
-        if (str_is('*.*.*', $identifier)) {
-            list($ns, $hookType, $subKey) = explode('.', $identifier);
-            $identifier = sprintf('%s.%s', $ns, $hookType);
+        $subKey = null;
+        $parts = explode('.', $identifier);
+        if (count($parts) > 2) {
+            $identifier = sprintf('%s.%s', $parts[0], $parts[1]);
+            $hookType = $parts[2];
 
+            if (count($parts) > 3) {
+                $subKey = $parts[3];
+            }
         } else {
             $parts = explode('_', snake_case($className));
             $hookType = end($parts);
-
-            $subKey = null;
         }
 
         if (! isset($this->map[$identifier])) {

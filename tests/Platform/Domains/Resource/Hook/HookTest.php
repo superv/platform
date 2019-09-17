@@ -38,7 +38,6 @@ class HookTest extends ResourceTestCase
             $hook->get('sv.users')
         );
 
-        dd($hook->get('sv.users'));
 
         $this->assertEquals(
             [

@@ -61,10 +61,6 @@ class ResourceConfig
             return $this->resourceKey;
         }
 
-//        if ($this->resource) {
-//            return str_singular($this->resource->getHandle());
-//        }
-
         if ($this->getName()) {
             return str_singular($this->getName());
         }
