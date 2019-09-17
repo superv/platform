@@ -41,10 +41,13 @@ class Blueprints
                               $pivotTable->string('notes');
                           });
 
-                $table->morphToMany('platform.t_actions', 'actions', 'owner', 'platform.assigned_actions', 'action',
-                    function (Blueprint $pivotTable) {
-                        $pivotTable->string('provision');
-                    });
+                $table->morphToMany('platform.t_actions', 'actions', 'owner')
+                      ->pivotRelatedKey('action_id')
+                      ->pivotTable('assigned_actions', 'platform.assigned_actions')
+                      ->pivotColumns(
+                          function (Blueprint $pivotTable) {
+                              $pivotTable->string('provision');
+                          });
 
                 $table->hasMany('platform.t_posts', 'posts');
                 $table->hasMany('platform.t_comments', 'comments');

@@ -94,27 +94,32 @@ class RelationsTest extends ResourceTestCase
 
     function test__saves_pivot_columns_even_if_pivot_table_is_created_before()
     {
-        $this->create('t_users', function (Blueprint $table) {
+        $this->create('testing.t_users', function (Blueprint $table) {
             $table->increments('id');
-            $pivotColumns = function (Blueprint $pivotTable) {
-                $pivotTable->string('status');
-            };
-            $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
+            $table->morphToMany(TestRole::class, 'roles', 'owner')
+                  ->pivotTable('testing.t_assigned_roles')
+                  ->pivotRelatedKey('role_id')
+                  ->pivotColumns(function (Blueprint $pivotTable) {
+                      $pivotTable->string('status');
+                  });
         });
 
-        $users = ResourceFactory::make('platform.t_users');
+        $users = ResourceFactory::make('testing.t_users');
         $roles = $users->getRelation('roles');
         $this->assertEquals(['status'], $roles->getRelationConfig()->getPivotColumns());
 
-        $this->create('t_admins', function (Blueprint $table) {
+        $this->create('testing.t_admins', function (Blueprint $table) {
             $table->increments('id');
-            $pivotColumns = function (Blueprint $pivotTable) {
-                $pivotTable->string('status');
-            };
-            $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
+
+            $table->morphToMany(TestRole::class, 'roles', 'owner')
+                  ->pivotTable('testing.t_assigned_roles')
+                  ->pivotRelatedKey('role_id')
+                  ->pivotColumns(function (Blueprint $pivotTable) {
+                      $pivotTable->string('status');
+                  });
         });
 
-        $admins = ResourceFactory::make('platform.t_admins');
+        $admins = ResourceFactory::make('testing.t_admins');
         $roles = $admins->getRelation('roles');
         $this->assertEquals(['status'], $roles->getRelationConfig()->getPivotColumns());
     }

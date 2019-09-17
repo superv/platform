@@ -116,6 +116,13 @@ class RelationConfig
      */
     protected $targetModel;
 
+    /**
+     * Identifier for the pivot resource
+     *
+     * @var string
+     */
+    protected $pivotIdentifier;
+
     public function __construct(RelationType $type)
     {
         $this->type = $type;
@@ -252,12 +259,14 @@ class RelationConfig
         return $this;
     }
 
-    public function pivotTable(string $pivotTable): self
+    public function pivotTable(string $pivotTable, string $pivotIdentifier = null): self
     {
         if (str_contains($pivotTable, '.')) {
+            $pivotIdentifier = $pivotTable;
             list($this->pivotNamespace, $pivotTable) = explode('.', $pivotTable);
         }
         $this->pivotTable = $pivotTable;
+        $this->pivotIdentifier = $pivotIdentifier;
 
         return $this;
     }
@@ -336,6 +345,14 @@ class RelationConfig
     public function getPivotNamespace(): ?string
     {
         return $this->pivotNamespace;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPivotIdentifier(): string
+    {
+        return $this->pivotIdentifier;
     }
 
     public function toArray()

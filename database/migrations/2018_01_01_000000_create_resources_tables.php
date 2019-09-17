@@ -37,9 +37,12 @@ class CreateResourcesTables extends Migration
          * Then run the migrations again to create the resources
          */
         foreach ($this->resources as $resource => $table) {
-            Schema::run($table, function (Blueprint $table, Config $config) use ($resource) {
-                PlatformBlueprints::{$resource}($table, $config);
-            });
+            Schema::run($table,
+                function (Blueprint $table, Config $config) use ($resource) {
+                    $config->setName($resource);
+                    PlatformBlueprints::{$resource}($table, $config);
+                }
+            );
         }
     }
 

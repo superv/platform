@@ -62,10 +62,10 @@ class PlatformBlueprints
             $resource->resourceKey('resource');
             $resource->nav('acp.platform.system');
 
-            $table->hasMany('platform.sv_fields', 'fields');
-            $table->hasMany('platform.sv_relations', 'relations');
-            $table->hasMany('platform.sv_forms', 'forms');
-            $table->hasMany('platform.sv_activities', 'activities');
+            $table->hasMany('platform.fields', 'fields');
+            $table->hasMany('platform.relations', 'relations');
+            $table->hasMany('platform.forms', 'forms');
+            $table->hasMany('platform.activities', 'activities');
             $table->dictionary('config')->nullable();
 
             $table->createdBy()->updatedBy();
@@ -99,7 +99,7 @@ class PlatformBlueprints
             $resource->resourceKey('field');
             $resource->nav('acp.platform.system');
 
-            $table->nullableBelongsTo('sv_resources', 'resource')->showOnIndex();
+            $table->nullableBelongsTo('platform.resources', 'resource')->showOnIndex();
 
             $table->text('flags')->fieldType('array')->nullable();
             $table->dictionary('rules')->nullable();
@@ -144,13 +144,13 @@ class PlatformBlueprints
             $resource->nav('acp.platform.forms');
             $resource->model(FormModel::class);
 
-            $table->nullableBelongsTo('sv_resources', 'resource');
+            $table->nullableBelongsTo('platform.resources', 'resource');
 //            $table->hasUuid()->showOnIndex();
 
             $table->createdBy()->updatedBy();
 
-            $table->belongsToMany('platform.sv_fields', 'fields')
-                  ->pivotTable('platform.sv_form_fields')
+            $table->belongsToMany('platform.fields', 'fields')
+                  ->pivotTable('sv_form_fields', 'platform.form_fields')
                   ->pivotForeignKey('form_id')
                   ->pivotRelatedKey('field_id')
                   ->pivotColumns(function(Blueprint $pivotTable) {

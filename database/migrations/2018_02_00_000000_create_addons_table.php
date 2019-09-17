@@ -12,6 +12,7 @@ class CreateAddonsTable extends Migration
     {
         Schema::create('sv_addons', function (Blueprint $table, Config $config) {
             $config->label('Addons');
+            $config->setName('addons');
             $config->model(AddonModel::class);
             $config->nav('acp.platform.system');
 

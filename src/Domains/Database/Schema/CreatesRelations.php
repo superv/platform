@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Database\Schema;
 
-use Closure;
 use SuperV\Platform\Domains\Resource\Field\Types\Polymorphic\PolymorphicFieldConfig;
 use SuperV\Platform\Domains\Resource\Field\Types\Relation\RelationFieldConfig;
 use SuperV\Platform\Domains\Resource\Field\Types\Relation\RelationType;
@@ -171,25 +170,17 @@ trait CreatesRelations
                     );
     }
 
-    public function morphToMany(
-        $related,
-        $relationName,
-        $morphName,
-        $pivotTable,
-        $pivotRelatedKey,
-        Closure $pivotColumns = null
-    ) {
-        return $this->addColumn(null, $relationName, ['nullable' => true])
-                    ->relation(
-                        Config::morphToMany()
-                              ->relationName($relationName)
-                              ->related($related)
-                              ->pivotTable($pivotTable)
-                              ->pivotForeignKey($morphName.'_id')
-                              ->pivotRelatedKey($pivotRelatedKey)
-                              ->pivotColumns($pivotColumns)
-                              ->morphName($morphName)
-                    );
+    public function morphToMany($related, $relation, $morphName): Config
+    {
+        $config = Config::morphToMany()
+                        ->relationName($relation)
+                        ->related($related)
+                        ->morphName($morphName)
+                        ->pivotForeignKey($morphName.'_id');
+
+        $this->addColumn(null, $relation, ['nullable' => true])->relation($config);
+
+        return $config;
     }
 
     public function morphMany($related, $relationName, $morphName)

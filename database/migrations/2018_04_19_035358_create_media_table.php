@@ -3,14 +3,16 @@
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
 
 class CreateMediaTable extends Migration
 {
     public function up()
     {
-        Schema::create('sv_media', function (Blueprint $table, ResourceConfig $resource) {
-            $resource->label('Media');
+        Schema::create('sv_media', function (Blueprint $table, Config $config) {
+            $config->label('Media');
+
+            $config->setName('media');
 
             $table->increments('id');
             $table->morphTo('owner');

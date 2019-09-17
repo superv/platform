@@ -12,6 +12,7 @@ class CreateDropsTable extends Migration
     {
         $this->create('sv_drop_repos', function (Blueprint $table, Config $config) {
             $config->label('Drop Repos');
+            $config->setName('drop_repos');
             $config->model(DropRepoModel::class);
             $config->nav('acp.platform.system');
 
@@ -20,11 +21,12 @@ class CreateDropsTable extends Migration
             $table->string('identifier')->entryLabel();
             $table->string('handler');
 
-            $table->hasMany('platform.sv_drops', 'drops');
+            $table->hasMany('platform.drops', 'drops');
         });
 
         $this->create('sv_drops', function (Blueprint $table, Config $config) {
             $config->label('Drops');
+            $config->setName('drops');
             $config->model(DropModel::class);
             $config->nav('acp.platform.system');
 

@@ -21,11 +21,11 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
  */
 class HookTest extends ResourceTestCase
 {
-    function test__resolves_from_container_as_a_singleton()
+    function test__registers_hooks_globally()
     {
         $hook = Hook::resolve();
         $hook->register('sv.users', 'config_handler', 'UsersConfig');
-        $hook->register('sv.users::fields.title', 'title_field_handler', 'TitleField');
+        $hook->register('sv.users.fields.title', 'title_field_handler', 'TitleField');
 
         $hook = Hook::resolve();
         $this->assertEquals(
@@ -38,9 +38,14 @@ class HookTest extends ResourceTestCase
             $hook->get('sv.users')
         );
 
-        $this->assertEquals([
-            'title' => 'title_field_handler',
-        ], $hook->get('sv.users', 'fields'));
+        dd($hook->get('sv.users'));
+
+        $this->assertEquals(
+            [
+                'title' => 'title_field_handler',
+            ],
+            $hook->get('sv.users', 'fields')
+        );
         $this->assertEquals('config_handler', $hook->get('sv.users', 'config'));
     }
 
