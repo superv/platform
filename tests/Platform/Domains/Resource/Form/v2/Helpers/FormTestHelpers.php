@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource\Form\v2;
+namespace Tests\Platform\Domains\Resource\Form\v2\Helpers;
 
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilder;

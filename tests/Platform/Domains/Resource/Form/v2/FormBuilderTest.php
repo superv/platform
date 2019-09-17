@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\Form;
 use SuperV\Platform\Domains\Resource\Form\v2\Factory;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFieldCollection;
+use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormFieldFake;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FormBuilderTest extends ResourceTestCase
@@ -27,11 +28,13 @@ class FormBuilderTest extends ResourceTestCase
 
         $builder->setFormIdentifier('test-form-id');
         $builder->setFormUrl('url-to-form');
+        $builder->setFormData([1, 2, 3]);
 
         $formMock = $this->bindMock(Form::class);
         $formMock->shouldReceive('setIdentifier')->with('test-form-id')->once()->andReturnSelf();
         $formMock->shouldReceive('setUrl')->with('url-to-form')->once()->andReturnSelf();
         $formMock->shouldReceive('setFields')->with($formFields)->once()->andReturnSelf();
+        $formMock->shouldReceive('setData')->with([1, 2, 3])->once()->andReturnSelf();
 
         $builder->build();
     }

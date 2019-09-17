@@ -5,8 +5,9 @@ namespace Tests\Platform\Domains\Resource\Form\v2;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FieldComposer;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\Form;
-use SuperV\Platform\Domains\Resource\Form\v2\FormFieldCollection;
 use SuperV\Platform\Support\Composer\Payload;
+use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormFake;
+use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormTestHelpers;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ComposeFormTest extends ResourceTestCase
@@ -48,19 +49,3 @@ class ComposeFormTest extends ResourceTestCase
 }
 
 
-class FormFake extends \SuperV\Platform\Domains\Resource\Form\v2\Form
-{
-    protected $identifier = 'form-id';
-
-    protected $url = 'url-to-form';
-
-    protected $method = 'PATCH';
-
-    public function getFields(): FormFieldCollection
-    {
-        return FormFieldCollection::make([
-            'field-1' => FormFieldFake::fake('field-1'),
-            'field-2' => FormFieldFake::fake('field-2'),
-        ]);
-    }
-}

@@ -40,6 +40,8 @@ class Form implements Contracts\Form
      */
     protected $events;
 
+    protected $data;
+
     public function __construct(Dispatcher $events)
     {
         $this->events = $events;
@@ -50,6 +52,10 @@ class Form implements Contracts\Form
         $this->fireEvent('handling');
 
         $this->method = strtoupper($request->getMethod());
+
+        if ($this->method === 'POST') {
+            $this->submit($request);
+        }
     }
 
     public function compose(): Payload
@@ -70,7 +76,7 @@ class Form implements Contracts\Form
         return RenderComponent::resolve()->handle($this->payload);
     }
 
-    public function submit(array $data = [])
+    public function submit($data)
     {
         SubmitForm::resolve()->handle($this, $data);
 
@@ -106,6 +112,12 @@ class Form implements Contracts\Form
     public function getField(string $fieldName): ?FormField
     {
         return $this->getFields()->get($fieldName);
+    }
+
+    public function getFieldValue(string $fieldName)
+    {
+        return $this->data[$fieldName];
+//        return $this->getField($fieldName)->getValue();
     }
 
     public function getFields(): FormFieldCollection
@@ -152,5 +164,19 @@ class Form implements Contracts\Form
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    public function setData($data): FormContract
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    public function setFieldValue($key, $value): FormContract
+    {
+        $this->data[$key] = $value;
+
+        return $this;
     }
 }

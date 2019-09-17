@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Form\v2\FormFieldCollection;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ComposeForm;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\SubmitForm;
 use SuperV\Platform\Support\Composer\Payload;
+use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormTestHelpers;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class FormTest extends ResourceTestCase
@@ -56,7 +57,7 @@ class FormTest extends ResourceTestCase
                      ->setFormData(['name' => 'SuperV User'])
                      ->getForm();
 
-        $this->assertEquals('SuperV User', $form->getField('name')->getValue());
+        $this->assertEquals('SuperV User', $form->getFieldValue('name'));
     }
 
     function test__dispatches_event_before_handling_request()
@@ -109,13 +110,12 @@ class FormTest extends ResourceTestCase
     function test__validates_form()
     {
         $form = $this->makeFormBuilder($this->makeTestFields())->getForm();
-
-        $data = ['name' => 'SuperV User', 'email' => 'user@superv.io'];
+        $request = $this->makePostRequest(['name' => 'SuperV User']);
 
         $submitForm = $this->bindMock(SubmitForm::class);
-        $submitForm->shouldReceive('handle')->with($form, $data)->once();
+        $submitForm->shouldReceive('handle')->with($form, $request)->once();
 
-        $form->submit($data);
+        $form->handle($request);
         $this->assertTrue($form->isSubmitted());
     }
 

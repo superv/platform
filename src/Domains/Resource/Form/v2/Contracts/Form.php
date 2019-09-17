@@ -14,7 +14,7 @@ interface Form
 
     public function handle(Request $request);
 
-    public function submit(array $data = []);
+    public function submit($data);
 
     /**
      * Render the SPA Component from composed data
@@ -23,9 +23,15 @@ interface Form
      */
     public function render(): ComponentContract;
 
+    public function setData($data): Form;
+
+    public function setFieldValue($key, $value): Form;
+
     public function isValid(): bool;
 
     public function getField(string $fieldName): ?FormField;
+
+    public function getFieldValue(string $fieldName);
 
     public function getFields(): FormFieldCollection;
 

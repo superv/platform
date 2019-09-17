@@ -48,12 +48,13 @@ class FormBuilder implements FormBuilderContract
 
     public function build()
     {
-        if (! empty($this->formData)) {
-            $this->fields->fill($this->formData);
-        }
+//        if (! empty($this->formData)) {
+//            $this->fields->fill($this->formData);
+//        }
         $form = Form::resolve($this->fields, $this->formIdentifier);
 
         $form->setUrl($this->formUrl);
+        $form->setData($this->formData);
 
         return $form;
     }
