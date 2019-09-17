@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
-class Blueprints
+class PlatformBlueprints
 {
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
@@ -228,7 +228,7 @@ class Blueprints
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
      * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
      */
-    public static function activity($table, ResourceConfig $resource = null)
+    public static function activities($table, ResourceConfig $resource = null)
     {
         $table->increments('id');
         if ($table instanceof Blueprint) {
