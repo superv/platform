@@ -12,7 +12,7 @@ class FormComponent extends BaseComponent
 
     protected $form;
 
-    public function __construct(Contracts\Form $form)
+    public function __construct(Contracts\FormInterface $form)
     {
         $this->form = $form;
     }

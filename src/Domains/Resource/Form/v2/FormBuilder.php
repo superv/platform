@@ -14,7 +14,7 @@ class FormBuilder implements FormBuilderContract
     protected $formEntry;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Form\v2\Contracts\Form
+     * @var \SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface
      */
     protected $form;
 
@@ -48,9 +48,9 @@ class FormBuilder implements FormBuilderContract
 
     public function build()
     {
-//        if (! empty($this->formData)) {
-//            $this->fields->fill($this->formData);
-//        }
+        if (! empty($this->formData)) {
+            $this->fields->fill($this->formData);
+        }
         $form = Form::resolve($this->fields, $this->formIdentifier);
 
         $form->setUrl($this->formUrl);
@@ -59,7 +59,7 @@ class FormBuilder implements FormBuilderContract
         return $form;
     }
 
-    public function getForm(): v2\Contracts\Form
+    public function getForm(): v2\Contracts\FormInterface
     {
         return $this->build();
     }

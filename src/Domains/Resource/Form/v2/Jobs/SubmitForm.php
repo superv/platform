@@ -2,11 +2,11 @@
 
 namespace SuperV\Platform\Domains\Resource\Form\v2\Jobs;
 
-use SuperV\Platform\Domains\Resource\Form\v2\Contracts\Form;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 
 class SubmitForm
 {
-    public function handle(Form $form, $data)
+    public function handle(FormInterface $form, $data)
     {
         foreach ($data as $key => $value) {
             $form->setFieldValue($key, $value);

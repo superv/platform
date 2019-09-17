@@ -14,6 +14,35 @@ class Blueprints
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
      * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
      */
+    public static function namespaces($table, ResourceConfig $resource = null)
+    {
+        $table->increments('id');
+
+        $table->string('namespace')->showOnIndex()->unique()->searchable();
+
+        if ($table instanceof Blueprint) {
+            $resource->label('Namespaces');
+            $resource->setName('namespaces');
+            $resource->nav('acp.platform.system');
+
+            $table->select('type', ['resource', 'form', 'field'])->showOnIndex()->addFlag('filter');
+
+            $table->createdBy()->updatedBy();
+        } else {
+            $table->string('type');
+
+            $table->nullableTimestamps();
+            $table->unsignedInteger('created_by_id')->nullable();
+            $table->unsignedInteger('updated_by_id')->nullable();
+        }
+        $table->boolean('restorable')->default(false);
+        $table->boolean('sortable')->default(false);
+    }
+
+    /**
+     * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
+     */
     public static function resources($table, ResourceConfig $resource = null)
     {
         $table->increments('id');

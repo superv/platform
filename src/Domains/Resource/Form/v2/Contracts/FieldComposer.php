@@ -6,5 +6,5 @@ use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 
 interface FieldComposer
 {
-    public function toForm(Form $form, FormField $field);
+    public function toForm(FormInterface $form, FormField $field);
 }

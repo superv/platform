@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Form\v2\FormFieldCollection;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
 
-interface Form
+interface FormInterface
 {
     public function compose(): Payload;
 
@@ -23,9 +23,9 @@ interface Form
      */
     public function render(): ComponentContract;
 
-    public function setData($data): Form;
+    public function setData($data): FormInterface;
 
-    public function setFieldValue($key, $value): Form;
+    public function setFieldValue($key, $value): FormInterface;
 
     public function isValid(): bool;
 
@@ -35,7 +35,7 @@ interface Form
 
     public function getFields(): FormFieldCollection;
 
-    public function setFields(FormFieldCollection $fields): Form;
+    public function setFields(FormFieldCollection $fields): FormInterface;
 
     public function isSubmitted(): bool;
 
@@ -43,9 +43,9 @@ interface Form
 
     public function getMethod();
 
-    public function setIdentifier(string $identifier): Form;
+    public function setIdentifier(string $identifier): FormInterface;
 
     public function getUrl(): string;
 
-    public function setUrl(string $url): Form;
+    public function setUrl(string $url): FormInterface;
 }

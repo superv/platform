@@ -19,9 +19,10 @@ class FormController extends BaseApiController
             app(PlatformAuthenticate::class)->guard($this->request, 'sv-api');
         }
 
+//        $formUrl = sv_route('resource.forms.store', ['uuid' => $formEntry->uuid]);
         $builder = Factory::createBuilder()
                           ->setFormEntry($formEntry)
-                          ->setFormUrl(sv_route('resource.forms.store', ['uuid' => $formEntry->uuid]));
+                          ->setFormUrl(sv_route(Form::ROUTE, ['identifier' => $formEntry->getIdentifier()]));
 
         $data = [];
         if ($entries = $this->request->get('entry')) {

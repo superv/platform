@@ -11,9 +11,14 @@ trait FormTestHelpers
     protected function makeTestFields()
     {
         return [
-            ['identifier' => 'name', 'type' => 'text'],
-            ['identifier' => 'email', 'type' => 'email'],
+            $this->makeFieldArray('users.name', 'name'),
+            $this->makeFieldArray('users.email', 'email'),
         ];
+    }
+
+    protected function makeFieldArray($identifier, $name, $type = 'text')
+    {
+        return compact('identifier', 'name', 'type');
     }
 
     protected function makeFormBuilder(array $fields = []): FormBuilder

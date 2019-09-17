@@ -50,6 +50,19 @@ class InstallerTest extends TestCase
         ]);
     }
 
+    function test__resource_namespace_for_addon_is_created()
+    {
+        $addon = $this->setUpAddon();
+
+        $namespace = sv_resource('platform::namespaces')
+            ->newQuery()
+            ->where('namespace', 'superv.addons.sample::resources')
+            ->where('type', 'resource')
+            ->first();
+
+        $this->assertNotNull($namespace);
+    }
+
     function test__install_with_custom_identifier()
     {
         $installer = $this->setUpAddonInstaller('sample');

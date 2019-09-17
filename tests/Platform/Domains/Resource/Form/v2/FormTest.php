@@ -3,9 +3,9 @@
 namespace Tests\Platform\Domains\Resource\Form\v2;
 
 use Event;
-use SuperV\Platform\Domains\Resource\Form\v2\Contracts\Form;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Factory;
-use SuperV\Platform\Domains\Resource\Form\v2\FormFieldCollection;
+use SuperV\Platform\Domains\Resource\Form\v2\Form;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ComposeForm;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\SubmitForm;
 use SuperV\Platform\Support\Composer\Payload;
@@ -19,11 +19,20 @@ class FormTest extends ResourceTestCase
     function test__initial_state()
     {
         $form = $this->makeFormBuilder()->getForm();
-        $this->assertInstanceOf(Form::class, $form);
+        $this->assertInstanceOf(FormInterface::class, $form);
 
         $this->assertFalse($form->isSubmitted());
         $this->assertFalse($form->isValid());
         $this->assertEquals('POST', $form->getMethod());
+    }
+
+    function test__sets_form_url_from_route_if_not_given()
+    {
+        $builder = Factory::createBuilder();
+        $builder->setFormIdentifier($identifier = uuid());
+        $form = $builder->getForm();
+
+        $this->assertEquals(sv_route(Form::ROUTE, ['identifier' => $identifier]), $form->getUrl());
     }
 
     function test__set_form_mode_from_request()
@@ -37,27 +46,6 @@ class FormTest extends ResourceTestCase
 
         $form->handle($this->makePostRequest());
         $this->assertEquals('POST', $form->getMethod());
-    }
-
-    function test__builder_fields()
-    {
-        $builder = $this->makeFormBuilder($this->makeTestFields());
-        $form = $builder->getForm();
-
-        $this->assertInstanceOf(FormFieldCollection::class, $form->getFields());
-        $this->assertEquals(2, $form->getFields()->count());
-
-        $this->assertEquals('name', $form->getField('name')->getName());
-        $this->assertEquals('email', $form->getField('email')->getName());
-    }
-
-    function test__resolves_field_values_from_initial_form_data()
-    {
-        $form = $this->makeFormBuilder($this->makeTestFields())
-                     ->setFormData(['name' => 'SuperV User'])
-                     ->getForm();
-
-        $this->assertEquals('SuperV User', $form->getFieldValue('name'));
     }
 
     function test__dispatches_event_before_handling_request()

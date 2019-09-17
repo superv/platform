@@ -5,15 +5,17 @@ namespace SuperV\Platform\Domains\Resource\Form\v2;
 use Illuminate\Http\Request;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
-use SuperV\Platform\Domains\Resource\Form\v2\Contracts\Form as FormContract;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ComposeForm;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\RenderComponent;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\SubmitForm;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
 
-class Form implements Contracts\Form
+class Form implements FormInterface
 {
+    const ROUTE = 'sv::forms.v2.show';
+
     protected $submitted = false;
 
     protected $valid = false;
@@ -92,7 +94,7 @@ class Form implements Contracts\Form
         return $this->identifier;
     }
 
-    public function setIdentifier(string $identifier): FormContract
+    public function setIdentifier(string $identifier): FormInterface
     {
         $this->identifier = $identifier;
 
@@ -116,8 +118,8 @@ class Form implements Contracts\Form
 
     public function getFieldValue(string $fieldName)
     {
-        return $this->data[$fieldName];
-//        return $this->getField($fieldName)->getValue();
+//        return $this->data[$fieldName];
+        return $this->getField($fieldName)->getValue();
     }
 
     public function getFields(): FormFieldCollection
@@ -125,7 +127,7 @@ class Form implements Contracts\Form
         return $this->fields;
     }
 
-    public function setFields(FormFieldCollection $fields): FormContract
+    public function setFields(FormFieldCollection $fields): FormInterface
     {
         $this->fields = $fields;
 
@@ -139,7 +141,7 @@ class Form implements Contracts\Form
 
     public static function resolve(FormFieldCollection $fields, string $identifier)
     {
-        $form = app(Contracts\Form::class);
+        $form = app(Contracts\FormInterface::class);
 
         $form->setIdentifier($identifier);
         $form->setFields($fields);
@@ -154,7 +156,7 @@ class Form implements Contracts\Form
         $this->events->dispatch($event, ['form' => $this, 'payload' => $payload]);
     }
 
-    public function setUrl($url): FormContract
+    public function setUrl($url): FormInterface
     {
         $this->url = $url;
 
@@ -163,17 +165,20 @@ class Form implements Contracts\Form
 
     public function getUrl(): string
     {
+        if (! $this->url) {
+            return sv_route(self::ROUTE, ['identifier' => $this->getIdentifier()]);
+        }
         return $this->url;
     }
 
-    public function setData($data): FormContract
+    public function setData($data): FormInterface
     {
         $this->data = $data;
 
         return $this;
     }
 
-    public function setFieldValue($key, $value): FormContract
+    public function setFieldValue($key, $value): FormInterface
     {
         $this->data[$key] = $value;
 

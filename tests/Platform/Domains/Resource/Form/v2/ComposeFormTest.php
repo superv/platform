@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Resource\Form\v2;
 
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FieldComposer;
-use SuperV\Platform\Domains\Resource\Form\v2\Contracts\Form;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Support\Composer\Payload;
 use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormFake;
 use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormTestHelpers;
@@ -16,15 +16,15 @@ class ComposeFormTest extends ResourceTestCase
 
     function test__compose()
     {
-        $this->app->bind(Form::class, FormFake::class);
+        $this->app->bind(FormInterface::class, FormFake::class);
         $fieldComposerMock = $this->bindMock(FieldComposer::class);
 
-        /** @var Form $form */
-        $form = app(Form::class);
+        /** @var FormInterface $form */
+        $form = app(FormInterface::class);
 
         $form->getFields()->map(function (FormField $field) use ($form, $fieldComposerMock) {
             $fieldComposerMock->shouldReceive('toForm')
-                              ->withArgs(function (Form $formArg, FormField $fieldArg) use ($form, $field) {
+                              ->withArgs(function (FormInterface $formArg, FormField $fieldArg) use ($form, $field) {
                                   return $fieldArg->getIdentifier() === $field->getIdentifier()
                                       && $formArg->getIdentifier() === $form->getIdentifier();
                               })

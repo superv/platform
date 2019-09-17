@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form\v2\Jobs;
 
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FieldComposer;
-use SuperV\Platform\Domains\Resource\Form\v2\Contracts\Form;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Support\Composer\Payload;
 
 class ComposeForm
@@ -19,7 +19,7 @@ class ComposeForm
         $this->fieldComposer = $fieldComposer;
     }
 
-    public function handle(Form $form)
+    public function handle(FormInterface $form)
     {
         return new Payload([
             'identifier' => $form->getIdentifier(),

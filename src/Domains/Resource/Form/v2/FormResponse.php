@@ -7,11 +7,11 @@ use Illuminate\Contracts\Support\Responsable;
 class FormResponse implements Responsable
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Form\v2\Contracts\Form
+     * @var \SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface
      */
     protected $form;
 
-    public function __construct(Contracts\Form $form)
+    public function __construct(Contracts\FormInterface $form)
     {
         $this->form = $form;
     }

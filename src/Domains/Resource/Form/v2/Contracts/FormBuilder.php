@@ -9,7 +9,7 @@ interface FormBuilder
 {
     public function setFormEntry(FormModel $formEntry): FormBuilder;
 
-    public function getForm(): Form;
+    public function getForm(): FormInterface;
 
     public function addField(FormField $field);
 
