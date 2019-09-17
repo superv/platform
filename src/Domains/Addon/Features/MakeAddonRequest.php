@@ -29,10 +29,10 @@ class MakeAddonRequest
      */
     protected $targetPath;
 
-    public function __construct(string $vendor, string $package, string $addonType)
+    public function __construct(string $identifier, string $addonType)
     {
-        $this->vendor = $vendor;
-        $this->package = $package;
+        list($this->vendor, $this->package) = explode('.', $identifier);
+        $this->identifier = $identifier;
         $this->addonType = $addonType;
     }
 

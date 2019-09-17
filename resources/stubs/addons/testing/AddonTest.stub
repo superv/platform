@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\{addon.short_name};
+namespace Tests\{addon.domain};
 
-class {addon.short_name}Test extends TestCase
+class {addon.domain}Test extends TestCase
 {
     function test_addon_is_installed()
     {
-        $this->assertNotNull(superv('addons')->get('{addon.slug}'));
+        $this->assertNotNull(sv_addons('{addon.identifer}'));
     }
 }

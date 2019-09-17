@@ -27,18 +27,21 @@ class CreateAddonFiles
     {
         $this->filesystem = $filesystem;
 
-        $name = ucfirst(camel_case($this->model->name));
+        $addonName = ucfirst(camel_case($this->model->getName()));
         $type = ucfirst(camel_case($this->model->type));
 
         $tokens = [
             'provider'    => [
-                'class_name' => $providerClass = "{$name}{$type}ServiceProvider",
+                'class_name' => $providerClass = "{$addonName}{$type}ServiceProvider",
             ],
             'addon'       => [
-                'class_name' => $addonClass = "{$name}{$type}",
-                'extends'    => ucwords($type),
-                'short_name' => $shortName = $this->model->getIdentifier(),
-                'slug'       => $this->model->getPsrNamespace(),
+                'vendor'        => $this->model->getVendor(),
+                'name'          => $this->model->getName(),
+                'type'          => $this->model->getType(),
+                'class_name'    => $addonClass = "{$addonName}{$type}",
+                'extends'       => ucwords($type),
+                'domain'        => $addonName,
+                'psr_namespace' => $this->model->getPsrNamespace(),
             ],
             'model'       => $this->model->toArray(),
             'psr4_prefix' => str_replace('\\', '\\\\', $this->model->getPsrNamespace()),
@@ -52,8 +55,8 @@ class CreateAddonFiles
          * test files
          */
         $this->makeStub('addons/testing/phpunit.xml', [], 'phpunit.xml');
-        $this->makeStub('addons/testing/TestCase.stub', $tokens, "tests/{$shortName}/TestCase.php");
-        $this->makeStub('addons/testing/AddonTest.stub', $tokens, "tests/{$shortName}/{$shortName}Test.php");
+        $this->makeStub('addons/testing/TestCase.stub', $tokens, "tests/{$addonName}/TestCase.php");
+        $this->makeStub('addons/testing/AddonTest.stub', $tokens, "tests/{$addonName}/{$addonName}Test.php");
     }
 
     protected function makeStub($stub, $tokens, $target)

@@ -8,13 +8,17 @@ use SuperV\Platform\Domains\Addon\Features\MakeAddonRequest;
 
 class MakeAddonCommand extends Command
 {
-    protected $signature = 'make:addon {vendor} {package} {--type=module} {--path=} {--force}';
+    protected $signature = 'make:addon {identifier} {--type=module} {--path=} {--force}';
 
     public function handle()
     {
+        $identifier = $this->argument('identifier');
+
+        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $identifier)) {
+            throw new \Exception('Identifier should be in this format: {vendor}.{addon}: '.$identifier);
+        }
         $request = new MakeAddonRequest(
-            $this->argument('vendor'),
-            $this->argument('package'),
+            $identifier,
             $this->option('type')
         );
 

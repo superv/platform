@@ -26,23 +26,21 @@ class InstallerTest extends TestCase
         app('events')->listen(
             AddonInstalledEvent::class,
             function (AddonInstalledEvent $event) use ($installer) {
-                if ($event->addon !== $installer->getAddon()) {
+                if ($event->addon !== sv_addons('superv.sample')) {
                     $this->fail('Failed to match addon in dispatched event');
                 }
             });
 
         $installer->setPath('tests/Platform/__fixtures__/sample-addon')
-                  ->setVendor('superv')
-                  ->setName('sample')
                   ->install();
 
-        $addon = AddonModel::query()->where('identifier', 'superv.addons.sample')->first();
+        $addon = AddonModel::query()->where('identifier', 'superv.sample')->first();
         $this->assertNotNull($addon);
 
         $this->assertDatabaseHas('sv_addons', [
             'name'          => 'sample',
             'vendor'        => 'superv',
-            'identifier'    => 'superv.addons.sample',
+            'identifier'    => 'superv.sample',
             'type'          => 'addon',
             'path'          => 'tests/Platform/__fixtures__/sample-addon',
             'enabled'       => true,
@@ -50,41 +48,20 @@ class InstallerTest extends TestCase
         ]);
     }
 
-    function test__resource_namespace_for_addon_is_created()
+    function __install_with_custom_identifier()
     {
-        $addon = $this->setUpAddon();
+        $this->setUpAddonInstaller('sample')->install('sv.my_addon');
 
-        $namespace = sv_resource('platform::namespaces')
-            ->newQuery()
-            ->where('namespace', 'superv.addons.sample::resources')
-            ->where('type', 'resource')
-            ->first();
-
-        $this->assertNotNull($namespace);
-    }
-
-    function test__install_with_custom_identifier()
-    {
-        $installer = $this->setUpAddonInstaller('sample');
-        $installer->setIdentifier('sv.sample');
-        $installer->install();
-
-        $entry = AddonModel::byIdentifier('sv.sample');
-        $this->assertNotNull($entry);
-        $this->assertDatabaseHas('sv_addons', [
-            'name'          => 'sample',
-            'vendor'        => 'superv',
-            'identifier'    => 'sv.sample',
-            'type'          => 'addon',
-            'path'          => 'tests/Platform/__fixtures__/sample-addon',
-            'enabled'       => true,
-            'psr_namespace' => 'SuperV\\Addons\\Sample',
-        ]);
+        $this->assertNotNull($entry = AddonModel::byIdentifier('sv.my_addon'));
+        $this->assertEquals('sv.my_addon', $entry->getIdentifier());
+        $this->assertEquals('sv', $entry->getVendor());
+        $this->assertEquals('my_addon', $entry->getVendor());
     }
 
     function test__seeds_addon()
     {
-        $this->setUpAddon(null, null, $seed = true);
+        $this->setUpAndSeedAddon();
+
         $this->assertTrue($_SERVER['sample.seeder']);
     }
 
@@ -101,17 +78,16 @@ class InstallerTest extends TestCase
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/sample-addon'));
 
-        $this->installer()->setPath('tests/Platform/__fixtures__/sample-addon')
-             ->setVendor('superv')
-             ->setName('sample')
+        $this->installer()
+             ->setPath('tests/Platform/__fixtures__/sample-addon')
              ->install();
 
-        $addon = superv('addons')->get('superv.addons.sample');
+        $addon = sv_addons('superv.sample');
         $this->assertNotNull($addon);
         $this->assertInstanceOf(SampleAddon::class, $addon);
     }
 
-    function test__addon_installs_subaddons()
+    function __addon_installs_subaddons()
     {
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another'));
         ComposerLoader::load(base_path('tests/Platform/__fixtures__/superv/addons/another/addons/themes/another_sub-addon'));
@@ -142,8 +118,6 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('tests/Platform/__fixtures__/sample-addon')
-             ->setVendor('superv')
-             ->setName('sample')
              ->install();
 
         $this->assertDatabaseHas('migrations', ['migration' => '2016_01_01_200000_addon_foo_migration']);
@@ -174,8 +148,6 @@ class InstallerTest extends TestCase
 
         $this->installer()
              ->setPath('path/does/not/exist')
-             ->setVendor('superv')
-             ->setName('sample')
              ->install();
     }
 

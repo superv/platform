@@ -9,23 +9,16 @@ use SuperV\Platform\Exceptions\ValidationException;
 
 class AddonInstallCommand extends Command
 {
-    protected $signature = 'addon:install {vendor} {package} {--identifier=} {--type=module} {--path=} {--seed}';
+    protected $signature = 'addon:install {path}  {--seed}';
 
     public function handle(Installer $installer)
     {
         try {
-            $this->comment('Installing '.$label = sprintf('%s/%s', $this->argument('vendor'), $this->argument('package')));
-            $installer->setCommand($this);
-            $installer->setVendor($this->argument('vendor'));
-            $installer->setName($this->argument('package'));
-            $installer->setAddonType($this->option('type'));
 
-            if ($this->option('identifier')) {
-                $installer->setIdentifier($this->option('identifier'));
-            }
-            if ($this->option('path')) {
-                $installer->setPath($this->option('path'));
-            }
+            $installer->setCommand($this);
+            $installer->setPath($this->argument('path'));
+
+            $this->comment('Installing Addon '.$installer->getIdentifier());
 
             try {
                 $installer->install();
@@ -37,7 +30,7 @@ class AddonInstallCommand extends Command
                 $installer->seed();
             }
 
-            $this->comment(sprintf("Addon %s installed \n", $label));
+            $this->comment(sprintf("Addon %s installed \n", $installer->getIdentifier()));
         } catch (ValidationException $e) {
             $this->error($e->getErrorsAsString());
         } catch (\Exception $e) {

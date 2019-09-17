@@ -128,7 +128,7 @@ class Blueprints
     {
         $table->increments('id');
 
-        $table->uuid('uuid')->unique();
+        $table->string('uuid')->unique();
         $table->uuid('rev_id')->nullable()->unique();
 
         $table->string('name')->showOnIndex();

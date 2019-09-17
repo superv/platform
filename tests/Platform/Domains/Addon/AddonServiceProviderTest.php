@@ -43,9 +43,9 @@ class AddonServiceProviderTest extends TestCase
 
         $hints = $this->app['view']->getFinder()->getHints();
 
-        $this->assertContains(base_path($addon->resourcePath('views')), $hints['superv.addons.sample']);
-        $this->assertContains(resource_path('vendor/'.$addon->getVendor().'/'.$addon->getIdentifier().'/views'), $hints['superv.addons.sample']);
-        $this->assertDirectoryExists(reset($hints['superv.addons.sample']));
+        $this->assertContains(base_path($addon->resourcePath('views')), $hints['superv.sample']);
+        $this->assertContains(resource_path('vendor/'.$addon->getVendor().'/'.$addon->getIdentifier().'/views'), $hints['superv.sample']);
+        $this->assertDirectoryExists(reset($hints['superv.sample']));
     }
 
     function test_registers_migrations_path()

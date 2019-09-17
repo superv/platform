@@ -31,13 +31,13 @@ class ResourceCreationTest extends ResourceTestCase
 
         $this->assertDatabaseHas('sv_resources', [
             'name'       => 'test_users',
-            'identifier' => 'platform::test_users',
+            'identifier' => 'platform.test_users',
         ]);
-        $resourceEntry = ResourceModel::withIdentifier('platform::test_users');
+        $resourceEntry = ResourceModel::withIdentifier('platform.test_users');
         $this->assertNotNull($resourceEntry);
         $this->assertNotNull($resourceEntry->uuid);
         $this->assertEquals('test_users', $resourceEntry->getName());
-        $this->assertEquals('platform::test_users', $resourceEntry->getIdentifier());
+        $this->assertEquals('platform.test_users', $resourceEntry->getIdentifier());
         $this->assertEquals('platform', $resourceEntry->getNamespace());
 
         $this->assertEquals([

@@ -38,6 +38,7 @@ class FormBuilderTest extends ResourceTestCase
     function test__build_standard_form()
     {
         $formFields = $this->bindMock(FormFieldCollection::class);
+        $formFields->shouldReceive('fill')->with([1, 2, 3])->once();
 
         $builder = Factory::createBuilder();
         $this->assertInstanceOf(\SuperV\Platform\Domains\Resource\Form\v2\FormBuilder::class, $builder);

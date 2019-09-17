@@ -113,15 +113,22 @@ class PlatformTestCase extends OrchestraTestCase
         }
     }
 
-    protected function setUpAddon($namespace = null, $name = null, $seed = false): Addon
+    protected function setUpAndSeedAddon($identifier = null)
     {
-        $installer = $this->setUpAddonInstaller($namespace, $name);
+        return $this->setUpAddon($identifier, true);
+    }
+
+    protected function setUpAddon($identifier = null, $seed = false): Addon
+    {
+        $identifier = $identifier ?? 'superv.sample';
+
+        $installer = $this->setUpAddonInstaller($identifier);
         $installer->install();
         if ($seed === true) {
             $installer->seed();
         }
 
-        $entry = AddonModel::byIdentifier('superv.addons.sample');
+        $entry = AddonModel::byIdentifier($identifier);
 
         return $entry->resolveAddon();
     }
@@ -181,11 +188,11 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected function installAddons(): void
     {
-        $this->app->setBasePath($this->basePath ?? realpath(__DIR__.'/../../../../../'));
+        $this->app->setBasePath($basePath = $this->basePath ?? realpath(__DIR__.'/../../../../../'));
 
-        foreach ($this->installs as $addon) {
+        foreach ($this->installs as $addonPath) {
             Installer::resolve()
-                     ->setIdentifier($addon)
+                     ->setPath($basePath.'/'.$addonPath)
                      ->install();
         }
     }
@@ -218,17 +225,14 @@ class PlatformTestCase extends OrchestraTestCase
         return $this->shouldInstallPlatform && method_exists($this, 'refreshDatabase');
     }
 
-    protected function setUpAddonInstaller($name, $vendor = null, $path = null): Installer
+    protected function setUpAddonInstaller($identifier, $path = null): Installer
     {
         $path = $path ?? 'tests/Platform/__fixtures__/sample-addon';
-        $vendor = $vendor ?? 'superv';
-        $name = $name ?? 'sample';
 
         ComposerLoader::load(base_path($path));
-        $installer = $this->app->make(Installer::class)
-                               ->setPath($path)
-                               ->setVendor($vendor)
-                               ->setName($name);
+        $installer = Installer::resolve()
+                              ->setPath(base_path($path))
+                              ->setIdentifier($identifier);
 
         return $installer;
     }

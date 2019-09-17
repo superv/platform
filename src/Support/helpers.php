@@ -46,6 +46,22 @@ function get_ns_from_file($file)
 
     return $namespace;
 }
+
+function get_json($path, $filename = null)
+{
+    if ($filename) {
+        $path .= DIRECTORY_SEPARATOR.$filename.'.json';
+    }
+
+    if (! file_exists($path)) {
+        throw new Exception("JSON file does not exist at path: ".$path);
+    }
+
+    $jsonData = json_decode(file_get_contents($path), true);
+
+    return $jsonData;
+}
+
 function sv_trans($key = null, $replace = [], $locale = null)
 {
     $line = trans($key, $replace, $locale);

@@ -4,9 +4,8 @@ namespace Tests\Platform\Domains\Addon\Console;
 
 use Mockery;
 use SuperV\Platform\Domains\Addon\Installer;
-use Tests\Platform\TestCase;
 
-class AddonInstallCommandTest extends TestCase
+class AddonInstallCommandTest
 {
     function test__calls_installer_with_proper_arguments_if_path_given()
     {

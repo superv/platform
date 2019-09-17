@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\{addon.short_name};
+namespace Tests\{addon.domain};
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Testing\PlatformTestCase;
@@ -9,5 +9,5 @@ class TestCase extends PlatformTestCase
 {
     use RefreshDatabase;
 
-    protected $installs = ['{addon.slug}'];
+    protected $installs = ['{addon.relative_path}'];
 }
