@@ -12,7 +12,7 @@ class FormRepository
         $formEntry = FormModel::create(array_merge([
             'uuid'       => $namespace,
             'namespace'  => $namespace,
-            'identifier' => $namespace.'.forms.'.$name,
+            'identifier' => $namespace.'.forms:'.$name,
             'name'       => $name,
         ], $attributes));
 
@@ -38,6 +38,6 @@ class FormRepository
     /** @return static */
     public static function resolve()
     {
-        return app()->make(static::class, func_get_args());
+        return app(static::class);
     }
 }

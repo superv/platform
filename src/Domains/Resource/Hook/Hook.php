@@ -94,11 +94,16 @@ class Hook
         $parts = explode('.', $identifier);
         if (count($parts) > 2) {
             $identifier = sprintf('%s.%s', $parts[0], $parts[1]);
-            $hookType = $parts[2];
 
-            if (count($parts) > 3) {
-                $subKey = $parts[3];
+            if (str_contains($parts[2], ':')) {
+                list($hookType, $subKey) = explode(':', $parts[2]);
+            } else {
+                $hookType = $parts[2];
             }
+
+//            if (count($parts) > 3) {
+//                $subKey = $parts[3];
+//            }
         } else {
             $parts = explode('_', snake_case($className));
             $hookType = end($parts);
@@ -111,7 +116,7 @@ class Hook
         if (! $subKey) {
             $this->map[$identifier][$hookType] = $hookHandler;
         } else {
-            if (! isset($this->map[$identifier][$subKey])) {
+            if (! isset($this->map[$identifier][$hookType][$subKey])) {
                 $this->map[$identifier][$hookType][$subKey] = [];
             }
 

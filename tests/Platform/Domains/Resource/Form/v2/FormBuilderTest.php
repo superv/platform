@@ -62,7 +62,7 @@ class FormBuilderTest extends ResourceTestCase
 
     function test__build_from_form_entry()
     {
-        $identifier = 'platform.addons.forms.default';
+        $identifier = 'platform.addons.forms:default';
         $formEntry = FormModel::withIdentifier($identifier);
 
         $builder = FormFactory::createBuilder();

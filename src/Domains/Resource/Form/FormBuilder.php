@@ -51,7 +51,7 @@ class FormBuilder
             app()->call($callback, ['form' => $form]);
         }
 
-        $this->dispatcher->dispatch($this->formEntry->getIdentifier().'.resolved', $form);
+        $this->dispatcher->dispatch($this->formEntry->getIdentifier().'.events:resolved', $form);
 
         return $form;
     }

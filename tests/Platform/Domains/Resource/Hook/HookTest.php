@@ -25,7 +25,7 @@ class HookTest extends ResourceTestCase
     {
         $hook = Hook::resolve();
         $hook->register('sv.users', 'config_handler', 'UsersConfig');
-        $hook->register('sv.users.fields.title', 'title_field_handler', 'TitleField');
+        $hook->register('sv.users.fields:title', 'title_field_handler', 'TitleField');
 
         $hook = Hook::resolve();
         $this->assertEquals(

@@ -35,7 +35,7 @@ class FormFactoryTest extends ResourceTestCase
         $this->assertTrue($formEntry->isPrivate());
         $this->assertEquals('default', $formEntry->getName());
         $this->assertEquals('testing.t_posts', $formEntry->getNamespace());
-        $this->assertEquals('testing.t_posts.forms.default', $formEntry->getIdentifier());
+        $this->assertEquals('testing.t_posts.forms:default', $formEntry->getIdentifier());
         $this->assertEquals($postsResource->id(), $formEntry->resource_id);
 
         $formFields = $formEntry->compileFields();
