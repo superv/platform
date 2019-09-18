@@ -14,6 +14,8 @@ use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FieldComposer;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilder as FormBuilderContract;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface as FormContract;
+use SuperV\Platform\Domains\Resource\Form\v2\EntryRepository;
+use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Form;
 use SuperV\Platform\Domains\Resource\Form\v2\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFieldComposer;
@@ -50,6 +52,7 @@ Listeners\SaveUpdatedBy::class,
         FormContract::class                 => Form::class,
         FormBuilderContract::class          => FormBuilder::class,
         FieldComposer::class                => FormFieldComposer::class,
+        EntryRepositoryInterface::class     => EntryRepository::class,
 
     ];
 

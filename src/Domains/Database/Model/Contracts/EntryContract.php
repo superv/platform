@@ -34,6 +34,8 @@ interface EntryContract
 
     public function getAttribute($key);
 
+    public function getAttributes();
+
     public function save();
 
     public function exists();

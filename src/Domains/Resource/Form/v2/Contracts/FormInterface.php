@@ -23,6 +23,10 @@ interface FormInterface
      */
     public function render(): ComponentContract;
 
+    public function getEntryIds(): array;
+
+    public function addEntry($identifier, $id);
+
     public function setData($data): FormInterface;
 
     public function setFieldValue($key, $value): FormInterface;
@@ -42,6 +46,10 @@ interface FormInterface
     public function getIdentifier(): string;
 
     public function getMethod();
+
+    public function isMethod($method): bool;
+
+    public function setMethod($method): FormInterface;
 
     public function setIdentifier(string $identifier): FormInterface;
 

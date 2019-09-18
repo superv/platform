@@ -44,6 +44,8 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected $basePath;
 
+    protected $bindings = [];
+
     public function basePath($path = null)
     {
         return __DIR__.($path ? '/'.$path : '');
@@ -91,6 +93,10 @@ class PlatformTestCase extends OrchestraTestCase
 
         if ($this->shouldInstallPlatform()) {
             $this->installSuperV();
+        }
+
+        foreach ($this->bindings as $abstract => $concrete) {
+            $this->app->bind($abstract, $concrete);
         }
     }
 

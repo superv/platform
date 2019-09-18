@@ -5,8 +5,8 @@ namespace SuperV\Platform\Domains\Resource\Form\v2;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
-use SuperV\Platform\Domains\Resource\Form\v2;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilder as FormBuilderContract;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 
 class FormBuilder implements FormBuilderContract
 {
@@ -39,6 +39,11 @@ class FormBuilder implements FormBuilderContract
         $this->fields->addField($field);
     }
 
+    public function addFields(array $fields)
+    {
+        $this->fields->addFields($fields);
+    }
+
     public function setFormData($data): FormBuilderContract
     {
         $this->formData = $data;
@@ -48,8 +53,8 @@ class FormBuilder implements FormBuilderContract
 
     public function build()
     {
-        if (! empty($this->formData)) {
-            $this->fields->fill($this->formData);
+        if ($fields = array_get($this->formData, 'fields')) {
+            $this->fields->fill($fields);
         }
         $form = Form::resolve($this->fields, $this->formIdentifier);
 
@@ -59,7 +64,7 @@ class FormBuilder implements FormBuilderContract
         return $form;
     }
 
-    public function getForm(): v2\Contracts\FormInterface
+    public function getForm(): FormInterface
     {
         return $this->build();
     }

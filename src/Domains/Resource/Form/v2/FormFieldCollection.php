@@ -41,6 +41,25 @@ class FormFieldCollection extends Collection
         }
     }
 
+    public function addFields(array $fields)
+    {
+        foreach ($fields as $field) {
+            if (is_array($field)) {
+                $this->addFieldFromArray($field);
+            } else {
+                $this->addField($field);
+            }
+        }
+    }
+
+    /**
+     * @return FormField[]
+     */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
     public function addField(FormField $field)
     {
         if (! $field->isHidden()) {

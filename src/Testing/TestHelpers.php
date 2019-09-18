@@ -144,6 +144,13 @@ trait TestHelpers
         return $mockInstance;
     }
 
+    protected function bindPartialMock($abstract, $partial): \Mockery\MockInterface
+    {
+        $this->app->instance($abstract, $mockInstance = \Mockery::mock($partial));
+
+        return $mockInstance->makePartial();
+    }
+
     /**
      * @param       $port
      * @param       $hostname
@@ -226,6 +233,10 @@ trait TestHelpers
         if (is_array($uri) && empty($data)) {
             $data = $uri;
             $uri = '';
+        }
+
+        if (is_array($uri) && is_array($data)) {
+            $uri = '?'.http_build_query($uri);
         }
 
         return Request::create($uri, 'POST', $data);

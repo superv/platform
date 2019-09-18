@@ -4,8 +4,8 @@ namespace Tests\Platform\Domains\Resource\Form\v2;
 
 use Event;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
-use SuperV\Platform\Domains\Resource\Form\v2\Factory;
 use SuperV\Platform\Domains\Resource\Form\v2\Form;
+use SuperV\Platform\Domains\Resource\Form\v2\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ComposeForm;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\SubmitForm;
 use SuperV\Platform\Support\Composer\Payload;
@@ -28,7 +28,7 @@ class FormTest extends ResourceTestCase
 
     function test__sets_form_url_from_route_if_not_given()
     {
-        $builder = Factory::createBuilder();
+        $builder = FormFactory::createBuilder();
         $builder->setFormIdentifier($identifier = uuid());
         $form = $builder->getForm();
 
@@ -37,15 +37,14 @@ class FormTest extends ResourceTestCase
 
     function test__set_form_mode_from_request()
     {
-        $builder = Factory::createBuilder();
-        $builder->setFormIdentifier($identifier = uuid());
-        $form = $builder->getForm();
+        $form = $this->makeForm();
 
         $form->handle($this->makeGetRequest());
         $this->assertEquals('GET', $form->getMethod());
 
         $form->handle($this->makePostRequest());
-        $this->assertEquals('POST', $form->getMethod());
+        $this->assertTrue($form->isMethod('POST'));
+        $this->assertTrue($form->isMethod('post'));
     }
 
     function test__dispatches_event_before_handling_request()
@@ -95,7 +94,7 @@ class FormTest extends ResourceTestCase
         $this->assertTrue($form->isSubmitted());
     }
 
-    function test__validates_form()
+    function __validates_form()
     {
         $form = $this->makeFormBuilder($this->makeTestFields())->getForm();
         $request = $this->makePostRequest(['name' => 'SuperV User']);
@@ -106,6 +105,4 @@ class FormTest extends ResourceTestCase
         $form->handle($request);
         $this->assertTrue($form->isSubmitted());
     }
-
-
 }

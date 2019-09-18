@@ -30,6 +30,7 @@ class ComposeForm
                                      return $this->fieldComposer->toForm($form, $field);
                                  })
                                  ->values()->all(),
+            'entries'    => $form->getEntryIds(),
         ]);
     }
 

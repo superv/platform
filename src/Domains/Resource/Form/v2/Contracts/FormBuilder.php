@@ -13,6 +13,8 @@ interface FormBuilder
 
     public function addField(FormField $field);
 
+    public function addFields(array $fields);
+
     public function build();
 
     public function getFormIdentifier(): string;

@@ -6,12 +6,12 @@ use SuperV\Platform\Domains\Resource\Form\FormField;
 
 class FormFieldFake extends FormField
 {
-    public static function fake($identifier = null, $type = 'text')
+    public static function fake($identifier = null, array $params = ['type' => 'text'])
     {
         if (! $identifier) {
             $identifier = uuid();
         }
 
-        return static::make(compact('identifier', 'type'));
+        return static::make(array_merge(compact('identifier'), $params));
     }
 }

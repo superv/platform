@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Form\v2;
 
 use SuperV\Platform\Domains\Resource\Form\FormModel;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 
@@ -20,27 +19,29 @@ class FormController extends BaseApiController
         }
 
 //        $formUrl = sv_route('resource.forms.store', ['uuid' => $formEntry->uuid]);
-        $builder = Factory::createBuilder()
-                          ->setFormEntry($formEntry)
-                          ->setFormUrl(sv_route(Form::ROUTE, ['identifier' => $formEntry->getIdentifier()]));
+        $builder = FormFactory::createBuilder()
+                              ->setFormEntry($formEntry)
+                              ->setFormUrl(sv_route(Form::ROUTE, ['identifier' => $formEntry->getIdentifier()]));
 
-        $data = [];
-        if ($entries = $this->request->get('entry')) {
-            foreach ($entries as $entryResourceIdentifier => $entryId) {
-                if ($entry = ResourceFactory::make($entryResourceIdentifier)->find($entryId)) {
-                    foreach ($entry->toArray() as $key => $value) {
-                        $data[$entryResourceIdentifier.'.fields.'.$key] = $value;
-                    }
-//                    $data[] = $entry;
-                }
-            }
-        }
-
-        if (! empty($data)) {
-            $builder->setFormData($data);
-        }
+//        $data = [];
+//        if ($entries = $this->request->get('entry')) {
+//            foreach ($entries as $entryResourceIdentifier => $entryId) {
+//                if ($entry = ResourceFactory::make($entryResourceIdentifier)->find($entryId)) {
+//                    foreach ($entry->toArray() as $key => $value) {
+//                        $data[$entryResourceIdentifier.'.fields.'.$key] = $value;
+//                    }
+////                    $data[] = $entry;
+//                }
+//            }
+//        }
+//
+//        if (! empty($data)) {
+//            $builder->setFormData($data);
+//        }
 
         $form = $builder->getForm();
+
+        $form->handle($this->request);
 
         return $form->render();
     }
@@ -61,10 +62,10 @@ class FormController extends BaseApiController
             $entry->setKeyName($keyName);
         }
 
-        $builder = Factory::createBuilder()
-                          ->setFormEntry($formEntry)
-                          ->setFormUrl(sv_url()->path())
-                          ->setFormData($entry);
+        $builder = FormFactory::createBuilder()
+                              ->setFormEntry($formEntry)
+                              ->setFormUrl(sv_url()->path())
+                              ->setFormData($entry);
 
         return $builder->getForm()->render();
     }

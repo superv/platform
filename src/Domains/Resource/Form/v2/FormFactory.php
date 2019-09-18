@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form\v2;
 
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilder;
 
-class Factory
+class FormFactory
 {
     public static function createBuilder(): FormBuilder
     {

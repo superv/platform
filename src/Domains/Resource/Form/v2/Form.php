@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ComposeForm;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\RenderComponent;
+use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ResolveRequest;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\SubmitForm;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
@@ -44,6 +45,8 @@ class Form implements FormInterface
 
     protected $data;
 
+    protected $entryIds;
+
     public function __construct(Dispatcher $events)
     {
         $this->events = $events;
@@ -53,11 +56,7 @@ class Form implements FormInterface
     {
         $this->fireEvent('handling');
 
-        $this->method = strtoupper($request->getMethod());
-
-        if ($this->method === 'POST') {
-            $this->submit($request);
-        }
+        ResolveRequest::resolve()->handle($this, $request);
     }
 
     public function compose(): Payload
@@ -183,5 +182,27 @@ class Form implements FormInterface
         $this->data[$key] = $value;
 
         return $this;
+    }
+
+    public function setMethod($method): FormInterface
+    {
+        $this->method = $method;
+
+        return $this;
+    }
+
+    public function isMethod($method): bool
+    {
+        return strtoupper($method) === $this->getMethod();
+    }
+
+    public function getEntryIds(): array
+    {
+        return $this->entryIds ?? [];
+    }
+
+    public function addEntry($identifier, $id)
+    {
+        $this->entryIds[$identifier] = $id;
     }
 }
