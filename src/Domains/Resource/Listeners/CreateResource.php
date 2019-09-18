@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Resource\Database\ResourceRepository;
 use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
-use SuperV\Platform\Domains\Resource\Nav\Section;
+use SuperV\Platform\Domains\Resource\Jobs\CreateNavigation;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Exceptions\ValidationException;
 
@@ -69,25 +69,9 @@ class CreateResource
 
     protected function createNavSections()
     {
-//        $table = $this->event->table;
-        $name = $this->config->getName();
-
         if ($nav = $this->config->getNav()) {
-            if (is_string($nav)) {
-                Section::createFromString($handle = $nav.'.'.$name);
-                $section = Section::get($handle);
-                $section->update([
-                    'resource_id' => $this->resourceEntry->getId(),
-                    'url'         => 'sv/res/'.$this->config->getIdentifier(),
-                    'title'       => $this->config->getLabel(),
-                    'handle'      => str_slug($this->config->getLabel(), '_'),
-                ]);
-            } elseif (is_array($nav)) {
-                if (! isset($nav['url'])) {
-                    $nav['url'] = 'sv/res/'.$name;
-                }
-                $section = Section::createFromArray($nav);
-            }
+            $section = CreateNavigation::resolve($this->config)
+                                       ->create($nav, $this->resourceEntry->getId());
 
             $section->update(['namespace' => $this->event->namespace]);
         }
