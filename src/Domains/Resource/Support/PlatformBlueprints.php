@@ -89,7 +89,7 @@ class PlatformBlueprints
         $table->increments('id');
 
         $table->string('identifier')->unique()->showOnIndex();
-        $table->string('namespace')->showOnIndex();
+//        $table->string('namespace')->showOnIndex();
 
         $table->uuid('revision_id')->unique();
 

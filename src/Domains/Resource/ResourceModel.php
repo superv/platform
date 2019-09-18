@@ -113,7 +113,7 @@ class ResourceModel extends Entry implements ProvidesFields
 
         return $this->fields()->make([
             'revision_id' => uuid(),
-            'namespace'   => $this->getIdentifier().'.fields',
+            //            'namespace'   => $this->getIdentifier().'.fields',
             'identifier'  => $this->getIdentifier().'.fields.'.$name,
             'name'        => $name,
         ]);

@@ -76,6 +76,17 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this->addFlag('required');
     }
 
+    public function setRequired(bool $isRequired)
+    {
+        if ($isRequired) {
+            $this->required();
+        } else {
+            $this->nullable();
+        }
+
+        return $this;
+    }
+
     public function primary()
     {
         $this->resourceConfig->keyName($this->name);

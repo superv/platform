@@ -56,9 +56,9 @@ class FormModel extends Entry
 
     public function createField(array $params)
     {
-        if (! isset($params['namespace'])) {
-            $params['namespace'] = $this->getIdentifier();
-        }
+//        if (! isset($params['namespace'])) {
+//            $params['namespace'] = $this->getIdentifier();
+//        }
 
         if (! isset($params['identifier'])) {
             $params['identifier'] = $this->getIdentifier().'.fields.'.$params['name'];
