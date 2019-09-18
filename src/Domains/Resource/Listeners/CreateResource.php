@@ -4,10 +4,10 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
+use SuperV\Platform\Domains\Resource\Database\ResourceRepository;
 use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
-use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Exceptions\ValidationException;
 
 class CreateResource
@@ -15,14 +15,21 @@ class CreateResource
     /** @var ResourceConfig */
     protected $config;
 
-    /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $resource;
-
     /** @var \SuperV\Platform\Domains\Database\Events\TableCreatingEvent */
     protected $event;
 
     /** @var \SuperV\Platform\Domains\Resource\ResourceModel */
     protected $resourceEntry;
+
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Database\ResourceRepository
+     */
+    protected $repository;
+
+    public function __construct(ResourceRepository $repository)
+    {
+        $this->repository = $repository;
+    }
 
     public function handle(TableCreatingEvent $event)
     {
@@ -37,9 +44,9 @@ class CreateResource
         $this->processConfig();
 
         try {
-            $this->createResourceEntry();
+            $this->resourceEntry = $this->repository->create($this->config);
         } catch (ValidationException $e) {
-//            dd($e->all());
+            dd($e->all());
         }
 
         $this->createNavSections();
@@ -86,24 +93,6 @@ class CreateResource
         }
     }
 
-    protected function createResourceEntry()
-    {
-        /** @var ResourceModel $entry */
-        $this->resourceEntry = ResourceModel::create(array_filter(
-            [
-                'uuid'       => uuid(),
-                'name'       => $this->config->getName(),
-                'namespace'  => $this->config->getNamespace(),
-                'identifier' => $this->config->getNamespace().'.'.$this->config->getName(),
-                'dsn'        => $this->config->getDriver()->toDsn(),
-                'model'      => $this->config->getModel(),
-                'config'     => $this->getConfig(),
-                'restorable' => (bool)$this->config->isRestorable(),
-                'sortable'   => (bool)$this->config->isSortable(),
-            ]
-        ));
-    }
-
     protected function processConfig(): void
     {
         if (! $this->config->getEntryLabel()) {
@@ -119,9 +108,6 @@ class CreateResource
             $this->event->blueprint->unsignedBigInteger('sort_order')->default(0);;
         }
 
-//        if (! $this->config->getIdentifier()) {
-//            $this->config->setIdentifier($this->event->table);
-//        }
     }
 
     /**
