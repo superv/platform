@@ -4,9 +4,11 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersDatabaseTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
+use SuperV\Platform\Domains\Resource\Field\FieldRepository;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Rules;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
@@ -19,7 +21,7 @@ use SuperV\Platform\Domains\Resource\ResourceModel;
 class SaveFieldEntry
 {
     /** @var \SuperV\Platform\Domains\Resource\ResourceModel */
-    protected $resourceEntry;
+    protected $resource;
 
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
     protected $resourceConfig;
@@ -41,67 +43,96 @@ class SaveFieldEntry
     /** @var array */
     protected $config;
 
+    /** @var \SuperV\Platform\Domains\Resource\Field\FieldModel|null */
+    protected $field;
+
     /**
-     * @var \SuperV\Platform\Domains\Resource\Field\FieldModel|null
+     * @var \SuperV\Platform\Domains\Resource\Field\FieldRepository
      */
-    protected $fieldEntry;
+    protected $repository;
+
+    public function __construct(FieldRepository $fieldRepository)
+    {
+        $this->repository = $fieldRepository;
+    }
 
     public function handle($event)
     {
-        /** @var \SuperV\Platform\Domains\Database\Schema\ColumnDefinition $column */
         $this->column = $event->column;
 
         $this->blueprint = $event->blueprint;
 
         $this->resourceConfig = $event->config;
 
+        /**
+         * Do not create a field for the ID column
+         * ..for now
+         */
         if ($this->column->autoIncrement) {
+//            $this->column->addFlag('table.show');
             return;
         }
 
         $this->setResourceEntry($event);
 
-        if (! $this->handleRelations()) {
+//        $this->mapFieldType($this->column);
+
+        /**
+         * If this column holds only relation data
+         * we wont be creating a field for it.
+         * (this shouldn't be here yes..🤫)
+         */
+        if ($this->column->relation && ! $this->createRelations($this->column->getRelationConfig())) {
             return;
         }
 
-        $this->mapFieldType();
+        if (! $this->column->fieldType) {
+            $this->mapFieldType($this->column);
+        }
 
-        $this->makeConfig();
+        $this->fieldType = FieldType::resolveType($this->column->fieldType);
 
-        $this->checkMustBeCreated();
+        $this->config = $this->makeConfig($this->column);
 
-        $this->syncWithEloquent();
+        if (! $this->fieldType instanceof RequiresDbColumn) {
+            $this->column->ignore();
+        }
+
+        if ($this->fieldType instanceof AltersDatabaseTable) {
+            $this->fieldType->alterBlueprint($this->blueprint, $this->config);
+        }
+
+        $this->persistEntry();
 
         /**
          * Attach field to default resource form
          */
-        if ($formEntry = FormModel::findByResource($this->resourceEntry->getId())) {
-            $formEntry->attachField($this->fieldEntry->getId());
+        if ($formEntry = FormModel::findByResource($this->resource->getId())) {
+            $formEntry->attachField($this->field->getId());
         }
     }
 
-    protected function makeConfig()
+    protected function makeConfig(ColumnDefinition $column)
     {
         if (method_exists($this->fieldType, 'onMakingConfig')) {
-            $this->fieldType->onMakingConfig($this->column->config);
+            $this->fieldType->onMakingConfig($column->config);
         }
 
-        $this->config = $this->column->config instanceof Arrayable ? $this->column->config->toArray() : $this->column->config;
+        $config = $column->config instanceof Arrayable ? $column->config->toArray() : $column->config;
 
-        $this->config['default_value'] = $this->column->getDefaultValue();
+        $config['default_value'] = $column->getDefaultValue();
 
-        $this->config = array_filter_null($this->config);
+        return array_filter_null($config);
     }
 
-    protected function handleRelations()
+    protected function createRelations(RelationConfig $relationConfig)
     {
-        if (! $this->column->relation) {
-            return true;
-        }
-
-        $relationConfig = $this->column->getRelationConfig();
         $this->column->ignore();
+//
+//        RelationRepository::make()->create(
+//            $this->resource,
+//            $relationConfig
+//        );
 
         $relationType = Relation::resolve($relationConfig->getType());
 
@@ -109,29 +140,33 @@ class SaveFieldEntry
             (new CreatePivotTable)($relationConfig);
         }
 
-        $this->resourceEntry->resourceRelations()->create([
+        $this->resource->resourceRelations()->create([
             'uuid'   => uuid(),
             'name'   => $relationConfig->getName(),
             'type'   => $relationConfig->getType(),
             'config' => $relationConfig->toArray(),
         ]);
 
-        if ($relationType instanceof ProvidesField) { //$relationConfig->type()->isBelongsTo()
+        if ($relationType instanceof ProvidesField) {
             $this->column->ignore(false);
             $this->column->config($relationConfig->toArray());
 
-            return true;
-        } elseif ($relationConfig->type()->isMorphTo()) {
+            return true; // should continue creating field
+        }
+
+        if ($relationConfig->type()->isMorphTo()) {
             $name = $relationConfig->getName();
 
             $this->blueprint->addPostBuildCallback(
                 function (Blueprint $blueprint) use ($name) {
                     $blueprint->string("{$name}_type")->nullable($this->column->nullable);
+
                     $blueprint->unsignedBigInteger("{$name}_id")->nullable($this->column->nullable);
                     $blueprint->index(["{$name}_type", "{$name}_id"]);
-                });
+                }
+            );
 
-            $morphToField = $this->resourceEntry->makeField($name);
+            $morphToField = $this->resource->makeField($name);
             $morphToField->fill([
                 'type'   => 'morph_to',
                 'config' => RelationConfig::morphTo()
@@ -140,49 +175,41 @@ class SaveFieldEntry
                 'flags'  => ['nullable'],
             ]);
             $morphToField->save();
-        }
 
-        return false;
+            return false;  // should NOT create field
+        }
     }
 
-    protected function mapFieldType()
+    protected function mapFieldType(ColumnDefinition $column)
     {
-        if (! $this->column->fieldType) {
-            $mapper = ColumnFieldMapper::for($this->column->type)->map($this->column->toArray());
+        $mapper = ColumnFieldMapper::for($column->type)->map($column->toArray());
 
-            $this->column->fieldType($mapper->getFieldType());
+        $column->config(array_merge($column->getConfig(), $mapper->getConfig()));
 
-            $this->column->config(array_merge($this->column->getConfig(), $mapper->getConfig()));
+        $column->rules(
+            Rules::make($mapper->getRules())
+                 ->merge($column->getRules())
+                 ->get()
+        );
 
-            $this->column->rules(
-                Rules::make($mapper->getRules())
-                     ->merge($this->column->getRules())
-                     ->get()
-            );
-        }
-
-        $this->fieldType = FieldType::resolveType($this->column->fieldType);
+        $column->fieldType($mapper->getFieldType());
     }
 
-    protected function syncWithEloquent()
+    protected function persistEntry()
     {
         $column = $this->column;
 
-        $fieldName = $column->getFieldName();
+        $this->field = $this->repository
+            ->getResourceField($this->resource, $column->getFieldName())
+            ->fill([
+                'type'        => $column->fieldType,
+                'column_type' => $column->type,
+                'flags'       => $column->flags,
+                'rules'       => Rules::make($column->getRules())->get(),
+                'config'      => $this->config,
+            ]);
 
-        if ($this->resourceEntry->hasField($fieldName)) {
-            $this->fieldEntry = $this->resourceEntry->getField($fieldName);
-        } else {
-            $this->fieldEntry = $this->resourceEntry->makeField($fieldName);
-        }
-
-        $this->fieldEntry->type = $column->fieldType;
-        $this->fieldEntry->column_type = $column->type;
-        $this->fieldEntry->flags = $column->flags;
-        $this->fieldEntry->rules = Rules::make($column->getRules())->get();
-
-        $this->fieldEntry->config = $this->config;
-        $this->fieldEntry->save();
+        $this->field->save();
     }
 
     protected function setResourceEntry($event): void
@@ -196,20 +223,9 @@ class SaveFieldEntry
 
         if (! $resourceEntry) {
 //            dd(DB::table('sv_resources')->where('name','t_posts')->get());
-            throw new \Exception(sprintf("Error saving field entry [%s]: Resource model entry not found for table [%s]", $this->fieldEntry, $this->resourceConfig->getIdentifier()));
+            throw new \Exception(sprintf("Error saving field entry [%s]: Resource model entry not found for table [%s]", $this->field, $this->resourceConfig->getIdentifier()));
         }
 
-        $this->resourceEntry = $resourceEntry;
-    }
-
-    protected function checkMustBeCreated()
-    {
-        if (! $this->fieldType instanceof RequiresDbColumn) {
-            $this->column->ignore();
-        }
-
-        if ($this->fieldType instanceof AltersDatabaseTable) {
-            $this->fieldType->alterBlueprint($this->blueprint, $this->config);
-        }
+        $this->resource = $resourceEntry;
     }
 }
