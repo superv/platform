@@ -7,7 +7,7 @@ use Hub;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
 use Platform;
-use SuperV\Platform\Console\SuperVInstallCommand;
+use SuperV\Platform\Console\InstallSuperVCommand;
 use SuperV\Platform\Console\SuperVUninstallCommand;
 use SuperV\Platform\Domains\Addon\AddonCollection;
 use SuperV\Platform\Domains\Addon\Console\AddonInstallCommand;
@@ -63,7 +63,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $commands = [
-        SuperVInstallCommand::class,
+        InstallSuperVCommand::class,
         SuperVUninstallCommand::class,
         AddonInstallCommand::class,
         AddonUninstallCommand::class,

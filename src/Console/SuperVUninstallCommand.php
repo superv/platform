@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use SuperV\Platform\Domains\Addon\Addon;
 use SuperV\Platform\Domains\Addon\AddonCollection;
 use SuperV\Platform\Domains\Addon\Jobs\UninstallAddonJob;
+use SuperV\Platform\Domains\Resource\Support\PlatformBlueprints;
 
 class SuperVUninstallCommand extends Command
 {
@@ -28,6 +29,8 @@ class SuperVUninstallCommand extends Command
         $this->call('migrate:rollback', ['--namespace' => 'platform', '--force' => true]);
 
         $this->setEnv('SV_INSTALLED=false');
+
+        PlatformBlueprints::dropTables();
 
         $this->comment("SuperV Uninstalled..! \n");
     }

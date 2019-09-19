@@ -2,10 +2,15 @@
 
 namespace SuperV\Platform\Domains\Resource\Support;
 
+use Current;
+use Illuminate\Database\Schema\Blueprint as LaravelBlueprint;
+use Schema as LaravelSchema;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class PlatformBlueprints
@@ -19,6 +24,38 @@ class PlatformBlueprints
         'navigation' => 'sv_navigation',
         'activities' => 'sv_activities',
     ];
+
+    public static function createTables()
+    {
+        foreach (PlatformBlueprints::$resources as $resource => $table) {
+            LaravelSchema::create($table,
+                function (LaravelBlueprint $table) use ($resource) {
+                    PlatformBlueprints::{$resource}($table);
+                }
+            );
+        }
+    }
+
+    public static function createResources()
+    {
+        Current::setMigrationScope('platform');
+
+        foreach (PlatformBlueprints::$resources as $resource => $table) {
+            Schema::run($table,
+                function (Blueprint $table, Config $config) use ($resource) {
+                    $config->setName($resource);
+                    PlatformBlueprints::{$resource}($table, $config);
+                }
+            );
+        }
+    }
+
+    public static function dropTables()
+    {
+        foreach (PlatformBlueprints::$resources as $resource => $table) {
+            Schema::dropIfExists($table);
+        }
+    }
 
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
@@ -157,12 +194,12 @@ class PlatformBlueprints
             $table->createdBy()->updatedBy();
 
             $table->belongsToMany('platform.fields', 'fields')
-                  ->pivotTable('sv_form_fields', 'platform.form_fields')
-                  ->pivotForeignKey('form_id')
-                  ->pivotRelatedKey('field_id')
-                  ->pivotColumns(function (Blueprint $pivotTable) {
-                      $pivotTable->unsignedInteger('sort_order')->nullable();
-                  });
+                ->pivotTable('sv_form_fields', 'platform.form_fields')
+                ->pivotForeignKey('form_id')
+                ->pivotRelatedKey('field_id')
+                ->pivotColumns(function (Blueprint $pivotTable) {
+                    $pivotTable->unsignedInteger('sort_order')->nullable();
+                });
         } else {
             $table->unsignedInteger('resource_id')->nullable();
 

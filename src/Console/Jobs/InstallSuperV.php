@@ -6,11 +6,9 @@ use Artisan;
 use DB;
 use Exception;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Schema\Blueprint as LaravelBlueprint;
 use Illuminate\Support\Facades\Schema as SchemaBuilder;
 use Log;
 use Schema;
-use Schema as LaravelSchema;
 use SuperV\Platform\Domains\Resource\Support\PlatformBlueprints;
 use SuperV\Platform\Events\PlatformInstalledEvent;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -132,16 +130,7 @@ class InstallSuperV
     {
         $this->prepareMigrationsTable();
 
-        /**
-         * First create the tables with framework's Schema
-         */
-        foreach (PlatformBlueprints::$resources as $resource => $table) {
-            LaravelSchema::create($table,
-                function (LaravelBlueprint $table) use ($resource) {
-                    PlatformBlueprints::{$resource}($table);
-                }
-            );
-        }
+        PlatformBlueprints::createTables();
 
         $platformServiceProvider->registerBase();
 
@@ -149,6 +138,8 @@ class InstallSuperV
         config(['superv.installed' => true]);
 
         $platformServiceProvider->register();
+
+        PlatformBlueprints::createResources();
 
         Artisan::call('migrate', ['--namespace' => 'platform', '--force' => true]);
 
