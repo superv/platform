@@ -6,9 +6,12 @@ use Artisan;
 use DB;
 use Exception;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\Blueprint as LaravelBlueprint;
 use Illuminate\Support\Facades\Schema as SchemaBuilder;
 use Log;
 use Schema;
+use Schema as LaravelSchema;
+use SuperV\Platform\Domains\Resource\Support\PlatformBlueprints;
 use SuperV\Platform\Events\PlatformInstalledEvent;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Platform;
@@ -127,19 +130,40 @@ class InstallSuperV
      */
     protected function install(PlatformServiceProvider $platformServiceProvider): void
     {
-        if (! SchemaBuilder::hasTable('migrations')) {
-            Artisan::call('migrate', ['--force' => true]);
+        $this->prepareMigrationsTable();
+
+        /**
+         * First create the tables with framework's Schema
+         */
+        foreach (PlatformBlueprints::$resources as $resource => $table) {
+            LaravelSchema::create($table,
+                function (LaravelBlueprint $table) use ($resource) {
+                    PlatformBlueprints::{$resource}($table);
+                }
+            );
         }
-        if (! SchemaBuilder::hasColumn('migrations', 'namespace')) {
-            Schema::table('migrations', function (Blueprint $table) {
-                $table->string('namespace')->nullable();
-            });
-        }
+
+        $platformServiceProvider->registerBase();
+
         $this->setEnv('SV_INSTALLED=true');
         config(['superv.installed' => true]);
 
         $platformServiceProvider->register();
 
         Artisan::call('migrate', ['--namespace' => 'platform', '--force' => true]);
+
+    }
+
+    protected function prepareMigrationsTable(): void
+    {
+        if (! SchemaBuilder::hasTable('migrations')) {
+            Artisan::call('migrate', ['--force' => true]);
+        }
+
+        if (! SchemaBuilder::hasColumn('migrations', 'namespace')) {
+            Schema::table('migrations', function (Blueprint $table) {
+                $table->string('namespace')->nullable();
+            });
+        }
     }
 }

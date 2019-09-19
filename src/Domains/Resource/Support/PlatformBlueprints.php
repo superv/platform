@@ -10,6 +10,16 @@ use SuperV\Platform\Domains\Resource\ResourceModel;
 
 class PlatformBlueprints
 {
+    public static $resources = [
+        'namespaces' => 'sv_namespaces',
+        'resources'  => 'sv_resources',
+        'fields'     => 'sv_fields',
+        'forms'      => 'sv_forms',
+        'relations'  => 'sv_relations',
+        'navigation' => 'sv_navigation',
+        'activities' => 'sv_activities',
+    ];
+
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
      * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
@@ -150,9 +160,9 @@ class PlatformBlueprints
                   ->pivotTable('sv_form_fields', 'platform.form_fields')
                   ->pivotForeignKey('form_id')
                   ->pivotRelatedKey('field_id')
-                  ->pivotColumns(function(Blueprint $pivotTable) {
-                $pivotTable->unsignedInteger('sort_order')->nullable();
-            });
+                  ->pivotColumns(function (Blueprint $pivotTable) {
+                      $pivotTable->unsignedInteger('sort_order')->nullable();
+                  });
         } else {
             $table->unsignedInteger('resource_id')->nullable();
 
@@ -245,7 +255,6 @@ class PlatformBlueprints
             $table->text('payload')->nullable();
 
             $table->softDeletes();
-
         }
 
         $table->string('activity')->entryLabel();
