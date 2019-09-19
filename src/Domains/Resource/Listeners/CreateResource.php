@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Resource\Database\ResourceRepository;
 use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
 use SuperV\Platform\Domains\Resource\Jobs\CreateNavigation;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Exceptions\ValidationException;
 
 class CreateResource
@@ -46,7 +47,7 @@ class CreateResource
         try {
             $this->resourceEntry = $this->repository->create($this->config);
         } catch (ValidationException $e) {
-            dd($e->all());
+            PlatformException::throw($e);
         }
 
         $this->createNavSections();
