@@ -1,5 +1,6 @@
 <?php
 
+use SuperV\Platform\Domains\Auth\Access\Action;
 use SuperV\Platform\Domains\Auth\Access\Role;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
@@ -52,6 +53,7 @@ class CreateAuthorizationTables extends Migration
         $this->create('sv_auth_actions', function (Blueprint $table, Config $config) {
             $config->label('Actions');
             $config->setName('auth_actions');
+            $config->model(Action::class);
             $config->nav('acp.platform.auth');
 
             $table->increments('id');

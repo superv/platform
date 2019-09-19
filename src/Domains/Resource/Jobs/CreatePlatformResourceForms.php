@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Listeners;
+namespace SuperV\Platform\Domains\Resource\Jobs;
 
 use SuperV\Platform\Domains\Resource\Form\FormRepository;
 use SuperV\Platform\Domains\Resource\ResourceModel;

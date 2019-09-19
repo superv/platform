@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Database;
 
+use DB;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
@@ -30,6 +31,10 @@ class ResourceRepository
             'restorable' => (bool)$config->isRestorable(),
             'sortable'   => (bool)$config->isSortable(),
         ];
+
+        if ($config->getNamespace() !== 'platform') {
+            DB::table('sv_auth_actions')->insert(['slug' => $config->getNamespace().'.'.$config->getName()]);
+        }
 
         return $this->model->newQuery()->create($attributes);
     }

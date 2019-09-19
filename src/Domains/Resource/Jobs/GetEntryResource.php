@@ -28,6 +28,10 @@ class GetEntryResource
         if (! isset(static::$cache[$dsn])) {
             $identifier = DB::table('sv_resources')->where('dsn', $dsn)->value('identifier');
 
+//            if (!$identifier) {
+//                PlatformException::fail("Resource for dsn not found: ".$dsn);
+//            }
+
             static::$cache[$dsn] = $identifier ?? false;
         }
 

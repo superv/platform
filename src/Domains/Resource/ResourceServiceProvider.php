@@ -34,7 +34,7 @@ class ResourceServiceProvider extends BaseServiceProvider
         ColumnDroppedEvent::class              => Listeners\DeleteField::class,
         TableCreatingEvent::class              => Listeners\CreateResource::class,
         TableCreatedEvent::class               => Listeners\CreateResourceForm::class,
-        PlatformInstalledEvent::class          => Listeners\CreatePlatformResourceForms::class,
+        PlatformInstalledEvent::class          => Jobs\CreatePlatformResourceForms::class,
         AddonBootedEvent::class                => Listeners\RegisterExtensions::class,
         Model\Events\EntrySavingEvent::class   => [
 //            Listeners\ValidateSavingEntry::class,

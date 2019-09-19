@@ -319,7 +319,7 @@ class ResourceConfig
 
     public static function find($identifier)
     {
-        if (is_null($identifier)) {
+        if (! $identifier) {
             PlatformException::runtime('Identifier can not be null');
         }
 
