@@ -12,6 +12,11 @@ class ActionsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function newUser(array $overrides = [])
+    {
+        return parent::newUser(['allow' => false]);
+    }
+
     function test__assigns_roles_to_user()
     {
         $user = $this->newUser();

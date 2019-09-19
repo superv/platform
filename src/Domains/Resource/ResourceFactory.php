@@ -69,6 +69,8 @@ class ResourceFactory
             $resource = new Resource($attributes);
 
             Extension::extend($resource);
+        } catch (PlatformException $e) {
+            throw $e;
         } catch (Exception $e) {
             PlatformException::throw($e);
 

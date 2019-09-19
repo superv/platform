@@ -33,7 +33,7 @@ class PlatformException extends \Exception
         throw new static($msg);
     }
 
-    public static function debug($payload)
+    public static function debug(array $payload = [])
     {
         throw (new static)->setPayload($payload);
     }

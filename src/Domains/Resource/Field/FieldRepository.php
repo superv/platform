@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
+use Current;
 use DB;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Exceptions\ValidationException;
@@ -16,6 +17,17 @@ class FieldRepository
     public function __construct(FieldModel $model)
     {
         $this->model = $model;
+    }
+
+    public function get($identifier)
+    {
+        $field = $this->model->newQuery()->whereIdentifier($identifier)->first();
+
+        if (Current::user()->can($field->getIdentifier())) {
+            return $field;
+        }
+
+        return new GhostField();
     }
 
     public function create(array $attributes = []): FieldModel

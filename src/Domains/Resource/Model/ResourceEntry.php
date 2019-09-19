@@ -94,7 +94,7 @@ class ResourceEntry extends Entry
             }
         }
 
-        if (! method_exists($this, $name) && ! in_array($name, ['create', 'first', 'find'])) {
+        if (! method_exists($this, $name) && ! in_array($name, ['create', 'first', 'find', 'hydrate'])) {
             if ($relation = $this->getRelationshipFromConfig($name)) {
                 return $relation;
             } elseif ($relation = superv('relations')->get($this->getHandle().'.'.$name)) {

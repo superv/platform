@@ -145,7 +145,7 @@ trait HasActions
      * @param $actions
      * @return bool
      */
-    protected function matchAction($action, $actions): bool
+    public function matchAction($action, $actions): bool
     {
         return in_array($action, $actions) || $this->matchWild($actions, $action);
     }
@@ -216,7 +216,7 @@ trait HasActions
      *
      * @return array
      */
-    protected function getAllowedActions()
+    public function getAllowedActions()
     {
         $allowed = $this->getAssignedActions()->filter(function (Action $action) {
             return $action->pivot->provision === 'pass';

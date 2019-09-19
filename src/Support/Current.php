@@ -4,6 +4,7 @@ namespace SuperV\Platform\Support;
 
 use Carbon\Carbon;
 use SuperV\Platform\Domains\Auth\Contracts\Users;
+use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Port\Port;
 
 class Current
@@ -28,6 +29,14 @@ class Current
     }
 
     /**
+     * Whether there's a logged in use
+     */
+    public function hasUser(): bool
+    {
+        return auth()->guard()->check();
+    }
+
+    /**
      * Return the current logged in user
      *
      * @return \SuperV\Platform\Domains\Auth\Contracts\User
@@ -35,7 +44,11 @@ class Current
     public function user()
     {
         if (! $this->user) {
-            $this->user = app(Users::class)->find(auth()->guard()->id());
+            if (auth()->guard()->id()) {
+                $this->user = app(Users::class)->find(auth()->guard()->id());
+            } else {
+                return new User();
+            }
         }
 
         return $this->user;
@@ -59,7 +72,7 @@ class Current
 
     public function requestPath()
     {
-      return str_replace_last('/'.Current::port()->prefix(), '', request()->getPathInfo());
+        return str_replace_last('/'.Current::port()->prefix(), '', request()->getPathInfo());
     }
 
     /**

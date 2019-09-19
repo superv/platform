@@ -8,12 +8,17 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Notifications\Notifiable;
 use SuperV\Platform\Domains\Auth\Access\HasActions;
+use SuperV\Platform\Domains\Auth\Access\HasActionsInterface;
 use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends ResourceEntry implements
-    UserContract, AuthenticatableContract, JWTSubject, CanResetPasswordContract
+    UserContract,
+    HasActionsInterface,
+    AuthenticatableContract,
+    JWTSubject,
+    CanResetPasswordContract
 {
     use Authenticatable;
     use Notifiable;
