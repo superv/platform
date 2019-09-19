@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Resource;
 
 use Event;
 use Exception;
+use SuperV\Platform\Domains\Auth\Access\Action;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
 use SuperV\Platform\Domains\Database\Schema\Schema;
@@ -294,6 +295,16 @@ class CreateResourceTest extends ResourceTestCase
 
             return true;
         });
+    }
+
+    function test__creates_auth_action_entries()
+    {
+        $this->blueprints()->posts('testing');
+
+        $action = Action::withSlug('testing.t_posts');
+        $this->assertNotNull($action);
+        $this->assertEquals('testing', $action->namespace);
+
     }
 
     protected function tearDown()

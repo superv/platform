@@ -7,7 +7,7 @@ use Hub;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
 use Platform;
-use SuperV\Platform\Console\SuperVInstallCommand;
+use SuperV\Platform\Console\InstallSuperVCommand;
 use SuperV\Platform\Console\SuperVUninstallCommand;
 use SuperV\Platform\Domains\Addon\AddonCollection;
 use SuperV\Platform\Domains\Addon\Console\AddonInstallCommand;
@@ -63,7 +63,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $commands = [
-        SuperVInstallCommand::class,
+        InstallSuperVCommand::class,
         SuperVUninstallCommand::class,
         AddonInstallCommand::class,
         AddonUninstallCommand::class,
@@ -82,13 +82,19 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->platform = $app->make(\SuperV\Platform\Platform::class);
     }
 
-    public function register()
+    public function registerBase(): void
     {
         $this->registerAliases($this->aliases);
         $this->registerCommands($this->commands);
         $this->registerSingletons($this->_singletons);
-
         app()->register(MigrationServiceProvider::class);
+
+        $this->registerCollectionMacros();
+    }
+
+    public function register()
+    {
+        $this->registerBase();
 
         if (! $this->platform->isInstalled()) {
             return;
@@ -105,8 +111,6 @@ class PlatformServiceProvider extends BaseServiceProvider
 //                $this->registerProviders($this->providers);
 //            },
 //        ]);
-
-        $this->registerCollectionMacros();
 
         $this->addViewNamespaces([
             'superv' => realpath(__DIR__.'/../resources/views'),

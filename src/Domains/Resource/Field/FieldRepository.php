@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
+use Current;
+use DB;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Exceptions\ValidationException;
 
@@ -17,7 +19,18 @@ class FieldRepository
         $this->model = $model;
     }
 
-    public function create(array $attributes = [])
+    public function get($identifier)
+    {
+        $field = $this->model->newQuery()->whereIdentifier($identifier)->first();
+
+        if (Current::user()->can($field->getIdentifier())) {
+            return $field;
+        }
+
+        return new GhostField();
+    }
+
+    public function create(array $attributes = []): FieldModel
     {
         if (! $identifier = array_get($attributes, 'identifier')) {
             ValidationException::throw('identifier', 'Field identifier is required');
@@ -27,7 +40,15 @@ class FieldRepository
             ValidationException::throw('identifier', 'Field identifier format not valid: ['.$identifier.']');
         }
 
-        return $this->model->newQuery()->create($attributes);
+        $field = $this->model->newQuery()->create($attributes);
+        if (! starts_with($identifier, 'platform.')) {
+            DB::table('sv_auth_actions')->insert([
+                'namespace' => explode('.fields:', $identifier)[0].'.fields',
+                'slug'      => $identifier,
+            ]);
+        }
+
+        return $field;
     }
 
     public function save(FieldModel $field)

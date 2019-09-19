@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Database\Model;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Jobs\GetEntryResource;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 abstract class Entry extends Eloquent implements EntryContract
 {
@@ -50,6 +51,20 @@ abstract class Entry extends Eloquent implements EntryContract
         return new QueryBuilder(
             $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
         );
+    }
+
+    public function getResourceConfig()
+    {
+        if (! $this->resourceConfig) {
+            $this->resourceConfig = ResourceConfig::find($this->getResourceIdentifier());
+        }
+
+        return $this->resourceConfig;
+    }
+
+    public function getResourceDsn()
+    {
+        return sprintf("%s@%s://%s", 'database', $this->getConnectionName(), $this->getTable());
     }
 
     public function getResourceIdentifier(): ?string

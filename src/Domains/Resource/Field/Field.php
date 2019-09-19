@@ -83,25 +83,22 @@ class Field implements FieldContract
     /** @var Form */
     protected $form;
 
-    public function __construct(FieldType $fieldType, array $attributes = [])
+    public function __construct(array $attributes = [])
     {
-        $this->fieldType = $fieldType;
-        $this->fieldType->setField($this);
-
         $this->hydrate($attributes);
 
-        $this->uuid = $this->uuid ?? uuid();
+        if ($this->fieldType) {
+            $this->fieldType->setField($this);
 
-        if (method_exists($this->fieldType, 'makeRules')) {
-            if ($rules = $this->fieldType->makeRules()) {
-                $this->rules = Rules::make($rules)->merge(wrap_array($this->rules))->get();
+            if (method_exists($this->fieldType, 'makeRules')) {
+                if ($rules = $this->fieldType->makeRules()) {
+                    $this->rules = Rules::make($rules)->merge(wrap_array($this->rules))->get();
+                }
             }
         }
 
-        $this->boot();
+        $this->uuid = $this->uuid ?? uuid();
     }
-
-    protected function boot() { }
 
     public function getLabel(): string
     {
@@ -204,7 +201,6 @@ class Field implements FieldContract
 //            return explode('.fields.', $this->getIdentifier())[1];
 //        }
 
-
     }
 
     public function getIdentifier()
@@ -246,7 +242,7 @@ class Field implements FieldContract
 
     public function getPlaceholder()
     {
-        return $this->placeholder ?? $this->getLabel();
+        return $this->placeholder;
     }
 
     public function copyToFilters(array $params = []): FieldContract
@@ -335,14 +331,6 @@ class Field implements FieldContract
         $this->removeFlag('required');
     }
 
-    public function setHint($hint)
-    {
-        $this->setConfigValue('hint', $hint);
-    }
-
-
-    //////// FLAGS
-    ///
     public function addFlag(string $flag): \SuperV\Platform\Domains\Resource\Field\Contracts\Field
     {
         $this->flags[] = $flag;
@@ -356,6 +344,10 @@ class Field implements FieldContract
 
         return $this;
     }
+
+
+    //////// FLAGS
+    ///
 
     public function hasFlag(string $flag): bool
     {
@@ -392,6 +384,16 @@ class Field implements FieldContract
         return $this->hasFlag('unbound');
     }
 
+    public function doesNotInteractWithTable()
+    {
+        return $this->fieldType instanceof DoesNotInteractWithTable;
+    }
+
+    public function setHint($hint)
+    {
+        $this->setConfigValue('hint', $hint);
+    }
+
     public function isFilter()
     {
         return $this->hasFlag('filter');
@@ -400,10 +402,5 @@ class Field implements FieldContract
     public function isVisible(): bool
     {
         return ! $this->isHidden();
-    }
-
-    public function doesNotInteractWithTable()
-    {
-        return $this->fieldType instanceof DoesNotInteractWithTable;
     }
 }

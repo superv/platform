@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
+use Current;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -54,6 +55,14 @@ class FieldFactory
             PlatformException::fail('Missing parameter [identifier] for field');
         }
 
+        if (Current::hasUser() && ! Current::user()->can($this->params['identifier'])) {
+            $resolveFrom = GhostField::class;
+        }
+
+//        if (Current::user() && !Current::user()->can($this->params['identifier'])) {
+//           $resolveFrom = GhostField::class;
+//        }
+
         if (! isset($this->params['name'])) {
             $this->params['name'] = $this->params['identifier'];
         }
@@ -64,15 +73,15 @@ class FieldFactory
             $fieldTypeClass = FieldType::resolveTypeClass($this->params['type']);
         }
 
-        /** @var \SuperV\Platform\Domains\Resource\Field\FieldType $fieldType */
-        $fieldType = new $fieldTypeClass();
+        $this->params['field_type'] = new $fieldTypeClass();
 
         $fieldClass = $resolveFrom ?? Field::class;
 
         /** @var \SuperV\Platform\Domains\Resource\Field\Field $field */
-        $field = new $fieldClass($fieldType, $this->params);
+//        $field = new $fieldClass($fieldType, $this->params);
+        $field = new $fieldClass($this->params);
 
-        if ($fieldType instanceof RequiresDbColumn) {
+        if ($field->getFieldType() instanceof RequiresDbColumn) {
             if (! $field->hasFlag('nullable')) {
                 $field->addFlag('required');
             }

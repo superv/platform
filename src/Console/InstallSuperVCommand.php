@@ -7,7 +7,7 @@ use Exception;
 use SuperV\Platform\Console\Jobs\InstallSuperV;
 use SuperV\Platform\Contracts\Command;
 
-class SuperVInstallCommand extends Command
+class InstallSuperVCommand extends Command
 {
     protected $signature = 'superv:install';
 

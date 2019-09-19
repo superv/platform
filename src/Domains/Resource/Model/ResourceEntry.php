@@ -12,7 +12,6 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory as RelationBuilder;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class ResourceEntry extends Entry
@@ -95,7 +94,7 @@ class ResourceEntry extends Entry
             }
         }
 
-        if (! method_exists($this, $name) && ! in_array($name, ['create', 'first', 'find'])) {
+        if (! method_exists($this, $name) && ! in_array($name, ['create', 'first', 'find', 'hydrate'])) {
             if ($relation = $this->getRelationshipFromConfig($name)) {
                 return $relation;
             } elseif ($relation = superv('relations')->get($this->getHandle().'.'.$name)) {
@@ -160,19 +159,7 @@ class ResourceEntry extends Entry
         return $this->parentSleep();
     }
 
-    public function getResourceConfig()
-    {
-        if (! $this->resourceConfig) {
-            $this->resourceConfig = ResourceConfig::find($this->getResourceIdentifier());
-        }
 
-        return $this->resourceConfig;
-    }
-
-    public function getResourceDsn()
-    {
-        return sprintf("%s@%s://%s", 'database', $this->getConnectionName(), $this->getTable());
-    }
 
     public function getRelationshipFromConfig($name)
     {

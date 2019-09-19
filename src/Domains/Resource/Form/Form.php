@@ -9,7 +9,9 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
+use SuperV\Platform\Domains\Resource\Field\GhostField;
 use SuperV\Platform\Domains\Resource\Form\Contracts\Form as FormContract;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Domains\Resource\Form\FormField as ConcreteFormField;
@@ -59,7 +61,6 @@ class Form implements FormContract, ProvidesUIComponent
      */
     protected $request;
 
-
     protected $actions = [];
 
     protected $postSaveCallbacks = [];
@@ -81,15 +82,6 @@ class Form implements FormContract, ProvidesUIComponent
         $this->identifier = $identifier;
     }
 
-    /**
-     * @param string $identifier
-     * @return static
-     */
-    public static function resolve(string $identifier = null)
-    {
-        return app()->make(static::class, ['identifier' => $identifier]);
-    }
-
     public function make($uuid = null)
     {
         $this->uuid = $uuid ?? uuid();
@@ -102,17 +94,22 @@ class Form implements FormContract, ProvidesUIComponent
             }
         }
 
-        $this->fields->map(function (FormField $field) {
-            $field->setForm($this);
-
-            if (in_array($field->getColumnName(), $this->getHiddenFields())) {
-                $field->hide();
-            }
-
-            if ($this->hasEntry()) {
-                $field->fillFromEntry($this->getEntry());
-            }
+        $this->fields = $this->fields->filter(function (Field $field) {
+            return ! $field instanceof GhostField;
         });
+
+        $this->fields
+            ->map(function (FormField $field) {
+                $field->setForm($this);
+
+                if (in_array($field->getColumnName(), $this->getHiddenFields())) {
+                    $field->hide();
+                }
+
+                if ($this->hasEntry()) {
+                    $field->fillFromEntry($this->getEntry());
+                }
+            });
 
         $this->setFormMode();
 
@@ -124,7 +121,6 @@ class Form implements FormContract, ProvidesUIComponent
 
     public function save(): FormResponse
     {
-
         $this->applyExtensionCallbacks();
 
 //        $this->validateTemporalFields();
@@ -173,6 +169,74 @@ class Form implements FormContract, ProvidesUIComponent
         return $this;
     }
 
+    public function mergeFields($fields)
+    {
+        $fields = $this->provideFields($fields);
+
+        $this->fields = $this->fields->merge($fields);
+
+        return $this;
+    }
+
+    public function hideFields($fields): FormContract
+    {
+        $fields = is_array($fields) ? $fields : func_get_args();
+
+        $this->getFields()->map(function (FormField $field) use ($fields) {
+            if (in_array($field->getName(), $fields)) {
+                $field->hide();
+            }
+        });
+
+        return $this;
+    }
+
+    public function addField(FormField $field)
+    {
+        // Fields added on the fly should be marked as temporal
+        //
+        $field->setTemporal(true);
+
+        return $this->addFields([$field]);
+    }
+
+    public function getFields()
+    {
+        return $this->fields;
+    }
+
+    public function setFields($fields)
+    {
+        if ($this->isMade) {
+            throw new Exception('Can not set fields after form is made');
+        }
+        $this->fields = $this->provideFields($fields);
+
+        return $this;
+    }
+
+    public function getField(string $name): ?FormField
+    {
+        return $this->fields->first(
+            function (FormField $field) use ($name) {
+                return $field->getName() === $name;
+            });
+    }
+
+    public function composeField($field, $entry = null)
+    {
+        if (is_string($field)) {
+            $field = $this->getField($field);
+        }
+
+        return (new FieldComposer($field))->forForm($entry);
+    }
+
+    public function getHiddenFields(): array
+    {
+        return $this->hiddenFields;
+    }
+
     public function isUpdating()
     {
         return $this->mode === EntryForm::MODE_UPDATE;
@@ -201,28 +265,6 @@ class Form implements FormContract, ProvidesUIComponent
                         );
     }
 
-    public function mergeFields($fields)
-    {
-        $fields = $this->provideFields($fields);
-
-        $this->fields = $this->fields->merge($fields);
-
-        return $this;
-    }
-
-    public function hideFields($fields): FormContract
-    {
-        $fields = is_array($fields) ? $fields : func_get_args();
-
-        $this->getFields()->map(function (FormField $field) use ($fields) {
-            if (in_array($field->getName(), $fields)) {
-                $field->hide();
-            }
-        });
-
-        return $this;
-    }
-
     public function onlyFields($fields): self
     {
         $fields = is_array($fields) ? $fields : func_get_args();
@@ -234,15 +276,6 @@ class Form implements FormContract, ProvidesUIComponent
         });
 
         return $this;
-    }
-
-    public function addField(FormField $field)
-    {
-        // Fields added on the fly should be marked as temporal
-        //
-        $field->setTemporal(true);
-
-        return $this->addFields([$field]);
     }
 
     public function addFields($fields): self
@@ -266,41 +299,9 @@ class Form implements FormContract, ProvidesUIComponent
         $this->actions = $actions;
     }
 
-    public function getFields()
-    {
-        return $this->fields;
-    }
-
-    public function setFields($fields)
-    {
-        if ($this->isMade) {
-            throw new Exception('Can not set fields after form is made');
-        }
-        $this->fields = $this->provideFields($fields);
-
-        return $this;
-    }
-
-    public function getField(string $name): ?FormField
-    {
-        return $this->fields->first(
-            function (FormField $field) use ($name) {
-                return $field->getName() === $name;
-            });
-    }
-
     public function getFieldValue(string $name)
     {
         return $this->getField($name)->getValue();
-    }
-
-    public function composeField($field, $entry = null)
-    {
-        if (is_string($field)) {
-            $field = $this->getField($field);
-        }
-
-        return (new FieldComposer($field))->forForm($entry);
     }
 
     public function getUrl()
@@ -329,11 +330,6 @@ class Form implements FormContract, ProvidesUIComponent
         return $this;
     }
 
-    public function getHiddenFields(): array
-    {
-        return $this->hiddenFields;
-    }
-
     public function getIdentifier()
     {
         return $this->identifier;
@@ -356,6 +352,15 @@ class Form implements FormContract, ProvidesUIComponent
         $this->title = $title;
 
         return $this;
+    }
+
+    /**
+     * @param string $identifier
+     * @return static
+     */
+    public static function resolve(string $identifier = null)
+    {
+        return app()->make(static::class, ['identifier' => $identifier]);
     }
 
     protected function provideFields($fields)

@@ -9,6 +9,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema as SchemaBuilder;
 use Log;
 use Schema;
+use SuperV\Platform\Domains\Resource\Support\PlatformBlueprints;
 use SuperV\Platform\Events\PlatformInstalledEvent;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Platform;
@@ -127,19 +128,33 @@ class InstallSuperV
      */
     protected function install(PlatformServiceProvider $platformServiceProvider): void
     {
-        if (! SchemaBuilder::hasTable('migrations')) {
-            Artisan::call('migrate', ['--force' => true]);
-        }
-        if (! SchemaBuilder::hasColumn('migrations', 'namespace')) {
-            Schema::table('migrations', function (Blueprint $table) {
-                $table->string('namespace')->nullable();
-            });
-        }
+        $this->prepareMigrationsTable();
+
+        PlatformBlueprints::createTables();
+
+        $platformServiceProvider->registerBase();
+
         $this->setEnv('SV_INSTALLED=true');
         config(['superv.installed' => true]);
 
         $platformServiceProvider->register();
 
+        PlatformBlueprints::createResources();
+
         Artisan::call('migrate', ['--namespace' => 'platform', '--force' => true]);
+
+    }
+
+    protected function prepareMigrationsTable(): void
+    {
+        if (! SchemaBuilder::hasTable('migrations')) {
+            Artisan::call('migrate', ['--force' => true]);
+        }
+
+        if (! SchemaBuilder::hasColumn('migrations', 'namespace')) {
+            Schema::table('migrations', function (Blueprint $table) {
+                $table->string('namespace')->nullable();
+            });
+        }
     }
 }

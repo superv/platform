@@ -24,7 +24,7 @@ class NavGuardTest extends ResourceTestCase
         $nav->add('foo.bom.tic');
         $nav->add('foo.bom.toe');
 
-        $user = $this->newUser();
+        $user = $this->newUser(['allow' => false]);
         $user->allow('foo');
         $user->allow('foo.baz');
         $user->allow('foo.bom.*');

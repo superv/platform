@@ -203,17 +203,21 @@ trait TestHelpers
     }
 
     /**
+     * Create new test user with ROOT access
+     *
      * @param array $overrides
      * @return \SuperV\Platform\Domains\Auth\User $user
      */
     protected function newUser(array $overrides = [])
     {
+        $allow = array_pull($overrides, 'allow', '*');
         $this->testUser = app(Users::class)->create(array_merge([
             'name'     => 'test user',
             'email'    => sprintf("user-%s@superv.io", str_random(6)),
             'password' => '$2y$10$lEElUpT9ssdSw4XVVEUt5OaJnBzgcmcE6MJ2Rrov4dKPEjuRD6dd.',
         ], $overrides));
         $this->testUser->assign('user');
+        $this->testUser->allow($allow);
 
         return $this->testUser->fresh();
     }

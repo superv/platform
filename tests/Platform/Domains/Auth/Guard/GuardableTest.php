@@ -158,7 +158,7 @@ class GuardableTest extends TestCase
      */
     protected function beUser()
     {
-        $this->be($user = $this->newUser());
+        $this->be($user = $this->newUser(['allow' => false]));
 
         return $user;
     }
