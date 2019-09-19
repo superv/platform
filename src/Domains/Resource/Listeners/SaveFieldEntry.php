@@ -15,6 +15,7 @@ use SuperV\Platform\Domains\Resource\Relation\Contracts\ProvidesField;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\Relation\RelationRepository;
 use SuperV\Platform\Domains\Resource\ResourceModel;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Exceptions\ValidationException;
 
 class SaveFieldEntry
@@ -114,7 +115,7 @@ class SaveFieldEntry
         try {
             $this->persistEntry();
         } catch (ValidationException $e) {
-            dd($this->column, $e->all());
+            PlatformException::throw($e);
         }
 
         /**
