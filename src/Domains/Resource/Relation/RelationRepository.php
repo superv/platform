@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Relation;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\Field\FieldRepository;
 use SuperV\Platform\Domains\Resource\Jobs\CreatePivotTable;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
@@ -43,7 +44,7 @@ class RelationRepository
                                           ->toArray(),
                 'flags'  => ['nullable'],
             ]);
-            $morphToField->save();
+            FieldRepository::resolve()->save($morphToField);
         }
 
         return $relationType;

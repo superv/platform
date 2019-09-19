@@ -12,7 +12,7 @@ use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FieldComposer;
-use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilder as FormBuilderContract;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilderInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface as FormContract;
 use SuperV\Platform\Domains\Resource\Form\v2\EntryRepository;
 use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
@@ -50,7 +50,7 @@ Listeners\SaveUpdatedBy::class,
     protected $_bindings = [
         Table\Contracts\DataProvider::class => Table\EloquentDataProvider::class,
         FormContract::class                 => Form::class,
-        FormBuilderContract::class          => FormBuilder::class,
+        FormBuilderInterface::class         => FormBuilder::class,
         FieldComposer::class                => FormFieldComposer::class,
         EntryRepositoryInterface::class     => EntryRepository::class,
 

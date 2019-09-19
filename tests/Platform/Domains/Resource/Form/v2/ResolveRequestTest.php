@@ -3,8 +3,8 @@
 namespace Tests\Platform\Domains\Resource\Form\v2;
 
 use Mockery;
-use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
+use SuperV\Platform\Domains\Resource\Form\v2\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ResolveRequest;
 use SuperV\Platform\Domains\Resource\Model\AnonymousModel;
 use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormFake;
@@ -15,24 +15,13 @@ class ResolveRequestTest extends ResourceTestCase
 {
     use FormTestHelpers;
 
-    function _resolves_get_request()
-    {
-        $form = FormFake::fake(function (Mockery\MockInterface $repoMock) {
-            $repoMock->shouldReceive('getEntry')->once()->andReturnNull();
-            $repoMock->shouldReceive('getEntry')->once()->andReturnNull();
-        });
-        $form->handle($this->makeGetRequest(['entries' => ['ns.foo.1', 'ns.bar.2']]));
-
-        $this->assertEquals(['ns.foo' => 1, 'ns.bar' => 2], $form->getEntryIds());
-    }
-
     function test__resolves_GET_request()
     {
         $request = $this->makeGetRequest(['entries' => ['ab.foo.1', 'xy.bar.2']]);
 
         $form = FormFake::fake()->setFakeFields([
-            'ab.foo.fields.title',
-            'xy.bar.fields.email',
+            'ab.foo.fields:title',
+            'xy.bar.fields:email',
         ]);
 
         $fooEntry = Mockery::mock((new AnonymousModel(['title' => 'foo-title'])))->makePartial();
@@ -46,7 +35,7 @@ class ResolveRequestTest extends ResourceTestCase
         ResolveRequest::resolve()->handle($form, $request);
 
         $this->assertEquals(['ab.foo' => 1, 'xy.bar' => 2], $form->getEntryIds());
-        $this->assertEquals('foo-title', $form->getFieldValue('ab.foo.fields.title'));
+        $this->assertEquals('foo-title', $form->getFieldValue('ab.foo.fields:title'));
     }
 
     function test__resolves_POST_request()
@@ -54,14 +43,16 @@ class ResolveRequestTest extends ResourceTestCase
         $request = $this->makePostRequest(
             ['entries' => ['ab.foo.1', 'xy.bar.2']],
             [
-                'ab.foo.fields.title' => 'updated-foo-title',
-                'xy.bar.fields.email' => 'updated-bar-email',
+                'ab.foo.fields:title' => 'updated-foo-title',
+                'xy.bar.fields:email' => 'updated-bar-email',
             ]);
 
-        $form = FormFake::fake()->setFakeFields([
-            'ab.foo.fields.title',
-            'xy.bar.fields.email',
-        ]);
+        $formEntry = FormFake::fake()->setFakeFields([
+            'ab.foo.fields:title',
+            'xy.bar.fields:email',
+        ])->createFormEntry();
+
+        $form = FormFactory::createBuilder($formEntry)->getForm();
 
         $fooEntry = Mockery::mock((new AnonymousModel(['title' => 'foo-title'])))->makePartial();
         $fooEntry->shouldReceive('setAttribute')->with('title', 'updated-foo-title')->once();
@@ -79,14 +70,6 @@ class ResolveRequestTest extends ResourceTestCase
         ResolveRequest::resolve()->handle($form, $request);
         $fooEntry->shouldHaveReceived('save')->once();
         $barEntry->shouldHaveReceived('save')->once();
-//
-//        $handler = $this->bindMock(HandleRequest::class);
-//        $handler->shouldReceive('handle')->with($form, $request)->once();
-
-//        $this->assertEquals('updated-foo-title', $form->getFieldValue('ab.foo.fields.title'));
     }
 }
 
-class TestEntry extends Entry
-{
-}

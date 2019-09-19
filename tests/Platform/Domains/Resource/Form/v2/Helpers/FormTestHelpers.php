@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Form\v2\Helpers;
 
 use SuperV\Platform\Domains\Resource\Form\FormField;
-use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilderInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFactory;
 
@@ -12,8 +12,8 @@ trait FormTestHelpers
     protected function makeTestFields()
     {
         return [
-            $this->makeFieldArray('users.fields.name', 'name'),
-            $this->makeFieldArray('users.fields.email', 'email'),
+            $this->makeFieldArray('sv.users.fields:name', 'name'),
+            $this->makeFieldArray('sv.users.fields:email', 'email'),
         ];
     }
 
@@ -22,7 +22,7 @@ trait FormTestHelpers
         return compact('identifier', 'name', 'type');
     }
 
-    protected function makeFormBuilder(array $fields = []): FormBuilder
+    protected function makeFormBuilder(array $fields = []): FormBuilderInterface
     {
         $builder = FormFactory::createBuilder();
 

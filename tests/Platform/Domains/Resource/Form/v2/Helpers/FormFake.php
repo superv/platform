@@ -4,14 +4,17 @@ namespace Tests\Platform\Domains\Resource\Form\v2\Helpers;
 
 use Closure;
 use Mockery;
+use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFieldCollection;
+use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\Exceptions\ValidationException;
 
 class FormFake extends \SuperV\Platform\Domains\Resource\Form\v2\Form
 {
-    protected $identifier = 'form-id';
+    protected $identifier = 'test_form_id';
 
     protected $url = 'url-to-form';
 
@@ -23,6 +26,31 @@ class FormFake extends \SuperV\Platform\Domains\Resource\Form\v2\Form
      * @var \SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface
      */
     protected $repositoryMock;
+
+    public function createFormEntry($formName = 'default')
+    {
+        try {
+            /** @var FormModel $formEntry */
+            $formEntry = FormModel::create([
+                'uuid'       => uuid(),
+                'title'      => 'Fake Form',
+                'identifier' => $this->getIdentifier().'.forms:'.$formName,
+                'name'       => $formName,
+            ]);
+            /** @var \SuperV\Platform\Domains\Resource\Form\Contracts\FormField $field */
+            foreach ($this->getFields() as $field) {
+                $formEntry->createField([
+                    'identifier' => $field->getIdentifier(),
+                    'name'       => $field->getName(),
+                    'type'       => $field->getType(),
+                ]);
+            }
+        } catch (ValidationException $e) {
+            PlatformException::throw($e);
+        }
+
+        return $formEntry;
+    }
 
     public function setFakeFields(array $fakeFields): FormFake
     {
@@ -42,7 +70,16 @@ class FormFake extends \SuperV\Platform\Domains\Resource\Form\v2\Form
                 continue;
             }
 
-            $this->fields->addField(FormFieldFake::fake($identifier, $params));
+            if (! str_contains($identifier, '.fields:')) {
+                $identifier = 'sv.user.fields:'.$identifier;
+            }
+
+            $this->fields->addField(
+                FormFieldFake::fake($identifier, array_merge($params,
+                    [
+                        'name' => explode('.fields:', $identifier)[1],
+                    ]))
+            );
         }
 
         return $this;
@@ -54,7 +91,7 @@ class FormFake extends \SuperV\Platform\Domains\Resource\Form\v2\Form
         app()->bind(FormInterface::class, FormFake::class);
 
         $builder = FormFactory::createBuilder();
-        $builder->setFormIdentifier('the-form-id');
+        $builder->setFormIdentifier('test_form_id');
 
         /** @var self $form */
         $form = $builder->getForm();

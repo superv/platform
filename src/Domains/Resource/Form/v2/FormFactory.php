@@ -2,13 +2,18 @@
 
 namespace SuperV\Platform\Domains\Resource\Form\v2;
 
-use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormModel;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilderInterface;
 
 class FormFactory
 {
-    public static function createBuilder(): FormBuilder
+    public static function createBuilder(FormModel $formEntry = null): FormBuilderInterface
     {
-        $builder = app()->make(FormBuilder::class);
+        $builder = app(FormBuilderInterface::class);
+
+        if ($formEntry) {
+            $builder->setFormEntry($formEntry);
+        }
 
         return $builder;
     }

@@ -89,7 +89,6 @@ class PlatformBlueprints
         $table->increments('id');
 
         $table->string('identifier')->unique()->showOnIndex();
-//        $table->string('namespace')->showOnIndex();
 
         $table->uuid('revision_id')->unique();
 
@@ -117,7 +116,6 @@ class PlatformBlueprints
         $table->string('type')->showOnIndex();;
 
         $table->timestamps();
-//        $table->unique(['identifier', 'namespace']);
     }
 
     /**
@@ -133,7 +131,7 @@ class PlatformBlueprints
 
         $table->string('name')->showOnIndex();
         $table->string('identifier')->showOnIndex()->unique();
-        $table->string('namespace')->showOnIndex();
+        $table->string('namespace')->showOnIndex()->nullable();
 
         $table->boolean('public')->default(false);
 

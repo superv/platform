@@ -5,10 +5,10 @@ namespace SuperV\Platform\Domains\Resource\Form\v2;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
-use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilder as FormBuilderContract;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilderInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 
-class FormBuilder implements FormBuilderContract
+class FormBuilder implements FormBuilderInterface
 {
     /** @var \SuperV\Platform\Domains\Resource\Form\FormModel */
     protected $formEntry;
@@ -44,7 +44,7 @@ class FormBuilder implements FormBuilderContract
         $this->fields->addFields($fields);
     }
 
-    public function setFormData($data): FormBuilderContract
+    public function setFormData($data): FormBuilderInterface
     {
         $this->formData = $data;
 
@@ -69,14 +69,14 @@ class FormBuilder implements FormBuilderContract
         return $this->build();
     }
 
-    public function setFormIdentifier($formIdentifier): FormBuilderContract
+    public function setFormIdentifier($formIdentifier): FormBuilderInterface
     {
         $this->formIdentifier = $formIdentifier;
 
         return $this;
     }
 
-    public function setFormEntry(FormModel $formEntry): FormBuilderContract
+    public function setFormEntry(FormModel $formEntry): FormBuilderInterface
     {
         $this->formIdentifier = $formEntry->getIdentifier();
 
@@ -89,7 +89,7 @@ class FormBuilder implements FormBuilderContract
         return $this;
     }
 
-    public function setFormUrl($formUrl): FormBuilderContract
+    public function setFormUrl($formUrl): FormBuilderInterface
     {
         $this->formUrl = $formUrl;
 

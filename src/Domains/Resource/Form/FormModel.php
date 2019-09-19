@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\FieldRepository;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 
@@ -49,22 +50,16 @@ class FormModel extends Entry
         return $this->belongsTo(ResourceModel::class, 'resource_id');
     }
 
-    public function attachField($fieldEntryId)
+    public function attachField($fieldEntry)
     {
-        $this->fields()->attach($fieldEntryId);
+        $this->fields()->attach(is_numeric($fieldEntry) ? $fieldEntry : $fieldEntry->getId());
     }
 
-    public function createField(array $params)
+    public function createField(array $attributes)
     {
-//        if (! isset($params['namespace'])) {
-//            $params['namespace'] = $this->getIdentifier();
-//        }
+        $fieldEntry = FieldRepository::resolve()->create($attributes);
 
-        if (! isset($params['identifier'])) {
-            $params['identifier'] = $this->getIdentifier().'.fields.'.$params['name'];
-        }
-
-        $fieldEntry = $this->fields()->create($params);
+        $this->attachField($fieldEntry);
 
         return $fieldEntry;
     }

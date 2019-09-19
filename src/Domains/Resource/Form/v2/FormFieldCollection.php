@@ -41,6 +41,11 @@ class FormFieldCollection extends Collection
         }
     }
 
+    public function first(callable $callback = null, $default = null): FormField
+    {
+        return parent::first($callback, $default);
+    }
+
     public function addFields(array $fields)
     {
         foreach ($fields as $field) {

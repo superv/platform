@@ -15,6 +15,7 @@ use SuperV\Platform\Domains\Resource\Relation\Contracts\ProvidesField;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\Relation\RelationRepository;
 use SuperV\Platform\Domains\Resource\ResourceModel;
+use SuperV\Platform\Exceptions\ValidationException;
 
 class SaveFieldEntry
 {
@@ -110,7 +111,11 @@ class SaveFieldEntry
             $this->fieldType->alterBlueprint($this->blueprint, $this->config);
         }
 
-        $this->persistEntry();
+        try {
+            $this->persistEntry();
+        } catch (ValidationException $e) {
+            dd($this->column, $e->all());
+        }
 
         /**
          * Attach field to default resource form
@@ -175,7 +180,11 @@ class SaveFieldEntry
                 'config'      => $this->config,
             ]);
 
-        $this->field->save();
+        if (! $this->field->exists()) {
+            $this->repository->create($this->field->toArray());
+        } else {
+            $this->field->save();
+        }
     }
 
     protected function setResourceEntry($event): void

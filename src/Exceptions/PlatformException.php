@@ -41,7 +41,8 @@ class PlatformException extends \Exception
     public static function throw(Exception $e)
     {
         $code = ($e instanceof QueryException) ? '0' : $e->getCode();
-        throw new static($e->getMessage(), $code, $e);
+        $message = ($e instanceof ValidationException) ? $e->getErrorsAsString() : $e->getMessage();
+        throw new static($message, $code, $e);
     }
 
     public static function runtime(?string $msg)

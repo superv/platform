@@ -58,7 +58,7 @@ class ResolveRequest
 
         if ($form->isMethod('GET')) {
             $form->getFields()->keys()->map(function ($fieldIdentifier) {
-                list($entryIdentifier, $fieldKey) = explode('.fields.', $fieldIdentifier);
+                list($entryIdentifier, $fieldKey) = explode('.fields:', $fieldIdentifier);
 
                 if ($entry = array_get($this->entries, $entryIdentifier)) {
                     $this->form->getField($fieldIdentifier)->setValue($entry->getAttribute($fieldKey));
@@ -66,7 +66,7 @@ class ResolveRequest
             });
         } elseif ($form->isMethod('POST')) {
             foreach ($this->request->post() as $fieldIdentifier => $value) {
-                list($entryIdentifier, $fieldKey) = explode('.fields.', str_replace('_', '.', $fieldIdentifier));
+                list($entryIdentifier, $fieldKey) = explode('.fields:', str_replace('_', '.', $fieldIdentifier));
                 if ($entry = array_get($this->entries, $entryIdentifier)) {
                     $entry->setAttribute($fieldKey, $value);
                 }

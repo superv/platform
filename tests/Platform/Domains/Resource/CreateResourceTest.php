@@ -154,7 +154,7 @@ class CreateResourceTest extends ResourceTestCase
 
         $usernameField = $resource->getField('username');
 //        $this->assertEquals('testing.test_users.fields', $usernameField->getNamespace());
-        $this->assertEquals('testing.test_users.fields.username', $usernameField->getIdentifier());
+        $this->assertEquals('testing.test_users.fields:username', $usernameField->getIdentifier());
         $this->assertEquals('username', $usernameField->getName());
         $this->assertEquals('string', $usernameField->getColumnType());
 

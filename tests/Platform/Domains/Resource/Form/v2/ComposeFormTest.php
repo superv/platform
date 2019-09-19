@@ -23,7 +23,12 @@ class ComposeFormTest extends ResourceTestCase
         /** @var FormFake $form */
         $form = app(FormInterface::class);
 
-        $form->setFakeFields(['field-1', 'field-2' => 'email', 'field-3' => ['type' => 'number']]);
+        $form->setFakeFields([
+                'sv.users.fields:field-1',
+                'sv.users.fields:field-2' => 'email',
+                'sv.users.fields:field-3' => ['type' => 'number'],
+            ]
+        );
         $form->getFields()->map(function (FormField $field) use ($form, $fieldComposerMock) {
             $fieldComposerMock->shouldReceive('toForm')
                               ->withArgs(function (FormInterface $formArg, FormField $fieldArg) use ($form, $field) {
@@ -39,13 +44,13 @@ class ComposeFormTest extends ResourceTestCase
         $this->assertInstanceOf(Payload::class, $payload);
 
         $this->assertEquals([
-            'identifier' => 'form-id',
+            'identifier' => 'test_form_id',
             'url'        => 'url-to-form',
             'method'     => 'PATCH',
             'fields'     => [
-                ['composed-field-1'],
-                ['composed-field-2'],
-                ['composed-field-3'],
+                ['composed-sv.users.fields:field-1'],
+                ['composed-sv.users.fields:field-2'],
+                ['composed-sv.users.fields:field-3'],
             ],
         ], $payload->get());
     }

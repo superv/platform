@@ -95,13 +95,14 @@ class FormControllerTest extends ResourceTestCase
             'public' => false,
         ], $overrides));
 
-        $formEntry->createField(['type' => 'text', 'name' => 'name']);
-        $formEntry->createField(['type' => 'text', 'name' => 'email']);
-        $formEntry->createField(['type'                           => 'belongs_to',
-                                                         'name'   => 'user',
-                                                         'config' => [
-                                                             'related_resource' => 'platform.users',
-                                                         ]]);
+        $formEntry->createField(['identifier' => 'sv.forms.fields:name', 'type' => 'text', 'name' => 'name']);
+        $formEntry->createField(['identifier' => 'sv.forms.fields:email', 'type' => 'text', 'name' => 'email']);
+        $formEntry->createField(['identifier' => 'sv.forms.fields:user',
+                                 'type'       => 'belongs_to',
+                                 'name'       => 'user',
+                                 'config'     => [
+                                     'related_resource' => 'platform.users',
+                                 ]]);
 
         return $formEntry;
     }
