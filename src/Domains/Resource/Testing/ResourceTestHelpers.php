@@ -163,5 +163,12 @@ trait ResourceTestHelpers
         return $response->decodeResponseJson('data.rows');
     }
 
-    protected function creatFieldEntry() { }
+    protected function makeFieldAttributes(array $overrides = []): array
+    {
+        return array_merge([
+            'identifier' => 'testing.servers.fields:title',
+            'name'       => 'title',
+            'type'       => 'text',
+        ], $overrides);
+    }
 }

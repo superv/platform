@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\EntryForm;
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Testing\FormComponent;
@@ -51,7 +52,9 @@ class FormTest extends ResourceTestCase
 
         FormComponent::get('testing.categories.forms:default', $this);
 
-        Event::assertDispatched($eventName);
+        Event::assertDispatched($eventName, function ($eventName, Form $form) {
+            return $form->getIdentifier() === 'testing.categories.forms:default';
+        });
     }
 
     function test_makes_update_form()

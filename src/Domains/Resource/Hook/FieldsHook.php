@@ -3,11 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Hook;
 
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Domains\Resource\Hook\Contracts\FormResolvedHook;
-use SuperV\Platform\Domains\Resource\Hook\Contracts\FormValidatingHook;
-use SuperV\Platform\Domains\Resource\Hook\Contracts\Hook as HookContract;
 
-class FormsHook implements HookContract
+class FieldsHook implements \SuperV\Platform\Domains\Resource\Hook\Contracts\Hook
 {
     /**
      * @var \SuperV\Platform\Contracts\Dispatcher
@@ -15,8 +12,7 @@ class FormsHook implements HookContract
     protected $dispatcher;
 
     protected $map = [
-        'resolved'   => FormResolvedHook::class,
-        'validating' => FormValidatingHook::class,
+        'resolved' => null,
     ];
 
     public function __construct(Dispatcher $dispatcher)
@@ -26,16 +22,11 @@ class FormsHook implements HookContract
 
     public function hook(string $identifier, string $hookHandler, string $subKey = null)
     {
-        $implements = class_implements($hookHandler);
-
         foreach ($this->map as $eventType => $contract) {
-            if (! in_array($contract, $implements)) {
-                continue;
-            }
-            $eventName = sprintf("%s.forms:%s.events:%s", $identifier, $subKey, $eventType);
+            $eventName = sprintf("%s.fields:*.events:%s", $identifier, $eventType);
             $this->dispatcher->listen(
                 $eventName,
-                function ($payload) use ($eventType, $hookHandler) {
+                function ($eventName, $payload) use ($eventType, $hookHandler) {
                     $this->handle($hookHandler, $eventType, $payload);
                 }
             );
@@ -48,6 +39,13 @@ class FormsHook implements HookContract
             $hookHandler = app($hookHandler);
         }
 
-        $hookHandler->{$eventType}($payload);
+        /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field $field */
+        $field = $payload[0];
+
+        $method = camel_case('resolved_'.$field->getName());
+
+        if (method_exists($hookHandler, $method)) {
+            $hookHandler->{$method}($field);
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
+use Event;
 use Illuminate\Http\Request;
 use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
@@ -192,15 +193,11 @@ class Field implements FieldContract
     public function getName(): string
     {
         return $this->name;
+    }
 
-//        if ($this->name) {
-//            return $this->name;
-//        }
-//
-//        if ($this->getIdentifier()) {
-//            return explode('.fields.', $this->getIdentifier())[1];
-//        }
-
+    public function fireEvent($eventName)
+    {
+        Event::fire(sprintf("%s.events:%s", $this->getIdentifier(), $eventName), $this);
     }
 
     public function getIdentifier()

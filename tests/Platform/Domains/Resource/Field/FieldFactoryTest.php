@@ -34,8 +34,10 @@ class FieldFactoryTest extends ResourceTestCase
 
         Event::fake($eventName);
 
-        FieldFactory::createFromEntry($fieldEntry);
+        $field = FieldFactory::createFromEntry($fieldEntry);
 
-        Event::assertDispatched($eventName);
+        Event::assertDispatched($eventName, function ($eventName, Field $payload) use ($field) {
+            return $field->getIdentifier() === $payload->getIdentifier();
+        });
     }
 }

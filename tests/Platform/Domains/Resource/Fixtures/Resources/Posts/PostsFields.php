@@ -10,5 +10,6 @@ class PostsFields
 
     public function resolvedTitle(Field $title)
     {
+        $_SERVER['__hooks::fields.title.resolved'] = $title->getIdentifier();
     }
 }

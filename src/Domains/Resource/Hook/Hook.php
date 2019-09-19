@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Hook;
 
+use Log;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Exceptions\PlatformException;
 use Symfony\Component\Finder\Finder;
@@ -82,6 +83,9 @@ class Hook
 
     public function hookType($identifier, $type, $hookHandler, $subKey = null)
     {
+        if (! class_exists($hookHandler)) {
+            return Log::error("Hook handler class does not exist: ".$hookHandler);
+        }
         $typeHook = str_replace_last("\\Hook", "\\".studly_case($type.'_hook'), get_class($this));
         if (class_exists($typeHook)) {
             app($typeHook)->hook($identifier, $hookHandler, $subKey);
@@ -100,10 +104,6 @@ class Hook
             } else {
                 $hookType = $parts[2];
             }
-
-//            if (count($parts) > 3) {
-//                $subKey = $parts[3];
-//            }
         } else {
             $parts = explode('_', snake_case($className));
             $hookType = end($parts);

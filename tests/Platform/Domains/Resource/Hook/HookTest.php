@@ -11,6 +11,7 @@ use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormDefault;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsConfig;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsFields;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
@@ -55,7 +56,6 @@ class HookTest extends ResourceTestCase
         $this->assertEquals(
             [
                 'config'   => OrdersConfig::class,
-                'fields'   => OrdersFields::class,
                 'forms'    => [
                     'default' => OrdersFormDefault::class,
                     'custom'  => OrdersFormCustom::class,
@@ -68,6 +68,7 @@ class HookTest extends ResourceTestCase
         $this->assertEquals([
             'config'   => PostsConfig::class,
             'observer' => PostObserver::class,
+            'fields'   => PostsFields::class,
         ], $hook->get('testing.posts'));
     }
 
