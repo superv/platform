@@ -13,6 +13,7 @@ use SuperV\Platform\Domains\UI\Nucleo\SvTab;
 use SuperV\Platform\Domains\UI\Nucleo\SvTabs;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Composer\Composer;
+use SuperV\Platform\Support\Identifier;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
 
@@ -210,6 +211,11 @@ if (! function_exists('superv')) {
             ? Container::getInstance()->make($abstract)
             : Container::getInstance()->makeWith($abstract, $parameters);
     }
+}
+
+function sv_identifier($string)
+{
+    return Identifier::make($string);
 }
 
 /**
