@@ -246,7 +246,7 @@ class Field implements FieldContract
 
     public function getPlaceholder()
     {
-        return $this->placeholder ?? $this->getLabel();
+        return $this->placeholder;
     }
 
     public function copyToFilters(array $params = []): FieldContract

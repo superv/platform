@@ -56,8 +56,10 @@ class CreateAuthorizationTables extends Migration
             $config->model(Action::class);
             $config->nav('acp.platform.auth');
 
+
             $table->increments('id');
-            $table->string('slug')->unique()->entryLabel();
+            $table->string('slug')->unique()->entryLabel()->searchable();
+            $table->string('namespace')->nullable()->addFlag('filter');
             $table->createdBy()->updatedBy();
             $table->restorable();
         });

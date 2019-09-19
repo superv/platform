@@ -33,7 +33,10 @@ class ResourceRepository
         ];
 
         if ($config->getNamespace() !== 'platform') {
-            DB::table('sv_auth_actions')->insert(['slug' => $config->getNamespace().'.'.$config->getName()]);
+            DB::table('sv_auth_actions')->insert([
+                'namespace' => $config->getNamespace(),
+                'slug'      => $config->getNamespace().'.'.$config->getName(),
+            ]);
         }
 
         return $this->model->newQuery()->create($attributes);

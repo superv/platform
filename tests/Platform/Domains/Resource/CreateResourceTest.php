@@ -301,7 +301,10 @@ class CreateResourceTest extends ResourceTestCase
     {
         $this->blueprints()->posts('testing');
 
-        $this->assertNotNull(Action::withSlug('testing.t_posts'));
+        $action = Action::withSlug('testing.t_posts');
+        $this->assertNotNull($action);
+        $this->assertEquals('testing', $action->namespace);
+
     }
 
     protected function tearDown()

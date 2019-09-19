@@ -20,7 +20,7 @@ class CreateUsersResource extends Migration
             $table->string('password');
             $table->string('remember_token')->nullable();
 
-            $table->hasOne('sv_profiles', 'profile', 'user_id');
+            $table->hasOne('platform.profiles', 'profile', 'user_id');
 
             $table->morphToMany('platform.auth_roles', 'roles', 'owner')
                   ->pivotTable('sv_auth_assigned_roles', 'platform.auth_assigned_roles')
