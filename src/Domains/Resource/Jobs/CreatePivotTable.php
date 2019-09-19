@@ -5,6 +5,8 @@ namespace SuperV\Platform\Domains\Resource\Jobs;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class CreatePivotTable
 {
@@ -15,10 +17,17 @@ class CreatePivotTable
             $relation->pivotColumns($table->getColumnNames());
         }
 
-        if (! \Schema::hasTable($relation->getPivotTable())) {
-            Schema::create(
-                $relation->getPivotTable(),
-                function (Blueprint $table) use ($pivotColumnsCallback, $relation) {
+        if (! $pivotTable = $relation->getPivotTable()) {
+            PlatformException::runtime("Pivot table can not be null");
+        }
+        if (! \Schema::hasTable($pivotTable)) {
+            Schema::create($pivotTable,
+                function (Blueprint $table, ResourceConfig $config) use ($pivotColumnsCallback, $relation) {
+                    /**
+                     * Set pivot resource identifier
+                     */
+                    $config->setIdentifier($relation->getPivotIdentifier());
+
                     $table->increments('id');
 
                     if ($relation->type()->isMorphToMany()) {

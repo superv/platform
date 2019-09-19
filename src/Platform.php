@@ -59,12 +59,12 @@ class Platform extends Addon
         return $this->path($prefix);
     }
 
-    public function slug()
+    public function getIdentifier()
     {
         return 'platform';
     }
 
-    public function namespace()
+    public function getPsrNamespace()
     {
         return "SuperV\\Platform";
     }

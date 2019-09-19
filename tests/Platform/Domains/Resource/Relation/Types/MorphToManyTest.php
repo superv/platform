@@ -17,18 +17,21 @@ class MorphToManyTest extends ResourceTestCase
 {
     function test__create_morph_to_many_relation()
     {
-        $this->create('t_users', function (Blueprint $table) {
+        $this->create('testing.abusers', function (Blueprint $table) {
             $table->increments('id');
-            $pivotColumns = function (Blueprint $pivotTable) {
-                $pivotTable->string('status');
-            };
-            $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
+
+            $table->morphToMany(TestRole::class, 'roles', 'owner')
+                  ->pivotTable('testing.assigned_roles')
+                  ->pivotRelatedKey('role_id')
+                  ->pivotColumns(function (Blueprint $pivotTable) {
+                      $pivotTable->string('status');
+                  });
         });
 
-        $users = ResourceFactory::make('t_users');
+        $abusers = ResourceFactory::make('testing.abusers');
 
-        $this->assertColumnNotExists('t_users', 'roles');
-        $this->assertColumnsExist('t_assigned_roles', ['id',
+        $this->assertColumnNotExists('abusers', 'roles');
+        $this->assertColumnsExist('assigned_roles', ['id',
                                                        'owner_type',
                                                        'owner_id',
                                                        'role_id',
@@ -36,16 +39,18 @@ class MorphToManyTest extends ResourceTestCase
                                                        'created_at',
                                                        'updated_at']);
 
-        $relation = $users->getRelation('roles');
+        $relation = $abusers->getRelation('roles');
         $this->assertEquals('morph_to_many', $relation->getType());
 
         $this->assertEquals([
             'related_model'     => TestRole::class,
-            'pivot_table'       => 't_assigned_roles',
+            'pivot_table'       => 'assigned_roles',
             'pivot_foreign_key' => 'owner_id',
             'pivot_related_key' => 'role_id',
             'morph_name'        => 'owner',
             'pivot_columns'     => ['status'],
+            'pivot_namespace'   => 'testing',
+            'pivot_identifier'  => 'testing.assigned_roles',
         ], $relation->getRelationConfig()->toArray());
     }
 }

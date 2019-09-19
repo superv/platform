@@ -19,7 +19,11 @@ class FieldFactory
 
     protected $flags = ['searchable', 'unique', 'required', 'nullable'];
 
-    public static function createFromEntry(FieldModel $entry, string $resolveFrom = null): Field
+    /**
+     * @param string|null $resolveFrom
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field | \SuperV\Platform\Domains\Resource\Form\Contracts\FormField
+     */
+    public static function createFromEntry(FieldModel $entry, string $resolveFrom = null)
     {
         $factory = new static;
         $factory->params = $entry->toArray();
@@ -27,7 +31,12 @@ class FieldFactory
         return $factory->create($resolveFrom);
     }
 
-    public static function createFromArray(array $params, string $resolveFrom = null): Field
+    /**
+     * @param array       $params
+     * @param string|null $resolveFrom
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field | \SuperV\Platform\Domains\Resource\Form\Contracts\FormField
+     */
+    public static function createFromArray(array $params, string $resolveFrom = null)
     {
         $factory = new static;
         $factory->params = $params;
@@ -35,10 +44,18 @@ class FieldFactory
         return $factory->create($resolveFrom);
     }
 
-    protected function create(string $resolveFrom = null): Field
+    /**
+     * @param string|null $resolveFrom
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field | \SuperV\Platform\Domains\Resource\Form\Contracts\FormField
+     */
+    protected function create(string $resolveFrom = null)
     {
+        if (! isset($this->params['identifier'])) {
+            PlatformException::fail('Missing parameter [identifier] for field');
+        }
+
         if (! isset($this->params['name'])) {
-            PlatformException::fail('Missing parameter [name] for field');
+            $this->params['name'] = $this->params['identifier'];
         }
 
         if (str_contains($this->params['type'], '\\') && class_exists($this->params['type'])) {

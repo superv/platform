@@ -4,22 +4,31 @@ namespace SuperV\Platform\Domains\Addon\Jobs;
 
 use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Addon\AddonModel;
+use SuperV\Platform\Support\Dispatchable;
 
 class CreateAddonPaths
 {
+    use Dispatchable;
+
     /** @var \SuperV\Platform\Domains\Addon\AddonModel */
     private $model;
 
-    public function __construct(AddonModel $model)
+    /**
+     * @var bool
+     */
+    protected $force;
+
+    public function __construct(AddonModel $model, bool $force = false)
     {
         $this->model = $model;
+        $this->force = $force;
     }
 
     public function handle(Filesystem $filesystem)
     {
         $path = base_path($this->model->path);
 
-        if ($filesystem->exists($path)) {
+        if (! $this->force && $filesystem->exists($path)) {
             throw new \Exception("Path already exists [{$path}]");
         }
 
@@ -42,7 +51,7 @@ class CreateAddonPaths
             "config",
             "database/migrations",
             "tests",
-            "tests/".studly_case($this->model->shortName()),
+            "tests/".studly_case($this->model->getName()),
         ];
     }
 }

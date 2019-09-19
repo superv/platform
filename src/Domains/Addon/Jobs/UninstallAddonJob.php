@@ -32,7 +32,7 @@ class UninstallAddonJob
 
         AddonUninstallingEvent::dispatch($this->addon);
 
-        Artisan::call('migrate:reset', ['--addon' => $this->addon->slug(), '--force' => true]);
+        Artisan::call('migrate:reset', ['--namespace' => $this->addon->getIdentifier(), '--force' => true]);
 
         $this->addon->entry()->delete();
 

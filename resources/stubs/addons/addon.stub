@@ -1,4 +1,4 @@
-<?php namespace {model.namespace};
+<?php namespace {addon.psr_namespace};
 
 use SuperV\Platform\Domains\Addon\Addon;
 

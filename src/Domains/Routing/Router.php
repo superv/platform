@@ -73,4 +73,10 @@ class Router
         $routes = require base_path($file);
         $this->registrar->register($routes);
     }
+
+    /** @return static */
+    public static function resolve()
+    {
+        return app(static::class);
+    }
 }

@@ -38,4 +38,9 @@ class ToDoTest extends TestCase
     {
         $this->addToAssertionCount(1);
     }
+
+    protected function setUp()
+    {
+        parent::setUp();
+    }
 }

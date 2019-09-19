@@ -8,15 +8,13 @@ use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
-use SuperV\Platform\Domains\Resource\Form\Jobs\MakeForm;
-use SuperV\Platform\Domains\Resource\Form\Jobs\SaveForm;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Http\Controllers\BaseController;
 use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 
 class FormController extends BaseController
 {
-    public function fields($uuid, $field, $rpc = null, FormBuilder $builder)
+    public function fields($uuid, $field, $rpc = null, ResourceFormBuilder $builder)
     {
         if (! $formEntry = $this->getFormEntry($uuid)) {
             abort(404, 'Form entry not found');
@@ -48,37 +46,97 @@ class FormController extends BaseController
         abort(404);
     }
 
-    public function show($uuid, FormBuilder $builder)
+    public function show($identifier, $name = null)
     {
-        if ($formEntry = $this->getFormEntry($uuid)) {
-            $form = MakeForm::dispatch($formEntry, $this->request);
-
-            return $form->makeComponent();
+        if (! $formEntry = FormModel::withIdentifier($identifier)) {
+            abort(404, 'Form entry not found');
         }
 
-        // dumb fix for platform resources >:/
-        //
-        $resource = ResourceFactory::make($uuid);
-
-        $form = $builder->setResource($resource)->build();
-
-        $form->setUrl($resource->route('store'))
-             ->setRequest($this->request);
-
-        if ($callback = $resource->getCallback('creating')) {
-            app()->call($callback, ['form' => $form]);
+        if (! $formEntry->isPublic()) {
+            app(PlatformAuthenticate::class)->guard($this->request, 'sv-api');
         }
 
-        $form->make();
+        $builder = FormBuilder::resolve();
+        $builder->setFormEntry($formEntry)
+                ->setRequest($this->request);
+
+        $form = $builder->build();
 
         return $form->makeComponent();
     }
 
-    public function post($uuid)
+    public function create($uuid)
+    {
+        if (! $formEntry = $this->getFormEntry($uuid)) {
+            abort(404, 'Form entry not found');
+        }
+
+        $builder = FormBuilder::resolve();
+        $builder->setFormEntry($formEntry)
+                ->setRequest($this->request);
+
+        $form = $builder->build();
+
+        return $form->makeComponent();
+    }
+
+    public function store($uuid, ResourceFormBuilder $builder)
     {
         $formEntry = $this->getFormEntry($uuid);
 
-        return SaveForm::dispatch($formEntry, $this->request);
+        if ($resource = $formEntry->getOwnerResource()) {
+            $builder->setResource($resource);
+        }
+        $form = $builder->build();
+
+        return $form->setRequest($this->request)
+                    ->make()
+                    ->save();
+    }
+
+    public function edit($uuid, $entryId, ResourceFormBuilder $builder)
+    {
+        if (! $formEntry = $this->getFormEntry($uuid)) {
+            abort(404, 'Form entry not found');
+        }
+
+        $resource = $formEntry->getOwnerResource();
+        $entry = $resource->find($entryId);
+        if ($keyName = $resource->config()->getKeyName()) {
+            $entry->setKeyName($keyName);
+        }
+        $formFields = $builder->buildFields($formEntry->getFormFields());
+
+        $form = ResourceFormBuilder::buildFromEntry($entry);
+        $form->setUrl($resource->route('forms.edit', $entry))
+             ->setRequest($this->request)
+             ->setFields($formFields)
+             ->make($formEntry->uuid);
+
+        if ($callback = $resource->getCallback('editing')) {
+            app()->call($callback, ['form' => $form, 'entry' => $entry]);
+        }
+
+        return $form->makeComponent();
+    }
+
+    public function update($uuid, $entryId)
+    {
+        if (! $formEntry = $this->getFormEntry($uuid)) {
+            abort(404, 'Form entry not found');
+        }
+
+        $resource = $formEntry->getOwnerResource();
+        $entry = $resource->find($entryId);
+        if ($keyName = $resource->config()->getKeyName()) {
+            $entry->setKeyName($keyName);
+        }
+
+        $form = ResourceFormBuilder::buildFromEntry($entry);
+
+        return $form->setRequest($this->request)
+                    ->make()
+                    ->save();
     }
 
     protected function getFormEntry($uuid): ?FormModel

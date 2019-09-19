@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
 use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Validator;
+use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Support\Dispatchable;
 
@@ -12,7 +13,7 @@ class ValidateForm
     use Dispatchable;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Form\Form
+     * @var \SuperV\Platform\Domains\Resource\Form\EntryForm
      */
     protected $form;
 
@@ -35,6 +36,9 @@ class ValidateForm
     public function handle(Validator $validator)
     {
         $rules = $this->fields
+            ->filter(function (Field $field) {
+                return ! $field->isUnbound();
+            })
             ->map(function (FormField $field) {
                 return [$field->getIdentifier(), $this->parseFieldRules($field)];
             })->filter()

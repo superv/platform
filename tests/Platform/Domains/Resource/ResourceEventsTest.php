@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatedEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatingEvent;
 use SuperV\Platform\Domains\Resource\Model\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 /**
  * Class ResourceEventsTest
@@ -78,8 +79,9 @@ class ResourceEventsTest extends ResourceTestCase
             $table->belongsTo('t_users', 'user');
             $table->timestamp('created_at');
         });
+        ResourceFactory::wipe();
 
-        Resource::extend('t_confirmations')->with(function (Resource $resource) {
+        Resource::extend('platform.t_confirmations')->with(function (Resource $resource) {
             $resource->onCreated(function (EntryContract $entry) {
                 $entry->load('user')->user->update(['confirmed_at' => $entry->created_at]);
             });

@@ -9,7 +9,7 @@ class FieldQuerySorterTest extends ResourceTestCase
 {
     function test__regular()
     {
-        $posts = $this->schema()->posts();
+        $posts = $this->blueprints()->posts();
 
         /** @var \Illuminate\Database\Eloquent\Builder $postsQuery */
         $postsQuery = $posts->newQuery();
@@ -30,8 +30,8 @@ class FieldQuerySorterTest extends ResourceTestCase
 
     function test__belongs_to()
     {
-        $users = $this->schema()->users();
-        $posts = $this->schema()->posts();
+        $users = $this->blueprints()->users();
+        $posts = $this->blueprints()->posts();
 
         /** @var \Illuminate\Database\Eloquent\Builder $postsQuery */
         $postsQuery = $posts->newQuery();
@@ -46,8 +46,9 @@ class FieldQuerySorterTest extends ResourceTestCase
         $this->assertNotNull($join);
         $this->assertEquals('t_users AS t_users_1', $join->table);
 
+        $usersTable = $users->config()->getTable();
         $this->assertEquals([
-            "column"    => $users->getHandle().'_1.'.$users->fields()->getEntryLabelField()->getColumnName(),
+            "column"    => $usersTable.'_1.'.$users->fields()->getEntryLabelField()->getColumnName(),
             "direction" => "asc",
         ], $postsQuery->getQuery()->orders[0]);
     }

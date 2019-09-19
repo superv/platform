@@ -2,38 +2,39 @@
 
 namespace SuperV\Platform\Domains\Addon\Console;
 
+use Exception;
 use Illuminate\Console\Command;
 use SuperV\Platform\Domains\Addon\Installer;
-use SuperV\Platform\Domains\Addon\Locator;
 use SuperV\Platform\Exceptions\ValidationException;
 
 class AddonInstallCommand extends Command
 {
-    protected $signature = 'addon:install {addon} {--path=} {--seed}';
+    protected $signature = 'addon:install {path}  {--seed}';
 
     public function handle(Installer $installer)
     {
         try {
-            $this->comment(sprintf('Installing %s', $this->argument('addon')));
+
             $installer->setCommand($this);
-            $installer->setSlug($this->argument('addon'));
+            $installer->setPath($this->argument('path'));
 
-            if ($this->option('path')) {
-                $installer->setPath($this->option('path'));
-            } else {
-                $installer->setLocator(new Locator());
+            $this->comment('Installing Addon '.$installer->getIdentifier());
+
+            try {
+                $installer->install();
+            } catch (Exception $e) {
+                dd($e);
             }
-
-            $installer->install();
 
             if ($this->option('seed')) {
                 $installer->seed();
             }
 
-            $this->comment(sprintf("Addon %s installed \n", $this->argument('addon')));
+            $this->comment(sprintf("Addon %s installed \n", $installer->getIdentifier()));
         } catch (ValidationException $e) {
             $this->error($e->getErrorsAsString());
         } catch (\Exception $e) {
+            dd($e->getMessage());
             $this->error($e->getMessage());
         }
     }

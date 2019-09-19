@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use SuperV\Platform\Console\Jobs\InstallSuperV;
+use SuperV\Platform\Domains\Addon\Addon;
 use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\Installer;
-use SuperV\Platform\Domains\Addon\Locator;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\PlatformServiceProvider;
@@ -44,6 +44,8 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected $basePath;
 
+    protected $bindings = [];
+
     public function basePath($path = null)
     {
         return __DIR__.($path ? '/'.$path : '');
@@ -65,7 +67,11 @@ class PlatformTestCase extends OrchestraTestCase
         $app['config']->set('database.connections.sqlite', [
             'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+        ]);
+
+        $app['config']->set('database.connections.sqlite2', [
+            'driver'   => 'sqlite',
+            'database' => $this->basePath('sv-testing.sqlite'),
         ]);
     }
 
@@ -88,6 +94,10 @@ class PlatformTestCase extends OrchestraTestCase
         if ($this->shouldInstallPlatform()) {
             $this->installSuperV();
         }
+
+        foreach ($this->bindings as $abstract => $concrete) {
+            $this->app->bind($abstract, $concrete);
+        }
     }
 
     protected function tearDown()
@@ -109,21 +119,22 @@ class PlatformTestCase extends OrchestraTestCase
         }
     }
 
-    protected function setUpAddon($slug = null, $path = null, $seed = false)
+    protected function setUpAndSeedAddon($identifier = null)
     {
-        $path = $path ?? 'tests/Platform/__fixtures__/sample-addon';
-        $slug = $slug ?? 'superv.addons.sample';
+        return $this->setUpAddon($identifier, true);
+    }
 
-        ComposerLoader::load(base_path($path));
-        $installer = $this->app->make(Installer::class)
-                               ->setSlug($slug)
-                               ->setPath($path);
+    protected function setUpAddon($identifier = null, $seed = false): Addon
+    {
+        $identifier = $identifier ?? 'superv.sample';
+
+        $installer = $this->setUpAddonInstaller($identifier);
         $installer->install();
         if ($seed === true) {
             $installer->seed();
         }
 
-        $entry = AddonModel::bySlug($slug);
+        $entry = AddonModel::byIdentifier($identifier);
 
         return $entry->resolveAddon();
     }
@@ -135,8 +146,6 @@ class PlatformTestCase extends OrchestraTestCase
             protected $slug = 'web';
 
             protected $hostname = 'superv.io';
-
-            protected $theme = 'themes.starter';
         });
 
         Hub::register(new class extends Port
@@ -185,13 +194,12 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected function installAddons(): void
     {
-        $this->app->setBasePath($this->basePath ?? realpath(__DIR__.'/../../../../../'));
+        $this->app->setBasePath($basePath = $this->basePath ?? realpath(__DIR__.'/../../../../../'));
 
-        foreach ($this->installs as $addon) {
-            app(Installer::class)
-                ->setLocator(new Locator())
-                ->setSlug($addon)
-                ->install();
+        foreach ($this->installs as $addonPath) {
+            Installer::resolve()
+                     ->setPath($basePath.'/'.$addonPath)
+                     ->install();
         }
     }
 
@@ -221,5 +229,17 @@ class PlatformTestCase extends OrchestraTestCase
     protected function shouldInstallPlatform()
     {
         return $this->shouldInstallPlatform && method_exists($this, 'refreshDatabase');
+    }
+
+    protected function setUpAddonInstaller($identifier, $path = null): Installer
+    {
+        $path = $path ?? 'tests/Platform/__fixtures__/sample-addon';
+
+        ComposerLoader::load(base_path($path));
+        $installer = Installer::resolve()
+                              ->setPath(base_path($path))
+                              ->setIdentifier($identifier);
+
+        return $installer;
     }
 }

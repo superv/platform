@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Database\Schema;
 
 /**
- * @method \Illuminate\Database\Schema\Builder create($table, \Closure $callback)
+ * @method \SuperV\Platform\Domains\Resource\ResourceConfig create($table, \Closure $callback)
  * @method static $this table($table, \Closure $callback)
  * @method static $this drop($table)
  * @method static $this dropIfExists($table)
@@ -12,18 +12,20 @@ class Schema
 {
     public $justRun;
 
-    /** @var \SuperV\Platform\Domains\Database\Schema\Blueprint */
-    protected $resource;
-
     /** @var \SuperV\Platform\Domains\Database\Schema\Builder */
     protected $builder;
 
     protected $columns;
 
-    public function __construct()
+    /** @var \Illuminate\Database\Connection */
+    protected $connection;
+
+    public function __construct($connection = null)
     {
         if (! $this->builder) {
-            $this->builder = new Builder(\DB::connection(), $this);
+            $this->connection = \DB::connection($connection);
+            $this->connection->useDefaultQueryGrammar();
+            $this->builder = new Builder($this->connection, $this);
 
             $this->builder->blueprintResolver(function ($table, $callback) {
                 return (new Blueprint($table, $callback, $this));

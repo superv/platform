@@ -28,8 +28,15 @@ class DetachEntryAction extends Action
 
     public function onComposed(Payload $payload)
     {
-        $payload->set('url', str_replace('entry.id', '{entry.id}', $this->getRequestUrl()));
-        $payload->set('on-complete', 'reload');
+        $payload->merge([
+            'url'         => str_replace('entry.id', '{entry.id}', $this->getRequestUrl()),
+            'on-complete' => 'reload',
+            'button'      => [
+                'color' => 'warning',
+                'size'  => 'sm',
+                'title' => __('Detach'),
+            ],
+        ]);
     }
 
     public function getRequestUrl()

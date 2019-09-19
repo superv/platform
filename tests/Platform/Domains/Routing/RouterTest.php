@@ -57,22 +57,23 @@ class RouterTest extends TestCase
         $_SERVER['test.routes.acp.foo'] = ['foo/baz' => 'FooAcpController@baz'];
         $_SERVER['test.routes.api.foo'] = ['bom/bor' => 'BomAcpController@bor'];
 
-        $loader = $this->bindMock(RouteRegistrar::class);
+        $registrar = $this->bindMock(RouteRegistrar::class);
 
-        $loader->shouldReceive('setPort')->with(Hub::get('acp'))->once();
-        $loader->shouldReceive('globally')->with(false)->once();
-        $loader->shouldReceive('register')->with(['foo/baz' => 'FooAcpController@baz'])->once()->andReturnSelf();
+        $registrar->shouldReceive('setPort')->with(Hub::get('acp'))->once();
+        $registrar->shouldReceive('globally')->with(false)->once();
+        $registrar->shouldReceive('register')->with(['foo/baz' => 'FooAcpController@baz'])->once()->andReturnSelf();
 
-        $loader->shouldReceive('setPort')->with(Hub::get('api'))->once();
-        $loader->shouldReceive('globally')->with(false)->once();
-        $loader->shouldReceive('register')->with(['bom/bor' => 'BomAcpController@bor'])->once()->andReturnSelf();
+        $registrar->shouldReceive('setPort')->with(Hub::get('api'))->once();
+        $registrar->shouldReceive('globally')->with(false)->once();
+        $registrar->shouldReceive('register')->with(['bom/bor' => 'BomAcpController@bor'])->once()->andReturnSelf();
 
-        $loader->shouldReceive('setPort')->with(Hub::get('web'))->once();
-        $loader->shouldReceive('globally')->with(false)->once();
-        $loader->shouldReceive('register')->with(['foo/baz' => 'FooWebController@baz'])->once()->andReturnSelf();
-        $loader->shouldReceive('register')->with(['bar/baz' => 'BarWebController@baz'])->once()->andReturnSelf();
+        $registrar->shouldReceive('setPort')->with(Hub::get('web'))->once();
+        $registrar->shouldReceive('globally')->with(false)->once();
+        $registrar->shouldReceive('register')->with(['foo/baz' => 'FooWebController@baz'])->once()->andReturnSelf();
+        $registrar->shouldReceive('register')->with(['bar/baz' => 'BarWebController@baz'])->once()->andReturnSelf();
 
-        app(Router::class)->loadFromPath('tests/Platform/__fixtures__/routes');
+        $path = base_path('tests/Platform/__fixtures__/routes');
+        Router::resolve()->loadFromPath($path);
     }
 
     protected function getPort($slug)

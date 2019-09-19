@@ -9,11 +9,11 @@ class NumberTest extends ResourceTestCase
 {
     function test_type_number_integer()
     {
-        $res = $this->create(function (Blueprint $table) {
+        $res = $this->create('tmp_table', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('age');
         });
-        $this->assertColumnExists($res->getHandle(), 'age');
+        $this->assertColumnExists('tmp_table', 'age');
 
         $age = $res->getField('age');
 
@@ -25,11 +25,11 @@ class NumberTest extends ResourceTestCase
 
     function test_type_number_decimal()
     {
-        $res = $this->create(function (Blueprint $table) {
+        $res = $this->create('tmp_table', function (Blueprint $table) {
             $table->increments('id');
             $table->decimal('height', 3, 2);
         });
-        $this->assertColumnExists($res->getHandle(), 'height');
+        $this->assertColumnExists('tmp_table', 'height');
 
         $height = $res->getField('height');
 

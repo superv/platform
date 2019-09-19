@@ -36,7 +36,7 @@ class AddonServiceProvider extends BaseServiceProvider
         }
 
         if ($this->app->runningInConsole()) {
-            MigrationScopes::register($this->addon->slug(), base_path($this->addon->path('database/migrations')));
+            MigrationScopes::register($this->addon->getIdentifier(), base_path($this->addon->path('database/migrations')));
         }
 
         $this->addon->loadConfigFiles();
@@ -44,9 +44,9 @@ class AddonServiceProvider extends BaseServiceProvider
 
     public function boot()
     {
-        app(Router::class)->loadFromPath($this->addon->realPath('routes'));
+        Router::resolve()->loadFromPath($this->addon->realPath('routes'));
 
-        $this->loadTranslationsFrom($this->addon->realPath('resources/lang'), $this->addon()->slug());
+        $this->loadTranslationsFrom($this->addon->realPath('resources/lang'), $this->addon()->getIdentifier());
 
         $this->loadJsonTranslationsFrom($this->addon->realPath('resources/lang'));
     }
@@ -54,10 +54,10 @@ class AddonServiceProvider extends BaseServiceProvider
     protected function registerViewNamespaces(): void
     {
         $this->addViewNamespaces([
-            $this->addon->slug() =>
+            $this->addon->getIdentifier() =>
                 [
                     base_path($this->addon->resourcePath('views')),
-                    resource_path('vendor/superv/'.$this->addon->shortSlug().'/views'),
+                    resource_path('vendor/'.$this->addon->getVendor().'/'.$this->addon->getIdentifier().'/views'),
                 ],
         ]);
     }

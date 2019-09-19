@@ -3,9 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
+use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Support\Dispatchable;
 
 class MakeForm
@@ -15,39 +14,30 @@ class MakeForm
     /**
      * @var \SuperV\Platform\Domains\Resource\Form\FormModel
      */
-    protected $formData;
+    protected $formEntry;
 
     /**
      * @var \Illuminate\Http\Request
      */
     protected $request;
 
-    public function __construct(FormModel $formData, ?Request $request = null)
+    public function __construct(FormModel $formEntry, ?Request $request = null)
     {
-        $this->formData = $formData;
+        $this->formEntry = $formEntry;
         $this->request = $request;
     }
 
-    public function handle(FormBuilder $builder)
+    public function handle(ResourceFormBuilder $builder)
     {
-        $builder->setResource($resource = $this->formData->getOwnerResource());
+        $builder->setResource($resource = $this->formEntry->getOwnerResource());
 
         $form = $builder->build()->setRequest($this->request);
 
-        // wrap field with formField
-        //
-//        $formFields = $this->formData->compileFields()
-//                                     ->map(function (FormField $field) use ($form) {
-//                                         $field->setForm($form);
-//
-//                                         return $field;
-//                                     });
-
-        $formFields = $builder->buildFields($this->formData->getFormFields());
+        $formFields = $builder->buildFields($this->formEntry->getFormFields());
 
         $form->setFields($formFields)
              ->setUrl(sv_url()->path())
-             ->make($this->formData->uuid);
+             ->make($this->formEntry->uuid);
 
         if ($resource && $callback = $resource->getCallback('creating')) {
             app()->call($callback, ['form' => $form]);

@@ -53,7 +53,7 @@ class Drops
 
     public function push()
     {
-        /** @var \SuperV\Platform\Domains\Database\Model\Model $entry */
+        /** @var \SuperV\Platform\Domains\Database\Model\Entry $entry */
         foreach ($this->entries as $entry) {
             if ($entry->isDirty()) {
                 $entry->save();

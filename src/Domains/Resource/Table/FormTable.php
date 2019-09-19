@@ -33,7 +33,7 @@ class FormTable extends Table
     public function makeFields(): Collection
     {
         return parent::makeFields()->filter(function (Field $field) {
-            return ! $field->hasFlag('form.hide');
+            return ! $field->isHidden();
         })->values();
     }
 

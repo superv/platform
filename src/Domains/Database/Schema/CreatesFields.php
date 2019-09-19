@@ -86,15 +86,10 @@ trait CreatesFields
 
     public function createdBy(): self
     {
-        $this->nullableBelongsTo('users', 'created_by')->hideOnForms();
+        $this->nullableBelongsTo('platform.users', 'created_by')->hideOnForms();
         $this->timestamp('created_at')->nullable()->hideOnForms();
 
         return $this;
-    }
-
-    public function id($key = 'id')
-    {
-        $this->increments($key);
     }
 
     public function increments($column)
@@ -104,9 +99,10 @@ trait CreatesFields
         return parent::increments($column);
     }
 
-    public function hasUuid($column = 'uuid')
+    public function hasUuid($column = 'uuid'): ColumnDefinition
     {
         $this->resourceConfig()->setHasUuid(true);
+
         return $this->addColumn('uuid', $column);
     }
 
@@ -126,9 +122,14 @@ trait CreatesFields
 
     public function updatedBy(): self
     {
-        $this->nullableBelongsTo('users', 'updated_by')->hideOnForms();
+        $this->nullableBelongsTo('platform.users', 'updated_by')->hideOnForms();
         $this->timestamp('updated_at')->nullable()->hideOnForms();
 
         return $this;
+    }
+
+    public function id($key = 'id')
+    {
+        $this->increments($key);
     }
 }

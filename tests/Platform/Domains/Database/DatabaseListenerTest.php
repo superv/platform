@@ -8,9 +8,8 @@ use SuperV\Platform\Domains\Database\Events\TableInsertEvent;
 use SuperV\Platform\Domains\Database\Events\TableUpdateEvent;
 use SuperV\Platform\Domains\Database\Model\Listener;
 use SuperV\Platform\Domains\Resource\Testing\ResourceTestHelpers;
-use Tests\Platform\TestCase;
 
-class DatabaseListenerTest extends TestCase
+class DatabaseListenerTest
 {
     use RefreshDatabase;
     use ResourceTestHelpers;

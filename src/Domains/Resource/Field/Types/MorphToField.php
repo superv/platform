@@ -12,7 +12,6 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
 {
     protected function boot()
     {
-
         $this->field->on('view.presenting', $this->viewPresenter());
         $this->field->on('view.composing', $this->viewComposer());
 
@@ -22,7 +21,7 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
 //            $query->with($this->getName());
         });
 
-        $this->addFlag('form.hide');
+        $this->field->hide();
     }
 
     protected function presenter()
@@ -48,7 +47,7 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $this->getRelatedEntry($entry)) {
                 $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view', $relatedEntry));
+                $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
             }
         };
     }
@@ -58,7 +57,7 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $this->getRelatedEntry($entry)) {
                 $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view', $relatedEntry));
+                $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
             }
         };
     }
@@ -66,7 +65,7 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
     protected function getRelatedEntry(EntryContract $parentEntry, ?Resource $resource = null)
     {
         if (! $resource) {
-            if (!$resource = $this->getRelatedResource($parentEntry)) {
+            if (! $resource = $this->getRelatedResource($parentEntry)) {
                 return null;
             }
         }
@@ -77,6 +76,12 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
 
     protected function getRelatedResource(EntryContract $entry)
     {
-        return sv_resource($entry->{$this->getName().'_type'});
+        $type = $entry->{$this->getName().'_type'};
+
+        if (class_exists($type)) {
+            $type = (new $type)->getTable();
+        }
+
+        return sv_resource($type);
     }
 }

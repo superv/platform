@@ -30,6 +30,7 @@ class ResourceTable extends EntryTable
         return $this->query;
     }
 
+    /** @param \Illuminate\Database\Eloquent\Builder $query */
     protected function applyOptions($query)
     {
         if ($this->request && $orderBy = $this->request->get('order_by')) {
@@ -41,11 +42,17 @@ class ResourceTable extends EntryTable
             $sorter->setField($field);
             $sorter->setQuery($query);
             $sorter->sort($direction);
+        } elseif ($orderBy = $this->options->get('order_by')) {
+            if (is_string($orderBy)) {
+                $orderBy = [$orderBy => 'ASC'];
+            }
+            foreach ($orderBy as $column => $direction) {
+                $query->orderBy($query->getModel()->getTable().'.'.$column, $direction);
+            }
         } elseif ($field = $this->resource->fields()->getEntryLabelField()) {
-            $this->orderBy = [
-                'column'    => $field->getColumnName(),
-                'direction' => 'ASC',
-            ];
+            $query->orderBy(
+                $field->getColumnName(), 'ASC'
+            );
         } else {
             parent::applyOptions($query);
         }
@@ -57,7 +64,7 @@ class ResourceTable extends EntryTable
             return $this->dataUrl;
         }
 
-        return $this->resource->route('index.table').'/data';
+        return $this->resource->route('table').'/data';
     }
 
     protected function getRowKeyName()

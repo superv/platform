@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Extension;
 
-use SuperV\Platform\Domains\Resource\Hook;
 use SuperV\Platform\Support\Dispatchable;
 use SuperV\Platform\Support\Path;
 use Symfony\Component\Finder\Finder;
@@ -20,12 +19,18 @@ class RegisterHooksInPath
     /**
      * @var string
      */
-    protected $baseNamespace;
+    protected $psrNamespace;
 
-    public function __construct(string $path, string $baseNamespace)
+    /**
+     * @var string
+     */
+    protected $namespace;
+
+    public function __construct(string $namespace, string $path, string $psrNamespace)
     {
         $this->path = $path;
-        $this->baseNamespace = $baseNamespace;
+        $this->psrNamespace = $psrNamespace;
+        $this->namespace = $namespace;
     }
 
     public function handle(Finder $finder)
@@ -36,8 +41,9 @@ class RegisterHooksInPath
 
         /** @var SplFileInfo $directory */
         foreach ($finder->in($this->path)->directories()  as $directory) {
-            $class = Path::parseClass($this->baseNamespace, $this->path, $directory);
-            Hook::register(snake_case($directory->getBasename()), $class);
+            $class = Path::parseClass($this->psrNamespace, $this->path, $directory);
+            $identifier = $this->namespace.'.'.snake_case($directory->getBasename());
+            Hook::resolve()->register($identifier, $class);
         }
 
     }

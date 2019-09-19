@@ -10,27 +10,37 @@ use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
 use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FieldComposer;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilderInterface;
+use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface as FormContract;
+use SuperV\Platform\Domains\Resource\Form\v2\EntryRepository;
+use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
+use SuperV\Platform\Domains\Resource\Form\v2\Form;
+use SuperV\Platform\Domains\Resource\Form\v2\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\v2\FormFieldComposer;
+use SuperV\Platform\Domains\Resource\Hook\Hook;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
+use SuperV\Platform\Domains\Resource\Listeners\RegisterEntryEventListeners;
 use SuperV\Platform\Domains\Resource\Relation\RelationCollection;
+use SuperV\Platform\Events\PlatformInstalledEvent;
 use SuperV\Platform\Providers\BaseServiceProvider;
 
 class ResourceServiceProvider extends BaseServiceProvider
 {
     protected $listeners = [
-        ColumnCreatedEvent::class              => Listeners\SyncField::class,
-        ColumnUpdatedEvent::class              => Listeners\SyncField::class,
+        ColumnCreatedEvent::class              => Listeners\SaveFieldEntry::class,
+        ColumnUpdatedEvent::class              => Listeners\SaveFieldEntry::class,
         ColumnDroppedEvent::class              => Listeners\DeleteField::class,
         TableCreatingEvent::class              => Listeners\CreateResource::class,
         TableCreatedEvent::class               => Listeners\CreateResourceForm::class,
+        PlatformInstalledEvent::class          => Listeners\CreatePlatformResourceForms::class,
         AddonBootedEvent::class                => Listeners\RegisterExtensions::class,
         Model\Events\EntrySavingEvent::class   => [
-            Listeners\ValidateSavingEntry::class,
-            Listeners\SaveUpdatedBy::class,
-            Listeners\HookSaving::class,
+//            Listeners\ValidateSavingEntry::class,
+Listeners\SaveUpdatedBy::class,
         ],
         Model\Events\EntrySavedEvent::class    => [
-            Listeners\HookSaved::class,
         ],
         Model\Events\EntryCreatingEvent::class => Listeners\SaveCreatedBy::class,
         Resource\ResourceActivityEvent::class  => Listeners\RecordActivity::class,
@@ -39,47 +49,23 @@ class ResourceServiceProvider extends BaseServiceProvider
 
     protected $_bindings = [
         Table\Contracts\DataProvider::class => Table\EloquentDataProvider::class,
+        FormContract::class                 => Form::class,
+        FormBuilderInterface::class         => FormBuilder::class,
+        FieldComposer::class                => FormFieldComposer::class,
+        EntryRepositoryInterface::class     => EntryRepository::class,
+
     ];
 
     protected $_singletons = [
         'relations' => RelationCollection::class,
+        Hook::class => Hook::class,
     ];
+
+    protected $commands = [ResourceImportCommand::class];
 
     public function register()
     {
         parent::register();
-
-        app('events')->listen('eloquent.creating:*', function ($event, $payload) {
-            if (($entry = $payload[0]) instanceof EntryContract) {
-                Model\Events\EntryCreatingEvent::dispatch($entry);
-            }
-        });
-
-        app('events')->listen('eloquent.created:*', function ($event, $payload) {
-            if (($entry = $payload[0]) instanceof EntryContract) {
-                Model\Events\EntryCreatedEvent::dispatch($entry);
-            }
-        });
-        app('events')->listen('eloquent.deleted:*', function ($event, $payload) {
-            if (($entry = $payload[0]) instanceof EntryContract) {
-                Model\Events\EntryDeletedEvent::dispatch($entry);
-            }
-        });
-        app('events')->listen('eloquent.saving:*', function ($event, $payload) {
-            if (($entry = $payload[0]) instanceof EntryContract) {
-                Model\Events\EntrySavingEvent::dispatch($entry);
-            }
-        });
-        app('events')->listen('eloquent.saved:*', function ($event, $payload) {
-            if (($entry = $payload[0]) instanceof EntryContract) {
-                Model\Events\EntrySavedEvent::dispatch($entry);
-            }
-        });
-        app('events')->listen('eloquent.retrieved:*', function ($event, $payload) {
-            if (($entry = $payload[0]) instanceof EntryContract) {
-                Model\Events\EntryRetrievedEvent::dispatch($entry);
-            }
-        });
     }
 
     public function boot()
@@ -87,5 +73,7 @@ class ResourceServiceProvider extends BaseServiceProvider
         if (! Platform::isInstalled()) {
             return;
         }
+
+        RegisterEntryEventListeners::dispatch();
     }
 }

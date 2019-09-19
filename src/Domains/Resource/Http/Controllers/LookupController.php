@@ -25,12 +25,12 @@ class LookupController extends BaseApiController
 
             $keyName = $query->getModel()->getKeyName();
             $alreadyAttachedItems = $this->entry->{$relation->getName()}()
-                                                ->pluck($resource->getHandle().'.'.$keyName);
+                                                ->pluck($resource->config()->getTable().'.'.$keyName);
 
             $query->whereNotIn($keyName, $alreadyAttachedItems);
             $table->setQuery($query);
 
-            return $table->build($this->request);
+            return $table->setRequest($this->request)->build();
         }
 
         return MakeComponentTree::dispatch($table)->withTokens(['res' => $resource->toArray()]);

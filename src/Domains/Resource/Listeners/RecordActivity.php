@@ -17,7 +17,7 @@ class RecordActivity
         $resource = sv_resource($route->parameter('resource'));
         $entryType = $resource->newEntryInstance()->getMorphClass();
 
-        sv_resource('sv_activities')->create([
+        sv_resource('platform.activities')->create([
             'user_id'     => $event->request->user()->getKey(),
             'resource_id' => $resource->id(),
             'entry_type'  => $entryType,
@@ -31,6 +31,6 @@ class RecordActivity
     protected function shouldRecord($activity)
     {
         return starts_with($activity, ['resource.', 'relation'])
-            && ! in_array($activity, ['resource.index.table']);
+            && ! in_array($activity, ['resource.dashboard']);
     }
 }

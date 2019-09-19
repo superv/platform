@@ -5,9 +5,8 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
-use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
+use SuperV\Platform\Domains\Resource\Form\FormRepository;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
@@ -91,19 +90,19 @@ class FormControllerTest extends ResourceTestCase
 
     protected function makeForm(array $overrides = []): FormModel
     {
-        $factory = app(FormFactory::class);
-        $formEntry = $factory->create(array_merge([
+        $formEntry = FormRepository::resolve()->create('testing', 'foo', array_merge([
             'title'  => 'Public Form',
             'public' => false,
         ], $overrides));
 
-        $formEntry->fields()->attach(FieldModel::create(['type' => 'text', 'name' => 'name']));
-        $formEntry->fields()->attach(FieldModel::create(['type' => 'text', 'name' => 'email']));
-        $formEntry->fields()->attach(FieldModel::create(['type'   => 'belongs_to',
-                                                         'name'   => 'user',
-                                                         'config' => [
-                                                             'related_resource' => 'users',
-                                                         ]]));
+        $formEntry->createField(['identifier' => 'sv.forms.fields:name', 'type' => 'text', 'name' => 'name']);
+        $formEntry->createField(['identifier' => 'sv.forms.fields:email', 'type' => 'text', 'name' => 'email']);
+        $formEntry->createField(['identifier' => 'sv.forms.fields:user',
+                                 'type'       => 'belongs_to',
+                                 'name'       => 'user',
+                                 'config'     => [
+                                     'related_resource' => 'platform.users',
+                                 ]]);
 
         return $formEntry;
     }

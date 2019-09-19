@@ -19,14 +19,15 @@ class ResourceUpdateTest extends ResourceTestCase
 
     function test__updates_all_required()
     {
-        $user = $this->schema()->users()->fake(['group_id' => 1]);
+        $user = $this->blueprints()->users()->fake(['group_id' => 1]);
 
         $post = [
             'name'  => 'Ali',
             'email' => 'ali@superv.io',
             'group' => 2,
         ];
-        $response = $this->postJsonUser($user->route('update'), $post);
+        $response = $this->postJsonUser($user->route('forms.update'), $post);
+//        dd($response->decodeResponseJson());
         $response->assertOk();
 
         $user = $user->fresh();
@@ -38,20 +39,20 @@ class ResourceUpdateTest extends ResourceTestCase
 
     function test__updates_some_required()
     {
-        $user = $this->schema()->users()->fake();
+        $user = $this->blueprints()->users()->fake();
 
-        $this->postJsonUser($user->route('update'), ['name' => 'Ali'])->assertOk();
-        $this->postJsonUser($user->route('update'), ['email' => 'ali@superv.io'])->assertOk();
+        $this->postJsonUser($user->route('forms.update'), ['name' => 'Ali'])->assertOk();
+        $this->postJsonUser($user->route('forms.update'), ['email' => 'ali@superv.io'])->assertOk();
     }
 
     function test__fails_on_unique_validation()
     {
         $this->withExceptionHandling();
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $users->fake(['email' => 'ali@superv.io']);
 
         $user = $users->fake();
-        $response = $this->postJsonUser($user->route('update'), ['email' => 'ali@superv.io']);
+        $response = $this->postJsonUser($user->route('forms.update'), ['email' => 'ali@superv.io']);
         $response->assertStatus(422);
 
         $this->assertEquals(['email'], array_keys($response->decodeResponseJson('errors')));
@@ -59,10 +60,10 @@ class ResourceUpdateTest extends ResourceTestCase
 
     function test__fails_on_nullable_validation()
     {
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $user = $users->fake();
 
-        $response = $this->postJsonUser($user->route('update'), ['name' => null]);
+        $response = $this->postJsonUser($user->route('forms.update'), ['name' => null]);
         $response->assertStatus(422);
 
         $this->assertEquals(['name'], array_keys($response->decodeResponseJson('errors')));
@@ -71,11 +72,11 @@ class ResourceUpdateTest extends ResourceTestCase
     function test__uploads_files()
     {
         Storage::fake('fakedisk');
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $user = $users->fake();
 
         $this->withoutExceptionHandling();
-        $response = $this->postJsonUser($user->route('update'), ['avatar' => $this->makeUploadedFile()]);
+        $response = $this->postJsonUser($user->route('forms.update'), ['avatar' => $this->makeUploadedFile()]);
         $response->assertOk();
 
         $this->assertNotNull(Media::first());

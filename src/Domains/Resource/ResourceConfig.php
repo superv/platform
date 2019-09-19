@@ -2,13 +2,19 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use Event;
+use SuperV\Platform\Contracts\Arrayable;
+use SuperV\Platform\Domains\Resource\Events\ResourceConfigResolvedEvent;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
 class ResourceConfig
 {
     use Hydratable;
 
-    protected $table;
+    protected $name;
+
+    protected $namespace;
 
     protected $hasUuid;
 
@@ -36,14 +42,17 @@ class ResourceConfig
 
     protected $sortable;
 
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Resource
-     */
-    protected $resource;
+    /** @var \SuperV\Platform\Domains\Resource\ResourceDriver */
+    protected $driver;
 
-    public function __construct(array $attributes = [])
+    protected function __construct(array $attributes = [], $overrideDefault = true)
     {
-        $this->hydrate($attributes);
+        if (! empty($attributes)) {
+            if ($driver = array_get($attributes, 'driver')) {
+                $attributes['driver'] = new ResourceDriver($driver);
+            }
+            $this->hydrate($attributes, $overrideDefault);
+        }
     }
 
     public function getResourceKey()
@@ -52,12 +61,8 @@ class ResourceConfig
             return $this->resourceKey;
         }
 
-//        if ($this->resource) {
-//            return str_singular($this->resource->getHandle());
-//        }
-
-        if ($this->table) {
-            return str_singular($this->table);
+        if ($this->getName()) {
+            return str_singular($this->getName());
         }
 
         return null;
@@ -70,16 +75,21 @@ class ResourceConfig
         return $this;
     }
 
-    public function table($table)
+    public function getIdentifier()
     {
-        $this->table = $table;
+        return $this->getNamespace().'.'.$this->getName();
+    }
+
+    public function setIdentifier($identifier)
+    {
+        list($this->namespace, $this->name) = explode('.', $identifier);
 
         return $this;
     }
 
     public function getHandle()
     {
-        return $this->table;
+        return $this->getIdentifier();
     }
 
     public function label($label)
@@ -112,16 +122,9 @@ class ResourceConfig
         return $this;
     }
 
-    public function setTable($table)
-    {
-        $this->table = $table;
-
-        return $this;
-    }
-
     public function getLabel()
     {
-        return $this->label ?? ucwords(str_replace('_', ' ', $this->table));
+        return $this->label ?? ucwords(str_replace('_', ' ', $this->getName()));
     }
 
     public function getModel()
@@ -232,18 +235,100 @@ class ResourceConfig
         return $this->ownerKey;
     }
 
+    public function getDriver(): ?ResourceDriver
+    {
+        return $this->driver;
+    }
+
+    public function getDriverParam($key)
+    {
+        return $this->getDriver()->getParam($key);
+    }
+
+    public function getTable()
+    {
+        return $this->getDriver()->getParam('table');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * @param mixed $namespace
+     */
+    public function setNamespace($namespace): void
+    {
+        $this->namespace = $namespace;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param mixed $name
+     */
+    public function setName($name): void
+    {
+        $this->name = $name;
+    }
+
     public function toArray(): array
     {
         $attributes = [];
         foreach ($this as $key => $value) {
+            if ($value instanceof Arrayable) {
+                $value = $value->toArray();
+            }
+            $getter = 'get'.studly_case(snake_case($key));
+            if (! $value && method_exists($this, $getter)) {
+                $value = $this->{$getter}();
+            }
             $attributes[snake_case($key)] = $value;
         }
 
         return array_except($attributes, 'resource');
     }
 
-    public static function make(array $config, $overrideDefault = true)
+    public function merge(string $otherClass)
     {
-        return (new static)->hydrate($config, $overrideDefault);
+        $other = new $otherClass;
+
+        $this->fill($other->toArray());
+    }
+
+    public static function make(array $config = [], $overrideDefault = true)
+    {
+        $config = (new static($config, $overrideDefault));
+
+        ResourceConfigResolvedEvent::fire($config);
+
+        Event::fire(sprintf("%s::config.resolved", $config->getIdentifier()), $config);
+
+        return $config;
+    }
+
+    public static function find($identifier)
+    {
+        if (is_null($identifier)) {
+            PlatformException::runtime('Identifier can not be null');
+        }
+
+        $resourceEntry = ResourceModel::query()->where('identifier', $identifier)->first();
+
+        if (is_null($resourceEntry)) {
+            PlatformException::runtime("Resource config not found for identifier: ".$identifier);
+        }
+
+        return static::make($resourceEntry->config);
     }
 }

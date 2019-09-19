@@ -55,18 +55,23 @@ class BelongsToField extends FieldType implements
      */
     public function sortQuery($query, $direction)
     {
+        /** @var \SuperV\Platform\Domains\Resource\Resource $parentResource */
         $parentResource = $this->field->getResource();
+        $parentTable = $parentResource->getIdentifier();
         $relation = RelationConfig::create($this->field->getType(), $this->field->getConfig());
 
         $relatedResource = ResourceFactory::make($relation->getRelatedResource());
+        $relatedTable = $relatedResource->config()->getTable();
+
         $labelField = $relatedResource->fields()->getEntryLabelField();
         $labelFieldColumName = $labelField ? $labelField->getColumnName() : $relatedResource->config()->getKeyName();
-        $orderBy = $relatedResource->getHandle().'_1.'.$labelFieldColumName;
+
+        $orderBy = $relatedTable.'_1.'.$labelFieldColumName;
 
         $joinType = 'leftJoin';
         $query->getQuery()
-              ->{$joinType}($relatedResource->getHandle()." AS ".$relatedResource->getHandle()."_1",
-                  $relatedResource->getHandle().'_1.id', '=', $parentResource->getHandle().'.'.$relation->getForeignKey());
+              ->{$joinType}($relatedTable." AS ".$relatedTable."_1",
+                  $relatedTable.'_1.'.$relatedResource->getKeyName(), '=', $parentTable.'.'.$relation->getForeignKey());
 
         $query->orderBy($orderBy, $direction);
     }
@@ -101,7 +106,7 @@ class BelongsToField extends FieldType implements
             $query->where($queryParams);
         }
 
-        $entryLabel = $this->relatedResource->config()->getEntryLabel('#{id}');
+        $entryLabel = $this->relatedResource->config()->getEntryLabel(sprintf("#%s", $this->relatedResource->getKeyName()));
 
         if ($entryLabelField = $this->relatedResource->fields()->getEntryLabelField()) {
             $query->orderBy($entryLabelField->getColumnName(), 'ASC');
@@ -147,7 +152,7 @@ class BelongsToField extends FieldType implements
             if ($entry) {
                 if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                     $resource = sv_resource($relatedEntry);
-                    $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
+                    $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
                 }
             }
             $this->relatedResource = $this->resolveRelatedResource();
@@ -160,7 +165,7 @@ class BelongsToField extends FieldType implements
                 $payload->set('meta.options', $url);
             }
 //            $payload->set('placeholder', sv_trans('sv::resource.select', ['resource' => $this->relatedResource->getSingularLabel()]));
-            $payload->set('placeholder', __('Select Resource', ['resource' =>  $this->relatedResource->getSingularLabel()]));
+            $payload->set('placeholder', __('Select :Object', ['object' => $this->relatedResource->getSingularLabel()]));
         };
     }
 
@@ -197,7 +202,8 @@ class BelongsToField extends FieldType implements
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                 $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
+
+                $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
             }
         };
     }
@@ -210,7 +216,7 @@ class BelongsToField extends FieldType implements
             }
             if ($relatedEntry = $entry->getRelation($this->getName())) {
                 $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
+                $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
             }
         };
     }

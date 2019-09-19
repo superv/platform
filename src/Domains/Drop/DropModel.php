@@ -3,10 +3,10 @@
 namespace SuperV\Platform\Domains\Drop;
 
 use Closure;
-use SuperV\Platform\Domains\Database\Model\Model;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Drop\Contracts\Drop;
 
-class DropModel extends Model implements Drop
+class DropModel extends Entry implements Drop
 {
     private $entryValue;
 

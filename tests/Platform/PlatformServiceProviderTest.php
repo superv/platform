@@ -29,7 +29,9 @@ class PlatformServiceProviderTest extends TestCase
 
         Platform::shouldReceive('boot')->once();
         Platform::makePartial();
-        (new PlatformServiceProvider($this->app))->boot();
+        $platformServiceProvider = new PlatformServiceProvider($this->app);
+        $platformServiceProvider->register();
+        $platformServiceProvider->boot();
     }
 
     function test__does_not_boot_platform_if_superv_is_not_installed()

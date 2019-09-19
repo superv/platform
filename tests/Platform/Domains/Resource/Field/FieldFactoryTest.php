@@ -17,7 +17,7 @@ class FieldFactoryTest extends ResourceTestCase
 {
     function test__make_field_from_field_entry()
     {
-        $fieldEntry = new FieldModel(['name' => 'title', 'type' => 'text']);
+        $fieldEntry = new FieldModel(['identifier' => uuid(), 'name' => 'title', 'type' => 'text']);
 
         $field = FieldFactory::createFromEntry($fieldEntry);
         $this->assertInstanceOf(Field::class, $field);

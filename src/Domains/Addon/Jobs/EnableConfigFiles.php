@@ -25,7 +25,7 @@ class EnableConfigFiles
             $fromModule = require $path;
             $merged = array_replace_recursive($fromModule, $config);
 
-            config()->set($this->addon->slug().'::'.$key, $merged);
+            config()->set($this->addon->getIdentifier().'::'.$key, $merged);
         }
     }
 }

@@ -26,7 +26,7 @@ class RelationsTest extends ResourceTestCase
         $users = $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->belongsTo('t_groups', 'group');
+            $table->belongsTo('platform.t_groups', 'group');
         });
 
         $this->assertColumnNotExists('t_users', 'posts');
@@ -35,7 +35,7 @@ class RelationsTest extends ResourceTestCase
         $this->assertEquals('belongs_to', $relation->getType());
 
         $this->assertEquals([
-            'related_resource' => 't_groups',
+            'related_resource' => 'platform.t_groups',
             'foreign_key'      => 'group_id',
         ], $relation->getRelationConfig()->toArray());
     }
@@ -48,7 +48,7 @@ class RelationsTest extends ResourceTestCase
             $table->hasMany(TestPost::class, 'posts', 'user_id', 'post_id');
         });
 
-        $users = ResourceFactory::make('t_users');
+        $users = ResourceFactory::make('platform.t_users');
         $this->assertColumnNotExists('t_users', 'posts');
 
         $relation = $users->getRelation('posts');
@@ -66,7 +66,7 @@ class RelationsTest extends ResourceTestCase
         $this->create('t_users', function (Blueprint $table) {
             $table->increments('id');
             $table->belongsToMany(TestRole::class, 'roles')
-                  ->pivotTable('t_user_roles')
+                  ->pivotTable('testing.t_user_roles')
                   ->pivotForeignKey('user_id')
                   ->pivotRelatedKey('role_id')
                   ->pivotColumns(
@@ -75,7 +75,7 @@ class RelationsTest extends ResourceTestCase
                       });
         });
 
-        $users = ResourceFactory::make('t_users');
+        $users = ResourceFactory::make('platform.t_users');
 
         $this->assertColumnNotExists('t_users', 'roles');
         $this->assertColumnsExist('t_user_roles', ['id', 'user_id', 'role_id', 'status', 'created_at', 'updated_at']);
@@ -89,32 +89,39 @@ class RelationsTest extends ResourceTestCase
             'pivot_foreign_key' => 'user_id',
             'pivot_related_key' => 'role_id',
             'pivot_columns'     => ['status'],
+            'pivot_namespace'   => 'testing',
+            'pivot_identifier'  => 'testing.t_user_roles',
         ], $relation->getRelationConfig()->toArray());
     }
 
     function test__saves_pivot_columns_even_if_pivot_table_is_created_before()
     {
-        $this->create('t_users', function (Blueprint $table) {
+        $this->create('testing.t_users', function (Blueprint $table) {
             $table->increments('id');
-            $pivotColumns = function (Blueprint $pivotTable) {
-                $pivotTable->string('status');
-            };
-            $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
+            $table->morphToMany(TestRole::class, 'roles', 'owner')
+                  ->pivotTable('testing.t_assigned_roles')
+                  ->pivotRelatedKey('role_id')
+                  ->pivotColumns(function (Blueprint $pivotTable) {
+                      $pivotTable->string('status');
+                  });
         });
 
-        $users = ResourceFactory::make('t_users');
+        $users = ResourceFactory::make('testing.t_users');
         $roles = $users->getRelation('roles');
         $this->assertEquals(['status'], $roles->getRelationConfig()->getPivotColumns());
 
-        $this->create('t_admins', function (Blueprint $table) {
+        $this->create('testing.t_admins', function (Blueprint $table) {
             $table->increments('id');
-            $pivotColumns = function (Blueprint $pivotTable) {
-                $pivotTable->string('status');
-            };
-            $table->morphToMany(TestRole::class, 'roles', 'owner', 't_assigned_roles', 'role_id', $pivotColumns);
+
+            $table->morphToMany(TestRole::class, 'roles', 'owner')
+                  ->pivotTable('testing.t_assigned_roles')
+                  ->pivotRelatedKey('role_id')
+                  ->pivotColumns(function (Blueprint $pivotTable) {
+                      $pivotTable->string('status');
+                  });
         });
 
-        $admins = ResourceFactory::make('t_admins');
+        $admins = ResourceFactory::make('testing.t_admins');
         $roles = $admins->getRelation('roles');
         $this->assertEquals(['status'], $roles->getRelationConfig()->getPivotColumns());
     }

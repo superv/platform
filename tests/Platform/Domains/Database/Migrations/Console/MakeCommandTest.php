@@ -24,7 +24,7 @@ class MakeCommandTest extends TestCase
 //        $creator->shouldReceive('setAddon')->with('test-addon')->once();
 //        $creator->shouldReceive('create')->once();
 //
-//        $this->runCommand($command, ['name' => 'CreateMigrationMake', '--addon' => 'test-addon']);
+//        $this->runCommand($command, ['name' => 'CreateMigrationMake', '--namespace' => 'test-addon']);
 //    }
 
     /**
@@ -36,7 +36,7 @@ class MakeCommandTest extends TestCase
         Scopes::register('sample', $this->tmpDirectory);
 
         $this->assertCount(0, \File::files($this->tmpDirectory));
-        $this->artisan('make:migration', ['name' => 'CreateMigrationMake', '--addon' => 'sample']);
+        $this->artisan('make:migration', ['name' => 'CreateMigrationMake', '--namespace' => 'sample']);
         $this->assertCount(1, \File::files($this->tmpDirectory));
     }
 }

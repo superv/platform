@@ -55,7 +55,10 @@ class FileField extends FieldType implements DoesNotInteractWithTable, HasModifi
 
     protected function composer()
     {
-        return function (Payload $payload, EntryContract $entry) {
+        return function (Payload $payload, ?EntryContract $entry) {
+            if (! $entry) {
+                return;
+            }
             if ($media = $this->getMedia($entry, $this->getName())) {
                 $payload->set('image_url', $media->getUrl());
                 $payload->set('config', null);

@@ -85,7 +85,7 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
             if ($entry) {
                 if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                     $resource = sv_resource($relatedEntry);
-                    $payload->set('meta.link', $resource->route('view.page', $relatedEntry));
+                    $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
                 }
             }
 
@@ -115,9 +115,10 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
         }
 
         $keyName = $query->getModel()->getKeyName();
+        $tableName = $query->getModel()->getTable();
         if ($entry) {
             $alreadyAttachedItems = $entry->{$this->getName()}()
-                                          ->pluck($resource->getHandle().'.'.$keyName);
+                                          ->pluck($tableName.'.'.$keyName);
             $query->whereNotIn($keyName, $alreadyAttachedItems);
         }
 

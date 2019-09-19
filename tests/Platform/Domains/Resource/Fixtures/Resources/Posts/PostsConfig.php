@@ -5,10 +5,13 @@ namespace Tests\Platform\Domains\Resource\Fixtures\Resources\Posts;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
 
-class PostsConfig extends ResourceConfig
+class PostsConfig
 {
-    protected $label =  'Posts v2';
+    public static $identifier = 'testing.posts';
 
-    protected $model = TestPostModel::class;
-
+    public function resolved(ResourceConfig $config)
+    {
+        $config->label('Posts Hooked');
+        $config->model(TestPostModel::class);
+    }
 }

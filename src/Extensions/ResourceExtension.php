@@ -10,18 +10,18 @@ class ResourceExtension implements ExtendsResource
 {
     public function extend(Resource $resource)
     {
-        $resource->config()->entryLabelField('handle');
-        $resource->searchable(['handle']);
+        $resource->config()->entryLabelField('identifier');
+        $resource->searchable(['identifier']);
         $fields = $resource->indexFields();
 
-        $fields->get('addon')->copyToFilters();
+        $fields->get('namespace')->copyToFilters();
 
         $resource->onIndexConfig(function (ResourceTable $table) {
             $table->showIdColumn();
         });
 
         $resource->onIndexData(function (ResourceTable $table) {
-            $table->setOption('limit', 50);
+            $table->setOption('limit', 10);
         });
     }
 

@@ -5,9 +5,10 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
-use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\EntryForm;
+use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -26,7 +27,9 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__displays_create_form()
     {
-        $users = $this->schema()
+        $this->withoutExceptionHandling();
+
+        $users = $this->blueprints()
                       ->users(function (Blueprint $table) {
                           $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
                           $table->createdBy()->updatedBy();
@@ -34,46 +37,21 @@ class ResourceFormsTest extends ResourceTestCase
 
         // Get Create form
         //
-        $page = $this->getUserPage($users->route('create'));
+        $form = $this->getUserPage($users->route('forms.create'));
 
-        $formBlock = HelperComponent::from($page->getProp('blocks.0'));
-        $form = $this->getUserPage($formBlock->getProp('url'));
         $this->assertEquals(8, $form->countProp('fields'));
 
         $fields = collect($form->getProp('fields'))->keyBy('name');
 
         $group = $fields->get('group');
         $this->assertEquals('belongs_to', $group['type']);
-
-    }
-
-    function test__displays_extended_create_form()
-    {
-        $users = $this->schema()->users();
-
-        $this->withoutExceptionHandling();
-        // extend resource creation form
-        //
-        Resource::extend('t_users')->with(function (Resource $resource) {
-            $resource->onCreating(function (Form $form) {
-                $form->onlyFields('name', 'email', 'group');
-            });
-        });
-
-        // Get Create form
-        //
-        $page = $this->getUserPage($users->route('create'));
-        $formBlock = HelperComponent::from($page->getProp('blocks.0'));
-        $form = $this->getUserPage($formBlock->getProp('url'));
-
-        $this->assertEquals(3, $form->countProp('fields'));
     }
 
     function test__displays_update_form()
     {
         $this->withoutExceptionHandling();
 
-        $user = $this->schema()
+        $user = $this->blueprints()
                      ->users(function (Blueprint $table) {
                          $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
                          $table->createdBy()->updatedBy();
@@ -83,14 +61,14 @@ class ResourceFormsTest extends ResourceTestCase
         // Upload an avatar for the user
         //
         Storage::fake('fakedisk');
-        $this->postJsonUser($user->route('update'), ['avatar' => $this->makeUploadedFile()]);
+
+        $this->postJsonUser($user->route('forms.update'), ['avatar' => $this->makeUploadedFile()]);
 
         // Get Update form
         //
-        $response = $this->getJsonUser($user->route('edit'))->assertOk();
-        $form = HelperComponent::from($response->decodeResponseJson('data'));
+        $form = $this->getUserPage($user->route('forms.edit'));
 
-        $this->assertEquals($user->route('update'), $form->getProp('url'));
+        $this->assertEquals($user->route('forms.update'), $form->getProp('url'));
         $this->assertEquals('post', $form->getProp('method'));
 
         // make sure fields is an array, not an object
@@ -101,7 +79,7 @@ class ResourceFormsTest extends ResourceTestCase
         $this->assertEquals(8, $fields->count());
 
         $name = $fields->get('name');
-        $this->assertNotNull($name['uuid']);
+        $this->assertNotNull($name['revision_id']);
         $this->assertEquals('text', $name['type']);
         $this->assertEquals('name', $name['name']);
         $this->assertEquals('Name', $name['label']);
@@ -126,9 +104,9 @@ class ResourceFormsTest extends ResourceTestCase
         $this->assertEquals('belongs_to', $group['type']);
         $this->assertEquals(1, $group['value']);
 
-//        $this->assertEquals(sv_resource('t_groups')->count(), count($group['meta']['options']));
+//        $this->assertEquals(sv_resource('platform.t_groups')->count(), count($group['meta']['options']));
 //
-//        $first = sv_resource('t_groups')->first();
+//        $first = sv_resource('platform.t_groups')->first();
 //        $this->assertEquals(
 //            ['value' => $first->getId(), 'text' => $first->title],
 //            $group['meta']['options'][0]
@@ -137,24 +115,25 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__displays_extended_update_form()
     {
-        $user = $this->schema()
+        $user = $this->blueprints()
                      ->users(function (Blueprint $table) {
-                         $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
-                         $table->createdBy()->updatedBy();
-                     })
+                $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
+                $table->createdBy()->updatedBy();
+            })
                      ->fake(['group_id' => 1]);
+        ResourceFactory::wipe();
 
         // extend resource edit form
         //
-        Resource::extend('t_users')->with(function (Resource $resource) {
-            $resource->onEditing(function (Form $form) {
+        Resource::extend('platform.t_users')->with(function (Resource $resource) {
+            $resource->onEditing(function (EntryForm $form) {
                 $form->onlyFields('name', 'email', 'group');
             });
         });
 
         // Get Update form
         //
-        $response = $this->getJsonUser($user->route('edit'))->assertOk();
+        $response = $this->getJsonUser($user->route('forms.edit'))->assertOk();
         $form = HelperComponent::from($response->decodeResponseJson('data'));
         $this->assertEquals(3, $form->countProp('fields'));
     }
@@ -162,14 +141,14 @@ class ResourceFormsTest extends ResourceTestCase
     function test__posts_create_form()
     {
         $this->withoutExceptionHandling();
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $post = [
             'name'     => 'Ali',
             'email'    => 'ali@superv.io',
             'group_id' => 1,
         ];
 
-        $response = $this->postJsonUser($users->route('store'), $post);
+        $response = $this->postJsonUser($users->route('forms.store'), $post);
         $response->assertOk();
 
         $user = $users->first();
@@ -178,16 +157,17 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__validation()
     {
-        $this->withExceptionHandling();
+//        $this->withExceptionHandling();
 
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
         $users->fake(['email' => 'ali@superv.io']);
 
         $post = [
             'name'  => 'Ali Selcuk',
             'email' => 'ali@superv.io',
         ];
-        $response = $this->postJsonUser($users->route('store'), $post);
+        $response = $this->postJsonUser($users->route('forms.store'), $post);
+//        dd($response->decodeResponseJson());
         $response->assertStatus(422);
 
         $this->assertEquals(
@@ -204,19 +184,10 @@ class ResourceFormsTest extends ResourceTestCase
             $table->restorable();
         });
 
-        $form = FormBuilder::buildFromResource($users);
+        $form = ResourceFormBuilder::buildFromResource($users);
         $form->make();
 
         $this->assertEquals(0, count($form->compose()->get('fields')));
-    }
-
-    /**
-     * @param \SuperV\Platform\Domains\Resource\Resource $resource
-     * @return string
-     */
-    protected function getCreateRoute(Resource $resource): string
-    {
-        return route('resource.create', ['resource' => $resource->getHandle()]);
     }
 }
 

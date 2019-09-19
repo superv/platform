@@ -2,10 +2,10 @@
 
 namespace SuperV\Platform\Domains\Addon;
 
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Exceptions\PlatformException;
 
-class AddonModel extends ResourceEntry
+class AddonModel extends Entry
 {
     protected $table = 'sv_addons';
 
@@ -21,8 +21,19 @@ class AddonModel extends ResourceEntry
         if (class_exists($class)) {
             return new $class($this);
         } else {
-            PlatformException::runtime("Could not resolve addon: ". $class);
+            $this->update(['enabled' => false]);
+            PlatformException::runtime(sprintf("Disabled unresolvable addon: [%s]", $class));
         }
+    }
+
+    public function getPsrNamespace()
+    {
+        return $this->psr_namespace;
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     /**
@@ -30,24 +41,7 @@ class AddonModel extends ResourceEntry
      */
     public function addonClass()
     {
-        return $this->namespace.'\\'.$this->name;
-    }
-
-    public function fullSlug()
-    {
-        return $this->slug;
-    }
-
-    public function shortSlug()
-    {
-        $parts = explode('.', $this->slug);
-
-        return $parts[count($parts) - 1];
-    }
-
-    public function shortName()
-    {
-        return studly_case($this->shortSlug());
+        return $this->getPsrNamespace().'\\'.studly_case($this->getName().'_'.$this->getType());
     }
 
     public function getRelativePath()
@@ -55,22 +49,32 @@ class AddonModel extends ResourceEntry
         return $this->path;
     }
 
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getVendor()
+    {
+        return $this->vendor;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
     public function getRealPath()
     {
         return base_path($this->getRelativePath());
     }
 
-    /**
-     * @param $slug
-     * @return self
-     */
-    public static function bySlug($slug)
+    public static function byIdentifier($identifier): ?AddonModel
     {
-        return static::query()->where('slug', $slug)->first();
-    }
-
-    public static function allKeyBySlug()
-    {
-        return static::query()->enabled()->get()->keyBy('slug');
+        if (str_is('*.*', $identifier)) {
+            list($vendor, $identifier) = explode('.', $identifier);
+        }
+        return static::query()->where('identifier', $identifier)
+                     ->first();
     }
 }

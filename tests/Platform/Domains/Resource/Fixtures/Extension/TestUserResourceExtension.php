@@ -15,7 +15,7 @@ class TestUserResourceExtension implements ExtendsResource, ObservesEntryRetriev
 
     public function extends(): string
     {
-        return 't_users';
+        return 'platform.t_users';
     }
 
     public function extend(Resource $resource)
@@ -25,16 +25,16 @@ class TestUserResourceExtension implements ExtendsResource, ObservesEntryRetriev
 
     public function retrieved(EntryContract $entry)
     {
-        static::$called['retrieved'] = $entry->getTable() === $this->extends() ? $entry : null;
+        static::$called['retrieved'] = $entry->getResourceIdentifier() === $this->extends() ? $entry : null;
     }
 
     public function saving(EntryContract $entry)
     {
-        static::$called['saving'] = $entry->getTable() === $this->extends() ? $entry : null;
+        static::$called['saving'] = $entry->getResourceIdentifier() === $this->extends() ? $entry : null;
     }
 
     public function saved(EntryContract $entry)
     {
-        static::$called['saved'] = $entry->getTable() === $this->extends() ? $entry : null;
+        static::$called['saved'] = $entry->getResourceIdentifier() === $this->extends() ? $entry : null;
     }
 }

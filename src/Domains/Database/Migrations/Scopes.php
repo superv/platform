@@ -6,12 +6,18 @@ class Scopes
 {
     protected static $scopes = [];
 
+    public static function clear()
+    {
+        static::$scopes = [];
+    }
+
     public static function register($key, $path)
     {
-        if (! $_path = realpath($path)) {
-            return;
-        }
-        static::$scopes[$key] = realpath($_path);
+        static::$scopes[$key] = $path;
+//        if (! $_path = realpath($path)) {
+//            return;
+//        }
+//        static::$scopes[$key] = realpath($_path);
     }
 
     public static function scopes()

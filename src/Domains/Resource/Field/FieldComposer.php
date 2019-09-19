@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\EntryForm;
 use SuperV\Platform\Support\Composer\Payload;
 
 class FieldComposer
@@ -22,7 +22,7 @@ class FieldComposer
         $this->field = $field instanceof ProvidesField ? $field->makeField() : $field;
     }
 
-    public function forForm(Form $form = null)
+    public function forForm(EntryForm $form = null)
     {
         $field = $this->field;
 
@@ -39,8 +39,9 @@ class FieldComposer
         }
 
         $payload = (new Payload([
+            'identifier'  => $field->getIdentifier(),
             'type'        => $field->getType(),
-            'uuid'        => $field->uuid(),
+            'revision_id' => $field->revisionId(),
             'name'        => $field->getName(),
             'label'       => $field->getLabel(),
             'placeholder' => $field->getPlaceholder(),
@@ -63,11 +64,12 @@ class FieldComposer
         $field = $this->field;
 
         $payload = (new Payload([
-            'uuid'     => $field->uuid(),
-            'name'     => $field->getName(),
-            'label'    => $field->getLabel(),
-            'classes'  => $field->getConfigValue('classes'),
-            'sortable' => $field->getFieldType() instanceof SortsQuery,
+            'identifier'  => $field->getIdentifier(),
+            'revision_id' => $field->revisionId(),
+            'name'        => $field->getName(),
+            'label'       => $field->getLabel(),
+            'classes'     => $field->getConfigValue('classes'),
+            'sortable'    => $field->getFieldType() instanceof SortsQuery,
         ]))->setFilterNull(false);
 
         return $payload;
@@ -90,11 +92,13 @@ class FieldComposer
         }
 
         $payload = (new Payload([
-            'type'       => $field->getType(),
-            'name'       => $field->getColumnName(),
-            'value'      => $value,
-            'presenting' => true,
-            'classes'    => $field->getConfigValue('classes'),
+            'identifier'  => $field->getIdentifier(),
+            'revision_id' => $field->revisionId(),
+            'type'        => $field->getType(),
+            'name'        => $field->getColumnName(),
+            'value'       => $value,
+            'presenting'  => true,
+            'classes'     => $field->getConfigValue('classes'),
         ]))->setFilterNull(false);
 
         if ($callback = $field->getCallback('table.composing')) {
@@ -119,13 +123,14 @@ class FieldComposer
         }
 
         $payload = (new Payload([
-            'type'       => $field->getType(),
-            'uuid'       => $field->uuid(),
-            'name'       => $field->getColumnName(),
-            'label'      => $field->getLabel(),
-            'value'      => $value,
-            'presenting' => true,
-            'classes'    => $field->getConfigValue('classes'),
+            'identifier'  => $field->getIdentifier(),
+            'type'        => $field->getType(),
+            'revision_id' => $field->revisionId(),
+            'name'        => $field->getColumnName(),
+            'label'       => $field->getLabel(),
+            'value'       => $value,
+            'presenting'  => true,
+            'classes'     => $field->getConfigValue('classes'),
         ]))->setFilterNull(false);
 
         if ($callback = $field->getCallback('view.composing')) {

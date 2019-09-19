@@ -2,45 +2,67 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class FormBuilder
 {
+    /** @var \SuperV\Platform\Domains\Resource\Form\FormModel */
+    protected $formEntry;
+
+    /** @var \Illuminate\Http\Request */
+    protected $request;
+
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
 
     /** @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract */
     protected $entry;
 
-    public function build(): Form
+    /**
+     * @var \SuperV\Platform\Contracts\Dispatcher
+     */
+    protected $dispatcher;
+
+    public function __construct(Dispatcher $dispatcher)
     {
-        $form = new Form();
+        $this->dispatcher = $dispatcher;
+    }
 
-        if (! $this->resource && $this->entry) {
-            $this->resource = ResourceFactory::make($this->entry);
-            $form->setEntry($this->entry);
+    public function build(): EntryForm
+    {
+        $form = EntryForm::resolve($this->formEntry->getIdentifier());
+
+        if ($this->resource = $this->formEntry->getOwnerResource()) {
+            $form->setEntry($this->getEntry() ?? $this->resource->newEntryInstance());
         }
 
-        if ($this->resource && ! $this->entry) {
-            $form->setEntry($this->resource->newEntryInstance());
+        $form->setRequest($this->getRequest());
+
+        $form->setFields($this->buildFields($this->formEntry->getFormFields()))
+             ->setUrl(sv_url()->path())
+             ->make($this->formEntry->getIdentifier());
+
+        if ($this->resource && $callback = $this->resource->getCallback('creating')) {
+            app()->call($callback, ['form' => $form]);
         }
 
-        if ($this->resource) {
-//            $form->setFields($this->resource->getFields());
-
-            $form->setFields($this->buildFields($this->resource->getFieldEntries()));
-            $form->setResource($this->resource);
-            $form->setIdentifier($this->resource->config()->getResourceKey());
-        }
+        $this->dispatcher->dispatch($this->formEntry->getIdentifier().'.events:resolved', $form);
 
         return $form;
     }
 
+    /**
+     * Rebuild resource fields with FormField
+     * and inject the resource
+     *
+     * @param \Illuminate\Support\Collection $fields
+     * @return \Illuminate\Support\Collection
+     */
     public function buildFields(Collection $fields)
     {
         $fields = $fields->map(function (FieldModel $field) {
@@ -56,21 +78,7 @@ class FormBuilder
         return $fields;
     }
 
-    public function getResource(): Resource
-    {
-        return $this->resource;
-    }
-
-    public function setResource(?Resource $resource): FormBuilder
-    {
-        if ($resource) {
-            $this->resource = $resource;
-        }
-
-        return $this;
-    }
-
-    public function getEntry(): EntryContract
+    public function getEntry(): ?EntryContract
     {
         return $this->entry;
     }
@@ -82,13 +90,34 @@ class FormBuilder
         return $this;
     }
 
-    public static function buildFromEntry(EntryContract $entry): Form
+    public function setFormEntry(FormModel $formEntry): FormBuilder
     {
-        return (new static)->setEntry($entry)->build();
+        $this->formEntry = $formEntry;
+
+        return $this;
     }
 
-    public static function buildFromResource(Resource $resource): Form
+    public function setRequest($request): FormBuilder
     {
-        return (new static())->setResource($resource)->build();
+        if (is_array($request)) {
+            $request = new Request($request);
+        }
+        $this->request = $request;
+
+        return $this;
+    }
+
+    /**
+     * @return \Illuminate\Http\Request
+     */
+    public function getRequest(): \Illuminate\Http\Request
+    {
+        return $this->request;
+    }
+
+    /** @return static */
+    public static function resolve()
+    {
+        return app()->make(static::class, func_get_args());
     }
 }

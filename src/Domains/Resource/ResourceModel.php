@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 
@@ -15,7 +16,10 @@ class ResourceModel extends Entry implements ProvidesFields
 
     protected $guarded = [];
 
-    protected $casts = ['config' => 'array'];
+    protected $casts = [
+        'config' => 'array',
+        'driver' => 'array',
+    ];
 
     protected static function boot()
     {
@@ -27,6 +31,7 @@ class ResourceModel extends Entry implements ProvidesFields
 
         static::deleting(function (ResourceModel $entry) {
             $entry->fields->map->delete();
+            $entry->forms->map->delete();
             $entry->wipeCache();
         });
 
@@ -35,9 +40,34 @@ class ResourceModel extends Entry implements ProvidesFields
         });
     }
 
+    public function getForeignKey()
+    {
+        return 'resource_id';
+    }
+
     public function nav()
     {
         return $this->hasOne(Section::class, 'resource_id');
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    public function getDriver()
+    {
+        return $this->driver;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getDsn()
+    {
+        return $this->dsn;
     }
 
     public function provideFields(): Collection
@@ -70,13 +100,22 @@ class ResourceModel extends Entry implements ProvidesFields
         return $this->hasMany(FieldModel::class, 'resource_id');
     }
 
-    public function createField(string $name): FieldModel
+    public function forms()
+    {
+        return $this->hasMany(FormModel::class, 'resource_id');
+    }
+
+    public function makeField(string $name): FieldModel
     {
         if ($this->hasField($name)) {
             throw new \Exception("Field with name [{$name}] already exists");
         }
 
-        return $this->fields()->make(['name' => $name]);
+        return $this->fields()->make([
+            'revision_id' => uuid(),
+            'identifier'  => $this->getIdentifier().'.fields:'.$name,
+            'name'        => $name,
+        ]);
     }
 
     public function hasField($name)
@@ -99,25 +138,25 @@ class ResourceModel extends Entry implements ProvidesFields
         return array_get($this->config, 'model');
     }
 
-    public function getAddon()
+    public function getNamespace()
     {
-        return $this->addon;
-    }
-
-    public function getHandle()
-    {
-        return $this->handle;
+        return $this->namespace;
     }
 
     public function wipeCache()
     {
-        $cacheKey = 'sv:resources:'.$this->getHandle();
+        $cacheKey = 'sv:resources:'.$this->getIdentifier();
         cache()->forget($cacheKey);
     }
 
-    public function uuid()
+    public function created_by()
     {
-        return $this->uuid ?? null;
+        return $this->belongsTo(config('superv.auth.user.model'), 'created_by_id');
+    }
+
+    public function updated_by()
+    {
+        return $this->belongsTo(config('superv.auth.user.model'), 'updated_by_id');
     }
 
     public static function withModel($model): ?self
@@ -125,17 +164,21 @@ class ResourceModel extends Entry implements ProvidesFields
         return static::query()->where('model', $model)->first();
     }
 
-    public static function withHandle($table): ?self
+    public static function withIdentifier($identifier): ?self
     {
-        return static::fromCache($table);
+//        if (! str_contains($identifier, '.res.')) {
+//            $identifier = str_replace_last('.', '.res.', $identifier);
+//        }
+
+        return static::fromCache($identifier);
     }
 
-    public static function fromCache($handle)
+    public static function fromCache($identifier)
     {
-        $cacheKey = 'sv:resources:'.$handle;
+        $cacheKey = 'sv:resources:'.$identifier;
 
-        $entry = cache()->rememberForever($cacheKey, function () use ($handle) {
-            return static::query()->where('slug', $handle)->first();
+        $entry = cache()->rememberForever($cacheKey, function () use ($identifier) {
+            return static::query()->where('identifier', $identifier)->first();
         });
 
         return $entry;

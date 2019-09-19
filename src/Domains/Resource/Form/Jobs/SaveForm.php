@@ -3,8 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
+use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Support\Dispatchable;
 
 class SaveForm
@@ -27,7 +27,7 @@ class SaveForm
         $this->request = $request;
     }
 
-    public function handle(FormBuilder $builder)
+    public function handle(ResourceFormBuilder $builder)
     {
         if ($resource = $this->formData->getOwnerResource()) {
             $builder->setResource($resource);

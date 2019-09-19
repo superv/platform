@@ -3,8 +3,9 @@
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\EntryForm;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Testing\HelperComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -24,8 +25,8 @@ class RelationCreateTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $users = $this->schema()->users();
-        $this->schema()->comments();
+        $users = $this->blueprints()->users();
+        $this->blueprints()->comments();
         $user = $users->fake();
         $relation = $users->getRelation('comments');
 
@@ -41,8 +42,9 @@ class RelationCreateTest extends ResourceTestCase
 
     function test__post_standard_form()
     {
-        $users = $this->schema()->users();
-        $this->schema()->comments();
+        $users = $this->blueprints()->users();
+
+        $this->blueprints()->comments();
         $user = $users->fake();
         $relation = $users->getRelation('comments');
 
@@ -61,12 +63,13 @@ class RelationCreateTest extends ResourceTestCase
 
     function test__display_extended_form()
     {
-        $users = $this->schema()->users();
-        $this->schema()->comments();
+        $users = $this->blueprints()->users();
+        $this->blueprints()->comments();
+        ResourceFactory::wipe();
 
-        Resource::extend('t_users')->with(function (Resource $resource) {
+        Resource::extend('platform.t_users')->with(function (Resource $resource) {
             $resource->getRelation('comments')
-                     ->on('create.displaying', function (Form $form) {
+                     ->on('create.displaying', function (EntryForm $form) {
                          $form->hideField('status');
                      });;
         });
@@ -85,12 +88,13 @@ class RelationCreateTest extends ResourceTestCase
 
     function test__post_extended_form()
     {
-        $users = $this->schema()->users();
-        $this->schema()->comments();
+        $users = $this->blueprints()->users();
+        $this->blueprints()->comments();
+        ResourceFactory::wipe();
 
-        Resource::extend('t_users')->with(function (Resource $resource) {
+        Resource::extend('platform.t_users')->with(function (Resource $resource) {
             $resource->getRelation('comments')
-                     ->on('create.storing', function (Request $request, Form $form, $entry) {
+                     ->on('create.storing', function (Request $request, EntryForm $form, $entry) {
                          $comment = $request->get('comment')." (by {$entry->name})";
                          $request->merge([
                              'comment' => $comment,

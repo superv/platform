@@ -14,6 +14,10 @@ interface EntryContract
 
     public function getForeignKey();
 
+    public function getResourceIdentifier();
+
+    public function getConnection();
+
     public function setKeyName($name);
 
     public function relationLoaded($key);
@@ -30,5 +34,13 @@ interface EntryContract
 
     public function getAttribute($key);
 
+    public function getAttributes();
+
     public function save();
+
+    public function exists();
+
+    public function delete();
+
+    public function fresh();
 }

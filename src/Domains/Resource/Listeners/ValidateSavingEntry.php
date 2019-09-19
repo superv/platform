@@ -25,10 +25,10 @@ class ValidateSavingEntry
     public function handle(EntrySavingEvent $event)
     {
         $this->entry = $event->entry;
-
-        if (starts_with($this->entry->getTable(), 'sv_')) {
-            return;
-        }
+//
+//        if (starts_with($this->entry->getTable(), 'sv_')) {
+//            return;
+//        }
 
         if (! Resource::exists($this->entry)) {
             return;

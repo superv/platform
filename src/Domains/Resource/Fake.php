@@ -71,7 +71,7 @@ class Fake
     protected function shouldFake(Field $field)
     {
         return ! $field->isHidden()
-            && ! $field->hasFlag('form.hide')
+//            && ! $field->hasFlag('form.hide')
             && ! $field->doesNotInteractWithTable();
     }
 
@@ -96,7 +96,7 @@ class Fake
         $relatedResource = ResourceFactory::make($field->getConfigValue('related_resource'));
 
         if ($relatedResource->count() === 0) {
-            if ($relatedResource->getHandle() === $this->resource->getHandle()) {
+            if ($relatedResource->getHandle() === $this->resource->getIdentifier()) {
                 return rand(1, 5); // otherwise causes dead recursion
             } else {
                 $relatedResource->fake([]);

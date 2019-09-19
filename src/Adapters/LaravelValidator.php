@@ -61,4 +61,10 @@ class LaravelValidator implements Validator
     {
         return $this->baseValidator->fails();
     }
+
+    /** * @return static */
+    public static function resolve()
+    {
+        return app(static::class);
+    }
 }

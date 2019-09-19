@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\UI\Nucleo\SvBlock;
 use SuperV\Platform\Domains\UI\Nucleo\SvComponent;
 use SuperV\Platform\Domains\UI\Nucleo\SvTab;
 use SuperV\Platform\Domains\UI\Nucleo\SvTabs;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
@@ -18,6 +19,47 @@ use SuperV\Platform\Support\RelativePath;
 function ddh()
 {
     dd('Over here! '.date('H:i:s'), func_get_args());
+}
+
+function fails($data)
+{
+    PlatformException::fail($data);
+}
+
+function get_ns_from_file($file)
+{
+    $fp = fopen($file, 'r');
+
+    $namespace = $buffer = '';
+    while (! $namespace) {
+        if (feof($fp)) {
+            break;
+        }
+
+        $buffer .= fgets($fp, 512);
+        $re = '/namespace\s+(((\w+\\\\)+)(\w+)\s*);/';
+        if (preg_match($re, $buffer, $matches)) {
+            $namespace = $matches[1];
+            break;
+        }
+    }
+
+    return $namespace;
+}
+
+function get_json($path, $filename = null)
+{
+    if ($filename) {
+        $path .= DIRECTORY_SEPARATOR.$filename.'.json';
+    }
+
+    if (! file_exists($path)) {
+        throw new Exception("JSON file does not exist at path: ".$path);
+    }
+
+    $jsonData = json_decode(file_get_contents($path), true);
+
+    return $jsonData;
 }
 
 function sv_trans($key = null, $replace = [], $locale = null)
@@ -277,7 +319,7 @@ function uuid()
 
 function str_unslug(string $slug)
 {
-    return ucwords(str_replace('_', ' ', $slug));
+    return ucwords(str_replace(['_', '.'], ' ', $slug));
 }
 
 function str_prefix(?string $str, $prefix, $glue = '.')

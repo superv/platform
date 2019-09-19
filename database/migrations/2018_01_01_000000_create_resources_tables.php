@@ -5,73 +5,51 @@ use Schema as LaravelSchema;
 use SuperV\Platform\Domains\Database\Migrations\Migration;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
-use SuperV\Platform\Domains\Resource\Nav\Section;
-use SuperV\Platform\Domains\Resource\ResourceConfig;
-use SuperV\Platform\Domains\Resource\Support\Blueprints;
+use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
+use SuperV\Platform\Domains\Resource\Support\PlatformBlueprints;
 
 class CreateResourcesTables extends Migration
 {
+    protected $resources = [
+        'namespaces' => 'sv_namespaces',
+        'resources'  => 'sv_resources',
+        'fields'     => 'sv_fields',
+        'forms'      => 'sv_forms',
+        'relations'  => 'sv_relations',
+        'navigation' => 'sv_navigation',
+        'activities' => 'sv_activities',
+    ];
+
     public function up()
     {
-        LaravelSchema::create('sv_resources', function (LaravelBlueprint $table) {
-            Blueprints::resources($table);
-        });
-        LaravelSchema::create('sv_fields', function (LaravelBlueprint $table) {
-            Blueprints::fields($table);
-        });
-        LaravelSchema::create('sv_forms', function (LaravelBlueprint $table) {
-            Blueprints::forms($table);
-        });
-        LaravelSchema::create('sv_relations', function (LaravelBlueprint $table) {
-            Blueprints::relations($table);
-        });
-        LaravelSchema::create('sv_navigation', function (LaravelBlueprint $table) {
-            Blueprints::navigation($table);
-        });
-        LaravelSchema::create('sv_activities', function (LaravelBlueprint $table) {
-            Blueprints::activity($table);
-        });
+        /**
+         * First create the tables with framework's Schema
+         */
+        foreach ($this->resources as $resource => $table) {
+            LaravelSchema::create($table,
+                function (LaravelBlueprint $table) use ($resource) {
+                    PlatformBlueprints::{$resource}($table);
+                }
+            );
+        }
 
-        $this->selfAware();
-    }
-
-    protected function selfAware()
-    {
-        Section::createFromArray([
-            'parent' => 'acp.platform',
-            'title'  => 'System',
-            'handle' => 'system',
-            'icon'   => 'system',
-        ]);
-
-        Schema::run('sv_resources', function (Blueprint $table, ResourceConfig $resource) {
-            Blueprints::resources($table, $resource);
-        });
-        Schema::run('sv_fields', function (Blueprint $table, ResourceConfig $resource) {
-            Blueprints::fields($table, $resource);
-        });
-        Schema::run('sv_forms', function (Blueprint $table, ResourceConfig $resource) {
-            Blueprints::forms($table, $resource);
-        });
-        Schema::run('sv_relations', function (Blueprint $table, ResourceConfig $resource) {
-            Blueprints::relations($table, $resource);
-        });
-        Schema::run('sv_navigation', function (Blueprint $table, ResourceConfig $resource) {
-            Blueprints::navigation($table, $resource);
-        });
-        Schema::run('sv_activities', function (Blueprint $table, ResourceConfig $resource) {
-            Blueprints::activity($table, $resource);
-        });
+        /**
+         * Then run the migrations again to create the resources
+         */
+        foreach ($this->resources as $resource => $table) {
+            Schema::run($table,
+                function (Blueprint $table, Config $config) use ($resource) {
+                    $config->setName($resource);
+                    PlatformBlueprints::{$resource}($table, $config);
+                }
+            );
+        }
     }
 
     public function down()
     {
-        Schema::dropIfExists('sv_resources');
-        Schema::dropIfExists('sv_fields');
-        Schema::dropIfExists('sv_forms');
-        Schema::dropIfExists('sv_form_fields');
-        Schema::dropIfExists('sv_relations');
-        Schema::dropIfExists('sv_navigation');
-        Schema::dropIfExists('sv_activities');
+        foreach ($this->resources as $resource => $table) {
+            Schema::dropIfExists($table);
+        }
     }
 }

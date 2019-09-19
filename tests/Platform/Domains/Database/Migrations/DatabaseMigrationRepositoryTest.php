@@ -13,11 +13,11 @@ class DatabaseMigrationRepositoryTest extends TestCase
     function test__filters_migrations_by_scope()
     {
         \DB::table(config('database.migrations'))->insert([
-                ['migration' => '2018_0001_migration_A', 'batch' => 101, 'addon' => null],
-                ['migration' => '2018_0002_migration_B', 'batch' => 102, 'addon' => 'foo'],
-                ['migration' => '2018_0003_migration_C', 'batch' => 103, 'addon' => 'bar'],
-                ['migration' => '2018_0004_migration_D', 'batch' => 104, 'addon' => 'foo'],
-                ['migration' => '2018_0005_migration_E', 'batch' => 104, 'addon' => 'foo'],
+                ['migration' => '2018_0001_migration_A', 'batch' => 101, 'namespace' => null],
+                ['migration' => '2018_0002_migration_B', 'batch' => 102, 'namespace' => 'foo'],
+                ['migration' => '2018_0003_migration_C', 'batch' => 103, 'namespace' => 'bar'],
+                ['migration' => '2018_0004_migration_D', 'batch' => 104, 'namespace' => 'foo'],
+                ['migration' => '2018_0005_migration_E', 'batch' => 104, 'namespace' => 'foo'],
             ]
         );
 
@@ -39,10 +39,10 @@ class DatabaseMigrationRepositoryTest extends TestCase
     function test__filters_last_migrations_by_scope()
     {
         \DB::table(config('database.migrations'))->insert([
-                ['migration' => '2018_0002_migration_B', 'batch' => 102, 'addon' => 'bar'],
-                ['migration' => '2018_0003_migration_C', 'batch' => 103, 'addon' => 'bar'],
-                ['migration' => '2018_0004_migration_D', 'batch' => 103, 'addon' => 'foo'],
-                ['migration' => '2018_0005_migration_E', 'batch' => 103, 'addon' => 'foo'],
+                ['migration' => '2018_0002_migration_B', 'batch' => 102, 'namespace' => 'bar'],
+                ['migration' => '2018_0003_migration_C', 'batch' => 103, 'namespace' => 'bar'],
+                ['migration' => '2018_0004_migration_D', 'batch' => 103, 'namespace' => 'foo'],
+                ['migration' => '2018_0005_migration_E', 'batch' => 103, 'namespace' => 'foo'],
             ]
         );
 
@@ -89,12 +89,11 @@ class DatabaseMigrationRepositoryTest extends TestCase
             })->all();
     }
 
-    /**
-     * @param null $scope
-     * @return \SuperV\Platform\Domains\Database\Migrations\DatabaseMigrationRepository
-     */
     protected function repositoryWithScope($scope = null)
     {
-        return app('migration.repository')->setAddon($scope);
+        /** @var \SuperV\Platform\Domains\Database\Migrations\DatabaseMigrationRepository $repository */
+        $repository = app('migration.repository');
+
+        return $repository->setNamespace($scope);
     }
 }

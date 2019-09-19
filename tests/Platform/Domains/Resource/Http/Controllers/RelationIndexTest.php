@@ -16,8 +16,8 @@ class RelationIndexTest extends ResourceTestCase
 {
     function test__index_listing_with_has_many_relations()
     {
-        $users = $this->schema()->users();
-        $posts = $this->schema()->posts();
+        $users = $this->blueprints()->users();
+        $posts = $this->blueprints()->posts();
 
         // seed the main user (parent)
         //
@@ -37,7 +37,9 @@ class RelationIndexTest extends ResourceTestCase
         //
         $this->withoutExceptionHandling();
 
-        $url = route('relation.index', ['resource' => 't_users', 'id' => $userA->getId(), 'relation' => 'posts']);
+        $url = route('relation.index', ['resource' => 'platform.t_users',
+                                        'id'       => $userA->getId(),
+                                        'relation' => 'posts']);
         $response = $this->getJsonUser($url);
         $response->assertOk();
         $table = HelperComponent::from($response->decodeResponseJson('data'));
@@ -54,7 +56,9 @@ class RelationIndexTest extends ResourceTestCase
         // Check the actions url, should point to create new relation form
         //
         $this->assertEquals(
-            sv_route('relation.create', ['resource' => 't_users', 'id' => $userA->getId(), 'relation' => 'posts']),
+            sv_route('relation.create', ['resource' => 'platform.t_users',
+                                         'id'       => $userA->getId(),
+                                         'relation' => 'posts']),
             sv_url($action->getProp('url')));
 
         // Now get the table data
@@ -71,14 +75,15 @@ class RelationIndexTest extends ResourceTestCase
         //
         $viewAction = HelperComponent::from($table->getProp('config.row_actions.1'));
         $firstPost = $userPosts->first();
-        $this->assertEquals($firstPost->route('view.page'), str_replace('{entry.id}', $firstPost->getId(), $viewAction->getProp('url')));
+        $actual = str_replace('{entry.id}', $firstPost->getId(), $viewAction->getProp('url'));
+        $this->assertEquals($firstPost->route('entry.dashboard', ['section' => 'view']), sv_url($actual));
     }
 
     function test__index_listing_with_belongs_to_many_relations()
     {
         $this->withoutExceptionHandling();
 
-        $users = $this->schema()->users();
+        $users = $this->blueprints()->users();
 
         $userA = $users->fake();
         $userA->roles()->attach([1 => ['notes' => 'note-1']]);
@@ -103,7 +108,7 @@ class RelationIndexTest extends ResourceTestCase
         $this->assertEquals(2, count($table->getProp('config.row_actions')));
         $action = HelperComponent::from($table->getProp('config.row_actions.1'));
 
-        $this->assertEquals('sv/res/t_roles/{entry.id}/view-page', $action->getProp('url'));
+        $this->assertEquals('sv/res/platform.t_roles/{entry.id}/view', $action->getProp('url'));
 
         // Check context action ATTACH NEW
         //
@@ -126,16 +131,16 @@ class RelationIndexTest extends ResourceTestCase
         //
         $this->assertNotNull($rows[0]['fields'][1] ?? null);
 
-        $this->assertEquals('note-1', $rows[0]['fields'][1]['value']);
-        $this->assertEquals('note-2', $rows[1]['fields'][1]['value']);
+        $this->assertEquals('note-1', $rows[1]['fields'][1]['value']);
+        $this->assertEquals('note-2', $rows[0]['fields'][1]['value']);
     }
 
     function test__index_listing_with_morph_to_many_relations()
     {
         $this->withoutExceptionHandling();
 
-        $users = $this->schema()->users();
-        $this->schema()->actions();
+        $users = $this->blueprints()->users();
+        $this->blueprints()->actions();
 
         $userA = $users->fake();
 

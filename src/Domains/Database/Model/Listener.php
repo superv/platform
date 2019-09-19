@@ -6,6 +6,12 @@ use Illuminate\Database\Events\QueryExecuted;
 use SuperV\Platform\Domains\Database\Events\TableInsertEvent;
 use SuperV\Platform\Domains\Database\Events\TableUpdateEvent;
 
+/**
+ * Class Listener
+ * Experimental - Not in use
+ *
+ * @package SuperV\Platform\Domains\Database\Model
+ */
 class Listener
 {
     public static function listen()

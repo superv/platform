@@ -1,5 +1,5 @@
 {
-    "name": "superv/sample-addon",
+    "name": "superv/sample",
     "type": "superv-addon",
     "autoload": {
         "psr-4": {

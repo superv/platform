@@ -9,7 +9,7 @@ class AuthController
         $credentials = request(['email', 'password']);
 
         if (! $token = $this->guard()->attempt($credentials, true)) {
-            return response()->json(['status' => 'error', 'error' => ['description' => 'Invalid Credentials']], 401);
+            return response()->json(['status' => 'error', 'error' => ['description' => 'Invalid credentials']], 401);
         }
 
         return response()->json([

@@ -34,7 +34,7 @@ class RestoreEntryAction extends Action
 
     public function getUrl()
     {
-        return $this->url ?? 'sv/res/{res.handle}/{entry.id}/restore';
+        return $this->url ?? 'sv/res/{res.identifier}/{entry.id}/restore';
     }
 
     public function setUrl($url)

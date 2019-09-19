@@ -2,11 +2,10 @@
 
 namespace Tests\SuperV\Platform\Domains\Media;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Media\HasMedia;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
@@ -118,7 +117,7 @@ class MediaTest extends TestCase
     }
 }
 
-class OwnerMock extends Model implements MediaOwner, EntryContract
+class OwnerMock extends Entry implements MediaOwner
 {
     public $timestamps = false;
 

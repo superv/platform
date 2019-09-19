@@ -9,11 +9,11 @@ class TextTest extends ResourceTestCase
 {
     function test__type_text()
     {
-        $res = $this->create(function (Blueprint $table) {
+        $res = $this->create('tmp_table', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
         });
-        $this->assertColumnExists($res->getHandle(), 'name');
+        $this->assertColumnExists('tmp_table', 'name');
 
         $field = $res->getField('name');
 

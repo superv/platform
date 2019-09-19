@@ -28,6 +28,15 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
 
     protected $uuid;
 
+    /**
+     * Action type [redirect|other]
+     *
+     * @var string
+     */
+    protected $type;
+
+    protected $target;
+
     protected function __construct(array $params = [])
     {
         $this->uuid = uuid();
@@ -43,6 +52,8 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
     {
         $payload = new Payload([
             'name'  => $this->getName(),
+            'type'  => $this->getType(),
+            'target' => $this->getTarget(),
             'title' => $this->getTitle(),
         ]);
 
@@ -51,7 +62,7 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
         return $payload;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -68,6 +79,23 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
         return $this;
     }
 
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function getTarget(): ?string
+    {
+        return $this->target;
+    }
+
+    public function setTarget($target)
+    {
+        $this->target = $target;
+
+        return $this;
+    }
+
     public function uuid(): string
     {
         return $this->uuid;
@@ -76,9 +104,9 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
     /** @return static */
     public static function make(?string $title = null, ?string $name = null)
     {
-        if ($title && ! $name) {
-            $name = str_slug($title, '_');
-        }
+//        if ($title && ! $name) {
+//            $name = str_slug($title, '_');
+//        }
 
         return new static(array_filter(compact('title', 'name')));
     }

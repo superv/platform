@@ -18,14 +18,14 @@ class SuperVUninstallCommand extends Command
         $this->comment('Uninstalling SuperV');
 
         $addons->map(function (Addon $addon) {
-            if ($addon->slug() === 'platform') {
+            if ($addon->getIdentifier() === 'platform') {
                 return;
             }
-            $this->comment('Uninstalling addon: ['.$addon->slug().']');
+            $this->comment('Uninstalling addon: ['.$addon->getIdentifier().']');
             UninstallAddonJob::dispatch($addon);
         });
 
-        $this->call('migrate:rollback', ['--addon' => 'platform', '--force' => true]);
+        $this->call('migrate:rollback', ['--namespace' => 'platform', '--force' => true]);
 
         $this->setEnv('SV_INSTALLED=false');
 

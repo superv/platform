@@ -36,7 +36,7 @@ class HelperComponent extends BaseComponent
 
     public static function from($array)
     {
-        $component = new self($array['props']);
+        $component = new static($array['props']);
         $component->name = $array['component'];
         $component->uuid = $array['uuid'] ?? null;
 

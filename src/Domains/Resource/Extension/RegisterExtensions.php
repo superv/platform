@@ -40,7 +40,7 @@ class RegisterExtensions
              */
             if (! empty($searchIn)) {
                 foreach ($searchIn as $file) {
-                    $resourceClass = Path::parseClass($addon->namespace(), $addon->realPath('src'), $file);
+                    $resourceClass = Path::parseClass($addon->getPsrNamespace(), $addon->realPath('src'), $file);
                     $this->registerNav($resourceClass);
                     Nucleo::resourceMap([$resourceClass]);
                 }

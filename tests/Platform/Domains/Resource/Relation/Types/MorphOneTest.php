@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Database\Model\Repository;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\EntryForm;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\Testing\FormTester;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -34,7 +34,7 @@ class MorphOneTest extends ResourceTestCase
         $relation = $this->parent->getRelation('tag');
         $this->assertEquals('morph_one', $relation->getType());
         $this->assertEquals([
-            'related_resource' => 't_tags',
+            'related_resource' => 'platform.t_tags',
             'morph_name'       => 'owner',
         ], $relation->getRelationConfig()->toArray());
     }
@@ -53,9 +53,9 @@ class MorphOneTest extends ResourceTestCase
         $this->assertInstanceOf(AcceptsParentEntry::class, $relation);
         $relation->acceptParentEntry($user);
 
-        /** @var Form $form */
+        /** @var EntryForm $form */
         $form = $relation->makeForm();
-        $this->assertInstanceOf(Form::class, $form);
+        $this->assertInstanceOf(EntryForm::class, $form);
         $this->assertNull($form->getField('user'));
         $this->assertNull($form->composeField('label')->get('value'));
 
@@ -79,7 +79,7 @@ class MorphOneTest extends ResourceTestCase
         $relation = $this->parent->getRelation('tac');
         $relation->acceptParentEntry($user);
 
-        /** @var Form $form */
+        /** @var EntryForm $form */
         $form = $relation->makeForm();
         $relatedEntry = $form->getEntry();
         $this->assertInstanceOf(TestTac::class, $relatedEntry);
@@ -123,9 +123,9 @@ class MorphOneTest extends ResourceTestCase
 
             $table->increments('id');
             $table->string('name');
-            $table->morphOne('t_tags', 'tag', 'owner');
-            $table->morphOne('t_tacs', 'tac', 'owner');
-            $table->morphOne('t_profiles', 'profile', 'owner', TestProfileRepository::class);
+            $table->morphOne('platform.t_tags', 'tag', 'owner');
+            $table->morphOne('platform.t_tacs', 'tac', 'owner');
+            $table->morphOne('platform.t_profiles', 'profile', 'owner', TestProfileRepository::class);
         });
 
         $this->related = $this->create('t_tags', function (Blueprint $table) {

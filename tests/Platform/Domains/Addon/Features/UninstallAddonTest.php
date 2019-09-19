@@ -12,20 +12,20 @@ class UninstallAddonTest extends TestCase
 
     function test__uninstall_successfully()
     {
-        $this->setUpAddon(null, null, $seed = true);
+        $this->setUpAndSeedAddon('superv.sample');
 
-        UninstallAddonJob::dispatch('superv.addons.sample');
+        UninstallAddonJob::dispatch('sample');
 
-        $this->assertDatabaseMissing('sv_addons', ['slug' => 'superv.addons.sample']);
+        $this->assertDatabaseMissing('sv_addons', ['identifier' => 'sample']);
     }
 
     function test__rollback_migrations()
     {
         $this->setUpAddon(null, null);
-        $this->assertEquals(3, \DB::table('migrations')->where('addon', 'superv.addons.sample')->count());
+        $this->assertEquals(3, \DB::table('migrations')->where('namespace', 'sample')->count());
 
-        UninstallAddonJob::dispatch('superv.addons.sample');
+        UninstallAddonJob::dispatch('sample');
 
-        $this->assertEquals(0, \DB::table('migrations')->where('addon', 'superv.addons.sample')->count());
+        $this->assertEquals(0, \DB::table('migrations')->where('namespace', 'sample')->count());
     }
 }

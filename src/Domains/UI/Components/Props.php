@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\UI\Components;
 
 use Closure;
+use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Tokens;
 
@@ -10,8 +11,11 @@ class Props implements Composable
 {
     protected $props = [];
 
-    public function __construct(array $props = [])
+    public function __construct($props = [])
     {
+        if ($props instanceof Arrayable) {
+            $props = $props->toArray();
+        }
         $this->props = $props;
     }
 

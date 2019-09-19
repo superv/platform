@@ -4,21 +4,24 @@ namespace Tests\Platform\Domains\Addon\Console;
 
 use Mockery;
 use SuperV\Platform\Domains\Addon\Installer;
-use Tests\Platform\TestCase;
 
-class AddonInstallCommandTest extends TestCase
+class AddonInstallCommandTest
 {
     function test__calls_installer_with_proper_arguments_if_path_given()
     {
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
         $installer->shouldReceive('setCommand')->once()->andReturnSelf();
         $installer->shouldReceive('setPath')->with('path/to/addon')->once()->andReturnSelf();
-        $installer->shouldReceive('setSlug')->with('addon.slug')->once()->andReturnSelf();
+        $installer->shouldReceive('setVendor')->with('superv')->once()->andReturnSelf();
+        $installer->shouldReceive('setName')->with('sample')->once()->andReturnSelf();
+        $installer->shouldReceive('setAddonType')->with('drop')->once()->andReturnSelf();
         $installer->shouldReceive('install')->once();
 
         $this->artisan('addon:install', [
-            '--path' => 'path/to/addon',
-            'addon'  => 'addon.slug',
+            'vendor'  => 'superv',
+            'package' => 'sample',
+            '--path'  => 'path/to/addon',
+            '--type'  => 'drop',
         ]);
     }
 
@@ -26,12 +29,14 @@ class AddonInstallCommandTest extends TestCase
     {
         $installer = $this->app->instance(Installer::class, Mockery::mock(Installer::class));
         $installer->shouldReceive('setCommand')->once()->andReturnSelf();
-        $installer->shouldReceive('setLocator')->once()->andReturnSelf();
-        $installer->shouldReceive('setSlug')->with('vendor.addons.slug')->once()->andReturnSelf();
+        $installer->shouldReceive('setVendor')->with('superv')->once()->andReturnSelf();
+        $installer->shouldReceive('setName')->with('sample')->once()->andReturnSelf();
+        $installer->shouldReceive('setAddonType')->with('module')->once()->andReturnSelf();
         $installer->shouldReceive('install')->once();
 
         $this->artisan('addon:install', [
-            'addon' => 'vendor.addons.slug',
+            'vendor'  => 'superv',
+            'package' => 'sample',
         ]);
     }
 
@@ -42,8 +47,9 @@ class AddonInstallCommandTest extends TestCase
         $installer->shouldReceive('seed')->once();
 
         $this->artisan('addon:install', [
-            'addon'  => 'vendor.addons.slug',
-            '--seed' => true,
+            'vendor'  => 'superv',
+            'package' => 'sample',
+            '--seed'  => true,
         ]);
     }
 }

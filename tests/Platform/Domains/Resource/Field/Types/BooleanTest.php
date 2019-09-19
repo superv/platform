@@ -9,11 +9,11 @@ class BooleanTest extends ResourceTestCase
 {
     function test__type_boolean()
     {
-        $res = $this->create(function (Blueprint $table) {
+        $res = $this->create('tmp_table', function (Blueprint $table) {
             $table->increments('id');
             $table->boolean('active');
         });
-        $this->assertColumnExists($res->getHandle(), 'active');
+        $this->assertColumnExists('tmp_table', 'active');
 
         $field = $res->getField('active');
         $this->assertEquals('boolean', $field->getFieldType());

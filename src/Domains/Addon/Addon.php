@@ -27,14 +27,9 @@ class Addon
     {
         app()->register($this->resolveProvider());
 
-        superv('addons')->put($this->slug(), $this);
+        superv('addons')->put($this->getIdentifier(), $this);
 
         AddonBootedEvent::dispatch($this);
-    }
-
-    public function slug()
-    {
-        return $this->entry->slug;
     }
 
     public function installs()
@@ -51,7 +46,10 @@ class Addon
     {
         $class = $this->providerClass();
 
-        return (new $class(app()))->setAddon($this);
+        /** @var \SuperV\Platform\Domains\Addon\AddonServiceProvider $provider */
+        $provider = new $class(app());
+
+        return $provider->setAddon($this);
     }
 
     public function path($prefix = null)
@@ -69,24 +67,29 @@ class Addon
         return $this->path('resources/'.$prefix);
     }
 
-    /**
-     * Return Addon Entry
-     *
-     * @return \SuperV\Platform\Domains\Addon\AddonModel
-     */
     public function entry(): AddonModel
     {
         return $this->entry;
     }
 
-    public function shortSlug()
+    public function getIdentifier()
     {
-        return $this->entry->shortSlug();
+        return $this->entry->getIdentifier();
     }
 
-    public function namespace()
+    public function getPsrNamespace()
     {
-        return $this->entry->namespace;
+        return $this->entry->getPsrNamespace();
+    }
+
+    public function getVendor()
+    {
+        return $this->entry->getVendor();
+    }
+
+    public function getType()
+    {
+        return $this->entry->getType();
     }
 
     /**
@@ -108,7 +111,7 @@ class Addon
             $fromModule = require $path;
             $merged = array_replace_recursive($fromModule, $config);
 
-            config()->set($this->slug().'::'.$key, $merged);
+            config()->set($this->getIdentifier().'::'.$key, $merged);
         }
     }
 

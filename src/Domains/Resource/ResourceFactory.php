@@ -17,7 +17,7 @@ class ResourceFactory
     /**
      * @var string
      */
-    protected $handle;
+    protected $identifier;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\ResourceModel
@@ -29,47 +29,53 @@ class ResourceFactory
      */
     protected $entry;
 
-    protected function __construct(string $handle, ?EntryContract $entry = null)
+    public static $cache = [];
+
+    protected function __construct(string $identifier, ?EntryContract $entry = null)
     {
-        $this->handle = $handle;
+        $this->identifier = $identifier;
         $this->entry = $entry;
     }
 
-    public static function attributesFor(string $handle, ?EntryContract $entry = null): array
+    public static function attributesFor(string $identifier, ?EntryContract $entry = null): array
     {
-        return (new static($handle, $entry))->get();
+        return (new static($identifier, $entry))->get();
     }
 
     /**
-     * @param $handle
-     * @return \SuperV\Platform\Domains\Resource\Resource
+     * @param $identifier
+     * @return \SuperV\Platform\Domains\Resource\Resource|null
+     * @throws \Exception
      */
-    public static function make($handle): ?Resource
+    public static function make($identifier): ?Resource
     {
-        if ($handle instanceof EntryContract) {
-            $handle = $handle->getTable();
+        if ($identifier instanceof EntryContract) {
+            $identifier = $identifier->getResourceIdentifier();
+        }
+
+//        if (! str_contains($identifier, '.res.')) {
+//            $identifier = str_replace_last('.', '.res.', $identifier);
+//        }
+
+        if (isset(static::$cache[$identifier])) {
+            return static::$cache[$identifier];
         }
 
         try {
-            $attributes = static::attributesFor($handle);
+            $attributes = static::attributesFor($identifier);
+            $attributes['config'] = ResourceConfig::make($attributes['config']);
 
-            $attributes = Hook::attributes($handle, $attributes);
-
-            if (is_array($attributes['config'])) {
-                $attributes['config'] = ResourceConfig::make($attributes['config']);
-            }
 
             $resource = new Resource($attributes);
 
             Extension::extend($resource);
         } catch (Exception $e) {
-            if ($e->getMessage() !== 'Resource model entry not found for [sv_forms]') {
-                throw $e;
-            }
+            PlatformException::throw($e);
+
             return null;
         }
 
-        return $resource;
+        return static::$cache[$identifier] = $resource;
     }
 
     protected function getFieldsProvider()
@@ -107,12 +113,14 @@ class ResourceFactory
 
     protected function get()
     {
-        if (! $this->model = ResourceModel::withHandle($this->handle)) {
-            PlatformException::fail("Resource model entry not found for [{$this->handle}]");
+        if (! $this->model = ResourceModel::withIdentifier($this->identifier)) {
+            PlatformException::fail("Resource model entry not found for [{$this->identifier}]");
         }
 
         $attributes = array_merge($this->model->toArray(), [
-            'handle'        => $this->model->getHandle(),
+            'name'          => $this->model->getName(),
+            'dsn'           => $this->model->getDsn(),
+            'identifier'    => $this->model->getIdentifier(),
             'fields'        => $this->getFieldsProvider(),
             'field_entries' => function () {
                 return $this->model->getFields();
@@ -121,5 +129,10 @@ class ResourceFactory
         ]);
 
         return $attributes;
+    }
+
+    public static function wipe()
+    {
+        static::$cache = [];
     }
 }

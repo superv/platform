@@ -9,11 +9,11 @@ class TextareaTest extends ResourceTestCase
 {
     function test__type_textarea()
     {
-        $res = $this->create(function (Blueprint $table) {
+        $res = $this->create('tmp_table', function (Blueprint $table) {
             $table->increments('id');
             $table->text('bio');
         });
-        $this->assertColumnExists($res->getHandle(), 'bio');
+        $this->assertColumnExists('tmp_table', 'bio');
 
         $field = $res->getField('bio');
 

@@ -21,7 +21,7 @@ class Blueprint extends LaravelBlueprint
     use CreatesFields;
 
     /**
-     * @var \SuperV\Platform\Domains\Database\Schema\Schema
+     * @var \SuperV\Platform\Domains\Database\Schema\Builder
      */
     protected $builder;
 
@@ -42,8 +42,9 @@ class Blueprint extends LaravelBlueprint
     {
         // Here, while adding a column let's pass along
         // the resource blueprint to each column
+        $resourceConfig = $this->builder ? $this->builder->resource() : ResourceConfig::make();
         $this->columns[] = $column = new ColumnDefinition(
-            $this->builder ? $this->builder->resource() : new ResourceConfig,
+            $resourceConfig,
             array_merge(compact('type', 'name'), $parameters)
         );
 
@@ -74,9 +75,9 @@ class Blueprint extends LaravelBlueprint
         $this->columns = $this->columns->map(
             function (ColumnDefinition $column) {
                 if ($column->change) {
-                    ColumnUpdatedEvent::dispatch($this->tableName(), $this, $column);
+                    ColumnUpdatedEvent::dispatch($this->resourceConfig(), $this, $column);
                 } else {
-                    ColumnCreatedEvent::dispatch($this->tableName(), $this, $column, $this->resourceConfig()->getModel());
+                    ColumnCreatedEvent::dispatch($this->resourceConfig(), $this, $column, $this->resourceConfig()->getModel());
                 }
 
                 return $column->ignore ? null : $column;
@@ -90,16 +91,17 @@ class Blueprint extends LaravelBlueprint
         }
 
         if ($this->creating()) {
-            TableCreatedEvent::dispatch($this->tableName(), $this->columns);
+//            TableCreatedEvent::dispatch($this->tableName(), $this->columns);
+            TableCreatedEvent::dispatch($this->tableName(), $this->resourceConfig(), $this->columns);
         }
     }
 
     /**
      * Specify an index for the table.
      *
-     * @param  string|array $columns
-     * @param  string       $name
-     * @param  string|null  $algorithm
+     * @param string|array $columns
+     * @param string       $name
+     * @param string|null  $algorithm
      * @return \Illuminate\Support\Fluent
      */
     public function index($columns, $name = null, $algorithm = null)
@@ -143,7 +145,7 @@ class Blueprint extends LaravelBlueprint
         foreach ($this->commands as $command) {
             if ($command->name === 'dropColumn') {
                 sv_collect($command->columns)->map(function ($column) {
-                    ColumnDroppedEvent::dispatch($this->tableName(), $column);
+                    ColumnDroppedEvent::dispatch($this->resourceConfig(), $column);
                 });
             }
         }

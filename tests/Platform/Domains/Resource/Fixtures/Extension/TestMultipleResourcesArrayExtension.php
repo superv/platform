@@ -8,7 +8,7 @@ class TestMultipleResourcesArrayExtension implements ExtendsMultipleResources
 {
     public function pattern()
     {
-        return ['test_users', 'test_posts'];
+        return ['platform.test_users', 'platform.test_posts'];
     }
 
     public function __call($name, $arguments)

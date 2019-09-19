@@ -4,17 +4,34 @@ namespace SuperV\Platform\Domains\Addon\Console;
 
 use SuperV\Platform\Contracts\Command;
 use SuperV\Platform\Domains\Addon\Features\MakeAddon;
+use SuperV\Platform\Domains\Addon\Features\MakeAddonRequest;
 
 class MakeAddonCommand extends Command
 {
-    protected $signature = 'make:addon {slug} {--path=}';
+    protected $signature = 'make:addon {identifier} {--type=module} {--path=} {--force}';
 
     public function handle()
     {
-        $slug = $this->argument('slug');
-        $path = $this->option('path');
-        $this->dispatch(new MakeAddon($slug, $path));
+        $identifier = $this->argument('identifier');
 
-        $this->info('The ['.$slug.'] addon was created.');
+        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $identifier)) {
+            throw new \Exception('Identifier should be in this format: {vendor}.{addon}: '.$identifier);
+        }
+        $request = new MakeAddonRequest(
+            $identifier,
+            $this->option('type')
+        );
+
+        if ($this->hasOption('identifier')) {
+            $request->setIdentifier($this->option('identifier'));
+        }
+
+        if ($this->hasOption('path')) {
+            $request->setTargetPath($this->option('path'));
+        }
+
+        $identifier = MakeAddon::dispatch($request, $this->option('force'));
+
+        $this->info('The ['.$identifier.'] addon was created.');
     }
 }

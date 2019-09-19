@@ -2,17 +2,21 @@
 
 namespace SuperV\Platform\Domains\Database\Events;
 
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Events\BaseEvent;
 
 class ColumnDroppedEvent extends BaseEvent
 {
-    public $table;
-
     public $columnName;
 
-    public function __construct($table, $columnName)
+    /**
+     * @var \SuperV\Platform\Domains\Resource\ResourceConfig
+     */
+    public $config;
+
+    public function __construct(ResourceConfig $config, $columnName)
     {
-        $this->table = $table;
         $this->columnName = $columnName;
+        $this->config = $config;
     }
 }

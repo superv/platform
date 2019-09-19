@@ -10,14 +10,19 @@ class CreateEntryAction extends Action
 
     protected $title = 'Create';
 
-    protected $url;
+    protected $type = 'redirect';
+
+    protected $url = 'sv/res/{res.identifier}/create';
 
     public function onComposed(Payload $payload)
     {
-        $payload->set('url', $this->url ?? 'sv/res/{res.handle}/create');
-        $payload->set('button', [
-            'color' => 'green',
-            'title' => __('Create', ['thing' => 'User'])
+        $payload->merge([
+            'url'    => $this->getUrl(),
+            'button' => [
+                'color' => 'green',
+                'size'  => 'sm',
+                'title' => __('Create'),
+            ],
         ]);
     }
 
@@ -26,5 +31,13 @@ class CreateEntryAction extends Action
         $this->url = $url;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getUrl(): string
+    {
+        return $this->url;
     }
 }

@@ -3,14 +3,15 @@
 namespace SuperV\Platform\Domains\Resource\Testing;
 
 use Closure;
+use Current;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
-use Tests\Platform\Domains\Resource\Fixtures\Blueprints;
 use SuperV\Platform\Testing\HelperComponent;
+use Tests\Platform\Domains\Resource\Fixtures\Blueprints;
 
 trait ResourceTestHelpers
 {
@@ -30,9 +31,22 @@ trait ResourceTestHelpers
         return HelperComponent::from($response->decodeResponseJson('data'));
     }
 
-    protected function schema()
+    protected function blueprints()
     {
         return new Blueprints;
+    }
+
+    protected function anyTable()
+    {
+        $res = $this->create('any_table', function (Blueprint $table, ResourceConfig $config) {
+            $config->label('Any Resource');
+            $config->setNamespace('testing');
+            $table->increments('id');
+
+            $table->string('title')->entryLabel();
+        });
+
+        return $res;
     }
 
     /**
@@ -40,17 +54,29 @@ trait ResourceTestHelpers
      * @param \Closure|null $callback
      * @return \SuperV\Platform\Domains\Resource\Resource
      */
-    protected function create($table, Closure $callback = null)
+    protected function create($table, Closure $callback = null, $connection = null)
     {
-        if ($table instanceof Closure) {
-            $callback = $table;
-            $table = Str::random(8);
+        if (str_contains($table, '.')) {
+            list($namespace, $table) = explode('.', $table);
+        } else {
+            $namespace = 'platform';
         }
-        $table = $table ?? Str::random(4);
 
-        Schema::create($table, $callback);
+        Current::setMigrationScope($namespace);
 
-        return ResourceFactory::make($table);
+//        $callback = function (Blueprint $table, ResourceConfig $config) use ($callback, $namespace) {
+//            $config->setNamespace($namespace.'.res');
+//
+//            $callback($table, $config);
+//        };
+
+        if ($connection) {
+            $config = Schema::connection($connection)->create($table, $callback);
+        } else {
+            $config = Schema::create($table, $callback);
+        }
+
+        return ResourceFactory::make($config->getIdentifier());
     }
 
     /**
@@ -59,59 +85,71 @@ trait ResourceTestHelpers
      */
     protected function randomTable(Closure $callback = null)
     {
-        Schema::create($table = Str::random(8), $callback);
+        $config = Schema::create($table = Str::random(8), $callback);
 
-        return ResourceFactory::make($table);
+        return ResourceFactory::make($config->getIdentifier());
     }
 
     /** @return \SuperV\Platform\Domains\Resource\Resource */
-    protected function makeResource($slug = 'test_users', array $columns = ['name'], array $resource = [])
+    protected function makeResource($table, array $columns = ['name'], array $resource = [])
     {
-        $this->makeResourceModel($slug, $columns, $resource);
+        if (str_contains($table, '.')) {
+            list($namespace, $table) = explode('.', $table);
+        }
+        $identifier = ($namespace ?? 'platform').'.'.$table;
+        $this->makeResourceModel($identifier, $columns, $resource);
 
-        return ResourceFactory::make($slug);
+        return ResourceFactory::make($identifier);
     }
 
     /** @return \SuperV\Platform\Domains\Resource\ResourceModel */
-    protected function makeResourceModel($slug, array $columns, array $resource = [])
+    protected function makeResourceModel($table, array $columns, array $resource = [])
     {
-        Schema::create($slug, function (Blueprint $table, ResourceConfig $resourceBlueprint) use (
-            $columns,
-            $resource
-        ) {
-            $table->increments('id');
+        if (str_contains($table, '.')) {
+            list($namespace, $table) = explode('.', $table);
+        } else {
+            $namespace = 'platform';
+        }
+        Schema::create($table,
+            function (Blueprint $table, ResourceConfig $config) use (
+                $columns,
+                $resource,
+                $namespace
+            ) {
+                $config->setNamespace($namespace);
+                $table->increments('id');
 
-            foreach ($columns as $key => $column) {
-                $parameters = [];
-                if (is_string($key)) {
-                    $parameters = explode('|', $column);
-                    $column = $key;
+                foreach ($columns as $key => $column) {
+                    $parameters = [];
+                    if (is_string($key)) {
+                        $parameters = explode('|', $column);
+                        $column = $key;
+                    }
+
+                    if ($column === 'timestamps') {
+                        $table->timestamps();
+                        continue;
+                    }
+                    $parts = explode(':', $column);
+                    $type = count($parts) === 1 ? 'string' : $parts[1];
+                    $name = $parts[0];
+
+                    $column = $table->addColumn($type, $name);
+                    foreach ($parameters as $param) {
+                        $column->{$param}();
+                    }
                 }
 
-                if ($column === 'timestamps') {
-                    $table->timestamps();
-                    continue;
-                }
-                $parts = explode(':', $column);
-                $type = count($parts) === 1 ? 'string' : $parts[1];
-                $name = $parts[0];
-
-                $column = $table->addColumn($type, $name);
-                foreach ($parameters as $param) {
-                    $column->{$param}();
-                }
-            }
-
-            $resourceBlueprint->fill($resource);
-        });
-        $resource = ResourceModel::withHandle($slug);
+                $config->fill($resource);
+            });
+        $resource = ResourceModel::withIdentifier($namespace.'.'.$table);
 
         return $resource;
     }
 
     protected function getTableConfigOfResource($resource)
     {
-        $response = $this->getJsonUser($resource->route('index.table'));
+        $response = $this->getJsonUser($resource->route('dashboard', null, ['section' => 'table']));
         $table = HelperComponent::from($response->decodeResponseJson('data'));
 
         return $table;
@@ -119,9 +157,11 @@ trait ResourceTestHelpers
 
     protected function getTableRowsOfResource($resource, $query = '')
     {
-        $url = $resource->route('index.table').'/data'.str_prefix($query, '?', '');
+        $url = $resource->route('dashboard', null, ['section' => 'table']).'/data'.str_prefix($query, '?', '');
         $response = $this->getJsonUser($url)->assertOk();
 
         return $response->decodeResponseJson('data.rows');
     }
+
+    protected function creatFieldEntry() { }
 }

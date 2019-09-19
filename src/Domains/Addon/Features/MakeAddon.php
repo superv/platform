@@ -2,44 +2,39 @@
 
 namespace SuperV\Platform\Domains\Addon\Features;
 
-use Illuminate\Foundation\Bus\DispatchesJobs;
 use SuperV\Platform\Domains\Addon\Events\MakingAddonEvent;
 use SuperV\Platform\Domains\Addon\Jobs\CreateAddonFiles;
 use SuperV\Platform\Domains\Addon\Jobs\CreateAddonPaths;
 use SuperV\Platform\Domains\Addon\Jobs\MakeAddonModel;
+use SuperV\Platform\Support\Dispatchable;
 
 class MakeAddon
 {
-    use DispatchesJobs;
+    use Dispatchable;
+
 
     /**
-     * Slug of the addon as vendor.type.name.
-     *
-     * @var string
+     * @var \SuperV\Platform\Domains\Addon\Features\MakeAddonRequest
      */
-    private $slug;
+    protected $request;
 
     /**
-     * Target path of the addon.
-     *
-     * @var null
+     * @var bool
      */
-    private $path;
+    protected $force;
 
-    public function __construct($slug, $path = null)
+    public function __construct(MakeAddonRequest $request, bool $force = false)
     {
-        $this->slug = $slug;
-        $this->path = $path;
+        $this->request = $request;
+        $this->force = $force;
     }
 
     public function handle()
     {
-        $model = $this->dispatch(new MakeAddonModel($this->slug, $this->path));
+        $model = MakeAddonModel::makeFromRequest($this->request);
 
-        $this->dispatch(new CreateAddonPaths($model));
-
-        $this->dispatch(new CreateAddonFiles($model));
-
+        CreateAddonPaths::dispatch($model, $this->force);
+        CreateAddonFiles::dispatch($model);
         MakingAddonEvent::dispatch($model);
 
         exec("composer install  -d ".base_path());

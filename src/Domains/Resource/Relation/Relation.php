@@ -126,7 +126,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
     {
         $params = array_merge([
             'id'       => $entry->getId(),
-            'resource' => $entry->getTable(),
+            'resource' => $entry->getResourceIdentifier(),
             'relation' => $this->getName(),
         ], $params);
 
@@ -143,7 +143,10 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         if (! $pivotColumns = $this->getRelationConfig()->getPivotColumns()) {
             return [];
         }
-        $pivotResource = ResourceFactory::make($this->getRelationConfig()->getPivotTable());
+        $pivotResource = ResourceFactory::make(
+//            sprintf("%s.%s", $this->getRelationConfig()->getPivotNamespace(), $this->getRelationConfig()->getPivotTable())
+            $this->getRelationConfig()->getPivotIdentifier()
+        );
 
         return $pivotResource->fields()
                              ->keyByName()
