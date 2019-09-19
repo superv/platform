@@ -15,7 +15,7 @@ class TestUserResourceExtension implements ExtendsResource, ObservesEntryRetriev
 
     public function extends(): string
     {
-        return 'platform.t_users';
+        return 'testing.users';
     }
 
     public function extend(Resource $resource)

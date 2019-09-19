@@ -15,7 +15,7 @@ class FieldRepositoryTest extends ResourceTestCase
 
     function test__creates_field_with_valid_params()
     {
-        $field = $this->repo->create($attributes = $this->makeValidFieldAttributes());
+        $field = $this->repo->create($attributes = $this->makeFieldAttributes());
 
         $this->assertNotNull($field);
 
@@ -43,16 +43,16 @@ class FieldRepositoryTest extends ResourceTestCase
 
     function test__creates_auth_action_entries()
     {
-        $field = $this->repo->create($attributes = $this->makeValidFieldAttributes());
+        $field = $this->repo->create($attributes = $this->makeFieldAttributes());
 
         $action = Action::withSlug($field->getIdentifier());
         $this->assertNotNull($action);
-        $this->assertEquals('testing_module.core.fields', $action->namespace);
+        $this->assertEquals('testing.servers.fields', $action->namespace);
     }
 
     function test__returns_ghost_if_authorization_fails()
     {
-        $field = $this->repo->create($attributes = $this->makeValidFieldAttributes());
+        $field = $this->repo->create($attributes = $this->makeFieldAttributes());
         $this->be($user = $this->newUser(['allow' => false]));
         $identifier = $field->getIdentifier();
 
@@ -75,15 +75,4 @@ class FieldRepositoryTest extends ResourceTestCase
         $this->repo = FieldRepository::resolve();
     }
 
-    /**
-     * @return array
-     */
-    protected function makeValidFieldAttributes(): array
-    {
-        return [
-            'identifier' => 'testing_module.core.fields:title',
-            'name'       => 'title',
-            'type'       => 'text',
-        ];
-    }
 }

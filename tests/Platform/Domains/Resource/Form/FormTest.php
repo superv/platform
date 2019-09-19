@@ -190,7 +190,7 @@ class FormTest extends ResourceTestCase
     {
         parent::setUp();
 
-        $this->users = $this->create('t_users', function (Blueprint $table) {
+        $this->users = $this->create('tbl_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->unsignedInteger('age');
@@ -224,7 +224,7 @@ class FormTestUser extends Entry
 {
     public $timestamps = false;
 
-    protected $table = 't_users';
+    protected $table = 'tbl_users';
 
     protected $guarded = [];
 

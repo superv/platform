@@ -291,7 +291,7 @@ class CreateResourceTest extends ResourceTestCase
 
         Event::assertDispatched(ResourceCreatedEvent::class, function (ResourceCreatedEvent $event) {
             $this->assertInstanceOf(ResourceModel::class, $event->resourceEntry);
-            $this->assertEquals('platform.t_posts', $event->resourceEntry->getIdentifier());
+            $this->assertEquals('testing.posts', $event->resourceEntry->getIdentifier());
 
             return true;
         });
@@ -301,7 +301,7 @@ class CreateResourceTest extends ResourceTestCase
     {
         $this->blueprints()->posts('testing');
 
-        $action = Action::withSlug('testing.t_posts');
+        $action = Action::withSlug('testing.posts');
         $this->assertNotNull($action);
         $this->assertEquals('testing', $action->namespace);
 

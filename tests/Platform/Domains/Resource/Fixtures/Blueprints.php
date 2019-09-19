@@ -18,10 +18,12 @@ class Blueprints
         $this->groups();
         $this->roles();
 
-        $users = $this->create('t_users',
+        $users = $this->create('tbl_users',
             function (Blueprint $table, Config $resource) use ($callback) {
                 $resource->resourceKey('user');
                 $resource->label('Users');
+                $resource->setNamespace('testing');
+                $resource->setName('users');
 
                 $table->increments('id');
                 $table->string('name')->entryLabel();
@@ -31,26 +33,26 @@ class Blueprints
 
                 $table->file('avatar')->config(['disk' => 'fakedisk']);
 
-                $table->belongsTo('t_groups', 'group')->showOnIndex();
-                $table->belongsToMany('platform.t_roles', 'roles')
-                      ->pivotTable('platform.assigned_roles')
+                $table->belongsTo('testing.groups', 'group')->showOnIndex();
+                $table->belongsToMany('testing.roles', 'roles')
+                      ->pivotTable('tbl_assigned_roles', 'testing.assigned_roles')
                       ->pivotForeignKey('user_id')
                       ->pivotRelatedKey('role_id')
                       ->pivotColumns(
                           function (Blueprint $pivotTable) {
-                              $pivotTable->string('notes');
+                              $pivotTable->string('status');
                           });
 
-                $table->morphToMany('platform.t_actions', 'actions', 'owner')
+                $table->morphToMany('testing.actions', 'actions', 'owner')
                       ->pivotRelatedKey('action_id')
-                      ->pivotTable('assigned_actions', 'platform.assigned_actions')
+                      ->pivotTable('assigned_actions', 'testing.assigned_actions')
                       ->pivotColumns(
                           function (Blueprint $pivotTable) {
                               $pivotTable->string('provision');
                           });
 
-                $table->hasMany('platform.t_posts', 'posts');
-                $table->hasMany('platform.t_comments', 'comments');
+                $table->hasMany('testing.posts', 'posts');
+                $table->hasMany('testing.comments', 'comments');
 
                 if ($callback) {
                     $callback($table);
@@ -61,39 +63,43 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function comments()
+    public function comments($namespace = 'testing')
     {
-        return $this->create('t_comments', function (Blueprint $table) {
-            $table->resourceConfig()->label('Comments');
+        return $this->create('comments', function (Blueprint $table, Config $config) use ($namespace) {
+            $config->label('Comments');
+            $config->setName('comments');
+            $config->setNamespace($namespace);
 
             $table->increments('id');
             $table->string('comment');
             $table->select('status')->options(['approved', 'pending']);
 
-            $table->belongsTo('t_users', 'user');
+            $table->belongsTo('testing.users', 'user');
         });
     }
 
     /** @return Resource */
-    public function posts($namespace = 'platform')
+    public function posts($namespace = 'testing')
     {
-        return $this->create('t_posts', function (Blueprint $table, Config $config) use ($namespace) {
+        return $this->create('tbl_posts', function (Blueprint $table, Config $config) use ($namespace) {
             $config->label('Posts');
+            $config->setName('posts');
             $config->setNamespace($namespace);
 
             $table->increments('id');
             $table->string('title')->entryLabel();
 
-            $table->belongsTo('t_users', 'user');
+            $table->belongsTo('testing.users', 'user');
         });
     }
 
     /** @return Resource */
     public function categories($namespace = 'testing')
     {
-        return $this->create('categories',
+        return $this->create('tbl_categories',
             function (Blueprint $table, Config $config) use ($namespace) {
                 $config->label('Categories');
+                $config->setName('categories');
                 $config->setNamespace($namespace);
 
                 $table->increments('id');
@@ -105,9 +111,10 @@ class Blueprints
     /** @return Resource */
     public function orders($namespace = 'testing')
     {
-        return $this->create('orders',
+        return $this->create('tbl_orders',
             function (Blueprint $table, Config $config) use ($namespace) {
                 $config->label('Orders');
+                $config->setName('orders');
                 $config->setNamespace($namespace);
 
                 $table->increments('id');
@@ -120,10 +127,13 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function roles()
+    public function roles($namespace = 'testing')
     {
-        $roles = $this->create('t_roles', function (Blueprint $table, Config $resource) {
-            $resource->resourceKey('role');
+        $roles = $this->create('tbl_roles', function (Blueprint $table, Config $config) use ($namespace) {
+            $config->resourceKey('role');
+            $config->setName('roles');
+            $config->setNamespace($namespace);
+
             $table->increments('id');
             $table->string('title')->unique()->entryLabel();
         });
@@ -134,9 +144,11 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function actions()
+    public function actions($namespace = 'testing')
     {
-        $actions = $this->create('t_actions', function (Blueprint $table) {
+        $actions = $this->create('tbl_actions', function (Blueprint $table, Config $config) use ($namespace) {
+            $config->setNamespace($namespace);
+            $config->setName('actions');
             $table->increments('id');
             $table->string('action')->unique()->entryLabel();
         });
@@ -151,9 +163,11 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function groups()
+    public function groups($namespace = 'testing')
     {
-        $groups = $this->create('t_groups', function (Blueprint $table) {
+        $groups = $this->create('tbl_groups', function (Blueprint $table, Config $config) use ($namespace) {
+            $config->setNamespace($namespace);
+            $config->setName('groups');
             $table->increments('id');
             $table->string('title');
         });

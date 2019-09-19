@@ -19,12 +19,12 @@ class ExtensionTest
 {
     function test__extends_resource()
     {
-        $this->makeResource('t_users');
+        $this->makeResource('tbl_users');
         ResourceFactory::wipe();
 
         Extension::register(TestUserResourceExtension::class);
 
-        $extended = sv_resource('platform.t_users');
+        $extended = sv_resource('testing.users');
 
         $nameField = $extended->getField('name');
 
@@ -68,35 +68,35 @@ class ExtensionTest
 
     function test__observes_retrieved()
     {
-        $this->makeResource('t_users');
+        $this->makeResource('tbl_users');
         $this->makeResource('t_posts');
         Extension::register(TestUserResourceExtension::class);
 
-        $user = sv_resource('platform.t_users')->fake()->fresh();
-//        sv_resource('platform.t_posts')->fake();
+        $user = sv_resource('testing.users')->fake()->fresh();
+//        sv_resource('testing.posts')->fake();
 
         $this->assertEquals($user, TestUserResourceExtension::$called['retrieved']);
     }
 
     function test__observes_saving()
     {
-        $this->makeResource('t_users');
+        $this->makeResource('tbl_users');
         $this->makeResource('t_posts');
         Extension::register(TestUserResourceExtension::class);
 
-        $user = sv_resource('platform.t_users')->fake();
-        sv_resource('platform.t_posts')->fake();
+        $user = sv_resource('testing.users')->fake();
+        sv_resource('testing.posts')->fake();
         $this->assertEquals($user, TestUserResourceExtension::$called['saving']);
     }
 
     function test__observes_saved()
     {
-        $this->makeResource('t_users');
+        $this->makeResource('tbl_users');
         $this->makeResource('t_posts');
         Extension::register(TestUserResourceExtension::class);
 
-        $user = sv_resource('platform.t_users')->fake();
-        sv_resource('platform.t_posts')->fake();
+        $user = sv_resource('testing.users')->fake();
+        sv_resource('testing.posts')->fake();
         $this->assertEquals($user, TestUserResourceExtension::$called['saved']);
     }
 

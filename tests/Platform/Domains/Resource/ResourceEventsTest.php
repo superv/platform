@@ -22,7 +22,7 @@ class ResourceEventsTest extends ResourceTestCase
 {
     function test__dispatches_event_when_a_resource_entry_is_creating()
     {
-        $res = $this->create('t_users', function (Blueprint $table) {
+        $res = $this->create('tbl_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
         });
@@ -37,7 +37,7 @@ class ResourceEventsTest extends ResourceTestCase
 
     function test__dispatches_event_when_a_resource_entry_is_created()
     {
-        $res = $this->create('t_users', function (Blueprint $table) {
+        $res = $this->create('tbl_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
         });
@@ -55,7 +55,7 @@ class ResourceEventsTest extends ResourceTestCase
     {
         Event::fake(EntryDeletedEvent::class);
 
-        $res = $this->create('t_users', function (Blueprint $table) {
+        $res = $this->create('tbl_users', function (Blueprint $table) {
             $table->increments('id');
         });
 
@@ -69,14 +69,14 @@ class ResourceEventsTest extends ResourceTestCase
 
     function test__triggers_on_created_hooks()
     {
-        $users = $this->create('t_users', function (Blueprint $table) {
+        $users = $this->create('tbl_users', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamp('confirmed_at')->nullable();
         });
 
         $confirmations = $this->create('t_confirmations', function (Blueprint $table) {
             $table->increments('id');
-            $table->belongsTo('t_users', 'user');
+            $table->belongsTo('tbl_users', 'user');
             $table->timestamp('created_at');
         });
         ResourceFactory::wipe();

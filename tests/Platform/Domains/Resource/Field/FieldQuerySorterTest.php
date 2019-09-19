@@ -44,7 +44,7 @@ class FieldQuerySorterTest extends ResourceTestCase
         /** @var \Illuminate\Database\Query\JoinClause $join */
         $join = $postsQuery->getQuery()->joins[0];
         $this->assertNotNull($join);
-        $this->assertEquals('t_users AS t_users_1', $join->table);
+        $this->assertEquals('tbl_users AS tbl_users_1', $join->table);
 
         $usersTable = $users->config()->getTable();
         $this->assertEquals([

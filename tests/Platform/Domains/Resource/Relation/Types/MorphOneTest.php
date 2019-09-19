@@ -28,8 +28,8 @@ class MorphOneTest extends ResourceTestCase
 
     function test__create_morph_one_relation()
     {
-        $this->assertColumnNotExists('t_users', 'address');
-        $this->assertColumnNotExists('t_users', 'address_id');
+        $this->assertColumnNotExists('tbl_users', 'address');
+        $this->assertColumnNotExists('tbl_users', 'address_id');
 
         $relation = $this->parent->getRelation('tag');
         $this->assertEquals('morph_one', $relation->getType());
@@ -118,7 +118,7 @@ class MorphOneTest extends ResourceTestCase
     {
         parent::setUp();
 
-        $this->parent = $this->create('t_users', function (Blueprint $table, ResourceConfig $resource) {
+        $this->parent = $this->create('tbl_users', function (Blueprint $table, ResourceConfig $resource) {
             $resource->resourceKey('user');
 
             $table->increments('id');

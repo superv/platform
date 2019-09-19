@@ -18,12 +18,12 @@ class ResourceTest extends ResourceTestCase
 {
     function test__creates_anonymous_model_class_if_not_provided()
     {
-        $resource = $this->makeResource('t_users');
+        $resource = $this->makeResource('tbl_users');
 
         $entry = $resource->newEntryInstance();
 
         $this->assertInstanceOf(ResourceEntry::class, $entry);
-        $this->assertEquals('t_users', $entry->getHandle());
+        $this->assertEquals('tbl_users', $entry->getHandle());
     }
 
     function test__instantiates_entries_using_provided_model()
@@ -47,12 +47,12 @@ class ResourceTest extends ResourceTestCase
 
         $this->assertEquals([
             'name'     => ['max:255', 'required'],
-            'email'    => ['unique:t_users,email,NULL,id', 'required'],
+            'email'    => ['unique:tbl_users,email,NULL,id', 'required'],
             'bio'      => ['max:255', 'string', 'nullable'],
             'group_id' => ['required'],
             'age'      => ['integer', 'min:0', 'nullable'],
             'avatar'   => ['nullable'],
-            'roles'   => ['nullable'],
+            'roles'    => ['nullable'],
         ], $users->getRules());
     }
 
@@ -64,24 +64,24 @@ class ResourceTest extends ResourceTestCase
 
         $this->assertEquals([
             'name'     => ['max:255', 'sometimes', 'required'],
-            'email'    => ['unique:t_users,email,'.$user->getId().',id', 'sometimes', 'required'],
+            'email'    => ['unique:tbl_users,email,'.$user->getId().',id', 'sometimes', 'required'],
             'bio'      => ['max:255', 'string', 'nullable'],
             'group_id' => ['sometimes', 'required'],
             'age'      => ['integer', 'min:0', 'nullable'],
             'avatar'   => ['nullable'],
-            'roles'   => ['nullable'],
+            'roles'    => ['nullable'],
         ], $users->getRules($user));
     }
 
     function test__rules_for_dynamically_added_fields()
     {
         $this->blueprints()->users();
-        Resource::extend('platform.t_users')
+        Resource::extend('testing.users')
                 ->with(function (Resource $resource) {
                     $resource->indexFields()->add(['type' => 'text', 'name' => 'isot']);
                 });
 
-        $users = sv_resource('platform.t_users');
+        $users = sv_resource('testing.users');
 
         $this->assertFalse(in_array('isot', array_keys($users->getRules())));
     }
