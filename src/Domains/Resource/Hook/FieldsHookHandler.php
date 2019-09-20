@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Hook;
 
 use SuperV\Platform\Contracts\Dispatcher;
 
-class FieldsHook implements \SuperV\Platform\Domains\Resource\Hook\Contracts\Hook
+class FieldsHookHandler implements \SuperV\Platform\Domains\Resource\Hook\Contracts\HookHandler
 {
     /**
      * @var \SuperV\Platform\Contracts\Dispatcher

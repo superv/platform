@@ -5,9 +5,9 @@ namespace SuperV\Platform\Domains\Resource\Hook;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\FormResolvedHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\FormValidatingHook;
-use SuperV\Platform\Domains\Resource\Hook\Contracts\Hook as HookContract;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\HookHandler as HookContract;
 
-class FormsHook implements HookContract
+class FormsHookHandler implements HookContract
 {
     /**
      * @var \SuperV\Platform\Contracts\Dispatcher

@@ -140,7 +140,7 @@ class HookManager
         if (! class_exists($hookHandler)) {
             return Log::error("Hook handler class does not exist: ".$hookHandler);
         }
-        $typeHook = str_replace_last("\\HookManager", "\\".studly_case($type.'_hook'), get_class($this));
+        $typeHook = str_replace_last("\\HookManager", "\\".studly_case($type.'_hook_handler'), get_class($this));
         if (class_exists($typeHook)) {
             app($typeHook)->hook($identifier, $hookHandler, $subKey);
         }

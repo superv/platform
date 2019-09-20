@@ -3,10 +3,10 @@
 namespace SuperV\Platform\Domains\Resource\Hook;
 
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Domains\Resource\Hook\Contracts\Hook as HookContract;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\HookHandler as HookContract;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
-class ConfigHook implements HookContract
+class ConfigHookHandler implements HookContract
 {
     /**
      * @var \SuperV\Platform\Contracts\Dispatcher

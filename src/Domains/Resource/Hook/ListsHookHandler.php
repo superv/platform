@@ -3,9 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Hook;
 
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Domains\Resource\Hook\Contracts\Hook as HookContract;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\HookHandler as HookContract;
 
-class ListsHook implements HookContract
+class ListsHookHandler implements HookContract
 {
     /**
      * @var \SuperV\Platform\Contracts\Dispatcher
