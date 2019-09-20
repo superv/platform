@@ -12,13 +12,13 @@ class OrdersFormDefault implements FormResolvedHook, FormValidatingHook
 
     public function resolved(Form $form)
     {
-        $form->onlyFields('number', 'status');
+        $_SERVER['__hooks::form.resolved'] = $form->getIdentifier();
+//        $form->onlyFields('number', 'status');
     }
 
     public function validating(Form $form)
     {
         $_SERVER['__hooks::form.validating'] = $form;
-
-        $form->getField('status')->removeRules();
+//        $form->getField('status')->removeRules();
     }
 }

@@ -22,4 +22,13 @@ class Router
             ])
         );
     }
+
+    public function defaultList()
+    {
+        return sprintf(
+            sv_route('resource.table', [
+                'resource' => $this->resource->getIdentifier(),
+            ])
+        );
+    }
 }

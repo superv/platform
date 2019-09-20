@@ -218,6 +218,13 @@ function sv_identifier($string)
     return Identifier::make($string);
 }
 
+function sv_console()
+{
+    $args = func_get_args();
+
+    Log::info('console', $args);
+}
+
 /**
  * @param null $addon
  * @return \SuperV\Platform\Domains\Addon\Addon|\SuperV\Platform\Domains\Addon\AddonCollection

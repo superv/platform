@@ -480,6 +480,8 @@ final class Resource implements
 
         $this->fire('table.resolved', ['table' => $table]);
 
+        $this->fireEvent('lists:default.events:resolved', ['table' => $table]);
+
         return $table;
     }
 
@@ -592,5 +594,11 @@ final class Resource implements
         }
 
         return ResourceModel::query()->where('identifier', $identifier)->exists();
+    }
+
+    protected function fireEvent($event, $payload = [])
+    {
+        $eventName = $this->getIdentifier().'.'.$event;
+        app('events')->dispatch($eventName, $payload);
     }
 }

@@ -69,19 +69,19 @@ class HookManager
             }
 
             $className = str_replace('.php', '', $file->getFilename());
-            $hookHandler = $namespace.'\\'.$className;
+            $hook = $namespace.'\\'.$className;
 
-            if (! ($identifier = isset($hookHandler::$identifier) ? $hookHandler::$identifier : null)) {
-                continue;
+            if (! ($identifier = isset($hook::$identifier) ? $hook::$identifier : null)) {
+                sv_console(sprintf("Identifier not found for hook [%s]", $hook));
             }
 
-            $this->register($identifier, $hookHandler, $className);
+            $this->register($identifier, $hook, $className);
         }
 
         return $this;
     }
 
-    public function register($identifier, $hookHandler, $className)
+    public function register($identifier, $hook, $className)
     {
         $_identifier = sv_identifier($identifier);
 
@@ -121,28 +121,28 @@ class HookManager
         }
 
         if (! $subKey) {
-            $this->map[$identifier][$hookType] = $hookHandler;
+            $this->map[$identifier][$hookType] = $hook;
         } else {
             if (! isset($this->map[$identifier][$hookType][$subKey])) {
                 $this->map[$identifier][$hookType][$subKey] = [];
             }
 
-            $this->map[$identifier][$hookType][$subKey] = $hookHandler;
+            $this->map[$identifier][$hookType][$subKey] = $hook;
         }
 
-        $this->hookType($identifier, $hookType, $hookHandler, $subKey);
+        $this->hookType($identifier, $hookType, $hook, $subKey);
 
         return $this;
     }
 
-    public function hookType($identifier, $type, $hookHandler, $subKey = null)
+    public function hookType($identifier, $type, $hook, $subKey = null)
     {
-        if (! class_exists($hookHandler)) {
-            return Log::error("Hook handler class does not exist: ".$hookHandler);
+        if (! class_exists($hook)) {
+            return Log::error("Hook handler class does not exist: ".$hook);
         }
-        $typeHook = str_replace_last("\\HookManager", "\\".studly_case($type.'_hook_handler'), get_class($this));
-        if (class_exists($typeHook)) {
-            app($typeHook)->hook($identifier, $hookHandler, $subKey);
+        $hookHandler = str_replace_last("\\HookManager", "\\".studly_case($type.'_hook_handler'), get_class($this));
+        if (class_exists($hookHandler)) {
+            app($hookHandler)->hook($identifier, $hook, $subKey);
         }
     }
 

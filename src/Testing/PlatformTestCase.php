@@ -13,6 +13,8 @@ use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
+use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\Exceptions\ValidationException;
 use SuperV\Platform\PlatformServiceProvider;
 use Tests\Platform\ComposerLoader;
 
@@ -49,6 +51,15 @@ class PlatformTestCase extends OrchestraTestCase
     public function basePath($path = null)
     {
         return __DIR__.($path ? '/'.$path : '');
+    }
+
+    protected function runTest()
+    {
+        try {
+            return parent::runTest();
+        } catch (ValidationException $e) {
+            PlatformException::throw($e);
+        }
     }
 
     protected function getPackageProviders($app)

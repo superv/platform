@@ -10,6 +10,8 @@ interface Form
 
     public function uuid();
 
+    public function getIdentifier();
+
     public function hideField(string $fieldName): Form;
 
     public function getField(string $name): ?FormField;

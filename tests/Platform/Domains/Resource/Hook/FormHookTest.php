@@ -17,13 +17,11 @@ class FormHookTest extends HookTestCase
 {
     function test_resolved()
     {
+        $_SERVER['__hooks::form.resolved'] = null;
         $this->blueprints()->orders();
 
-        $form = FormComponent::get(OrdersFormDefault::class, $this);
-
-        $this->assertNotNull($form);
-
-        $this->assertEquals(2, $form->getFieldCount());
+        $formComponent = FormComponent::get(OrdersFormDefault::class, $this);
+        $formComponent->assertIdentifier($_SERVER['__hooks::form.resolved']);
     }
 
     function __validating()
@@ -43,6 +41,4 @@ class FormHookTest extends HookTestCase
 
         $this->assertNotNull($_SERVER['__hooks::form.validating']);
     }
-
-
 }

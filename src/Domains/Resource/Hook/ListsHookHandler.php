@@ -23,12 +23,8 @@ class ListsHookHandler implements HookContract
 
     public function hook(string $identifier, string $hookHandler, string $subKey = null)
     {
-        $implements = class_implements($hookHandler);
 
         foreach ($this->map as $eventType => $contract) {
-            if (! in_array($contract, $implements)) {
-                continue;
-            }
             $eventName = sprintf("%s.lists:%s.events:%s", $identifier, $subKey, $eventType);
             $this->dispatcher->listen(
                 $eventName,

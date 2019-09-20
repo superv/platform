@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Fixtures\Resources;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Hook\BaseHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\AfterDeletedHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\AfterRetrievedHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\AfterSavedHook;
