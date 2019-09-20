@@ -195,11 +195,6 @@ class Field implements FieldContract
         return $this->name;
     }
 
-    public function fireEvent($eventName)
-    {
-        Event::fire(sprintf("%s.events:%s", $this->getIdentifier(), $eventName), $this);
-    }
-
     public function getIdentifier()
     {
         return $this->identifier;
@@ -342,14 +337,14 @@ class Field implements FieldContract
         return $this;
     }
 
-
-    //////// FLAGS
-    ///
-
     public function hasFlag(string $flag): bool
     {
         return in_array($flag, $this->flags);
     }
+
+
+    //////// FLAGS
+    ///
 
     public function showOnIndex(): FieldContract
     {
@@ -384,6 +379,16 @@ class Field implements FieldContract
     public function doesNotInteractWithTable()
     {
         return $this->fieldType instanceof DoesNotInteractWithTable;
+    }
+
+    public function fireEvent($eventName)
+    {
+        Event::fire(sprintf("%s.events:%s", $this->getIdentifier(), $eventName), $this);
+    }
+
+    public function searchable(): FieldContract
+    {
+        return $this->addFlag('searchable');
     }
 
     public function setHint($hint)

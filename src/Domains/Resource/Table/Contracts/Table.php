@@ -13,6 +13,8 @@ interface Table
 
     public function getFields();
 
+    public function setOption($key, $value);
+
     public function makeFields(): Collection;
 
     public function setFields($fields);
@@ -52,4 +54,8 @@ interface Table
     public function getSelectionActions();
 
     public function getContextActions();
+
+    public function getRows(): Collection;
+
+    public function removeRowAction($actionName);
 }

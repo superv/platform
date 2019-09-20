@@ -476,7 +476,9 @@ final class Resource implements
 
     public function resolveTable(): ResourceTable
     {
+        /** @var ResourceTable $table */
         $table = app(ResourceTable::class)->setResource($this);
+        $table->setIdentifier($this->getIdentifier().'.lists:default');
 
         $this->fire('table.resolved', ['table' => $table]);
 

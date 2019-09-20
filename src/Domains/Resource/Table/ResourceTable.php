@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
+use Event;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Field\FieldQuerySorter;
 use SuperV\Platform\Domains\Resource\Resource;
@@ -14,6 +15,26 @@ class ResourceTable extends EntryTable
     public function getFields()
     {
         return $this->resource->indexFields()->get();
+    }
+
+    public function composeConfig()
+    {
+        Event::fire($this->getIdentifier().'.events:config', ['table'  => $this,
+                                                              'fields' => $this->resource->indexFields()]);
+
+        return parent::composeConfig();
+    }
+
+    public function build()
+    {
+        Event::fire($this->getIdentifier().'.events:config', ['table'  => $this,
+                                                              'fields' => $this->resource->indexFields()]);
+
+        $return = parent::build();
+
+        Event::fire($this->getIdentifier().'.events:data', ['table' => $this, 'rows' => $this->rows]);
+
+        return $return;
     }
 
     public function getFilters(): Collection

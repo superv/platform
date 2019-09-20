@@ -16,9 +16,14 @@ use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Composable;
 use SuperV\Platform\Support\Composer\Tokens;
+use SuperV\Platform\Support\Concerns\HasOptions;
 
 class Table implements TableContract, Composable, ProvidesUIComponent, Responsable
 {
+    use HasOptions;
+
+    protected $identifier;
+
     protected $title;
 
     /** @var Collection */
@@ -158,6 +163,21 @@ class Table implements TableContract, Composable, ProvidesUIComponent, Responsab
         $this->viewable = false;
 
         return $this;
+    }
+
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     protected function copyMergeFields()
