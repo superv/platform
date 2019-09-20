@@ -9,9 +9,8 @@ use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ResolveRequest;
 use SuperV\Platform\Domains\Resource\Model\AnonymousModel;
 use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormFake;
 use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormTestHelpers;
-use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class ResolveRequestTest extends ResourceTestCase
+class ResolveRequestTest
 {
     use FormTestHelpers;
 
@@ -31,6 +30,8 @@ class ResolveRequestTest extends ResourceTestCase
 
         $repository->shouldReceive('getEntry')->with('ab.foo', 1)->andReturn($fooEntry)->once();
         $repository->shouldReceive('getEntry')->with('xy.bar', 2)->andReturn($barEntry)->once();
+
+//        $form->handle($request);
 
         ResolveRequest::resolve()->handle($form, $request);
 

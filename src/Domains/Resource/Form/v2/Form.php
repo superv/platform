@@ -8,8 +8,6 @@ use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ComposeForm;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\RenderComponent;
-use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ResolveRequest;
-use SuperV\Platform\Domains\Resource\Form\v2\Jobs\SubmitForm;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
 
@@ -21,14 +19,10 @@ class Form implements FormInterface
 
     protected $valid = false;
 
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Form\v2\FormFieldCollection
-     */
+    /** @var \SuperV\Platform\Domains\Resource\Form\v2\FormFieldCollection */
     protected $fields;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $identifier;
 
     protected $url;
@@ -38,25 +32,86 @@ class Form implements FormInterface
     /** @var Payload */
     protected $payload;
 
-    /**
-     * @var \SuperV\Platform\Contracts\Dispatcher
-     */
+    /** @var \SuperV\Platform\Contracts\Dispatcher */
     protected $events;
 
     protected $data;
 
     protected $entryIds;
 
-    public function __construct(Dispatcher $events)
+    protected $entries = [];
+
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface
+     */
+    protected $entryRepository;
+
+    public function __construct(Dispatcher $events, EntryRepositoryInterface $entryRepository)
     {
         $this->events = $events;
+        $this->entryRepository = $entryRepository;
+    }
+
+    protected function loadEntries($requestArray)
+    {
+        foreach (array_pull($requestArray, 'entries', []) as $entry) {
+            $parts = explode('.', $entry);
+
+            if (count($parts) < 3 || ! is_numeric(end($parts))) {
+                continue;
+            }
+
+            $entryId = array_pop($parts);
+            $identifier = implode('.', $parts);
+
+            if (! $entry = $this->entryRepository->getEntry($identifier, $entryId)) {
+                continue;
+            }
+
+            $this->addEntry($identifier, $entryId);
+            $this->entries[$identifier] = $entry;
+        }
     }
 
     public function handle(Request $request)
     {
         $this->fireEvent('handling');
 
-        ResolveRequest::resolve()->handle($this, $request);
+        $this->setMethod(strtoupper($request->getMethod()));
+
+        if ($this->isMethod('POST')) {
+            $this->fireEvent('submitting');
+        }
+
+        $this->loadEntries($request->all());
+
+        if ($this->isMethod('GET')) {
+            $this->getFields()->keys()->map(function ($fieldIdentifier) {
+                list($entryIdentifier, $fieldKey) = explode('.fields:', $fieldIdentifier);
+
+                if ($entry = array_get($this->entries, $entryIdentifier)) {
+                    $this->getField($fieldIdentifier)->setValue($entry->getAttribute($fieldKey));
+                }
+            });
+        } elseif ($this->isMethod('POST')) {
+            foreach ($request->post() as $fieldIdentifier => $value) {
+                list($entryIdentifier, $fieldKey) = explode('.fields:', str_replace('_', '.', $fieldIdentifier));
+                if ($entry = array_get($this->entries, $entryIdentifier)) {
+                    $entry->setAttribute($fieldKey, $value);
+                }
+            }
+
+            foreach ($this->entries as $entry) {
+                $entry->save();
+            }
+        }
+
+//        ResolveRequest::resolve()->handle($this, $request);
+
+        if ($request->isMethod('POST')) {
+            $this->submitted = true;
+            $this->fireEvent('submitted');
+        }
     }
 
     public function compose(): Payload
@@ -75,13 +130,6 @@ class Form implements FormInterface
         }
 
         return RenderComponent::resolve()->handle($this->payload);
-    }
-
-    public function submit($data)
-    {
-        SubmitForm::resolve()->handle($this, $data);
-
-        $this->submitted = true;
     }
 
     ////////////////////////////////////
@@ -117,7 +165,6 @@ class Form implements FormInterface
 
     public function getFieldValue(string $fieldName)
     {
-//        return $this->data[$fieldName];
         return $this->getField($fieldName)->getValue();
     }
 
@@ -138,6 +185,25 @@ class Form implements FormInterface
         return $this->method;
     }
 
+    public function setMethod($method): FormInterface
+    {
+        $this->method = $method;
+
+        return $this;
+    }
+
+    public function fireEvent(string $eventName, $payload = null)
+    {
+        $event = sprintf("%s.events:%s", $this->getIdentifier(), $eventName);
+
+        $this->events->dispatch($event, array_filter(['form' => $this, 'payload' => $payload]));
+    }
+
+    public function isMethod($method): bool
+    {
+        return strtoupper($method) === $this->getMethod();
+    }
+
     public static function resolve(FormFieldCollection $fields, string $identifier)
     {
         $form = app(Contracts\FormInterface::class);
@@ -148,13 +214,6 @@ class Form implements FormInterface
         return $form;
     }
 
-    protected function fireEvent(string $eventName, $payload = null)
-    {
-        $event = sprintf("%s.%s", $this->getIdentifier(), $eventName);
-
-        $this->events->dispatch($event, ['form' => $this, 'payload' => $payload]);
-    }
-
     public function setUrl($url): FormInterface
     {
         $this->url = $url;
@@ -162,12 +221,23 @@ class Form implements FormInterface
         return $this;
     }
 
+    public function getEntryIds(): array
+    {
+        return $this->entryIds ?? [];
+    }
+
     public function getUrl(): string
     {
         if (! $this->url) {
             return sv_route(self::ROUTE, ['identifier' => $this->getIdentifier()]);
         }
+
         return $this->url;
+    }
+
+    public function addEntry($identifier, $id)
+    {
+        $this->entryIds[$identifier] = $id;
     }
 
     public function setData($data): FormInterface
@@ -182,27 +252,5 @@ class Form implements FormInterface
         $this->data[$key] = $value;
 
         return $this;
-    }
-
-    public function setMethod($method): FormInterface
-    {
-        $this->method = $method;
-
-        return $this;
-    }
-
-    public function isMethod($method): bool
-    {
-        return strtoupper($method) === $this->getMethod();
-    }
-
-    public function getEntryIds(): array
-    {
-        return $this->entryIds ?? [];
-    }
-
-    public function addEntry($identifier, $id)
-    {
-        $this->entryIds[$identifier] = $id;
     }
 }

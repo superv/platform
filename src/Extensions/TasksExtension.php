@@ -24,6 +24,6 @@ class TasksExtension implements ExtendsResource
 
     public function extends(): string
     {
-        return 'sv_tasks';
+        return 'platform.tasks';
     }
 }

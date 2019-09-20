@@ -3,12 +3,17 @@
 namespace Tests\Platform\Domains\Resource\Form\v2;
 
 use Event;
+use Mockery;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
+use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Form;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ComposeForm;
+use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ResolveRequest;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\SubmitForm;
+use SuperV\Platform\Domains\Resource\Model\AnonymousModel;
 use SuperV\Platform\Support\Composer\Payload;
+use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormFake;
 use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormTestHelpers;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -47,21 +52,110 @@ class FormTest extends ResourceTestCase
         $this->assertTrue($form->isMethod('post'));
     }
 
-    function test__dispatches_event_before_handling_request()
+    function test__resolves_GET_request()
+    {
+        $fooEntry = Mockery::mock((new AnonymousModel(['title' => 'foo-title'])))->makePartial();
+        $barEntry = Mockery::mock((new AnonymousModel(['email' => 'bar-title'])))->makePartial();
+
+//        $repository = $this->bindMock(EntryRepositoryInterface::class);
+//        $repository->shouldReceive('getEntry')->with('ab.foo', 1)->andReturn($fooEntry)->once();
+//        $repository->shouldReceive('getEntry')->with('xy.bar', 2)->andReturn($barEntry)->once();
+
+        $request = $this->makeGetRequest(['entries' => ['ab.foo.1', 'xy.bar.2']]);
+
+        $form = FormFake::fake(function (EntryRepositoryInterface $repository) use ($barEntry, $fooEntry) {
+            $repository->shouldReceive('getEntry')->with('ab.foo', 1)->andReturn($fooEntry)->once();
+            $repository->shouldReceive('getEntry')->with('xy.bar', 2)->andReturn($barEntry)->once();
+        })->setFakeFields([
+            'ab.foo.fields:title',
+            'xy.bar.fields:email',
+        ]);
+
+        $form->handle($request);
+
+//        ResolveRequest::resolve()->handle($form, $request);
+
+        $this->assertEquals(['ab.foo' => 1, 'xy.bar' => 2], $form->getEntryIds());
+        $this->assertEquals('foo-title', $form->getFieldValue('ab.foo.fields:title'));
+    }
+
+    function test__resolves_POST_request()
+    {
+        $fooEntry = Mockery::mock((new AnonymousModel(['title' => 'foo-title'])))->makePartial();
+        $fooEntry->shouldReceive('setAttribute')->with('title', 'updated-foo-title')->once();
+
+        $barEntry = Mockery::mock((new AnonymousModel(['email' => 'bar-title'])))->makePartial();
+        $barEntry->shouldReceive('setAttribute')->with('email', 'updated-bar-email')->once();
+
+        $fooEntry->shouldReceive('save')->once();
+        $barEntry->shouldReceive('save')->once();
+
+        $request = $this->makePostRequest(
+            ['entries' => ['ab.foo.1', 'xy.bar.2']],
+            [
+                'ab.foo.fields:title' => 'updated-foo-title',
+                'xy.bar.fields:email' => 'updated-bar-email',
+            ]);
+
+        $formEntry = FormFake::fake(
+            function (EntryRepositoryInterface $repository) use ($barEntry, $fooEntry) {
+                $repository->shouldReceive('getEntry')->with('ab.foo', 1)->andReturn($fooEntry)->once();
+                $repository->shouldReceive('getEntry')->with('xy.bar', 2)->andReturn($barEntry)->once();
+            }
+        )->setFakeFields([
+            'ab.foo.fields:title',
+            'xy.bar.fields:email',
+        ])->createFormEntry();
+
+        $form = FormFactory::createBuilder($formEntry)->getForm();
+
+        $form->handle($request);
+//        ResolveRequest::resolve()->handle($form, $request);
+        $fooEntry->shouldHaveReceived('save')->once();
+        $barEntry->shouldHaveReceived('save')->once();
+    }
+
+    function test__dispatches_event_before_handling_POST_request()
     {
         $builder = $this->makeFormBuilder($this->makeTestFields());
+        Event::fake($eventName = $builder->getFormIdentifier().'.events:submitting');
+        $form = $builder->getForm();
 
-        Event::fake($eventName = $builder->getFormIdentifier().'.handling');
+        $form->handle($this->makePostRequest());
+        Event::assertDispatched($eventName);
+
+        // but not for GET
+        $builder = $this->makeFormBuilder($this->makeTestFields());
+        Event::fake($eventName = $builder->getFormIdentifier().'.events:submitting');
         $form = $builder->getForm();
 
         $form->handle($this->makeGetRequest());
+        Event::assertNotDispatched($eventName);
+    }
+
+    function test__dispatches_event_after_handling_POST_request()
+    {
+        $builder = $this->makeFormBuilder($this->makeTestFields());
+        Event::fake($eventName = $builder->getFormIdentifier().'.events:submitted');
+        $form = $builder->getForm();
+
+        $form->handle($this->makePostRequest());
         Event::assertDispatched($eventName);
+        $this->assertTrue($form->isSubmitted());
+
+        // but not for GET
+        $builder = $this->makeFormBuilder($this->makeTestFields());
+        Event::fake($eventName = $builder->getFormIdentifier().'.events:submitted');
+        $form = $builder->getForm();
+        $form->handle($this->makeGetRequest());
+        Event::assertNotDispatched($eventName);
+        $this->assertFalse($form->isSubmitted());
     }
 
     function test__composes_form()
     {
         $builder = $this->makeFormBuilder($this->makeTestFields());
-        Event::fake($eventName = $builder->getFormIdentifier().'.composed');
+        Event::fake($eventName = $builder->getFormIdentifier().'.events:composed');
 
         $form = $builder->getForm();
         $payload = new Payload(['pay-load']);
@@ -81,7 +175,28 @@ class FormTest extends ResourceTestCase
         $this->assertEquals($payload->get(), $component->getProps()->compose());
     }
 
-    function test__submits_form()
+    function __resolves_request()
+    {
+        $builder = $this->makeFormBuilder($this->makeTestFields());
+        Event::fake($eventName = $builder->getFormIdentifier().'.events:handling');
+
+        $form = $builder->getForm();
+        $request = $this->makeGetRequest();
+
+        $resolver = $this->bindMock(ResolveRequest::class);
+        $resolver->shouldReceive('handle')->with($form, $request)->once();
+
+        $form->handle($request);
+        $formIdentifier = $form->getIdentifier();
+        Event::assertDispatched($eventName, function ($eventName, $payload) use ($formIdentifier) {
+            /** @var FormInterface $form */
+            $form = $payload['form'];
+
+            return $form->getIdentifier() === $formIdentifier;
+        });
+    }
+
+    function __submits_form()
     {
         $form = $this->makeFormBuilder($this->makeTestFields())->getForm();
 
