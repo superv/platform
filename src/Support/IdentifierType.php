@@ -4,9 +4,9 @@ namespace SuperV\Platform\Support;
 
 class IdentifierType extends ValueObject
 {
-    private const FORM = 'form';
-    private const FIELD = 'field';
-    private const ENTRY = 'entry';
+    private const FORM = 'forms';
+    private const FIELD = 'fields';
+    private const ENTRY = 'entries';
 
     protected $id;
 

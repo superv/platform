@@ -16,7 +16,7 @@ class Identifier
         $this->identifier = $identifier;
     }
 
-    public function parent()
+    public function parent(): ?Identifier
     {
         if (count($nodes = $this->getNodes()) === 1) {
             return null;
@@ -28,14 +28,29 @@ class Identifier
         return static::make(implode('.', $nodes));
     }
 
-    public function type()
+    public function getParent(): ?string
+    {
+        return (string)$this->parent();
+    }
+
+    public function getNodeCount()
+    {
+        return count($this->getNodes());
+    }
+
+    public function getType(): ?string
     {
         list($type, $typeId) = $this->getTypeNode();
 
-        return new IdentifierType(str_singular($type), $typeId);
+        return $type;
     }
 
-    public function typeId()
+    public function type(): ?IdentifierType
+    {
+        return new IdentifierType($this->getType(), $this->getTypeId());
+    }
+
+    public function getTypeId()
     {
         list(, $typeId) = $this->getTypeNode();
 
