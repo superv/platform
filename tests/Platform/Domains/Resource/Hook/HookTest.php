@@ -2,8 +2,11 @@
 
 namespace Tests\Platform\Domains\Resource\Hook;
 
+use stdClass;
 use SuperV\Platform\Domains\Resource\Hook\Hook;
 use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoryList;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoryObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersConfig;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFields;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormCustom;
@@ -25,28 +28,27 @@ class HookTest extends ResourceTestCase
     function test__registers_hooks_globally()
     {
         $hook = Hook::resolve();
-        $hook->register('sv.users', 'config_handler', 'UsersConfig');
-        $hook->register('sv.users.fields:title', 'title_field_handler', 'TitleField');
+        $hook->register('sv.users', stdClass::class, 'UsersConfig');
+        $hook->register('sv.users.fields:title', stdClass::class, 'TitleField');
 
         $hook = Hook::resolve();
         $this->assertEquals(
             [
-                'config' => 'config_handler',
+                'config' => stdClass::class,
                 'fields' => [
-                    'title' => 'title_field_handler',
+                    'title' => stdClass::class,
                 ],
             ],
             $hook->get('sv.users')
         );
 
-
         $this->assertEquals(
             [
-                'title' => 'title_field_handler',
+                'title' => stdClass::class,
             ],
             $hook->get('sv.users', 'fields')
         );
-        $this->assertEquals('config_handler', $hook->get('sv.users', 'config'));
+        $this->assertEquals(stdClass::class, $hook->get('sv.users', 'config'));
     }
 
     function test__scan_path_for_hooks()
@@ -70,6 +72,13 @@ class HookTest extends ResourceTestCase
             'observer' => PostObserver::class,
             'fields'   => PostsFields::class,
         ], $hook->get('testing.posts'));
+
+        $this->assertEquals([
+            'lists'    => [
+                'default' => CategoryList::class,
+            ],
+            'observer' => CategoryObserver::class,
+        ], $hook->get('testing.categories'));
     }
 
     function test_config_hook()
