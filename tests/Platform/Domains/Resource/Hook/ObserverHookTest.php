@@ -2,16 +2,13 @@
 
 namespace Tests\Platform\Domains\Resource\Hook;
 
-use SuperV\Platform\Domains\Resource\Hook\Hook;
-use Tests\Platform\Domains\Resource\ResourceTestCase;
-
 /**
  * Class ObserverHookTest
  *
  * @package Tests\Platform\Domains\Resource
  * @group   resource
  */
-class ObserverHookTest extends ResourceTestCase
+class ObserverHookTest extends HookTestCase
 {
     function test_observes_before_creating()
     {
@@ -73,17 +70,4 @@ class ObserverHookTest extends ResourceTestCase
         ]);
     }
 
-    protected function setUp()
-    {
-        parent::setUp();
-
-        Hook::resolve()->scan(__DIR__.'/../Fixtures/Resources');
-    }
-
-    protected function tearDown()
-    {
-        Hook::resolve()->flush();
-
-        parent::tearDown();
-    }
 }

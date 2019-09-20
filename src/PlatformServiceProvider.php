@@ -24,7 +24,7 @@ use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
 use SuperV\Platform\Domains\Resource\Extension\RegisterExtensions;
-use SuperV\Platform\Domains\Resource\Hook\Hook;
+use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Events\PlatformBootingEvent;
 use SuperV\Platform\Exceptions\PlatformExceptionHandler;
@@ -140,7 +140,7 @@ class PlatformServiceProvider extends BaseServiceProvider
         //
         $this->platform->boot();
 
-        Hook::resolve()->scan($this->platform->realPath('src/Resources'));
+        HookManager::resolve()->scan($this->platform->realPath('src/Resources'));
 
         // Register routes needed by platform
         //

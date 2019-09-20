@@ -8,7 +8,7 @@ use SuperV\Platform\Exceptions\PlatformException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-class Hook
+class HookManager
 {
     protected $map = [];
 
@@ -56,7 +56,7 @@ class Hook
      *
      * @param $path
      */
-    public function scan($path): Hook
+    public function scan($path): HookManager
     {
         if (! file_exists($path)) {
             PlatformException::runtime(sprintf("Path not found: %s", $path));
@@ -140,7 +140,7 @@ class Hook
         if (! class_exists($hookHandler)) {
             return Log::error("Hook handler class does not exist: ".$hookHandler);
         }
-        $typeHook = str_replace_last("\\Hook", "\\".studly_case($type.'_hook'), get_class($this));
+        $typeHook = str_replace_last("\\HookManager", "\\".studly_case($type.'_hook'), get_class($this));
         if (class_exists($typeHook)) {
             app($typeHook)->hook($identifier, $hookHandler, $subKey);
         }

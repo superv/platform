@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Hook;
 
 use stdClass;
-use SuperV\Platform\Domains\Resource\Hook\Hook;
+use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoryList;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoryObserver;
@@ -15,7 +15,6 @@ use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsConfig;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsFields;
-use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
  * Class HookTest
@@ -23,15 +22,15 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
  * @package Tests\Platform\Domains\Resource
  * @group   resource
  */
-class HookTest extends ResourceTestCase
+class HookTest extends HookTestCase
 {
     function test__registers_hooks_globally()
     {
-        $hook = Hook::resolve();
+        $hook = HookManager::resolve();
         $hook->register('sv.users', stdClass::class, 'UsersConfig');
         $hook->register('sv.users.fields:title', stdClass::class, 'TitleField');
 
-        $hook = Hook::resolve();
+        $hook = HookManager::resolve();
         $this->assertEquals(
             [
                 'config' => stdClass::class,
@@ -53,7 +52,7 @@ class HookTest extends ResourceTestCase
 
     function test__scan_path_for_hooks()
     {
-        $hook = Hook::resolve();
+        $hook = HookManager::resolve();
 
         $this->assertEquals(
             [
@@ -87,22 +86,9 @@ class HookTest extends ResourceTestCase
         $posts = $this->makeResource('testing.posts');
 
         $this->assertEquals('Orders Hooked', $orders->config()->getLabel());
-
         $this->assertEquals('Posts Hooked', $posts->config()->getLabel());
+
         $this->assertEquals(TestPostModel::class, $posts->config()->getModel());
     }
 
-    protected function setUp()
-    {
-        parent::setUp();
-
-        Hook::resolve()->scan(__DIR__.'/../Fixtures/Resources');
-    }
-
-    protected function tearDown()
-    {
-        Hook::resolve()->flush();
-
-        parent::tearDown();
-    }
 }

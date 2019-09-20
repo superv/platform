@@ -19,7 +19,7 @@ use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Form;
 use SuperV\Platform\Domains\Resource\Form\v2\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFieldComposer;
-use SuperV\Platform\Domains\Resource\Hook\Hook;
+use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
 use SuperV\Platform\Domains\Resource\Listeners\RegisterEntryEventListeners;
 use SuperV\Platform\Domains\Resource\Relation\RelationCollection;
@@ -57,8 +57,8 @@ Listeners\SaveUpdatedBy::class,
     ];
 
     protected $_singletons = [
-        'relations' => RelationCollection::class,
-        Hook::class => Hook::class,
+        'relations'        => RelationCollection::class,
+        HookManager::class => HookManager::class,
     ];
 
     protected $commands = [ResourceImportCommand::class];

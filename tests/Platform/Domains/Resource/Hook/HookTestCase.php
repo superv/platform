@@ -2,7 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource\Hook;
 
-use SuperV\Platform\Domains\Resource\Hook\Hook;
+use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 abstract class HookTestCase extends ResourceTestCase
@@ -11,12 +11,12 @@ abstract class HookTestCase extends ResourceTestCase
     {
         parent::setUp();
 
-        Hook::resolve()->scan(__DIR__.'/../Fixtures/Resources');
+        HookManager::resolve()->scan(__DIR__.'/../Fixtures/Resources');
     }
 
     protected function tearDown()
     {
-        Hook::resolve()->flush();
+        HookManager::resolve()->flush();
 
         parent::tearDown();
     }

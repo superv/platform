@@ -10,6 +10,7 @@ class OrdersConfig
 
     public function resolved(ResourceConfig $config)
     {
+        ;
         $config->label('Orders Hooked');
     }
 }
