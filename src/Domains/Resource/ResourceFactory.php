@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use Event;
 use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
@@ -65,7 +66,6 @@ class ResourceFactory
             $attributes = static::attributesFor($identifier);
             $attributes['config'] = ResourceConfig::make($attributes['config']);
 
-
             $resource = new Resource($attributes);
 
             Extension::extend($resource);
@@ -76,6 +76,8 @@ class ResourceFactory
 
             return null;
         }
+
+        Event::fire(sprintf("%s.events:resolved", $identifier), $resource);
 
         return static::$cache[$identifier] = $resource;
     }
@@ -100,12 +102,12 @@ class ResourceFactory
     {
         return function (Resource $resource) {
             $relations = $this->model->getResourceRelations()
-                                     ->map(function (RelationModel $relation) use ($resource) {
-                                         $relation = (new RelationFactory)->make($relation);
-                                         $resource->cacheRelation($relation);
+                ->map(function (RelationModel $relation) use ($resource) {
+                    $relation = (new RelationFactory)->make($relation);
+                    $resource->cacheRelation($relation);
 
-                                         return $relation;
-                                     })->all();
+                    return $relation;
+                })->all();
 
             // get rid of eloquent collection
             //

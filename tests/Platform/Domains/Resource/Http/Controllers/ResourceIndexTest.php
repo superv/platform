@@ -25,7 +25,7 @@ class ResourceIndexTest extends ResourceTestCase
         $users = $this->blueprints()->users();
 
         $page = $this->getUserPage($users->route('dashboard'));
-        $table = HelperComponent::from($page->getProp('blocks.0'));
+        $table = HelperComponent::fromArray($page->getProp('blocks.0'));
 
         $this->assertEquals('sv-router-portal', $table->getName());
         $this->assertEquals($users->getIdentifier(), $table->getProp('name'));
@@ -36,7 +36,7 @@ class ResourceIndexTest extends ResourceTestCase
         $users = $this->blueprints()->users();
 
         $response = $this->getJsonUser($users->route('table'))->assertOk();
-        $table = HelperComponent::from($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
 
         $this->assertEquals($users->route('table').'/data', $table->getProp('config.data_url'));
 

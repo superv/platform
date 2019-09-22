@@ -134,7 +134,7 @@ class ResourceFormsTest extends ResourceTestCase
         // Get Update form
         //
         $response = $this->getJsonUser($user->route('forms.edit'))->assertOk();
-        $form = HelperComponent::from($response->decodeResponseJson('data'));
+        $form = HelperComponent::fromArray($response->decodeResponseJson('data'));
         $this->assertEquals(3, $form->countProp('fields'));
     }
 

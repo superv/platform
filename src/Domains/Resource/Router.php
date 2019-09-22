@@ -31,4 +31,13 @@ class Router
             ])
         );
     }
+
+    public function dashboard()
+    {
+        return sprintf(
+            sv_route('resource.dashboard', [
+                'resource' => $this->resource->getIdentifier(),
+            ])
+        );
+    }
 }

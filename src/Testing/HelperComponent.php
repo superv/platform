@@ -34,12 +34,16 @@ class HelperComponent extends BaseComponent
         return 0;
     }
 
-    public static function from($array)
+    public static function fromArray($array)
     {
         $component = new static($array['props']);
         $component->name = $array['component'];
         $component->uuid = $array['uuid'] ?? null;
 
         return $component;
+    }
+
+    public static function fromUrl($url)
+    {
     }
 }

@@ -30,6 +30,8 @@ class Page implements ProvidesUIComponent, Responsable
 
     protected $componentName = 'sv-page';
 
+    protected $built = false;
+
     protected function __construct(string $title)
     {
         $this->boot();
@@ -46,6 +48,8 @@ class Page implements ProvidesUIComponent, Responsable
         $this->tokens = $tokens;
 
         $this->component = MakeComponentTree::dispatch($this);
+
+        $this->built = true;
 
         return $this;
     }
@@ -167,6 +171,19 @@ class Page implements ProvidesUIComponent, Responsable
     public function getDefaultSection()
     {
         return $this->defaultSection;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBuilt(): bool
+    {
+        return $this->built;
+    }
+
+    public function getComponent(): ComponentContract
+    {
+        return $this->component;
     }
 
     public function uuid(): string

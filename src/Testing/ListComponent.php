@@ -30,7 +30,7 @@ class ListComponent extends HelperComponent
             dd($response->content());
         }
 
-        $list = static::from($response->decodeResponseJson('data'));
+        $list = static::fromArray($response->decodeResponseJson('data'));
         $list->testCase = $testCase;
 
         return $list;

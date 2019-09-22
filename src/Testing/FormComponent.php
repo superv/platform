@@ -29,6 +29,6 @@ class FormComponent extends HelperComponent
 
         $response = $testCase->getJsonUser($url)->assertOk();
 
-        return static::from($response->decodeResponseJson('data'));
+        return static::fromArray($response->decodeResponseJson('data'));
     }
 }

@@ -28,7 +28,7 @@ use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-final class Resource implements
+class Resource implements
     Contracts\ProvidesFields,
     Contracts\ProvidesQuery
 {

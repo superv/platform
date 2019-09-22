@@ -14,20 +14,20 @@ class ObserverHookTest extends HookTestCase
     {
         $_SERVER['__hooks::observer.creating'] = null;
         $this->blueprints()->categories()->fake();
-        $this->assertEquals($_SERVER['__hooks::observer.creating'], [
+        $this->assertEquals([
             'resource' => 'testing.categories',
             'exists'   => false,
-        ]);
+        ], $_SERVER['__hooks::observer.creating']);
     }
 
     function test_observes_after_created()
     {
         $_SERVER['__hooks::observer.created'] = null;
         $this->blueprints()->categories()->fake();
-        $this->assertEquals($_SERVER['__hooks::observer.created'], [
+        $this->assertEquals([
             'resource' => 'testing.categories',
             'exists'   => true,
-        ]);
+        ], $_SERVER['__hooks::observer.created']);
     }
 
     function test_observes_after_retrieved()
@@ -36,9 +36,9 @@ class ObserverHookTest extends HookTestCase
         $post = $this->makeResource('testing.orders', ['title:text'])->fake();
         $post->fresh();
 
-        $this->assertEquals($_SERVER['__hooks::observer.retrieved'], [
+        $this->assertEquals([
             'resource' => 'testing.orders',
-        ]);
+        ], $_SERVER['__hooks::observer.retrieved']);
     }
 
     function test_observes_after_deleted()
@@ -47,10 +47,10 @@ class ObserverHookTest extends HookTestCase
         $post = $this->makeResource('testing.orders', ['title:text'])->fake();
         $post->delete();
 
-        $this->assertEquals($_SERVER['__hooks::observer.deleted'], [
+        $this->assertEquals([
             'resource' => 'testing.orders',
             'fresh'    => null,
-        ]);
+        ], $_SERVER['__hooks::observer.deleted']);
     }
 
     function test_observes_before_saving()
@@ -64,10 +64,9 @@ class ObserverHookTest extends HookTestCase
     {
         $this->makeResource('testing.orders', ['title:text'])->fake();;
 
-        $this->assertEquals($_SERVER['__hooks::observer.saved'], [
+        $this->assertEquals([
             'resource' => 'testing.orders',
             'saved'    => true,
-        ]);
+        ], $_SERVER['__hooks::observer.saved']);
     }
-
 }

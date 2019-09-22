@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Hook\Contracts\AfterRetrievedHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\AfterSavedHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\BeforeCreatingHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\BeforeSavingHook;
-use SuperV\Platform\Domains\Resource\Hook\Contracts\HookHandler as HookContract;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\HookHandlerInterface as HookContract;
 
 class ObserverHookHandler implements HookContract
 {

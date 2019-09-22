@@ -73,6 +73,7 @@ class HookManager
 
             if (! ($identifier = isset($hook::$identifier) ? $hook::$identifier : null)) {
                 sv_console(sprintf("Identifier not found for hook [%s]", $hook));
+                continue;
             }
 
             $this->register($identifier, $hook, $className);
@@ -83,38 +84,7 @@ class HookManager
 
     public function register($identifier, $hook, $className)
     {
-        $_identifier = sv_identifier($identifier);
-
-        $subKey = null;
-
-//        $parts = explode('.', $identifier);
-//        if (count($parts) > 2) {
-//            $identifier = sprintf('%s.%s', $parts[0], $parts[1]);
-//
-//            if (str_contains($parts[2], ':')) {
-//                list($hookType, $subKey) = explode(':', $parts[2]);
-//            } else {
-//                $hookType = $parts[2];
-//            }
-//        } else {
-//            $parts = explode('_', snake_case($className));
-//            $hookType = end($parts);
-//        }
-
-        if ($_identifier->getNodeCount() > 2) {
-            $hookType = (string)$_identifier->getType();
-            $subKey = $_identifier->getTypeId();
-            $identifier = $_identifier->getParent();
-        } else {
-            $parts = explode('_', snake_case($className));
-            $hookType = end($parts);
-            $subKey2 = null;
-        }
-
-//        if ($subKey !== $subKey2 || $hookType !== $hookType2) {
-//            dd($identifier, $subKey, $subKey2);
-//        }
-//
+        [$identifier, $hookType, $subKey] = $this->parseIdentifier($identifier, $className);
 
         if (! isset($this->map[$identifier])) {
             $this->map[$identifier] = [];
@@ -150,5 +120,28 @@ class HookManager
     public static function resolve()
     {
         return app(static::class);
+    }
+
+    /**
+     * @param $identifier
+     * @param $className
+     * @return array
+     */
+    protected function parseIdentifier($identifier, $className): array
+    {
+        $_identifier = sv_identifier($identifier);
+        $subKey = null;
+
+        if ($_identifier->getNodeCount() > 2) {
+            $hookType = (string)$_identifier->getType();
+            $subKey = $_identifier->getTypeId();
+            $identifier = $_identifier->getParent();
+        } else {
+            $parts = explode('_', snake_case($className));
+            $hookType = end($parts);
+//            $hookType = 'resource';
+        }
+
+        return [$identifier, $hookType, $subKey];
     }
 }

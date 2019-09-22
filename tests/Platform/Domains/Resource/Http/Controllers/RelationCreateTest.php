@@ -31,7 +31,7 @@ class RelationCreateTest extends ResourceTestCase
         $relation = $users->getRelation('comments');
 
         $response = $this->getJsonUser($relation->route('create', $user))->assertOk();
-        $form = HelperComponent::from($response->decodeResponseJson('data'));
+        $form = HelperComponent::fromArray($response->decodeResponseJson('data'));
 
         $this->assertEquals(2, count($form->getProp('fields')));
         $this->assertEquals(sv_url($relation->route('store', $user)), $form->getProp('url'));
@@ -78,7 +78,7 @@ class RelationCreateTest extends ResourceTestCase
         $relation = $users->getRelation('comments');
 
         $response = $this->getJsonUser($relation->route('create', $user))->assertOk();
-        $form = HelperComponent::from($response->decodeResponseJson('data'));
+        $form = HelperComponent::fromArray($response->decodeResponseJson('data'));
 
         $this->assertEquals(1, count($form->getProp('fields')));
         $this->assertEquals(sv_url($relation->route('store', $user)), $form->getProp('url'));

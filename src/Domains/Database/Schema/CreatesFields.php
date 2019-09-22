@@ -19,7 +19,10 @@ trait CreatesFields
 
     public function file($name, $path = '/', $disk = 'public'): ColumnDefinition
     {
-        return $this->addColumn(null, $name)->fieldType('file')->ignore()->nullable()
+        return $this->addColumn(null, $name)
+                    ->fieldType('file')
+                    ->ignore()
+                    ->nullable()
                     ->config(MediaOptions::one($name)
                                          ->public()
                                          ->disk($disk)

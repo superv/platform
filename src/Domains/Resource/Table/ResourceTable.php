@@ -19,16 +19,22 @@ class ResourceTable extends EntryTable
 
     public function composeConfig()
     {
-        Event::fire($this->getIdentifier().'.events:config', ['table'  => $this,
-                                                              'fields' => $this->resource->indexFields()]);
+        Event::fire($this->getIdentifier().'.events:config', [
+            'table'    => $this,
+            'fields'   => $this->resource->indexFields(),
+            'resource' => $this->resource,
+        ]);
 
         return parent::composeConfig();
     }
 
     public function build()
     {
-        Event::fire($this->getIdentifier().'.events:config', ['table'  => $this,
-                                                              'fields' => $this->resource->indexFields()]);
+        Event::fire($this->getIdentifier().'.events:config', [
+            'table'    => $this,
+            'fields'   => $this->resource->indexFields(),
+            'resource' => $this->resource,
+        ]);
 
         $return = parent::build();
 

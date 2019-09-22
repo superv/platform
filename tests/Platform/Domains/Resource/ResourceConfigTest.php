@@ -19,7 +19,7 @@ class ResourceConfigTest extends ResourceTestCase
 {
     function test__dispatches_event_when_resolved()
     {
-        $resolvedEventName = 'testing.any_table::config.resolved';
+        $resolvedEventName = 'testing.any_table.events:config_resolved';
         Event::fake([ResolvedEvent::class, $resolvedEventName]);
         $any = $this->anyTable();
 

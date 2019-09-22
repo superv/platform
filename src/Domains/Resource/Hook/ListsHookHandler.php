@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Hook;
 
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Domains\Resource\Hook\Contracts\HookHandler as HookContract;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\HookHandlerInterface as HookContract;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ListConfigHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ListDataHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ListResolvedHook;

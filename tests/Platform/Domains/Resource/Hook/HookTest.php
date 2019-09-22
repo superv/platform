@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Resource\Hook;
 
 use stdClass;
 use SuperV\Platform\Domains\Resource\Hook\HookManager;
-use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoriesDashboardPage;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoryList;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoryObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersConfig;
@@ -13,8 +13,8 @@ use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormCustom;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormDefault;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostObserver;
-use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsConfig;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsFields;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsResource;
 
 /**
  * Class HookTest
@@ -56,7 +56,6 @@ class HookTest extends HookTestCase
 
         $this->assertEquals(
             [
-                'config'   => OrdersConfig::class,
                 'forms'    => [
                     'default' => OrdersFormDefault::class,
                     'custom'  => OrdersFormCustom::class,
@@ -67,7 +66,7 @@ class HookTest extends HookTestCase
         );
 
         $this->assertEquals([
-            'config'   => PostsConfig::class,
+            'resource' => PostsResource::class,
             'observer' => PostObserver::class,
             'fields'   => PostsFields::class,
         ], $hook->get('testing.posts'));
@@ -77,18 +76,11 @@ class HookTest extends HookTestCase
                 'default' => CategoryList::class,
             ],
             'observer' => CategoryObserver::class,
+            'pages'    => [
+                'dashboard' => CategoriesDashboardPage::class,
+            ],
         ], $hook->get('testing.categories'));
     }
 
-    function test_config_hook()
-    {
-        $orders = $this->makeResource('testing.orders');
-        $posts = $this->makeResource('testing.posts');
-
-        $this->assertEquals('Orders Hooked', $orders->config()->getLabel());
-        $this->assertEquals('Posts Hooked', $posts->config()->getLabel());
-
-        $this->assertEquals(TestPostModel::class, $posts->config()->getModel());
-    }
 
 }
