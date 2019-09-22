@@ -55,10 +55,6 @@ class FormTest extends ResourceTestCase
         $fooEntry = Mockery::mock((new AnonymousModel(['title' => 'foo-title'])))->makePartial();
         $barEntry = Mockery::mock((new AnonymousModel(['email' => 'bar-title'])))->makePartial();
 
-//        $repository = $this->bindMock(EntryRepositoryInterface::class);
-//        $repository->shouldReceive('getEntry')->with('ab.foo', 1)->andReturn($fooEntry)->once();
-//        $repository->shouldReceive('getEntry')->with('xy.bar', 2)->andReturn($barEntry)->once();
-
         $request = $this->makeGetRequest(['entries' => ['ab.foo.1', 'xy.bar.2']]);
 
         $form = FormFake::fake(function (EntryRepositoryInterface $repository) use ($barEntry, $fooEntry) {
@@ -71,7 +67,10 @@ class FormTest extends ResourceTestCase
 
         $form->handle($request);
 
-//        ResolveRequest::resolve()->handle($form, $request);
+        $this->assertEquals([
+            'ab.foo.fields:title' => 'foo-title',
+            'xy.bar.fields:email' => 'bar-title',
+        ], $form->getData());
 
         $this->assertEquals(['ab.foo' => 1, 'xy.bar' => 2], $form->getEntryIds());
         $this->assertEquals('foo-title', $form->getFieldValue('ab.foo.fields:title'));
@@ -108,9 +107,13 @@ class FormTest extends ResourceTestCase
         $form = FormFactory::createBuilder($formEntry)->getForm();
 
         $form->handle($request);
-//        ResolveRequest::resolve()->handle($form, $request);
         $fooEntry->shouldHaveReceived('save')->once();
         $barEntry->shouldHaveReceived('save')->once();
+
+        $this->assertEquals([
+            'ab.foo.fields:title' => 'updated-foo-title',
+            'xy.bar.fields:email' => 'updated-bar-email',
+        ], $form->getData());
     }
 
     function test__dispatches_event_before_handling_POST_request()

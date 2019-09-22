@@ -35,7 +35,7 @@ class Form implements FormInterface
     /** @var \SuperV\Platform\Contracts\Dispatcher */
     protected $events;
 
-    protected $data;
+    protected $data = [];
 
     protected $entryIds;
 
@@ -52,25 +52,23 @@ class Form implements FormInterface
         $this->entryRepository = $entryRepository;
     }
 
-    protected function loadEntries($requestArray)
+    public function getData()
     {
-        foreach (array_pull($requestArray, 'entries', []) as $entry) {
-            $parts = explode('.', $entry);
+        return $this->data;
+    }
 
-            if (count($parts) < 3 || ! is_numeric(end($parts))) {
-                continue;
-            }
+    public function setData($data): FormInterface
+    {
+        $this->data = $data;
 
-            $entryId = array_pop($parts);
-            $identifier = implode('.', $parts);
+        return $this;
+    }
 
-            if (! $entry = $this->entryRepository->getEntry($identifier, $entryId)) {
-                continue;
-            }
+    public function setFieldValue($key, $value): FormInterface
+    {
+        $this->data[$key] = $value;
 
-            $this->addEntry($identifier, $entryId);
-            $this->entries[$identifier] = $entry;
-        }
+        return $this;
     }
 
     public function handle(Request $request)
@@ -87,17 +85,24 @@ class Form implements FormInterface
 
         if ($this->isMethod('GET')) {
             $this->getFields()->keys()->map(function ($fieldIdentifier) {
-                list($entryIdentifier, $fieldKey) = explode('.fields:', $fieldIdentifier);
+                $fieldIdentifier = sv_identifier($fieldIdentifier);
 
-                if ($entry = array_get($this->entries, $entryIdentifier)) {
-                    $this->getField($fieldIdentifier)->setValue($entry->getAttribute($fieldKey));
+                if ($entry = array_get($this->entries, $fieldIdentifier->getParent())) {
+                    $fieldValue = $entry->getAttribute($fieldIdentifier->getTypeId());
+
+                    $this->getField($fieldIdentifier)->setValue($fieldValue);
+
+                    $this->setDataValue($fieldIdentifier, $fieldValue);
                 }
             });
         } elseif ($this->isMethod('POST')) {
-            foreach ($request->post() as $fieldIdentifier => $value) {
-                list($entryIdentifier, $fieldKey) = explode('.fields:', str_replace('_', '.', $fieldIdentifier));
-                if ($entry = array_get($this->entries, $entryIdentifier)) {
-                    $entry->setAttribute($fieldKey, $value);
+            foreach ($request->post() as $fieldIdentifier => $fieldValue) {
+                $fieldIdentifier = sv_identifier(str_replace('_', '.', $fieldIdentifier));
+
+                if ($entry = array_get($this->entries, $fieldIdentifier->getParent())) {
+                    $entry->setAttribute($fieldIdentifier->getTypeId(), $fieldValue);
+
+                    $this->setDataValue($fieldIdentifier, $fieldValue);
                 }
             }
 
@@ -214,6 +219,32 @@ class Form implements FormInterface
         return $form;
     }
 
+    protected function loadEntries($requestArray)
+    {
+        foreach (array_pull($requestArray, 'entries', []) as $entry) {
+            $parts = explode('.', $entry);
+
+            if (count($parts) < 3 || ! is_numeric(end($parts))) {
+                continue;
+            }
+
+            $entryId = array_pop($parts);
+            $identifier = implode('.', $parts);
+
+            if (! $entry = $this->entryRepository->getEntry($identifier, $entryId)) {
+                continue;
+            }
+
+            $this->addEntry($identifier, $entryId);
+            $this->entries[$identifier] = $entry;
+        }
+    }
+
+    protected function setDataValue($key, $value)
+    {
+        $this->data[(string)$key] = $value;
+    }
+
     public function setUrl($url): FormInterface
     {
         $this->url = $url;
@@ -238,19 +269,5 @@ class Form implements FormInterface
     public function addEntry($identifier, $id)
     {
         $this->entryIds[$identifier] = $id;
-    }
-
-    public function setData($data): FormInterface
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    public function setFieldValue($key, $value): FormInterface
-    {
-        $this->data[$key] = $value;
-
-        return $this;
     }
 }
