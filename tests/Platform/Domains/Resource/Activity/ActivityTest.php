@@ -24,6 +24,6 @@ class ActivityTest extends ResourceTestCase
         $this->assertEquals('resource.entry.view', $log->activity);
         $this->assertEquals($this->testUser->getId(), $log->user_id);
         $this->assertEquals($action->getId(), $log->entry_id);
-        $this->assertEquals($action->getTable(), $log->entry_type);
+        $this->assertEquals($action->getResourceIdentifier(), $log->entry_type);
     }
 }
