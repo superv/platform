@@ -59,18 +59,18 @@ class PlatformBlueprints
 
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
-     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $config
      */
-    public static function namespaces($table, ResourceConfig $resource = null)
+    public static function namespaces($table, ResourceConfig $config = null)
     {
         $table->increments('id');
 
         $table->string('namespace')->showOnIndex()->unique()->searchable();
 
         if ($table instanceof Blueprint) {
-            $resource->label('Namespaces');
-            $resource->setName('namespaces');
-            $resource->nav('acp.platform.system');
+            $config->label('Namespaces');
+            $config->setName('namespaces');
+            $config->nav('acp.platform.system');
 
             $table->select('type', ['resource', 'form', 'field'])->showOnIndex()->addFlag('filter');
 
@@ -88,9 +88,9 @@ class PlatformBlueprints
 
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
-     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $config
      */
-    public static function resources($table, ResourceConfig $resource = null)
+    public static function resources($table, ResourceConfig $config = null)
     {
         $table->increments('id');
         $table->uuid('uuid')->unique();
@@ -104,10 +104,10 @@ class PlatformBlueprints
         $table->string('dsn');
 
         if ($table instanceof Blueprint) {
-            $resource->model(ResourceModel::class);
-            $resource->label('Resources');
-            $resource->resourceKey('resource');
-            $resource->nav('acp.platform.system');
+            $config->model(ResourceModel::class);
+            $config->label('Resources');
+            $config->resourceKey('resource');
+            $config->nav('acp.platform.system');
 
             $table->hasMany('platform.fields', 'fields');
             $table->hasMany('platform.relations', 'relations');
@@ -129,9 +129,9 @@ class PlatformBlueprints
 
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
-     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $config
      */
-    public static function fields($table, ResourceConfig $resource = null)
+    public static function fields($table, ResourceConfig $config = null)
     {
         $table->increments('id');
 
@@ -140,10 +140,10 @@ class PlatformBlueprints
         $table->uuid('revision_id')->unique();
 
         if ($table instanceof Blueprint) {
-            $resource->model(FieldModel::class);
-            $resource->label('Fields');
-            $resource->resourceKey('field');
-            $resource->nav('acp.platform.system');
+            $config->model(FieldModel::class);
+            $config->label('Fields');
+            $config->resourceKey('field');
+            $config->nav('acp.platform.system');
 
             $table->nullableBelongsTo('platform.resources', 'resource')->showOnIndex();
 
@@ -167,9 +167,9 @@ class PlatformBlueprints
 
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
-     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $config
      */
-    public static function forms($table, ResourceConfig $resource = null)
+    public static function forms($table, ResourceConfig $config = null)
     {
         $table->increments('id');
 
@@ -183,10 +183,10 @@ class PlatformBlueprints
         $table->boolean('public')->default(false);
 
         if ($table instanceof Blueprint) {
-            $resource->label('Forms');
-            $resource->resourceKey('form');
-            $resource->nav('acp.platform.forms');
-            $resource->model(FormModel::class);
+            $config->label('Forms');
+            $config->resourceKey('form');
+            $config->nav('acp.platform.system');
+            $config->model(FormModel::class);
 
             $table->nullableBelongsTo('platform.resources', 'resource');
 //            $table->hasUuid()->showOnIndex();
@@ -213,16 +213,16 @@ class PlatformBlueprints
 
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
-     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $config
      */
-    public static function relations($table, ResourceConfig $resource = null)
+    public static function relations($table, ResourceConfig $config = null)
     {
         $table->increments('id');
         $table->uuid('uuid')->unique();
         if ($table instanceof Blueprint) {
-            $resource->label('Relations');
-            $resource->resourceKey('relation');
-            $resource->nav('acp.platform.system');
+            $config->label('Relations');
+            $config->resourceKey('relation');
+            $config->nav('acp.platform.system');
 
             $table->belongsTo('platform.resources', 'resource')->showOnIndex();;
             $table->dictionary('config')->nullable();
@@ -239,18 +239,18 @@ class PlatformBlueprints
 
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
-     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $config
      */
-    public static function navigation($table, ResourceConfig $resource = null)
+    public static function navigation($table, ResourceConfig $config = null)
     {
         $table->increments('id');
         if ($table instanceof Blueprint) {
-            $resource->label('Navigation');
-            $resource->resourceKey('nav');
-            $resource->nav('acp.platform.system');
+            $config->label('Navigation');
+            $config->resourceKey('nav');
+            $config->nav('acp.platform.system');
 
-            $table->nullableBelongsTo('sv_navigation', 'parent')->showOnIndex();;
-            $table->nullableBelongsTo('sv_resources', 'resource')->showOnIndex();;
+            $table->nullableBelongsTo('platform.navigation', 'parent')->showOnIndex();;
+            $table->nullableBelongsTo('platform.resources', 'resource')->showOnIndex();;
         } else {
             $table->unsignedInteger('parent_id')->nullable();
             $table->unsignedInteger('resource_id')->nullable();
@@ -269,16 +269,16 @@ class PlatformBlueprints
 
     /**
      * @param \SuperV\Platform\Domains\Database\Schema\Blueprint    $table
-     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $resource
+     * @param \SuperV\Platform\Domains\Resource\ResourceConfig|null $config
      */
-    public static function activities($table, ResourceConfig $resource = null)
+    public static function activities($table, ResourceConfig $config = null)
     {
         $table->increments('id');
         if ($table instanceof Blueprint) {
-            $resource->nav('acp.platform.system');
-            $resource->label('Resource Activity');
+            $config->nav('acp.platform.system');
+            $config->label('Resource Activity');
 
-            $table->belongsTo('sv_resources', 'resource')->showOnIndex();
+            $table->belongsTo('platform.resources', 'resource')->showOnIndex();
             $table->belongsTo('users', 'user')->showOnIndex();
             $table->nullableMorphTo('entry')->showOnIndex();
             $table->dictionary('payload');
