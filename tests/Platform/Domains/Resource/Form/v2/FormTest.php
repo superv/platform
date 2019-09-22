@@ -9,8 +9,6 @@ use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Form;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ComposeForm;
-use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ResolveRequest;
-use SuperV\Platform\Domains\Resource\Form\v2\Jobs\SubmitForm;
 use SuperV\Platform\Domains\Resource\Model\AnonymousModel;
 use SuperV\Platform\Support\Composer\Payload;
 use Tests\Platform\Domains\Resource\Form\v2\Helpers\FormFake;
@@ -173,51 +171,5 @@ class FormTest extends ResourceTestCase
 
         $component = $form->render();
         $this->assertEquals($payload->get(), $component->getProps()->compose());
-    }
-
-    function __resolves_request()
-    {
-        $builder = $this->makeFormBuilder($this->makeTestFields());
-        Event::fake($eventName = $builder->getFormIdentifier().'.events:handling');
-
-        $form = $builder->getForm();
-        $request = $this->makeGetRequest();
-
-        $resolver = $this->bindMock(ResolveRequest::class);
-        $resolver->shouldReceive('handle')->with($form, $request)->once();
-
-        $form->handle($request);
-        $formIdentifier = $form->getIdentifier();
-        Event::assertDispatched($eventName, function ($eventName, $payload) use ($formIdentifier) {
-            /** @var FormInterface $form */
-            $form = $payload['form'];
-
-            return $form->getIdentifier() === $formIdentifier;
-        });
-    }
-
-    function __submits_form()
-    {
-        $form = $this->makeFormBuilder($this->makeTestFields())->getForm();
-
-        $data = ['name' => 'SuperV User'];
-
-        $submitForm = $this->bindMock(SubmitForm::class);
-        $submitForm->shouldReceive('handle')->with($form, $data)->once();
-
-        $form->submit($data);
-        $this->assertTrue($form->isSubmitted());
-    }
-
-    function __validates_form()
-    {
-        $form = $this->makeFormBuilder($this->makeTestFields())->getForm();
-        $request = $this->makePostRequest(['name' => 'SuperV User']);
-
-        $submitForm = $this->bindMock(SubmitForm::class);
-        $submitForm->shouldReceive('handle')->with($form, $request)->once();
-
-        $form->handle($request);
-        $this->assertTrue($form->isSubmitted());
     }
 }
