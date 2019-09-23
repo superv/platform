@@ -17,9 +17,9 @@ trait FormTestHelpers
         ];
     }
 
-    protected function makeFieldArray($identifier, $name, $type = 'text')
+    protected function makeFieldArray($identifier, $name, $type = 'text', array $rules = [])
     {
-        return compact('identifier', 'name', 'type');
+        return compact('identifier', 'name', 'type', 'rules');
     }
 
     protected function makeFormBuilder(array $fields = []): FormBuilderInterface

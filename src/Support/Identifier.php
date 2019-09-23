@@ -60,6 +60,10 @@ class Identifier
         return $type;
     }
 
+    public function withoutType()
+    {
+        return $this->getParent().'.'.$this->getTypeId();
+    }
     public function type(): ?IdentifierType
     {
         return new IdentifierType($this->getType(), $this->getTypeId());

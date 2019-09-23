@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ComposeForm;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\RenderComponent;
+use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ValidateForm;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Identifier;
@@ -58,6 +59,13 @@ class Form implements FormInterface
         return $this->data;
     }
 
+    public function setData($data): FormInterface
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
     public function setFieldValue($key, $value): FormInterface
     {
         $this->data[$key] = $value;
@@ -65,56 +73,67 @@ class Form implements FormInterface
         return $this;
     }
 
-    public function handle(Request $request)
+    public function handle(Request $request): FormInterface
     {
         $this->fireEvent('handling');
 
         $this->setMethod(strtoupper($request->getMethod()));
 
-        foreach ($request->get('entries', []) as $entryIdentifier) {
-            $entryIdentifier = sv_identifier($entryIdentifier);
-            if (! $entryIdentifier->type()->isEntry()) {
-                continue;
-            }
-
-            $this->entryIds[] = $entryIdentifier->get();
-            $this->entries[$entryIdentifier->getParent()] = $entryIdentifier->getTypeId();
-        }
-
-
+        /**
+         * Populate Form Data from Entries
+         */
         if ($this->isMethod('GET')) {
-            foreach ($this->entries as $resourceIdentifier => $entryId) {
-                if ($entry = $this->entryRepository->getEntry($resourceIdentifier, $entryId)) {
-                    $fields = $this->getFields()->getIdentifierMap()->get($resourceIdentifier);
-                    $this->data[$resourceIdentifier] = $entry->only($fields);
+            foreach ($request->get('entries', []) as $entryIdentifier) {
+                $entryIdentifier = sv_identifier($entryIdentifier);
+                if (! $entryIdentifier->type()->isEntry()) {
+                    continue;
                 }
+
+                $entry = $this->entryRepository->getEntry($entryIdentifier->getParent(), $entryIdentifier->getTypeId());
+                $this->entries[$entryIdentifier->getParent()] = $entry;
+            }
+
+            foreach ($this->entries as $resourceIdentifier => $entry) {
+                $fields = $this->getFields()->getIdentifierMap()->get($resourceIdentifier);
+                $this->data[$resourceIdentifier] = $entry->only($fields);
             }
         }
 
+        /**
+         * Populate Form Data from Request
+         */
         if ($this->isMethod('POST')) {
-            $this->fireEvent('submitting');
+            foreach ($request->get('entries', []) as $entryIdentifier) {
+                $this->addEntry($entryIdentifier);
+            }
 
+//            sv_debug($request->post(), $this->getFields()->getIdentifierMap());
             foreach ($request->post() as $fieldIdentifier => $fieldValue) {
                 $fieldIdentifier = sv_identifier(str_replace('_', '.', $fieldIdentifier));
                 $this->setDataValue($fieldIdentifier, $fieldValue);
             }
 
-            foreach ($this->data as $resourceIdentifier => $entryData) {
-                if ($entryId = $this->entries[$resourceIdentifier] ?? null) {
-                    if ($entry = $this->entryRepository->getEntry($resourceIdentifier, $entryId)) {
-                        $entry->fill($entryData);
-                        $entry->save();
-                    }
-                } else {
-                    // NOT TESTED
-//                    $resource = sv_resource($resourceIdentifier);
-//                    $resource->newQuery()->create($entryData);
-                }
-            }
-
-            $this->submitted = true;
-            $this->fireEvent('submitted');
         }
+
+        return $this;
+    }
+
+    public function submit()
+    {
+        ValidateForm::resolve()->validate($this);
+
+//        $this->fireEvent('submitting');
+
+        foreach ($this->data as $resourceIdentifier => $entryData) {
+            if ($entryId = array_get($this->entries, $resourceIdentifier)) {
+                $this->entryRepository->update($resourceIdentifier.':'.$entryId, $entryData);
+            } else {
+                $this->entryRepository->create($resourceIdentifier, $entryData);
+            }
+        }
+
+        $this->submitted = true;
+//        $this->fireEvent('submitted');
     }
 
     public function compose(): Payload
@@ -134,10 +153,6 @@ class Form implements FormInterface
 
         return RenderComponent::resolve()->handle($this->payload);
     }
-
-    ////////////////////////////////////
-    //
-    ////////////////////////////////////
 
     public function getIdentifier(): string
     {
@@ -212,6 +227,11 @@ class Form implements FormInterface
         return array_get(array_get($this->data, $parent, []), $key);
     }
 
+    public function setValid(bool $valid): void
+    {
+        $this->valid = $valid;
+    }
+
     public static function resolve(FormFieldCollection $fields, string $identifier)
     {
         $form = app(Contracts\FormInterface::class);
@@ -225,7 +245,7 @@ class Form implements FormInterface
     protected function setDataValue(Identifier $identifier, $value)
     {
         $parent = $this->data[$identifier->getParent()] ?? [];
-        $parent[$identifier->getTypeId()] = $value;
+        $parent[$identifier->getLastNode()] = $value;
 
         $this->data[$identifier->getParent()] = $parent;
     }
@@ -239,7 +259,12 @@ class Form implements FormInterface
 
     public function getEntryIds(): array
     {
-        return $this->entryIds ?? [];
+        $ids = [];
+        foreach ($this->entries ?? [] as $resource => $entry) {
+            $ids[] = $resource.':'.(is_object($entry) ? $entry->getId() : $entry);
+        }
+
+        return $ids;
     }
 
     public function getUrl(): string
@@ -251,8 +276,15 @@ class Form implements FormInterface
         return $this->url;
     }
 
-    public function addEntry($identifier, $id)
+    public function addEntry($identifier, $id = null): FormInterface
     {
-        $this->entryIds[$identifier] = $id;
+        if (is_null($id)) {
+            $identifier = sv_identifier($identifier);
+            $this->entries[$identifier->getParent()] = $identifier->id();
+        } else {
+            $this->entries[$identifier] = $id;
+        }
+
+        return $this;
     }
 }

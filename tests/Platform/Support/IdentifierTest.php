@@ -53,7 +53,8 @@ class IdentifierTest extends TestCase
 
         $this->assertEquals('fields', sv_identifier('ab.cd.fields')->type());
         $this->assertEquals('entries', sv_identifier('ab.cd.ef.entries')->type());
-//        $this->assertEquals(1, sv_identifier('ab.orders:1'));
+
+        $this->assertEquals('ab.orders.title', sv_identifier('ab.orders.fields:title')->withoutType());
     }
 
     function test__typeId()

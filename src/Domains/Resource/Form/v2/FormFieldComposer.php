@@ -14,7 +14,7 @@ class FormFieldComposer implements FieldComposer
         $fieldIdentifier = sv_identifier($field->getIdentifier());
 
         $payload = (new Payload([
-            'identifier'  => $field->getIdentifier(),
+            'identifier'  => $fieldIdentifier->withoutType(),
             'type'        => $field->getType(),
             'revision_id' => $field->revisionId(),
             'name'        => $field->getName(),

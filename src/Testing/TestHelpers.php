@@ -149,9 +149,9 @@ trait TestHelpers
         $this->assertNotContains($provider, array_keys($this->app->getLoadedProviders()));
     }
 
-    protected function bindMock($abstract): \Mockery\MockInterface
+    protected function bindMock($abstract, $instance = null): \Mockery\MockInterface
     {
-        $this->app->instance($abstract, $mockInstance = \Mockery::mock($abstract));
+        $this->app->instance($abstract, $mockInstance = \Mockery::mock($instance ?? $abstract));
 
         return $mockInstance;
     }

@@ -20,14 +20,13 @@ class ParseFieldRules
     public function parse(?EntryContract $entry = null, string $table = null)
     {
         $field = $this->field;
-        $table = $table ?? $entry->getTable();
 
         $rules = $field->getRules();
 
         if ($field->isUnique()) {
             $rules[] = sprintf(
                 'unique:%s,%s,%s,id',
-                $table,
+                $table ?? $entry->getTable(),
                 $field->getColumnName(),
                 $entry ? $entry->getId() : 'NULL'
             );
