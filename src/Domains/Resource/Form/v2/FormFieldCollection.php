@@ -57,6 +57,24 @@ class FormFieldCollection extends Collection
         }
     }
 
+    public function getIdentifierMap()
+    {
+        /** @var \SuperV\Platform\Support\Identifier[] $keys */
+        $keys = $this->keys()->map(function ($key) {
+            return sv_identifier($key);
+        })->all();
+
+        $map = collect();
+        foreach ($keys as $identifier) {
+            $parent = $map[$identifier->getParent()] ?? [];
+            $parent[] = $identifier->getTypeId();
+
+            $map[$identifier->getParent()] = $parent;
+        }
+
+        return $map;
+    }
+
     /**
      * @return FormField[]
      */

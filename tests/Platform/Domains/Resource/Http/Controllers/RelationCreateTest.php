@@ -31,7 +31,7 @@ class RelationCreateTest extends ResourceTestCase
         $relation = $users->getRelation('comments');
 
         $response = $this->getJsonUser($relation->route('create', $user))->assertOk();
-        $form = HelperComponent::from($response->decodeResponseJson('data'));
+        $form = HelperComponent::fromArray($response->decodeResponseJson('data'));
 
         $this->assertEquals(2, count($form->getProp('fields')));
         $this->assertEquals(sv_url($relation->route('store', $user)), $form->getProp('url'));
@@ -67,7 +67,7 @@ class RelationCreateTest extends ResourceTestCase
         $this->blueprints()->comments();
         ResourceFactory::wipe();
 
-        Resource::extend('platform.t_users')->with(function (Resource $resource) {
+        Resource::extend('testing.users')->with(function (Resource $resource) {
             $resource->getRelation('comments')
                      ->on('create.displaying', function (EntryForm $form) {
                          $form->hideField('status');
@@ -78,7 +78,7 @@ class RelationCreateTest extends ResourceTestCase
         $relation = $users->getRelation('comments');
 
         $response = $this->getJsonUser($relation->route('create', $user))->assertOk();
-        $form = HelperComponent::from($response->decodeResponseJson('data'));
+        $form = HelperComponent::fromArray($response->decodeResponseJson('data'));
 
         $this->assertEquals(1, count($form->getProp('fields')));
         $this->assertEquals(sv_url($relation->route('store', $user)), $form->getProp('url'));
@@ -92,7 +92,7 @@ class RelationCreateTest extends ResourceTestCase
         $this->blueprints()->comments();
         ResourceFactory::wipe();
 
-        Resource::extend('platform.t_users')->with(function (Resource $resource) {
+        Resource::extend('testing.users')->with(function (Resource $resource) {
             $resource->getRelation('comments')
                      ->on('create.storing', function (Request $request, EntryForm $form, $entry) {
                          $comment = $request->get('comment')." (by {$entry->name})";

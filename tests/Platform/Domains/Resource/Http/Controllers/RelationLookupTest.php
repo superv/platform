@@ -34,7 +34,7 @@ class RelationLookupTest extends ResourceTestCase
         $url = $relation->route('lookup', $userA);
         $response = $this->getJsonUser($url)->assertOk();
 
-        $table = HelperComponent::from($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
 
         //  Since this is a lookup a table, normal fields should
         //  be displayed

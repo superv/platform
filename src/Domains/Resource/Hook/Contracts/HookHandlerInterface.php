@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Hook\Contracts;
 
-interface Hook
+interface HookHandlerInterface
 {
     public function hook(string $identifier, string $hookHandler, string $subKey = null);
 }

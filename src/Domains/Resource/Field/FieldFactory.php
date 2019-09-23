@@ -18,7 +18,7 @@ class FieldFactory
      */
     protected $params;
 
-    protected $flags = ['searchable', 'unique', 'required', 'nullable'];
+//    protected $flags = ['searchable', 'unique', 'required', 'nullable'];
 
     /**
      * @param string|null $resolveFrom
@@ -59,10 +59,6 @@ class FieldFactory
             $resolveFrom = GhostField::class;
         }
 
-//        if (Current::user() && !Current::user()->can($this->params['identifier'])) {
-//           $resolveFrom = GhostField::class;
-//        }
-
         if (! isset($this->params['name'])) {
             $this->params['name'] = $this->params['identifier'];
         }
@@ -86,6 +82,8 @@ class FieldFactory
                 $field->addFlag('required');
             }
         }
+
+        $field->fireEvent('resolved');
 
         return $field;
     }

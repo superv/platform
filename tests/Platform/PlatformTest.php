@@ -50,7 +50,7 @@ class PlatformTest extends TestCase
         });
     }
 
-    function test__registers_platform_extensions_before_booting()
+    function __registers_platform_extensions_before_booting()
     {
         app('events')->listen(PlatformBootingEvent::class, function (PlatformBootingEvent $event) {
             $this->assertNotNull(Extension::get('sv_resources'));

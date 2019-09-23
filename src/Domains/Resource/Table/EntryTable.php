@@ -12,11 +12,9 @@ use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
 use SuperV\Platform\Domains\Resource\Table\Contracts\EntryTable as EntryTableContract;
 use SuperV\Platform\Support\Composer\Tokens;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
-use SuperV\Platform\Support\Concerns\HasOptions;
 
 class EntryTable extends Table implements EntryTableContract
 {
-    use HasOptions;
     use FiresCallbacks;
 
     protected $query;

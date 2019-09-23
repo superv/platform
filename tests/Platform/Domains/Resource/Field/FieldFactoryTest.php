@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource\Field;
 
+use Event;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
@@ -23,11 +24,20 @@ class FieldFactoryTest extends ResourceTestCase
         $this->assertInstanceOf(Field::class, $field);
         $this->assertEquals('title', $field->getName());
         $this->assertEquals('text', $field->getFieldType());
+    }
 
-//        $fieldType = $field->fieldType();
-//        $fieldType->setAccessor(function ($value) { return str_slug($value); });
-//
-//        $field->setValue('SuperV Platform');
-//        $this->assertEquals('superv-platform', $field->getValue());
+    function test__dispatches_event_when_field_is_resolved()
+    {
+        $fieldEntry = new FieldModel($this->makeFieldAttributes());
+
+        $eventName = $fieldEntry->getIdentifier().'.events:resolved';
+
+        Event::fake($eventName);
+
+        $field = FieldFactory::createFromEntry($fieldEntry);
+
+        Event::assertDispatched($eventName, function ($eventName, Field $payload) use ($field) {
+            return $field->getIdentifier() === $payload->getIdentifier();
+        });
     }
 }

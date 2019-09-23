@@ -5,10 +5,9 @@ namespace SuperV\Platform\Domains\Resource\Hook;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\FormResolvedHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\FormValidatingHook;
-use SuperV\Platform\Domains\Resource\Hook\Contracts\Hook as HookContract;
-use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\HookHandlerInterface as HookContract;
 
-class FormsHook implements HookContract
+class FormsHookHandler implements HookContract
 {
     /**
      * @var \SuperV\Platform\Contracts\Dispatcher
@@ -45,7 +44,6 @@ class FormsHook implements HookContract
 
     protected function handle($hookHandler, $eventType, $payload)
     {
-        /** @var ResourceConfig $payload */
         if (is_string($hookHandler)) {
             $hookHandler = app($hookHandler);
         }

@@ -143,4 +143,10 @@ interface Field
     public function removeFlag(string $flag): Field;
 
     public function revisionId(): ?string;
+
+    public function isFilter();
+
+    public function searchable(): Field;
+
+    public function isVisible(): bool;
 }

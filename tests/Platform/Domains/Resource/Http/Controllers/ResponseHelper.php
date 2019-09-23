@@ -13,11 +13,11 @@ trait ResponseHelper
         $resource = ResourceFactory::make($entry);
         $response = $this->getJsonUser($resource->route('entry.view', $entry));
 
-        return HelperComponent::from($response->decodeResponseJson('data'));
+        return HelperComponent::fromArray($response->decodeResponseJson('data'));
 
-        $page = HelperComponent::from($response->decodeResponseJson('data'));
+        $page = HelperComponent::fromArray($response->decodeResponseJson('data'));
 
-        $view = HelperComponent::from($page->getProp('blocks.0'));
+        $view = HelperComponent::fromArray($page->getProp('blocks.0'));
 
         return $view;
     }

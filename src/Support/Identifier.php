@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Support;
 
+use InvalidArgumentException;
+
 class Identifier
 {
     /**
@@ -14,12 +16,21 @@ class Identifier
     protected function __construct(string $identifier)
     {
         $this->identifier = $identifier;
+
+        if ($this->getNodeCount() < 2) {
+            throw new InvalidArgumentException('Not a valid identifier string');
+        }
     }
 
-    public function parent()
+    public function get(): string
     {
-        if (count($nodes = $this->getNodes()) === 1) {
-            return null;
+        return $this->identifier;
+    }
+
+    public function parent(): ?Identifier
+    {
+        if (count($nodes = $this->getNodes()) === 2) {
+            return str_contains($this->identifier, ':') ? static::make(explode(':', $this->identifier)[0]) : null;
         }
 
         // pop the type node
@@ -28,18 +39,42 @@ class Identifier
         return static::make(implode('.', $nodes));
     }
 
-    public function type()
+    public function getParent(): ?string
     {
-        list($type, $typeId) = $this->getTypeNode();
-
-        return new IdentifierType(str_singular($type), $typeId);
+        return (string)$this->parent();
     }
 
-    public function typeId()
+    public function getNodeCount()
+    {
+        return count($this->getNodes());
+    }
+
+    public function getType(): ?string
+    {
+        if ($this->getNodeCount() === 2) {
+            return str_contains($this->identifier, ':') ? 'entries' : 'resources';
+        }
+
+        list($type, $typeId) = $this->getTypeNode();
+
+        return $type;
+    }
+
+    public function type(): ?IdentifierType
+    {
+        return new IdentifierType($this->getType(), $this->getTypeId());
+    }
+
+    public function getTypeId()
     {
         list(, $typeId) = $this->getTypeNode();
 
         return $typeId ?? null;
+    }
+
+    public function id()
+    {
+        return $this->getTypeId();
     }
 
     public function getNodes()
@@ -51,9 +86,23 @@ class Identifier
         return $this->nodes;
     }
 
+    public function getLastNode()
+    {
+        return $this->getNodes()[$this->getNodeCount() - 1];
+    }
+
     public function __toString()
     {
         return $this->identifier;
+    }
+
+    public function toArray()
+    {
+        return array_filter([
+            'parent'  => $this->parent() ? $this->parent()->get() : null,
+            'type'    => $this->getType(),
+            'type_id' => $this->getTypeId(),
+        ]);
     }
 
     public static function make(string $identifier): Identifier
@@ -65,7 +114,7 @@ class Identifier
     {
         $nodes = $this->getNodes();
 
-        $type = array_pop($nodes);
+        $type = count($nodes) === 2 ? $this->identifier : array_pop($nodes);
         if (str_contains($type, ':')) {
             list($type, $typeId) = explode(':', $type);
         }

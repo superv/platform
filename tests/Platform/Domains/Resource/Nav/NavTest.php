@@ -178,7 +178,7 @@ class NavTest extends ResourceTestCase
 
     function test__creates_from_resource_blueprint()
     {
-        Schema::create('t_users', function (Blueprint $table, ResourceConfig $resource) {
+        Schema::create('tbl_users', function (Blueprint $table, ResourceConfig $resource) {
             $table->increments('id');
             $resource->nav([
                 'parent' => 'acp.settings.auth',
@@ -192,7 +192,7 @@ class NavTest extends ResourceTestCase
             'title'  => 'System Users',
             'handle' => 'users',
             'icon'   => 'user',
-            'url'    => 'sv/res/platform.t_users',
+            'url'    => 'sv/res/testing.users',
         ], Section::get('acp.settings.auth.users')->compose());
 
         Schema::create('t_templates', function (Blueprint $table, ResourceConfig $resource) {

@@ -2,12 +2,13 @@
 
 namespace SuperV\Platform\Domains\Resource\Hook;
 
+use Log;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Exceptions\PlatformException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-class Hook
+class HookManager
 {
     protected $map = [];
 
@@ -55,7 +56,7 @@ class Hook
      *
      * @param $path
      */
-    public function scan($path): Hook
+    public function scan($path): HookManager
     {
         if (! file_exists($path)) {
             PlatformException::runtime(sprintf("Path not found: %s", $path));
@@ -68,69 +69,79 @@ class Hook
             }
 
             $className = str_replace('.php', '', $file->getFilename());
-            $hookHandler = $namespace.'\\'.$className;
+            $hook = $namespace.'\\'.$className;
 
-            if (! ($identifier = isset($hookHandler::$identifier) ? $hookHandler::$identifier : null)) {
+            if (! ($identifier = isset($hook::$identifier) ? $hook::$identifier : null)) {
+                sv_console(sprintf("Identifier not found for hook [%s]", $hook));
                 continue;
             }
 
-            $this->register($identifier, $hookHandler, $className);
+            $this->register($identifier, $hook, $className);
         }
 
         return $this;
     }
 
-    public function hookType($identifier, $type, $hookHandler, $subKey = null)
+    public function register($identifier, $hook, $className)
     {
-        $typeHook = str_replace_last("\\Hook", "\\".studly_case($type.'_hook'), get_class($this));
-        if (class_exists($typeHook)) {
-            app($typeHook)->hook($identifier, $hookHandler, $subKey);
-        }
-    }
-
-    public function register($identifier, $hookHandler, $className)
-    {
-        $subKey = null;
-        $parts = explode('.', $identifier);
-        if (count($parts) > 2) {
-            $identifier = sprintf('%s.%s', $parts[0], $parts[1]);
-
-            if (str_contains($parts[2], ':')) {
-                list($hookType, $subKey) = explode(':', $parts[2]);
-            } else {
-                $hookType = $parts[2];
-            }
-
-//            if (count($parts) > 3) {
-//                $subKey = $parts[3];
-//            }
-        } else {
-            $parts = explode('_', snake_case($className));
-            $hookType = end($parts);
-        }
+        [$identifier, $hookType, $subKey] = $this->parseIdentifier($identifier, $className);
 
         if (! isset($this->map[$identifier])) {
             $this->map[$identifier] = [];
         }
 
         if (! $subKey) {
-            $this->map[$identifier][$hookType] = $hookHandler;
+            $this->map[$identifier][$hookType] = $hook;
         } else {
             if (! isset($this->map[$identifier][$hookType][$subKey])) {
                 $this->map[$identifier][$hookType][$subKey] = [];
             }
 
-            $this->map[$identifier][$hookType][$subKey] = $hookHandler;
+            $this->map[$identifier][$hookType][$subKey] = $hook;
         }
 
-        $this->hookType($identifier, $hookType, $hookHandler, $subKey);
+        $this->hookType($identifier, $hookType, $hook, $subKey);
 
         return $this;
+    }
+
+    public function hookType($identifier, $type, $hook, $subKey = null)
+    {
+        if (! class_exists($hook)) {
+            return Log::error("Hook handler class does not exist: ".$hook);
+        }
+        $hookHandler = str_replace_last("\\HookManager", "\\".studly_case($type.'_hook_handler'), get_class($this));
+        if (class_exists($hookHandler)) {
+            app($hookHandler)->hook($identifier, $hook, $subKey);
+        }
     }
 
     /** @return static */
     public static function resolve()
     {
         return app(static::class);
+    }
+
+    /**
+     * @param $identifier
+     * @param $className
+     * @return array
+     */
+    protected function parseIdentifier($identifier, $className): array
+    {
+        $_identifier = sv_identifier($identifier);
+        $subKey = null;
+
+        if ($_identifier->getNodeCount() > 2) {
+            $hookType = (string)$_identifier->getType();
+            $subKey = $_identifier->getTypeId();
+            $identifier = $_identifier->getParent();
+        } else {
+            $parts = explode('_', snake_case($className));
+            $hookType = end($parts);
+//            $hookType = 'resource';
+        }
+
+        return [$identifier, $hookType, $subKey];
     }
 }

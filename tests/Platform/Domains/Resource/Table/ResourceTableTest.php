@@ -45,7 +45,7 @@ class ResourceTableTest extends ResourceTestCase
         $table->build();
 
         $this->assertEquals([
-            'column'    => 't_posts.created_at',
+            'column'    => 'tbl_posts.created_at',
             'direction' => 'asc',
         ], $table->getQuery()->getQuery()->orders[0]);
     }

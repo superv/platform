@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\UI;
 
+use Event;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Page\ResourcePage;
@@ -13,19 +14,36 @@ class ResourceDashboard
      */
     protected $resource;
 
-    public function __construct(Resource $resource)
+    /**
+     * @var string
+     */
+    protected $section;
+
+    /**
+     * @var \SuperV\Platform\Domains\UI\Page\ResourcePage
+     */
+    protected $page;
+
+    public function __construct(Resource $resource, string $section = null)
     {
         $this->resource = $resource;
-    }
-
-    public function render($section = null)
-    {
-        $resource = $this->resource;
+        $this->section = $section;
 
         $page = ResourcePage::make(__($resource->getLabel()));
         $page->setResource($resource);
         $page->setDefaultSection('all');
         $page->setSelectedSection($section);
+
+        $this->page = $page;
+
+        Event::fire($resource->getIdentifier().'.pages:dashboard.events:resolved', compact('page', 'resource'));
+    }
+
+    public function render()
+    {
+        $resource = $this->resource;
+        $section = $this->section;
+        $page = $this->page;
 
         if ($callback = $resource->getCallback('index.page')) {
             app()->call($callback, ['page' => $page]);
@@ -43,14 +61,15 @@ class ResourceDashboard
             'default'    => ! $section || $section === 'all',
         ]);
 
-        $page->addSection([
-            'identifier' => 'create',
-            'title'      => 'Create',
-            //            'url'        => $resource->router()->createForm(),
-            'url'        => $resource->route('forms.create'),
-            'target'     => 'portal:'.$resource->getIdentifier(),
-            'default'    => $section === 'create',
-        ]);
+        if ($page->isCreatable() && empty($page->getActions())) {
+            $page->addSection([
+                'identifier' => 'create',
+                'title'      => 'Create',
+                'url'        => $resource->route('forms.create'),
+                'target'     => 'portal:'.$resource->getIdentifier(),
+                'default'    => $section === 'create',
+            ]);
+        }
 
 //        if ($page->isCreatable() && empty($page->getActions())) {
 //            $action = CreateEntryAction::make('New '.$resource->getSingularLabel());
@@ -61,7 +80,11 @@ class ResourceDashboard
 
         $page->setMeta('url', 'sv/res/'.$resource->getIdentifier());
 
-        return $page->build(['res' => $resource->toArray()]);
+        $page = $page->build(['res' => $resource->toArray()]);
+
+        Event::fire($resource->getIdentifier().'.pages:dashboard.events:rendered', compact('page', 'resource'));
+
+        return $page->toResponse([]);
     }
 
     /** @return static */

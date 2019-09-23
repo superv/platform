@@ -37,17 +37,17 @@ class RelationIndexTest extends ResourceTestCase
         //
         $this->withoutExceptionHandling();
 
-        $url = route('relation.index', ['resource' => 'platform.t_users',
+        $url = route('relation.index', ['resource' => 'testing.users',
                                         'id'       => $userA->getId(),
                                         'relation' => 'posts']);
         $response = $this->getJsonUser($url);
         $response->assertOk();
-        $table = HelperComponent::from($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
 
         // We should have 1 context action (Create New)
         //
         $this->assertEquals(1, count($table->getProp('config.context_actions')));
-        $action = HelperComponent::from($table->getProp('config.context_actions.0'));
+        $action = HelperComponent::fromArray($table->getProp('config.context_actions.0'));
 
         // Button title should be generated from, singular relation name
         //
@@ -56,7 +56,7 @@ class RelationIndexTest extends ResourceTestCase
         // Check the actions url, should point to create new relation form
         //
         $this->assertEquals(
-            sv_route('relation.create', ['resource' => 'platform.t_users',
+            sv_route('relation.create', ['resource' => 'testing.users',
                                          'id'       => $userA->getId(),
                                          'relation' => 'posts']),
             sv_url($action->getProp('url')));
@@ -73,7 +73,7 @@ class RelationIndexTest extends ResourceTestCase
 
         // check the View Action Url
         //
-        $viewAction = HelperComponent::from($table->getProp('config.row_actions.1'));
+        $viewAction = HelperComponent::fromArray($table->getProp('config.row_actions.1'));
         $firstPost = $userPosts->first();
         $actual = str_replace('{entry.id}', $firstPost->getId(), $viewAction->getProp('url'));
         $this->assertEquals($firstPost->route('entry.dashboard', ['section' => 'view']), sv_url($actual));
@@ -86,8 +86,8 @@ class RelationIndexTest extends ResourceTestCase
         $users = $this->blueprints()->users();
 
         $userA = $users->fake();
-        $userA->roles()->attach([1 => ['notes' => 'note-1']]);
-        $userA->roles()->attach([2 => ['notes' => 'note-2']]);
+        $userA->roles()->attach([1 => ['status' => 'note-1']]);
+        $userA->roles()->attach([2 => ['status' => 'note-2']]);
 
         $relation = $users->getRelation('roles', $userA);
 
@@ -95,10 +95,10 @@ class RelationIndexTest extends ResourceTestCase
         $response = $this->getJsonUser($url);
         $response->assertOk();
 
-        $table = HelperComponent::from($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
 
         //  Only two fields for this table,
-        //  role.title + pivot.notes
+        //  role.title + pivot.status
         //
         $fields = $table->getProp('config.fields');
         $this->assertEquals(2, count($fields));
@@ -106,20 +106,20 @@ class RelationIndexTest extends ResourceTestCase
         // Check row action VIEW & DETACH
         //
         $this->assertEquals(2, count($table->getProp('config.row_actions')));
-        $action = HelperComponent::from($table->getProp('config.row_actions.1'));
+        $action = HelperComponent::fromArray($table->getProp('config.row_actions.1'));
 
-        $this->assertEquals('sv/res/platform.t_roles/{entry.id}/view', $action->getProp('url'));
+        $this->assertEquals('sv/res/testing.roles/{entry.id}/view', $action->getProp('url'));
 
         // Check context action ATTACH NEW
         //
         $this->assertEquals(1, count($table->getProp('config.context_actions')));
-        $action = HelperComponent::from($table->getProp('config.context_actions.0'));
+        $action = HelperComponent::fromArray($table->getProp('config.context_actions.0'));
 
         $this->assertEquals('sv-attach-entry-action', $action->getName());
         $this->assertEquals(sv_url($relation->route('lookup', $userA)), $action->getProp('lookup-url'));
         $this->assertEquals(sv_url($relation->route('attach', $userA)), $action->getProp('attach-url'));
 
-        $this->assertEquals('notes', $action->getProp('pivot-fields.notes.name'));
+        $this->assertEquals('status', $action->getProp('pivot-fields.status.name'));
 
         $response = $this->getJsonUser($table->getProp('config.data_url'));
         $response->assertOk();
@@ -154,7 +154,7 @@ class RelationIndexTest extends ResourceTestCase
         $response = $this->getJsonUser($url);
         $response->assertOk();
 
-        $table = HelperComponent::from($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
 
         //  Only two fields for this table,
         //  action.slug + pivot.provision
@@ -165,7 +165,7 @@ class RelationIndexTest extends ResourceTestCase
         // We should have 1 context action (Attach)
         //
         $this->assertEquals(1, count($table->getProp('config.context_actions')));
-        $action = HelperComponent::from($table->getProp('config.context_actions.0'));
+        $action = HelperComponent::fromArray($table->getProp('config.context_actions.0'));
 
         $this->assertEquals('sv-attach-entry-action', $action->getName());
         $this->assertEquals(sv_url($relation->route('lookup', $userA)), $action->getProp('lookup-url'));

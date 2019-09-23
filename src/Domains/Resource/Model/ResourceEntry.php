@@ -149,7 +149,7 @@ class ResourceEntry extends Entry
 
     public function getMorphClass()
     {
-        return $this->getTable();
+        return $this->getResourceIdentifier();
     }
 
     public function __sleep()

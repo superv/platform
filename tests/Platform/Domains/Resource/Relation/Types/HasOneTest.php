@@ -6,7 +6,6 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\EntryForm;
-use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\Testing\FormTester;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -26,15 +25,15 @@ class HasOneTest extends ResourceTestCase
 
     function test__creates_relation()
     {
-        $this->assertColumnNotExists('t_users', 'profile');
-        $this->assertColumnNotExists('t_users', 'user_id');
+        $this->assertColumnNotExists('tbl_users', 'profile');
+        $this->assertColumnNotExists('tbl_users', 'user_id');
 
         /** @var \SuperV\Platform\Domains\Resource\Relation\Types\HasOne $relation */
         $relation = $this->parent->getRelation('profile');
         $this->assertEquals('has_one', $relation->getType());
 
         $this->assertEquals([
-            'related_resource' => 'testing.t_profiles',
+            'related_resource' => 'testing.profiles',
             'foreign_key'      => 'user_id',
         ], $relation->getRelationConfig()->toArray());
     }
@@ -67,19 +66,16 @@ class HasOneTest extends ResourceTestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->parent = $this->create('testing.t_users', function (Blueprint $table, ResourceConfig $resource) {
-            $resource->resourceKey('user');
-
-            $table->increments('id');
-            $table->string('name');
-            $table->hasOne('testing.t_profiles', 'profile', 'user_id');
+        $this->parent = $this->blueprints()->users(function (Blueprint $table) {
+            $table->hasOne('testing.profiles', 'profile', 'user_id');
         });
 
-        $this->related = $this->create('testing.t_profiles', function (Blueprint $table) {
+        $this->related = $this->create('tbl_profiles', function (Blueprint $table) {
+            $table->resourceConfig()->setIdentifier('testing.profiles');
+
             $table->increments('id');
             $table->string('address');
-            $table->belongsTo('testing.t_users', 'user', 'user_id');
+            $table->belongsTo('testing.users', 'user', 'user_id');
         });
     }
 }

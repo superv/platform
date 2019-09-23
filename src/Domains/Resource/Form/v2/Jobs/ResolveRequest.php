@@ -36,25 +36,7 @@ class ResolveRequest
         $this->request = $request;
         $form->setMethod(strtoupper($request->getMethod()));
 
-        $requestArray = $request->all();
-
-        foreach (array_pull($requestArray, 'entries', []) as $entry) {
-            $parts = explode('.', $entry);
-
-            if (count($parts) < 3 || ! is_numeric(end($parts))) {
-                continue;
-            }
-
-            $entryId = array_pop($parts);
-            $identifier = implode('.', $parts);
-            $form->addEntry($identifier, $entryId);
-
-            if (! $entry = $this->repository->getEntry($identifier, $entryId)) {
-                continue;
-            }
-
-            $this->entries[$identifier] = $entry;
-        }
+        $this->loadEntries($request->all());
 
         if ($form->isMethod('GET')) {
             $form->getFields()->keys()->map(function ($fieldIdentifier) {
@@ -76,6 +58,7 @@ class ResolveRequest
                 $entry->save();
             }
         }
+
     }
 
     /**
@@ -84,5 +67,26 @@ class ResolveRequest
     public static function resolve()
     {
         return app(static::class);
+    }
+
+    protected function loadEntries($requestArray)
+    {
+        foreach (array_pull($requestArray, 'entries', []) as $entry) {
+            $parts = explode('.', $entry);
+
+            if (count($parts) < 3 || ! is_numeric(end($parts))) {
+                continue;
+            }
+
+            $entryId = array_pop($parts);
+            $identifier = implode('.', $parts);
+            $this->form->addEntry($identifier, $entryId);
+
+            if (! $entry = $this->repository->getEntry($identifier, $entryId)) {
+                continue;
+            }
+
+            $this->entries[$identifier] = $entry;
+        }
     }
 }

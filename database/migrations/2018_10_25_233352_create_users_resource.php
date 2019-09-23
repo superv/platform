@@ -37,8 +37,12 @@ class CreateUsersResource extends Migration
         });
 
         Schema::table('users', function (Blueprint $table) {
-            $table->softDeletes();
-            $table->nullableBelongsTo('users', 'deleted_by');
+            if (! \Schema::hasColumn('users', 'deleted_at')) {
+                $table->softDeletes();
+            }
+            if (! \Schema::hasColumn('users', 'deleted_by_id')) {
+                $table->nullableBelongsTo('users', 'deleted_by');
+            }
         });
     }
 

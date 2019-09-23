@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Extensions;
+namespace SuperV\Platform\Resources\Users;
 
 use SuperV\Platform\Domains\Resource\Action\ResourceEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;

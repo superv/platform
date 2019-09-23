@@ -2,14 +2,24 @@
 
 namespace SuperV\Platform\Testing;
 
+use Tests\Platform\TestCase;
+
 class FormComponent extends HelperComponent
 {
+    /** @var \Tests\Platform\TestCase */
+    protected $testCase;
+
+    public function assertIdentifier($expected)
+    {
+        TestCase::assertEquals($expected, $this->getProp('identifier'));
+    }
+
     public function getFieldCount()
     {
         return $this->countProp('fields');
     }
 
-    public static function get($identifier, $testCase)
+    public static function get($identifier, TestCase $testCase)
     {
         if (class_exists($identifier)) {
             $identifier = $identifier::$identifier;
@@ -19,6 +29,6 @@ class FormComponent extends HelperComponent
 
         $response = $testCase->getJsonUser($url)->assertOk();
 
-        return FormComponent::from($response->decodeResponseJson('data'));
+        return static::fromArray($response->decodeResponseJson('data'));
     }
 }

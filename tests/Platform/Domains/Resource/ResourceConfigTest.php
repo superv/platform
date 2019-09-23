@@ -19,7 +19,7 @@ class ResourceConfigTest extends ResourceTestCase
 {
     function test__dispatches_event_when_resolved()
     {
-        $resolvedEventName = 'testing.any_table::config.resolved';
+        $resolvedEventName = 'testing.any_table.events:config_resolved';
         Event::fake([ResolvedEvent::class, $resolvedEventName]);
         $any = $this->anyTable();
 
@@ -35,32 +35,32 @@ class ResourceConfigTest extends ResourceTestCase
 
     function test__sortable()
     {
-        $res = $this->create('t_users', function (Blueprint $table) {
+        $res = $this->create('tbl_users', function (Blueprint $table) {
             $table->increments('id');
             $table->sortable();
         });
 
         $this->assertTrue($res->config()->isSortable());
-        $this->assertColumnExists('t_users', 'sort_order');
+        $this->assertColumnExists('tbl_users', 'sort_order');
     }
 
     function test__id_column()
     {
-        $res = $this->create('t_users', function (Blueprint $table) {
+        $res = $this->create('tbl_users', function (Blueprint $table) {
             $table->id();
         });
 
-        $this->assertColumnExists('t_users', 'id');
+        $this->assertColumnExists('tbl_users', 'id');
     }
 
     function test__uuid()
     {
-        $res = $this->create('t_users', function (Blueprint $table) {
+        $res = $this->create('tbl_users', function (Blueprint $table) {
             $table->increments('id');
             $table->hasUuid();
         });
 
-        $this->assertColumnExists('t_users', 'uuid');
+        $this->assertColumnExists('tbl_users', 'uuid');
         $this->assertTrue($res->config()->hasUuid());
 
         $user = $res->create([]);
@@ -69,11 +69,11 @@ class ResourceConfigTest extends ResourceTestCase
 
     function test__saves_resource_key()
     {
-        $res = $this->create('t_users', function (Blueprint $table, Config $config) {
+        $res = $this->create('tbl_users', function (Blueprint $table, Config $config) {
             $table->increments('id');
 
             // default resource key is singular name
-            $this->assertEquals('t_user', $config->getResourceKey());
+            $this->assertEquals('tbl_user', $config->getResourceKey());
 
             // but we can override it
             $config->resourceKey('user');

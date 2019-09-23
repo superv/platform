@@ -4,9 +4,10 @@ namespace SuperV\Platform\Support;
 
 class IdentifierType extends ValueObject
 {
-    private const FORM = 'form';
-    private const FIELD = 'field';
-    private const ENTRY = 'entry';
+    private const FORM = 'forms';
+    private const FIELD = 'fields';
+    private const ENTRY = 'entries';
+    private const RESOURCE = 'resources';
 
     protected $id;
 
@@ -17,6 +18,11 @@ class IdentifierType extends ValueObject
         if ($id) {
             $this->id = $id;
         }
+    }
+
+    public function isResource(): bool
+    {
+        return $this->equals(static::resource());
     }
 
     public function isForm(): bool
@@ -37,6 +43,11 @@ class IdentifierType extends ValueObject
     public function id()
     {
         return $this->id;
+    }
+
+    public static function resource(): self
+    {
+        return new static(self::RESOURCE);
     }
 
     public static function form(): self

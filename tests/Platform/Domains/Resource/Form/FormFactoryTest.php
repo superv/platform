@@ -17,7 +17,7 @@ class FormFactoryTest extends ResourceTestCase
 {
     function test__create_form_entry()
     {
-        $postsResource = $this->create('testing.t_posts',
+        $postsResource = $this->create('testing.posts',
             function (Blueprint $table) {
                 $table->id();
                 $table->nullableBelongsTo('sv_resources', 'resource');
@@ -34,8 +34,8 @@ class FormFactoryTest extends ResourceTestCase
         $this->assertInstanceOf(FormModel::class, $formEntry);
         $this->assertTrue($formEntry->isPrivate());
         $this->assertEquals('default', $formEntry->getName());
-        $this->assertEquals('testing.t_posts', $formEntry->getNamespace());
-        $this->assertEquals('testing.t_posts.forms:default', $formEntry->getIdentifier());
+        $this->assertEquals('testing.posts', $formEntry->getNamespace());
+        $this->assertEquals('testing.posts.forms:default', $formEntry->getIdentifier());
         $this->assertEquals($postsResource->id(), $formEntry->resource_id);
 
         $formFields = $formEntry->compileFields();

@@ -14,8 +14,6 @@ interface FormInterface
 
     public function handle(Request $request);
 
-    public function submit($data);
-
     /**
      * Render the SPA Component from composed data
      *
@@ -26,8 +24,6 @@ interface FormInterface
     public function getEntryIds(): array;
 
     public function addEntry($identifier, $id);
-
-    public function setData($data): FormInterface;
 
     public function setFieldValue($key, $value): FormInterface;
 
@@ -56,4 +52,8 @@ interface FormInterface
     public function getUrl(): string;
 
     public function setUrl(string $url): FormInterface;
+
+    public function fireEvent(string $eventName, $payload = null);
+
+    public function getDataValue($parent, $key);
 }

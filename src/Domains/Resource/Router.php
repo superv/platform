@@ -22,4 +22,22 @@ class Router
             ])
         );
     }
+
+    public function defaultList()
+    {
+        return sprintf(
+            sv_route('resource.table', [
+                'resource' => $this->resource->getIdentifier(),
+            ])
+        );
+    }
+
+    public function dashboard()
+    {
+        return sprintf(
+            sv_route('resource.dashboard', [
+                'resource' => $this->resource->getIdentifier(),
+            ])
+        );
+    }
 }

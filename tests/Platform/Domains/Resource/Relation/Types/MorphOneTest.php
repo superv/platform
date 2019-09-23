@@ -28,8 +28,8 @@ class MorphOneTest extends ResourceTestCase
 
     function test__create_morph_one_relation()
     {
-        $this->assertColumnNotExists('t_users', 'address');
-        $this->assertColumnNotExists('t_users', 'address_id');
+        $this->assertColumnNotExists('tbl_users', 'address');
+        $this->assertColumnNotExists('tbl_users', 'address_id');
 
         $relation = $this->parent->getRelation('tag');
         $this->assertEquals('morph_one', $relation->getType());
@@ -45,7 +45,7 @@ class MorphOneTest extends ResourceTestCase
 
         $tag = $user->tag()->make(['label' => 'blue']);
         $this->assertEquals($user->getId(), $tag->owner_id);
-        $this->assertEquals($user->getHandle(), $tag->owner_type);
+        $this->assertEquals($user->getResourceIdentifier(), $tag->owner_type);
 
         /** @var \SuperV\Platform\Domains\Resource\Relation\Types\MorphOne $relation */
         $relation = $this->parent->getRelation('tag');
@@ -61,7 +61,7 @@ class MorphOneTest extends ResourceTestCase
 
         $relatedEntry = $form->getEntry();
         $this->assertEquals($user->getId(), $relatedEntry->owner_id);
-        $this->assertEquals($user->getHandle(), $relatedEntry->owner_type);
+        $this->assertEquals($user->getResourceIdentifier(), $relatedEntry->owner_type);
 
         $this->withoutExceptionHandling();
         (new FormTester($this->basePath()))->test($form);
@@ -85,7 +85,7 @@ class MorphOneTest extends ResourceTestCase
         $this->assertInstanceOf(TestTac::class, $relatedEntry);
 
         $this->assertEquals($user->getId(), $relatedEntry->owner_id);
-        $this->assertEquals($user->getHandle(), $relatedEntry->owner_type);
+        $this->assertEquals($user->getResourceIdentifier(), $relatedEntry->owner_type);
 
         $this->withoutExceptionHandling();
         (new FormTester($this->basePath()))->test($form);
@@ -118,7 +118,7 @@ class MorphOneTest extends ResourceTestCase
     {
         parent::setUp();
 
-        $this->parent = $this->create('t_users', function (Blueprint $table, ResourceConfig $resource) {
+        $this->parent = $this->create('tbl_users', function (Blueprint $table, ResourceConfig $resource) {
             $resource->resourceKey('user');
 
             $table->increments('id');

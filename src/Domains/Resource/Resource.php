@@ -28,7 +28,7 @@ use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\Hydratable;
 
-final class Resource implements
+class Resource implements
     Contracts\ProvidesFields,
     Contracts\ProvidesQuery
 {
@@ -476,9 +476,13 @@ final class Resource implements
 
     public function resolveTable(): ResourceTable
     {
+        /** @var ResourceTable $table */
         $table = app(ResourceTable::class)->setResource($this);
+        $table->setIdentifier($this->getIdentifier().'.lists:default');
 
         $this->fire('table.resolved', ['table' => $table]);
+
+        $this->fireEvent('lists:default.events:resolved', ['table' => $table]);
 
         return $table;
     }
@@ -592,5 +596,11 @@ final class Resource implements
         }
 
         return ResourceModel::query()->where('identifier', $identifier)->exists();
+    }
+
+    protected function fireEvent($event, $payload = [])
+    {
+        $eventName = $this->getIdentifier().'.'.$event;
+        app('events')->dispatch($eventName, $payload);
     }
 }

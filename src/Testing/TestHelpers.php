@@ -92,6 +92,18 @@ trait TestHelpers
         }
     }
 
+    protected function getListComponent($resource): ListComponent
+    {
+        return ListComponent::get($resource, $this);
+    }
+
+    protected function getComponentFromUrl($url): HelperComponent
+    {
+        $response = $this->getJsonUser($url)->assertOk();
+
+        return HelperComponent::fromArray($response->decodeResponseJson('data'));
+    }
+
     protected function assertArrayContains(array $needle, array $haystack)
     {
         if (is_numeric(array_keys($needle)[0])) {

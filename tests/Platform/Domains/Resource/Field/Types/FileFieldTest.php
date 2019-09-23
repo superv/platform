@@ -7,9 +7,10 @@ use Illuminate\Http\UploadedFile;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class FileTest extends ResourceTestCase
+class FileFieldTest extends ResourceTestCase
 {
     function test_type_file_is_not_required_by_default()
     {
@@ -24,7 +25,8 @@ class FileTest extends ResourceTestCase
 
     function test__type_file()
     {
-        $res = $this->create('tmp_tbl', function (Blueprint $table) {
+        $res = $this->create('tmp_tbl', function (Blueprint $table, ResourceConfig $config) {
+            $config->setIdentifier('testing.tbl');
             $table->increments('id');
             $table->file('avatar')->config(['disk' => 'fakedisk']);
         });
@@ -51,6 +53,8 @@ class FileTest extends ResourceTestCase
         /** @var \SuperV\Platform\Domains\Media\Media $media */
         $media = $callback();
         $this->assertNotNull($media);
+
+        $this->assertEquals('testing.tbl', $media->owner_type);
 
         $this->assertNotNull((new FieldComposer($field))->forView($fake)->get('image_url'));
 

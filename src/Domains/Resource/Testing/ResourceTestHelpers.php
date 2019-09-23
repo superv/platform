@@ -20,7 +20,7 @@ trait ResourceTestHelpers
         $response = $this->getJsonUser($url);
         $response->assertOk();
 
-        return HelperComponent::from($response->decodeResponseJson('data'));
+        return HelperComponent::fromArray($response->decodeResponseJson('data'));
     }
 
     protected function getPublicPage($url)
@@ -28,7 +28,7 @@ trait ResourceTestHelpers
         $response = $this->getJson($url);
         $response->assertOk();
 
-        return HelperComponent::from($response->decodeResponseJson('data'));
+        return HelperComponent::fromArray($response->decodeResponseJson('data'));
     }
 
     protected function blueprints()
@@ -150,7 +150,7 @@ trait ResourceTestHelpers
     protected function getTableConfigOfResource($resource)
     {
         $response = $this->getJsonUser($resource->route('dashboard', null, ['section' => 'table']));
-        $table = HelperComponent::from($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
 
         return $table;
     }
@@ -163,5 +163,12 @@ trait ResourceTestHelpers
         return $response->decodeResponseJson('data.rows');
     }
 
-    protected function creatFieldEntry() { }
+    protected function makeFieldAttributes(array $overrides = []): array
+    {
+        return array_merge([
+            'identifier' => 'testing.servers.fields:title',
+            'name'       => 'title',
+            'type'       => 'text',
+        ], $overrides);
+    }
 }

@@ -33,7 +33,7 @@ class MorphToTest extends ResourceTestCase
     {
         parent::setUp();
 
-        $this->parentResource = $this->create('t_users', function (Blueprint $table) {
+        $this->parentResource = $this->create('tbl_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->morphOne('t_files', 'avatar', 'owner');

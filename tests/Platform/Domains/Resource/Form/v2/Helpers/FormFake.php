@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Resource\Form\v2\Helpers;
 
 use Closure;
-use Mockery;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
@@ -39,6 +38,12 @@ class FormFake extends \SuperV\Platform\Domains\Resource\Form\v2\Form
             ]);
             /** @var \SuperV\Platform\Domains\Resource\Form\Contracts\FormField $field */
             foreach ($this->getFields() as $field) {
+//                $identifier = sv_identifier($field->getIdentifier());
+//
+//                if ($identifier->parent()->type()->isEntry()) {
+//                   $parent = $identifier->parent()->parent();
+//                    $identifier = $parent.'.fields:'.$identifier->getTypeId();
+//                }
                 $formEntry->createField([
                     'identifier' => $field->getIdentifier(),
                     'name'       => $field->getName(),
@@ -50,6 +55,11 @@ class FormFake extends \SuperV\Platform\Domains\Resource\Form\v2\Form
         }
 
         return $formEntry;
+    }
+
+    public function getRepository(): EntryRepositoryInterface
+    {
+        return $this->entryRepository;
     }
 
     public function setFakeFields(array $fakeFields): FormFake
@@ -87,7 +97,7 @@ class FormFake extends \SuperV\Platform\Domains\Resource\Form\v2\Form
 
     public static function fake(Closure $callback = null): FormFake
     {
-        app()->instance(EntryRepositoryInterface::class, $repoMock = Mockery::mock(EntryRepositoryInterface::class));
+//        app()->instance(EntryRepositoryInterface::class, $repoMock = Mockery::mock(EntryRepositoryInterface::class));
         app()->bind(FormInterface::class, FormFake::class);
 
         $builder = FormFactory::createBuilder();
@@ -96,11 +106,11 @@ class FormFake extends \SuperV\Platform\Domains\Resource\Form\v2\Form
         /** @var self $form */
         $form = $builder->getForm();
 
-        $form->setRepositoryMock($repoMock);
-
-        if ($callback) {
-            $callback($repoMock);
-        }
+//        $form->setRepositoryMock($repoMock);
+//
+//        if ($callback) {
+//            $callback($repoMock);
+//        }
 
         return $form;
     }

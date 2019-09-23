@@ -19,7 +19,7 @@ use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Form;
 use SuperV\Platform\Domains\Resource\Form\v2\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFieldComposer;
-use SuperV\Platform\Domains\Resource\Hook\Hook;
+use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
 use SuperV\Platform\Domains\Resource\Listeners\RegisterEntryEventListeners;
 use SuperV\Platform\Domains\Resource\Relation\RelationCollection;
@@ -37,11 +37,9 @@ class ResourceServiceProvider extends BaseServiceProvider
         PlatformInstalledEvent::class          => Jobs\CreatePlatformResourceForms::class,
         AddonBootedEvent::class                => Listeners\RegisterExtensions::class,
         Model\Events\EntrySavingEvent::class   => [
-//            Listeners\ValidateSavingEntry::class,
-Listeners\SaveUpdatedBy::class,
+            Listeners\SaveUpdatedBy::class, //            Listeners\ValidateSavingEntry::class,
         ],
-        Model\Events\EntrySavedEvent::class    => [
-        ],
+        Model\Events\EntrySavedEvent::class    => [],
         Model\Events\EntryCreatingEvent::class => Listeners\SaveCreatedBy::class,
         Resource\ResourceActivityEvent::class  => Listeners\RecordActivity::class,
         AddonUninstallingEvent::class          => DeleteAddonResources::class,
@@ -57,8 +55,8 @@ Listeners\SaveUpdatedBy::class,
     ];
 
     protected $_singletons = [
-        'relations' => RelationCollection::class,
-        Hook::class => Hook::class,
+        'relations'        => RelationCollection::class,
+        HookManager::class => HookManager::class,
     ];
 
     protected $commands = [ResourceImportCommand::class];
