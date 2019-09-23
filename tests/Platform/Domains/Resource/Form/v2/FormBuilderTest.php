@@ -22,22 +22,14 @@ class FormBuilderTest extends ResourceTestCase
 
         $this->assertInstanceOf(FormFieldCollection::class, $form->getFields());
         $this->assertEquals(2, $form->getFields()->count());
-        $this->assertEquals('name', $form->getField('sv.users.fields:name')->getName());
-        $this->assertEquals('email', $form->getField('sv.users.fields:email')->getName());
+        $this->assertEquals('name', $form->getField('sv.users.name')->getName());
+        $this->assertEquals('email', $form->getField('sv.users.email')->getName());
 
         $builder = $this->makeFormBuilder();
         $builder->addFields($this->makeTestFields());
         $this->assertEquals(2, $builder->getForm()->getFields()->count());
     }
 
-    function test__resolves_field_values_from_initial_form_data()
-    {
-        $form = $this->makeFormBuilder($this->makeTestFields())
-                     ->setFormData(['fields' => ['sv.users.fields:name' => 'SuperV User']])
-                     ->getForm();
-
-        $this->assertEquals('SuperV User', $form->getFieldValue('sv.users.fields:name'));
-    }
 
     function test__build_standard_form()
     {

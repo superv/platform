@@ -65,9 +65,10 @@ class FormFieldCollection extends Collection
         })->all();
 
         $map = collect();
+
         foreach ($keys as $identifier) {
             $parent = $map[$identifier->getParent()] ?? [];
-            $parent[] = $identifier->getTypeId();
+            $parent[] = $identifier->getLastNode();
 
             $map[$identifier->getParent()] = $parent;
         }
@@ -86,7 +87,7 @@ class FormFieldCollection extends Collection
     public function addField(FormField $field)
     {
         if (! $field->isHidden()) {
-            $this->put($field->getIdentifier(), $field);
+            $this->put($field->identifier()->withoutType(), $field);
         }
     }
 

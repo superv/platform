@@ -14,6 +14,7 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
+use SuperV\Platform\Support\Identifier;
 
 class Field implements FieldContract
 {
@@ -99,6 +100,11 @@ class Field implements FieldContract
         }
 
         $this->uuid = $this->uuid ?? uuid();
+    }
+
+    public function identifier(): Identifier
+    {
+        return sv_identifier($this->getIdentifier());
     }
 
     public function getLabel(): string

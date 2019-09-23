@@ -95,6 +95,7 @@ class Form implements FormInterface
 
             foreach ($this->entries as $resourceIdentifier => $entry) {
                 $fields = $this->getFields()->getIdentifierMap()->get($resourceIdentifier);
+
                 $this->data[$resourceIdentifier] = $entry->only($fields);
             }
         }

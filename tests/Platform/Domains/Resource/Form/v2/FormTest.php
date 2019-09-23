@@ -260,8 +260,6 @@ class FormTest extends ResourceTestCase
 
         $composite = (new FormFieldComposer())->toForm($form, $form->getField('ab.orders.title'));
 
-//        dd($composite, $form->getData());
-
         $this->assertArrayHasKey('value', $composite);
 
         $this->assertEquals('order-A-title', $composite['value']);
