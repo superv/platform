@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form\v2\Jobs;
 
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 
-class SubmitForm
+class SubmistForm
 {
     public function handle(FormInterface $form, $data)
     {

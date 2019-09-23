@@ -4,10 +4,12 @@ namespace Tests\Platform\Domains\Resource\Form\v2;
 
 use Event;
 use Mockery;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Form;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFactory;
+use SuperV\Platform\Domains\Resource\Form\v2\FormFieldComposer;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ComposeForm;
 use SuperV\Platform\Domains\Resource\Model\AnonymousModel;
 use SuperV\Platform\Support\Composer\Payload;
@@ -50,69 +52,107 @@ class FormTest extends ResourceTestCase
         $this->assertTrue($form->isMethod('post'));
     }
 
-    function test__resolves_GET_request()
+    function test__create_form_get()
     {
-        $fooEntry = Mockery::mock((new AnonymousModel(['title' => 'foo-title'])))->makePartial();
-        $barEntry = Mockery::mock((new AnonymousModel(['email' => 'bar-title'])))->makePartial();
+        $this->app->bind(EntryRepositoryInterface::class, FakeEntryRepository::class);
 
-        $request = $this->makeGetRequest(['entries' => ['ab.foo.1', 'xy.bar.2']]);
+        $request = $this->makeGetRequest();
 
-        $form = FormFake::fake(function (EntryRepositoryInterface $repository) use ($barEntry, $fooEntry) {
-            $repository->shouldReceive('getEntry')->with('ab.foo', 1)->andReturn($fooEntry)->once();
-            $repository->shouldReceive('getEntry')->with('xy.bar', 2)->andReturn($barEntry)->once();
-        })->setFakeFields([
-            'ab.foo.fields:title',
-            'xy.bar.fields:email',
-        ]);
+        $form = $this->setupForm();
+
+        $this->assertEquals([
+            'ab.orders'  => ['title'],
+            'xy.clients' => ['email', 'phone'],
+        ], $form->getFields()->getIdentifierMap()->all());
 
         $form->handle($request);
 
-        $this->assertEquals([
-            'ab.foo.fields:title' => 'foo-title',
-            'xy.bar.fields:email' => 'bar-title',
-        ], $form->getData());
-
-        $this->assertEquals(['ab.foo' => 1, 'xy.bar' => 2], $form->getEntryIds());
-        $this->assertEquals('foo-title', $form->getFieldValue('ab.foo.fields:title'));
+        $this->assertEquals([], $form->getData());
     }
 
-    function test__resolves_POST_request()
+    function test__create_form_post()
     {
-        $fooEntry = Mockery::mock((new AnonymousModel(['title' => 'foo-title'])))->makePartial();
-        $fooEntry->shouldReceive('setAttribute')->with('title', 'updated-foo-title')->once();
-
-        $barEntry = Mockery::mock((new AnonymousModel(['email' => 'bar-title'])))->makePartial();
-        $barEntry->shouldReceive('setAttribute')->with('email', 'updated-bar-email')->once();
-
-        $fooEntry->shouldReceive('save')->once();
-        $barEntry->shouldReceive('save')->once();
+        $this->app->bind(EntryRepositoryInterface::class, FakeEntryRepository::class);
 
         $request = $this->makePostRequest(
-            ['entries' => ['ab.foo.1', 'xy.bar.2']],
             [
-                'ab.foo.fields:title' => 'updated-foo-title',
-                'xy.bar.fields:email' => 'updated-bar-email',
+                'ab.orders.fields:title'  => 'new-order-A-title',
+                'xy.clients.fields:email' => 'new-client-email',
+                'xy.clients.fields:phone' => 'new-client-phone',
             ]);
 
-        $formEntry = FormFake::fake(
-            function (EntryRepositoryInterface $repository) use ($barEntry, $fooEntry) {
-                $repository->shouldReceive('getEntry')->with('ab.foo', 1)->andReturn($fooEntry)->once();
-                $repository->shouldReceive('getEntry')->with('xy.bar', 2)->andReturn($barEntry)->once();
-            }
-        )->setFakeFields([
-            'ab.foo.fields:title',
-            'xy.bar.fields:email',
-        ])->createFormEntry();
-
-        $form = FormFactory::createBuilder($formEntry)->getForm();
+        $form = $this->setupForm();
 
         $form->handle($request);
-        $fooEntry->shouldHaveReceived('save')->once();
-        $barEntry->shouldHaveReceived('save')->once();
 
         $this->assertEquals([
-            'ab.foo.fields:title' => 'updated-foo-title',
-            'xy.bar.fields:email' => 'updated-bar-email',
+            'ab.orders'  => [
+                'title' => 'new-order-A-title',
+            ],
+            'xy.clients' => [
+                'email' => 'new-client-email',
+                'phone' => 'new-client-phone',
+            ],
+        ], $form->getData());
+    }
+
+    function test__update_form_get()
+    {
+        $this->app->bind(EntryRepositoryInterface::class, FakeEntryRepository::class);
+
+        $request = $this->makeGetRequest(['entries' => ['ab.orders:12', 'xy.clients:34']]);
+
+        $form = $this->setupForm();
+
+        $form->handle($request);
+
+        $this->assertEquals(['ab.orders:12', 'xy.clients:34'], $form->getEntryIds());
+
+        $this->assertEquals([
+            'ab.orders'  => [
+                'title' => 'order-A-title',
+            ],
+            'xy.clients' => [
+                'email' => 'client-email',
+                'phone' => 'client-phone',
+            ],
+        ], $form->getData());
+    }
+
+    function test__update_form_post()
+    {
+        $this->app->bind(EntryRepositoryInterface::class, FakeEntryRepository::class);
+
+        $request = $this->makePostRequest(
+            ['entries' => ['ab.orders:12', 'xy.clients:34']],
+            [
+                'ab.orders.fields:title'  => 'updated-order-A-title',
+                'xy.clients.fields:email' => 'updated-client-email',
+            ]);
+
+        $form = $this->setupForm();
+
+        $orderEntry = $form->getRepository()->getEntry('ab.orders', 12);
+        $orderEntry->shouldReceive('fill')->with([
+            'title' => 'updated-order-A-title',
+        ])->once();
+        $orderEntry->shouldReceive('save')->with()->once();
+
+        $clientEntry = $form->getRepository()->getEntry('xy.clients', 34);
+        $clientEntry->shouldReceive('fill')->with([
+            'email' => 'updated-client-email',
+        ])->once();
+        $clientEntry->shouldReceive('save')->with()->once();
+
+        $form->handle($request);
+
+        $this->assertEquals([
+            'ab.orders'  => [
+                'title' => 'updated-order-A-title',
+            ],
+            'xy.clients' => [
+                'email' => 'updated-client-email',
+            ],
         ], $form->getData());
     }
 
@@ -174,5 +214,74 @@ class FormTest extends ResourceTestCase
 
         $component = $form->render();
         $this->assertEquals($payload->get(), $component->getProps()->compose());
+    }
+
+    function test__field_composer_form_data()
+    {
+        $this->app->bind(EntryRepositoryInterface::class, FakeEntryRepository::class);
+
+        $form = $this->setupForm();
+
+        $form->handle($this->makeGetRequest(['entries' => ['ab.orders:12', 'xy.clients:34']]));
+
+        $composite = (new FormFieldComposer())->toForm($form, $form->getField('ab.orders.fields:title'));
+
+//        dd($composite, $form->getData());
+
+        $this->assertArrayHasKey('value', $composite);
+
+        $this->assertEquals('order-A-title', $composite['value']);
+    }
+
+    protected function setupForm($fields = null): FormFake
+    {
+        $fields = $fields ?? [
+                'ab.orders.fields:title',
+                'xy.clients.fields:email',
+                'xy.clients.fields:phone',
+            ];
+
+        $formEntry = FormFake::fake()
+                             ->setFakeFields($fields)->createFormEntry();
+
+        $form = FormFactory::createBuilder($formEntry)->getForm();
+
+        return $form;
+    }
+
+    protected function getRepositoryMock()
+    {
+        $repository = $this->bindMock(EntryRepositoryInterface::class);
+
+        $repository->shouldReceive('getEntry')->with('ab.orders', 1)->andReturn($orderEntryA)->once();
+        $repository->shouldReceive('getEntry')->with('ab.orders', 2)->andReturn($orderEntryB)->once();
+        $repository->shouldReceive('getEntry')->with('xy.clients', 1)->andReturn($clientEntry)->once();
+
+        return $repository;
+    }
+}
+
+class FakeEntryRepository implements EntryRepositoryInterface
+{
+    public $mocks = [];
+
+    public function __construct()
+    {
+        $this->mocks = [
+            'ab.orders'  => [
+                12 => Mockery::mock((new AnonymousModel(['title' => 'order-A-title'])))->makePartial(),
+                56 => Mockery::mock((new AnonymousModel(['title' => 'order-B-title'])))->makePartial(),
+            ],
+            'xy.clients' => [
+                34 => Mockery::mock((new AnonymousModel(['email' => 'client-email',
+                                                         'phone' => 'client-phone'])))->makePartial(),
+
+            ],
+        ];
+    }
+
+    public function getEntry(string $identifier, int $id): ?EntryContract
+    {
+        return $this->mocks[$identifier][$id];
     }
 }

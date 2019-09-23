@@ -59,7 +59,8 @@ class FormBuilder implements FormBuilderInterface
         $form = Form::resolve($this->fields, $this->formIdentifier);
 
         $form->setUrl($this->formUrl);
-        $form->setData($this->formData);
+
+//        $form->setData($this->formData);
 
         return $form;
     }

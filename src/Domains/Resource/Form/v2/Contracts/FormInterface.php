@@ -25,8 +25,6 @@ interface FormInterface
 
     public function addEntry($identifier, $id);
 
-    public function setData($data): FormInterface;
-
     public function setFieldValue($key, $value): FormInterface;
 
     public function isValid(): bool;
@@ -56,4 +54,6 @@ interface FormInterface
     public function setUrl(string $url): FormInterface;
 
     public function fireEvent(string $eventName, $payload = null);
+
+    public function getDataValue($parent, $key);
 }

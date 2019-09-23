@@ -56,7 +56,6 @@ class FormBuilderTest extends ResourceTestCase
         $formMock->shouldReceive('setIdentifier')->with('test-form-id')->once()->andReturnSelf();
         $formMock->shouldReceive('setUrl')->with('url-to-form')->once()->andReturnSelf();
         $formMock->shouldReceive('setFields')->with($formFields)->once()->andReturnSelf();
-        $formMock->shouldReceive('setData')->with($formData)->once()->andReturnSelf();
 
         $builder->build();
     }

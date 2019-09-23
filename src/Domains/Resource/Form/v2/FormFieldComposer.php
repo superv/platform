@@ -11,6 +11,8 @@ class FormFieldComposer implements FieldComposer
 {
     public function toForm(FormInterface $form, FormField $field)
     {
+        $fieldIdentifier = sv_identifier($field->getIdentifier());
+
         $payload = (new Payload([
             'identifier'  => $field->getIdentifier(),
             'type'        => $field->getType(),
@@ -18,7 +20,7 @@ class FormFieldComposer implements FieldComposer
             'name'        => $field->getName(),
             'label'       => $field->getLabel(),
             'placeholder' => $field->getPlaceholder(),
-            'value'       => $value ?? $field->getValue(),
+            'value'       => $form->getDataValue($fieldIdentifier->getParent(), $fieldIdentifier->getTypeId()),
             'hint'        => $field->getConfigValue('hint'),
             'meta'        => $field->getConfigValue('meta'),
             'presenting'  => $field->getConfigValue('presenting'),
