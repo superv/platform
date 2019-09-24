@@ -156,9 +156,9 @@ trait TestHelpers
         return $mockInstance;
     }
 
-    protected function bindPartialMock($abstract, $partial): \Mockery\MockInterface
+    protected function bindPartialMock($abstract, $partial = null): \Mockery\MockInterface
     {
-        $this->app->instance($abstract, $mockInstance = \Mockery::mock($partial));
+        $this->app->instance($abstract, $mockInstance = \Mockery::mock($partial ?? app($abstract)));
 
         return $mockInstance->makePartial();
     }

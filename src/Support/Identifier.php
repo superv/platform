@@ -18,7 +18,7 @@ class Identifier
         $this->identifier = $identifier;
 
         if ($this->getNodeCount() < 2) {
-            throw new InvalidArgumentException('Not a valid identifier string');
+            throw new InvalidArgumentException(sprintf("Not a valid identifier string: [%s]", $identifier));
         }
     }
 

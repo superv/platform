@@ -18,7 +18,7 @@ class IdentifierTest extends TestCase
     function test__validate()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Not a valid identifier string');
+        $this->expectExceptionMessage('Not a valid identifier string: [ab]');
         sv_identifier('ab');
     }
 

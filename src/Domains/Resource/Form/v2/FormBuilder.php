@@ -85,7 +85,7 @@ class FormBuilder implements FormBuilderInterface
             $this->fields->addFromFieldEntry($fieldEntry);
         });
 
-        $this->formUrl = sv_route('sv::forms.show', ['identifier' => $this->formIdentifier]);
+        $this->formUrl = sv_route('sv::forms.v2.show', ['identifier' => $this->formIdentifier]);
 
         return $this;
     }

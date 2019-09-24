@@ -4,12 +4,15 @@ namespace Tests\Platform\Domains\Resource\Form\v2;
 
 use Event;
 use Mockery;
+use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Form;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFieldComposer;
+use SuperV\Platform\Domains\Resource\Form\v2\FormResponse;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ComposeForm;
 use SuperV\Platform\Domains\Resource\Form\v2\Jobs\ValidateForm;
 use SuperV\Platform\Domains\Resource\Model\AnonymousModel;
@@ -58,8 +61,8 @@ class FormTest extends ResourceTestCase
         $form = $this->setupForm();
 
         $this->assertEquals([
-            'ab.orders'  => ['title'],
-            'xy.clients' => ['email', 'phone'],
+            'ab.crm_tickets' => ['title'],
+            'xy.clients'     => ['email', 'phone'],
         ], $form->getFields()->getIdentifierMap()->all());
 
         $form->handle($this->makeGetRequest());
@@ -70,9 +73,9 @@ class FormTest extends ResourceTestCase
     function test__resolves_create_form_data_from_POST_request()
     {
         $request = $this->makePostRequest([
-            'ab.orders.title'  => 'new-order-A-title',
-            'xy.clients.email' => 'new-client-email',
-            'xy.clients.phone' => 'new-client-phone',
+            'ab__crm_tickets__title' => 'new-ticket-title',
+            'xy__clients__email'     => 'new-client-email',
+            'xy__clients__phone'     => 'new-client-phone',
         ]);
 
         $form = $this->setupForm();
@@ -80,10 +83,10 @@ class FormTest extends ResourceTestCase
         $form->handle($request);
 
         $this->assertEquals([
-            'ab.orders'  => [
-                'title' => 'new-order-A-title',
+            'ab.crm_tickets' => [
+                'title' => 'new-ticket-title',
             ],
-            'xy.clients' => [
+            'xy.clients'     => [
                 'email' => 'new-client-email',
                 'phone' => 'new-client-phone',
             ],
@@ -94,19 +97,17 @@ class FormTest extends ResourceTestCase
     {
         $this->app->bind(EntryRepositoryInterface::class, FakeEntryRepository::class);
 
-        $request = $this->makeGetRequest(['entries' => ['ab.orders:12', 'xy.clients:34']]);
+        $request = $this->makeGetRequest(['entries' => ['ab.crm_tickets:12', 'xy.clients:34']]);
 
         $form = $this->setupForm();
 
         $form->handle($request);
 
-        $this->assertEquals(['ab.orders:12', 'xy.clients:34'], $form->getEntryIds());
-
         $this->assertEquals([
-            'ab.orders'  => [
-                'title' => 'order-A-title',
+            'ab.crm_tickets' => [
+                'title' => 'ticket-title',
             ],
-            'xy.clients' => [
+            'xy.clients'     => [
                 'email' => 'client-email',
                 'phone' => 'client-phone',
             ],
@@ -120,19 +121,19 @@ class FormTest extends ResourceTestCase
         $this->app->bind(EntryRepositoryInterface::class, FakeEntryRepository::class);
 
         $request = $this->makePostRequest(
-            ['entries' => ['ab.orders:12', 'xy.clients:34']],
+            ['entries' => ['ab.crm_tickets:12', 'xy.clients:34']],
             [
-                'ab.orders.title'  => 'updated-order-A-title',
-                'xy.clients.email' => 'updated-client-email',
+                'ab.crm_tickets.title' => 'updated-ticket-title',
+                'xy__clients__email'   => 'updated-client-email',
             ]);
 
         $form = $this->setupForm()->handle($request);
 
         $this->assertEquals([
-            'ab.orders'  => [
-                'title' => 'updated-order-A-title',
+            'ab.crm_tickets' => [
+                'title' => 'updated-ticket-title',
             ],
-            'xy.clients' => [
+            'xy.clients'     => [
                 'email' => 'updated-client-email',
             ],
         ], $form->getData());
@@ -145,8 +146,8 @@ class FormTest extends ResourceTestCase
         $repoMock = $this->bindMock(EntryRepositoryInterface::class);
 
         $repoMock->shouldReceive('create')
-                 ->with('ab.orders', [
-                     'title' => 'new-order-A-title',
+                 ->with('ab.crm_tickets', [
+                     'title' => 'new-ticket-title',
                  ])->once();
         $repoMock->shouldReceive('create')
                  ->with('xy.clients', [
@@ -157,10 +158,10 @@ class FormTest extends ResourceTestCase
         $form = $this->setupForm();
 
         $form->setData([
-            'ab.orders'  => [
-                'title' => 'new-order-A-title',
+            'ab.crm_tickets' => [
+                'title' => 'new-ticket-title',
             ],
-            'xy.clients' => [
+            'xy.clients'     => [
                 'email' => 'new-client-email',
                 'phone' => 'new-client-phone',
             ],
@@ -172,13 +173,14 @@ class FormTest extends ResourceTestCase
     function test__submits_update_form()
     {
         $repoMock = $this->bindMock(EntryRepositoryInterface::class);
-        $repoMock->shouldReceive('update')->with('ab.orders:12', ['title' => 'updated-order-A-title'])->once();
+        $repoMock->shouldReceive('update')->with('ab.crm_tickets:12', ['title' => 'updated-ticket-title'])->once();
         $repoMock->shouldReceive('update')->with('xy.clients:34', ['email' => 'updated-client-email'])->once();
+        $repoMock->shouldReceive('getEntry'); // FormResponse 🤬
 
-        $request = $this->makePostRequest(['entries' => ['ab.orders:12', 'xy.clients:34']],
+        $request = $this->makePostRequest(['entries' => ['ab.crm_tickets:12', 'xy.clients:34']],
             [
-                'ab.orders.title'  => 'updated-order-A-title',
-                'xy.clients.email' => 'updated-client-email',
+                'ab__crm_tickets__title' => 'updated-ticket-title',
+                'xy__clients__email'     => 'updated-client-email',
             ]);
 
         $validatorMock = $this->bindMock(ValidateForm::class);
@@ -187,6 +189,28 @@ class FormTest extends ResourceTestCase
 
         $validatorMock->shouldReceive('validate')->with($form)->once();
         $form->submit();
+    }
+
+    function test__submit_response()
+    {
+        $categories = $this->blueprints()->categories();
+
+        $form = FormFactory::createBuilder(FormModel::withIdentifier($categories->getIdentifier().'.forms:default'))->getForm();
+
+        $form->handle($this->makePostRequest(['testing__categories__title' => 'category-title',
+                                              '__form_action'              => 'the-action']));
+
+        $form->submit();
+
+        $response = $form->getResponse();
+
+        $this->assertInstanceOf(FormResponse::class, $response);
+        $this->assertInstanceOf(Arrayable::class, $response);
+
+        $responseArray = $response->get();
+        $this->assertEquals(['message', 'action', 'redirect_to'], array_keys($responseArray));
+
+        $this->assertEquals($categories->router()->dashboardSPA(), $responseArray['redirect_to']);
     }
 
     function __dispatches_event_before_handling_POST_request()
@@ -256,19 +280,19 @@ class FormTest extends ResourceTestCase
 
         $form = $this->setupForm();
 
-        $form->handle($this->makeGetRequest(['entries' => ['ab.orders:12', 'xy.clients:34']]));
+        $form->handle($this->makeGetRequest(['entries' => ['ab.crm_tickets:12', 'xy.clients:34']]));
 
-        $composite = (new FormFieldComposer())->toForm($form, $form->getField('ab.orders.title'));
+        $composite = (new FormFieldComposer())->toForm($form, $form->getField('ab.crm_tickets.title'));
 
         $this->assertArrayHasKey('value', $composite);
 
-        $this->assertEquals('order-A-title', $composite['value']);
+        $this->assertEquals('ticket-title', $composite['value']);
     }
 
     protected function setupForm($fields = null): FormFake
     {
         $fields = $fields ?? [
-                'ab.orders.fields:title',
+                'ab.crm_tickets.fields:title',
                 'xy.clients.fields:email',
                 'xy.clients.fields:phone',
             ];
@@ -280,17 +304,6 @@ class FormTest extends ResourceTestCase
 
         return $form;
     }
-
-    protected function getRepositoryMock()
-    {
-        $repository = $this->bindMock(EntryRepositoryInterface::class);
-
-        $repository->shouldReceive('getEntry')->with('ab.orders', 1)->andReturn($orderEntryA)->once();
-        $repository->shouldReceive('getEntry')->with('ab.orders', 2)->andReturn($orderEntryB)->once();
-        $repository->shouldReceive('getEntry')->with('xy.clients', 1)->andReturn($clientEntry)->once();
-
-        return $repository;
-    }
 }
 
 class FakeEntryRepository implements EntryRepositoryInterface
@@ -300,17 +313,17 @@ class FakeEntryRepository implements EntryRepositoryInterface
     public function __construct()
     {
         $this->mocks = [
-            'ab.orders'  => [
+            'ab.crm_tickets' => [
                 12 => Mockery::mock((new AnonymousModel([
                     'id'    => 12,
-                    'title' => 'order-A-title',
+                    'title' => 'ticket-title',
                 ])))->makePartial(),
                 56 => Mockery::mock((new AnonymousModel([
                     'id'    => 56,
                     'title' => 'order-B-title',
                 ])))->makePartial(),
             ],
-            'xy.clients' => [
+            'xy.clients'     => [
                 34 => Mockery::mock((new AnonymousModel([
                     'id'    => 34,
                     'email' => 'client-email',
@@ -323,6 +336,10 @@ class FakeEntryRepository implements EntryRepositoryInterface
 
     public function getEntry(string $identifier, int $id = null): ?EntryContract
     {
+        if (is_null($id)) {
+            [$identifier, $id] = explode(':', $identifier);
+        }
+
         return $this->mocks[$identifier][$id];
     }
 

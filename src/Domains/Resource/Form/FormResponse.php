@@ -48,6 +48,8 @@ class FormResponse implements Responsable
             if ($next) {
                 $route = $this->resource->route('forms.edit', $next).'?action=edit_next';
             }
+        } else {
+            $route = $this->resource->spaRoute('dashboard');
         }
 
         $entryLabel = $this->resource->getEntryLabel($this->entry);
@@ -57,7 +59,7 @@ class FormResponse implements Responsable
                 'message'     => __($this->form->isUpdating() ? ':Resource :Entry was updated' : ':Resource :Entry was created', ['Entry'    => $entryLabel,
                                                                                                                                   'Resource' => $this->resource->getSingularLabel()]),
                 'action'      => $action,
-                'redirect_to' => $route ?? $this->resource->spaRoute('dashboard'),
+                'redirect_to' => $route,
             ],
         ]);
     }

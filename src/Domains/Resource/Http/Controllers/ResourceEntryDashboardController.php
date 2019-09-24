@@ -19,7 +19,7 @@ class ResourceEntryDashboardController extends BaseApiController
         $page = EntryPage::make($resource->getEntryLabel($this->entry));
         $page->setResource($resource);
         $page->setEntry($this->entry);
-        $page->setParent(['title' => $resource->getLabel(), 'url' => $resource->route('dashboard')]);
+        $page->setParent(['title' => $resource->getLabel(), 'url' => $resource->router()->dashboardSPA()]);
         $page->setSelectedSection($this->route->parameter('section'));
         $page->setDefaultSection('view');
 
@@ -36,14 +36,16 @@ class ResourceEntryDashboardController extends BaseApiController
         $page->addSection([
             'identifier' => 'view',
             'title'      => 'View',
-            'url'        => $resource->route('entry.view', $this->entry),
+            //            'url'        => $resource->route('entry.view', $this->entry),
+            'url'        => $resource->router()->entryView($this->entry),
             'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
         ]);
 
         $page->addSection([
             'identifier' => 'edit',
             'title'      => 'Edit',
-            'url'        => $resource->route('forms.edit', $this->entry),
+            'url'        => $resource->router()->updateForm($this->entry),
+            //            'url'        => $resource->route('forms.edit', $this->entry),
             'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
         ]);
 

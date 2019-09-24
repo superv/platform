@@ -24,8 +24,8 @@ class ResourceRouterTest extends ResourceTestCase
 
     function test__create_form()
     {
-        $expected = sprintf(sv_route('sv::forms.show', [
-            'identifier' => $this->resource->getIdentifier().'.forms.default',
+        $expected = sprintf(sv_route('sv::forms.display', [
+            'form' => $this->resource->getIdentifier().'.forms:default',
         ]));
         $this->assertEquals($expected, $this->router->createForm());
     }
@@ -44,5 +44,12 @@ class ResourceRouterTest extends ResourceTestCase
             'resource' => $this->resource->getIdentifier(),
         ]));
         $this->assertEquals($expected, $this->router->dashboard());
+    }
+
+    function test__entry_update_form()
+    {
+        $entry = $this->resource->fake();
+
+        $this->assertEquals($this->router->updateForm($entry), $entry->router()->updateForm());
     }
 }

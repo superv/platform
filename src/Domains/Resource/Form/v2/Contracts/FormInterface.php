@@ -7,12 +7,17 @@ use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFieldCollection;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
+use SuperV\Platform\Support\Identifier;
 
 interface FormInterface
 {
+    public function identifier(): Identifier;
+
     public function compose(): Payload;
 
-    public function handle(Request $request): FormInterface;
+    public function setRequest(Request $request): FormInterface;
+
+    public function handle(Request $request = null): FormInterface;
 
     public function submit();
 
@@ -65,4 +70,11 @@ interface FormInterface
 
     public function setValid(bool $valid): void;
 
+    public function getEntry(string $identifier);
+
+    public function getResponse();
+
+    public function getRequestEntries();
+
+    public function getFormAction();
 }

@@ -59,13 +59,11 @@ class ComposeFormTest extends ResourceTestCase
     {
         $form = FormFake::fake();
 
-        $partialForm = \Mockery::mock($form)->makePartial();
+        $form->setRequest($this->makeGetRequest(['entries' => ['ns.a:1', 'ns.b:2']]));
 
-        $partialForm->shouldReceive('getEntryIds')->andReturn(['ns.a' => 1, 'ns.b' => 2])->once();
+        $payload = ComposeForm::resolve()->handle($form);
 
-        $payload = ComposeForm::resolve()->handle($partialForm);
-
-        $this->assertEquals(['ns.a' => 1, 'ns.b' => 2], $payload->get('entries'));
+        $this->assertEquals(['ns.a:1', 'ns.b:2'], $payload->get('entries'));
     }
 }
 

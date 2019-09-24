@@ -8,7 +8,7 @@ use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 
 class FormController extends BaseApiController
 {
-    public function show($identifier)
+    public function handle($identifier, $entryId = null)
     {
         if (! $formEntry = FormModel::withIdentifier($identifier)) {
             abort(404, 'Form entry not found');
@@ -18,55 +18,26 @@ class FormController extends BaseApiController
             app(PlatformAuthenticate::class)->guard($this->request, 'sv-api');
         }
 
-//        $formUrl = sv_route('resource.forms.store', ['uuid' => $formEntry->uuid]);
         $builder = FormFactory::createBuilder()
                               ->setFormEntry($formEntry)
                               ->setFormUrl(sv_route(Form::ROUTE, ['identifier' => $formEntry->getIdentifier()]));
 
-//        $data = [];
-//        if ($entries = $this->request->get('entry')) {
-//            foreach ($entries as $entryResourceIdentifier => $entryId) {
-//                if ($entry = ResourceFactory::make($entryResourceIdentifier)->find($entryId)) {
-//                    foreach ($entry->toArray() as $key => $value) {
-//                        $data[$entryResourceIdentifier.'.fields.'.$key] = $value;
-//                    }
-////                    $data[] = $entry;
-//                }
-//            }
-//        }
-//
-//        if (! empty($data)) {
-//            $builder->setFormData($data);
-//        }
 
         $form = $builder->getForm();
 
-        $form->handle($this->request);
+        if ($entryId) {
+            $this->request->merge(['entries' => [$form->identifier()->getParent().':'.$entryId]]);
+        }
+
+        $form->setRequest($this->request)->handle();
+
+        if ($form->isMethod('POST')) {
+            $form->submit();
+
+            return ['data' => $form->getResponse()->toArray()];
+        }
 
         return $form->render();
     }
 
-    public function edit($identifier, $entryId)
-    {
-        if (! $formEntry = FormModel::withIdentifier($identifier)) {
-            abort(404, 'Form entry not found');
-        }
-
-        if (! $formEntry->isPublic()) {
-            app(PlatformAuthenticate::class)->guard($this->request, 'sv-api');
-        }
-
-        $resource = $formEntry->getOwnerResource();
-        $entry = $resource->find($entryId);
-        if ($keyName = $resource->config()->getKeyName()) {
-            $entry->setKeyName($keyName);
-        }
-
-        $builder = FormFactory::createBuilder()
-                              ->setFormEntry($formEntry)
-                              ->setFormUrl(sv_url()->path())
-                              ->setFormData($entry);
-
-        return $builder->getForm()->render();
-    }
 }

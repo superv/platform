@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource;
 
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+
 class Router
 {
     /**
@@ -17,8 +19,18 @@ class Router
     public function createForm()
     {
         return sprintf(
-            sv_route('sv::forms.show', [
-                'identifier' => $this->resource->getIdentifier().'.forms.default',
+            sv_route('sv::forms.display', [
+                'form' => $this->resource->getIdentifier().'.forms:default',
+            ])
+        );
+    }
+
+    public function updateForm(EntryContract $entry)
+    {
+        return sprintf(
+            sv_route('sv::forms.display', [
+                'identifier' => $this->resource->getIdentifier().'.forms:default',
+                'entry'      => $entry->getId(),
             ])
         );
     }
@@ -32,12 +44,33 @@ class Router
         );
     }
 
-    public function dashboard()
+    public function entryView(EntryContract $entry)
+    {
+        return sprintf(
+            sv_route('resource.entry.view', [
+                'resource' => $this->resource->getIdentifier(),
+                'entry'    => $entry->getId(),
+            ])
+        );
+    }
+
+    public function dashboard($section = null)
     {
         return sprintf(
             sv_route('resource.dashboard', [
                 'resource' => $this->resource->getIdentifier(),
+                'section'  => $section,
             ])
+        );
+    }
+
+    public function dashboardSPA($section = null)
+    {
+        return sprintf(
+            route('resource.dashboard', [
+                'resource' => $this->resource->getIdentifier(),
+                'section'  => $section,
+            ], false)
         );
     }
 }

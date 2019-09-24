@@ -63,7 +63,7 @@ class FormBuilderTest extends ResourceTestCase
         $form = $builder->getForm();
 
         $this->assertEquals($formEntry->getIdentifier(), $form->getIdentifier());
-        $this->assertEquals(sv_route('sv::forms.show', ['identifier' => $form->getIdentifier()]), $form->getUrl());
+        $this->assertEquals(sv_route('sv::forms.v2.show', ['identifier' => $form->getIdentifier()]), $form->getUrl());
 
         $this->assertTrue($formEntry->getFormFields()->count() > 0);
         $this->assertEquals($formEntry->getFormFields()->count(), $form->getFields()->count());

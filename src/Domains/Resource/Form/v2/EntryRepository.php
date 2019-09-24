@@ -9,6 +9,9 @@ class EntryRepository implements EntryRepositoryInterface
 {
     public function getEntry(string $identifier, int $id = null): ?EntryContract
     {
+        if (is_null($id)) {
+            [$identifier, $id] = explode(':', $identifier);
+        }
         return ResourceFactory::make($identifier)->newQuery()->find($id);
     }
 

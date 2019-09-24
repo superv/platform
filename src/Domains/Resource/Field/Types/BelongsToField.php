@@ -151,8 +151,7 @@ class BelongsToField extends FieldType implements
         return function (Payload $payload, ?EntryContract $entry = null) {
             if ($entry) {
                 if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
-                    $resource = sv_resource($relatedEntry);
-                    $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
+                    $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
                 }
             }
             $this->relatedResource = $this->resolveRelatedResource();
@@ -161,10 +160,15 @@ class BelongsToField extends FieldType implements
             if (! is_null($options)) {
                 $payload->set('meta.options', $options);
             } else {
-                $url = sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
+//                $url = sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
+
+                $url = sv_route('sv::forms.fields', [
+                    'form'  => $this->field->getForm()->getIdentifier(),
+                    'field' => $this->getName(),
+                    'rpc'   => 'options',
+                ]);
                 $payload->set('meta.options', $url);
             }
-//            $payload->set('placeholder', sv_trans('sv::resource.select', ['resource' => $this->relatedResource->getSingularLabel()]));
             $payload->set('placeholder', __('Select :Object', ['object' => $this->relatedResource->getSingularLabel()]));
         };
     }
@@ -201,9 +205,7 @@ class BelongsToField extends FieldType implements
     {
         return function (Payload $payload, EntryContract $entry) {
             if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
-                $resource = sv_resource($relatedEntry);
-
-                $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
+                $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
             }
         };
     }
@@ -215,8 +217,7 @@ class BelongsToField extends FieldType implements
                 $entry->load($this->getName());
             }
             if ($relatedEntry = $entry->getRelation($this->getName())) {
-                $resource = sv_resource($relatedEntry);
-                $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
+                $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
             }
         };
     }

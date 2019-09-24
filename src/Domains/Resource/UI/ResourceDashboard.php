@@ -56,7 +56,8 @@ class ResourceDashboard
         $page->addSection([
             'identifier' => 'all',
             'title'      => 'All',
-            'url'        => $resource->route('dashboard', null, ['section' => 'table']),
+            'url'        => $resource->router()->dashboard('table'),
+            //            'url'        => $resource->route('dashboard', null, ['section' => 'table']),
             'target'     => 'portal:'.$resource->getIdentifier(),
             'default'    => ! $section || $section === 'all',
         ]);
@@ -65,7 +66,8 @@ class ResourceDashboard
             $page->addSection([
                 'identifier' => 'create',
                 'title'      => 'Create',
-                'url'        => $resource->route('forms.create'),
+                'url'        => $resource->router()->createForm(),
+                //                'url'        => $resource->route('forms.create'),
                 'target'     => 'portal:'.$resource->getIdentifier(),
                 'default'    => $section === 'create',
             ]);

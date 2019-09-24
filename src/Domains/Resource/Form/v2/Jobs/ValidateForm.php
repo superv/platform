@@ -32,12 +32,12 @@ class ValidateForm
             $this->validator->make($data, $rules);
             $form->setValid(true);
         } catch (ValidationException $e) {
-            $errors = [];
-            foreach ($e->getErrors() as $key => $message) {
-                $errors[str_replace('_', '.', $key)] = $message;
-            }
-
-            $e->setErrors($errors);
+//            $errors = [];
+//            foreach ($e->getErrors() as $key => $message) {
+//                $errors[str_replace('_', '.', $key)] = $message;
+//            }
+//
+//            $e->setErrors($errors);
 
             throw $e;
 //            dd($e->getErrors());
@@ -57,7 +57,7 @@ class ValidateForm
         $data = [];
         foreach ($formData as $resource => $fields) {
             foreach ($fields as $field => $value) {
-                $data[str_replace('.', '_', $resource.'.'.$field)] = $value;
+                $data[str_replace('.', '__', $resource.'.'.$field)] = $value;
             }
         }
 
@@ -72,7 +72,7 @@ class ValidateForm
 
             $fieldRules = (new ParseFieldRules($field))->parse();
 
-            $rules[str_replace('.', '_', $identifier->withoutType())] = $fieldRules;
+            $rules[str_replace('.', '__', $identifier->withoutType())] = $fieldRules;
         }
 
         return $rules;

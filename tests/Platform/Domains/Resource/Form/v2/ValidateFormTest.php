@@ -62,9 +62,9 @@ class ValidateFormTest extends ResourceTestCase
         $this->assertFalse($form->isValid());
 
         $this->assertEquals([
-            'ab.orders.title',
-            'xy.clients.email',
-            'xy.clients.phone',
+            'ab__orders__title',
+            'xy__clients__email',
+            'xy__clients__phone',
         ], array_keys($errors));
     }
 }

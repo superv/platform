@@ -207,6 +207,11 @@ class ResourceEntry extends Entry
         return $this->getResource()->route($route, $this, $params);
     }
 
+    public function router(): EntryRouter
+    {
+        return new EntryRouter($this);
+    }
+
     public function getField(string $name): ?Field
     {
         $field = $this->getResource()->getField($name);
