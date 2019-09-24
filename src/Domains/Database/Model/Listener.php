@@ -14,6 +14,12 @@ use SuperV\Platform\Domains\Database\Events\TableUpdateEvent;
  */
 class Listener
 {
+    public static function debug()
+    {
+        \DB::listen(function (QueryExecuted $query) {
+            sv_console($query->sql);
+        });
+    }
     public static function listen()
     {
         \DB::listen(function (QueryExecuted $query) {

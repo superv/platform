@@ -12,6 +12,8 @@ use SuperV\Platform\Domains\Auth\Access\Guard\Guardable;
  */
 trait HasActions
 {
+    public static $__cache = [];
+
     public function getRoles()
     {
         return $this->roles;
@@ -38,6 +40,7 @@ trait HasActions
 
         $this->actions()->syncWithoutDetaching([$entry->id => ['provision' => 'pass']]);
 
+        static::$__cache = [];
         return $this;
     }
 
@@ -188,13 +191,14 @@ trait HasActions
      */
     public function getAssignedActions()
     {
-        $assigned = $this->roles->map(
+        if (! isset(static::$__cache['assigned']))
+            static::$__cache['assigned'] = $this->roles->map(
             function (Role $role) {
                 return $role->actions;
             }
         )->flatten(1)->merge($this->actions()->get());
 
-        return $assigned;
+        return static::$__cache['assigned'];
     }
 
     /**

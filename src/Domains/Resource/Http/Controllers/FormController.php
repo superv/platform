@@ -7,25 +7,18 @@ use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormField;
-use SuperV\Platform\Domains\Resource\Form\FormModel;
-use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Http\Controllers\BaseController;
-use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 
 class FormController extends BaseController
 {
-    public function fields($formIdentifier, $field, $rpc = null)
+    public function fields($formIdentifier, $field)
     {
-        if (! $formEntry = $this->getFormEntry($formIdentifier)) {
-            abort(404, 'Form entry not found');
-        }
-
-        $builder = FormBuilder::createFrom($this->getFormEntry($formIdentifier))
+        $builder = FormBuilder::createFrom($formIdentifier)
                               ->setRequest($this->request);
 
         $form = $builder->getForm();
 
-        $fieldEntry = $formEntry->getFormField($field);
+        $fieldEntry = $builder->getFormEntry()->getFormField($field);
 
         $field = FieldFactory::createFromEntry($fieldEntry, FormField::class);
         $field->setForm($form);
@@ -49,10 +42,12 @@ class FormController extends BaseController
 
     public function display(string $formIdentifier, int $entryId = null)
     {
-        $builder = FormBuilder::createFrom($this->getFormEntry($formIdentifier))
-                              ->setRequest($this->request);
+        $builder = FormBuilder::createFrom($formIdentifier);
 
         if ($entryId) {
+//        if ($callback = $resource->getCallback('editing')) {
+//            app()->call($callback, ['form' => $form, 'entry' => $entry]);
+//        }
             $builder->setEntryId($entryId);
         }
 
@@ -63,10 +58,12 @@ class FormController extends BaseController
 
     public function submit(string $formIdentifier, int $entryId = null)
     {
-        $builder = FormBuilder::createFrom($this->getFormEntry($formIdentifier))
-                              ->setRequest($this->request);
+        $builder = FormBuilder::createFrom($formIdentifier);
 
         if ($entryId) {
+            //        if ($callback = $resource->getCallback('editing')) {
+//            app()->call($callback, ['form' => $form, 'entry' => $entry]);
+//        }
             $builder->setEntryId($entryId);
         }
 
@@ -75,18 +72,6 @@ class FormController extends BaseController
         return $form->save();
     }
 
-    protected function getFormEntry($identifier): ?FormModel
-    {
-        if (! $formEntry = FormModel::withIdentifier($identifier)) {
-            PlatformException::runtime('Form entry not found');
-        }
-
-        if (! $formEntry->isPublic()) {
-            app(PlatformAuthenticate::class)->guard($this->request, 'sv-api');
-        }
-
-        return $formEntry;
-    }
 
 //    protected function ___store($uuid, ResourceFormBuilder $builder)
 //    {

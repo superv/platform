@@ -9,6 +9,8 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 
 class FormBuilder
 {
@@ -41,6 +43,10 @@ class FormBuilder
 
     public function getForm(): EntryForm
     {
+        if (! $this->formEntry->isPublic()) {
+            app(PlatformAuthenticate::class)->guard($this->getRequest(), 'sv-api');
+        }
+
         $form = EntryForm::resolve($this->formEntry->getIdentifier());
 
         if ($this->resource = $this->formEntry->getOwnerResource()) {
@@ -123,17 +129,22 @@ class FormBuilder
         return $this;
     }
 
-    /**
-     * @return \Illuminate\Http\Request
-     */
-    public function getRequest(): \Illuminate\Http\Request
+    public function getRequest(): Request
     {
-        return $this->request;
+        return $this->request ?? app('request');
     }
 
     public function getResource(): ?Resource
     {
         return $this->resource;
+    }
+
+    /**
+     * @return \SuperV\Platform\Domains\Resource\Form\FormModel
+     */
+    public function getFormEntry(): \SuperV\Platform\Domains\Resource\Form\FormModel
+    {
+        return $this->formEntry;
     }
 
     /** @return static */
@@ -144,6 +155,12 @@ class FormBuilder
 
     public static function createFrom($formEntry)
     {
+        if (is_string($identifier = $formEntry)) {
+            if (! $formEntry = FormModel::withIdentifier($identifier)) {
+                PlatformException::runtime('Form entry not found: '.$identifier);
+            }
+        }
+
         return static::resolve()->setFormEntry($formEntry);
     }
 }

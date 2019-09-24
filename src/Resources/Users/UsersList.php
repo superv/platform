@@ -12,8 +12,6 @@ class UsersList implements ListConfigHook
 
     public function config(Table $table, IndexFields $fields)
     {
-        $resource->searchable(['email']);
-
         $fields->show('email');
     }
 }

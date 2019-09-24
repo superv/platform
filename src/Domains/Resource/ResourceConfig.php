@@ -45,6 +45,8 @@ class ResourceConfig
     /** @var \SuperV\Platform\Domains\Resource\ResourceDriver */
     protected $driver;
 
+    protected static $__cache = [];
+
     protected function __construct(array $attributes = [], $overrideDefault = true)
     {
         if (! empty($attributes)) {
@@ -323,12 +325,16 @@ class ResourceConfig
             PlatformException::runtime('Identifier can not be null');
         }
 
-        $resourceEntry = ResourceModel::query()->where('identifier', $identifier)->first();
+        if (! isset(static::$__cache[$identifier])) {
+            $resourceEntry = ResourceModel::query()->where('identifier', $identifier)->first();
 
-        if (is_null($resourceEntry)) {
-            PlatformException::runtime("Resource config not found for identifier: ".$identifier);
+            if (is_null($resourceEntry)) {
+                PlatformException::runtime("Resource config not found for identifier: ".$identifier);
+            }
+
+            static::$__cache[$identifier] = static::make($resourceEntry->config);
         }
 
-        return static::make($resourceEntry->config);
+        return static::$__cache[$identifier];
     }
 }
