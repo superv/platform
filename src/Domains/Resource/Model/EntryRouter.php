@@ -26,6 +26,16 @@ class EntryRouter
         );
     }
 
+    public function view()
+    {
+        return sprintf(
+            sv_route('resource.entry.view', [
+                'resource' => $this->entry->getResourceIdentifier(),
+                'id'       => $this->entry->getId(),
+            ])
+        );
+    }
+
     public function dashboard($section = null)
     {
         return sprintf(

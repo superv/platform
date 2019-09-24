@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Database\Model\Contracts;
 
+use SuperV\Platform\Domains\Resource\Model\EntryRouter;
+
 interface EntryContract
 {
     public function getId();
@@ -43,4 +45,6 @@ interface EntryContract
     public function delete();
 
     public function fresh();
+
+    public function router(): EntryRouter;
 }

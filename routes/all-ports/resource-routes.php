@@ -16,7 +16,7 @@ return [
         'where' => ['section' => '^(|create|all)$'],
     ],
 
-    'GET@'.'sv/res/{resource}/{id}/_view'      => [
+    'GET@'.'sv/res/{resource}/{id}/view' => [
         'as'    => 'resource.entry.view',
         'uses'  => ResourceViewController::at('view'),
         'where' => ['id' => '[0-9]*'],

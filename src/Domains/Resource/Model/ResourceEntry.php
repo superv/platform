@@ -52,6 +52,7 @@ class ResourceEntry extends Entry
          */
         if (starts_with($name, 'get')) {
             $relationName = snake_case(str_replace_first('get', '', $name));
+            sv_console($relationName);
             if ($relation = $this->resolveRelation($relationName)) {
                 if ($targetModel = $relation->getRelationConfig()->getTargetModel()) {
                     /** @var \SuperV\Platform\Domains\Database\Model\Entry $relatedEntry */
@@ -205,11 +206,6 @@ class ResourceEntry extends Entry
     public function route($route, array $params = [])
     {
         return $this->getResource()->route($route, $this, $params);
-    }
-
-    public function router(): EntryRouter
-    {
-        return new EntryRouter($this);
     }
 
     public function getField(string $name): ?Field

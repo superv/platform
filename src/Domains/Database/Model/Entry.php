@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Database\Model;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Jobs\GetEntryResource;
+use SuperV\Platform\Domains\Resource\Model\EntryRouter;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 abstract class Entry extends Eloquent implements EntryContract
@@ -51,6 +52,11 @@ abstract class Entry extends Eloquent implements EntryContract
         return new QueryBuilder(
             $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
         );
+    }
+
+    public function router(): EntryRouter
+    {
+        return new EntryRouter($this);
     }
 
     public function getResourceConfig()

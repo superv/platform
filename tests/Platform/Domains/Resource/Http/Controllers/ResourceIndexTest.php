@@ -99,7 +99,7 @@ class ResourceIndexTest extends ResourceTestCase
         $groups = sv_resource('testing.groups');
         $usersGroup = $groups->find(1);
         $this->assertSame($usersGroup->title, $group['value']);
-        $this->assertEquals($groups->route('entry.view', $usersGroup), $group['meta']['link']);
+        $this->assertEquals($usersGroup->router()->dashboardSPA(), $group['meta']['link']);
     }
 
     function test__fields_extending()
