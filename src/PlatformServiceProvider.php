@@ -104,7 +104,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->bindUserModel();
 
-        $this->registerListeners($this->listeners);
+        $this->registerPlatformListeners();
 
 //        $this->registerListeners([
 //            'platform.registered' => function () {
@@ -119,7 +119,8 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->registerDefaultPort();
 
         event('platform.registered');
-        $this->registerProviders($this->providers);
+
+        $this->registerPlatformProviders();
     }
 
     public function boot()
@@ -150,6 +151,16 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     }
 
+    public function registerPlatformProviders()
+    {
+        $this->registerProviders($this->providers);
+    }
+
+    public function registerPlatformListeners()
+    {
+        $this->registerListeners($this->listeners);
+    }
+
     protected function setupTranslations()
     {
         $this->loadTranslationsFrom($this->platform->realPath('resources/lang'), 'platform');
@@ -161,7 +172,7 @@ class PlatformServiceProvider extends BaseServiceProvider
         ]);
     }
 
-    protected function bindUserModel(): void
+    public function bindUserModel(): void
     {
         $this->app->bind(User::class, sv_config('auth.user.model'));
     }
