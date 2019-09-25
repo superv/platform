@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Support\Identifier;
 
 interface Field
 {
@@ -15,6 +16,8 @@ interface Field
     public function getResource(): Resource;
 
     public function getIdentifier();
+
+    public function identifier(): Identifier;
 
     public function getType(): string;
 

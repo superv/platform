@@ -29,7 +29,7 @@ class FormControllerTest extends ResourceTestCase
 
     function test__form_page_with_uuid()
     {
-        $form = $this->getUserPage('sv/forms/'.$this->formEntry->uuid);
+        $form = $this->getUserPage($this->formEntry->getUrl());
 //        $form = HelperComponent::from($page->getProp('blocks.0'));
 
         $this->assertEquals('sv-form', $form->getName());
@@ -49,24 +49,24 @@ class FormControllerTest extends ResourceTestCase
         $this->withoutExceptionHandling();
         $formEntry = $this->makePublicForm();
         $this->assertTrue($formEntry->isPublic());
-        $this->getPublicPage('sv/forms/'.$formEntry->uuid);
+        $this->getPublicPage($formEntry->getUrl());
     }
 
     function test__user_form()
     {
         $formEntry = $this->makeForm(['public' => false]);
         $this->assertFalse($formEntry->isPublic());
-        $this->getUserPage('sv/forms/'.$formEntry->uuid);
+        $this->getUserPage($formEntry->getUrl());
     }
 
     function test__user_forms_are_not_accessible_by_public()
     {
         $formEntry = $this->makeForm(['public' => false]);
         $this->assertFalse($formEntry->isPublic());
-        $response = $this->getJson('sv/forms/'.$formEntry->uuid);
+        $response = $this->getJson($formEntry->getUrl());
         $response->assertStatus(401);
 
-        $response = $this->postJson('sv/forms/'.$formEntry->uuid);
+        $response = $this->postJson($formEntry->getUrl());
         $response->assertStatus(401);
     }
 

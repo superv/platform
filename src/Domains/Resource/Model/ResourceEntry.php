@@ -52,6 +52,7 @@ class ResourceEntry extends Entry
          */
         if (starts_with($name, 'get')) {
             $relationName = snake_case(str_replace_first('get', '', $name));
+            sv_console($relationName);
             if ($relation = $this->resolveRelation($relationName)) {
                 if ($targetModel = $relation->getRelationConfig()->getTargetModel()) {
                     /** @var \SuperV\Platform\Domains\Database\Model\Entry $relatedEntry */

@@ -10,9 +10,9 @@ class PlatformException extends \Exception
 {
     protected $payload;
 
-    public function setPayload($payload)
+    public function setPayload()
     {
-        $this->payload = $payload;
+        $this->payload = func_get_args();
 
         return $this;
     }
@@ -33,9 +33,9 @@ class PlatformException extends \Exception
         throw new static($msg);
     }
 
-    public static function debug(array $payload = [])
+    public static function debug()
     {
-        throw (new static)->setPayload($payload);
+        throw (new static)->setPayload(...func_get_args());
     }
 
     public static function throw(Exception $e)

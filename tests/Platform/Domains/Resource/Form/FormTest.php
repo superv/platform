@@ -141,12 +141,12 @@ class FormTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $response = $this->getJsonUser($this->users->route('forms.create'));
+        $response = $this->getJsonUser($this->users->router()->createForm());
         $response->assertOk();
 
 //        $createPage = HelperComponent::from($response->decodeResponseJson('data'));
 //        $formBlock = HelperComponent::from($createPage->getProp('blocks.0'));
-        $form = $this->getUserPage($this->users->route('forms.create'));
+        $form = $this->getUserPage($this->users->router()->createForm());
 
         $this->assertEquals(['identifier',
                              'url',

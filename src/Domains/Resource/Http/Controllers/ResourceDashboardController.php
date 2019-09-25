@@ -15,7 +15,7 @@ class ResourceDashboardController extends BaseApiController
         $resource = $this->resolveResource();
         $section = $this->route->parameter('section');
 
-        return ResourceDashboard::resolve($resource)
-                                ->render($section);
+        return ResourceDashboard::resolve($resource, $section)
+                                ->render();
     }
 }

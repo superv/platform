@@ -22,9 +22,9 @@ function ddh()
     dd('Over here! '.date('H:i:s'), func_get_args());
 }
 
-function fails($data)
+function sv_debug()
 {
-    PlatformException::fail($data);
+    PlatformException::debug(...func_get_args());
 }
 
 function get_ns_from_file($file)

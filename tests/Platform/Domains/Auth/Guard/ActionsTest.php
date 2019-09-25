@@ -12,6 +12,13 @@ class ActionsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        User::$__cache = [];
+    }
+
     protected function newUser(array $overrides = [])
     {
         return parent::newUser(['allow' => false]);

@@ -31,7 +31,7 @@ class FormHookTest extends HookTestCase
         $form = FormBuilder::resolve()
                            ->setRequest(['number' => 1, 'status' => 'pending'])
                            ->setFormEntry(FormModel::withIdentifier(OrdersFormDefault::$identifier))
-                           ->build();
+                           ->getForm();
 
         $this->assertNotNull($form);
 

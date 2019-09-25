@@ -117,7 +117,7 @@ class EntryTest extends ResourceTestCase
             $table->createdBy();
         });
 
-        $this->postJsonUser($posts->route('forms.store'), ['title' => 'Some Post'])->assertOk();
+        $this->postJsonUser($posts->router()->createForm(), ['title' => 'Some Post'])->assertOk();
 
         $this->assertEquals($this->testUser->id, $posts->first()->created_by_id);
     }
@@ -134,7 +134,7 @@ class EntryTest extends ResourceTestCase
 
         $post = $posts->create(['title' => 'Some Post']);
 
-        $this->postJsonUser($post->route('forms.update'), ['title' => 'Updated Post'])->assertOk();
+        $this->postJsonUser($post->router()->updateForm(), ['title' => 'Updated Post'])->assertOk();
 
         $this->assertEquals($this->testUser->id, $posts->first()->updated_by_id);
     }

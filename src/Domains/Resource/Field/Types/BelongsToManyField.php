@@ -40,20 +40,34 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
 
     public function getOptionsUrl(?EntryContract $entry = null)
     {
+        $url = sv_route('sv::forms.fields', [
+            'form'  => $this->field->getForm()->getIdentifier(),
+            'field' => $this->getName(),
+            'rpc'   => 'options',
+        ]);
         if ($entry && $entry->exists) {
-            return sprintf("sv/forms/%s/fields/%s/options?entry=%d", $this->field->getForm()->uuid(), $this->getName(), $entry->getId());
+            $url .= '?entry='.$entry->getId();
         }
 
-        return sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
+        return $url;
+//            return sprintf("sv/forms/%s/fields/%s/options?entry=%d", $this->field->getForm()->uuid(), $this->getName(), $entry->getId());
+//        return sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
     }
 
     public function getValuesUrl(?EntryContract $entry = null)
     {
+        $url = sv_route('sv::forms.fields', [
+            'form'  => $this->field->getForm()->getIdentifier(),
+            'field' => $this->getName(),
+            'rpc'   => 'values',
+        ]);
         if ($entry && $entry->exists) {
-            return sprintf("sv/forms/%s/fields/%s/values?entry=%d", $this->field->getForm()->uuid(), $this->getName(), $entry->getId());
+            $url .= '?entry='.$entry->getId();
         }
 
-        return sprintf("sv/forms/%s/fields/%s/values", $this->field->getForm()->uuid(), $this->getName());
+        return $url;
+//            return sprintf("sv/forms/%s/fields/%s/values?entry=%d", $this->field->getForm()->uuid(), $this->getName(), $entry->getId());
+//        return sprintf("sv/forms/%s/fields/%s/values", $this->field->getForm()->uuid(), $this->getName());
     }
 
     /**
@@ -88,7 +102,6 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
                     $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
                 }
             }
-
 
             $payload->set('meta.options', $this->getOptionsUrl($entry));
 

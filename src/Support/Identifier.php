@@ -18,7 +18,7 @@ class Identifier
         $this->identifier = $identifier;
 
         if ($this->getNodeCount() < 2) {
-            throw new InvalidArgumentException('Not a valid identifier string');
+            throw new InvalidArgumentException(sprintf("Not a valid identifier string: [%s]", $identifier));
         }
     }
 
@@ -60,6 +60,10 @@ class Identifier
         return $type;
     }
 
+    public function withoutType()
+    {
+        return $this->getParent().'.'.$this->getTypeId();
+    }
     public function type(): ?IdentifierType
     {
         return new IdentifierType($this->getType(), $this->getTypeId());
