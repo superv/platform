@@ -117,10 +117,10 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         return $this->parentEntry;
     }
 
-    public function getParentResourceHandle(): string
-    {
-        return $this->parentEntry->getHandle();
-    }
+//    public function getParentResourceHandle(): string
+//    {
+//        return $this->parentEntry->getHandle();
+//    }
 
     public function route($name, EntryContract $entry, array $params = [])
     {

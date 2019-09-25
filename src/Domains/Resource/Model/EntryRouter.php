@@ -16,6 +16,37 @@ class EntryRouter
         $this->entry = $entry;
     }
 
+    public function delete()
+    {
+        return sprintf(
+            sv_route('resource.entry.delete', [
+                'resource' => $this->entry->getResourceIdentifier(),
+                'id'       => $this->entry->getId(),
+            ])
+        );
+    }
+
+    public function restore()
+    {
+        return sprintf(
+            sv_route('resource.entry.restore', [
+                'resource' => $this->entry->getResourceIdentifier(),
+                'id'       => $this->entry->getId(),
+            ])
+        );
+    }
+
+    public function actions($action)
+    {
+        return sprintf(
+            sv_route('resource.entry.dashboard', [
+                'resource' => $this->entry->getResourceIdentifier(),
+                'id'       => $this->entry->getId(),
+                'action'   => $action,
+            ])
+        );
+    }
+
     public function updateForm()
     {
         return sprintf(

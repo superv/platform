@@ -18,7 +18,7 @@ class ActivityTest extends ResourceTestCase
         $this->withoutExceptionHandling();
         $action = $this->blueprints()->actions()->first();
 
-        $this->getJsonUser($action->route('entry.view'))->assertOk();
+        $this->getJsonUser($action->router()->view())->assertOk();
 
         $log = sv_resource('platform.activities')->first();
         $this->assertEquals('resource.entry.view', $log->activity);

@@ -252,6 +252,11 @@ class ResourceConfig
         return $this->getDriver()->getParam('table');
     }
 
+    public function getConnection()
+    {
+        return $this->getDriver()->getParam('connection');
+    }
+
     /**
      * @return mixed
      */

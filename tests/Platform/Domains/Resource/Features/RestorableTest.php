@@ -4,15 +4,15 @@ namespace Tests\Platform\Domains\Resource\Features;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
-use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
  * Class RestorableTest
  *
+ * @disabled
  * @package Tests\Platform\Domains\Resource\Features
  * @group   resource
  */
-class RestorableTest extends ResourceTestCase
+class RestorableTest
 {
     function test__creates_table_columns_and_sets_config()
     {
@@ -31,7 +31,7 @@ class RestorableTest extends ResourceTestCase
         $this->assertNull($entry->deleted_at);
         $this->assertNull($entry->deleted_by_id);
 
-        $this->deleteJsonUser($entry->route('delete'))->assertOk();
+        $this->deleteJsonUser($entry->router()->delete())->assertOk();
 
         $trashed = $entry->fresh();
         $this->assertNotNull($trashed->deleted_at);
@@ -66,10 +66,10 @@ class RestorableTest extends ResourceTestCase
         $entries = $this->createEntriesResource();
         $entry = $entries->create([]);
 
-        $this->deleteJsonUser($entry->route('delete'))->assertOk();
+        $this->deleteJsonUser($entry->router()->delete())->assertOk();
 
         // ACT
-        $response = $this->postJsonUser($entry->route('restore'));
+        $response = $this->postJsonUser($entry->router()->restore());
         $response->assertOk();
 
         // ASSERT

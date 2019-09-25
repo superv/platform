@@ -27,10 +27,10 @@ class MediaTest extends TestCase
         Storage::fake('fakedisk');
         $options = MediaOptions::one('photos')->disk('fakedisk');
 
-//        $pngFile = $this->owner->mediaBag('photos')->addFromPath(realpath(__DIR__.'/fixtures/image-a.png'), $options);
-//        $this->assertMediaSaved($pngFile, 'image-a.png', 'image/png', 'png');
+        $pngFile = $this->owner
+            ->mediaBag('photos')
+            ->addFromPath(realpath(__DIR__.'/fixtures/icon.svg'), $options);
 
-        $pngFile = $this->owner->mediaBag('photos')->addFromPath(realpath(__DIR__.'/fixtures/icon.svg'), $options);
         $this->assertMediaSaved($pngFile, 'icon.svg', 'image/svg+xml', 'svg');
     }
 

@@ -25,18 +25,18 @@ class ParseFieldRules
 
         $rules = $field->getRules();
 
-        try {
-            $resourceConfig = ResourceConfig::find($field->identifier()->getParent());
-        } catch (Exception $e) {
-        }
-
         if ($field->isUnique()) {
-            $rules[] = sprintf(
-                'unique:%s,%s,%s,id',
-                $resourceConfig->getTable(),
-                $field->getColumnName(),
-                $entry ? $entry->getId() : 'NULL'
-            );
+            try {
+                $resourceConfig = ResourceConfig::find($field->identifier()->getParent());
+                $rules[] = sprintf(
+                    'unique:%s,%s,%s,id',
+                    $resourceConfig->getTable(),
+                    $field->getColumnName(),
+                    $entry ? $entry->getId() : 'NULL'
+                );
+            } catch (Exception $e) {
+            }
+
         }
         if ($field->isRequired()) {
             if ($entry && $entry->exists) {

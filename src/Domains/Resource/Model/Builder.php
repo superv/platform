@@ -22,6 +22,9 @@ class Builder extends \Illuminate\Database\Eloquent\Builder
         // not have to remove these where clauses manually which gets really hacky
         // and error prone. We don't want constraints because we add eager ones.
         $relation = Relation::noConstraints(function () use ($name) {
+            /**
+             *      <superV override=true>
+             */
             $instance = $this->getModel()->newInstance();
             if (method_exists($instance, $name)) {
                 return $instance->$name();
@@ -31,7 +34,11 @@ class Builder extends \Illuminate\Database\Eloquent\Builder
                 return $relation;
             }
 
-            throw new RuntimeException("Call to undefined relationship [{$name}] on resource [{$this->getModel()->getTable()}].");
+            throw new RuntimeException(sprintf("Call to undefined relationship [%s] on resource [%s].", $name, $this->getModel()->getResourceIdentifier()));
+            /**
+             *      </superV>
+             */
+
         });
 
         $nested = $this->relationsNestedUnder($name);

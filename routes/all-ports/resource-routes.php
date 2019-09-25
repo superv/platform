@@ -29,12 +29,12 @@ return [
     ],
 
     'DELETE@'.'sv/res/{resource}/{id}' => [
-        'as'   => 'resource.delete',
+        'as'   => 'resource.entry.delete',
         'uses' => ResourceController::at('delete'),
     ],
 
     'POST@'.'sv/res/{resource}/{id}/restore'   => [
-        'as'   => 'resource.restore',
+        'as'   => 'resource.entry.restore',
         'uses' => ResourceController::at('restore'),
     ],
 

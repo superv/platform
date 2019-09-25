@@ -5,15 +5,22 @@ namespace SuperV\Platform\Domains\Database\Model;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Jobs\GetEntryResource;
+use SuperV\Platform\Domains\Resource\Model\Builder;
 use SuperV\Platform\Domains\Resource\Model\EntryRouter;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 abstract class Entry extends Eloquent implements EntryContract
 {
-    /**
-     * @var string
-     */
+    /** @var \SuperV\Platform\Domains\Resource\Resource */
+    protected $resource;
+
+    /** @var string */
     protected $resourceIdentifier;
+
+    /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
+    protected $resourceConfig;
 
     protected $guarded = [];
 
@@ -38,14 +45,25 @@ abstract class Entry extends Eloquent implements EntryContract
      * Create a new Eloquent query builder for the model.
      *
      * @param \Illuminate\Database\Query\Builder $query
-     * @return \SuperV\Platform\Domains\Database\Model\EloquentQueryBuilder|static
+     * @return \Illuminate\Database\Eloquent\Builder|static
      */
     public function newEloquentBuilder($query)
     {
-        return new EloquentQueryBuilder($query);
+        return new Builder($query);
     }
 
-    protected function newBaseQueryBuilder()
+    public function newQuery()
+    {
+//        if (optional($this->getResourceConfig())->isRestorable()) {
+//            static::addGlobalScope(new SoftDeletingScope());
+//        } else {
+//            return parent::newQuery()->withoutGlobalScopes();
+//        }
+
+        return parent::newQuery();
+    }
+
+    protected function newBaseQueryBuilder_xxxxxx()
     {
         $connection = $this->getConnection();
 
@@ -57,6 +75,33 @@ abstract class Entry extends Eloquent implements EntryContract
     public function router(): EntryRouter
     {
         return new EntryRouter($this);
+    }
+
+    public function getForeignKey()
+    {
+        return $this->getResourceConfig()->getResourceKey().'_id';
+    }
+
+    public function getMorphClass()
+    {
+        return $this->getResourceIdentifier() ?: parent::getMorphClass();
+    }
+
+    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    public function getResource()
+    {
+        if (! $this->resource) {
+            $this->resource = ResourceFactory::make($this->getResourceConfig()->getIdentifier());
+        }
+
+        return $this->resource;
+    }
+
+    public function setResource(Resource $resource): EntryContract
+    {
+        $this->resource = $resource;
+
+        return $this;
     }
 
     public function getResourceConfig()
@@ -82,12 +127,8 @@ abstract class Entry extends Eloquent implements EntryContract
         return $this->resourceIdentifier;
     }
 
-    /**
-     * @param $id
-     * @return static
-     */
-    public static function find($id)
+    public function setResourceIdentifier(string $resourceIdentifier): void
     {
-        return static::query()->find($id);
+        $this->resourceIdentifier = $resourceIdentifier;
     }
 }

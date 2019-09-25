@@ -6,7 +6,7 @@ use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Fake;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Model\AnonymousModel;
 use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
 
 trait RepoConcern
@@ -48,7 +48,13 @@ trait RepoConcern
             $entry = new $model;
         } else {
             // Anonymous Entry Model
-            $entry = ResourceEntry::make($this);
+//            $entry = ResourceEntry::make($this);
+
+            $entry = new AnonymousModel();
+            $entry->setTable($this->config()->getTable());
+            $entry->setConnection($this->config()->getConnection());
+            $entry->setKeyName($this->getKeyName());
+            $entry->setResourceIdentifier($this->getIdentifier());
         }
 
         $this->getFields()->map(function (Field $field) use ($entry) {

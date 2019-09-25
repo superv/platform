@@ -23,7 +23,7 @@ class ResourceTest extends ResourceTestCase
         $entry = $resource->newEntryInstance();
 
         $this->assertInstanceOf(ResourceEntry::class, $entry);
-        $this->assertEquals('tbl_users', $entry->getHandle());
+        $this->assertEquals('tbl_users', $entry->getTable());
     }
 
     function test__instantiates_entries_using_provided_model()
