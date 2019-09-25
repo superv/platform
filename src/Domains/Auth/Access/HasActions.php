@@ -55,6 +55,7 @@ trait HasActions
 
         $this->actions()->syncWithoutDetaching([$entry->id => ['provision' => 'fail']]);
 
+        static::$__cache = [];
         return $this;
     }
 
@@ -191,14 +192,14 @@ trait HasActions
      */
     public function getAssignedActions()
     {
-        if (! isset(static::$__cache['assigned']))
-            static::$__cache['assigned'] = $this->roles->map(
+        if (! isset(static::$__cache[$this->getId()]))
+            static::$__cache[$this->getId()] = $this->roles->map(
             function (Role $role) {
                 return $role->actions;
             }
         )->flatten(1)->merge($this->actions()->get());
 
-        return static::$__cache['assigned'];
+        return static::$__cache[$this->getId()];
     }
 
     /**
