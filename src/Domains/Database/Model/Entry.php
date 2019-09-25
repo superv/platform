@@ -4,10 +4,9 @@ namespace SuperV\Platform\Domains\Database\Model;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Database\Entry\Builder;
+use SuperV\Platform\Domains\Resource\Database\Entry\EntryRouter;
 use SuperV\Platform\Domains\Resource\Jobs\GetEntryResource;
-use SuperV\Platform\Domains\Resource\Model\Builder;
-use SuperV\Platform\Domains\Resource\Model\EntryRouter;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
@@ -87,7 +86,6 @@ abstract class Entry extends Eloquent implements EntryContract
         return $this->getResourceIdentifier() ?: parent::getMorphClass();
     }
 
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
     public function getResource()
     {
         if (! $this->resource) {
@@ -95,13 +93,6 @@ abstract class Entry extends Eloquent implements EntryContract
         }
 
         return $this->resource;
-    }
-
-    public function setResource(Resource $resource): EntryContract
-    {
-        $this->resource = $resource;
-
-        return $this;
     }
 
     public function getResourceConfig()

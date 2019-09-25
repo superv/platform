@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use Tests\Platform\Domains\Resource\Fixtures\TestResourceEntry;

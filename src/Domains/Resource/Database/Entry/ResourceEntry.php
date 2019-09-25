@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Model;
+namespace SuperV\Platform\Domains\Resource\Database\Entry;
 
 use Illuminate\Queue\SerializesModels;
 use SuperV\Platform\Domains\Database\Model\Entry;

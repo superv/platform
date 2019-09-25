@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database\Model\Contracts;
 
-use SuperV\Platform\Domains\Resource\Model\EntryRouter;
+use SuperV\Platform\Domains\Resource\Database\Entry\EntryRouter;
 
 interface EntryContract
 {

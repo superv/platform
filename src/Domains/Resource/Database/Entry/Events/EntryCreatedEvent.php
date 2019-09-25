@@ -1,11 +1,11 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Model\Events;
+namespace SuperV\Platform\Domains\Resource\Database\Entry\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 
-class EntryRetrievedEvent
+class EntryCreatedEvent
 {
     use Dispatchable;
 

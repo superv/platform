@@ -1,13 +1,13 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Model;
+namespace SuperV\Platform\Domains\Resource\Database\Entry;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
 use RuntimeException;
 
 class Builder extends \Illuminate\Database\Eloquent\Builder
 {
-    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
+    /** @var \SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry */
     protected $model;
 
     /**
@@ -56,7 +56,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder
     /**
      * Get the model instance being queried.
      *
-     * @return  \SuperV\Platform\Domains\Resource\Model\ResourceEntry|static
+     * @return  \SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry|static
      */
     public function getModel()
     {

@@ -4,10 +4,10 @@ namespace SuperV\Platform\Domains\Resource\Resource;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Database\Entry\AnonymousModel;
+use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntryFake;
 use SuperV\Platform\Domains\Resource\Fake;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Model\AnonymousModel;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
 
 trait RepoConcern
 {
@@ -97,7 +97,7 @@ trait RepoConcern
         return $this->newQuery()->count();
     }
 
-    /** @return  \SuperV\Platform\Domains\Resource\Model\ResourceEntry|array */
+    /** @return  \SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry|array */
     public function fake(array $overrides = [], int $number = 1, Closure $callback = null)
     {
         return ResourceEntryFake::make($this, $overrides, $number, $callback);

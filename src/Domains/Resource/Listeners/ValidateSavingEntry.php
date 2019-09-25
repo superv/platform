@@ -3,8 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Contracts\Validator;
+use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntrySavingEvent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class ValidateSavingEntry
@@ -14,7 +14,7 @@ class ValidateSavingEntry
      */
     protected $validator;
 
-    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
+    /** @var \SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry */
     protected $entry;
 
     public function __construct(Validator $validator)

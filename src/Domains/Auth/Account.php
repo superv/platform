@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Auth;
 
 use SuperV\Platform\Domains\Auth\Contracts\Account as AccountContract;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry;
 
 class Account extends ResourceEntry implements AccountContract
 {

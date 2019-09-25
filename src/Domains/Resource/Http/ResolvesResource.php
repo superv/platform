@@ -10,7 +10,7 @@ trait ResolvesResource
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
 
-    /** @var \SuperV\Platform\Domains\Resource\Model\ResourceEntry */
+    /** @var \SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry */
     protected $entry;
 
     protected function resolveResource($resolveEntry = true)
