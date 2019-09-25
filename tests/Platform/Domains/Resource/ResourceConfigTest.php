@@ -109,7 +109,7 @@ class ResourceConfigTest extends ResourceTestCase
         });
 
         $this->assertEquals('Customers', $customers->getLabel());
-        $this->assertEquals('platform.customers.singular', $customers->getSingularLabel());
+        $this->assertEquals('testing.customers.singular', $customers->getSingularLabel());
     }
 
     function test__builds_label_from_given()
@@ -122,7 +122,7 @@ class ResourceConfigTest extends ResourceTestCase
         });
 
         $this->assertEquals('SuperV Customers', $customers->getLabel());
-        $this->assertEquals('platform.customers.singular', $customers->getSingularLabel());
+        $this->assertEquals('testing.customers.singular', $customers->getSingularLabel());
     }
 
     function test__builds_label_for_resource_entry()

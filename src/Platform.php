@@ -30,6 +30,8 @@ class Platform extends Addon
      */
     public function boot()
     {
+        $this->booted = false;
+
         PlatformBootingEvent::dispatch();
 
         $entries = AddonModel::query()

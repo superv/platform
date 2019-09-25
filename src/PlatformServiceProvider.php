@@ -118,9 +118,9 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->registerDefaultPort();
 
-        event('platform.registered');
-
         $this->registerPlatformProviders();
+
+        event('platform.registered');
     }
 
     public function boot()

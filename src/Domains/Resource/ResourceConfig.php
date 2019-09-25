@@ -45,7 +45,7 @@ class ResourceConfig
     /** @var \SuperV\Platform\Domains\Resource\ResourceDriver */
     protected $driver;
 
-    protected static $__cache = [];
+    public static $__cache = [];
 
     protected function __construct(array $attributes = [], $overrideDefault = true)
     {
@@ -324,7 +324,7 @@ class ResourceConfig
         return $config;
     }
 
-    public static function find($identifier)
+    public static function find($identifier): ResourceConfig
     {
         if (! $identifier) {
             PlatformException::runtime('Identifier can not be null');

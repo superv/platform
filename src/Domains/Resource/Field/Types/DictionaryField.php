@@ -22,11 +22,8 @@ class DictionaryField extends FieldType implements RequiresDbColumn, HasAccessor
     public function getAccessor(): Closure
     {
         return function ($value) {
-
             if (is_string($value)) {
-
                 return json_decode($value, true);
-            } else {
             }
 
             return $value;
@@ -36,30 +33,14 @@ class DictionaryField extends FieldType implements RequiresDbColumn, HasAccessor
     public function getModifier(): Closure
     {
         return function ($value, EntryContract $entry) {
-            return $value;
+            if (is_string($value)) {
+                return $value;
+            }
+            if (array_key_exists($this->field->getColumnName(), $entry->getCasts())) {
+                return $value;
+            }
+
+            return json_encode($value);
         };
     }
-
-//    protected function accessor()
-//    {
-//        return function ($value) {
-//            if (is_string($value)) {
-//                return json_decode($value, true);
-//            }
-//
-//            return $value;
-//        };
-//    }
-//
-//    protected function mutator()
-//    {
-//        return function ($value, EntryContract $entry) {
-////            dump($value);
-////            if (!is_string($value)) {
-////                return $entry->setAttribute($this->getColumnName(),json_encode($value));
-////            }
-//
-//            return $value;
-//        };
-//    }
 }

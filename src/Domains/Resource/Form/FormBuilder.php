@@ -153,7 +153,7 @@ class FormBuilder
         return app(static::class);
     }
 
-    public static function createFrom($formEntry)
+    public static function createFrom($formEntry): FormBuilder
     {
         if (is_string($identifier = $formEntry)) {
             if (! $formEntry = FormModel::withIdentifier($identifier)) {
