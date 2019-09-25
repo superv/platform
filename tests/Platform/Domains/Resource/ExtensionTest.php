@@ -12,6 +12,7 @@ use Tests\Platform\Domains\Resource\Fixtures\Extension\TestUserResourceExtension
 /**
  * Class ExtensionTest
  *
+ * @disabled
  * @package Tests\Platform\Domains\Resource
  * @group   resource
  */

@@ -2,11 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource;
 
-use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\ResourceConfig;
-use Tests\Platform\Domains\Resource\Fixtures\TestResourceEntry;
 
 /**
  * Class ResourceTest
@@ -16,31 +12,6 @@ use Tests\Platform\Domains\Resource\Fixtures\TestResourceEntry;
  */
 class ResourceTest extends ResourceTestCase
 {
-    function test__creates_anonymous_model_class_if_not_provided()
-    {
-        $resource = $this->makeResource('tbl_users');
-
-        $entry = $resource->newEntryInstance();
-
-        $this->assertInstanceOf(ResourceEntry::class, $entry);
-        $this->assertEquals('tbl_users', $entry->getTable());
-    }
-
-    function test__instantiates_entries_using_provided_model()
-    {
-        $resource = $this->create('t_entries',
-            function (Blueprint $table, ResourceConfig $resource) {
-                $table->increments('id');
-
-                $resource->model(TestResourceEntry::class);
-            });
-
-        $entry = $resource->newEntryInstance();
-        $this->assertInstanceOf(TestResourceEntry::class, $entry);
-        $this->assertInstanceOf(TestResourceEntry::class, $resource->fake());
-        $this->assertEquals('t_entries', $entry->getTable());
-    }
-
     function test__get_creation_rules()
     {
         $users = $this->blueprints()->users();
@@ -86,11 +57,4 @@ class ResourceTest extends ResourceTestCase
         $this->assertFalse(in_array('isot', array_keys($users->getRules())));
     }
 
-    function test__count()
-    {
-        $res = $this->makeResource('t_items');
-        $res->fake([], 3);
-
-        $this->assertEquals(3, $res->count());
-    }
 }

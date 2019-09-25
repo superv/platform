@@ -25,23 +25,22 @@ abstract class Entry extends Eloquent implements EntryContract
 
     public $timestamps = false;
 
-    public function getId()
+    protected $relationKeys = [];
+
+    public function setRelationKeys($relationKeys)
     {
-        return $this->getKey();
+        $this->relationKeys = $relationKeys;
+
+        return $this;
     }
 
-    public function wasRecentlyCreated(): bool
+    public function getRelationKeys()
     {
-        return $this->wasRecentlyCreated;
-    }
-
-    public function exists(): bool
-    {
-        return $this->exists;
+        return $this->relationKeys;
     }
 
     /**
-     * Create a new Eloquent query builder for the model.
+     *  <superV> Overriding this to catch dynamic relations </superV>
      *
      * @param \Illuminate\Database\Query\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder|static
@@ -51,24 +50,9 @@ abstract class Entry extends Eloquent implements EntryContract
         return new Builder($query);
     }
 
-    public function newQuery()
+    public function newQuery(): \Illuminate\Database\Eloquent\Builder
     {
-//        if (optional($this->getResourceConfig())->isRestorable()) {
-//            static::addGlobalScope(new SoftDeletingScope());
-//        } else {
-//            return parent::newQuery()->withoutGlobalScopes();
-//        }
-
         return parent::newQuery();
-    }
-
-    protected function newBaseQueryBuilder_xxxxxx()
-    {
-        $connection = $this->getConnection();
-
-        return new QueryBuilder(
-            $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
-        );
     }
 
     public function router(): EntryRouter
@@ -84,6 +68,21 @@ abstract class Entry extends Eloquent implements EntryContract
     public function getMorphClass()
     {
         return $this->getResourceIdentifier() ?: parent::getMorphClass();
+    }
+
+    public function getId()
+    {
+        return $this->getKey();
+    }
+
+    public function wasRecentlyCreated(): bool
+    {
+        return $this->wasRecentlyCreated;
+    }
+
+    public function exists(): bool
+    {
+        return $this->exists;
     }
 
     public function getResource()

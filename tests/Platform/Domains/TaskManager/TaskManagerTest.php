@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\TaskManager\Contracts\Task;
 use SuperV\Platform\Testing\PlatformTestCase;
 use Tests\Platform\Domains\TaskManager\Fixtures\TestHandler;
 
-class TestCase extends PlatformTestCase
+abstract class TaskManagerTest extends PlatformTestCase
 {
     use RefreshDatabase;
 
@@ -26,9 +26,6 @@ class TestCase extends PlatformTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     protected function makeTaskPayload(): array
     {
         return ['server_id' => 3,

@@ -17,7 +17,6 @@ class ResourceEntry extends Entry
         SerializesModels::__sleep as parentSleep;
     }
 
-
     protected static function boot()
     {
         parent::boot();
@@ -38,7 +37,6 @@ class ResourceEntry extends Entry
          */
         if (starts_with($name, 'get')) {
             $relationName = snake_case(str_replace_first('get', '', $name));
-            sv_console($relationName);
             if ($relation = $this->resolveRelation($relationName)) {
                 if ($targetModel = $relation->getRelationConfig()->getTargetModel()) {
                     /** @var \SuperV\Platform\Domains\Database\Model\Entry $relatedEntry */
@@ -51,25 +49,22 @@ class ResourceEntry extends Entry
                     }
                 }
             }
-//            if (! $this->isPlatformResource()) {
-                if ($field = $this->getResource()->getField($relationName)) {
-                    $fieldType = $field->getFieldType();
+            if ($field = $this->getResource()->getField($relationName)) {
+                $fieldType = $field->getFieldType();
 
-                    return $fieldType->newQuery($this)->getResults()->first();
-                }
-//            }
+                return $fieldType->newQuery($this)->getResults()->first();
+            }
         }
-
 
         /**
          *  Dynamic Relations
          */
         if (! method_exists($this, $name) && ! in_array($name, ['create', 'first', 'find', 'hydrate'])) {
-            if ($relation = $this->getRelationshipFromConfig($name)) {
-                return $relation;
-            } elseif ($relation = superv('relations')->get($this->getResourceIdentifier().'.'.$name)) {
-                return $relation->newQuery();
-            } else { // if (! $this->isPlatformResource()) {
+            if (in_array($name, $this->relationKeys)) {
+                $svRelation = $this->resolveRelation($name);
+
+                return $svRelation->newQuery();
+            } else {
                 if ($field = $this->getResource()->getField($name)) {
                     $fieldType = $field->getFieldType();
 
@@ -81,19 +76,26 @@ class ResourceEntry extends Entry
         return parent::__call($name, $arguments);
     }
 
-
     public function getRelationshipFromConfig($name)
     {
-        if (! $relation = $this->resolveRelation($name)) {
-            if (
-                snake_case($name) === $name ||
-                ! $relation = $this->resolveRelation(snake_case($name))
-            ) {
-                return null;
+        if ($relation = $this->resolveRelation($name)) {
+            return $relation->newQuery();
+        }
+        // Try again with the snake case version
+        if (snake_case($name) !== $name) {
+            if ($relation = $this->resolveRelation(snake_case($name))) {
+                return $relation->newQuery();
             }
         }
 
-        return $relation->newQuery();
+        return null;
+    }
+
+    public function __sleep()
+    {
+        $this->resource = null;
+
+        return $this->parentSleep();
     }
 
     protected function resolveRelation($name)
@@ -109,17 +111,4 @@ class ResourceEntry extends Entry
 
         return $relation;
     }
-
-    public function __sleep()
-    {
-        $this->resource = null;
-
-        return $this->parentSleep();
-    }
-
-
-//    public function isPlatformResource()
-//    {
-//        return starts_with($this->getTable(), 'sv_');
-//    }
 }
