@@ -22,11 +22,11 @@ class ResourceEntry extends Entry
         parent::boot();
 
         static::saving(function (ResourceEntry $entry) {
-            if (! starts_with($entry->getTable(), 'sv_')) {
-                if ($entry->getResource()->config()->hasUuid() && is_null($entry->uuid)) {
-                    $entry->setAttribute('uuid', uuid());
-                }
-            }
+//            if (! starts_with($entry->getTable(), 'sv_')) {
+//                if ($entry->getResourceConfig()->hasUuid() && is_null($entry->uuid)) {
+//                    $entry->setAttribute('uuid', uuid());
+//                }
+//            }
         });
     }
 
@@ -64,6 +64,12 @@ class ResourceEntry extends Entry
                 $svRelation = $this->resolveRelation($name);
 
                 return $svRelation->newQuery();
+            } elseif ($relation = superv('relations')->get($this->getResourceIdentifier().'.'.$name)) {
+                if ($relation instanceof AcceptsParentEntry) {
+                    $relation->acceptParentEntry($this);
+                }
+
+                return $relation->newQuery();
             } else {
                 if ($field = $this->getResource()->getField($name)) {
                     $fieldType = $field->getFieldType();

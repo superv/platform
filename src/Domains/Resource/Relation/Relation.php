@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
+use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -66,12 +67,12 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         return $query;
     }
 
-    protected function newRelatedInstance(): ?EntryContract
+    protected function newRelatedInstance(): EntryContract
     {
         if ($model = $this->relationConfig->getRelatedModel()) {
             return new $model;
         } elseif ($handle = $this->relationConfig->getRelatedResource()) {
-            return ResourceFactory::make($handle)->newEntryInstance();
+            return EntryRepository::for($handle)->newInstance();
         }
 
         PlatformException::fail('Related resource/model not found ['.$this->getName().' :: '.$this->getType().']');

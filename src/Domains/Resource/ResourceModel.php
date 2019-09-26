@@ -183,4 +183,11 @@ class ResourceModel extends Entry implements ProvidesFields
 
         return $entry;
     }
+
+    public static function forgetCache($identifier)
+    {
+        $cacheKey = 'sv:resources:'.$identifier;
+
+        cache()->forget($cacheKey);
+    }
 }

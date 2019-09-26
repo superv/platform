@@ -19,11 +19,11 @@ class Blueprints
         $this->roles();
 
         $users = $this->create('tbl_users',
-            function (Blueprint $table, Config $resource) use ($callback) {
-                $resource->resourceKey('user');
-                $resource->label('Users');
-                $resource->setNamespace('testing');
-                $resource->setName('users');
+            function (Blueprint $table, Config $config) use ($callback) {
+                $config->resourceKey('user');
+                $config->label('Users');
+                $config->setNamespace('testing');
+                $config->setName('users');
 
                 $table->increments('id');
                 $table->string('name')->entryLabel();
@@ -55,7 +55,7 @@ class Blueprints
                 $table->hasMany('testing.comments', 'comments');
 
                 if ($callback) {
-                    $callback($table);
+                    $callback($table, $config);
                 }
             });
 

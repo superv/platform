@@ -6,5 +6,5 @@ use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry;
 
 class TestUser extends ResourceEntry
 {
-    protected $table = 'test_users';
+    protected $table = 'tbl_users';
 }

@@ -163,6 +163,24 @@ class CreateResourceTest extends ResourceTestCase
         $this->assertEquals('integer', $ageField->getColumnType());
     }
 
+    function test__table_schema_updates()
+    {
+        $this->create('test_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+        });
+
+        Schema::table('test_users', function (Blueprint $table) {
+            $table->number('age')->nullable();
+        });
+
+        $users = sv_resource('testing.test_users');
+
+//        dd(FieldModel::query()->where('identifier', 'LIKE', 'testing.test_users%')->get());
+
+        $this->assertNotNull($users->getField('age'));
+    }
+
     function test__fields_are_unique_per_resource()
     {
         $resourceEntry = $this->makeResourceModel('test_users', ['name']);
