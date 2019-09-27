@@ -39,7 +39,7 @@ class EntryRouter
     public function actions($action)
     {
         return sprintf(
-            sv_route('resource.entry.dashboard', [
+            sv_route('resource.entry.actions', [
                 'resource' => $this->entry->getResourceIdentifier(),
                 'id'       => $this->entry->getId(),
                 'action'   => $action,

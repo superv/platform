@@ -12,22 +12,19 @@ class UpdatePasswordAction extends ResourceEntryAction implements HandlesRequest
 
     protected $title = 'Update Password';
 
+    /** @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract */
     protected $entry;
 
     public function makeComponent(): ComponentContract
     {
         return parent::makeComponent()
                      ->setName('sv-modal-form')
-                     ->setProp('title', 'Update Password')
-                     ->setProp('fields', [
-                         [
-                             'type'  => 'text',
-                             'name'  => 'password',
-                             'label' => 'New Password',
-                         ],
-                     ])
-                     ->setProp('identifier', $this->name)
-                     ->setProp('url', url()->current().'/actions/update_password');
+                     ->setProps([
+                         'title'      => 'Update Password',
+                         'fields'     => $this->getFormFields(),
+                         'identifier' => $this->name,
+                         'url'        => $this->getActionUrl(),
+                     ]);
     }
 
     public function handleRequest(\Illuminate\Http\Request $request)
@@ -36,9 +33,24 @@ class UpdatePasswordAction extends ResourceEntryAction implements HandlesRequest
 
         return [
             'entry'  => $this->entry,
-            'events' =>
-                ['update_password:complete'],
+            'events' => ['update_password:complete'],
             'data'   => ['message' => 'Password Updated'],
+        ];
+    }
+
+    protected function getActionUrl(): string
+    {
+        return $this->entry->router()->actions('update_password');
+    }
+
+    protected function getFormFields(): array
+    {
+        return [
+            [
+                'type'  => 'text',
+                'name'  => 'password',
+                'label' => 'New Password',
+            ],
         ];
     }
 }
