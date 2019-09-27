@@ -12,6 +12,7 @@ use Tests\Platform\Domains\Resource\Fixtures\Extension\TestUserResourceExtension
 /**
  * Class ExtensionTest
  *
+ * @disabled
  * @package Tests\Platform\Domains\Resource
  * @group   resource
  */
@@ -110,7 +111,7 @@ class ExtensionTest
         $this->assertNotNull(Extension::get('platform.test_a'));
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

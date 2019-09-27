@@ -3,12 +3,16 @@
 namespace SuperV\Platform\Console\Jobs;
 
 use Artisan;
+use Current;
 use DB;
 use Exception;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema as SchemaBuilder;
 use Log;
 use Schema;
+use SuperV\Platform\Domains\Resource\Jobs\CreatePlatformResourceForms;
+use SuperV\Platform\Domains\Resource\Listeners\RegisterEntryEventListeners;
+use SuperV\Platform\Domains\Resource\ResourceServiceProvider;
 use SuperV\Platform\Domains\Resource\Support\PlatformBlueprints;
 use SuperV\Platform\Events\PlatformInstalledEvent;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -130,19 +134,25 @@ class InstallSuperV
     {
         $this->prepareMigrationsTable();
 
-        PlatformBlueprints::createTables();
-
         $platformServiceProvider->registerBase();
+        $platformServiceProvider->bindUserModel();
+        app()->register(ResourceServiceProvider::class);
+
+        Current::setMigrationScope('platform');
+        PlatformBlueprints::createTables();
+        PlatformBlueprints::createResources();
 
         $this->setEnv('SV_INSTALLED=true');
         config(['superv.installed' => true]);
 
-        $platformServiceProvider->register();
-
-        PlatformBlueprints::createResources();
 
         Artisan::call('migrate', ['--namespace' => 'platform', '--force' => true]);
 
+        CreatePlatformResourceForms::dispatch();
+
+        app()->register(PlatformServiceProvider::class, true);
+
+        RegisterEntryEventListeners::dispatch();
     }
 
     protected function prepareMigrationsTable(): void

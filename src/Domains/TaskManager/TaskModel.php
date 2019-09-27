@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\TaskManager;
 
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry;
 use SuperV\Platform\Domains\TaskManager\Contracts\Task;
 use SuperV\Platform\Domains\TaskManager\Contracts\TaskHandler;
 

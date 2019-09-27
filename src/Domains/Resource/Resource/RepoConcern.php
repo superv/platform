@@ -4,34 +4,28 @@ namespace SuperV\Platform\Domains\Resource\Resource;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntryFake;
 use SuperV\Platform\Domains\Resource\Fake;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntryFake;
 
+/**
+ * Trait RepoConcern
+ * @method \SuperV\Platform\Domains\Resource\ResourceConfig config()
+ *
+ * @package SuperV\Platform\Domains\Resource\Resource
+ * @property \SuperV\Platform\Domains\Resource\Database\Entry\EntryRepositoryInterface $entryRepository
+ */
 trait RepoConcern
 {
     protected $with = [];
 
-    protected $scopes = [];
-
-    public function addScope($scope)
+    public function getWith(): array
     {
-        $this->scopes[] = $scope;
+        return $this->with;
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function newQuery()
+    public function newQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        $query = $this->newEntryInstance()->newQuery()->with($this->with);
-
-        foreach ($this->scopes as $scope) {
-            $scope($query);
-        }
-
-        return $query;
+        return $this->entryRepository->newQuery();
     }
 
     public function with($relation)
@@ -43,55 +37,30 @@ trait RepoConcern
 
     public function newEntryInstance()
     {
-        if ($model = $this->config->getModel()) {
-            // Custom Entry Model
-            $entry = new $model;
-        } else {
-            // Anonymous Entry Model
-            $entry = ResourceEntry::make($this);
-        }
-
-        $this->getFields()->map(function (Field $field) use ($entry) {
-            if ($value = $field->getConfigValue('default_value')) {
-                $entry->setAttribute($field->getColumnName(), $value);
-            }
-        });
-
-        return $entry;
+        return $this->entryRepository->newInstance();
     }
 
     public function create(array $attributes = []): EntryContract
     {
-        $query = $this->newEntryInstance()->newQuery();
-
-        return $query->create($attributes);
-//        return $this->newEntryInstance()->setResource($this)->create($attributes);
+        return $this->entryRepository->create($attributes);
     }
 
     public function find($id): ?EntryContract
     {
-        if (! $entry = $this->newQuery()->find($id)) {
-            return null;
-        }
-
-        return $entry;
+        return $this->entryRepository->find($id);
     }
 
     public function first(): ?EntryContract
     {
-        if (! $entry = $this->newQuery()->first()) {
-            return null;
-        }
-
-        return $entry;
+        return $this->entryRepository->first();
     }
 
     public function count(): int
     {
-        return $this->newQuery()->count();
+        return $this->entryRepository->count();
     }
 
-    /** @return  \SuperV\Platform\Domains\Resource\Model\ResourceEntry|array */
+    /** @return  \SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry|array */
     public function fake(array $overrides = [], int $number = 1, Closure $callback = null)
     {
         return ResourceEntryFake::make($this, $overrides, $number, $callback);

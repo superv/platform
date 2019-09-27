@@ -9,12 +9,13 @@ use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Contracts\RequiresResource;
+use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
+use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryCreatedEvent;
+use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\Jobs\GetRules;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
-use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatedEvent;
-use SuperV\Platform\Domains\Resource\Model\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\Extender;
 use SuperV\Platform\Domains\Resource\Resource\Fields;
@@ -129,6 +130,9 @@ class Resource implements
 
     protected $extended = false;
 
+    /** @var \SuperV\Platform\Domains\Resource\Database\Entry\EntryRepositoryInterface */
+    protected $entryRepository;
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
@@ -138,6 +142,8 @@ class Resource implements
         $this->relations = ($this->relations)($this);
 
         $this->actions = collect();
+
+        $this->entryRepository = EntryRepository::resolve()->setResource($this);
     }
 
     public function config(): ResourceConfig

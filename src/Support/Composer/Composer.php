@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Arrayable;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry;
 
 class Composer
 {
@@ -87,16 +87,6 @@ class Composer
                 }
             }
 
-            /**
-             * Search  nearby composers of the Interface
-             */
-//            if ($interfaces = class_implements($data)) {
-//                foreach ($interfaces as $interface) {
-//                    if (class_exists($class = $interface.'Composer')) {
-//                        return $this->compose((new $class($data))->compose($this->params));
-//                    }
-//                }
-//            }
 
             /**
              * Search in Port Composers

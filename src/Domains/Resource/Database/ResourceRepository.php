@@ -33,10 +33,6 @@ class ResourceRepository
         ];
 
         if ($config->getNamespace() !== 'platform') {
-//            DB::table('sv_auth_actions')->insert([
-//                'namespace' => $config->getNamespace(),
-//                'slug'      => $config->getNamespace().'.'.$config->getName(),
-//            ]);
             Action::query()->create([
                 'namespace' => $config->getNamespace(),
                 'slug'      => $config->getNamespace().'.'.$config->getName(),

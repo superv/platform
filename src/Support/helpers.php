@@ -2,7 +2,9 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Routing\UrlGenerator;
@@ -112,18 +114,6 @@ function get_callers($limit = 10): Collection
     })->filter()->first();
 
     return collect([$callers]);
-}
-
-function reload_env()
-{
-    foreach (file(base_path('.env'), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-        // Check for # comments.
-        if (! starts_with($line, '#')) {
-            if (starts_with($line, 'SUPERV_')) {
-                putenv($line);
-            }
-        }
-    }
 }
 
 function mysql_now()
@@ -410,4 +400,139 @@ function wrap_array($obj)
     }
 
     return [$obj];
+}
+
+if (! function_exists('studly_case')) {
+    function studly_case($value)
+    {
+        return Str::studly($value);
+    }
+}
+
+if (! function_exists('camel_case')) {
+    function camel_case($value)
+    {
+        return Str::camel($value);
+    }
+}
+
+if (! function_exists('snake_case')) {
+    function snake_case($value)
+    {
+        return Str::snake($value);
+    }
+}
+
+if (! function_exists('str_contains')) {
+    function str_contains($haystack, $needles)
+    {
+        return Str::contains($haystack, $needles);
+    }
+}
+
+if (! function_exists('starts_with')) {
+    function starts_with($haystack, $needles)
+    {
+        return Str::startsWith($haystack, $needles);
+    }
+}
+
+if (! function_exists('ends_with')) {
+    function ends_with($haystack, $needles)
+    {
+        return Str::endsWith($haystack, $needles);
+    }
+}
+
+if (! function_exists('str_slug')) {
+    function str_slug($title, $separator = '-', $language = 'en')
+    {
+        return Str::slug($title, $separator, $language);
+    }
+}
+if (! function_exists('str_singular')) {
+    function str_singular($value)
+    {
+        return Str::singular($value);
+    }
+}
+if (! function_exists('str_plural')) {
+    function str_plural($value)
+    {
+        return Str::plural($value);
+    }
+}
+if (! function_exists('str_random')) {
+    function str_random($length = 12)
+    {
+        return Str::random($length);
+    }
+}
+
+if (! function_exists('str_replace_last')) {
+    function str_replace_last($search, $replace, $subject)
+    {
+        return Str::replaceLast($search, $replace, $subject);
+    }
+}
+
+if (! function_exists('str_replace_first')) {
+    function str_replace_first($search, $replace, $subject)
+    {
+        return Str::replaceFirst($search, $replace, $subject);
+    }
+}
+
+if (! function_exists('str_is')) {
+    function str_is($pattern, $value)
+    {
+        return Str::is($pattern, $value);
+    }
+}
+
+if (! function_exists('array_first')) {
+    function array_first($array, callable $callback = null, $default = null)
+    {
+        return Arr::first($array, $callback, $default);
+    }
+}
+if (! function_exists('array_random')) {
+    function array_random($array, $number = null)
+    {
+        return Arr::random($array, $number);
+    }
+}
+
+if (! function_exists('array_get')) {
+    function array_get($array, $key, $default = null)
+    {
+        return Arr::get($array, $key, $default);
+    }
+}
+
+if (! function_exists('array_set')) {
+    function array_set(&$array, $key, $value)
+    {
+        return Arr::set($array, $key, $value);
+    }
+}
+
+if (! function_exists('array_flatten')) {
+    function array_flatten($array, $depth = INF)
+    {
+        return Arr::flatten($array, $depth);
+    }
+}
+if (! function_exists('array_except')) {
+    function array_except($array, $keys)
+    {
+        return Arr::except($array, $keys);
+    }
+}
+
+if (! function_exists('array_pull')) {
+    function array_pull(&$array, $key, $default = null)
+    {
+        return Arr::pull($array, $key, $default);
+    }
 }

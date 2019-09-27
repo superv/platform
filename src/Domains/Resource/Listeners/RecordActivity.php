@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use Current;
+use Exception;
 use SuperV\Platform\Domains\Resource\Resource\ResourceActivityEvent;
 
 class RecordActivity
@@ -14,18 +15,21 @@ class RecordActivity
             return;
         }
 
-        $resource = sv_resource($route->parameter('resource'));
-        $entryType = $resource->newEntryInstance()->getMorphClass();
-
-        sv_resource('platform.activities')->create([
-            'user_id'     => $event->request->user()->getKey(),
-            'resource_id' => $resource->id(),
-            'entry_type'  => $entryType,
-            'entry_id'    => (int)$route->parameter('id'),
-            'activity'    => $activity,
-            'payload'     => json_encode($event->request->all()),
-            'created_at'  => Current::time(),
-        ]);
+        try {
+            $resource = sv_resource($route->parameter('resource'));
+            $entryType = $resource->newEntryInstance()->getMorphClass();
+            sv_resource('platform.activities')->create([
+                'user_id'     => $event->request->user()->getKey(),
+                'resource_id' => $resource->id(),
+                'entry_type'  => $entryType,
+                'entry_id'    => (int)$route->parameter('id'),
+                'activity'    => $activity,
+                'payload'     => json_encode($event->request->all()),
+                'created_at'  => Current::time(),
+            ]);
+        } catch (Exception $e) {
+            sv_console("Can not record activity: ".$e->getMessage());
+        }
     }
 
     protected function shouldRecord($activity)

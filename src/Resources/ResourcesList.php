@@ -19,7 +19,7 @@ class ResourcesList implements ListResolvedHook, ListConfigHook
     public function config(Table $table, IndexFields $fields)
     {
         $table->showIdColumn();
-        $table->setOption('limit', 3);
+        $table->setOption('limit', 10);
 
         $fields->get('identifier')->searchable();
         $fields->get('namespace')->copyToFilters();

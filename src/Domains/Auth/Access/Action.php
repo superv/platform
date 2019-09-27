@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Auth\Access;
 
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry;
 
 class Action extends ResourceEntry
 {

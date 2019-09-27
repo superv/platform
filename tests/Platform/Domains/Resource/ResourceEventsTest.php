@@ -6,9 +6,9 @@ use Current;
 use Event;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatedEvent;
-use SuperV\Platform\Domains\Resource\Model\Events\EntryCreatingEvent;
-use SuperV\Platform\Domains\Resource\Model\Events\EntryDeletedEvent;
+use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryCreatedEvent;
+use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryCreatingEvent;
+use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
@@ -81,7 +81,7 @@ class ResourceEventsTest extends ResourceTestCase
         });
         ResourceFactory::wipe();
 
-        Resource::extend('platform.t_confirmations')->with(function (Resource $resource) {
+        Resource::extend('testing.t_confirmations')->with(function (Resource $resource) {
             $resource->onCreated(function (EntryContract $entry) {
                 $entry->load('user')->user->update(['confirmed_at' => $entry->created_at]);
             });

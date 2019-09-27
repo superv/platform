@@ -11,6 +11,14 @@ use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class ArrayField extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier
 {
+    protected function boot()
+    {
+        $this->field->on('form.accessing', $this->getAccessor());
+        $this->field->on('form.mutating', $this->getModifier());
+        $this->field->on('view.presenting', $this->getAccessor());
+        $this->field->on('table.presenting', $this->getAccessor());
+    }
+
     public function getAccessor(): Closure
     {
         return function ($value) {
@@ -25,7 +33,14 @@ class ArrayField extends FieldType implements RequiresDbColumn, HasAccessor, Has
     public function getModifier(): Closure
     {
         return function ($value, EntryContract $entry) {
-            return $value;
+            if (is_string($value)) {
+                return $value;
+            }
+            if (array_key_exists($this->field->getColumnName(), $entry->getCasts())) {
+                return $value;
+            }
+
+            return json_encode($value);
         };
     }
 }

@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Model\Events;
+use SuperV\Platform\Domains\Resource\Database\Entry\Events;
 use SuperV\Platform\Support\Dispatchable;
 
 class RegisterEntryEventListeners

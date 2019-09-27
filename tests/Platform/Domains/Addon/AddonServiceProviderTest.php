@@ -33,7 +33,7 @@ class AddonServiceProviderTest extends TestCase
 
         $this->setUpAddon();
 
-        $this->app['events']->fire(new TestEvent());
+        $this->app['events']->dispatch(new TestEvent());
         $this->assertEquals(TestEvent::class, $_SERVER['__event.class']);
     }
 
@@ -43,8 +43,8 @@ class AddonServiceProviderTest extends TestCase
 
         $hints = $this->app['view']->getFinder()->getHints();
 
-        $this->assertContains(base_path($addon->resourcePath('views')), $hints['sample']);
-        $this->assertContains(resource_path('vendor/'.$addon->getVendor().'/'.$addon->getIdentifier().'/views'), $hints['sample']);
+        $this->assertArrayContains(base_path($addon->resourcePath('views')), $hints['sample']);
+        $this->assertArrayContains(resource_path('vendor/'.$addon->getVendor().'/'.$addon->getIdentifier().'/views'), $hints['sample']);
         $this->assertDirectoryExists(reset($hints['sample']));
     }
 

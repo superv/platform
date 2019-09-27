@@ -1,0 +1,20 @@
+<?php
+
+namespace SuperV\Platform\Domains\Resource\Database\Entry;
+
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+
+interface EntryRepositoryInterface
+{
+    public function getEntry(string $identifier, int $id = null): ?EntryContract;
+
+    public function create(array $attributes = []);
+
+    public function update(string $identifier, array $attributes = []);
+
+    public function newInstance(): EntryContract;
+
+    public function count(): int;
+
+    public function newQuery(): \Illuminate\Database\Eloquent\Builder;
+}

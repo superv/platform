@@ -26,7 +26,7 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
     public function getModifier(): Closure
     {
         return function ($value, EntryContract $entry) {
-            $this->value = $value ? explode(',', $value) : [];
+            $this->value = $value ? json_decode($value) : [];
 
             return function () use ($entry) {
                 if (! $entry) {

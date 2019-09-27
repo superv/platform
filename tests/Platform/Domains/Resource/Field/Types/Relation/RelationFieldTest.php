@@ -14,13 +14,13 @@ class RelationFieldTest extends ResourceTestCase
 
         $config = $this->getFieldConfig('students', 'address');
         $this->assertEquals('students', $config->getSelf());
-        $this->assertEquals('platform.addresses', $config->getRelated());
+        $this->assertEquals('testing.addresses', $config->getRelated());
         $this->assertEquals('student_id', $config->getForeignKey());
         $this->assertTrue($config->getRelationType()->isOneToOne());
         $this->assertTrue($config->isRequired());
 
         $config = $this->getFieldConfig('addresses', 'student');
-        $this->assertEquals('platform.students', $config->getRelated());
+        $this->assertEquals('testing.students', $config->getRelated());
         $this->assertEquals('student_id', $config->getLocalKey());
         $this->assertTrue($config->getRelationType()->isOneToOne());
         $this->assertFalse($config->isRequired());
@@ -32,7 +32,7 @@ class RelationFieldTest extends ResourceTestCase
     function test__config_one_to_many()
     {
         $config = $this->getFieldConfig('teachers', 'courses');
-        $this->assertEquals('platform.courses', $config->getRelated());
+        $this->assertEquals('testing.courses', $config->getRelated());
         $this->assertEquals('teacher_id', $config->getForeignKey());
         $this->assertTrue($config->getRelationType()->isOneToMany());
     }
@@ -40,7 +40,7 @@ class RelationFieldTest extends ResourceTestCase
     function test__config_many_to_many()
     {
         $config = $this->getFieldConfig('students', 'courses');
-        $this->assertEquals('platform.courses', $config->getRelated());
+        $this->assertEquals('testing.courses', $config->getRelated());
         $this->assertEquals('students_courses', $config->getPivotTable());
         $this->assertEquals('student_id', $config->getPivotForeignKey());
         $this->assertEquals('course_id', $config->getPivotRelatedKey());
@@ -62,7 +62,7 @@ class RelationFieldTest extends ResourceTestCase
     function test__associate()
     {
         $student = $this->makeStudent();
-        $address = sv_resource('platform.addresses')->create(['id' => 34, 'title' => 'Home']);
+        $address = sv_resource('testing.addresses')->create(['id' => 34, 'title' => 'Home']);
 
         $address->student()->associate($student);
         $this->assertEquals($student->getId(), $address->student_id);
@@ -70,7 +70,7 @@ class RelationFieldTest extends ResourceTestCase
 
     function test__one_to_many()
     {
-        $teacher = sv_resource('platform.teachers')->create(['name' => 'Some Guy']);
+        $teacher = sv_resource('testing.teachers')->create(['name' => 'Some Guy']);
         $course = $teacher->courses()->create([
             'title' => 'Course A',
         ]);
@@ -79,14 +79,14 @@ class RelationFieldTest extends ResourceTestCase
         $this->assertEquals($teacher->getId(), $course->teacher_id);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $config = $this->create('addresses', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
 
-            $table->relatedToOne('platform.students', 'student')
+            $table->relatedToOne('testing.students', 'student')
                   ->withLocalKey('student_id')
                   ->required(false);
         });
@@ -97,10 +97,10 @@ class RelationFieldTest extends ResourceTestCase
             $table->increments('id');
             $table->string('name');
 
-            $table->relatedToOne('platform.addresses')
+            $table->relatedToOne('testing.addresses')
                   ->withForeignKey('student_id');
 
-            $table->relatedManyToMany('platform.courses')
+            $table->relatedManyToMany('testing.courses')
                   ->withPivotTable('students_courses');
         });
 
@@ -108,7 +108,7 @@ class RelationFieldTest extends ResourceTestCase
             $table->increments('id');
             $table->string('title');
 
-            $table->relatedToOne('platform.teachers')
+            $table->relatedToOne('testing.teachers')
                   ->withLocalKey('teacher_id');
         });
 
@@ -116,21 +116,21 @@ class RelationFieldTest extends ResourceTestCase
             $table->increments('id');
             $table->string('name');
 
-            $table->relatedToMany('platform.courses')
+            $table->relatedToMany('testing.courses')
                   ->withForeignKey('teacher_id');
         });
     }
 
     protected function makeStudent(): \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract
     {
-        $student = sv_resource('platform.students')->create(['id' => 12, 'name' => 'Super Student']);
+        $student = sv_resource('testing.students')->create(['id' => 12, 'name' => 'Super Student']);
 
         return $student;
     }
 
     protected function getFieldConfig(string $resource, string $fieldName): RelationFieldConfig
     {
-        $field = ResourceFactory::make('platform.'.$resource)->getField($fieldName);
+        $field = ResourceFactory::make('testing.'.$resource)->getField($fieldName);
 
         return $field->getFieldType()->getConfig();
     }

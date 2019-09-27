@@ -69,7 +69,7 @@ class FieldRepositoryTest extends ResourceTestCase
         $this->assertNotInstanceOf(GhostField::class, $field);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->repo = FieldRepository::resolve();

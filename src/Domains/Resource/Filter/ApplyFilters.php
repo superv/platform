@@ -26,6 +26,9 @@ class ApplyFilters
      */
     protected $request;
 
+    /** @var array */
+    protected $filterValues;
+
     public function __construct(Collection $filters, $query, ?Request $request)
     {
         $this->filters = $filters;
@@ -35,31 +38,41 @@ class ApplyFilters
 
     public function handle()
     {
-        if (! $this->request) {
-            return;
+        if (! $this->validate()) {
+            return false;
         }
 
-        if ($this->filters->isEmpty()) {
-            return;
-        }
+        $this->decodeRequest();
 
-        if (! $request = $this->request->get('filters')) {
-            return;
-        }
-
-        if ($decoded = base64_decode($this->request->get('filters'))) {
-            if ($hydrated = json_decode($decoded, true)) {
-                if (is_array($hydrated)) {
-                    $request = $hydrated;
-                }
-            }
-        }
-
-        $this->filters->map(function (Filter $filter) use ($request) {
-            $filterValue = array_get($request, $filter->getIdentifier());
-            if (!is_null($filterValue)) {
+        $this->filters->map(function (Filter $filter) {
+            $filterValue = array_get($this->filterValues, $filter->getIdentifier());
+            if (! is_null($filterValue)) {
                 $filter->applyQuery($this->query, $filterValue);
             }
         });
+
+        return true;
+    }
+
+    protected function validate()
+    {
+        if (! $this->request) {
+            return false;
+        }
+
+        if ($this->filters->isEmpty()) {
+            return false;
+        }
+
+        if (! $this->request->has('filters')) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function decodeRequest()
+    {
+        $this->filterValues = DecodeRequest::dispatch($this->request, 'filters');
     }
 }

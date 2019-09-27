@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database\Model\Contracts;
 
-use SuperV\Platform\Domains\Resource\Model\EntryRouter;
+use SuperV\Platform\Domains\Resource\Database\Entry\EntryRouter;
 
 interface EntryContract
 {
@@ -46,5 +46,11 @@ interface EntryContract
 
     public function fresh();
 
+    public function newQuery(): \Illuminate\Database\Eloquent\Builder;
+
     public function router(): EntryRouter;
+
+    public function setRelationKeys($relationKeys);
+
+    public function getRelationKeys();
 }

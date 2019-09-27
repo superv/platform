@@ -180,6 +180,11 @@ class Fake
         return $this->faker->text;
     }
 
+    protected function fakeDictionary()
+    {
+        return $this->faker->rgbColorAsArray;
+    }
+
     protected function fakeSelect(Field $field)
     {
         return array_random(wrap_array($field->getConfigValue('options')));

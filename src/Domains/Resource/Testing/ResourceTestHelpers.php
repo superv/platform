@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Testing;
 
 use Closure;
 use Current;
+use Exception;
 use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
@@ -59,7 +60,7 @@ trait ResourceTestHelpers
         if (str_contains($table, '.')) {
             list($namespace, $table) = explode('.', $table);
         } else {
-            $namespace = 'platform';
+            $namespace = 'testing';
         }
 
         Current::setMigrationScope($namespace);
@@ -170,5 +171,24 @@ trait ResourceTestHelpers
             'name'       => 'title',
             'type'       => 'text',
         ], $overrides);
+    }
+
+    protected function postCreateResource($resource, array $post = [])
+    {
+        /** @var \SuperV\Platform\Domains\Resource\Resource $resource */
+        if (is_string($resource)) {
+            $resource = ResourceFactory::make($resource);
+        }
+
+        $response = $this->postJsonUser($resource->router()->createForm(), $post);
+
+        if (! $response->isOk()) {
+            $data = $response->decodeResponseJson();
+            throw new Exception('Can not post create resource: '.$resource->getIdentifier().' ['.json_encode($data).']');
+        }
+
+        $entryId = $response->decodeResponseJson('data')['entry']['id'];
+
+        return $resource->find($entryId);
     }
 }

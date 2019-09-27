@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use SuperV\Platform\Domains\Auth\Access\HasActions;
 use SuperV\Platform\Domains\Auth\Access\HasActionsInterface;
 use SuperV\Platform\Domains\Auth\Contracts\User as UserContract;
-use SuperV\Platform\Domains\Resource\Model\ResourceEntry;
+use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends ResourceEntry implements

@@ -13,6 +13,7 @@ use SuperV\Platform\Domains\Resource\Form\EntryForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Testing\FormComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -189,11 +190,12 @@ class FormTest extends ResourceTestCase
         $this->assertEquals(1, Media::count());
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->users = $this->create('tbl_users', function (Blueprint $table) {
+        $this->users = $this->create('tbl_users', function (Blueprint $table, ResourceConfig $config) {
+            $config->setIdentifier('testing.users');
             $table->increments('id');
             $table->string('name');
             $table->unsignedInteger('age');

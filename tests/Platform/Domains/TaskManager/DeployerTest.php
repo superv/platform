@@ -6,7 +6,7 @@ use Exception;
 use SuperV\Platform\Domains\TaskManager\Deployer;
 use Tests\Platform\Domains\TaskManager\Fixtures\TestHandler;
 
-class DeployerTest extends TestCase
+class DeployerTest extends TaskManagerTest
 {
     function test__deploy()
     {

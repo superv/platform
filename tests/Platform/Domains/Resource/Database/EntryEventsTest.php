@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource\Model;
+namespace Tests\Platform\Domains\Resource\Database;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
@@ -13,7 +13,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
  * @package Tests\Platform\Domains\Resource
  * @group   resource
  */
-class EntryTest extends ResourceTestCase
+class EntryEventsTest extends ResourceTestCase
 {
     protected $dispatchedEvents = [];
 
@@ -139,7 +139,7 @@ class EntryTest extends ResourceTestCase
         $this->assertEquals($this->testUser->id, $posts->first()->updated_by_id);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

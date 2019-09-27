@@ -3,6 +3,7 @@
 namespace SuperV\Platform;
 
 use Current;
+use Event;
 use Hub;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
@@ -104,13 +105,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->bindUserModel();
 
-        $this->registerListeners($this->listeners);
-
-//        $this->registerListeners([
-//            'platform.registered' => function () {
-//                $this->registerProviders($this->providers);
-//            },
-//        ]);
+        $this->registerPlatformListeners();
 
         $this->addViewNamespaces([
             'superv' => realpath(__DIR__.'/../resources/views'),
@@ -118,8 +113,9 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->registerDefaultPort();
 
-        event('platform.registered');
-        $this->registerProviders($this->providers);
+        $this->registerPlatformProviders();
+
+        Event::dispatch('platform.registered');
     }
 
     public function boot()
@@ -135,7 +131,6 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         superv('addons')->put('superv.platform', $this->platform);
 
-
         // Boot all addons
         //
         $this->platform->boot();
@@ -147,7 +142,21 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->registerPlatformRoutes();
 
         $this->setupTranslations();
+    }
 
+    public function registerPlatformProviders()
+    {
+        $this->registerProviders($this->providers);
+    }
+
+    public function registerPlatformListeners()
+    {
+        $this->registerListeners($this->listeners);
+    }
+
+    public function bindUserModel(): void
+    {
+        $this->app->bind(User::class, sv_config('auth.user.model'));
     }
 
     protected function setupTranslations()
@@ -159,11 +168,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->publishes([
             $this->platform->realPath('resources/lang') => resource_path('lang/vendor/superv'),
         ]);
-    }
-
-    protected function bindUserModel(): void
-    {
-        $this->app->bind(User::class, sv_config('auth.user.model'));
     }
 
     protected function registerCollectionMacros()

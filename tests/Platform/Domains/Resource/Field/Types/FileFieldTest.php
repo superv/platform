@@ -36,7 +36,7 @@ class FileFieldTest extends ResourceTestCase
 
         $fake = $res->fake();
         /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field $field */
-        $field = $fake->getField('avatar');
+        $field = $fake->getResource()->getField('avatar');
 
         $this->assertEquals('file', $field->getType());
         $this->assertEquals(['disk' => 'fakedisk'], $field->getConfig());

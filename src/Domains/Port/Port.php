@@ -100,6 +100,11 @@ class Port
         return $this->secure;
     }
 
+    public function setNavigationSlug($navigationSlug): void
+    {
+        $this->navigationSlug = $navigationSlug;
+    }
+
     protected function protocol()
     {
         return $this->isSecure() ? 'https://' : 'http://';

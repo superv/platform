@@ -24,6 +24,7 @@ class LookupController extends BaseApiController
             $query = $resource->newQuery();
 
             $keyName = $query->getModel()->getKeyName();
+
             $alreadyAttachedItems = $this->entry->{$relation->getName()}()
                                                 ->pluck($resource->config()->getTable().'.'.$keyName);
 

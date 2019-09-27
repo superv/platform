@@ -14,6 +14,7 @@ use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Relation\Contracts\ProvidesField;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\Relation\RelationRepository;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Exceptions\ValidationException;
@@ -124,6 +125,9 @@ class SaveFieldEntry
         if ($formEntry = FormModel::findByResource($this->resource->getId())) {
             $formEntry->attachField($this->field->getId());
         }
+
+        ResourceFactory::$cache = [];
+        ResourceModel::forgetCache($this->resource->getIdentifier());
     }
 
     protected function makeConfig(ColumnDefinition $column)
@@ -182,7 +186,7 @@ class SaveFieldEntry
             ]);
 
         if (! $this->field->exists()) {
-            $this->repository->create($this->field->toArray());
+            $this->field = $this->repository->create($this->field->toArray());
         } else {
             $this->field->save();
         }

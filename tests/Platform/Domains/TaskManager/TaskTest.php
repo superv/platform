@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\TaskManager\Contracts\Task;
 use SuperV\Platform\Domains\TaskManager\Contracts\TaskHandler;
 use Tests\Platform\Domains\TaskManager\Fixtures\TestHandler;
 
-class TaskTest extends TestCase
+class TaskTest extends TaskManagerTest
 {
     function test__create()
     {

@@ -45,7 +45,7 @@ class ResourceConfig
     /** @var \SuperV\Platform\Domains\Resource\ResourceDriver */
     protected $driver;
 
-    protected static $__cache = [];
+    public static $__cache = [];
 
     protected function __construct(array $attributes = [], $overrideDefault = true)
     {
@@ -252,6 +252,11 @@ class ResourceConfig
         return $this->getDriver()->getParam('table');
     }
 
+    public function getConnection()
+    {
+        return $this->getDriver()->getParam('connection');
+    }
+
     /**
      * @return mixed
      */
@@ -314,12 +319,12 @@ class ResourceConfig
 
         ResourceConfigResolvedEvent::fire($config);
 
-        Event::fire(sprintf("%s.events:config_resolved", $config->getIdentifier()), $config);
+        Event::dispatch(sprintf("%s.events:config_resolved", $config->getIdentifier()), $config);
 
         return $config;
     }
 
-    public static function find($identifier)
+    public static function find($identifier): ResourceConfig
     {
         if (! $identifier) {
             PlatformException::runtime('Identifier can not be null');

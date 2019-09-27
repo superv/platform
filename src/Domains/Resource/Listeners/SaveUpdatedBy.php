@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use Current;
-use SuperV\Platform\Domains\Resource\Model\Events\EntrySavingEvent;
+use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntrySavingEvent;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 

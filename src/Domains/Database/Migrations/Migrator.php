@@ -49,11 +49,9 @@ class Migrator extends BaseMigrator
 
         $this->note("<comment>Migrating:</comment> {$name}");
 
+        $startTime = microtime(true);
+
         $scope = $this->setMigrationScope($migration);
-//        if ($migration instanceof PlatformMigration) {
-//            $this->note("<info>$scope</info>");
-//            $this->note("<info>{$migration->getNamespace()}</info>");
-//        }
 
         if ($scope && ! Platform::isInstalled()) {
             $this->note("<info>Skipped:</info>  {$name}");
@@ -62,7 +60,9 @@ class Migrator extends BaseMigrator
 
             $this->repository->log($name, $batch);
 
-            $this->note("<info>Migrated:</info>  {$name}");
+            $runTime = round(microtime(true) - $startTime, 2);
+
+            $this->note("<info>Migrated:</info>  {$name} ({$runTime} seconds)");
         }
     }
 

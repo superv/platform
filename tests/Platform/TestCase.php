@@ -8,7 +8,7 @@ use SuperV\Platform\Testing\PlatformTestCase;
 
 class TestCase extends PlatformTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

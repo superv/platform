@@ -9,10 +9,10 @@ class EntryController extends BaseApiController
 {
     use ResolvesResource;
 
-    public function show()
-    {
-        $this->resolveResource();
-
-        return ['data' => ['entry' => sv_compose($this->entry)]];
-    }
+//    public function show()
+//    {
+//        $this->resolveResource();
+//
+//        return ['data' => ['entry' => sv_compose($this->entry)]];
+//    }
 }

@@ -11,11 +11,12 @@ use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
+use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
+use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepositoryInterface;
+use SuperV\Platform\Domains\Resource\Database\Entry\Events;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FieldComposer;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilderInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface as FormContract;
-use SuperV\Platform\Domains\Resource\Form\v2\EntryRepository;
-use SuperV\Platform\Domains\Resource\Form\v2\EntryRepositoryInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Form;
 use SuperV\Platform\Domains\Resource\Form\v2\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFieldComposer;
@@ -23,26 +24,26 @@ use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
 use SuperV\Platform\Domains\Resource\Listeners\RegisterEntryEventListeners;
 use SuperV\Platform\Domains\Resource\Relation\RelationCollection;
-use SuperV\Platform\Events\PlatformInstalledEvent;
 use SuperV\Platform\Providers\BaseServiceProvider;
 
 class ResourceServiceProvider extends BaseServiceProvider
 {
     protected $listeners = [
-        ColumnCreatedEvent::class              => Listeners\SaveFieldEntry::class,
-        ColumnUpdatedEvent::class              => Listeners\SaveFieldEntry::class,
-        ColumnDroppedEvent::class              => Listeners\DeleteField::class,
-        TableCreatingEvent::class              => Listeners\CreateResource::class,
-        TableCreatedEvent::class               => Listeners\CreateResourceForm::class,
-        PlatformInstalledEvent::class          => Jobs\CreatePlatformResourceForms::class,
-        AddonBootedEvent::class                => Listeners\RegisterExtensions::class,
-        Model\Events\EntrySavingEvent::class   => [
-            Listeners\SaveUpdatedBy::class, //            Listeners\ValidateSavingEntry::class,
+        ColumnCreatedEvent::class             => Listeners\SaveFieldEntry::class,
+        ColumnUpdatedEvent::class             => Listeners\SaveFieldEntry::class,
+        ColumnDroppedEvent::class             => Listeners\DeleteField::class,
+        TableCreatingEvent::class             => Listeners\CreateResource::class,
+        TableCreatedEvent::class              => Listeners\CreateResourceForm::class,
+        //        PlatformInstalledEvent::class         => Jobs\CreatePlatformResourceForms::class,
+        AddonBootedEvent::class               => Listeners\RegisterExtensions::class,
+        Events\EntrySavingEvent::class        => [
+            Listeners\SaveUpdatedBy::class,
+            Jobs\ModifyEntryAttributes::class,
         ],
-        Model\Events\EntrySavedEvent::class    => [],
-        Model\Events\EntryCreatingEvent::class => Listeners\SaveCreatedBy::class,
-        Resource\ResourceActivityEvent::class  => Listeners\RecordActivity::class,
-        AddonUninstallingEvent::class          => DeleteAddonResources::class,
+        //        Events\EntryRetrievedEvent::class     => Jobs\AccessEntryAttributes::class,
+        Events\EntryCreatingEvent::class      => Listeners\SaveCreatedBy::class,
+        Resource\ResourceActivityEvent::class => Listeners\RecordActivity::class,
+        AddonUninstallingEvent::class         => DeleteAddonResources::class,
     ];
 
     protected $_bindings = [

@@ -4,20 +4,71 @@ namespace SuperV\Platform\Domains\Database\Model;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Database\Entry\Builder;
+use SuperV\Platform\Domains\Resource\Database\Entry\EntryRouter;
 use SuperV\Platform\Domains\Resource\Jobs\GetEntryResource;
-use SuperV\Platform\Domains\Resource\Model\EntryRouter;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 abstract class Entry extends Eloquent implements EntryContract
 {
-    /**
-     * @var string
-     */
+    /** @var \SuperV\Platform\Domains\Resource\Resource */
+    protected $resource;
+
+    /** @var string */
     protected $resourceIdentifier;
+
+    /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
+    protected $resourceConfig;
 
     protected $guarded = [];
 
     public $timestamps = false;
+
+    protected $relationKeys = [];
+
+    public function setRelationKeys($relationKeys)
+    {
+        $this->relationKeys = $relationKeys;
+
+        return $this;
+    }
+
+    public function getRelationKeys()
+    {
+        return $this->relationKeys;
+    }
+
+    /**
+     *  <superV> Overriding this to catch dynamic relations </superV>
+     *
+     * @param \Illuminate\Database\Query\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
+    public function newEloquentBuilder($query)
+    {
+        return new Builder($query);
+    }
+
+    public function newQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::newQuery();
+    }
+
+    public function router(): EntryRouter
+    {
+        return new EntryRouter($this);
+    }
+
+    public function getForeignKey()
+    {
+        return $this->getResourceConfig()->getResourceKey().'_id';
+    }
+
+    public function getMorphClass()
+    {
+        return $this->getResourceIdentifier() ?: parent::getMorphClass();
+    }
 
     public function getId()
     {
@@ -34,29 +85,13 @@ abstract class Entry extends Eloquent implements EntryContract
         return $this->exists;
     }
 
-    /**
-     * Create a new Eloquent query builder for the model.
-     *
-     * @param \Illuminate\Database\Query\Builder $query
-     * @return \SuperV\Platform\Domains\Database\Model\EloquentQueryBuilder|static
-     */
-    public function newEloquentBuilder($query)
+    public function getResource()
     {
-        return new EloquentQueryBuilder($query);
-    }
+        if (! $this->resource) {
+            $this->resource = ResourceFactory::make($this->getResourceConfig()->getIdentifier());
+        }
 
-    protected function newBaseQueryBuilder()
-    {
-        $connection = $this->getConnection();
-
-        return new QueryBuilder(
-            $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
-        );
-    }
-
-    public function router(): EntryRouter
-    {
-        return new EntryRouter($this);
+        return $this->resource;
     }
 
     public function getResourceConfig()
@@ -82,12 +117,8 @@ abstract class Entry extends Eloquent implements EntryContract
         return $this->resourceIdentifier;
     }
 
-    /**
-     * @param $id
-     * @return static
-     */
-    public static function find($id)
+    public function setResourceIdentifier(string $resourceIdentifier): void
     {
-        return static::query()->find($id);
+        $this->resourceIdentifier = $resourceIdentifier;
     }
 }

@@ -6,7 +6,7 @@ use Queue;
 use SuperV\Platform\Domains\TaskManager\Deployer;
 use SuperV\Platform\Domains\TaskManager\DeployTaskJob;
 
-class DeployTaskJobTest extends TestCase
+class DeployTaskJobTest extends TaskManagerTest
 {
     function test__queue()
     {

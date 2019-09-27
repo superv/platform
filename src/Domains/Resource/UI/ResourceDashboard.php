@@ -36,7 +36,7 @@ class ResourceDashboard
 
         $this->page = $page;
 
-        Event::fire($resource->getIdentifier().'.pages:dashboard.events:resolved', compact('page', 'resource'));
+        Event::dispatch($resource->getIdentifier().'.pages:dashboard.events:resolved', compact('page', 'resource'));
     }
 
     public function render()
@@ -84,7 +84,7 @@ class ResourceDashboard
 
         $page = $page->build(['res' => $resource->toArray()]);
 
-        Event::fire($resource->getIdentifier().'.pages:dashboard.events:rendered', compact('page', 'resource'));
+        Event::dispatch($resource->getIdentifier().'.pages:dashboard.events:rendered', compact('page', 'resource'));
 
         return $page->toResponse([]);
     }

@@ -28,7 +28,7 @@ class ResourceController extends BaseApiController
     {
         $resource = $this->resolveResource(false);
 
-        /** @var    \SuperV\Platform\Domains\Resource\Model\ResourceEntry $entry */
+        /** @var    \SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry $entry */
         $entry = $resource->newQuery()->withTrashed()->find(request()->route()->parameter('id'));
 
         $entry->restore();

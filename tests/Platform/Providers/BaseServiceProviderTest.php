@@ -70,10 +70,10 @@ class BaseServiceProviderTest extends TestCase
             ],
         ]);
 
-        $this->app['events']->fire(new TestEvent());
+        $this->app['events']->dispatch(new TestEvent());
         $this->assertEquals(TestEvent::class, $_SERVER['__event.class']);
 
-        $this->app['events']->fire(new AnotherEvent());
+        $this->app['events']->dispatch(new AnotherEvent());
         $this->assertEquals(AnotherEvent::class, $_SERVER['__event.class']);
     }
 
@@ -101,8 +101,8 @@ class BaseServiceProviderTest extends TestCase
         ]);
 
         $hints = $this->app['view']->getFinder()->getHints();
-        $this->assertContains('path/A', $hints['hintA']);
-        $this->assertContains('path/B', $hints['hintB']);
+        $this->assertArrayContains('path/A', $hints['hintA']);
+        $this->assertArrayContains('path/B', $hints['hintB']);
     }
 }
 
