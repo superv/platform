@@ -63,11 +63,11 @@ class ResourceFormsTest extends ResourceTestCase
         //
         Storage::fake('fakedisk');
 
-        $this->postJsonUser($users->router()->updateForm($user), ['avatar' => $this->makeUploadedFile()]);
+        $this->postJsonUser($user->router()->updateForm(), ['avatar' => $this->makeUploadedFile()]);
 
         // Get Update form
         //
-        $form = $this->getUserPage($users->router()->updateForm($user));
+        $form = $this->getUserPage($user->router()->updateForm());
 
 //        $this->assertEquals($users->router()->editForm($user), $form->getProp('url'));
         $this->assertEquals('post', $form->getProp('method'));

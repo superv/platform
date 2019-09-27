@@ -14,7 +14,7 @@ class ResourceRouterTest extends ResourceTestCase
      */
     protected $router;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -40,9 +40,9 @@ class ResourceRouterTest extends ResourceTestCase
 
     function test__dashboard_page()
     {
-        $expected = sprintf(sv_route('resource.dashboard', [
+        $expected = sv_route('resource.dashboard', [
             'resource' => $this->resource->getIdentifier(),
-        ]));
+        ]);
         $this->assertEquals($expected, $this->router->dashboard());
     }
 

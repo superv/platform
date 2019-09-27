@@ -319,7 +319,7 @@ class ResourceConfig
 
         ResourceConfigResolvedEvent::fire($config);
 
-        Event::fire(sprintf("%s.events:config_resolved", $config->getIdentifier()), $config);
+        Event::dispatch(sprintf("%s.events:config_resolved", $config->getIdentifier()), $config);
 
         return $config;
     }

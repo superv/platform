@@ -19,7 +19,7 @@ class ResourceTable extends EntryTable
 
     public function composeConfig()
     {
-        Event::fire($this->getIdentifier().'.events:config', [
+        Event::dispatch($this->getIdentifier().'.events:config', [
             'table'    => $this,
             'fields'   => $this->resource->indexFields(),
             'resource' => $this->resource,
@@ -30,7 +30,7 @@ class ResourceTable extends EntryTable
 
     public function build()
     {
-        Event::fire($this->getIdentifier().'.events:config', [
+        Event::dispatch($this->getIdentifier().'.events:config', [
             'table'    => $this,
             'fields'   => $this->resource->indexFields(),
             'resource' => $this->resource,
@@ -38,7 +38,7 @@ class ResourceTable extends EntryTable
 
         $return = parent::build();
 
-        Event::fire($this->getIdentifier().'.events:data', ['table' => $this, 'rows' => $this->rows]);
+        Event::dispatch($this->getIdentifier().'.events:data', ['table' => $this, 'rows' => $this->rows]);
 
         return $return;
     }

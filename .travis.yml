@@ -5,7 +5,8 @@ php:
   - 7.3
 
 before_script:
-  - phpenv config-rm xdebug.ini
+  - phpenv config-rm xdebug.ini || true
+  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - travis_retry composer install --prefer-source --no-interaction --dev
 
 script:

@@ -29,7 +29,7 @@ class MorphToTest extends ResourceTestCase
         $this->assertEquals(['morph_name' => 'owner'], $relation->getRelationConfig()->toArray());
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

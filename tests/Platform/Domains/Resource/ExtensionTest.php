@@ -111,7 +111,7 @@ class ExtensionTest
         $this->assertNotNull(Extension::get('platform.test_a'));
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

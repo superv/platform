@@ -325,7 +325,7 @@ class CreateResourceTest extends ResourceTestCase
 
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         @unlink($this->basePath('sv-testing.sqlite'));
         parent::tearDown();

@@ -10,3 +10,5 @@ composer.lock
 _ide_helper.php
 notes.txt
 phpunit.xml.dist
+/tests/config/superv.php
+/.phpunit.result.cache

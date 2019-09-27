@@ -30,7 +30,7 @@ class ResourceGeneratorTest extends ResourceTestCase
         );
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 //        Config::set('database.connections.testing', [
@@ -60,7 +60,7 @@ class ResourceGeneratorTest extends ResourceTestCase
 //        });
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
 //        Schema::disableForeignKeyConstraints();
 //        Schema::dropIfExists('users');

@@ -12,7 +12,7 @@ class ActionsTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

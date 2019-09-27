@@ -23,7 +23,7 @@ class ResourceEntryDashboardController extends BaseApiController
         $page->setSelectedSection($this->route->parameter('section'));
         $page->setDefaultSection('view');
 
-        Event::fire($resource->getIdentifier().'.pages:entry_dashboard.events:resolved', compact('page', 'resource'));
+        Event::dispatch($resource->getIdentifier().'.pages:entry_dashboard.events:resolved', compact('page', 'resource'));
 
         if ($callback = $resource->getCallback('entry.dashboard')) {
             app()->call($callback, ['page' => $page, 'entry' => $this->entry]);
@@ -53,7 +53,7 @@ class ResourceEntryDashboardController extends BaseApiController
 
         $page = $page->build(['res' => $resource->toArray(), 'entry' => $this->entry]);
 
-        Event::fire($resource->getIdentifier().'.pages:entry_dashboard.events:rendered', compact('page', 'resource'));
+        Event::dispatch($resource->getIdentifier().'.pages:entry_dashboard.events:rendered', compact('page', 'resource'));
 
         return $page;
     }

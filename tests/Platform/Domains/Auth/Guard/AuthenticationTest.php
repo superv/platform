@@ -30,7 +30,7 @@ class AuthenticationTest
         $response->assertStatus(401);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->afterPlatformInstalled(function () {
             Hub::register(ApiV1Port::class);

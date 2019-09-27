@@ -15,7 +15,7 @@ class MigrateCommandTest extends TestCase
     use RefreshDatabase;
     use TestsConsoleCommands;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -7,11 +7,11 @@ use SuperV\Platform\Http\Controllers\DataController;
 return [
 
     'sv/data/init'  => [
-        'as'   => 'sv.data.init',
+        'as'   => 'sv::data.init',
         'uses' => DataController::class.'@init',
     ],
     'sv/data/nav'   => [
-        'as'   => 'sv.data.nav',
+        'as'   => 'sv::data.nav',
         'uses' => DataController::class.'@nav',
     ],
     'post@sv/login' => [

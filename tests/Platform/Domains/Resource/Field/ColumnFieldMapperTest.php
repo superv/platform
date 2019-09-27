@@ -4,7 +4,6 @@ namespace Tests\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper as Mapper;
 use SuperV\Platform\Testing\PlatformTestCase;
-use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
  * Class ColumnFieldMapperTest
@@ -44,7 +43,7 @@ class ColumnFieldMapperTest extends PlatformTestCase
 
         $mapper = Mapper::for('integer')->map(['unsigned' => true]);
         $this->assertEquals('number', $mapper->getFieldType());
-//        $this->assertArraySubset(['integer', 'min:0'], $mapper->getRules());
+//        $this->assertArrayContains(['integer', 'min:0'], $mapper->getRules());
 
         $mapper = Mapper::for('bigInteger')->map();
         $this->assertEquals('number', $mapper->getFieldType());

@@ -28,9 +28,9 @@ class Hub
      * and return the resolved instance.
      *
      * @param \SuperV\Platform\Domains\Port\Port $port
-     * @return mixed
+     * @return \SuperV\Platform\Domains\Port\Port
      */
-    public function register($port)
+    public function register($port): Port
     {
         if (is_string($port)) {
             $port = resolve($port);
@@ -67,10 +67,10 @@ class Hub
     /**
      * Get port by slug
      *
-     * @param $slug
+     * @param string $slug
      * @return \SuperV\Platform\Domains\Port\Port
      */
-    public function get($slug)
+    public function get(string $slug): ?Port
     {
         return $this->ports->first(function (Port $port) use ($slug) {
             return $port->slug() === $slug;

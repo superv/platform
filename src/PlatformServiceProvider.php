@@ -3,6 +3,7 @@
 namespace SuperV\Platform;
 
 use Current;
+use Event;
 use Hub;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Collection;
@@ -106,12 +107,6 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->registerPlatformListeners();
 
-//        $this->registerListeners([
-//            'platform.registered' => function () {
-//                $this->registerProviders($this->providers);
-//            },
-//        ]);
-
         $this->addViewNamespaces([
             'superv' => realpath(__DIR__.'/../resources/views'),
         ]);
@@ -120,7 +115,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         $this->registerPlatformProviders();
 
-        event('platform.registered');
+        Event::dispatch('platform.registered');
     }
 
     public function boot()
@@ -136,7 +131,6 @@ class PlatformServiceProvider extends BaseServiceProvider
 
         superv('addons')->put('superv.platform', $this->platform);
 
-
         // Boot all addons
         //
         $this->platform->boot();
@@ -148,7 +142,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->registerPlatformRoutes();
 
         $this->setupTranslations();
-
     }
 
     public function registerPlatformProviders()
@@ -161,6 +154,11 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->registerListeners($this->listeners);
     }
 
+    public function bindUserModel(): void
+    {
+        $this->app->bind(User::class, sv_config('auth.user.model'));
+    }
+
     protected function setupTranslations()
     {
         $this->loadTranslationsFrom($this->platform->realPath('resources/lang'), 'platform');
@@ -170,11 +168,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->publishes([
             $this->platform->realPath('resources/lang') => resource_path('lang/vendor/superv'),
         ]);
-    }
-
-    public function bindUserModel(): void
-    {
-        $this->app->bind(User::class, sv_config('auth.user.model'));
     }
 
     protected function registerCollectionMacros()

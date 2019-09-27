@@ -114,7 +114,7 @@ class MorphOneTest extends ResourceTestCase
         $this->assertEquals($user->getMorphClass(), $profile->entry->owner_type);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

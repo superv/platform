@@ -8,6 +8,7 @@ class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateComm
 {
     /** @var \SuperV\Platform\Domains\Database\Migrations\Migrator */
     protected $migrator;
+
     protected $signature = 'migrate {--database= : The database connection to use.}
                 {--force : Force the operation to run when in production.}
                 {--path= : The path of migrations files to be executed.}

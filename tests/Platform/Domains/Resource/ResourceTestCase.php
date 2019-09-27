@@ -15,7 +15,7 @@ abstract class ResourceTestCase extends \Tests\Platform\TestCase
 
     protected $shouldBootPlatform = true;
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         ResourceFactory::$cache = [];

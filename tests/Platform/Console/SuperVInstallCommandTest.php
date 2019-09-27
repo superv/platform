@@ -22,7 +22,7 @@ class SuperVInstallCommandTest extends TestCase
 
         InstallSuperV::dispatch();
 
-        $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
+        $this->assertStringContainsString('SV_INSTALLED=true', file_get_contents(base_path('.env')));
     }
 
     function test_sets_env_variable_invalid_parameter()
@@ -31,7 +31,7 @@ class SuperVInstallCommandTest extends TestCase
 
         $this->artisan('superv:install');
 
-        $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
+        $this->assertStringContainsString('SV_INSTALLED=true', file_get_contents(base_path('.env')));
     }
 
     function test_sets_env_variable_empty_env()
@@ -40,7 +40,7 @@ class SuperVInstallCommandTest extends TestCase
 
         $this->artisan('superv:install');
 
-        $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
+        $this->assertStringContainsString('SV_INSTALLED=true', file_get_contents(base_path('.env')));
     }
 
     function test_does_not_make_any_other_changes_on_env_file()
@@ -88,14 +88,14 @@ class SuperVInstallCommandTest extends TestCase
         $this->assertColumnExists('migrations', 'namespace');
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->app->setBasePath(base_path('tests'));
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         file_put_contents(base_path('.env'), '');
 
