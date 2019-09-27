@@ -18,7 +18,7 @@ class ApplyFiltersTest extends PlatformTestCase
         $this->assertEquals('filter-value', $filterMock->appliedValue);
     }
 
-    function test__validates()
+    function test__bails_if_no_filter_provided()
     {
         $request = $this->makeGetRequest([
             'filters' => base64_encode(json_encode(['filter-id' => 'filter-value'])),
@@ -27,7 +27,7 @@ class ApplyFiltersTest extends PlatformTestCase
         $this->assertFalse($result);
     }
 
-    function test__validates_a()
+    function test__bails_with_empty_request()
     {
         $request = $this->makeGetRequest();
         $result = ApplyFilters::dispatch(collect($filterMock = new FilterMock), 'the-query', $request);
