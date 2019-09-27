@@ -29,9 +29,9 @@ class SuperVUninstallCommandTest extends TestCase
         file_put_contents(base_path('.env'), '');
 
         $this->artisan('superv:install');
-        $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
+        $this->assertStringContainsString('SV_INSTALLED=true', file_get_contents(base_path('.env')));
         $this->artisan('superv:uninstall');
-        $this->assertContains('SV_INSTALLED=false', file_get_contents(base_path('.env')));
+        $this->assertStringContainsString('SV_INSTALLED=false', file_get_contents(base_path('.env')));
     }
 
     function test__uninstalls_modules()

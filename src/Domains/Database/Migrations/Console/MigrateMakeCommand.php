@@ -15,6 +15,8 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
         {--create= : The table to be created.}
         {--table= : The table to migrate.}
         {--path= : The location where the migration file should be created.}
+        {--realpath : Indicate any provided migration file paths are pre-resolved absolute paths}
+        {--fullpath : Output the full path of the migration}
         {--namespace= : The namespace of the migration.}
         ';
 
@@ -39,6 +41,5 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
         }
 
         return $path;
-
     }
 }

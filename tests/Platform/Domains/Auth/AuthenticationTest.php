@@ -105,7 +105,7 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticatedAs($admin, 'sv-api');
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
     }

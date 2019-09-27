@@ -44,7 +44,7 @@ class NavGuardTest extends ResourceTestCase
         $this->assertEquals($expected, $filtered['sections']);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

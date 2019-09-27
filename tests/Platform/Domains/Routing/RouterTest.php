@@ -33,7 +33,7 @@ class RouterTest extends TestCase
         $path = base_path('tests/Platform/__fixtures__/routes');
         $files = app(Router::class)->portFilesIn($path);
 
-        $this->assertArraySubset([
+        $this->assertArrayContains([
             'acp' => [
                 $path.'/acp.php',
                 $path.'/acp/foo.php',

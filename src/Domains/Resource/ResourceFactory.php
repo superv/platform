@@ -77,7 +77,7 @@ class ResourceFactory
             return null;
         }
 
-        Event::fire(sprintf("%s.events:resolved", $identifier), $resource);
+        Event::dispatch(sprintf("%s.events:resolved", $identifier), $resource);
 
         return static::$cache[$identifier] = $resource;
     }

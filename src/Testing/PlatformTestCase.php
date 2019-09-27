@@ -64,7 +64,7 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected function getPackageProviders($app)
     {
-        return array_flatten(array_merge([PlatformServiceProvider::class], $this->packageProviders));
+        return $this->packageProviders;
     }
 
     protected function getEnvironmentSetUp($app)
@@ -86,7 +86,7 @@ class PlatformTestCase extends OrchestraTestCase
         ]);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -95,6 +95,8 @@ class PlatformTestCase extends OrchestraTestCase
         if ($this->handleExceptions === false) {
             $this->withoutExceptionHandling();
         }
+
+        $this->app->register(PlatformServiceProvider::class);
 
         $this->loadLaravelMigrations();
 
@@ -111,7 +113,7 @@ class PlatformTestCase extends OrchestraTestCase
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if ($this->tmpDirectory) {
             app('files')->deleteDirectory(__DIR__.'/../tmp');

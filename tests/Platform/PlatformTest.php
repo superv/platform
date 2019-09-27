@@ -25,7 +25,7 @@ class PlatformTest extends TestCase
 
         Platform::boot();
 
-        $this->assertContains($entry->resolveAddon()->providerClass(), array_keys(app()->getLoadedProviders()));
+        $this->assertArrayContains($entry->resolveAddon()->providerClass(), array_keys(app()->getLoadedProviders()));
     }
 
     function test_dispatches_event_before_platform_starts_booting()

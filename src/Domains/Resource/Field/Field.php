@@ -389,7 +389,7 @@ class Field implements FieldContract
 
     public function fireEvent($eventName)
     {
-        Event::fire(sprintf("%s.events:%s", $this->getIdentifier(), $eventName), $this);
+        Event::dispatch(sprintf("%s.events:%s", $this->getIdentifier(), $eventName), $this);
     }
 
     public function searchable(): FieldContract

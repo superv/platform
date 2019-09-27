@@ -18,7 +18,7 @@ class LaravelDispatcher implements Dispatcher
 
     public function dispatch($event, $payload = [])
     {
-        $this->dispatcher->fire($event, $payload);
+        $this->dispatcher->dispatch($event, $payload);
     }
 
     public function listen($events, $listener)

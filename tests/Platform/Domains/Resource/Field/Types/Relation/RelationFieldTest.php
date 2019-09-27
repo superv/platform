@@ -79,7 +79,7 @@ class RelationFieldTest extends ResourceTestCase
         $this->assertEquals($teacher->getId(), $course->teacher_id);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $config = $this->create('addresses', function (Blueprint $table) {
