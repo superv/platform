@@ -3,9 +3,10 @@
 namespace SuperV\Platform\Domains\Resource\Table\Contracts;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
-interface Table
+interface TableInterface
 {
     public function getTitle();
 
@@ -21,18 +22,6 @@ interface Table
 
     public function mergeFields($fields);
 
-    public function setRows($rows);
-
-    public function addSelectionAction($action): Table;
-
-    public function addRowAction($action): Table;
-
-    public function addContextAction($action): Table;
-
-    public function getAction($name);
-
-    public function setRowActions($actions);
-
     public function makeComponent(): ComponentContract;
 
     public function isSelectable();
@@ -45,9 +34,29 @@ interface Table
 
     public function build();
 
+    public function getFilters(): Collection;
+
+    public function setFilters($filters): TableInterface;
+
+    public function setRequest($request): TableInterface;
+
+    public function getQuery();
+
+    public function setQuery($query): TableInterface;
+
+    public function getPagination(): array;
+
+    public function orderByLatest();
+
+    public function setResource(Resource $resource): TableInterface;
+
     public function getDataUrl();
 
-    public function setDataUrl($url): Table;
+    public function setDataUrl($url): TableInterface;
+
+    public function setRows($rows);
+
+    public function getRows(): Collection;
 
     public function getRowActions();
 
@@ -55,7 +64,15 @@ interface Table
 
     public function getContextActions();
 
-    public function getRows(): Collection;
-
     public function removeRowAction($actionName);
+
+    public function addSelectionAction($action): TableInterface;
+
+    public function addRowAction($action): TableInterface;
+
+    public function addContextAction($action): TableInterface;
+
+    public function getAction($name);
+
+    public function setRowActions($actions);
 }

@@ -5,17 +5,17 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
-use SuperV\Platform\Domains\Resource\Table\Contracts\Table;
+use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 use SuperV\Platform\Support\Composer\Payload;
 
 class TableComposer
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Table\Contracts\Table
+     * @var \SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface
      */
     protected $table;
 
-    public function __construct(Table $table)
+    public function __construct(TableInterface $table)
     {
         $this->table = $table;
     }
@@ -36,12 +36,10 @@ class TableComposer
             ],
         ]);
 
-        if ($this->table instanceof EntryTable) {
-            $payload->set('config.filters', $this->table->getFilters()
-                                                        ->map(function (Filter $filter) {
-                                                            return (new FieldComposer($filter))->forForm();
-                                                        }));
-        }
+        $payload->set('config.filters', $this->table->getFilters()
+                                                    ->map(function (Filter $filter) {
+                                                        return (new FieldComposer($filter))->forForm();
+                                                    }));
 
         return $payload->get();
     }

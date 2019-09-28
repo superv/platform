@@ -24,6 +24,10 @@ use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
 use SuperV\Platform\Domains\Resource\Listeners\RegisterEntryEventListeners;
 use SuperV\Platform\Domains\Resource\Relation\RelationCollection;
+use SuperV\Platform\Domains\Resource\Table\Contracts\TableDataProviderInterface;
+use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
+use SuperV\Platform\Domains\Resource\Table\EloquentTableDataProvider;
+use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Providers\BaseServiceProvider;
 
 class ResourceServiceProvider extends BaseServiceProvider
@@ -47,11 +51,12 @@ class ResourceServiceProvider extends BaseServiceProvider
     ];
 
     protected $_bindings = [
-        Table\Contracts\DataProvider::class => Table\EloquentDataProvider::class,
-        FormContract::class                 => Form::class,
-        FormBuilderInterface::class         => FormBuilder::class,
-        FieldComposer::class                => FormFieldComposer::class,
-        EntryRepositoryInterface::class     => EntryRepository::class,
+        TableDataProviderInterface::class => EloquentTableDataProvider::class,
+        FormContract::class               => Form::class,
+        FormBuilderInterface::class       => FormBuilder::class,
+        FieldComposer::class              => FormFieldComposer::class,
+        EntryRepositoryInterface::class   => EntryRepository::class,
+        TableInterface::class             => Table::class,
 
     ];
 

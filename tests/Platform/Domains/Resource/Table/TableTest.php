@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Resource\Field\FieldQuerySorter;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class ResourceTableTest extends ResourceTestCase
+class TableTest extends ResourceTestCase
 {
     function test__relational_order_by()
     {

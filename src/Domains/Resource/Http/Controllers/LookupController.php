@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
-use SuperV\Platform\Domains\Resource\Table\ResourceTable;
+use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
@@ -11,7 +11,7 @@ class LookupController extends BaseApiController
 {
     use ResolvesResource;
 
-    public function __invoke(ResourceTable $table)
+    public function __invoke(TableInterface $table)
     {
         $relation = $this->resolveRelation();
         $resource = $relation->getRelatedResource();
