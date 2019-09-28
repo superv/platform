@@ -44,7 +44,7 @@ class RelationCreateTest extends ResourceTestCase
     {
         $users = $this->blueprints()->users();
 
-        $this->blueprints()->comments();
+        $comments = $this->blueprints()->comments();
         $user = $users->fake();
         $relation = $users->getRelation('comments');
 
@@ -53,7 +53,7 @@ class RelationCreateTest extends ResourceTestCase
             ['comment' => 'abc 123', 'status' => 'approved']
         )->assertOk();
 
-        $this->assertEquals('ok', $response->decodeResponseJson('status'));
+        $this->assertEquals($comments->first()->getId(), $response->decodeResponseJson('data.entry.id'));
 
         $comment = $user->comments()->first();
         $this->assertEquals($user->getId(), $comment->user_id);
@@ -89,7 +89,7 @@ class RelationCreateTest extends ResourceTestCase
     function test__post_extended_form()
     {
         $users = $this->blueprints()->users();
-        $this->blueprints()->comments();
+        $comments = $this->blueprints()->comments();
         ResourceFactory::wipe();
 
         Resource::extend('testing.users')->with(function (Resource $resource) {
@@ -111,7 +111,7 @@ class RelationCreateTest extends ResourceTestCase
             ['comment' => 'abc 123', 'status' => 'approved']
         )->assertOk();
 
-        $this->assertEquals('ok', $response->decodeResponseJson('status'));
+        $this->assertEquals($comments->first()->getId(), $response->decodeResponseJson('data.entry.id'));
 
         $comment = $user->comments()->first();
         $this->assertEquals($user->getId(), $comment->user_id);

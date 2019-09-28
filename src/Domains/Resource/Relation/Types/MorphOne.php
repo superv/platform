@@ -9,19 +9,30 @@ use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\EntryForm;
-use SuperV\Platform\Domains\Resource\Form\FormModel;
-use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequests
 {
     public function makeForm(): EntryForm
     {
-        $form = ResourceFormBuilder::buildFromEntry($this->getRelatedEntry());
-        $formData = FormModel::findByUuid($this->getRelatedResource()->getIdentifier());
+        $formIdentifier = $this->getRelatedResource()->getIdentifier().'.forms:default';
+        $builder = FormBuilder::createFrom($formIdentifier);
 
-        return $form->make($formData ? $formData->uuid : null)
-                    ->hideField($this->relationConfig->getMorphName());
+        $builder->setEntry($this->getRelatedEntry());
+
+        /** @var \SuperV\Platform\Domains\Resource\Form\Contracts\EntryForm $form */
+        $form = $builder->getForm();
+
+        $form->hideField($this->relationConfig->getMorphName());
+
+        return $form;
+
+//        $form = ResourceFormBuilder::buildFromEntry($this->getRelatedEntry());
+//        $formData = FormModel::findByUuid($this->getRelatedResource()->getIdentifier());
+//
+//        return $form->make($formData ? $formData->uuid : null)
+//                    ->hideField($this->relationConfig->getMorphName());
     }
 
     public function getFormTitle(): string

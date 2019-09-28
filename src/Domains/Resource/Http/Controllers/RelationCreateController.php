@@ -26,14 +26,16 @@ class RelationCreateController extends BaseApiController
     public function store()
     {
         $relation = $this->resolveRelation();
+
+        /** @var \SuperV\Platform\Domains\Resource\Form\EntryForm $form */
         $form = $relation->makeForm();
 
         if ($callback = $relation->getCallback('create.storing')) {
             app()->call($callback, ['form' => $form, 'request' => $this->request, 'entry' => $this->entry]);
         }
 
-        $form->setRequest($this->request)->save();
+        $formResponse = $form->save();
 
-        return response()->json(['status' => 'ok', 'events' => ['create_'.$relation->getName().':complete']]);
+        return $formResponse->setEvents(['create_'.$relation->getName().':complete']);
     }
 }

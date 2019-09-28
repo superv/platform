@@ -330,7 +330,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     public function setQuery($query): TableInterface
     {
-        $this->query = $query;
+        $this->query = $query instanceof ProvidesQuery ? $query->newQuery() : $query;
 
         return $this;
     }
