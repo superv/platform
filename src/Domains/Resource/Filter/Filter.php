@@ -49,10 +49,15 @@ abstract class Filter implements FilterContract, ProvidesField
      */
     protected $placeholder;
 
+    /**
+     * Default value
+     *
+     * @var mixed
+     */
     protected $defaultValue;
 
     /**
-     * Resource the filter belongs to
+     * Resource that filter belongs to
      *
      * @var \SuperV\Platform\Domains\Resource\Resource
      */

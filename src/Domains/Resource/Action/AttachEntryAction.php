@@ -20,7 +20,8 @@ class AttachEntryAction extends Action
     public function makeComponent(): ComponentContract
     {
         return parent::makeComponent()
-                     ->setName('sv-attach-entry-action');
+                     ->setName('sv-attach-entry-action')
+                     ->setProp('modal-size', 'w-5/6');
     }
 
     public function onComposed(Payload $payload)
