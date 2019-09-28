@@ -21,7 +21,10 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
 
         $this->extendMigrationRepository();
 
-        $this->registerCommands($this->commands);
+        // @laravel-6.0
+        if (method_exists($this, 'registerCommands')) {
+            $this->registerCommands($this->commands);
+        }
 
         $this->extendConsoleCommands();
     }
