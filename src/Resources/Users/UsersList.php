@@ -13,5 +13,6 @@ class UsersList implements ListConfigHook
     public function config(TableInterface $table, IndexFields $fields)
     {
         $fields->show('email');
+        $fields->get('email')->searchable();
     }
 }

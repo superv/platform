@@ -8,19 +8,23 @@ use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
 interface TableInterface
 {
+    public function composeConfig();
+
+    public function build();
+
     public function getTitle();
 
     public function setTitle($title);
-
-    public function getFields();
 
     public function setOption($key, $value);
 
     public function makeFields(): Collection;
 
-    public function setFields($fields);
+    public function getFields();
 
-    public function mergeFields($fields);
+    public function setFields($fields): TableInterface;
+
+    public function mergeFields($fields): TableInterface;
 
     public function makeComponent(): ComponentContract;
 
@@ -30,13 +34,12 @@ interface TableInterface
 
     public function shouldShowIdColumn(): bool;
 
-    public function composeConfig();
-
-    public function build();
 
     public function getFilters(): Collection;
 
     public function setFilters($filters): TableInterface;
+
+    public function mergeFilters($filters): TableInterface;
 
     public function setRequest($request): TableInterface;
 

@@ -47,6 +47,8 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     protected $mergeFields;
 
+    protected $mergeFilters;
+
     protected $fields;
 
     protected $selectable = true;
@@ -83,9 +85,16 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         $this->options = collect();
     }
 
-    public function mergeFields($fields)
+    public function mergeFields($fields): TableInterface
     {
         $this->mergeFields = $fields;
+
+        return $this;
+    }
+
+    public function mergeFilters($filters): TableInterface
+    {
+        $this->mergeFilters = $filters;
 
         return $this;
     }
@@ -143,7 +152,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         return $this->showIdColumn;
     }
 
-    public function setFields($fields)
+    public function setFields($fields): TableInterface
     {
         $this->fields = $fields;
 
@@ -226,7 +235,12 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     public function makeFields(): Collection
     {
-        $fields = wrap_collect($this->getFields())->merge($this->copyMergeFields())
+        $mergeFields = wrap_collect($this->mergeFields)
+            ->map(function (Field $field) {
+                return clone $field;
+            });
+
+        $fields = wrap_collect($this->getFields())->merge($mergeFields)
                                                   ->map(function ($field) {
                                                       return is_array($field) ? sv_field($field) : $field;
                                                   });
@@ -262,6 +276,11 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         $fields = $this->makeFields();
 
         $query = $this->getQuery();
+        if ($this->resource->isRestorable()) {
+            $query->where('deleted_at', null);
+        }
+        $this->resource->fire('table.querying', ['query' => $query]);
+
         $this->fire('querying', ['query' => $query]);
         $this->applyFilters($query);
         $this->applyOptions($query);
@@ -290,7 +309,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     public function getFilters(): Collection
     {
-        return $this->resource->getFilters();
+        return $this->resource->getFilters()->merge($this->mergeFilters);
     }
 
     public function setFilters($filters): TableInterface
@@ -303,7 +322,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     public function getQuery()
     {
         if (! $this->query) {
-            $this->query = $this->resource->newQuery();
+            $this->query = $this->resource->newQuery()->selectRaw($this->resource->config()->getTable().'.*');
         }
 
         return $this->query;
@@ -399,20 +418,14 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         return $this->identifier;
     }
 
-    public function onQuerying($query)
+    public function onQuerying($on)
     {
-        if ($this->resource->isRestorable()) {
-            $query->where('deleted_at', null);
-        }
-        $this->resource->fire('table.querying', ['query' => $query]);
     }
 
-    protected function copyMergeFields()
+    /** * @return static */
+    public static function resolve()
     {
-        return wrap_collect($this->mergeFields)
-            ->map(function (Field $field) {
-                return clone $field;
-            });
+        return app(TableInterface::class);
     }
 
     protected function makeTokens(): array
@@ -506,11 +519,5 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     protected function getRequest()
     {
         return $this->request;
-    }
-
-    /** * @return static */
-    public static function resolve()
-    {
-        return app(TableInterface::class);
     }
 }
