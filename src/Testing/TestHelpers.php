@@ -138,7 +138,7 @@ trait TestHelpers
 
     protected function assertTableDoesNotExist($table)
     {
-        $this->assertFalse(\Schema::hasTable($table));
+        $this->assertFalse(\Schema::hasTable($table), 'Failed asserting table '.$table.' does not exist');
     }
 
     protected function assertTableExists($table)

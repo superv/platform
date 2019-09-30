@@ -75,7 +75,7 @@ class ResourceModel extends Entry implements ProvidesFields
         return $this->getFields();
     }
 
-    public function getFields()
+    public function getFields(): Collection
     {
         return $this->fields;
     }

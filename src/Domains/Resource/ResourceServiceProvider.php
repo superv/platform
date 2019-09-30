@@ -14,6 +14,7 @@ use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepositoryInterface;
 use SuperV\Platform\Domains\Resource\Database\Entry\Events;
+use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FieldComposer;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilderInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface as FormContract;
@@ -22,6 +23,7 @@ use SuperV\Platform\Domains\Resource\Form\v2\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFieldComposer;
 use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
+use SuperV\Platform\Domains\Resource\Listeners\CreateResourceAuthActions;
 use SuperV\Platform\Domains\Resource\Listeners\RegisterEntryEventListeners;
 use SuperV\Platform\Domains\Resource\Relation\RelationCollection;
 use SuperV\Platform\Domains\Resource\Table\Contracts\TableDataProviderInterface;
@@ -38,16 +40,15 @@ class ResourceServiceProvider extends BaseServiceProvider
         ColumnDroppedEvent::class             => Listeners\DeleteField::class,
         TableCreatingEvent::class             => Listeners\CreateResource::class,
         TableCreatedEvent::class              => Listeners\CreateResourceForm::class,
-        //        PlatformInstalledEvent::class         => Jobs\CreatePlatformResourceForms::class,
         AddonBootedEvent::class               => Listeners\RegisterExtensions::class,
         Events\EntrySavingEvent::class        => [
             Listeners\SaveUpdatedBy::class,
             Jobs\ModifyEntryAttributes::class,
         ],
-        //        Events\EntryRetrievedEvent::class     => Jobs\AccessEntryAttributes::class,
         Events\EntryCreatingEvent::class      => Listeners\SaveCreatedBy::class,
         Resource\ResourceActivityEvent::class => Listeners\RecordActivity::class,
         AddonUninstallingEvent::class         => DeleteAddonResources::class,
+        ResourceCreatedEvent::class           => CreateResourceAuthActions::class,
     ];
 
     protected $_bindings = [
