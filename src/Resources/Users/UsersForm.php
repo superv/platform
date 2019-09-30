@@ -12,5 +12,8 @@ class UsersForm implements FormResolvedHook
     public function resolved(Form $form)
     {
         $form->hideField('password');
+        $form->hideField('remember_token');
+        $form->hideField('deleted_at');
+        $form->hideField('deleted_by');
     }
 }

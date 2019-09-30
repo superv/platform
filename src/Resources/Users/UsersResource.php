@@ -13,6 +13,7 @@ class UsersResource implements ResourceResolvedHook
     {
         $resource->registerAction('update_password', UpdatePasswordAction::class);
 
-        $resource->getField('password')->addFlag('hide.view');
+        $resource->getField('password')->addFlag('view.hide');
+        $resource->getField('remember_token')->addFlag('view.hide');
     }
 }
