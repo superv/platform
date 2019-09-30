@@ -8,19 +8,24 @@ use SuperV\Platform\Domains\Addon\AddonCollection;
 
 class AddonReinstallCommand extends Command
 {
-    protected $signature = 'addon:reinstall {--namespace=} {--seed}';
+    protected $signature = 'addon:reinstall {--identifier=} {--seed}';
 
     public function handle(AddonCollection $addons)
     {
-        if (! $namespace = $this->option('namespace')) {
-            $namespace = $this->choice('Select Addon to Reinstall', $addons->enabled()->slugs()->all());
+        if (! $identifier = $this->option('identifier')) {
+            if ($addons->enabled()->isEmpty()) {
+                return $this->warn('There are no addons currently installed');
+            }
+            $identifier = $this->choice('Select Addon to Reinstall', $addons->enabled()->identifiers()->all());
         }
 
         try {
-            $this->call('addon:uninstall', ['--namespace' => $namespace]);
+            $addon = $addons->withSlug($identifier);
+
+            $this->call('addon:uninstall', ['--identifier' => $identifier]);
 
             $this->call('addon:install', [
-                'namespace'  => $namespace,
+                'path'   => $addon->path(),
                 '--seed' => $this->option('seed'),
             ]);
         } catch (Exception $e) {

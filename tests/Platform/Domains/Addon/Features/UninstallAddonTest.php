@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Addon\Features;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Addon\Jobs\UninstallAddonJob;
+use SuperV\Platform\Domains\Resource\ResourceModel;
 use Tests\Platform\TestCase;
 
 class UninstallAddonTest extends TestCase
@@ -27,5 +28,16 @@ class UninstallAddonTest extends TestCase
         UninstallAddonJob::dispatch('sample');
 
         $this->assertEquals(0, \DB::table('migrations')->where('namespace', 'sample')->count());
+    }
+
+    function test__deletes_resources()
+    {
+        $this->setUpAddon(null, null);
+
+        $this->assertEquals(1, ResourceModel::query()->where('namespace', 'sample')->count());
+
+        UninstallAddonJob::dispatch('sample');
+
+        $this->assertEquals(0, ResourceModel::query()->where('namespace', 'sample')->count());
     }
 }

@@ -3,21 +3,22 @@
 namespace SuperV\Platform\Domains\Addon\Console;
 
 use SuperV\Platform\Contracts\Command;
+use SuperV\Platform\Domains\Addon\AddonCollection;
 use SuperV\Platform\Domains\Addon\Jobs\UninstallAddonJob;
 
 class AddonUninstallCommand extends Command
 {
-    protected $signature = 'addon:uninstall {--namespace=}';
+    protected $signature = 'addon:uninstall {--identifier=}';
 
-    public function handle()
+    public function handle(AddonCollection $addons)
     {
-        if (! $namespace = $this->option('namespace')) {
-            $namespace = $this->choice('Select Addon to Uninstall', sv_addons()->enabled()->slugs()->all());
+        if (! $identifier = $this->option('identifier')) {
+            $identifier = $this->choice('Select Addon to Uninstall', $addons->enabled()->slugs()->all());
         }
-        $this->comment(sprintf('Uninstalling %s', $namespace));
+        $this->comment(sprintf('Uninstalling %s', $identifier));
 
-        if ($this->dispatch(new UninstallAddonJob($namespace))) {
-            $this->info('The ['.$namespace.'] addon successfully uninstalled.');
+        if ($this->dispatch(new UninstallAddonJob($identifier))) {
+            $this->info('The ['.$identifier.'] addon successfully uninstalled.');
         } else {
             $this->error('Addon could not be uninstalled');
         }
