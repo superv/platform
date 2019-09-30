@@ -3,9 +3,8 @@
 namespace SuperV\Platform\Domains\Auth;
 
 use Auth;
-use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Auth\Console\AssignRoleCommand;
-use SuperV\Platform\Domains\Auth\Console\CreateUserCommand;
+use SuperV\Platform\Domains\Auth\Console\SuperVUserCommand;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 use SuperV\Platform\Providers\BaseServiceProvider;
@@ -14,7 +13,7 @@ use Tymon\JWTAuth\Providers\LaravelServiceProvider as JwtAuthServiceProvider;
 class AuthServiceProvider extends BaseServiceProvider
 {
     protected $commands = [
-        CreateUserCommand::class,
+        SuperVUserCommand::class,
         AssignRoleCommand::class,
     ];
 

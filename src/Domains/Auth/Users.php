@@ -60,4 +60,10 @@ class Users implements UsersContract
 
         throw new \InvalidArgumentException('Unknown method '.$name);
     }
+
+    /** * @return static */
+    public static function resolve()
+    {
+        return app(UsersContract::class);
+    }
 }
