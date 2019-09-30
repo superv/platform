@@ -40,7 +40,7 @@ class Router
 
     public function entryView(EntryContract $entry)
     {
-        return sv_route('resource.entry.view', [
+        return sv_route('sv::entry.view', [
             'resource' => $this->resource->getIdentifier(),
             'entry'    => $entry->getId(),
         ]);
