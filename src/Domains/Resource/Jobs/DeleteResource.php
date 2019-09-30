@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Jobs;
 
+use SuperV\Platform\Domains\Auth\Access\Action;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Support\Dispatchable;
@@ -11,23 +12,30 @@ class DeleteResource
     use Dispatchable;
 
     /**
-     * @var string
+     * @var \SuperV\Platform\Domains\Resource\ResourceModel
      */
-    protected $resourceHandle;
+    protected $resourceEntry;
 
-    public function __construct(string $resourceHandle)
+    public function __construct($resource)
     {
-        $this->resourceHandle = $resourceHandle;
+        if (is_string($resource)) {
+            $resource = ResourceModel::withIdentifier($resource);
+        }
+
+        $this->resourceEntry = $resource;
     }
 
     public function handle()
     {
-        if (! $resourceEntry = ResourceModel::withIdentifier($this->resourceHandle)) {
+        if (! $this->resourceEntry) {
             return;
         }
-        $resourceEntry->delete();
-        $resourceEntry->wipeCache();
 
-        Section::query()->where('resource_id', $resourceEntry->getId())->delete();
+        $this->resourceEntry->delete();
+        $this->resourceEntry->wipeCache();
+
+        Section::query()->where('resource_id', $this->resourceEntry->getId())->delete();
+
+        Action::query()->where('namespace', $this->resourceEntry->getIdentifier().'.fields')->delete();
     }
 }
