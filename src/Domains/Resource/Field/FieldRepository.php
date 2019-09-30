@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use Current;
-use DB;
+use SuperV\Platform\Domains\Auth\Access\Action;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Exceptions\ValidationException;
 
@@ -41,8 +41,9 @@ class FieldRepository
         }
 
         $field = $this->model->newQuery()->create($attributes);
+
         if (! starts_with($identifier, 'platform.')) {
-            DB::table('sv_auth_actions')->insert([
+            Action::query()->create([
                 'namespace' => explode('.fields:', $identifier)[0].'.fields',
                 'slug'      => $identifier,
             ]);
