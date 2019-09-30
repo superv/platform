@@ -16,10 +16,19 @@ return [
         'where' => ['section' => '^(|create|all)$'],
     ],
 
-    'GET@'.'sv/res/{resource}/{id}/view' => [
-        'as'    => 'resource.entry.view',
+    /**
+     * RESOURCE ENTRY DASHBOARD
+     */
+    'GET@'.'sv/res/{resource}/{id}/{section?}' => [
+        'as'    => 'resource.entry.dashboard',
+        'uses'  => ResourceEntryDashboardController::class,
+        'where' => ['id' => '[0-9]*'], // , 'section' => '^(|view|edit)$'
+    ],
+
+    'GET@'.'sv/ent/{resource}/{entry}/view' => [
+        'as'    => 'sv::entry.view',
         'uses'  => ResourceViewController::at('view'),
-        'where' => ['id' => '[0-9]*'],
+        'where' => ['entry' => '[0-9]*'],
     ],
 
     'ANY@'.'sv/res/{resource}/{id}/actions/{action}' => [
@@ -36,15 +45,6 @@ return [
     'POST@'.'sv/res/{resource}/{id}/restore'   => [
         'as'   => 'resource.entry.restore',
         'uses' => ResourceController::at('restore'),
-    ],
-
-    /**
-     * RESOURCE ENTRY DASHBOARD
-     */
-    'GET@'.'sv/res/{resource}/{id}/{section?}' => [
-        'as'    => 'resource.entry.dashboard',
-        'uses'  => ResourceEntryDashboardController::class,
-        'where' => ['id' => '[0-9]*'], // , 'section' => '^(|view|edit)$'
     ],
 
     /**

@@ -51,14 +51,17 @@ trait ResolvesResource
 
     protected function resolveEntry()
     {
-        if ($id = request()->route()->parameter('id')) {
+        if (! $id = request()->route()->parameter('id')) {
+            if (! $id = request()->route()->parameter('entry')) {
+                return null;
+            }
+        }
             if (! $this->entry = $this->resource->find($id)) {
                 PlatformException::fail('Entry not found');
             }
             if ($keyName = $this->resource->config()->getKeyName()) {
                 $this->entry->setKeyName($keyName);
             }
-        }
 
         return $this->entry;
     }

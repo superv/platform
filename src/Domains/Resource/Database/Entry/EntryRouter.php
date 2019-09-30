@@ -51,9 +51,9 @@ class EntryRouter
 
     public function view()
     {
-        return sv_route('resource.entry.view', [
+        return sv_route('sv::entry.view', [
             'resource' => $this->entry->getResourceIdentifier(),
-            'id'       => $this->entry->getId(),
+            'entry'    => $this->entry->getId(),
         ]);
     }
 
