@@ -20,7 +20,7 @@ class EntryRouter
     {
         return sv_route('resource.entry.delete', [
             'resource' => $this->entry->getResourceIdentifier(),
-            'id'       => $this->entry->getId(),
+            'entry'    => $this->entry->getId(),
         ]);
     }
 
@@ -28,7 +28,7 @@ class EntryRouter
     {
         return sv_route('resource.entry.restore', [
             'resource' => $this->entry->getResourceIdentifier(),
-            'id'       => $this->entry->getId(),
+            'entry'    => $this->entry->getId(),
         ]);
     }
 
@@ -36,7 +36,7 @@ class EntryRouter
     {
         return sv_route('resource.entry.actions', [
             'resource' => $this->entry->getResourceIdentifier(),
-            'id'       => $this->entry->getId(),
+            'entry'    => $this->entry->getId(),
             'action'   => $action,
         ]);
     }
@@ -61,7 +61,7 @@ class EntryRouter
     {
         return sv_route('resource.entry.dashboard', array_filter([
             'resource' => $this->entry->getResourceIdentifier(),
-            'id'       => $this->entry->getId(),
+            'entry'    => $this->entry->getId(),
             'section'  => $section,
         ]));
     }
@@ -71,7 +71,7 @@ class EntryRouter
         return route('resource.entry.dashboard', array_filter(
             [
                 'resource' => $this->entry->getResourceIdentifier(),
-                'id'       => $this->entry->getId(),
+                'entry'    => $this->entry->getId(),
                 'section'  => $section,
             ]
         ), false);

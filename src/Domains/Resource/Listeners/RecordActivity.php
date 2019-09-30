@@ -22,7 +22,7 @@ class RecordActivity
                 'user_id'     => $event->request->user()->getKey(),
                 'resource_id' => $resource->id(),
                 'entry_type'  => $entryType,
-                'entry_id'    => (int)$route->parameter('id'),
+                'entry_id'    => (int)$route->parameter('entry'),
                 'activity'    => $activity,
                 'payload'     => json_encode($event->request->all()),
                 'created_at'  => Current::time(),
@@ -34,7 +34,7 @@ class RecordActivity
 
     protected function shouldRecord($activity)
     {
-        return starts_with($activity, ['resource.', 'relation'])
+        return starts_with($activity, ['resource.', 'relation', 'sv::entry'])
             && ! in_array($activity, ['resource.dashboard']);
     }
 }

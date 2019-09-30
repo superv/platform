@@ -118,15 +118,10 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         return $this->parentEntry;
     }
 
-//    public function getParentResourceHandle(): string
-//    {
-//        return $this->parentEntry->getHandle();
-//    }
-
     public function route($name, EntryContract $entry, array $params = [])
     {
         $params = array_merge([
-            'id'       => $entry->getId(),
+            'entry'    => $entry->getId(),
             'resource' => $entry->getResourceIdentifier(),
             'relation' => $this->getName(),
         ], $params);

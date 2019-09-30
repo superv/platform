@@ -10,7 +10,7 @@ return [
     /**
      * RESOURCE DASHBOARD
      */
-    'GET@'.'sv/res/{resource}/{section?}'      => [
+    'GET@'.'sv/res/{resource}/{section?}'         => [
         'as'    => 'resource.dashboard',
         'uses'  => ResourceDashboardController::class,
         'where' => ['section' => '^(|create|all)$'],
@@ -19,10 +19,10 @@ return [
     /**
      * RESOURCE ENTRY DASHBOARD
      */
-    'GET@'.'sv/res/{resource}/{id}/{section?}' => [
+    'GET@'.'sv/res/{resource}/{entry}/{section?}' => [
         'as'    => 'resource.entry.dashboard',
         'uses'  => ResourceEntryDashboardController::class,
-        'where' => ['id' => '[0-9]*'], // , 'section' => '^(|view|edit)$'
+        'where' => ['entry' => '[0-9]*'], // , 'section' => '^(|view|edit)$'
     ],
 
     'GET@'.'sv/ent/{resource}/{entry}/view' => [
@@ -31,18 +31,18 @@ return [
         'where' => ['entry' => '[0-9]*'],
     ],
 
-    'ANY@'.'sv/res/{resource}/{id}/actions/{action}' => [
+    'ANY@'.'sv/res/{resource}/{entry}/actions/{action}' => [
         'as'    => 'resource.entry.actions',
         'uses'  => ResourceIndexController::at('action'),
-        'where' => ['id' => '[0-9]*'],
+        'where' => ['entry' => '[0-9]*'],
     ],
 
-    'DELETE@'.'sv/res/{resource}/{id}' => [
+    'DELETE@'.'sv/res/{resource}/{entry}' => [
         'as'   => 'resource.entry.delete',
         'uses' => ResourceController::at('delete'),
     ],
 
-    'POST@'.'sv/res/{resource}/{id}/restore'   => [
+    'POST@'.'sv/res/{resource}/{entry}/restore' => [
         'as'   => 'resource.entry.restore',
         'uses' => ResourceController::at('restore'),
     ],
