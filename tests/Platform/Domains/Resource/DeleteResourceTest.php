@@ -59,6 +59,7 @@ class DeleteResourceTest extends ResourceTestCase
         $addon->shouldReceive('getIdentifier')->andReturn('testing');
         AddonUninstallingEvent::dispatch($addon);
 
+        $this->assertEquals(0, Action::query()->where('slug', 'testing.posts')->count());
         $this->assertEquals(0, Action::query()->where('namespace', 'testing')->count());
         $this->assertEquals(0, Action::query()->where('namespace', 'testing.posts.fields')->count());
     }

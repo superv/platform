@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Events\TableDroppedEvent;
+use SuperV\Platform\Domains\Database\Events\TableDroppingEvent;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use Tests\Platform\TestCase;
@@ -71,8 +72,27 @@ class BlueprintTest extends TestCase
         Schema::drop('testing_tasks');
 
         Event::assertDispatched(TableDroppedEvent::class, function (TableDroppedEvent $event) {
+            $this->assertTableDoesNotExist('testing_tasks');
             return $event->table === 'testing_tasks' && $event->connection === DB::getDefaultConnection();
         });
+    }
+
+    function test__dispatch_event_before_table_is_dropping()
+    {
+        $_SERVER['__table_dropping_event'] = null;
+
+        Event::listen(TableDroppingEvent::class, function (TableDroppingEvent $event) {
+            $this->assertTableExists('testing_tasks');
+            $this->assertEquals('testing_tasks', $event->table);
+            $this->assertEquals(DB::getDefaultConnection(), $event->connection);
+
+            $_SERVER['__table_dropping_event'] = $event->table;
+        });
+
+        Schema::create('testing_tasks', function (Blueprint $table) { $table->string('title'); });
+        Schema::drop('testing_tasks');
+
+        $this->assertNotNull($_SERVER['__table_dropping_event']);
     }
 
     function test__dispatch_event_when_a_column_is_created()
