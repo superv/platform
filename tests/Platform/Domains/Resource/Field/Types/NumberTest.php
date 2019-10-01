@@ -18,7 +18,7 @@ class NumberTest extends ResourceTestCase
         $age = $res->getField('age');
 
         $this->assertEquals('number', $age->getFieldType());
-        $this->assertEquals(['integer', 'min:0', 'required'], $res->parseFieldRules('age'));
+        $this->assertEquals(['integer', 'min:0', 'max:4294967295', 'required'], $res->parseFieldRules('age'));
         $this->assertEquals('integer', $age->getConfigValue('type'));
         $this->assertTrue($age->getConfigValue('unsigned'));
     }

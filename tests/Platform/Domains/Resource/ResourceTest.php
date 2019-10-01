@@ -21,7 +21,7 @@ class ResourceTest extends ResourceTestCase
             'email'    => ['unique:tbl_users,email,NULL,id', 'required'],
             'bio'      => ['max:255', 'string', 'nullable'],
             'group_id' => ['required'],
-            'age'      => ['integer', 'min:0', 'nullable'],
+            'age'      => ['integer', 'min:0', 'max:255', 'nullable'],
             'avatar'   => ['nullable'],
             'roles'    => ['nullable'],
         ], $users->getRules());
@@ -38,7 +38,7 @@ class ResourceTest extends ResourceTestCase
             'email'    => ['unique:tbl_users,email,'.$user->getId().',id', 'sometimes', 'required'],
             'bio'      => ['max:255', 'string', 'nullable'],
             'group_id' => ['sometimes', 'required'],
-            'age'      => ['integer', 'min:0', 'nullable'],
+            'age'      => ['integer', 'min:0', 'max:255', 'nullable'],
             'avatar'   => ['nullable'],
             'roles'    => ['nullable'],
         ], $users->getRules($user));
