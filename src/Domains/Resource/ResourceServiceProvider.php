@@ -3,18 +3,9 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Platform;
-use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
-use SuperV\Platform\Domains\Addon\Events\AddonUninstallingEvent;
-use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
-use SuperV\Platform\Domains\Database\Events\ColumnDroppedEvent;
-use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
-use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
-use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepositoryInterface;
-use SuperV\Platform\Domains\Resource\Database\Entry\Events;
-use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FieldComposer;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilderInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface as FormContract;
@@ -22,8 +13,6 @@ use SuperV\Platform\Domains\Resource\Form\v2\Form;
 use SuperV\Platform\Domains\Resource\Form\v2\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFieldComposer;
 use SuperV\Platform\Domains\Resource\Hook\HookManager;
-use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
-use SuperV\Platform\Domains\Resource\Listeners\CreateResourceAuthActions;
 use SuperV\Platform\Domains\Resource\Listeners\RegisterEntryEventListeners;
 use SuperV\Platform\Domains\Resource\Relation\RelationCollection;
 use SuperV\Platform\Domains\Resource\Table\Contracts\TableDataProviderInterface;
@@ -34,23 +23,6 @@ use SuperV\Platform\Providers\BaseServiceProvider;
 
 class ResourceServiceProvider extends BaseServiceProvider
 {
-    protected $listeners = [
-        ColumnCreatedEvent::class             => Listeners\SaveFieldEntry::class,
-        ColumnUpdatedEvent::class             => Listeners\SaveFieldEntry::class,
-        ColumnDroppedEvent::class             => Listeners\DeleteField::class,
-        TableCreatingEvent::class             => Listeners\CreateResource::class,
-        TableCreatedEvent::class              => Listeners\CreateResourceForm::class,
-        AddonBootedEvent::class               => Listeners\RegisterExtensions::class,
-        Events\EntrySavingEvent::class        => [
-            Listeners\SaveUpdatedBy::class,
-            Jobs\ModifyEntryAttributes::class,
-        ],
-        Events\EntryCreatingEvent::class      => Listeners\SaveCreatedBy::class,
-        Resource\ResourceActivityEvent::class => Listeners\RecordActivity::class,
-        AddonUninstallingEvent::class         => DeleteAddonResources::class,
-        ResourceCreatedEvent::class           => CreateResourceAuthActions::class,
-    ];
-
     protected $_bindings = [
         TableDataProviderInterface::class => EloquentTableDataProvider::class,
         FormContract::class               => Form::class,
@@ -71,6 +43,8 @@ class ResourceServiceProvider extends BaseServiceProvider
     public function register()
     {
         parent::register();
+
+        $this->registerListeners((array)require($this->platform->realPath('config/resource/listeners.php')));
     }
 
     public function boot()
