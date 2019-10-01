@@ -3,6 +3,9 @@
 namespace Tests\Platform\Domains\Resource\Hook;
 
 use stdClass;
+use SuperV\Platform\Domains\Addon\Addon;
+use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
+use SuperV\Platform\Domains\Resource\Hook\Actions\RegisterAddonHooks;
 use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoriesDashboardPage;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoryList;
@@ -17,12 +20,12 @@ use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsFields;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsResource;
 
 /**
- * Class HookTest
+ * Class HookManagerTest
  *
  * @package Tests\Platform\Domains\Resource
  * @group   resource
  */
-class HookTest extends HookTestCase
+class HookManagerTest extends HookTestCase
 {
     function test__registers_hooks_globally()
     {
@@ -82,5 +85,25 @@ class HookTest extends HookTestCase
         ], $hook->get('testing.categories'));
     }
 
+    function test__scans_resources_directory_when_an_addon_is_booted()
+    {
+        $addon = $this->setUpAddon(null, null);
+
+        $manager = $this->bindPartialMock(HookManager::class, HookManager::resolve());
+        $manager->shouldReceive('scan')->with($addon->realPath('src/Resources'))->once();
+
+        AddonBootedEvent::dispatch($addon);
+    }
+
+    function test__scans_dddes_directory_when_an_addon_is_booted()
+    {
+        $addon = $this->bindMock(Addon::class);
+        $addon->shouldReceive('realPath')->andReturn('path-does-not-exist');
+
+        $manager = $this->bindPartialMock(HookManager::class, HookManager::resolve());
+        $manager->shouldNotReceive('scan');
+
+        (new RegisterAddonHooks)->handle(new AddonBootedEvent($addon));
+    }
 
 }
