@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Auth\Console;
 use SuperV\Platform\Contracts\Command;
 use SuperV\Platform\Domains\Auth\Contracts\Users;
 
-class CreateUserCommand extends Command
+class SuperVUserCommand extends Command
 {
     protected $signature = 'superv:user {name} {email} {--role=user} {--password=}';
 

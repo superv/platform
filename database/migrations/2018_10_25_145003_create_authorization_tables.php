@@ -59,7 +59,7 @@ class CreateAuthorizationTables extends Migration
 
             $table->increments('id');
             $table->string('slug')->unique()->entryLabel()->searchable();
-            $table->string('namespace')->nullable()->addFlag('filter');
+            $table->string('namespace')->nullable()->addFlag('filter')->showOnIndex();
             $table->createdBy()->updatedBy();
             $table->restorable();
         });

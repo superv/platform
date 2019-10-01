@@ -4,9 +4,9 @@ namespace SuperV\Platform\Domains\Resource\Table;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Table\Contracts\DataProvider;
+use SuperV\Platform\Domains\Resource\Table\Contracts\TableDataProviderInterface;
 
-class EloquentDataProvider implements DataProvider
+class EloquentTableDataProvider implements TableDataProviderInterface
 {
     /** @var \Illuminate\Database\Eloquent\Builder */
     protected $query;

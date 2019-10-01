@@ -63,7 +63,7 @@ class HasOneTest extends ResourceTestCase
         (new FormTester($this->basePath()))->test($form);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->parent = $this->blueprints()->users(function (Blueprint $table) {

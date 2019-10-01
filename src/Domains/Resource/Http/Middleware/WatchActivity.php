@@ -11,9 +11,8 @@ class WatchActivity
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
-     * @param  string|null              $guard
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -24,7 +23,7 @@ class WatchActivity
 
         $uri = ltrim(Current::requestPath(), '/');
 
-        if (starts_with($uri, 'sv/res/')) {
+        if (starts_with($uri, 'sv/res/') || starts_with($uri, 'sv/ent/')) {
             ResourceActivityEvent::dispatch($request);
         }
 

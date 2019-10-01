@@ -26,8 +26,9 @@ class HubTest extends TestCase
         $ports = Hub::ports();
 
         $this->assertEquals(2, $ports->count());
-        $this->assertContains($apiPort, $ports);
-        $this->assertContains($acpPort, $ports);
+
+        $this->assertEquals($apiPort, Hub::get($apiPort->slug()));
+        $this->assertEquals($acpPort, Hub::get($acpPort->slug()));
     }
 }
 

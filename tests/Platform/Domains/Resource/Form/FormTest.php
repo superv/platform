@@ -190,7 +190,7 @@ class FormTest extends ResourceTestCase
         $this->assertEquals(1, Media::count());
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

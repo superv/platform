@@ -34,7 +34,6 @@ class AddonInstallCommand extends Command
         } catch (ValidationException $e) {
             $this->error($e->getErrorsAsString());
         } catch (\Exception $e) {
-            dd($e->getMessage());
             $this->error($e->getMessage());
         }
     }

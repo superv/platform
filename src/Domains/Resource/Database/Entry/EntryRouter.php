@@ -18,74 +18,62 @@ class EntryRouter
 
     public function delete()
     {
-        return sprintf(
-            sv_route('resource.entry.delete', [
-                'resource' => $this->entry->getResourceIdentifier(),
-                'id'       => $this->entry->getId(),
-            ])
-        );
+        return sv_route('resource.entry.delete', [
+            'resource' => $this->entry->getResourceIdentifier(),
+            'entry'    => $this->entry->getId(),
+        ]);
     }
 
     public function restore()
     {
-        return sprintf(
-            sv_route('resource.entry.restore', [
-                'resource' => $this->entry->getResourceIdentifier(),
-                'id'       => $this->entry->getId(),
-            ])
-        );
+        return sv_route('resource.entry.restore', [
+            'resource' => $this->entry->getResourceIdentifier(),
+            'entry'    => $this->entry->getId(),
+        ]);
     }
 
     public function actions($action)
     {
-        return sprintf(
-            sv_route('resource.entry.actions', [
-                'resource' => $this->entry->getResourceIdentifier(),
-                'id'       => $this->entry->getId(),
-                'action'   => $action,
-            ])
-        );
+        return sv_route('resource.entry.actions', [
+            'resource' => $this->entry->getResourceIdentifier(),
+            'entry'    => $this->entry->getId(),
+            'action'   => $action,
+        ]);
     }
 
     public function updateForm()
     {
-        return sprintf(
-            sv_route('sv::forms.display', [
-                'identifier' => $this->entry->getResourceIdentifier().'.forms:default',
-                'entry'      => $this->entry->getId(),
-            ])
-        );
+        return sv_route('sv::forms.display', [
+            'form'  => $this->entry->getResourceIdentifier().'.forms:default',
+            'entry' => $this->entry->getId(),
+        ]);
     }
 
     public function view()
     {
-        return sprintf(
-            sv_route('resource.entry.view', [
-                'resource' => $this->entry->getResourceIdentifier(),
-                'id'       => $this->entry->getId(),
-            ])
-        );
+        return sv_route('sv::entry.view', [
+            'resource' => $this->entry->getResourceIdentifier(),
+            'entry'    => $this->entry->getId(),
+        ]);
     }
 
     public function dashboard($section = null)
     {
-        return sprintf(
-            sv_route('resource.entry.dashboard', [
-                'resource' => $this->entry->getResourceIdentifier(),
-                'id'       => $this->entry->getId(),
-                'section'  => $section,
-            ])
-        );
+        return sv_route('resource.entry.dashboard', array_filter([
+            'resource' => $this->entry->getResourceIdentifier(),
+            'entry'    => $this->entry->getId(),
+            'section'  => $section,
+        ]));
     }
 
     public function dashboardSPA($section = null)
     {
-        return sprintf(
-            route('resource.entry.dashboard', [
+        return route('resource.entry.dashboard', array_filter(
+            [
                 'resource' => $this->entry->getResourceIdentifier(),
-                'id'       => $this->entry->getId(),
+                'entry'    => $this->entry->getId(),
                 'section'  => $section,
-            ], false)
-        );
+            ]
+        ), false);
     }
 }

@@ -29,6 +29,15 @@ class InstallSuperV
      */
     protected $platform;
 
+    protected $hostname = 'localhost';
+
+    public function __construct(array $params = [])
+    {
+        if (isset($params['hostname'])) {
+            $this->hostname = $params['hostname'];
+        }
+    }
+
     public function handle(Platform $platform)
     {
         $this->platform = $platform;
@@ -40,63 +49,9 @@ class InstallSuperV
         try {
             $this->install($platformServiceProvider);
             $this->commit();
-
         } catch (Exception $e) {
             $this->rollback($e);
         }
-    }
-
-    public function setEnv($line)
-    {
-        list($variable, $value) = explode('=', $line, 2);
-
-        $data = $this->readEnvironmentFile();
-
-        array_set($data, $variable, $value);
-
-        $this->writeEnvironmentFile($data);
-    }
-
-    protected function readEnvironmentFile()
-    {
-        $data = [];
-
-        $file = base_path('.env');
-
-        if (! file_exists($file)) {
-            return $data;
-        }
-
-        foreach (file($file) as $line) {
-            // Check for # comments.
-            if (starts_with($line, '#')) {
-                $data[] = $line;
-            } elseif ($operator = strpos($line, '=')) {
-                $key = substr($line, 0, $operator);
-                $value = substr($line, $operator + 1);
-
-                $data[$key] = $value;
-            }
-        }
-
-        return $data;
-    }
-
-    protected function writeEnvironmentFile($data)
-    {
-        $contents = '';
-
-        foreach ($data as $key => $value) {
-            if ($key) {
-                $contents .= PHP_EOL.strtoupper($key).'='.$value;
-            } else {
-                $contents .= PHP_EOL.$value;
-            }
-        }
-
-        $file = base_path('.env');
-
-        file_put_contents($file, $contents);
     }
 
     /**
@@ -107,7 +62,9 @@ class InstallSuperV
     {
         DB::rollBack();
 
-        $this->setEnv('SV_INSTALLED=false');
+        EnvFile::load(base_path('.env'))->set('SV_INSTALLED', 'false')->write();
+
+//        $this->setEnv('SV_INSTALLED=false');
 
         config(['superv.installed' => false]);
 
@@ -134,25 +91,25 @@ class InstallSuperV
     {
         $this->prepareMigrationsTable();
 
-        PlatformBlueprints::createTables();
-
         $platformServiceProvider->registerBase();
         $platformServiceProvider->bindUserModel();
         app()->register(ResourceServiceProvider::class);
 
         Current::setMigrationScope('platform');
-
+        PlatformBlueprints::createTables();
         PlatformBlueprints::createResources();
 
-        CreatePlatformResourceForms::dispatch();
+        EnvFile::load(base_path('.env'))
+               ->set('SV_INSTALLED', 'true')
+               ->set('SV_HOSTNAME', $this->hostname)
+               ->write();
 
-//        $platformServiceProvider->register();
-//        PlatformBlueprints::createResources();
-
-        $this->setEnv('SV_INSTALLED=true');
         config(['superv.installed' => true]);
 
+
         Artisan::call('migrate', ['--namespace' => 'platform', '--force' => true]);
+
+        CreatePlatformResourceForms::dispatch();
 
         app()->register(PlatformServiceProvider::class, true);
 

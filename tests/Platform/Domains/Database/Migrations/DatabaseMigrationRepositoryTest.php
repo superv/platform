@@ -24,7 +24,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
         $this->assertCount(5, $this->repositoryWithScope(null)->getMigrations($steps = 5));
 
         $this->assertCount(3, $this->repositoryWithScope('foo')->getMigrations($steps = 5));
-        $this->assertArraySubset(
+        $this->assertArrayContains(
             [
                 ['migration' => '2018_0005_migration_E'],
                 ['migration' => '2018_0004_migration_D'],
@@ -47,7 +47,8 @@ class DatabaseMigrationRepositoryTest extends TestCase
         );
 
         $this->assertCount(2, $this->repositoryWithScope('foo')->getLast());
-        $this->assertArraySubset(
+
+        $this->assertArrayContains(
             [
                 ['migration' => '2018_0005_migration_E'],
                 ['migration' => '2018_0004_migration_D'],
@@ -56,7 +57,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
         );
 
         $this->assertCount(1, $this->repositoryWithScope('bar')->getLast());
-        $this->assertArraySubset(
+        $this->assertArrayContains(
             [
                 ['migration' => '2018_0003_migration_C'],
             ],
@@ -72,7 +73,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
         $this->app['migrator']->run(__DIR__.'/migrations');
 
         $this->assertCount(2, $this->repositoryWithScope('bar')->getRan());
-        $this->assertArraySubset(
+        $this->assertArrayContains(
             [
                 "2016_01_01_200000_bar_scope_migration",
                 "2016_01_01_200010_another_bar_scope_migration",
@@ -86,7 +87,7 @@ class DatabaseMigrationRepositoryTest extends TestCase
         return collect($migrations)
             ->map(function ($obj) {
                 return ['migration' => $obj->migration];
-            })->all();
+            })->values()->all();
     }
 
     protected function repositoryWithScope($scope = null)

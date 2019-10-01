@@ -11,21 +11,26 @@ class AddonCollection extends Collection
 {
     public function enabled()
     {
-        return $this->filter(function(Addon $addon) {
-           return $addon->entry()->enabled;
+        return $this->filter(function (Addon $addon) {
+            return $addon->entry()->enabled;
         });
     }
 
     public function slugs()
     {
-        return $this->map(function (Addon $addon) { return $addon->getIdentifier(); })->values();
+        return $this->map(function (Addon $addon) {
+            return $addon->getIdentifier();
+        })->values();
     }
 
-    /**
-     * @param $slug
-     * @return Addon
-     */
-    public function withSlug($slug)
+    public function identifiers()
+    {
+        return $this->map(function (Addon $addon) {
+            return $addon->getIdentifier();
+        })->values();
+    }
+
+    public function withSlug(string $slug): ?Addon
     {
         foreach ($this->items as $key => $addon) {
             if ($slug === $key) {
@@ -34,11 +39,7 @@ class AddonCollection extends Collection
         }
     }
 
-    /**
-     * @param $class
-     * @return Addon
-     */
-    public function withClass($class)
+    public function withClass(string $class): ?Addon
     {
         foreach ($this->items as $key => $addon) {
             if ($class === get_class($addon)) {

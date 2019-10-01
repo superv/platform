@@ -9,19 +9,19 @@ use SuperV\Platform\Domains\Resource\Action\ModalAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\EntryForm;
-use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
-use SuperV\Platform\Domains\Resource\Table\ResourceTable;
+use SuperV\Platform\Domains\Resource\Table\Table;
 
 class MorphMany extends Relation implements ProvidesTable, ProvidesForm
 {
     public function makeTable()
     {
-        return app(ResourceTable::class)
-            ->setResource($this->getRelatedResource())
-            ->setQuery($this)
-            ->setDataUrl(url()->current().'/data')
-            ->addContextAction(
+        return Table::resolve()
+                    ->setResource($this->getRelatedResource())
+                    ->setQuery($this)
+                    ->setDataUrl(url()->current().'/data')
+                    ->addContextAction(
                 ModalAction::make('New '.str_singular(str_unslug($this->getName())))
                            ->setModalUrl($this->route('create', $this->parentEntry))
             );
@@ -30,10 +30,10 @@ class MorphMany extends Relation implements ProvidesTable, ProvidesForm
 
     public function makeForm(): EntryForm
     {
-        $form = ResourceFormBuilder::buildFromEntry($childEntry = $this->newQuery()->make());
+        $builder = FormBuilder::fromResource($this->getRelatedResource());
+        $builder->setEntry($childEntry = $this->newQuery()->make());
 
-        return $form->hideField(sv_resource($this->parentEntry)->config()->getResourceKey())
-                    ->make();
+        return $builder->getForm();
     }
 
     public function getFormTitle(): string

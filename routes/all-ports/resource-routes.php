@@ -10,41 +10,41 @@ return [
     /**
      * RESOURCE DASHBOARD
      */
-    'GET@'.'sv/res/{resource}/{section?}'      => [
+    'GET@'.'sv/res/{resource}/{section?}'         => [
         'as'    => 'resource.dashboard',
         'uses'  => ResourceDashboardController::class,
         'where' => ['section' => '^(|create|all)$'],
     ],
 
-    'GET@'.'sv/res/{resource}/{id}/view' => [
-        'as'    => 'resource.entry.view',
-        'uses'  => ResourceViewController::at('view'),
-        'where' => ['id' => '[0-9]*'],
+    /**
+     * RESOURCE ENTRY DASHBOARD
+     */
+    'GET@'.'sv/res/{resource}/{entry}/{section?}' => [
+        'as'    => 'resource.entry.dashboard',
+        'uses'  => ResourceEntryDashboardController::class,
+        'where' => ['entry' => '[0-9]*'], // , 'section' => '^(|view|edit)$'
     ],
 
-    'ANY@'.'sv/res/{resource}/{id}/actions/{action}' => [
+    'GET@'.'sv/ent/{resource}/{entry}/view' => [
+        'as'    => 'sv::entry.view',
+        'uses'  => ResourceViewController::at('view'),
+        'where' => ['entry' => '[0-9]*'],
+    ],
+
+    'ANY@'.'sv/res/{resource}/{entry}/actions/{action}' => [
         'as'    => 'resource.entry.actions',
         'uses'  => ResourceIndexController::at('action'),
-        'where' => ['id' => '[0-9]*'],
+        'where' => ['entry' => '[0-9]*'],
     ],
 
-    'DELETE@'.'sv/res/{resource}/{id}' => [
+    'DELETE@'.'sv/res/{resource}/{entry}' => [
         'as'   => 'resource.entry.delete',
         'uses' => ResourceController::at('delete'),
     ],
 
-    'POST@'.'sv/res/{resource}/{id}/restore'   => [
+    'POST@'.'sv/res/{resource}/{entry}/restore' => [
         'as'   => 'resource.entry.restore',
         'uses' => ResourceController::at('restore'),
-    ],
-
-    /**
-     * RESOURCE ENTRY DASHBOARD
-     */
-    'GET@'.'sv/res/{resource}/{id}/{section?}' => [
-        'as'    => 'resource.entry.dashboard',
-        'uses'  => ResourceEntryDashboardController::class,
-        'where' => ['id' => '[0-9]*'], // , 'section' => '^(|view|edit)$'
     ],
 
     /**

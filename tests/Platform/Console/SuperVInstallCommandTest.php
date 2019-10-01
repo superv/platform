@@ -16,45 +16,63 @@ class SuperVInstallCommandTest extends TestCase
     use TestsConsoleCommands;
     use TestHelpers;
 
-    function test_sets_env_variable_existing_parameter()
+
+    function test_sets_env_variables()
     {
-        file_put_contents(base_path('.env'), 'SV_INSTALLED=false');
+        file_put_contents(base_path('.env'), $this->envPath('sample'));
 
         InstallSuperV::dispatch();
 
-        $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
+        $envFile = file_get_contents(base_path('.env'));
+        $this->assertStringContainsString('SV_INSTALLED=true', $envFile);
+        $this->assertStringContainsString('SV_HOSTNAME=localhost', $envFile);
+    }
+
+    function test_sets_env_variable_existing_parameter()
+    {
+        file_put_contents(base_path('.env'), $this->envPath('existing'));
+
+        InstallSuperV::dispatch();
+
+        $envFile = file_get_contents(base_path('.env'));
+        $this->assertStringContainsString('SV_INSTALLED=true', $envFile);
+        $this->assertStringContainsString('SV_HOSTNAME=localhost', $envFile);
     }
 
     function test_sets_env_variable_invalid_parameter()
     {
         file_put_contents(base_path('.env'), 'SV_INSTALLED***invalid');
 
-        $this->artisan('superv:install');
+        InstallSuperV::dispatch();
 
-        $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
+        $envFile = file_get_contents(base_path('.env'));
+        $this->assertStringContainsString('SV_INSTALLED=true', $envFile);
+        $this->assertStringContainsString('SV_HOSTNAME=localhost', $envFile);
     }
 
     function test_sets_env_variable_empty_env()
     {
         file_put_contents(base_path('.env'), '');
 
-        $this->artisan('superv:install');
+        $this->artisan('superv:install', ['--hostname' => 'my-hostname']);
 
-        $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
+        $envFile = file_get_contents(base_path('.env'));
+        $this->assertStringContainsString('SV_INSTALLED=true', $envFile);
+        $this->assertStringContainsString('SV_HOSTNAME=my-hostname', $envFile);
     }
 
     function test_does_not_make_any_other_changes_on_env_file()
     {
         file_put_contents(base_path('.env'), file_get_contents($this->envPath('sample')));
 
-        $this->artisan('superv:install');
+        InstallSuperV::dispatch();
 
         $this->assertEnvValuesPreserved($this->envPath('sample'), base_path('.env'));
     }
 
     function test_runs_platform_migrations()
     {
-        $this->artisan('superv:install');
+        InstallSuperV::dispatch();
 
         $this->assertEquals(0, AddonModel::count());
     }
@@ -88,14 +106,14 @@ class SuperVInstallCommandTest extends TestCase
         $this->assertColumnExists('migrations', 'namespace');
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->app->setBasePath(base_path('tests'));
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         file_put_contents(base_path('.env'), '');
 
@@ -113,6 +131,8 @@ class SuperVInstallCommandTest extends TestCase
     {
         $orig = file($orig);
         $updated = file($updated);
+
+        $this->assertEquals(count($orig) + 2, count($updated));
 
         foreach ($orig as $line) {
             if (starts_with($line, 'SV_')) {

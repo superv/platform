@@ -10,7 +10,6 @@ use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
-use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 
 class FormBuilder
 {
@@ -43,15 +42,17 @@ class FormBuilder
 
     public function getForm(): EntryForm
     {
-        if (! $this->formEntry->isPublic()) {
-            app(PlatformAuthenticate::class)->guard($this->getRequest(), 'sv-api');
-        }
+//        if (! $this->formEntry->isPublic() && $this->getRequest()) {
+//            app(PlatformAuthenticate::class)->guard($this->getRequest(), 'sv-api');
+//        }
 
         $form = EntryForm::resolve($this->formEntry->getIdentifier());
 
         if ($this->resource = $this->formEntry->getOwnerResource()) {
-            if (! $entry = $this->getEntry() && $this->entryId) {
-                $entry = $this->resource->find($this->entryId);
+            if (! $entry = $this->getEntry()) {
+                if ($this->entryId) {
+                    $entry = $this->resource->find($this->entryId);
+                }
             }
             $form->setEntry($entry ?? $this->resource->newEntryInstance());
         }
@@ -153,6 +154,13 @@ class FormBuilder
         return app(static::class);
     }
 
+    public static function fromResource($resource): FormBuilder
+    {
+        $formIdentifier = $resource->getIdentifier().'.forms:default';
+        $builder = FormBuilder::createFrom($formIdentifier);
+
+        return $builder;
+    }
     public static function createFrom($formEntry): FormBuilder
     {
         if (is_string($identifier = $formEntry)) {

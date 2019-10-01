@@ -34,13 +34,13 @@ class DataController extends BaseApiController
         }
 
         // @TODO.dali
-        $nav = (new NavGuard(auth()->user(), Nav::get('acp')))->compose();
+        $nav = (new NavGuard(auth()->user(), Nav::get($port->getNavigationSlug())))->compose();
 
         $payload = new Payload([
             'nav' => $nav,
         ]);
 
-        $this->events->fire('nav.composed', $payload);
+        $this->events->dispatch('nav.composed', $payload);
 
         return [
             'data' => $payload->toArray(),

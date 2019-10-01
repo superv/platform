@@ -38,7 +38,7 @@ class RelationIndexTest extends ResourceTestCase
         $this->withoutExceptionHandling();
 
         $url = route('relation.index', ['resource' => 'testing.users',
-                                        'id'       => $userA->getId(),
+                                        'entry'    => $userA->getId(),
                                         'relation' => 'posts']);
         $response = $this->getJsonUser($url);
         $response->assertOk();
@@ -57,7 +57,7 @@ class RelationIndexTest extends ResourceTestCase
         //
         $this->assertEquals(
             sv_route('relation.create', ['resource' => 'testing.users',
-                                         'id'       => $userA->getId(),
+                                         'entry'    => $userA->getId(),
                                          'relation' => 'posts']),
             sv_url($action->getProp('url')));
 

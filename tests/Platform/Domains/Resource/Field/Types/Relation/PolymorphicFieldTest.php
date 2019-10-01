@@ -36,7 +36,7 @@ class PolymorphicFieldTest extends ResourceTestCase
 //        ], $selectTypeField->getConfigValue('options'));
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

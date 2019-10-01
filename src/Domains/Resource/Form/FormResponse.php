@@ -25,6 +25,8 @@ class FormResponse implements Responsable
      */
     protected $entry;
 
+    protected $events;
+
     public function __construct(Form $form, EntryContract $entry, ?Resource $resource = null)
     {
         $this->form = $form;
@@ -53,16 +55,21 @@ class FormResponse implements Responsable
         $data = [
             'message'     => $this->getMessage(),
             'action'      => $action,
+            'events'      => $this->events,
+            'entry'       => ['id' => $this->entry->getId()],
             'redirect_to' => $route ?? $this->resource->spaRoute('dashboard'),
         ];
 
-        if ($this->form->isCreating()) {
-            $data['entry'] = ['id' => $this->entry->getId()];
-        }
-
         return response()->json([
-            'data' => $data,
+            'data' => array_filter($data),
         ]);
+    }
+
+    public function setEvents($events)
+    {
+        $this->events = $events;
+
+        return $this;
     }
 
     protected function getMessage()

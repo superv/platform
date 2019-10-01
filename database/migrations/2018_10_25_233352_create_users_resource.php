@@ -33,7 +33,6 @@ class CreateUsersResource extends Migration
                       $pivotTable->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
                   });
 
-            $table->restorable();
         });
 
         Schema::table('users', function (Blueprint $table) {

@@ -104,8 +104,15 @@ trait TestHelpers
         return HelperComponent::fromArray($response->decodeResponseJson('data'));
     }
 
-    protected function assertArrayContains(array $needle, array $haystack)
+    protected function assertArrayContains($needle, array $haystack)
     {
+        $needle = wrap_array($needle);
+
+        if ($needle === $haystack) {
+            $this->addToAssertionCount(1);
+
+            return true;
+        }
         if (is_numeric(array_keys($needle)[0])) {
             $actual = array_intersect($needle, $haystack);
         } else {
@@ -131,7 +138,7 @@ trait TestHelpers
 
     protected function assertTableDoesNotExist($table)
     {
-        $this->assertFalse(\Schema::hasTable($table));
+        $this->assertFalse(\Schema::hasTable($table), 'Failed asserting table '.$table.' does not exist');
     }
 
     protected function assertTableExists($table)
@@ -141,7 +148,7 @@ trait TestHelpers
 
     protected function assertProviderRegistered($provider)
     {
-        $this->assertContains($provider, array_keys($this->app->getLoadedProviders()));
+        $this->assertArrayContains($provider, array_keys($this->app->getLoadedProviders()));
     }
 
     protected function assertProviderNotRegistered($provider)

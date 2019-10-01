@@ -272,13 +272,13 @@ class ResourceIndexTest extends ResourceTestCase
         $this->assertEquals('Select Name', $filter['placeholder']);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->withoutExceptionHandling();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

@@ -7,14 +7,14 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 abstract class HookTestCase extends ResourceTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         HookManager::resolve()->scan(__DIR__.'/../Fixtures/Resources');
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         HookManager::resolve()->flush();
 

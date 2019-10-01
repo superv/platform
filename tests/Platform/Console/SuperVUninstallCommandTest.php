@@ -5,6 +5,7 @@ namespace Tests\Platform\Console;
 use Event;
 use Illuminate\Support\Facades\Schema;
 use Platform;
+use SuperV\Platform\Console\Jobs\InstallSuperV;
 use SuperV\Platform\Domains\Addon\Events\AddonUninstallingEvent;
 use Tests\Platform\TestCase;
 
@@ -12,7 +13,7 @@ class SuperVUninstallCommandTest extends TestCase
 {
     function test__drops_platform_tables()
     {
-        $this->artisan('superv:install');
+        InstallSuperV::dispatch();
         foreach (Platform::tables() as $table) {
             $this->assertTrue(Schema::hasTable($table), $table);
         }
@@ -28,15 +29,15 @@ class SuperVUninstallCommandTest extends TestCase
         $this->app->setBasePath(base_path('tests'));
         file_put_contents(base_path('.env'), '');
 
-        $this->artisan('superv:install');
-        $this->assertContains('SV_INSTALLED=true', file_get_contents(base_path('.env')));
+        InstallSuperV::dispatch();
+        $this->assertStringContainsString('SV_INSTALLED=true', file_get_contents(base_path('.env')));
         $this->artisan('superv:uninstall');
-        $this->assertContains('SV_INSTALLED=false', file_get_contents(base_path('.env')));
+        $this->assertStringContainsString('SV_INSTALLED=false', file_get_contents(base_path('.env')));
     }
 
     function test__uninstalls_modules()
     {
-        $this->artisan('superv:install');
+        InstallSuperV::dispatch();
 
         $this->setUpAddon();
 

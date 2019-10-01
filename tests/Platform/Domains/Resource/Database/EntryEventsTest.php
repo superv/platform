@@ -139,7 +139,7 @@ class EntryEventsTest extends ResourceTestCase
         $this->assertEquals($this->testUser->id, $posts->first()->updated_by_id);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

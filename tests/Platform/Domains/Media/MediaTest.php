@@ -62,7 +62,7 @@ class MediaTest extends TestCase
 
         $photos = $this->owner->mediaBag('photos')->get();
         $this->assertEquals(2, $photos->count());
-        $this->assertArraySubset([
+        $this->assertArrayContains([
             ['original' => 'image-a'],
             ['original' => 'image-b'],
         ], $photos->toArray());
@@ -74,7 +74,7 @@ class MediaTest extends TestCase
         });
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

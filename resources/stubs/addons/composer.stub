@@ -12,23 +12,7 @@
         }
     },
     "require": {
-        "php": ">=7.1.3",
-        "fideloper/proxy": "~4.0",
-        "laravel/framework": "5.7.*",
-        "superv/platform": "0.*|dev-*"
-    },
-    "require-dev": {
-        "doctrine/dbal": "^2.6",
-        "fzaninotto/faker": "~1.4",
-        "orchestra/testbench": "~3.0",
-        "phpunit/phpunit": "~7.0"
-    },
-    "config": {
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "optimize-autoloader": true
-    },
-    "prefer-stable": true,
-    "minimum-stability": "dev"
+        "superv/platform": "0.*"
+    }
 }
 

@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
-use SuperV\Platform\Domains\Resource\Table\ResourceTable;
+use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
@@ -11,25 +11,24 @@ class LookupController extends BaseApiController
 {
     use ResolvesResource;
 
-    public function __invoke(ResourceTable $table)
+    public function __invoke(TableInterface $table)
     {
         $relation = $this->resolveRelation();
         $resource = $relation->getRelatedResource();
 
-        $table->setResource($resource);
+//        $table->setResource($resource);
+        $table = $resource->resolveTable();
         $table->setDataUrl(url()->current().'/data');
 
         if ($this->route->parameter('data')) {
             /** @var \Illuminate\Database\Eloquent\Builder $query */
-            $query = $resource->newQuery();
-
-            $keyName = $query->getModel()->getKeyName();
+            $query = $table->getQuery();
 
             $alreadyAttachedItems = $this->entry->{$relation->getName()}()
-                                                ->pluck($resource->config()->getTable().'.'.$keyName);
+                                                ->pluck($resource->config()->getTable().'.'.$query->getModel()->getKeyName());
 
-            $query->whereNotIn($keyName, $alreadyAttachedItems);
-            $table->setQuery($query);
+            $query->whereNotIn($query->getModel()->getQualifiedKeyName(), $alreadyAttachedItems);
+//            $table->setQuery($query);
 
             return $table->setRequest($this->request)->build();
         }

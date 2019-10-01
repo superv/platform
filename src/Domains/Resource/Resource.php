@@ -24,7 +24,8 @@ use SuperV\Platform\Domains\Resource\Resource\LabelConcern;
 use SuperV\Platform\Domains\Resource\Resource\RepoConcern;
 use SuperV\Platform\Domains\Resource\Resource\ResourceView;
 use SuperV\Platform\Domains\Resource\Resource\TestHelper;
-use SuperV\Platform\Domains\Resource\Table\ResourceTable;
+use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
+use SuperV\Platform\Domains\Resource\Table\Table;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -480,10 +481,10 @@ class Resource implements
         return $filters;
     }
 
-    public function resolveTable(): ResourceTable
+    public function resolveTable(): TableInterface
     {
-        /** @var ResourceTable $table */
-        $table = app(ResourceTable::class)->setResource($this);
+        $table = Table::resolve()->setResource($this);
+
         $table->setIdentifier($this->getIdentifier().'.lists:default');
 
         $this->fire('table.resolved', ['table' => $table]);

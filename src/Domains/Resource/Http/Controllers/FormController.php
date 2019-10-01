@@ -8,13 +8,17 @@ use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Http\Controllers\BaseController;
+use SuperV\Platform\Http\Middleware\PlatformAuthenticate;
 
 class FormController extends BaseController
 {
     public function fields($formIdentifier, $field)
     {
-        $builder = FormBuilder::createFrom($formIdentifier)
-                              ->setRequest($this->request);
+        $builder = FormBuilder::createFrom($formIdentifier);
+
+        if (! $builder->getFormEntry()->isPublic()) {
+            app(PlatformAuthenticate::class)->guard($this->request, 'sv-api');
+        }
 
         $form = $builder->getForm();
 
@@ -44,6 +48,10 @@ class FormController extends BaseController
     {
         $builder = FormBuilder::createFrom($formIdentifier);
 
+        if (! $builder->getFormEntry()->isPublic()) {
+            app(PlatformAuthenticate::class)->guard($this->request, 'sv-api');
+        }
+
         if ($entryId) {
 //        if ($callback = $resource->getCallback('editing')) {
 //            app()->call($callback, ['form' => $form, 'entry' => $entry]);
@@ -59,6 +67,10 @@ class FormController extends BaseController
     public function submit(string $formIdentifier, int $entryId = null)
     {
         $builder = FormBuilder::createFrom($formIdentifier);
+
+        if (! $builder->getFormEntry()->isPublic()) {
+            app(PlatformAuthenticate::class)->guard($this->request, 'sv-api');
+        }
 
         if ($entryId) {
             //        if ($callback = $resource->getCallback('editing')) {

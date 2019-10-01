@@ -8,20 +8,24 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Form\EntryForm;
-use SuperV\Platform\Domains\Resource\Form\FormModel;
-use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class HasOne extends Relation implements ProvidesForm, HandlesRequests
 {
     public function makeForm(): EntryForm
     {
-        $form = ResourceFormBuilder::buildFromEntry($this->getRelatedEntry());
-        $formData = FormModel::findByUuid($this->getRelatedResource()->getIdentifier());
+        $formIdentifier = $this->getRelatedResource()->getIdentifier().'.forms:default';
+        $builder = FormBuilder::createFrom($formIdentifier);
 
-        return $form
-            ->make($formData ? $formData->uuid : null)
-            ->hideField(sv_resource($this->parentEntry)->config()->getResourceKey());
+        $builder->setEntry($this->getRelatedEntry());
+
+        /** @var \SuperV\Platform\Domains\Resource\Form\Contracts\EntryForm $form */
+        $form = $builder->getForm();
+
+        $form->hideField(sv_resource($this->parentEntry)->config()->getResourceKey());
+
+        return $form;
     }
 
     public function getFormTitle(): string

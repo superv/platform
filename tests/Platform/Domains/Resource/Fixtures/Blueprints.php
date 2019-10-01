@@ -34,6 +34,7 @@ class Blueprints
                 $table->file('avatar')->config(['disk' => 'fakedisk']);
 
                 $table->belongsTo('testing.groups', 'group')->showOnIndex();
+
                 $table->belongsToMany('testing.roles', 'roles')
                       ->pivotTable('tbl_assigned_roles', 'testing.assigned_roles')
                       ->pivotForeignKey('user_id')
@@ -151,6 +152,14 @@ class Blueprints
             $config->setName('actions');
             $table->increments('id');
             $table->string('action')->unique()->entryLabel();
+
+            $table->morphToMany('testing.actions', 'actions', 'owner')
+                  ->pivotRelatedKey('action_id')
+                  ->pivotTable('assigned_actions', 'testing.assigned_actions')
+                  ->pivotColumns(
+                      function (Blueprint $pivotTable) {
+                          $pivotTable->string('provision');
+                      });
         });
 
         $actions->create(['action' => 'create']);

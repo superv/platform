@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Table\Contracts;
 
 use Illuminate\Support\Collection;
 
-interface DataProvider
+interface TableDataProviderInterface
 {
     public function setQuery($query): void;
 

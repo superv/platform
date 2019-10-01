@@ -107,7 +107,7 @@ class FormControllerTest extends ResourceTestCase
         return $formEntry;
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
