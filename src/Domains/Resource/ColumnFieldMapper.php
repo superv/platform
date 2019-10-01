@@ -173,6 +173,11 @@ class ColumnFieldMapper
 
         $this->setConfigValue('total', $this->getParameter('total'));
         $this->setConfigValue('places', $this->getParameter('places'));
+
+        $integer = $this->getParameter('total') - $this->getParameter('places');
+        if ($integer) {
+            $this->addRule('max:'.(pow(10, $integer) - pow(10, -$this->getParameter('places'))));
+        }
     }
 
     protected function mapFloat()

@@ -35,7 +35,7 @@ class NumberTest extends ResourceTestCase
 
         $this->assertEquals('number', $height->getFieldType());
         $this->assertEquals('decimal', $height->getConfigValue('type'));
-        $this->assertEquals(['numeric', 'required'], $res->parseFieldRules('height'));
+        $this->assertEquals(['numeric', 'max:9.99', 'required'], $res->parseFieldRules('height'));
 
         $this->assertEquals(3, $height->getConfigValue('total'));
         $this->assertEquals(2, $height->getConfigValue('places'));
