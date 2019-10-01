@@ -37,11 +37,16 @@ class Migrator extends BaseMigrator
             $this->setNamespace($addon);
         }
 
-//        parent::runUp($file, $batch, $pretend);
-
         $migration = $this->resolve(
             $name = $this->getMigrationName($file)
         );
+
+        /**
+         * Skip normal migrations when --namespace is provided..
+         */
+        if ($this->namespace && ! $migration instanceof PlatformMigration) {
+            return;
+        }
 
         if ($pretend) {
             return $this->pretendToRun($migration, 'up');
