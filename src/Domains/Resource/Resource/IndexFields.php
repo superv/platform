@@ -128,9 +128,10 @@ class IndexFields
     protected function makeLabelField()
     {
         $fieldParams = [
-            'type'  => 'text',
-            'name'  => 'label',
-            'label' => $this->resource->getSingularLabel(),
+            'identifier' => $this->resource->getIdentifier().'.fields:entry_label',
+            'type'       => 'text',
+            'name'       => 'label',
+            'label'      => $this->resource->getSingularLabel(),
         ];
 
         return FieldFactory::createFromArray($fieldParams)
