@@ -5,6 +5,7 @@ namespace SuperV\Platform\Providers;
 use Illuminate\Console\Application as Artisan;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use SuperV\Platform\Platform;
 
 abstract class BaseServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,15 @@ abstract class BaseServiceProvider extends ServiceProvider
     protected $listeners = [];
 
     protected $commands = [];
+
+    /** @var \SuperV\Platform\Platform */
+    protected $platform;
+
+    public function __construct($app)
+    {
+        parent::__construct($app);
+        $this->platform = Platform::resolve();
+    }
 
     public function register()
     {

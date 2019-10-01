@@ -136,5 +136,11 @@ class Platform extends Addon
     {
         return $this->booted;
     }
+
+    /** * @return static */
+    public static function resolve()
+    {
+        return app(Platform::class);
+    }
 }
 

@@ -74,15 +74,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         AddonRunMigrationCommand::class,
     ];
 
-    /** @var \SuperV\Platform\Platform */
-    protected $platform;
-
-    public function __construct($app)
-    {
-        parent::__construct($app);
-        $this->platform = $app->make(\SuperV\Platform\Platform::class);
-    }
-
     public function registerBase(): void
     {
         $this->registerAliases($this->aliases);
