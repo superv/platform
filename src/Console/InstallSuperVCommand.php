@@ -18,7 +18,7 @@ class InstallSuperVCommand extends Command
         $this->comment('Installing SuperV');
 
         if (! $hostname = $this->option('hostname')) {
-            $hostname = $this->ask("Please enter your project's hostname ", 'localhost');
+            $hostname = $this->ask("Please enter your project hostname", 'localhost');
         }
 
         try {
