@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Addon\Events\AddonUninstallingEvent;
 use SuperV\Platform\Domains\Auth\Access\Action;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
+use SuperV\Platform\Domains\Resource\Jobs\DeleteResource;
 use SuperV\Platform\Domains\Resource\Resource;
 
 /**
@@ -55,9 +56,11 @@ class DeleteResourceTest extends ResourceTestCase
     {
         $this->blueprints()->posts('testing');
 
-        $addon = $this->bindMock(Addon::class);
-        $addon->shouldReceive('getIdentifier')->andReturn('testing');
-        AddonUninstallingEvent::dispatch($addon);
+//        $addon = $this->bindMock(Addon::class);
+//        $addon->shouldReceive('getIdentifier')->andReturn('testing');
+//        AddonUninstallingEvent::dispatch($addon);
+
+        DeleteResource::dispatch('testing.posts');
 
         $this->assertEquals(0, Action::query()->where('slug', 'testing.posts')->count());
         $this->assertEquals(0, Action::query()->where('namespace', 'testing')->count());
