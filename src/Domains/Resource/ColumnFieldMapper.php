@@ -113,16 +113,22 @@ class ColumnFieldMapper
         $this->mapText();
     }
 
-    protected function mapTinyInteger()
-    {
-        $this->mapInteger();
-    }
-
-    protected function mapInteger()
+    protected function mapInteger($max = ['signed' => 2147483647, 'unsigned' => 4294967295])
     {
         $this->fieldType = 'number';
         $this->setConfigValue('type', 'integer');
         $this->setConfigValue('unsigned', $this->getParameter('unsigned'));
+        $this->addRule('max:'.$max[$this->getParameter('unsigned') ? 'unsigned' : 'signed']);
+    }
+
+    protected function mapTinyInt()
+    {
+        $this->mapTinyInteger();
+    }
+
+    protected function mapTinyInteger()
+    {
+        $this->mapInteger(['signed' => 127, 'unsigned' => 255]);
     }
 
     protected function mapBigInteger()
@@ -130,29 +136,29 @@ class ColumnFieldMapper
         $this->mapInteger();
     }
 
-    protected function mapSmallint()
+    protected function mapBigInt()
     {
         $this->mapInteger();
+    }
+
+    protected function mapSmallInt()
+    {
+        $this->mapSmallInteger();
     }
 
     protected function mapSmallInteger()
     {
-        $this->mapInteger();
+        $this->mapInteger(['signed' => 32767, 'unsigned' => 65535]);
     }
 
-    protected function mapMediumint()
+    protected function mapMediumInt()
     {
-        $this->mapInteger();
+        $this->mapMediumInteger();
     }
 
     protected function mapMediumInteger()
     {
-        $this->mapInteger();
-    }
-
-    protected function mapBigInt()
-    {
-        $this->mapInteger();
+        $this->mapInteger(['signed' => 8388607, 'unsigned' => 16777215]);
     }
 
     protected function mapDouble()

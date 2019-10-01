@@ -29,7 +29,7 @@ class Blueprints
                 $table->string('name')->entryLabel();
                 $table->email('email')->unique();
                 $table->string('bio')->rules(['string'])->nullable();
-                $table->unsignedInteger('age')->nullable()->showOnIndex();
+                $table->unsignedTinyInteger('age')->nullable()->showOnIndex();
 
                 $table->file('avatar')->config(['disk' => 'fakedisk']);
 
