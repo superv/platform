@@ -31,6 +31,10 @@ class DeleteResource
             return;
         }
 
+        if ($this->resourceEntry->identifier()->isNamespace('platform')) {
+            return;
+        }
+
         $this->resourceEntry->delete();
         $this->resourceEntry->wipeCache();
 

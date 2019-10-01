@@ -21,6 +21,10 @@ use SuperV\Platform\Domains\Resource\Resource\ResourceActivityEvent;
 return [
     TableDroppedEvent::class =>
         function (TableDroppedEvent $event) {
+            if (starts_with($event->table, 'sv_')) {
+                return;
+            }
+
             if (! $resourceIdentifier = GetTableResource::dispatch($event->table, $event->connection)) {
                 return;
             }

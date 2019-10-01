@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
+use SuperV\Platform\Support\Identifier;
 
 class ResourceModel extends Entry implements ProvidesFields
 {
@@ -53,6 +54,11 @@ class ResourceModel extends Entry implements ProvidesFields
     public function getIdentifier()
     {
         return $this->identifier;
+    }
+
+    public function identifier(): Identifier
+    {
+        return sv_identifier($this->getIdentifier());
     }
 
     public function getDriver()

@@ -26,6 +26,9 @@ class IdentifierTest extends TestCase
     {
         $this->assertNull(sv_identifier('ab.cd')->parent());
 
+        $this->assertEquals('ab', sv_identifier('ab.cd.ef')->getNamespace());
+        $this->assertTrue(sv_identifier('ab.cd.ef')->isNamespace('ab'));
+
         $this->assertInstanceOf(Identifier::class, sv_identifier('ab.cd.ef')->parent());
 
         $this->assertEquals('ab.cd', sv_identifier('ab.cd.ef')->parent());

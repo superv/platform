@@ -44,6 +44,16 @@ class Identifier
         return (string)$this->parent();
     }
 
+    public function getNamespace()
+    {
+        return $this->getNodes()[0];
+    }
+
+    public function isNamespace($namespace): bool
+    {
+        return $this->getNamespace() === $namespace;
+    }
+
     public function getNodeCount()
     {
         return count($this->getNodes());
@@ -64,6 +74,7 @@ class Identifier
     {
         return $this->getParent().'.'.$this->getTypeId();
     }
+
     public function type(): ?IdentifierType
     {
         return new IdentifierType($this->getType(), $this->getTypeId());
