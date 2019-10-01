@@ -16,13 +16,26 @@ class SuperVInstallCommandTest extends TestCase
     use TestsConsoleCommands;
     use TestHelpers;
 
-    function test_sets_env_variable_existing_parameter()
+    function test_sets_env_variables()
     {
-        file_put_contents(base_path('.env'), 'SV_INSTALLED=false');
+        file_put_contents(base_path('.env'), $this->envPath('sample'));
 
         InstallSuperV::dispatch();
 
-        $this->assertStringContainsString('SV_INSTALLED=true', file_get_contents(base_path('.env')));
+        $envFile = file_get_contents(base_path('.env'));
+        $this->assertStringContainsString('SV_INSTALLED=true', $envFile);
+        $this->assertStringContainsString('SV_HOSTNAME=localhost', $envFile);
+    }
+
+    function test_sets_env_variable_existing_parameter()
+    {
+        file_put_contents(base_path('.env'), $this->envPath('existing'));
+
+        InstallSuperV::dispatch();
+
+        $envFile = file_get_contents(base_path('.env'));
+        $this->assertStringContainsString('SV_INSTALLED=true', $envFile);
+        $this->assertStringContainsString('SV_HOSTNAME=localhost', $envFile);
     }
 
     function test_sets_env_variable_invalid_parameter()
@@ -31,7 +44,9 @@ class SuperVInstallCommandTest extends TestCase
 
         $this->artisan('superv:install');
 
-        $this->assertStringContainsString('SV_INSTALLED=true', file_get_contents(base_path('.env')));
+        $envFile = file_get_contents(base_path('.env'));
+        $this->assertStringContainsString('SV_INSTALLED=true', $envFile);
+        $this->assertStringContainsString('SV_HOSTNAME=localhost', $envFile);
     }
 
     function test_sets_env_variable_empty_env()
@@ -40,7 +55,9 @@ class SuperVInstallCommandTest extends TestCase
 
         $this->artisan('superv:install');
 
-        $this->assertStringContainsString('SV_INSTALLED=true', file_get_contents(base_path('.env')));
+        $envFile = file_get_contents(base_path('.env'));
+        $this->assertStringContainsString('SV_INSTALLED=true', $envFile);
+        $this->assertStringContainsString('SV_HOSTNAME=localhost', $envFile);
     }
 
     function test_does_not_make_any_other_changes_on_env_file()
@@ -113,6 +130,8 @@ class SuperVInstallCommandTest extends TestCase
     {
         $orig = file($orig);
         $updated = file($updated);
+
+        $this->assertEquals(count($orig) + 2, count($updated));
 
         foreach ($orig as $line) {
             if (starts_with($line, 'SV_')) {

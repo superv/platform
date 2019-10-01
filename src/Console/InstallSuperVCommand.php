@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Auth\Users;
 
 class InstallSuperVCommand extends Command
 {
-    protected $signature = 'superv:install';
+    protected $signature = 'superv:install {--hostname=}';
 
     protected $description = 'Install SuperV Platform';
 
@@ -17,8 +17,12 @@ class InstallSuperVCommand extends Command
     {
         $this->comment('Installing SuperV');
 
+        if (! $hostname = $this->option('hostname')) {
+            $hostname = $this->ask("Please enter your project's hostname ", 'localhost');
+        }
+
         try {
-            InstallSuperV::dispatch();
+            InstallSuperV::dispatch(compact('hostname'));
 
             $this->comment("SuperV installed..! \n");
 
