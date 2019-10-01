@@ -5,6 +5,13 @@ SuperV is a Laravel package that provides an SPA Admin Panel based on your migra
 
 Please visit https://docs.superv.io for documentation
 
+## Video Tutorials
+- [Installation](https://youtu.be/3CDE7rjcfdk)
+- [Creating Resources](https://youtu.be/osaqOtebj7Y)
+- [Creating Resource Relations](https://youtu.be/mJdGPWZswCI)
+- [Frontend SPA Overview]
+- [Creating Modules]
+
 ## Installation
 Install superV Platform package:
 ```bash
