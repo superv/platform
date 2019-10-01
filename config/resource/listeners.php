@@ -10,6 +10,7 @@ use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Events\TableDroppedEvent;
 use SuperV\Platform\Domains\Resource\Database\Entry\Events as DatabaseEvents;
 use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
+use SuperV\Platform\Domains\Resource\Hook\Actions\RegisterAddonHooks;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteResource;
 use SuperV\Platform\Domains\Resource\Jobs\GetTableResource;
@@ -37,7 +38,7 @@ return [
     ColumnDroppedEvent::class                => Listeners\DeleteField::class,
     TableCreatingEvent::class                => Listeners\CreateResource::class,
     TableCreatedEvent::class                 => Listeners\CreateResourceForm::class,
-    AddonBootedEvent::class                  => Listeners\RegisterExtensions::class,
+    AddonBootedEvent::class                  => [Listeners\RegisterExtensions::class, RegisterAddonHooks::class],
     DatabaseEvents\EntrySavingEvent::class   => [
         Listeners\SaveUpdatedBy::class,
         ModifyEntryAttributes::class,
