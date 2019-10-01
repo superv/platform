@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Database\Entry\Builder;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRouter;
-use SuperV\Platform\Domains\Resource\Jobs\GetEntryResource;
+use SuperV\Platform\Domains\Resource\Jobs\GetTableResource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
@@ -111,7 +111,7 @@ abstract class Entry extends Eloquent implements EntryContract
     public function getResourceIdentifier(): ?string
     {
         if (! $this->resourceIdentifier) {
-            $this->resourceIdentifier = GetEntryResource::dispatch($this);
+            $this->resourceIdentifier = GetTableResource::dispatch($this->getTable(), $this->getConnection()->getName());
         }
 
         return $this->resourceIdentifier;

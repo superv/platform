@@ -17,6 +17,14 @@ use SuperV\Platform\Domains\Resource\Resource;
  */
 class DeleteResourceTest extends ResourceTestCase
 {
+    function test__deletes_resource_when_the_table_is_dropped()
+    {
+        $categories = $this->blueprints()->categories();
+
+        Schema::drop($categories->config()->getTable());
+
+        $this->assertFalse(Resource::exists($categories->getIdentifier()));
+    }
     function test__deletes_field_when_a_column_is_dropped()
     {
         $resourceEntry = $this->makeResourceModel('test_users', ['name', 'title']);

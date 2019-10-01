@@ -12,7 +12,7 @@ use SuperV\Platform\Domains\Resource\Database\Entry\Events as DatabaseEvents;
 use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteAddonResources;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteResource;
-use SuperV\Platform\Domains\Resource\Jobs\GetEntryResource;
+use SuperV\Platform\Domains\Resource\Jobs\GetTableResource;
 use SuperV\Platform\Domains\Resource\Jobs\ModifyEntryAttributes;
 use SuperV\Platform\Domains\Resource\Listeners;
 use SuperV\Platform\Domains\Resource\Listeners\CreateResourceAuthActions;
@@ -21,7 +21,7 @@ use SuperV\Platform\Domains\Resource\Resource\ResourceActivityEvent;
 return [
     TableDroppedEvent::class =>
         function (TableDroppedEvent $event) {
-            if (! $resourceIdentifier = GetEntryResource::dispatch($event->table, $event->connection)) {
+            if (! $resourceIdentifier = GetTableResource::dispatch($event->table, $event->connection)) {
                 return;
             }
 
