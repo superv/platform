@@ -70,7 +70,7 @@ class PlatformBlueprints
         if ($table instanceof Blueprint) {
             $config->label('Namespaces');
             $config->setName('namespaces');
-            $config->nav('acp.platform.system');
+//            $config->nav('acp.platform.system');
 
             $table->select('type', ['resource', 'form', 'field'])->showOnIndex()->addFlag('filter');
 

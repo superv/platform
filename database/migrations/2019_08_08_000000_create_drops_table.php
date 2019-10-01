@@ -14,7 +14,7 @@ class CreateDropsTable extends Migration
             $config->label('Drop Repos');
             $config->setName('drop_repos');
             $config->model(DropRepoModel::class);
-            $config->nav('acp.platform.system');
+//            $config->nav('acp.platform.system');
 
             $table->increments('id');
             $table->string('namespace');
@@ -28,7 +28,7 @@ class CreateDropsTable extends Migration
             $config->label('Drops');
             $config->setName('drops');
             $config->model(DropModel::class);
-            $config->nav('acp.platform.system');
+//            $config->nav('acp.platform.system');
 
             $table->increments('id');
             $table->belongsTo('sv_drop_repos', 'repo');
