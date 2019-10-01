@@ -58,7 +58,7 @@ class Blueprint extends LaravelBlueprint
                 parent::build($connection, $grammar);
             }
 
-            TableDroppedEvent::dispatch($this->tableName());
+            TableDroppedEvent::dispatch($this->tableName(), $connection->getName());
 
             return;
         }

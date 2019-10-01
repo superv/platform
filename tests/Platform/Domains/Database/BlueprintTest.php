@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Database;
 
+use DB;
 use Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Domains\Database\Events\ColumnCreatedEvent;
@@ -63,14 +64,14 @@ class BlueprintTest extends TestCase
     {
         Event::fake(TableDroppedEvent::class);
 
-        \SuperV\Platform\Domains\Database\Schema\Schema::create('testing_tasks', function (Blueprint $table) {
+        Schema::create('testing_tasks', function (Blueprint $table) {
             $table->string('title');
         });
 
-        \SuperV\Platform\Domains\Database\Schema\Schema::drop('testing_tasks');
+        Schema::drop('testing_tasks');
 
         Event::assertDispatched(TableDroppedEvent::class, function (TableDroppedEvent $event) {
-            return $event->table === 'testing_tasks';
+            return $event->table === 'testing_tasks' && $event->connection === DB::getDefaultConnection();
         });
     }
 
