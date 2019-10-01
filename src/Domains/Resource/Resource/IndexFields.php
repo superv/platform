@@ -113,8 +113,13 @@ class IndexFields
                 return $field->getConfigValue('sort_order', $key);
             });
 
-        if ($this->hideLabelField === false && $fields->isEmpty()) {
-            $fields->push($this->resource->fields()->getEntryLabelField());
+        $entryLabelField = $this->resource->fields()->getEntryLabelField();
+        if ($entryLabelField && $this->hideLabelField === false && $fields->isEmpty()) {
+            $fields->push($entryLabelField);
+        }
+
+        if (! $entryLabelField) {
+            $fields->push($this->makeLabelField());
         }
 
         return $fields->filter();
