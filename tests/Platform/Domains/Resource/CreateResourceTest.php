@@ -293,6 +293,7 @@ class CreateResourceTest extends ResourceTestCase
     {
         $this->blueprints()->posts('testing');
 
+        $this->assertEquals(1, Action::query()->where('slug', 'testing.posts')->count());
         $this->assertEquals(1, Action::query()->where('namespace', 'testing')->count());
         $this->assertEquals(2, Action::query()->where('namespace', 'testing.posts.fields')->count());
     }

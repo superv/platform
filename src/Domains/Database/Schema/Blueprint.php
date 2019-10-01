@@ -13,6 +13,7 @@ use SuperV\Platform\Domains\Database\Events\ColumnUpdatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatedEvent;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Database\Events\TableDroppedEvent;
+use SuperV\Platform\Domains\Database\Events\TableDroppingEvent;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class Blueprint extends LaravelBlueprint
@@ -54,10 +55,11 @@ class Blueprint extends LaravelBlueprint
     public function build(Connection $connection, Grammar $grammar)
     {
         if ($this->dropping()) {
+            TableDroppingEvent::dispatch($this->tableName(), $connection->getName());
+
             if (! $this->builder->justRun) {
                 parent::build($connection, $grammar);
             }
-
             TableDroppedEvent::dispatch($this->tableName(), $connection->getName());
 
             return;
