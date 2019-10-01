@@ -22,18 +22,22 @@ trait LabelConcern
         return sv_parse($this->config()->getEntryLabel(), $entry->toArray());
     }
 
-    public function getSingularLabel()
+    public function getSingularLabel($translated = true)
     {
 //        $key = $this->getNamespace().'.resources.'.$this->getIdentifier().'.singular';
-        $key = $this->getIdentifier().'.singular';
-        if ($value = trans($key)) {
-            return __($value);
-        }
+//        $key = $this->getIdentifier().'.singular';
+//        if ($value = trans($key)) {
+//            return __($value);
+//        }
         if (! $singularLabel = $this->config()->getSingularLabel()) {
             $singularLabel = str_singular($this->config()->getLabel());
         }
 
-        return __($singularLabel);
+        if ($translated) {
+            return __($singularLabel);
+        }
+
+        return $singularLabel;
     }
 
     public function getEntryLabelTemplate()
