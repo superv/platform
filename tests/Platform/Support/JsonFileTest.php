@@ -76,8 +76,8 @@ class JsonFileTest extends TestCase
 
         $this->assertEquals(
             trim(file_get_contents($this->basePath('__fixtures__/sample.json'))),
-            file_get_contents($this->basePath('__fixtures__/tmp.json')),
-            );
+            file_get_contents($this->basePath('__fixtures__/tmp.json'))
+        );
 
         unlink($this->basePath('__fixtures__/tmp.json'));
     }
