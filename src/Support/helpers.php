@@ -210,9 +210,9 @@ function sv_identifier($string)
 
 function sv_console()
 {
-    $args = func_get_args();
-
-    Log::info('console', $args);
+    if (config('app.debug')) {
+        Log::debug('console', func_get_args());
+    }
 }
 
 /**
