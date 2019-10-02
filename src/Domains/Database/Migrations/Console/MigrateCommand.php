@@ -20,11 +20,11 @@ class MigrateCommand extends \Illuminate\Database\Console\Migrations\MigrateComm
     public function handle()
     {
         if ($this->option('namespace')) {
-            if (! $path = Scopes::path($this->option('namespace'))) {
-                $this->error('Migration namespace not registered');
-
-                return;
-            }
+//            if (! $path = Scopes::path($this->option('namespace'))) {
+//                $this->error('Migration namespace not registered');
+//
+//                return;
+//            }
             $this->migrator->setNamespace($this->option('namespace'));
         }
         parent::handle();
