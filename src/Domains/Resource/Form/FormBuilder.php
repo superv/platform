@@ -42,10 +42,6 @@ class FormBuilder
 
     public function getForm(): Form
     {
-//        if (! $this->formEntry->isPublic() && $this->getRequest()) {
-//            app(PlatformAuthenticate::class)->guard($this->getRequest(), 'sv-api');
-//        }
-
         $form = Form::resolve($this->formEntry->getIdentifier());
 
         if ($this->resource = $this->formEntry->getOwnerResource()) {
@@ -161,6 +157,16 @@ class FormBuilder
 
         return $builder;
     }
+
+    public static function fromEntry(EntryContract $entry): FormBuilder
+    {
+        $formIdentifier = $entry->getResourceIdentifier().'.forms:default';
+        $builder = FormBuilder::createFrom($formIdentifier);
+        $builder->setEntry($entry);
+
+        return $builder;
+    }
+
     public static function createFrom($formEntry): FormBuilder
     {
         if (is_string($identifier = $formEntry)) {

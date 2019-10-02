@@ -2,16 +2,14 @@
 
 namespace Tests\Platform\Domains\Resource\Form;
 
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\FormField;
-use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Testing\FormComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -29,15 +27,14 @@ class FormTest extends ResourceTestCase
 
     function test__config()
     {
-        $fields = $this->makeFields();
-        $watcher = new FormTestUser(['name' => 'Omar', 'age' => 33]);
+        $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
 
-        $form = ResourceFormBuilder::buildFromEntry($watcher);
-        $form = $form->setFields($fields)->make()->hideField('age');
+        $form = FormBuilder::fromEntry($entry)->getForm();
+        $form->hideField('age');
 
         $this->assertInstanceOf(Form::class, $form);
         $this->assertEquals(2, $form->getFields()->count());
-        $this->assertEquals($watcher, $form->getEntry());
+        $this->assertEquals($entry, $form->getEntry());
         $this->assertEquals(['age'], $form->getHiddenFields());
     }
 
@@ -59,10 +56,8 @@ class FormTest extends ResourceTestCase
 
     function test_makes_update_form()
     {
-        $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
-        $fields = $this->makeFields();
-        $form = ResourceFormBuilder::buildFromEntry($testUser);
-        $form->setFields($fields)->make();
+        $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
+        $form = FormBuilder::fromEntry($entry)->getForm();
 
         $this->assertEquals('Omar', $this->getComposedValue($form->getField('name'), $form));
         $this->assertEquals(33, $this->getComposedValue($form->getField('age'), $form));
@@ -70,7 +65,7 @@ class FormTest extends ResourceTestCase
 
     function test__add_field()
     {
-        $form = ResourceFormBuilder::buildFromEntry($testUser = new FormTestUser);
+        $form = FormBuilder::fromEntry($entry = new FormTestUser)->getForm();
         $this->assertEquals(2, $form->getFields()->count());
 
         $form->addField($this->makeField(['type' => 'text', 'name' => 'profession']));
@@ -82,10 +77,9 @@ class FormTest extends ResourceTestCase
 
     function test__saves_form()
     {
-        $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
-        $fields = $this->makeFields();
-        $form = ResourceFormBuilder::buildFromEntry($testUser);
-        $form->setFields($fields)->make();
+        $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
+        $form = FormBuilder::fromEntry($entry)->getForm();
+
         $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
              ->save();
 
@@ -95,10 +89,8 @@ class FormTest extends ResourceTestCase
 
     function test__hidden_fields()
     {
-        $testUser = new FormTestUser(['name' => 'Omar', 'age' => 33]);
-        $fields = $this->makeFields();
-        $form = ResourceFormBuilder::buildFromEntry($testUser);
-        $form->setFields($fields)->make();
+        $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
+        $form = FormBuilder::fromEntry($entry)->getForm();
 
         $form->hideField('name')
              ->make()
@@ -118,10 +110,9 @@ class FormTest extends ResourceTestCase
 
     function test__saves_entry()
     {
-        $testUser = new FormTestUser;
-        $fields = $this->makeFields();
-        $form = ResourceFormBuilder::buildFromEntry($testUser);
-        $form->setFields($fields)->make();
+        $entry = new FormTestUser;
+        $form = FormBuilder::fromEntry($entry)->getForm();
+
         $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
              ->save();
 
@@ -164,29 +155,6 @@ class FormTest extends ResourceTestCase
         $user = $this->users->first();
         $this->assertEquals('Omar', $user->name);
         $this->assertEquals(33, $user->age);
-    }
-
-    function test__save_handles_fields_mutating_callbacks()
-    {
-        $fields = [
-            $textField = $this->makeField(['name' => 'name', 'type' => 'text']),
-            $ageField = $this->makeField(['name' => 'age', 'type' => 'number']),
-            $fileField = $this->makeField(['name' => 'avatar', 'type' => 'file']),
-        ];
-
-        $file = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
-        $form = ResourceFormBuilder::buildFromEntry($testUser = new FormTestUser);
-        $form->setFields($fields)->make();
-
-        $form->setRequest($this->makePostRequest(['name'   => 'Omar',
-                                                  'age'    => 33,
-                                                  'avatar' => $file]));
-
-        $form->getField('avatar');
-        $form->save();
-        $this->assertNull($testUser->avatar);
-
-        $this->assertEquals(1, Media::count());
     }
 
     protected function setUp(): void
