@@ -8,10 +8,10 @@ use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormBuilderInterface;
 use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Exceptions\PlatformException;
 
-class FormBuilder
+class FormBuilder implements FormBuilderInterface
 {
     /** @var \SuperV\Platform\Domains\Resource\Form\FormModel */
     protected $formEntry;
@@ -25,14 +25,10 @@ class FormBuilder
     /** @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract */
     protected $entry;
 
-    /**
-     * @var \SuperV\Platform\Contracts\Dispatcher
-     */
+    /** @var \SuperV\Platform\Contracts\Dispatcher */
     protected $dispatcher;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $entryId;
 
     public function __construct(Dispatcher $dispatcher)
@@ -136,10 +132,7 @@ class FormBuilder
         return $this->resource;
     }
 
-    /**
-     * @return \SuperV\Platform\Domains\Resource\Form\FormModel
-     */
-    public function getFormEntry(): \SuperV\Platform\Domains\Resource\Form\FormModel
+    public function getFormEntry(): FormModel
     {
         return $this->formEntry;
     }
@@ -147,34 +140,6 @@ class FormBuilder
     /** @return static */
     public static function resolve()
     {
-        return app(static::class);
-    }
-
-    public static function fromResource($resource): FormBuilder
-    {
-        $formIdentifier = $resource->getIdentifier().'.forms:default';
-        $builder = FormBuilder::createFrom($formIdentifier);
-
-        return $builder;
-    }
-
-    public static function fromEntry(EntryContract $entry): FormBuilder
-    {
-        $formIdentifier = $entry->getResourceIdentifier().'.forms:default';
-        $builder = FormBuilder::createFrom($formIdentifier);
-        $builder->setEntry($entry);
-
-        return $builder;
-    }
-
-    public static function createFrom($formEntry): FormBuilder
-    {
-        if (is_string($identifier = $formEntry)) {
-            if (! $formEntry = FormModel::withIdentifier($identifier)) {
-                PlatformException::runtime('Form entry not found: '.$identifier);
-            }
-        }
-
-        return static::resolve()->setFormEntry($formEntry);
+        return app(FormBuilderInterface::class);
     }
 }

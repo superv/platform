@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Action\ModalAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Table\Table;
 
@@ -30,7 +30,7 @@ class MorphMany extends Relation implements ProvidesTable, ProvidesForm
 
     public function makeForm(): Form
     {
-        $builder = FormBuilder::fromResource($this->getRelatedResource());
+        $builder = FormFactory::builderFromResource($this->getRelatedResource());
         $builder->setEntry($childEntry = $this->newQuery()->make());
 
         return $builder->getForm();

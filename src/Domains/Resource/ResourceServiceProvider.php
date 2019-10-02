@@ -6,11 +6,11 @@ use Platform;
 use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepositoryInterface;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormBuilderInterface;
+use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FieldComposer;
-use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormBuilderInterface;
 use SuperV\Platform\Domains\Resource\Form\v2\Contracts\FormInterface as FormContract;
 use SuperV\Platform\Domains\Resource\Form\v2\Form;
-use SuperV\Platform\Domains\Resource\Form\v2\FormBuilder;
 use SuperV\Platform\Domains\Resource\Form\v2\FormFieldComposer;
 use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use SuperV\Platform\Domains\Resource\Listeners\RegisterEntryEventListeners;
@@ -26,10 +26,11 @@ class ResourceServiceProvider extends BaseServiceProvider
     protected $_bindings = [
         TableDataProviderInterface::class => EloquentTableDataProvider::class,
         FormContract::class               => Form::class,
-        FormBuilderInterface::class       => FormBuilder::class,
         FieldComposer::class              => FormFieldComposer::class,
         EntryRepositoryInterface::class   => EntryRepository::class,
         TableInterface::class             => Table::class,
+
+        FormBuilderInterface::class => FormBuilder::class,
 
     ];
 

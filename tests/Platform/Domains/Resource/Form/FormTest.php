@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Form;
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
+use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Testing\FormComponent;
@@ -29,7 +29,7 @@ class FormTest extends ResourceTestCase
     {
         $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
 
-        $form = FormBuilder::fromEntry($entry)->getForm();
+        $form = FormFactory::builderFromEntry($entry)->getForm();
         $form->hideField('age');
 
         $this->assertInstanceOf(Form::class, $form);
@@ -57,7 +57,7 @@ class FormTest extends ResourceTestCase
     function test_makes_update_form()
     {
         $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
-        $form = FormBuilder::fromEntry($entry)->getForm();
+        $form = FormFactory::builderFromEntry($entry)->getForm();
 
         $this->assertEquals('Omar', $this->getComposedValue($form->getField('name'), $form));
         $this->assertEquals(33, $this->getComposedValue($form->getField('age'), $form));
@@ -65,7 +65,7 @@ class FormTest extends ResourceTestCase
 
     function test__add_field()
     {
-        $form = FormBuilder::fromEntry($entry = new FormTestUser)->getForm();
+        $form = FormFactory::builderFromEntry($entry = new FormTestUser)->getForm();
         $this->assertEquals(2, $form->getFields()->count());
 
         $form->addField($this->makeField(['type' => 'text', 'name' => 'profession']));
@@ -78,7 +78,7 @@ class FormTest extends ResourceTestCase
     function test__saves_form()
     {
         $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
-        $form = FormBuilder::fromEntry($entry)->getForm();
+        $form = FormFactory::builderFromEntry($entry)->getForm();
 
         $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
              ->save();
@@ -90,7 +90,7 @@ class FormTest extends ResourceTestCase
     function test__hidden_fields()
     {
         $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
-        $form = FormBuilder::fromEntry($entry)->getForm();
+        $form = FormFactory::builderFromEntry($entry)->getForm();
 
         $form->hideField('name')
              ->make()
@@ -111,7 +111,7 @@ class FormTest extends ResourceTestCase
     function test__saves_entry()
     {
         $entry = new FormTestUser;
-        $form = FormBuilder::fromEntry($entry)->getForm();
+        $form = FormFactory::builderFromEntry($entry)->getForm();
 
         $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
              ->save();
