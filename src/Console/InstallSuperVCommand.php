@@ -3,15 +3,19 @@
 namespace SuperV\Platform\Console;
 
 use Exception;
+use File;
 use SuperV\Platform\Console\Jobs\InstallSuperV;
 use SuperV\Platform\Contracts\Command;
 use SuperV\Platform\Domains\Auth\Users;
+use SuperV\Platform\Support\JsonFile;
 
 class InstallSuperVCommand extends Command
 {
     protected $signature = 'superv:install {--hostname=}';
 
     protected $description = 'Install SuperV Platform';
+
+    protected $version = '0.20.x-dev';
 
     public function handle()
     {
@@ -31,7 +35,6 @@ class InstallSuperVCommand extends Command
             }
 
             return;
-
         } catch (Exception $e) {
             $this->error($e->getMessage());
         }
@@ -39,14 +42,43 @@ class InstallSuperVCommand extends Command
 
     protected function setup()
     {
+        $this->setupDirectories();
+
+        $this->setupJwtSecret();
+
+        $this->setupUser();
+
+        $this->setupComposer();
+    }
+
+    protected function setupComposer()
+    {
+        $composer = JsonFile::fromPath(base_path('composer.json'));
+
+        if (! $composer->get('extra.merge-plugin')) {
+            if ($this->confirm("I will modify your main composer.json to add merge-plugin configuration. Is that OK?", true)) {
+                $composer->merge('extra', ['merge-plugin' => ["include" => [
+                    "addons/*/*/*/composer.json",
+                ]]]);
+
+                $composer->write();
+            }
+        }
+    }
+
+    protected function setupJwtSecret(): void
+    {
         if (! env('JWT_SECRET')) {
-            if ($this->confirm('Looks like no JWT_SECRET set in your env file, shall we generate one now ?')) {
+            if ($this->confirm('Looks like no JWT_SECRET set in your env file, shall we generate one now ?', true)) {
                 $this->comment('Generating JWT Secret');
                 $this->call('jwt:secret');
             }
         }
+    }
 
-        if ($this->confirm('Would you like to create a user with full access now ?')) {
+    protected function setupUser(): void
+    {
+        if ($this->confirm('Would you like to create a user with full access now ?', true)) {
             $name = $this->ask('Enter the name for user');
             $email = $this->ask('Enter the email for user');
             $password = $this->ask('Enter the password');
@@ -61,7 +93,7 @@ class InstallSuperVCommand extends Command
             $user->allow('*');
 
             $this->comment("A user with full access was with ID: {$user->id}");
-        } elseif ($this->confirm("Without any user setup, you will not be able to login to admin panel. \n Would you like to grant access to an existing user now?")) {
+        } elseif ($this->confirm("Without any user setup, you will not be able to login to admin panel. \n Would you like to grant access to an existing user now?", true)) {
             $user = null;
             while (is_null($user)) {
                 $email = $this->ask('Enter the email for existing user');
@@ -80,6 +112,14 @@ class InstallSuperVCommand extends Command
 
                 $this->comment("Granted full access to user with email [".$email."]");
             }
+        }
+    }
+
+    protected function setupDirectories(): void
+    {
+        if (! file_exists(base_path('addons'))) {
+            File::makeDirectory(base_path('addons'), 0777);
+            File::put(base_path('addons/.gitignore'), 'superv/*');
         }
     }
 }
