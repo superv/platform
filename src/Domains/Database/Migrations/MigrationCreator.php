@@ -15,9 +15,7 @@ class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
     {
         $stub = parent::populateStub($name, $stub, $table);
 
-        $addon = $this->addon ? "protected \$addon = '{$this->addon}';" : "";
-
-        return str_replace('{addon}', $addon, $stub);
+        return str_replace('{namespace}', $this->namespace, $stub);
     }
 
     public function setNamespace($namespace): void
