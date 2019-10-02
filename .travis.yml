@@ -3,6 +3,12 @@ language: php
 php:
   - 7.2
   - 7.3
+env:
+  - LARAVEL_VERSION="5.7.*"
+  - LARAVEL_VERSION="6.*"
+
+install:
+  - composer require laravel/framework:${LARAVEL_VERSION}
 
 before_script:
   - phpenv config-rm xdebug.ini || true
