@@ -57,7 +57,7 @@ class BelongsToField extends FieldType implements
     {
         /** @var \SuperV\Platform\Domains\Resource\Resource $parentResource */
         $parentResource = $this->field->getResource();
-        $parentTable = $parentResource->getIdentifier();
+        $parentTable = $parentResource->config()->getTable();
         $relation = RelationConfig::create($this->field->getType(), $this->field->getConfig());
 
         $relatedResource = ResourceFactory::make($relation->getRelatedResource());
