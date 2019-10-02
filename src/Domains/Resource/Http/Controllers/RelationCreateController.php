@@ -27,7 +27,7 @@ class RelationCreateController extends BaseApiController
     {
         $relation = $this->resolveRelation();
 
-        /** @var \SuperV\Platform\Domains\Resource\Form\EntryForm $form */
+        /** @var \SuperV\Platform\Domains\Resource\Form\Form $form */
         $form = $relation->makeForm();
 
         if ($callback = $relation->getCallback('create.storing')) {

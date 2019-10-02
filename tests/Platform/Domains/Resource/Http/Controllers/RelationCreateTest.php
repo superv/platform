@@ -3,7 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Http\Controllers;
 
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Form\EntryForm;
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Testing\HelperComponent;
@@ -69,7 +69,7 @@ class RelationCreateTest extends ResourceTestCase
 
         Resource::extend('testing.users')->with(function (Resource $resource) {
             $resource->getRelation('comments')
-                     ->on('create.displaying', function (EntryForm $form) {
+                     ->on('create.displaying', function (Form $form) {
                          $form->hideField('status');
                      });;
         });
@@ -94,7 +94,7 @@ class RelationCreateTest extends ResourceTestCase
 
         Resource::extend('testing.users')->with(function (Resource $resource) {
             $resource->getRelation('comments')
-                     ->on('create.storing', function (Request $request, EntryForm $form, $entry) {
+                     ->on('create.storing', function (Request $request, Form $form, $entry) {
                          $comment = $request->get('comment')." (by {$entry->name})";
                          $request->merge([
                              'comment' => $comment,

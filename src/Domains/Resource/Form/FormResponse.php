@@ -11,7 +11,7 @@ use SuperV\Platform\Domains\Resource\ResourceFactory;
 class FormResponse implements Responsable
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Form\EntryForm
+     * @var \SuperV\Platform\Domains\Resource\Form\Form
      */
     protected $form;
 

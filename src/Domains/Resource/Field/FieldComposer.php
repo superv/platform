@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
-use SuperV\Platform\Domains\Resource\Form\EntryForm;
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Support\Composer\Payload;
 
 class FieldComposer
@@ -22,7 +22,7 @@ class FieldComposer
         $this->field = $field instanceof ProvidesField ? $field->makeField() : $field;
     }
 
-    public function forForm(EntryForm $form = null)
+    public function forForm(Form $form = null)
     {
         $field = $this->field;
 

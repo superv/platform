@@ -10,7 +10,7 @@ use SuperV\Platform\Support\Composer\Payload;
 class FormComposer
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Form\EntryForm
+     * @var \SuperV\Platform\Domains\Resource\Form\Form
      */
     protected $form;
 

@@ -8,31 +8,25 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Model\MakesEntry;
 use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
-use SuperV\Platform\Domains\Resource\Form\EntryForm;
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormBuilder;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequests
 {
-    public function makeForm(): EntryForm
+    public function makeForm(): Form
     {
         $formIdentifier = $this->getRelatedResource()->getIdentifier().'.forms:default';
         $builder = FormBuilder::createFrom($formIdentifier);
 
         $builder->setEntry($this->getRelatedEntry());
 
-        /** @var \SuperV\Platform\Domains\Resource\Form\Contracts\EntryForm $form */
+        /** @var \SuperV\Platform\Domains\Resource\Form\Form $form */
         $form = $builder->getForm();
 
         $form->hideField($this->relationConfig->getMorphName());
 
         return $form;
-
-//        $form = ResourceFormBuilder::buildFromEntry($this->getRelatedEntry());
-//        $formData = FormModel::findByUuid($this->getRelatedResource()->getIdentifier());
-//
-//        return $form->make($formData ? $formData->uuid : null)
-//                    ->hideField($this->relationConfig->getMorphName());
     }
 
     public function getFormTitle(): string

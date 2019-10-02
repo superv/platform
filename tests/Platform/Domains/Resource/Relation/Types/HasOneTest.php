@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource\Relation\Types;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
-use SuperV\Platform\Domains\Resource\Form\EntryForm;
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Testing\FormTester;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -50,9 +50,9 @@ class HasOneTest extends ResourceTestCase
         $this->assertInstanceOf(AcceptsParentEntry::class, $relation);
         $relation->acceptParentEntry($user);
 
-        /** @var EntryForm $form */
+        /** @var Form $form */
         $form = $relation->makeForm();
-        $this->assertInstanceOf(EntryForm::class, $form);
+        $this->assertInstanceOf(Form::class, $form);
         $this->assertEquals(2, $form->getFields()->count());
         $this->assertFalse($form->getField('user')->isVisible());
 

@@ -25,14 +25,14 @@ class FileFieldTest extends ResourceTestCase
 
     function test__type_file()
     {
-        $res = $this->create('tmp_tbl', function (Blueprint $table, ResourceConfig $config) {
+        $res = $this->create('tmp_table', function (Blueprint $table, ResourceConfig $config) {
             $config->setIdentifier('testing.tbl');
             $table->increments('id');
             $table->file('avatar')->config(['disk' => 'fakedisk']);
         });
 
-        $this->assertColumnNotExists('avatar', 'tmp_tbl');
-        $this->assertFalse(in_array('avatar', \Schema::getColumnListing('tmp_tbl')));
+        $this->assertColumnNotExists('avatar', 'tmp_table');
+        $this->assertFalse(in_array('avatar', \Schema::getColumnListing('tmp_table')));
 
         $fake = $res->fake();
         /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field $field */
@@ -59,5 +59,17 @@ class FileFieldTest extends ResourceTestCase
         $this->assertNotNull((new FieldComposer($field))->forView($fake)->get('image_url'));
 
         $this->assertFileExists($media->filePath());
+    }
+
+    function __allowed_file_types()
+    {
+        $res = $this->create('tmp_table', function (Blueprint $table, ResourceConfig $config) {
+            $table->increments('id');
+            $table->file('avatar')->config(['disk' => 'fakedisk'])->rules(['image']);
+        });
+
+        Storage::fake('fakedisk');
+        $uploadedFile = new UploadedFile($this->basePath('__fixtures__/square.png'), 'square.png');
+        $entry = $this->postCreateResource($res->getIdentifier(), ['avatar' => $uploadedFile]);
     }
 }

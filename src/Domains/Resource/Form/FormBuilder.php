@@ -40,13 +40,13 @@ class FormBuilder
         $this->dispatcher = $dispatcher;
     }
 
-    public function getForm(): EntryForm
+    public function getForm(): Form
     {
 //        if (! $this->formEntry->isPublic() && $this->getRequest()) {
 //            app(PlatformAuthenticate::class)->guard($this->getRequest(), 'sv-api');
 //        }
 
-        $form = EntryForm::resolve($this->formEntry->getIdentifier());
+        $form = Form::resolve($this->formEntry->getIdentifier());
 
         if ($this->resource = $this->formEntry->getOwnerResource()) {
             if (! $entry = $this->getEntry()) {

@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Form\Contracts;
 
-
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 
 interface Form
 {
@@ -11,6 +11,12 @@ interface Form
     public function uuid();
 
     public function getIdentifier();
+
+    public function setEntry(EntryContract $entry): \SuperV\Platform\Domains\Resource\Form\Form;
+
+    public function getEntry(): ?EntryContract;
+
+    public function hasEntry(): bool;
 
     public function hideField(string $fieldName): Form;
 

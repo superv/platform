@@ -31,9 +31,9 @@ class ResourceFormBuilder
         $this->dispatcher = $dispatcher;
     }
 
-    public function build(): EntryForm
+    public function build(): Form
     {
-        $form = EntryForm::resolve();
+        $form = Form::resolve();
 
         if (! $this->resource && $this->entry) {
 //            PlatformException::runtime('over here');
@@ -109,12 +109,12 @@ class ResourceFormBuilder
         return $this;
     }
 
-    public static function buildFromEntry(EntryContract $entry): EntryForm
+    public static function buildFromEntry(EntryContract $entry): Form
     {
         return static::resolve()->setEntry($entry)->build();
     }
 
-    public static function buildFromResource(Resource $resource): EntryForm
+    public static function buildFromResource(Resource $resource): Form
     {
         return static::resolve()->setResource($resource)->build();
     }

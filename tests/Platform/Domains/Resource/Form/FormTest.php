@@ -9,7 +9,6 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
-use SuperV\Platform\Domains\Resource\Form\EntryForm;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
@@ -36,7 +35,7 @@ class FormTest extends ResourceTestCase
         $form = ResourceFormBuilder::buildFromEntry($watcher);
         $form = $form->setFields($fields)->make()->hideField('age');
 
-        $this->assertInstanceOf(EntryForm::class, $form);
+        $this->assertInstanceOf(Form::class, $form);
         $this->assertEquals(2, $form->getFields()->count());
         $this->assertEquals($watcher, $form->getEntry());
         $this->assertEquals(['age'], $form->getHiddenFields());

@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Validator;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Dispatchable;
 
 class ValidateForm
@@ -13,7 +14,7 @@ class ValidateForm
     use Dispatchable;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Form\EntryForm
+     * @var \SuperV\Platform\Domains\Resource\Form\Form
      */
     protected $form;
 
@@ -35,6 +36,7 @@ class ValidateForm
 
     public function handle(Validator $validator)
     {
+        PlatformException::fail();
         $rules = $this->fields
             ->filter(function (Field $field) {
                 return ! $field->isUnbound();

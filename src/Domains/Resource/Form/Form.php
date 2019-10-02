@@ -7,11 +7,14 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Dispatcher;
+use SuperV\Platform\Contracts\Validator;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\GhostField;
+use SuperV\Platform\Domains\Resource\Field\Jobs\GetRules;
 use SuperV\Platform\Domains\Resource\Form\Contracts\Form as FormContract;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
 use SuperV\Platform\Domains\Resource\Form\FormField as ConcreteFormField;
@@ -33,6 +36,9 @@ class Form implements FormContract, ProvidesUIComponent
 
     /** @var Resource */
     protected $resource;
+
+    /** @var EntryContract */
+    protected $entry;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field[]|Collection
@@ -67,7 +73,7 @@ class Form implements FormContract, ProvidesUIComponent
 
     protected $title;
 
-    protected $mode = EntryForm::MODE_CREATE;
+    protected $mode = Form::MODE_CREATE;
 
     protected $isMade = false;
 
@@ -127,13 +133,6 @@ class Form implements FormContract, ProvidesUIComponent
 
         $this->fireBeforeSavingCallbacks();
 
-        // If this is a no-entry form then we will
-        // have to validate on our own since the
-        // model events wont fire
-        //
-//        if (! $this->hasEntry()) {
-//            $this->validate();
-//        }
 
         $this->resolveFieldValuesFromRequest();
 
@@ -141,9 +140,6 @@ class Form implements FormContract, ProvidesUIComponent
 
         if ($this->hasEntry()) {
             $this->getEntry()->save();
-//            $this->getEntry()::withoutEvents(function() {
-//                $this->getEntry()->save();
-//            });
         }
 
         $this->runPostSaveCallbacks();
@@ -239,17 +235,31 @@ class Form implements FormContract, ProvidesUIComponent
 
     public function isUpdating()
     {
-        return $this->mode === EntryForm::MODE_UPDATE;
+        return $this->mode === Form::MODE_UPDATE;
     }
 
     public function isCreating()
     {
-        return $this->mode === EntryForm::MODE_CREATE;
+        return $this->mode === Form::MODE_CREATE;
     }
 
     public function validate()
     {
-        ValidateForm::dispatch($this->getFields(), $this->request->all());
+        /**
+         * @var \SuperV\Platform\Contracts\Validator $validator
+         */
+        $validator = app(Validator::class);
+
+        $rules = (new GetRules($this->getFields()))->get($this->getEntry());
+        $data = $this->entry->getAttributes();
+        $attributes = $this->fields
+            ->map(function (Field $field) {
+                return [$field->getColumnName(), $field->getLabel()];
+            })->filter()
+            ->toAssoc()
+            ->all();
+
+        $validator->make($data, $rules, [], $attributes);
     }
 
     public function compose(): Payload
@@ -309,7 +319,7 @@ class Form implements FormContract, ProvidesUIComponent
         return $this->url;
     }
 
-    public function setUrl(string $url): EntryForm
+    public function setUrl(string $url): Form
     {
         $this->url = $url;
 
@@ -335,7 +345,7 @@ class Form implements FormContract, ProvidesUIComponent
         return $this->identifier;
     }
 
-    public function setIdentifier(string $identifier): EntryForm
+    public function setIdentifier(string $identifier): Form
     {
         $this->identifier = $identifier;
 
@@ -352,6 +362,45 @@ class Form implements FormContract, ProvidesUIComponent
         $this->title = $title;
 
         return $this;
+    }
+
+    public function getEntry(): ?EntryContract
+    {
+        return $this->entry;
+    }
+
+    public function setEntry(EntryContract $entry): Form
+    {
+        $this->entry = $entry;
+
+        return $this;
+    }
+
+    public function hasEntry(): bool
+    {
+        return (bool)$this->entry;
+    }
+
+    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): Form
+    {
+        $this->resource = $resource;
+
+        return $this;
+    }
+
+    protected function applyExtensionCallbacks(): void
+    {
+        if ($this->isCreating()) {
+            if ($this->resource && $callback = $this->resource->getCallback('creating')) {
+                app()->call($callback, ['form' => $this]);
+            }
+        }
+
+        if ($this->isUpdating()) {
+            if ($this->resource && $callback = $this->resource->getCallback('editing')) {
+                app()->call($callback, ['form' => $this, 'entry' => $this->getEntry()]);
+            }
+        }
     }
 
     /**
@@ -393,7 +442,7 @@ class Form implements FormContract, ProvidesUIComponent
     protected function setFormMode(): void
     {
         if ($this->hasEntry() && $this->entry->exists) {
-            $this->mode = EntryForm::MODE_UPDATE;
+            $this->mode = Form::MODE_UPDATE;
         }
     }
 

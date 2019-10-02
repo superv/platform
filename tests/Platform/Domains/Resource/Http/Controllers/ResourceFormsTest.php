@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource\Http\Controllers;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
-use SuperV\Platform\Domains\Resource\Form\EntryForm;
+use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\ResourceFormBuilder;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -127,7 +127,7 @@ class ResourceFormsTest extends ResourceTestCase
         // extend resource edit form
         //
         Resource::extend('testing.users')->with(function (Resource $resource) {
-            $resource->onEditing(function (EntryForm $form) {
+            $resource->onEditing(function (Form $form) {
                 $form->onlyFields('name', 'email', 'group');
             });
         });
