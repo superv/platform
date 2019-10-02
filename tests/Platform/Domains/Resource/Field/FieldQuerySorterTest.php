@@ -45,6 +45,13 @@ class FieldQuerySorterTest extends ResourceTestCase
         $join = $postsQuery->getQuery()->joins[0];
         $this->assertNotNull($join);
         $this->assertEquals('tbl_users AS tbl_users_1', $join->table);
+        $this->assertEquals([[
+                                 'type'     => 'Column',
+                                 'first'    => 'tbl_users_1.id',
+                                 'operator' => '=',
+                                 'second'   => 'tbl_posts.user_id',
+                                 'boolean'  => 'and',
+                             ]], $join->wheres);
 
         $usersTable = $users->config()->getTable();
         $this->assertEquals([
