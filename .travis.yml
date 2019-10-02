@@ -4,11 +4,13 @@ php:
   - 7.2
   - 7.3
 env:
-  - LARAVEL_VERSION="5.7.*"
-  - LARAVEL_VERSION="6.*"
+  - LARAVEL="5.7.*" TESTBENCH="3.*"
+  - LARAVEL="5.8.*" TESTBENCH="3.*"
+  - LARAVEL="6.*" TESTBENCH="4.*"
 
 install:
-  - composer require laravel/framework:${LARAVEL_VERSION}
+  - composer require laravel/framework:${LARAVEL}
+  - composer require orchestra/testbench:${TESTBENCH}
 
 before_script:
   - phpenv config-rm xdebug.ini || true
