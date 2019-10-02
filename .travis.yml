@@ -3,18 +3,16 @@ language: php
 php:
   - 7.2
   - 7.3
+
 env:
-  - LARAVEL="5.7.*" TESTBENCH="3.*"
-  - LARAVEL="5.8.*" TESTBENCH="3.*"
   - LARAVEL="6.*" TESTBENCH="4.*"
 
 install:
-  - composer require laravel/framework:${LARAVEL}
   - composer require orchestra/testbench:${TESTBENCH}
+  - composer require laravel/framework:${LARAVEL}
 
 before_script:
   - phpenv config-rm xdebug.ini || true
-  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - travis_retry composer install --prefer-source --no-interaction --dev
 
 script:
