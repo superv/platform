@@ -25,6 +25,9 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
 
     public function handle()
     {
+        if ($this->option('namespace')) {
+            $this->creator->setNamespace($this->option('namespace'));
+        }
         parent::handle();
     }
 
