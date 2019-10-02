@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Database\Schema;
 
 use Closure;
 use Current;
+use DB;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint as LaravelBlueprint;
 use Illuminate\Database\Schema\Grammars\Grammar;
@@ -68,6 +69,7 @@ class Blueprint extends LaravelBlueprint
         $this->postBuildCallbacks = collect();
         $this->columns = collect($this->columns)->keyBy('name');
 
+        DB::beginTransaction();
         if ($this->creating()) {
             TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->resourceConfig(), Current::migrationScope(), $this);
         } else {
@@ -93,9 +95,10 @@ class Blueprint extends LaravelBlueprint
         }
 
         if ($this->creating()) {
-//            TableCreatedEvent::dispatch($this->tableName(), $this->columns);
             TableCreatedEvent::dispatch($this->tableName(), $this->resourceConfig(), $this->columns);
         }
+
+        DB::commit();
     }
 
     /**
