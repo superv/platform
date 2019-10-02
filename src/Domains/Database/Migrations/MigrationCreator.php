@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Database\Migrations;
 
 class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
 {
-    protected $addon;
+    protected $namespace;
 
     public function stubPath()
     {
@@ -20,14 +20,8 @@ class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
         return str_replace('{addon}', $addon, $stub);
     }
 
-    /**
-     * @param mixed $addon
-     * @return MigrationCreator
-     */
-    public function setAddon($addon)
+    public function setNamespace($namespace): void
     {
-        $this->addon = $addon;
-
-        return $this;
+        $this->namespace = $namespace;
     }
 }

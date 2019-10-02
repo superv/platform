@@ -89,6 +89,11 @@ class ResourceConfig
         return $this;
     }
 
+    public function identifier($identifier)
+    {
+        return $this->setIdentifier($identifier);
+    }
+
     public function getHandle()
     {
         return $this->getIdentifier();
