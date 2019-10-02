@@ -9,5 +9,8 @@ class TestCase extends PlatformTestCase
 {
     use RefreshDatabase;
 
+    protected $shouldBootPlatform = true;
+
     protected $installs = ['{addon.relative_path}'];
+
 }
