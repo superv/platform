@@ -53,6 +53,10 @@ class InstallSuperVCommand extends Command
 
     protected function setupComposer()
     {
+        if (! File::isWritable(base_path('composer.json'))) {
+            return;
+        }
+
         $composer = JsonFile::fromPath(base_path('composer.json'));
 
         if (! $composer->get('extra.merge-plugin')) {
@@ -117,6 +121,10 @@ class InstallSuperVCommand extends Command
 
     protected function setupDirectories(): void
     {
+        if (! File::isWritable(base_path())) {
+            return;
+        }
+
         if (! file_exists(base_path('addons'))) {
             File::makeDirectory(base_path('addons'), 0777);
             File::put(base_path('addons/.gitignore'), 'superv/*');
