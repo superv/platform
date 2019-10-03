@@ -2,18 +2,18 @@
 
 namespace SuperV\Platform\Resources\Users;
 
-use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\FormResolvedHook;
 
 class UsersForm implements FormResolvedHook
 {
     public static $identifier = 'platform.users.forms:default';
 
-    public function resolved(Form $form)
+    public function resolved(FormInterface $form)
     {
-        $form->hideField('password');
-        $form->hideField('remember_token');
-        $form->hideField('deleted_at');
-        $form->hideField('deleted_by');
+        $form->fields()->hide('password');
+        $form->fields()->hide('remember_token');
+        $form->fields()->hide('deleted_at');
+        $form->fields()->hide('deleted_by');
     }
 }

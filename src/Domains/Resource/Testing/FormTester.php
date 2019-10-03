@@ -9,6 +9,7 @@ use PHPUnit\Framework\Assert;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Fake;
+use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Testing\TestHelpers;
 
@@ -54,20 +55,17 @@ class FormTester extends Assert
         $entryForHandle = $form->getEntry();
         $original = $entryForHandle->toArray();
         $fields = [];
-        foreach ($form->getFields() as $field) {
+        foreach ($form->fields() as $field) {
             if ($field->isHidden() || $field->doesNotInteractWithTable()) {
                 continue;
             }
 
-            $fields[] = $form->composeField($field);
+            $fields[] = (new FieldComposer($field))->forForm($form)->get('value');
             $post[$field->getColumnName()] = Fake::field($field);
         }
 
-//        dd($form->getWatcher()->toArray(), $fields, $post);
-//        $response = $this->postJsonUser($form->getUrl(), $post);
-//        $response->assertOk();
-
-        $form->setRequest($this->makePostRequest('', $post))->save();
+        $form->getData()->resolveRequest($this->makePostRequest('', $post), $form->getEntry());
+        $form->save();
 
         $entry = $form->getEntry()->newQuery()->first();
 
@@ -75,17 +73,6 @@ class FormTester extends Assert
 
         $expectedAttributes = array_merge($original, $post);
         $this->assertArrayContains($expectedAttributes, array_except($entry->toArray(), 'id'));
-
-        // create
-        // loop fields
-        // fake according to type
-        // submit
-
-        // update
-        // make fake
-        // fill
-        // submit
-
     }
 
     public function testUpdate()

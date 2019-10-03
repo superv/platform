@@ -6,7 +6,7 @@ use Closure;
 use Platform;
 use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryRetrievedEvent;
 use SuperV\Platform\Domains\Resource\Field\Accessor;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -31,7 +31,7 @@ class AccessEntryAttributes
 
         $resource = ResourceFactory::make($entry);
 
-        $resource->getFields()->map(function (Field $field) use ($entry) {
+        $resource->getFields()->map(function (FieldInterface $field) use ($entry) {
             if ($field->getFieldType() instanceof HasAccessor) {
                 $value = (new Accessor($field->getFieldType()))
                     ->get([

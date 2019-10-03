@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource\Http\Controllers;
+namespace Tests\Platform\Domains\Resource\Form;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;

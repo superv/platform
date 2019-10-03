@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Identifier;
 
-interface Field
+interface FieldInterface
 {
     public function getName();
 
@@ -21,13 +21,13 @@ interface Field
 
     public function getType(): string;
 
-    public function setType(string $type): Field;
+    public function setType(string $type): FieldInterface;
 
     public function getColumnName(): ?string;
 
     public function getLabel(): string;
 
-    public function setLabel(string $label): Field;
+    public function setLabel(string $label): FieldInterface;
 
     public function getFieldType(): FieldType;
 
@@ -61,9 +61,9 @@ interface Field
 
     public function getRules();
 
-    public function removeRules(): Field;
+    public function removeRules(): FieldInterface;
 
-    public function addRule($rule, $message = null): Field;
+    public function addRule($rule, $message = null): FieldInterface;
 
     public function getPlaceholder();
 
@@ -81,53 +81,53 @@ interface Field
 
     public function getMutator($for);
 
-    public function setPresenter(Closure $callback): Field;
+    public function setPresenter(Closure $callback): FieldInterface;
 
     /**
      * Add a flag to hide the field on forms
      *
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
      */
-    public function hide(): Field;
+    public function hide(): FieldInterface;
 
     /**
      * Add a flag to show the field on index table
      *
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
      */
-    public function showOnIndex(): Field;
+    public function showOnIndex(): FieldInterface;
 
     /**
      * Generate filter from field and add to filters
      *
      * @param array $params
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
      */
-    public function copyToFilters(array $params = []): Field;
+    public function copyToFilters(array $params = []): FieldInterface;
 
     /**
      * Set the display order for the field
      *
      * @param $order
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
      */
-    public function displayOrder($order): Field;
+    public function displayOrder($order): FieldInterface;
 
     /**
      * Add css class(es)
      *
      * @param string $class
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
      */
-    public function addClass(string $class): Field;
+    public function addClass(string $class): FieldInterface;
 
     /**
      * Add a boolean flag
      *
      * @param string $flag
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
      */
-    public function addFlag(string $flag): Field;
+    public function addFlag(string $flag): FieldInterface;
 
     /**
      * Determine if the field has given flag
@@ -141,15 +141,15 @@ interface Field
      * Remove a flag from the field
      *
      * @param string $flag
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
      */
-    public function removeFlag(string $flag): Field;
+    public function removeFlag(string $flag): FieldInterface;
 
     public function revisionId(): ?string;
 
     public function isFilter();
 
-    public function searchable(): Field;
+    public function searchable(): FieldInterface;
 
     public function isVisible(): bool;
 }

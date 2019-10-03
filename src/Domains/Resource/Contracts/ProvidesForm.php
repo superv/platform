@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\Form\Form;
 
 interface ProvidesForm
 {
-    public function makeForm(): Form;
+    public function makeForm($request = null): Form;
 
     public function getFormTitle(): string;
 }

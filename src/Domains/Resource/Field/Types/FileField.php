@@ -36,7 +36,7 @@ class FileField extends FieldType implements DoesNotInteractWithTable, HasModifi
 
     public function getModifier(): Closure
     {
-        return function ($value, EntryContract $entry) {
+        return function ($value, ?EntryContract $entry) {
             $this->requestFile = $value;
 
             return function () use ($entry) {

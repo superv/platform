@@ -1,15 +1,12 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource\Http\Controllers;
+namespace Tests\Platform\Domains\Resource\Form;
 
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Media\Media;
-use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormFactory;
-use SuperV\Platform\Domains\Resource\Resource;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Testing\HelperComponent;
+use Tests\Platform\Domains\Resource\Http\Controllers\FieldTestHelper;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
@@ -70,7 +67,7 @@ class ResourceFormsTest extends ResourceTestCase
         $form = $this->getUserPage($user->router()->updateForm());
 
 //        $this->assertEquals($users->router()->editForm($user), $form->getProp('url'));
-        $this->assertEquals('post', $form->getProp('method'));
+        $this->assertEquals('POST', $form->getProp('method'));
 
         // make sure fields is an array, not an object
         //
@@ -112,31 +109,6 @@ class ResourceFormsTest extends ResourceTestCase
 //            ['value' => $first->getId(), 'text' => $first->title],
 //            $group['meta']['options'][0]
 //        );
-    }
-
-    function __displays_extended_update_form()
-    {
-        $users = $this->blueprints()
-                      ->users(function (Blueprint $table) {
-                          $table->select('gender')->options(['m' => 'Male', 'f' => 'Female']);
-                          $table->createdBy()->updatedBy();
-                      });
-        $user = $users->fake(['group_id' => 1]);
-        ResourceFactory::wipe();
-
-        // extend resource edit form
-        //
-        Resource::extend('testing.users')->with(function (Resource $resource) {
-            $resource->onEditing(function (Form $form) {
-                $form->onlyFields('name', 'email', 'group');
-            });
-        });
-
-        // Get Update form
-        //
-        $response = $this->getJsonUser($users->router()->updateForm($user))->assertOk();
-        $form = HelperComponent::fromArray($response->decodeResponseJson('data'));
-        $this->assertEquals(3, $form->countProp('fields'));
     }
 
     function test__posts_create_form()

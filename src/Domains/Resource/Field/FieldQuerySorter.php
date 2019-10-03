@@ -9,7 +9,7 @@ class FieldQuerySorter
     /** @var \Illuminate\Database\Eloquent\Builder */
     protected $query;
 
-    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field */
+    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface */
     protected $field;
 
     public function sort($direction)
@@ -29,9 +29,9 @@ class FieldQuerySorter
     }
 
     /**
-     * @param \SuperV\Platform\Domains\Resource\Field\Contracts\Field $field
+     * @param \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface $field
      */
-    public function setField(\SuperV\Platform\Domains\Resource\Field\Contracts\Field $field): void
+    public function setField(\SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface $field): void
     {
         $this->field = $field;
     }

@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
@@ -27,7 +27,7 @@ class FormResponse implements Responsable
 
     protected $events;
 
-    public function __construct(Form $form, EntryContract $entry, ?Resource $resource = null)
+    public function __construct(FormInterface $form, EntryContract $entry, ?Resource $resource = null)
     {
         $this->form = $form;
         $this->resource = $resource;

@@ -28,9 +28,12 @@ class MorphMany extends Relation implements ProvidesTable, ProvidesForm
 //            ->mergeFields($this->getPivotFields());
     }
 
-    public function makeForm(): Form
+    public function makeForm($request = null): Form
     {
         $builder = FormFactory::builderFromResource($this->getRelatedResource());
+        if ($request) {
+            $builder->setRequest($request);
+        }
         $builder->setEntry($childEntry = $this->newQuery()->make());
 
         return $builder->getForm();

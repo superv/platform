@@ -2,14 +2,20 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field as Field;
+use Closure;
+use Illuminate\Http\Request;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
+use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Exceptions\PlatformException;
 
-class FieldType
+class FieldType implements FieldTypeInterface
 {
     protected $type;
 
-    /** @var Field */
+    /** @var FieldInterface */
     protected $field;
 
     protected function boot() { }
@@ -19,7 +25,7 @@ class FieldType
         return $this->type ?? $this->field->getType();
     }
 
-    public function setField(Field $field): void
+    public function setField(FieldInterface $field): void
     {
         $this->field = $field;
 
@@ -36,6 +42,11 @@ class FieldType
         return $this->field->getName();
     }
 
+    public function getColumnName()
+    {
+        return $this->getName();
+    }
+
     public function getConfigValue($key, $default = null)
     {
         return $this->field->getConfigValue($key, $default);
@@ -49,6 +60,37 @@ class FieldType
     public function getType(): ?string
     {
         return $this->type;
+    }
+
+    public function resolveDataFromEntry(FormData $data, EntryContract $entry)
+    {
+        if ($this instanceof DoesNotInteractWithTable) {
+            return;
+        }
+        $value = $entry->getAttribute($this->getColumnName());
+
+        $data->setDataValue($this->getColumnName(), $value);
+    }
+
+    public function resolveDataFromRequest(FormData $data, Request $request, EntryContract $entry)
+    {
+        if (! $request->has($this->getName()) && ! $request->has($this->getColumnName())) {
+            return;
+        }
+
+        if (! $value = $request->__get($this->getColumnName())) {
+            $value = $request->__get($this->getName());
+        }
+
+        if ($this instanceof HasModifier) {
+            $value = (new Modifier($this))->set(['entry' => $entry, 'value' => $value]);
+        }
+
+        if ($value instanceof Closure) {
+            $data->callbacks()->push($value);
+        } else {
+            $data->setDataValue($this->getColumnName(), $value);
+        }
     }
 
     public static function resolveType($type)

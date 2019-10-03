@@ -5,8 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Resource;
 use Closure;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class Fields
@@ -34,7 +33,7 @@ class Fields
 
     public function sort()
     {
-        $this->fields = $this->fields->sortBy(function (Field $field) {
+        $this->fields = $this->fields->sortBy(function (FieldInterface $field) {
             return $field->getConfigValue('sort_order', 100);
         });
 
@@ -46,15 +45,15 @@ class Fields
         return ! is_null($this->find($name));
     }
 
-    public function find($name): ?Field
+    public function find($name): ?FieldInterface
     {
         return $this->fields->first(
-            function (Field $field) use ($name) {
+            function (FieldInterface $field) use ($name) {
                 return $field->getName() === $name;
             });
     }
 
-    public function get($name): ?Field
+    public function get($name): ?FieldInterface
     {
         return $this->find($name);
 //
@@ -70,21 +69,21 @@ class Fields
         return $this->find($this->resource->config()->getEntryLabelField());
     }
 
-    public function showOnIndex($name): Field
+    public function showOnIndex($name): FieldInterface
     {
         return $this->get($name)->showOnIndex();
     }
 
     public function keyByName(): Collection
     {
-        return $this->fields->keyBy(function (Field $field) {
+        return $this->fields->keyBy(function (FieldInterface $field) {
             return $field->getName();
         });
     }
 
     public function withFlag($flag): Collection
     {
-        return $this->fields->filter(function (Field $field) use ($flag) {
+        return $this->fields->filter(function (FieldInterface $field) use ($flag) {
             return $field->hasFlag($flag);
         });
     }
@@ -92,9 +91,9 @@ class Fields
     public function getFilters(): Collection
     {
         $filters = $this->fields
-            ->filter(function (Field $field) {
+            ->filter(function (FieldInterface $field) {
                 return $field->hasFlag('filter');
-            })->map(function (Field $field) {
+            })->map(function (FieldInterface $field) {
                 if ($field->getFieldType() instanceof ProvidesFilter) {
                     return $field->getFieldType()->makeFilter($field->getConfigValue('filter'));
                 }
@@ -103,7 +102,7 @@ class Fields
         return $filters->filter();
     }
 
-    public function getHeaderImage(): ?Field
+    public function getHeaderImage(): ?FieldInterface
     {
         return $this->withFlag('header.show')->first();
     }

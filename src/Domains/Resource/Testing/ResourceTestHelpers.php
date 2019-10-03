@@ -184,6 +184,8 @@ trait ResourceTestHelpers
 
         if (! $response->isOk()) {
             $data = $response->decodeResponseJson();
+
+            dd($data);
             throw new Exception('Can not post create resource: '.$resource->getIdentifier().' ['.json_encode($data).']');
         }
 

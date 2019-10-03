@@ -47,7 +47,7 @@ class PolymorphicFieldTest extends ResourceTestCase
             $table->string('title');
             $table->belongsTo('users');
 
-            $table->polymorph('typed')
+            $table->polymorph('contact')
                   ->add('sms', function (Blueprint $table, Config $config) {
                       $config->label('SMS Contacts');
                       $table->string('cell');

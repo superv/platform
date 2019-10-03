@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Database\Entry;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class EntryRepository implements EntryRepositoryInterface
@@ -95,7 +95,7 @@ class EntryRepository implements EntryRepositoryInterface
         $entry->setKeyName($this->resource->getKeyName());
         $entry->setResourceIdentifier($this->resource->getIdentifier());
 
-        $this->resource->getFields()->map(function (Field $field) use ($entry) {
+        $this->resource->getFields()->map(function (FieldInterface $field) use ($entry) {
             if ($value = $field->getConfigValue('default_value')) {
                 $entry->setAttribute($field->getColumnName(), $value);
             }

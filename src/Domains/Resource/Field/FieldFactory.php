@@ -22,7 +22,7 @@ class FieldFactory
 
     /**
      * @param string|null $resolveFrom
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field | \SuperV\Platform\Domains\Resource\Form\Contracts\FormField
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface | \SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface
      */
     public static function createFromEntry(FieldModel $entry, string $resolveFrom = null)
     {
@@ -35,7 +35,7 @@ class FieldFactory
     /**
      * @param array       $params
      * @param string|null $resolveFrom
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field | \SuperV\Platform\Domains\Resource\Form\Contracts\FormField
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface | \SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface
      */
     public static function createFromArray(array $params, string $resolveFrom = null)
     {
@@ -47,7 +47,7 @@ class FieldFactory
 
     /**
      * @param string|null $resolveFrom
-     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\Field | \SuperV\Platform\Domains\Resource\Form\Contracts\FormField
+     * @return \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface | \SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface
      */
     protected function create(string $resolveFrom = null)
     {

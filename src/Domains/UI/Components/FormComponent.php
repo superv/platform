@@ -18,7 +18,7 @@ class FormComponent extends BaseComponent
 
     public function uuid()
     {
-        return $this->form->uuid();
+        return $this->form->getIdentifier();
     }
 
     public static function from(Form $form): self

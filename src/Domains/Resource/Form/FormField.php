@@ -5,10 +5,10 @@ namespace SuperV\Platform\Domains\Resource\Form;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
-use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
-use SuperV\Platform\Domains\Resource\Form\Contracts\FormField as FormFieldContract;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 
-class FormField extends Field implements FormFieldContract
+class FormField extends Field implements FormFieldInterface
 {
     protected $temporal = false;
 
@@ -18,7 +18,7 @@ class FormField extends Field implements FormFieldContract
     /** @var \SuperV\Platform\Domains\Resource\Form\FieldLocation */
     protected $location;
 
-    public function observe(FormFieldContract $parent, ?EntryContract $entry = null)
+    public function observe(FormFieldInterface $parent, ?EntryContract $entry = null)
     {
         $parent->setConfigValue('meta.on_change_event', $parent->getName().':'.$parent->getColumnName().'={value}');
 
@@ -39,12 +39,12 @@ class FormField extends Field implements FormFieldContract
         }
     }
 
-    public function getForm(): Form
+    public function getForm(): FormInterface
     {
         return $this->form;
     }
 
-    public function setForm(Form $form): void
+    public function setForm(FormInterface $form): void
     {
         $this->form = $form;
     }
@@ -69,7 +69,7 @@ class FormField extends Field implements FormFieldContract
         return $this->temporal;
     }
 
-    public static function make(array $params): FormFieldContract
+    public static function make(array $params): FormFieldInterface
     {
         return FieldFactory::createFromArray($params, self::class);
     }

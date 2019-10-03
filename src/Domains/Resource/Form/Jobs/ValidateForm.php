@@ -2,11 +2,12 @@
 
 namespace SuperV\Platform\Domains\Resource\Form\Jobs;
 
-use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Validator;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
-use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
+use SuperV\Platform\Domains\Resource\Field\Jobs\GetRules;
+use SuperV\Platform\Domains\Resource\Form\FormData;
+use SuperV\Platform\Domains\Resource\Form\FormFieldCollection;
 use SuperV\Platform\Support\Dispatchable;
 
 class ValidateForm
@@ -28,45 +29,32 @@ class ValidateForm
      */
     protected $fields;
 
-    public function __construct(Collection $fields, array $data)
+    /**
+     * @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract|null
+     */
+    protected $entry;
+
+    public function __construct(FormFieldCollection $fields, FormData $data, ?EntryContract $entry)
     {
         $this->data = $data;
         $this->fields = $fields;
+        $this->entry = $entry;
     }
 
     public function handle(Validator $validator)
     {
-        PlatformException::fail();
-        $rules = $this->fields
-            ->filter(function (Field $field) {
-                return ! $field->isUnbound();
-            })
-            ->map(function (FormField $field) {
-                return [$field->getIdentifier(), $this->parseFieldRules($field)];
-            })->filter()
-            ->toAssoc()
-            ->all();
+        $rules = (new GetRules($this->fields))->get($this->entry);
+
+        $data = $this->data->getForValidation($this->entry);
 
         $attributes = $this->fields
-            ->map(function (FormField $field) {
-                return [$field->getIdentifier(), $field->getLabel()];
+            ->map(function (FieldInterface $field) {
+                return [$field->getColumnName(), $field->getLabel()];
             })->filter()
             ->toAssoc()
             ->all();
 
-        $validator->make($this->data, $rules, [], $attributes);
+        $validator->make($data, $rules, [], $attributes);
     }
 
-    private function parseFieldRules(FormField $field)
-    {
-        $rules = $field->getRules();
-
-        if ($field->isRequired()) {
-            $rules[] = 'required';
-        } else {
-            $rules[] = 'nullable';
-        }
-
-        return $rules;
-    }
 }

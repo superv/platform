@@ -32,6 +32,8 @@ interface EntryContract
 
     public function update(array $attributes = []);
 
+    public function fill(array $attributes);
+
     public function setAttribute($key, $value);
 
     public function getAttribute($key);

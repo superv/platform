@@ -12,7 +12,7 @@ use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
 use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldQuerySorter;
 use SuperV\Platform\Domains\Resource\Filter\ApplyFilters;
@@ -236,7 +236,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     public function makeFields(): Collection
     {
         $mergeFields = wrap_collect($this->mergeFields)
-            ->map(function (Field $field) {
+            ->map(function (FieldInterface $field) {
                 return clone $field;
             });
 
@@ -245,7 +245,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
                                                       return is_array($field) ? sv_field($field) : $field;
                                                   });
 
-        return $fields->map(function (Field $field) {
+        return $fields->map(function (FieldInterface $field) {
             if ($callback = $field->getCallback('table.querying')) {
                 $this->on('querying', $callback);
             }
@@ -439,7 +439,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
             function (EntryContract $entry) use ($fields) {
                 return [
                     'id'      => $this->getRowId($entry),
-                    'fields'  => $fields->map(function (Field $field) use ($entry) {
+                    'fields'  => $fields->map(function (FieldInterface $field) use ($entry) {
                         return (new FieldComposer($field))->forTableRow($entry)->get();
                     })->values()->all(),
                     'actions' => ['view'],

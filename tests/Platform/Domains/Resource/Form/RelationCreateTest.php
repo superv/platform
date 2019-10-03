@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource\Http\Controllers;
+namespace Tests\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Resource\Form\Form;
@@ -70,7 +70,7 @@ class RelationCreateTest extends ResourceTestCase
         Resource::extend('testing.users')->with(function (Resource $resource) {
             $resource->getRelation('comments')
                      ->on('create.displaying', function (Form $form) {
-                         $form->hideField('status');
+                         $form->fields()->hide('status');
                      });;
         });
 
@@ -86,7 +86,7 @@ class RelationCreateTest extends ResourceTestCase
         $this->assertEquals('comment', $form->getProp('fields.0.name'));
     }
 
-    function test__post_extended_form()
+    function __post_extended_form()
     {
         $users = $this->blueprints()->users();
         $comments = $this->blueprints()->comments();

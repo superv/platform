@@ -7,7 +7,9 @@ use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
@@ -30,12 +32,10 @@ class FormTest extends ResourceTestCase
         $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
 
         $form = FormFactory::builderFromEntry($entry)->getForm();
-        $form->hideField('age');
 
         $this->assertInstanceOf(Form::class, $form);
-        $this->assertEquals(2, $form->getFields()->count());
+        $this->assertEquals(2, $form->fields()->count());
         $this->assertEquals($entry, $form->getEntry());
-        $this->assertEquals(['age'], $form->getHiddenFields());
     }
 
     function test__dispatches_event_when_resolved()
@@ -63,45 +63,89 @@ class FormTest extends ResourceTestCase
         $this->assertEquals(33, $this->getComposedValue($form->getField('age'), $form));
     }
 
+    function test__form_data_resolves_entry()
+    {
+        $categories = $this->blueprints()
+                           ->categories(function (Blueprint $table) {
+                               $table->boolean('active')->default(false);
+                               $table->string('notes')->nullable();
+                           });
+
+        $category = $categories->create(['title' => 'Books', 'active' => 'TRUE', 'notes' => 'a-b-c']);
+        $builder = FormFactory::builderFromEntry($category);
+
+        $form = $builder->makeForm();
+        $form->fields()->hide('notes'); // XXX behh behhhh
+
+        $builder->getForm();
+
+        $formData = $form->getData();
+        $this->assertInstanceOf(FormData::class, $formData);
+        $this->assertEquals(['title' => 'Books', 'active' => true], $formData->get());
+    }
+
+    function test__form_data_resolves_request()
+    {
+        $categories = $this->blueprints()
+                           ->categories(function (Blueprint $table) {
+                               $table->boolean('active')->default(false);
+                               $table->string('notes')->nullable();
+//                               $table->file('some')->config(['disk' => 'fakedisk']);
+                           });
+
+        $category = $categories->create(['title' => 'Books', 'active' => 'TRUE', 'notes' => 'a-b-c']);
+        $builder = FormFactory::builderFromEntry($category);
+
+        $form = $builder->makeForm();
+        $form->fields()->hide('notes'); // XXX behh behhhh
+
+        $builder->setRequest($this->makePostRequest(['title' => 'Updated Books', 'notes' => 'bad-value']));
+        $builder->getForm();
+
+        $this->assertEquals(['title' => 'Updated Books', 'active' => true], $form->getData()->get());
+    }
+
     function test__add_field()
     {
         $form = FormFactory::builderFromEntry($entry = new FormTestUser)->getForm();
-        $this->assertEquals(2, $form->getFields()->count());
+        $this->assertEquals(2, $form->fields()->count());
 
         $form->addField($this->makeField(['type' => 'text', 'name' => 'profession']));
 
         $field = $form->getField('profession');
         $this->assertNotNull($field);
-        $this->assertInstanceOf(\SuperV\Platform\Domains\Resource\Form\Contracts\FormField::class, $field);
+        $this->assertInstanceOf(\SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface::class, $field);
     }
 
     function test__saves_form()
     {
-        $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
-        $form = FormFactory::builderFromEntry($entry)->getForm();
+        $entry = new FormTestUser();
+        $form = FormFactory::builderFromEntry($entry)
+                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
+                           ->getForm();
 
-        $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-             ->save();
+        $form->save();
 
-        $this->assertEquals('Omar', $form->composeField('name', $form)->get('value'));
-        $this->assertEquals(33, $form->composeField('age', $form)->get('value'));
+        $this->assertEquals('Omar', $this->getComposedValue('name', $form));
+        $this->assertEquals(33, $this->getComposedValue('age', $form));
     }
 
     function test__hidden_fields()
     {
         $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
-        $form = FormFactory::builderFromEntry($entry)->getForm();
+        $form = FormFactory::builderFromEntry($entry)
+                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 99]))
+                           ->getForm();
 
-        $form->hideField('name')
-             ->make()
-             ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 99]))
-             ->save();
+        $form->getField('name')->hide();
+
+        $form->save();
 
         $nameField = $form->getField('name');
         $this->assertTrue($nameField->isHidden());
 
-        $this->assertEquals('Omar', $form->composeField('name', $form)->get('value'));
-        $this->assertEquals(99, $form->composeField('age', $form)->get('value'));
+        $this->assertEquals('Omar', $this->getComposedValue('name', $form));
+        $this->assertEquals(99, $this->getComposedValue('age', $form));
 
         $composedFields = $form->compose()->get('fields');
         $this->assertEquals(1, count($composedFields));
@@ -111,13 +155,14 @@ class FormTest extends ResourceTestCase
     function test__saves_entry()
     {
         $entry = new FormTestUser;
-        $form = FormFactory::builderFromEntry($entry)->getForm();
+        $form = FormFactory::builderFromEntry($entry)
+                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
+                           ->getForm();
 
-        $form->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-             ->save();
+        $form->save();
 
-        $this->assertEquals('Omar', $form->composeField('name', $form)->get('value'));
-        $this->assertEquals(33, $form->composeField('age', $form)->get('value'));
+        $this->assertEquals('Omar', $this->getComposedValue('name', $form));
+        $this->assertEquals(33, $this->getComposedValue('age', $form));
 
         $user = $form->getEntry();
         $this->assertEquals('Omar', $user->name);
@@ -169,8 +214,12 @@ class FormTest extends ResourceTestCase
         });
     }
 
-    protected function getComposedValue($field, $form = null)
+    protected function getComposedValue($field, FormInterface $form)
     {
+        if (is_string($field)) {
+            $field = $form->getField($field);
+        }
+
         return (new FieldComposer($field))->forForm($form)->get('value');
     }
 
@@ -182,7 +231,7 @@ class FormTest extends ResourceTestCase
         ];
     }
 
-    protected function makeField(array $params): \SuperV\Platform\Domains\Resource\Form\Contracts\FormField
+    protected function makeField(array $params): \SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface
     {
         if (! isset($params['identifier'])) {
             $params['identifier'] = uuid();

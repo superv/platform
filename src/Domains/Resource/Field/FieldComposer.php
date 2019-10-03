@@ -13,7 +13,7 @@ use SuperV\Platform\Support\Composer\Payload;
 class FieldComposer
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+     * @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
      */
     protected $field;
 

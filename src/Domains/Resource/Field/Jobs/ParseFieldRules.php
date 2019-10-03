@@ -4,17 +4,17 @@ namespace SuperV\Platform\Domains\Resource\Field\Jobs;
 
 use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class ParseFieldRules
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+     * @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
      */
     protected $field;
 
-    public function __construct(Field $field)
+    public function __construct(FieldInterface $field)
     {
         $this->field = $field;
     }

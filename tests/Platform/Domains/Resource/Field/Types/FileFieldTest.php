@@ -35,7 +35,7 @@ class FileFieldTest extends ResourceTestCase
         $this->assertFalse(in_array('avatar', \Schema::getColumnListing('tmp_table')));
 
         $fake = $res->fake();
-        /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field $field */
+        /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface $field */
         $field = $fake->getResource()->getField('avatar');
 
         $this->assertEquals('file', $field->getType());

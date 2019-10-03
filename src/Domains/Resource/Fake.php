@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource;
 use Closure;
 use Faker\Generator;
 use Illuminate\Http\UploadedFile;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 
 class Fake
 {
@@ -36,7 +36,7 @@ class Fake
         $this->overrides = $overrides;
 
         $resource->getFields()
-                 ->map(function (Field $field) {
+                 ->map(function (FieldInterface $field) {
                      if ($this->shouldFake($field)) {
                          $this->attributes[$field->getColumnName()] = $this->fake($field);
                      }
@@ -47,7 +47,7 @@ class Fake
         return array_filter_null($this->attributes);
     }
 
-    public static function field(Field $field)
+    public static function field(FieldInterface $field)
     {
         return (new static)->fake($field);
     }
@@ -68,14 +68,14 @@ class Fake
         return (new static())->__invoke($resource, $overrides);
     }
 
-    protected function shouldFake(Field $field)
+    protected function shouldFake(FieldInterface $field)
     {
         return ! $field->isHidden()
 //            && ! $field->hasFlag('form.hide')
             && ! $field->doesNotInteractWithTable();
     }
 
-    protected function fake(Field $field)
+    protected function fake(FieldInterface $field)
     {
         if ($value = array_get($this->overrides, $field->getColumnName())) {
             if (is_callable($value)) {
@@ -91,7 +91,7 @@ class Fake
         return $this->faker->text;
     }
 
-    protected function fakeBelongsTo(Field $field)
+    protected function fakeBelongsTo(FieldInterface $field)
     {
         $relatedResource = ResourceFactory::make($field->getConfigValue('related_resource'));
 
@@ -114,7 +114,7 @@ class Fake
         }
     }
 
-    protected function fakeText(Field $field)
+    protected function fakeText(FieldInterface $field)
     {
         $fieldName = $field->getName();
 
@@ -185,12 +185,12 @@ class Fake
         return $this->faker->rgbColorAsArray;
     }
 
-    protected function fakeSelect(Field $field)
+    protected function fakeSelect(FieldInterface $field)
     {
         return array_random(wrap_array($field->getConfigValue('options')));
     }
 
-    protected function fakeNumber(Field $field)
+    protected function fakeNumber(FieldInterface $field)
     {
         if ($field->getConfigValue('type') === 'decimal') {
             $max = $field->getConfigValue('total', 5) - 2;
@@ -211,7 +211,7 @@ class Fake
         return $this->faker->boolean;
     }
 
-    protected function fakeDatetime(Field $field)
+    protected function fakeDatetime(FieldInterface $field)
     {
         return $field->getConfigValue('time') ? $this->faker->dateTime : $this->faker->date();
     }

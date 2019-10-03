@@ -13,17 +13,21 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class HasOne extends Relation implements ProvidesForm, HandlesRequests
 {
-    public function makeForm(): Form
+    public function makeForm($request = null): Form
     {
         $formIdentifier = $this->getRelatedResource()->getIdentifier().'.forms:default';
         $builder = FormFactory::builderFromFormEntry($formIdentifier);
+
+        if ($request) {
+            $builder->setRequest($request);
+        }
 
         $builder->setEntry($this->getRelatedEntry());
 
         /** @var \SuperV\Platform\Domains\Resource\Form\Form $form */
         $form = $builder->getForm();
 
-        $form->hideField(sv_resource($this->parentEntry)->config()->getResourceKey());
+        $form->fields()->hide(sv_resource($this->parentEntry)->config()->getResourceKey());
 
         return $form;
     }
@@ -35,7 +39,7 @@ class HasOne extends Relation implements ProvidesForm, HandlesRequests
 
     public function handleRequest(\Illuminate\Http\Request $request)
     {
-        return $this->makeForm()->setRequest($request)->save();
+        return $this->makeForm($request)->save();
     }
 
     protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation

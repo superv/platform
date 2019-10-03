@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Table;
 
 use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
@@ -23,7 +23,7 @@ class FormTable extends Table
                 return [
                     'id'     => $row['id'] ?? null,
                     'fields' => $fields
-                        ->map(function (Field $field) use ($row) {
+                        ->map(function (FieldInterface $field) use ($row) {
                             return (new FieldComposer($field))->forForm($row);
                         })->values(),
                 ];
@@ -32,7 +32,7 @@ class FormTable extends Table
 
     public function makeFields(): Collection
     {
-        return parent::makeFields()->filter(function (Field $field) {
+        return parent::makeFields()->filter(function (FieldInterface $field) {
             return ! $field->isHidden();
         })->values();
     }

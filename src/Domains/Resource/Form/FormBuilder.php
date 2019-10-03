@@ -3,12 +3,14 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\GhostField;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormBuilderInterface;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Resource;
 
 class FormBuilder implements FormBuilderInterface
@@ -31,59 +33,46 @@ class FormBuilder implements FormBuilderInterface
     /** @var int */
     protected $entryId;
 
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface
+     */
+    protected $form;
+
     public function __construct(Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }
 
-    public function getForm(): Form
+    public function makeForm(): FormInterface
     {
-        $form = Form::resolve($this->formEntry->getIdentifier());
+        $this->form = Form::resolve($this->formEntry->getIdentifier());
 
-        if ($this->resource = $this->formEntry->getOwnerResource()) {
-            if (! $entry = $this->getEntry()) {
-                if ($this->entryId) {
-                    $entry = $this->resource->find($this->entryId);
-                }
-            }
-            $form->setEntry($entry ?? $this->resource->newEntryInstance());
-        }
+        $this->makeFormFields();
 
-        $form->setRequest($this->getRequest());
-
-        $form->setFields($this->buildFields($this->formEntry->getFormFields()))
-             ->setUrl(sv_url()->path())
-             ->make($this->formEntry->getIdentifier());
-
-        if ($this->resource && $callback = $this->resource->getCallback('creating')) {
-            app()->call($callback, ['form' => $form]);
-        }
-
-        $this->dispatcher->dispatch($this->formEntry->getIdentifier().'.events:resolved', $form);
-
-        return $form;
+        return $this->form;
     }
 
-    /**
-     * Rebuild resource fields with FormField
-     * and inject the resource
-     *
-     * @param \Illuminate\Support\Collection $fields
-     * @return \Illuminate\Support\Collection
-     */
-    public function buildFields(Collection $fields)
+    public function getForm(): FormInterface
     {
-        $fields = $fields->map(function (FieldModel $field) {
-            $field = FieldFactory::createFromEntry($field, FormField::class);
+        if (! $this->form) {
+            $this->makeForm();
+        }
 
-            if ($this->resource) {
-                $field->setResource($this->resource);
-            }
+        if ($this->entry) {
+            $this->form->setEntry($this->entry);
+            $this->form->getData()->resolveEntry($this->entry);
+        }
 
-            return $field;
-        });
+        if ($this->request) {
+            $this->form->resolveRequest($this->request);
+            $this->form->getData()->resolveRequest($this->request, $this->entry);
+        }
 
-        return $fields;
+        $this->form->setUrl(sv_url()->path());
+
+        $this->dispatcher->dispatch($this->formEntry->getIdentifier().'.events:resolved', $this->form);
+
+        return $this->form;
     }
 
     public function getEntry(): ?EntryContract
@@ -98,12 +87,6 @@ class FormBuilder implements FormBuilderInterface
         return $this;
     }
 
-    public function setEntryId(int $entryId)
-    {
-        $this->entryId = $entryId;
-
-        return $this;
-    }
 
     public function setFormEntry(FormModel $formEntry): FormBuilder
     {
@@ -122,19 +105,50 @@ class FormBuilder implements FormBuilderInterface
         return $this;
     }
 
-    public function getRequest(): Request
+    public function getRequest(): ?Request
     {
-        return $this->request ?? app('request');
+        return $this->request;
     }
 
     public function getResource(): ?Resource
     {
-        return $this->resource;
+        return $this->formEntry->getOwnerResource();
     }
 
     public function getFormEntry(): FormModel
     {
         return $this->formEntry;
+    }
+
+    protected function makeFormFields()
+    {
+        $formFields = $this->formEntry->getFormFields()
+                                      ->map(function (FieldModel $field) {
+                                          $field = FieldFactory::createFromEntry($field, FormField::class);
+
+                                          if ($this->resource) {
+                                              $field->setResource($this->resource);
+                                          }
+
+                                          return $field;
+                                      })
+                                      ->filter(function (FieldInterface $field) {
+                                          return ! $field instanceof GhostField;
+                                      })
+                                      ->map(function (FormField $field) {
+                                          $field->setForm($this->form);
+
+                                          /**
+                                           *  ????????????
+                                           */
+                                          if ($this->getEntry()) {
+                                              $field->fillFromEntry($this->getEntry());
+                                          }
+
+                                          return $field;
+                                      });
+
+        $this->form->fields()->mergeFields($formFields);
     }
 
     /** @return static */

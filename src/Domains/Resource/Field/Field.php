@@ -7,9 +7,9 @@ use Event;
 use Illuminate\Http\Request;
 use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field as FieldContract;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
-use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
@@ -82,7 +82,7 @@ class Field implements FieldContract
      */
     protected $resource;
 
-    /** @var Form */
+    /** @var FormInterface */
     protected $form;
 
     public function __construct(array $attributes = [])
@@ -208,11 +208,13 @@ class Field implements FieldContract
 
     public function getColumnName(): ?string
     {
-        if (method_exists($this->fieldType, 'getColumnName')) {
-            return $this->fieldType->getColumnName();
-        }
-
-        return $this->columnName ?? $this->getName();
+        return $this->fieldType->getColumnName();
+//
+//        if (method_exists($this->fieldType, 'getColumnName')) {
+//            return $this->fieldType->getColumnName();
+//        }
+//
+//        return $this->columnName ?? $this->getName();
     }
 
     public function getRules()
@@ -329,7 +331,7 @@ class Field implements FieldContract
         $this->removeFlag('required');
     }
 
-    public function addFlag(string $flag): \SuperV\Platform\Domains\Resource\Field\Contracts\Field
+    public function addFlag(string $flag): \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
     {
         $this->flags[] = $flag;
 

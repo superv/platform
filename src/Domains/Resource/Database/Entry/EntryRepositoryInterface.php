@@ -17,4 +17,10 @@ interface EntryRepositoryInterface
     public function count(): int;
 
     public function newQuery(): \Illuminate\Database\Eloquent\Builder;
+
+    public function hydrateEntry(EntryContract $entry);
+
+    public function first(): ?EntryContract;
+
+    public function find($id): ?EntryContract;
 }

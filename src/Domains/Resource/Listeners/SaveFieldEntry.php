@@ -27,7 +27,7 @@ class SaveFieldEntry
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
     protected $resourceConfig;
 
-    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field */
+    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface */
     protected $fieldType;
 
     protected $fieldWithoutEloquent = true;

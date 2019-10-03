@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Jobs;
 
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 
 class GetRules
 {
@@ -21,13 +21,13 @@ class GetRules
     public function get(?EntryContract $entry = null, string $table = null)
     {
         return $this->fields
-            ->filter(function (Field $field) {
+            ->filter(function (FieldInterface $field) {
                 return ! $field->isUnbound();
             })
-            ->keyBy(function (Field $field) {
+            ->keyBy(function (FieldInterface $field) {
                 return $field->getColumnName();
             })
-            ->map(function (Field $field) use ($table, $entry) {
+            ->map(function (FieldInterface $field) use ($table, $entry) {
                 return (new ParseFieldRules($field))->parse($entry, $table);
             })
             ->filter()

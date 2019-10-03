@@ -25,7 +25,7 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
 
     public function getModifier(): Closure
     {
-        return function ($value, EntryContract $entry) {
+        return function ($value, ?EntryContract $entry) {
             $this->value = $value ? json_decode($value) : [];
 
             return function () use ($entry) {
@@ -98,8 +98,7 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
 
             if ($entry) {
                 if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
-                    $resource = sv_resource($relatedEntry);
-                    $payload->set('meta.link', $resource->route('entry.view', $relatedEntry));
+                    $payload->set('meta.link', $relatedEntry->router()->view());
                 }
             }
 

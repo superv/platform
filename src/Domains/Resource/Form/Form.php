@@ -3,21 +3,12 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Closure;
-use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Dispatcher;
-use SuperV\Platform\Contracts\Validator;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Contracts\ProvidesFields;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
-use SuperV\Platform\Domains\Resource\Field\GhostField;
-use SuperV\Platform\Domains\Resource\Field\Jobs\GetRules;
-use SuperV\Platform\Domains\Resource\Form\Contracts\Form as FormContract;
-use SuperV\Platform\Domains\Resource\Form\Contracts\FormField;
-use SuperV\Platform\Domains\Resource\Form\FormField as ConcreteFormField;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Jobs\ValidateForm;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
@@ -25,11 +16,11 @@ use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-class Form implements FormContract, ProvidesUIComponent
+class Form implements FormInterface, ProvidesUIComponent
 {
     use FiresCallbacks;
-    const MODE_CREATE = 'create';
-    const MODE_UPDATE = 'update';
+
+    protected $method = 'POST';
 
     /** @var string */
     protected $identifier;
@@ -40,31 +31,13 @@ class Form implements FormContract, ProvidesUIComponent
     /** @var EntryContract */
     protected $entry;
 
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field[]|Collection
-     */
+    /** @var \SuperV\Platform\Domains\Resource\Form\FormFieldCollection */
     protected $fields;
 
-    protected $hiddenFields = [];
-
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $url;
 
-    /**
-     * @var string
-     */
-    protected $method = 'post';
-
-    /**
-     * @var string
-     */
-    protected $uuid;
-
-    /**
-     * @var \Illuminate\Http\Request
-     */
+    /** @var \Illuminate\Http\Request */
     protected $request;
 
     protected $actions = [];
@@ -73,193 +46,125 @@ class Form implements FormContract, ProvidesUIComponent
 
     protected $title;
 
-    protected $mode = Form::MODE_CREATE;
-
-    protected $isMade = false;
-
     /**
      * @var \SuperV\Platform\Contracts\Dispatcher
      */
     protected $dispatcher;
 
+    /** @var \SuperV\Platform\Domains\Resource\Form\FormData */
+    protected $data;
+
     public function __construct(string $identifier = null, Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
         $this->identifier = $identifier;
-    }
 
-    public function make($uuid = null)
-    {
-        $this->uuid = $uuid ?? uuid();
+        $this->fields = new FormFieldCollection();
 
-        if (is_null($this->fields)) {
-            if ($this->entry) {
-                $this->fields = $this->provideFields($this->entry);
-            } else {
-                $this->fields = collect();
-            }
-        }
-
-        $this->fields = $this->fields->filter(function (Field $field) {
-            return ! $field instanceof GhostField;
-        });
-
-        $this->fields
-            ->map(function (FormField $field) {
-                $field->setForm($this);
-
-                if (in_array($field->getColumnName(), $this->getHiddenFields())) {
-                    $field->hide();
-                }
-
-                if ($this->hasEntry()) {
-                    $field->fillFromEntry($this->getEntry());
-                }
-            });
-
-        $this->setFormMode();
-
-
-        $this->isMade = true;
-
-        return $this;
+        $this->data = new FormData($this->fields);
     }
 
     public function save(): FormResponse
     {
-        $this->applyExtensionCallbacks();
+//        $this->fireBeforeSavingCallbacks();
 
-//        $this->validateTemporalFields();
-
-        $this->fireBeforeSavingCallbacks();
-
-
-        $this->resolveFieldValuesFromRequest();
+//        $this->resolveFieldValuesFromRequest();
 
         $this->validate();
 
-        if ($this->hasEntry()) {
-            $this->getEntry()->save();
-        }
-
-        $this->runPostSaveCallbacks();
+        $this->submit();
 
         return new FormResponse($this, $this->getEntry(), $this->resource);
     }
 
-    public function uuid(): string
+    public function submit()
     {
-        return $this->uuid;
+        $this->entry->fill($this->data->get());
+        $this->entry->save();
+
+        $this->data->callbacks()
+                   ->filter()
+                   ->map(function (Closure $callback) {
+                       $callback();
+                   });
     }
 
-    public function hideField(string $fieldName): FormContract
+    public function addField(FormFieldInterface $field)
     {
-        if (! $field = $this->getField($fieldName)) {
-            throw new Exception('Field not found: '.$fieldName);
-        }
-
-        $field->hide();
-
-        $this->hiddenFields[] = $fieldName;
-
-        return $this;
+        return $this->fields()->addField($field);
     }
 
-    public function mergeFields($fields)
-    {
-        $fields = $this->provideFields($fields);
-
-        $this->fields = $this->fields->merge($fields);
-
-        return $this;
-    }
-
-    public function hideFields($fields): FormContract
-    {
-        $fields = is_array($fields) ? $fields : func_get_args();
-
-        $this->getFields()->map(function (FormField $field) use ($fields) {
-            if (in_array($field->getName(), $fields)) {
-                $field->hide();
-            }
-        });
-
-        return $this;
-    }
-
-    public function addField(FormField $field)
-    {
-        // Fields added on the fly should be marked as temporal
-        //
-        $field->setTemporal(true);
-
-        return $this->addFields([$field]);
-    }
-
-    public function getFields()
+    public function fields(): FormFieldCollection
     {
         return $this->fields;
     }
 
-    public function setFields($fields)
+    public function setFields(FormFieldCollection $fields)
     {
-        if ($this->isMade) {
-            throw new Exception('Can not set fields after form is made');
-        }
-        $this->fields = $this->provideFields($fields);
+        $this->fields = $fields;
 
         return $this;
     }
 
-    public function getField(string $name): ?FormField
+    public function getField(string $name): ?FormFieldInterface
     {
-        return $this->fields->first(
-            function (FormField $field) use ($name) {
-                return $field->getName() === $name;
-            });
+        return $this->fields()->field($name);
     }
 
-    public function composeField($field, $entry = null)
+    public function getIdentifier()
     {
-        if (is_string($field)) {
-            $field = $this->getField($field);
-        }
-
-        return (new FieldComposer($field))->forForm($entry);
+        return $this->identifier;
     }
 
-    public function getHiddenFields(): array
+    public function getEntry(): ?EntryContract
     {
-        return $this->hiddenFields;
+        return $this->entry;
+    }
+
+    public function setEntry(EntryContract $entry): FormInterface
+    {
+        $this->entry = $entry;
+
+        return $this;
+    }
+
+    public function hasEntry(): bool
+    {
+        return (bool)$this->entry;
     }
 
     public function isUpdating()
     {
-        return $this->mode === Form::MODE_UPDATE;
+        return $this->hasEntry() && $this->getEntry()->exists();
     }
 
     public function isCreating()
     {
-        return $this->mode === Form::MODE_CREATE;
+        return ! $this->isUpdating();
     }
 
     public function validate()
     {
-        /**
-         * @var \SuperV\Platform\Contracts\Validator $validator
-         */
-        $validator = app(Validator::class);
+        ValidateForm::dispatch($this->fields, $this->data, $this->entry);
+    }
 
-        $rules = (new GetRules($this->getFields()))->get($this->getEntry());
-        $data = $this->entry->getAttributes();
-        $attributes = $this->fields
-            ->map(function (Field $field) {
-                return [$field->getColumnName(), $field->getLabel()];
-            })->filter()
-            ->toAssoc()
-            ->all();
+    public function setData(FormData $data): FormInterface
+    {
+        $this->data = $data;
 
-        $validator->make($data, $rules, [], $attributes);
+        return $this;
+    }
+
+    public function getData(): FormData
+    {
+        return $this->data;
+    }
+
+    public function resolveRequest(Request $request): FormInterface
+    {
+        $this->request = $request;
+
+        return $this;
     }
 
     public function compose(): Payload
@@ -275,43 +180,14 @@ class Form implements FormContract, ProvidesUIComponent
                         );
     }
 
-    public function onlyFields($fields): self
-    {
-        $fields = is_array($fields) ? $fields : func_get_args();
-
-        $this->getFields()->map(function (FormField $field) use ($fields) {
-            if (! in_array($field->getName(), $fields)) {
-                $field->hide();
-            }
-        });
-
-        return $this;
-    }
-
-    public function addFields($fields): self
-    {
-        return $this->mergeFields($fields);
-    }
-
-    /**
-     * @return array
-     */
     public function getActions(): array
     {
         return $this->actions;
     }
 
-    /**
-     * @param array $actions
-     */
     public function setActions(array $actions): void
     {
         $this->actions = $actions;
-    }
-
-    public function getFieldValue(string $name)
-    {
-        return $this->getField($name)->getValue();
     }
 
     public function getUrl()
@@ -319,7 +195,7 @@ class Form implements FormContract, ProvidesUIComponent
         return $this->url;
     }
 
-    public function setUrl(string $url): Form
+    public function setUrl(string $url): FormInterface
     {
         $this->url = $url;
 
@@ -329,20 +205,6 @@ class Form implements FormContract, ProvidesUIComponent
     public function getMethod(): string
     {
         return $this->method;
-    }
-
-    public function setRequest(?Request $request): self
-    {
-        if ($request) {
-            $this->request = $request;
-        }
-
-        return $this;
-    }
-
-    public function getIdentifier()
-    {
-        return $this->identifier;
     }
 
     public function setIdentifier(string $identifier): Form
@@ -364,45 +226,6 @@ class Form implements FormContract, ProvidesUIComponent
         return $this;
     }
 
-    public function getEntry(): ?EntryContract
-    {
-        return $this->entry;
-    }
-
-    public function setEntry(EntryContract $entry): Form
-    {
-        $this->entry = $entry;
-
-        return $this;
-    }
-
-    public function hasEntry(): bool
-    {
-        return (bool)$this->entry;
-    }
-
-    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): Form
-    {
-        $this->resource = $resource;
-
-        return $this;
-    }
-
-    protected function applyExtensionCallbacks(): void
-    {
-        if ($this->isCreating()) {
-            if ($this->resource && $callback = $this->resource->getCallback('creating')) {
-                app()->call($callback, ['form' => $this]);
-            }
-        }
-
-        if ($this->isUpdating()) {
-            if ($this->resource && $callback = $this->resource->getCallback('editing')) {
-                app()->call($callback, ['form' => $this, 'entry' => $this->getEntry()]);
-            }
-        }
-    }
-
     /**
      * @param string $identifier
      * @return static
@@ -410,72 +233,5 @@ class Form implements FormContract, ProvidesUIComponent
     public static function resolve(string $identifier = null)
     {
         return app()->make(static::class, ['identifier' => $identifier]);
-    }
-
-    protected function provideFields($fields)
-    {
-        if ($fields instanceof ProvidesFields) {
-            $fields = $fields->provideFields();
-        }
-
-        if (is_array($fields)) {
-            $fields = collect($fields)
-                ->map(function ($field) {
-                    $field = is_array($field) ? ConcreteFormField::make($field) : $field;
-
-                    return $field;
-                });
-        }
-
-        return wrap_collect($fields);
-    }
-
-    protected function validateTemporalFields(): void
-    {
-        $temporalFields = $this->fields->filter(function (FormField $field) {
-            return $field->isTemporal();
-        });
-
-        ValidateForm::dispatch($temporalFields, $this->request->all());
-    }
-
-    protected function setFormMode(): void
-    {
-        if ($this->hasEntry() && $this->entry->exists) {
-            $this->mode = Form::MODE_UPDATE;
-        }
-    }
-
-    protected function fireBeforeSavingCallbacks(): void
-    {
-        $this->fields->map(function (FormField $field) {
-            if ($field->isHidden() && ! $field->isTemporal()) {
-                return;
-            }
-
-            $field->fire('before.saving', ['request' => $this->request]);
-        });
-    }
-
-    protected function resolveFieldValuesFromRequest(): void
-    {
-        if (! $this->request) {
-            return;
-        }
-
-        $this->fields->map(function (FormField $field) {
-            if ($field->isHidden() && ! $field->isTemporal() || $field->isTemporal()) {
-                return;
-            }
-
-            $this->postSaveCallbacks[] = $field->resolveRequest($this->request, $this->getEntry());
-        });
-    }
-
-    protected function runPostSaveCallbacks(): void
-    {
-        collect($this->postSaveCallbacks)->filter()->map(function (Closure $callback) {
-            $callback();
-        });
     }
 }

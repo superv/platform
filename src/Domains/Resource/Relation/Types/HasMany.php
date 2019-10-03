@@ -26,15 +26,17 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
                     );
     }
 
-    public function makeForm(): Form
+    public function makeForm($request = null): Form
     {
         $builder = FormFactory::builderFromResource($this->getRelatedResource());
-
+        if ($request) {
+            $builder->setRequest($request);
+        }
         $builder->setEntry($childEntry = $this->newQuery()->make());
 
         $form = $builder->getForm();
 
-        $form->hideField(sv_resource($this->parentEntry)->config()->getResourceKey());
+        $form->fields()->hide(sv_resource($this->parentEntry)->config()->getResourceKey());
 
         return $form;
     }

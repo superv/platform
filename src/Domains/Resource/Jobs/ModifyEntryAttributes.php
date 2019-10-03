@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Jobs;
 
 use Closure;
 use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntrySavingEvent;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Field\Modifier;
 use SuperV\Platform\Domains\Resource\Resource;
@@ -22,7 +22,7 @@ class ModifyEntryAttributes
 
         $resource = ResourceFactory::make($entry);
 
-        $resource->getFields()->map(function (Field $field) use ($entry) {
+        $resource->getFields()->map(function (FieldInterface $field) use ($entry) {
             if ($field->getFieldType() instanceof HasModifier) {
                 $value = (new Modifier($field->getFieldType()))
                     ->set([

@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
-use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Support\Composer\Payload;
 
 class FormComposer
@@ -17,7 +17,7 @@ class FormComposer
     /** @var \Illuminate\Http\Request */
     protected $request;
 
-    public function __construct(Form $form)
+    public function __construct(FormInterface $form)
     {
         $this->form = $form;
     }
@@ -45,7 +45,7 @@ class FormComposer
         return $this;
     }
 
-    public static function make(Form $form): FormComposer
+    public static function make(FormInterface $form): FormComposer
     {
         return (new static($form));
     }
@@ -67,10 +67,7 @@ class FormComposer
 
     protected function composeFields()
     {
-        return $this->form->getFields()
-                          ->filter(function (FormField $field) {
-                              return ! $field->isHidden();// && ! $field->hasFlag('form.hide')
-                          })
+        return $this->form->fields()->visible()
                           ->sortBy(function (FormField $field) {
                               if ($location = $field->getLocation()) {
                                   return $location->row;

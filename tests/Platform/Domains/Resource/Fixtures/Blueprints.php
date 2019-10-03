@@ -95,16 +95,20 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function categories($namespace = 'testing')
+    public function categories(?Closure $callback = null): Resource
     {
         return $this->create('tbl_categories',
-            function (Blueprint $table, Config $config) use ($namespace) {
+            function (Blueprint $table, Config $config) use ($callback) {
                 $config->label('Categories');
                 $config->setName('categories');
-                $config->setNamespace($namespace);
+                $config->setNamespace('testing');
 
                 $table->increments('id');
                 $table->string('title')->entryLabel();
+
+                if ($callback) {
+                    $callback($table, $config);
+                }
             }
         );
     }

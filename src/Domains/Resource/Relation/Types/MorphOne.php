@@ -14,17 +14,21 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 
 class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequests
 {
-    public function makeForm(): Form
+    public function makeForm($request = null): Form
     {
         $formIdentifier = $this->getRelatedResource()->getIdentifier().'.forms:default';
         $builder = FormFactory::builderFromFormEntry($formIdentifier);
+
+        if ($request) {
+            $builder->setRequest($request);
+        }
 
         $builder->setEntry($this->getRelatedEntry());
 
         /** @var \SuperV\Platform\Domains\Resource\Form\Form $form */
         $form = $builder->getForm();
 
-        $form->hideField($this->relationConfig->getMorphName());
+        $form->fields()->hide($this->relationConfig->getMorphName());
 
         return $form;
     }
@@ -46,7 +50,7 @@ class MorphOne extends Relation implements ProvidesForm, MakesEntry, HandlesRequ
 
     public function handleRequest(\Illuminate\Http\Request $request)
     {
-        return $this->makeForm()->setRequest($request)->save();
+        return $this->makeForm($request)->save();
     }
 
     protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation

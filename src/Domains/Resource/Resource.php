@@ -13,7 +13,7 @@ use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryCreatedEvent;
 use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Jobs\GetRules;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
@@ -219,7 +219,7 @@ class Resource implements
         return $this->getFields();
     }
 
-    public function getField($name): ?Field
+    public function getField($name): ?FieldInterface
     {
         return $this->fields()->get($name);
     }
@@ -291,10 +291,10 @@ class Resource implements
     public function getRuleMessages()
     {
         return $this->getFields()
-                    ->filter(function (Field $field) {
+                    ->filter(function (FieldInterface $field) {
                         return ! $field->isUnbound();
                     })
-                    ->map(function (Field $field) {
+                    ->map(function (FieldInterface $field) {
                         return $this->parseFieldRuleMessages($field);
                     })
                     ->filter()
@@ -307,7 +307,7 @@ class Resource implements
                     ->all();
     }
 
-    public function parseFieldRuleMessages(Field $field)
+    public function parseFieldRuleMessages(FieldInterface $field)
     {
         return collect($field->getRules())
             ->map(function ($rule) use ($field) {
@@ -438,6 +438,11 @@ class Resource implements
     public function getIdentifier(): string
     {
         return $this->config()->getIdentifier();
+    }
+
+    public function getChildIdentifier($type, $key)
+    {
+        return sprintf("%s.%s:%s", $this->getIdentifier(), $type, $key);
     }
 
     public function searchable(array $searchable)
