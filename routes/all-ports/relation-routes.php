@@ -1,10 +1,9 @@
 <?php
 
-use SuperV\Platform\Domains\Resource\Http\Controllers\LookupController;
-use SuperV\Platform\Domains\Resource\Http\Controllers\RelationController;
-use SuperV\Platform\Domains\Resource\Http\Controllers\RelationCreateController;
-use SuperV\Platform\Domains\Resource\Http\Controllers\RelationIndexController;
-use SuperV\Platform\Domains\Resource\Http\Controllers\RelationUpdateController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\Relation\LookupController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\Relation\RelationController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\Relation\RelationFormController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\Relation\RelationIndexController;
 
 return [
 
@@ -26,16 +25,16 @@ return [
 
     'sv/res/{resource}/{entry}/rel/{relation}/create'  => [
         'as'   => 'relation.create',
-        'uses' => RelationCreateController::at('create'),
+        'uses' => RelationFormController::at('create'),
     ],
     'POST@'.'sv/res/{resource}/{entry}/rel/{relation}' => [
         'as'   => 'relation.store',
-        'uses' => RelationCreateController::at('store'),
+        'uses' => RelationFormController::at('store'),
     ],
 
     'sv/res/{resource}/{entry}/rel/{relation}/edit' => [
         'as'   => 'relation.edit',
-        'uses' => RelationUpdateController::at('edit'),
+        'uses' => RelationFormController::at('edit'),
     ],
 
     'sv/res/{resource}/{entry}/rel/{relation}/{data?}' => [

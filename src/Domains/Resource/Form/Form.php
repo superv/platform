@@ -63,7 +63,7 @@ class Form implements FormInterface, ProvidesUIComponent
         $this->data = new FormData($this->fields);
     }
 
-    public function resolve()
+    public function resolve(): FormInterface
     {
         if ($this->entry) {
             $this->data->resolveEntry($this->entry);
@@ -72,6 +72,10 @@ class Form implements FormInterface, ProvidesUIComponent
         if ($this->request) {
             $this->data->resolveRequest($this->request, $this->entry);
         }
+
+        $this->dispatcher->dispatch($this->getIdentifier().'.events:resolved', $this);
+
+        return $this;
     }
 
     public function save(): FormResponse
@@ -173,6 +177,13 @@ class Form implements FormInterface, ProvidesUIComponent
         return $this;
     }
 
+    public function setIdentifier(string $identifier): FormInterface
+    {
+        $this->identifier = $identifier;
+
+        return $this;
+    }
+
     public function compose(): Payload
     {
         return FormComposer::make($this)->setRequest($this->request)->payload();
@@ -211,13 +222,6 @@ class Form implements FormInterface, ProvidesUIComponent
     public function getMethod(): string
     {
         return $this->method;
-    }
-
-    public function setIdentifier(string $identifier): FormInterface
-    {
-        $this->identifier = $identifier;
-
-        return $this;
     }
 
     public function getTitle()

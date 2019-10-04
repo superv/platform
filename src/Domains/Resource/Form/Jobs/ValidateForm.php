@@ -43,10 +43,9 @@ class ValidateForm
 
     public function handle(Validator $validator)
     {
-        $rules = (new GetRules($this->fields))->get($this->entry);
+        $rules = (new GetRules($this->fields->visible()))->get($this->entry);
 
         $data = $this->data->getForValidation($this->entry);
-//        dd($rules, $data);
 
         $attributes = $this->fields
             ->map(function (FieldInterface $field) {

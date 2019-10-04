@@ -1,8 +1,8 @@
 <?php
 
+use SuperV\Platform\Domains\Resource\Http\Controllers\Dashboard\ResourceDashboardController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\Dashboard\ResourceEntryDashboardController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
-use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceDashboardController;
-use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceEntryDashboardController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceIndexController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceViewController;
 

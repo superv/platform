@@ -22,7 +22,7 @@ interface FormBuilderInterface
 
     public function getForm(): FormInterface;
 
-    public function makeForm(): FormInterface;
+    public function resolveForm(): FormInterface;
 
     public function setRequest($request): FormBuilder;
 

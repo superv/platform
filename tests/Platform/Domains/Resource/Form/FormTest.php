@@ -34,7 +34,7 @@ class FormTest extends ResourceTestCase
         $form = FormFactory::builderFromEntry($entry)->getForm();
 
         $this->assertInstanceOf(Form::class, $form);
-        $this->assertEquals(2, $form->fields()->count());
+        $this->assertEquals(3, $form->fields()->count());
         $this->assertEquals($entry, $form->getEntry());
     }
 
@@ -74,10 +74,9 @@ class FormTest extends ResourceTestCase
         $category = $categories->create(['title' => 'Books', 'active' => 'TRUE', 'notes' => 'a-b-c']);
         $builder = FormFactory::builderFromEntry($category);
 
-        $form = $builder->makeForm();
+        $form = $builder->getForm();
         $form->fields()->hide('notes'); // XXX behh behhhh
-
-        $builder->getForm();
+        $form->resolve();
 
         $formData = $form->getData();
         $this->assertInstanceOf(FormData::class, $formData);
@@ -95,12 +94,11 @@ class FormTest extends ResourceTestCase
 
         $category = $categories->create(['title' => 'Books', 'active' => 'TRUE', 'notes' => 'a-b-c']);
         $builder = FormFactory::builderFromEntry($category);
-
-        $form = $builder->makeForm();
-        $form->fields()->hide('notes'); // XXX behh behhhh
-
         $builder->setRequest($this->makePostRequest(['title' => 'Updated Books', 'notes' => 'bad-value']));
-        $builder->getForm();
+
+        $form = $builder->getForm();
+        $form->fields()->hide('notes'); // XXX behh behhhh
+        $form->resolve();
 
         $this->assertEquals(['title' => 'Updated Books', 'active' => true], $form->getData()->get());
     }
@@ -108,7 +106,7 @@ class FormTest extends ResourceTestCase
     function test__add_field()
     {
         $form = FormFactory::builderFromEntry($entry = new FormTestUser)->getForm();
-        $this->assertEquals(2, $form->fields()->count());
+        $this->assertEquals(3, $form->fields()->count());
 
         $form->addField($this->makeField(['type' => 'text', 'name' => 'profession']));
 
@@ -122,7 +120,7 @@ class FormTest extends ResourceTestCase
         $entry = new FormTestUser();
         $form = FormFactory::builderFromEntry($entry)
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
-                           ->getForm();
+                           ->resolveForm();
 
         $form->save();
 
@@ -132,23 +130,22 @@ class FormTest extends ResourceTestCase
 
     function test__hidden_fields()
     {
-        $entry = new FormTestUser(['name' => 'Omar', 'age' => 33]);
+        $entry = new FormTestUser();
         $form = FormFactory::builderFromEntry($entry)
-                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 99]))
+                           ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 99, 'phone' => '1-2-3']))
                            ->getForm();
 
-        $form->getField('name')->hide();
+        $form->getField('phone')->hide();
+        $form->resolve()->save();
 
-        $form->save();
-
-        $nameField = $form->getField('name');
-        $this->assertTrue($nameField->isHidden());
+        $phoneField = $form->getField('phone');
+        $this->assertTrue($phoneField->isHidden());
 
         $this->assertEquals('Omar', $this->getComposedValue('name', $form));
         $this->assertEquals(99, $this->getComposedValue('age', $form));
 
         $composedFields = $form->compose()->get('fields');
-        $this->assertEquals(1, count($composedFields));
+        $this->assertEquals(2, count($composedFields));
         $this->assertEquals(array_values($composedFields), $composedFields);
     }
 
@@ -159,7 +156,7 @@ class FormTest extends ResourceTestCase
                            ->setRequest($this->makePostRequest(['name' => 'Omar', 'age' => 33]))
                            ->getForm();
 
-        $form->save();
+        $form->resolve()->save();
 
         $this->assertEquals('Omar', $this->getComposedValue('name', $form));
         $this->assertEquals(33, $this->getComposedValue('age', $form));
@@ -180,8 +177,6 @@ class FormTest extends ResourceTestCase
         $response = $this->getJsonUser($this->users->router()->createForm());
         $response->assertOk();
 
-//        $createPage = HelperComponent::from($response->decodeResponseJson('data'));
-//        $formBlock = HelperComponent::from($createPage->getProp('blocks.0'));
         $form = $this->getUserPage($this->users->router()->createForm());
 
         $this->assertEquals(['identifier',
@@ -189,7 +184,7 @@ class FormTest extends ResourceTestCase
                              'method',
                              'fields',
                              'actions'], array_keys($form->getProps()->compose()));
-        $this->assertEquals(2, $form->countProp('fields'));
+        $this->assertEquals(3, $form->countProp('fields'));
 
         $response = $this->postJsonUser($form->getProp('url'), [
             'name' => 'Omar',
@@ -211,6 +206,7 @@ class FormTest extends ResourceTestCase
             $table->increments('id');
             $table->string('name');
             $table->unsignedInteger('age');
+            $table->string('phone')->nullable();
         });
     }
 

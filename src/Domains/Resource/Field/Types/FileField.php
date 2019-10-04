@@ -88,8 +88,6 @@ class FileField extends FieldType implements
     {
         $model = $query->getModel();
 
-//        PlatformException::debug($this->field->getIdentifier());
-
         $query->getQuery()->leftJoin('sv_media', function (JoinClause $join) use ($model) {
             $join->on('sv_media.id', '=', $model->getQualifiedKeyName());
             $join->where('sv_media.owner_type', '=', $this->field->identifier()->parent());

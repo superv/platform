@@ -33,7 +33,7 @@ class Fake
     public function __invoke(Resource $resource, array $overrides = [])
     {
         $this->resource = $resource;
-        $this->overrides = $overrides;
+        $this->overrides = $this->attributes = $overrides;
 
         $resource->getFields()
                  ->map(function (FieldInterface $field) {

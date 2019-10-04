@@ -51,7 +51,9 @@ class RelationCreateTest extends ResourceTestCase
         $response = $this->postJsonUser(
             $relation->route('store', $user),
             ['comment' => 'abc 123', 'status' => 'approved']
-        )->assertOk();
+        );
+
+        $response->assertOk();
 
         $this->assertEquals($comments->first()->getId(), $response->decodeResponseJson('data.entry.id'));
 

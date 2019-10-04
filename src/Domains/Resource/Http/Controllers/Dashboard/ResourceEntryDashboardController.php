@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Http\Controllers;
+namespace SuperV\Platform\Domains\Resource\Http\Controllers\Dashboard;
 
 use Event;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;

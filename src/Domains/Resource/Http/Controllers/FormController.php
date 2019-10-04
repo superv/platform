@@ -22,7 +22,7 @@ class FormController extends BaseController
             $builder->setEntry(EntryRepository::for($resource)->find($entryId));
         }
 
-        return $builder->getForm()
+        return $builder->resolveForm()
                        ->makeComponent();
     }
 
@@ -39,7 +39,7 @@ class FormController extends BaseController
         $builder->setEntry($entry)
                 ->setRequest($this->request);
 
-        return $builder->getForm()
+        return $builder->resolveForm()
                        ->save();
     }
 

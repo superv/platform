@@ -6,14 +6,15 @@ use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Domains\Resource\Form\FormFieldCollection;
+use SuperV\Platform\Domains\Resource\Form\FormResponse;
 
 interface FormInterface
 {
-    public function resolve();
+    public function resolve(): FormInterface;
 
     public function validate();
 
-    public function save();
+    public function save(): FormResponse;
 
     public function submit();
 
@@ -44,4 +45,12 @@ interface FormInterface
     public function setData(FormData $data): FormInterface;
 
     public function getData(): FormData;
+
+    public function setUrl(string $url): FormInterface;
+
+    public function getActions(): array;
+
+    public function getUrl();
+
+    public function setActions(array $actions): void;
 }

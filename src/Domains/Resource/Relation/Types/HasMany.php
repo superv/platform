@@ -8,7 +8,6 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\ModalAction;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 
@@ -26,7 +25,7 @@ class HasMany extends Relation implements ProvidesTable, ProvidesForm
                     );
     }
 
-    public function makeForm($request = null): Form
+    public function makeForm($request = null): \SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface
     {
         $builder = FormFactory::builderFromResource($this->getRelatedResource());
         if ($request) {

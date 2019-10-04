@@ -18,7 +18,7 @@ class GetRules
         $this->fields = $fields;
     }
 
-    public function get(?EntryContract $entry = null, string $table = null)
+    public function get(?EntryContract $entry = null)
     {
         return $this->fields
             ->filter(function (FieldInterface $field) {
@@ -27,8 +27,8 @@ class GetRules
             ->keyBy(function (FieldInterface $field) {
                 return $field->getColumnName();
             })
-            ->map(function (FieldInterface $field) use ($table, $entry) {
-                return (new ParseFieldRules($field))->parse($entry, $table);
+            ->map(function (FieldInterface $field) use ($entry) {
+                return (new ParseFieldRules($field))->parse($entry);
             })
             ->filter()
             ->all();

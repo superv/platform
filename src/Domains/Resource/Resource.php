@@ -272,7 +272,7 @@ class Resource implements
 
     public function getRules(EntryContract $entry = null)
     {
-        return (new GetRules($this->getFields()))->get($entry, $this->config()->getTable());
+        return (new GetRules($this->getFields()))->get($entry);
 //
 //        return $this->getFields()
 //                    ->filter(function (Field $field) {

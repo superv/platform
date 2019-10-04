@@ -43,7 +43,7 @@ class FormBuilder implements FormBuilderInterface
         $this->dispatcher = $dispatcher;
     }
 
-    public function makeForm(): FormInterface
+    public function getForm(): FormInterface
     {
         $this->form = app(FormInterface::class);
         $this->form->setIdentifier($this->formEntry->getIdentifier());
@@ -51,20 +51,19 @@ class FormBuilder implements FormBuilderInterface
 
         $this->makeFormFields();
 
+        $this->form->setEntry($this->entry);
+        $this->form->setRequest($this->request);
+
         return $this->form;
     }
 
-    public function getForm(): FormInterface
+    public function resolveForm(): FormInterface
     {
         if (! $this->form) {
-            $this->makeForm();
+            $this->getForm();
         }
 
-        $this->form->setEntry($this->entry);
-        $this->form->setRequest($this->request);
         $this->form->resolve();
-
-        $this->dispatcher->dispatch($this->formEntry->getIdentifier().'.events:resolved', $this->form);
 
         return $this->form;
     }
@@ -119,9 +118,9 @@ class FormBuilder implements FormBuilderInterface
                                       ->map(function (FieldModel $field) {
                                           $field = FieldFactory::createFromEntry($field, FormField::class);
 
-                                          if ($this->resource) {
-                                              $field->setResource($this->resource);
-                                          }
+//                                          if ($this->resource) {
+//                                              $field->setResource($this->resource);
+//                                          }
 
                                           return $field;
                                       })

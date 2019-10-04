@@ -19,7 +19,7 @@ class ParseFieldRules
         $this->field = $field;
     }
 
-    public function parse(?EntryContract $entry = null, string $table = null)
+    public function parse(?EntryContract $entry = null)
     {
         $field = $this->field;
 

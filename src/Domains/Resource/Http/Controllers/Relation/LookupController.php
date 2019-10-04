@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Http\Controllers;
+namespace SuperV\Platform\Domains\Resource\Http\Controllers\Relation;
 
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
