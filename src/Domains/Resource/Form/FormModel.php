@@ -129,9 +129,9 @@ class FormModel extends Entry
                     ->map(function (FieldModel $fieldEntry) {
                         $field = FieldFactory::createFromEntry($fieldEntry);
 
-                        if ($this->resource_id > 0) {
-                            $field->setResource($this->getOwnerResource());
-                        }
+//                        if ($this->resource_id > 0) {
+//                            $field->setResource($this->getOwnerResource());
+//                        }
 
                         return $field;
                     });

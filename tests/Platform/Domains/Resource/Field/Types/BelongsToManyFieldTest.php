@@ -8,8 +8,6 @@ class BelongsToManyFieldTest extends ResourceTestCase
 {
     function test__rpc_options()
     {
-        $this->withoutExceptionHandling();
-
         $users = $this->blueprints()->users();
         $rpcUrl = sv_route('sv::forms.fields', [
             'form'  => $users->getChildIdentifier('forms', 'default'),
@@ -17,7 +15,20 @@ class BelongsToManyFieldTest extends ResourceTestCase
             'rpc'   => 'options',
         ]);
         $response = $this->getJsonUser($rpcUrl);
+        $response->assertOk();
+    }
 
+    function test__rpc_options_with_entry()
+    {
+        $users = $this->blueprints()->users();
+        $rpcUrl = sv_route('sv::forms.fields', [
+            'form'  => $users->getChildIdentifier('forms', 'default'),
+            'field' => 'roles',
+            'rpc'   => 'options',
+        ]);
+
+        $user = $users->fake();
+        $response = $this->getJsonUser($rpcUrl.'?entry='.$user->getId());
         $response->assertOk();
     }
 
@@ -34,7 +45,6 @@ class BelongsToManyFieldTest extends ResourceTestCase
             'rpc'   => 'values',
         ]);
         $response = $this->getJsonUser($rpcUrl.'?entry='.$user->getId());
-
         $response->assertOk();
     }
 }

@@ -10,7 +10,6 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface as FieldContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -316,15 +315,15 @@ class Field implements FieldContract
         $this->defaultValue = $defaultValue;
     }
 
-    public function getResource(): Resource
-    {
-        return $this->resource;
-    }
-
-    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void
-    {
-        $this->resource = $resource;
-    }
+//    public function getResource(): Resource
+//    {
+//        return $this->resource;
+//    }
+//
+//    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void
+//    {
+//        $this->resource = $resource;
+//    }
 
     public function setNotRequired()
     {

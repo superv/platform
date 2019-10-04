@@ -6,14 +6,13 @@ use Closure;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
-use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Identifier;
 
 interface FieldInterface
 {
     public function getName();
 
-    public function getResource(): Resource;
+//    public function getResource(): Resource;
 
     public function getIdentifier();
 

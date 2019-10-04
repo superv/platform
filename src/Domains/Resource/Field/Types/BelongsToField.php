@@ -55,9 +55,9 @@ class BelongsToField extends FieldType implements
      */
     public function sortQuery($query, $direction)
     {
-        /** @var \SuperV\Platform\Domains\Resource\Resource $parentResource */
-        $parentResource = $this->field->getResource();
+        $parentResource = ResourceFactory::make($this->field->identifier()->parent());
         $parentTable = $parentResource->config()->getTable();
+
         $relation = RelationConfig::create($this->field->getType(), $this->field->getConfig());
 
         $relatedResource = ResourceFactory::make($relation->getRelatedResource());

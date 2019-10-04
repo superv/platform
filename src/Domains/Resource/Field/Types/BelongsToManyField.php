@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Support\Composer\Payload;
 
 class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInteractWithTable, HasModifier
@@ -116,7 +117,8 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
     {
         $entry = null;
         if ($entryId = $request['entry'] ?? null) {
-            $entry = $this->field->getResource()->find($request['entry']);
+            $parentResource = ResourceFactory::make($this->field->identifier()->parent());
+            $entry = $parentResource->find($request['entry']);
         }
 
         $resource = $this->resolveRelatedResource();
@@ -147,17 +149,18 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
 
     protected function rpcValues(array $params, array $request = [])
     {
-        $resource = $this->resolveRelatedResource();
+        $parentResource = ResourceFactory::make($this->field->identifier()->parent());
+        $relatedResource = $this->resolveRelatedResource();
 
-        $entryLabel = $resource->config()->getEntryLabel('#{id}');
+        $entryLabel = $relatedResource->config()->getEntryLabel('#{id}');
 
-        if (! $entry = $this->field->getResource()->find($request['entry'])) {
+        if (! $entry = $parentResource->find($request['entry'])) {
             return [];
         }
 
         return $entry->{$this->getName()}()
-                     ->get()->map(function (EntryContract $item) use ($resource, $entryLabel) {
-                if ($keyName = $resource->config()->getKeyName()) {
+                     ->get()->map(function (EntryContract $item) use ($relatedResource, $entryLabel) {
+                if ($keyName = $relatedResource->config()->getKeyName()) {
                     $item->setKeyName($keyName);
                 }
 

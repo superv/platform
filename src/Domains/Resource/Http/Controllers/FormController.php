@@ -54,9 +54,9 @@ class FormController extends BaseController
         $field = FieldFactory::createFromEntry($fieldEntry, FormField::class);
         $field->setForm($form);
 
-        if ($resource = $builder->getResource()) {
-            $field->setResource($resource);
-        }
+//        if ($resource = $builder->getResource()) {
+//            $field->setResource($resource);
+//        }
 
         if (! $rpcMethod = $this->route->parameter('rpc')) {
             return [
@@ -65,7 +65,8 @@ class FormController extends BaseController
         }
 
         if ($field->getFieldType() instanceof HandlesRpc) {
-            return $field->getFieldType()->getRpcResult(['method' => $rpcMethod], $this->request->toArray());
+            return $field->getFieldType()
+                         ->getRpcResult(['method' => $rpcMethod], $this->request->toArray());
         }
 
         abort(404);

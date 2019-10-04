@@ -12,6 +12,7 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\Support\Identifier;
 
 class ResourceFactory
 {
@@ -54,9 +55,9 @@ class ResourceFactory
             $identifier = $identifier->getResourceIdentifier();
         }
 
-//        if (! str_contains($identifier, '.res.')) {
-//            $identifier = str_replace_last('.', '.res.', $identifier);
-//        }
+        if ($identifier instanceof Identifier) {
+            $identifier = $identifier->get();
+        }
 
         if (isset(static::$cache[$identifier])) {
             return static::$cache[$identifier];
@@ -89,7 +90,7 @@ class ResourceFactory
                                   ->map(function (FieldModel $fieldEntry) use ($resource) {
                                       $field = FieldFactory::createFromEntry($fieldEntry);
 
-                                      $field->setResource($resource);
+//                                      $field->setResource($resource);
 
                                       return $field;
                                   });
