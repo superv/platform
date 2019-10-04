@@ -69,7 +69,7 @@ class FieldType implements FieldTypeInterface
         }
         $value = $entry->getAttribute($this->getColumnName());
 
-        $data->setDataValue($this->getColumnName(), $value);
+        $data->set($this->getColumnName(), $value);
     }
 
     public function resolveDataFromRequest(FormData $data, Request $request, EntryContract $entry)
@@ -78,18 +78,20 @@ class FieldType implements FieldTypeInterface
             return;
         }
 
-        if (! $value = $request->__get($this->getColumnName())) {
-            $value = $request->__get($this->getName());
+        if (! $requestValue = $request->__get($this->getColumnName())) {
+            $requestValue = $request->__get($this->getName());
         }
 
+        $value = $requestValue;
         if ($this instanceof HasModifier) {
-            $value = (new Modifier($this))->set(['entry' => $entry, 'value' => $value]);
+            $value = (new Modifier($this))->set(['entry' => $entry, 'value' => $requestValue]);
         }
 
         if ($value instanceof Closure) {
             $data->callbacks()->push($value);
+            $data->toValidate($this->getColumnName(), $requestValue);
         } else {
-            $data->setDataValue($this->getColumnName(), $value);
+            $data->set($this->getColumnName(), $value);
         }
     }
 

@@ -45,7 +45,9 @@ class FormBuilder implements FormBuilderInterface
 
     public function makeForm(): FormInterface
     {
-        $this->form = Form::resolve($this->formEntry->getIdentifier());
+        $this->form = app(FormInterface::class);
+        $this->form->setIdentifier($this->formEntry->getIdentifier());
+        $this->form->setUrl(sv_url()->path());
 
         $this->makeFormFields();
 
@@ -58,17 +60,9 @@ class FormBuilder implements FormBuilderInterface
             $this->makeForm();
         }
 
-        if ($this->entry) {
-            $this->form->setEntry($this->entry);
-            $this->form->getData()->resolveEntry($this->entry);
-        }
-
-        if ($this->request) {
-            $this->form->resolveRequest($this->request);
-            $this->form->getData()->resolveRequest($this->request, $this->entry);
-        }
-
-        $this->form->setUrl(sv_url()->path());
+        $this->form->setEntry($this->entry);
+        $this->form->setRequest($this->request);
+        $this->form->resolve();
 
         $this->dispatcher->dispatch($this->formEntry->getIdentifier().'.events:resolved', $this->form);
 
@@ -86,7 +80,6 @@ class FormBuilder implements FormBuilderInterface
 
         return $this;
     }
-
 
     public function setFormEntry(FormModel $formEntry): FormBuilder
     {

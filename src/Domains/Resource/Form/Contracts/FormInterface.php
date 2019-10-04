@@ -9,13 +9,19 @@ use SuperV\Platform\Domains\Resource\Form\FormFieldCollection;
 
 interface FormInterface
 {
+    public function resolve();
+
+    public function validate();
+
     public function save();
 
     public function submit();
 
     public function getIdentifier();
 
-    public function setEntry(EntryContract $entry): FormInterface;
+    public function setIdentifier(string $identifier): FormInterface;
+
+    public function setEntry(?EntryContract $entry): FormInterface;
 
     public function getEntry(): ?EntryContract;
 
@@ -31,11 +37,9 @@ interface FormInterface
 
     public function isCreating();
 
-    public function validate();
-
     public function isUpdating();
 
-    public function resolveRequest(Request $request): FormInterface;
+    public function setRequest(?Request $request): FormInterface;
 
     public function setData(FormData $data): FormInterface;
 

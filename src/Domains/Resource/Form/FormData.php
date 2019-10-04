@@ -12,6 +12,9 @@ class FormData
     /** @var array */
     protected $data = [];
 
+    /** @var array */
+    protected $dataToValidate = [];
+
     /**
      * @var \SuperV\Platform\Domains\Resource\Form\FormFieldCollection
      */
@@ -34,7 +37,7 @@ class FormData
 
     public function getForValidation(EntryContract $entry)
     {
-        return $this->data;
+        return array_merge($this->data, $this->dataToValidate);
     }
 
     public function resolveRequest(Request $request, EntryContract $entry)
@@ -66,8 +69,13 @@ class FormData
         return $this->callbacks;
     }
 
-    public function setDataValue($key, $value)
+    public function set($key, $value)
     {
         $this->data[$key] = $value;
+    }
+
+    public function toValidate($key, $value)
+    {
+        $this->dataToValidate[$key] = $value;
     }
 }

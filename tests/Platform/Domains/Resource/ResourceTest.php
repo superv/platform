@@ -22,7 +22,7 @@ class ResourceTest extends ResourceTestCase
             'bio'      => ['max:255', 'string', 'nullable'],
             'group_id' => ['required'],
             'age'      => ['integer', 'min:0', 'max:255', 'nullable'],
-            'avatar'   => ['nullable'],
+            'avatar'   => ['image', 'nullable'],
             'roles'    => ['nullable'],
         ], $users->getRules());
     }
@@ -39,7 +39,7 @@ class ResourceTest extends ResourceTestCase
             'bio'      => ['max:255', 'string', 'nullable'],
             'group_id' => ['sometimes', 'required'],
             'age'      => ['integer', 'min:0', 'max:255', 'nullable'],
-            'avatar'   => ['nullable'],
+            'avatar'   => ['image', 'nullable'],
             'roles'    => ['nullable'],
         ], $users->getRules($user));
     }

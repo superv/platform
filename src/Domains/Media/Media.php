@@ -31,6 +31,11 @@ class Media extends ResourceEntry
         return $this->disk;
     }
 
+    public function getOriginalFilename()
+    {
+        return $this->getAttribute('original');
+    }
+
     public function owner()
     {
         return $this->morphTo();

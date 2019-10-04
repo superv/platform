@@ -31,7 +31,8 @@ class Blueprints
                 $table->string('bio')->rules(['string'])->nullable();
                 $table->unsignedTinyInteger('age')->nullable()->showOnIndex();
 
-                $table->file('avatar')->config(['disk' => 'fakedisk']);
+                $table->file('avatar')->config(['disk' => 'fakedisk'])
+                      ->addRule('image');
 
                 $table->belongsTo('testing.groups', 'group')->showOnIndex();
 

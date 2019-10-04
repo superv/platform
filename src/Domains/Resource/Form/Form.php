@@ -54,22 +54,28 @@ class Form implements FormInterface, ProvidesUIComponent
     /** @var \SuperV\Platform\Domains\Resource\Form\FormData */
     protected $data;
 
-    public function __construct(string $identifier = null, Dispatcher $dispatcher)
+    public function __construct(Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
-        $this->identifier = $identifier;
 
         $this->fields = new FormFieldCollection();
 
         $this->data = new FormData($this->fields);
     }
 
+    public function resolve()
+    {
+        if ($this->entry) {
+            $this->data->resolveEntry($this->entry);
+        }
+
+        if ($this->request) {
+            $this->data->resolveRequest($this->request, $this->entry);
+        }
+    }
+
     public function save(): FormResponse
     {
-//        $this->fireBeforeSavingCallbacks();
-
-//        $this->resolveFieldValuesFromRequest();
-
         $this->validate();
 
         $this->submit();
@@ -121,7 +127,7 @@ class Form implements FormInterface, ProvidesUIComponent
         return $this->entry;
     }
 
-    public function setEntry(EntryContract $entry): FormInterface
+    public function setEntry(?EntryContract $entry): FormInterface
     {
         $this->entry = $entry;
 
@@ -160,7 +166,7 @@ class Form implements FormInterface, ProvidesUIComponent
         return $this->data;
     }
 
-    public function resolveRequest(Request $request): FormInterface
+    public function setRequest(?Request $request): FormInterface
     {
         $this->request = $request;
 
@@ -207,7 +213,7 @@ class Form implements FormInterface, ProvidesUIComponent
         return $this->method;
     }
 
-    public function setIdentifier(string $identifier): Form
+    public function setIdentifier(string $identifier): FormInterface
     {
         $this->identifier = $identifier;
 
@@ -224,14 +230,5 @@ class Form implements FormInterface, ProvidesUIComponent
         $this->title = $title;
 
         return $this;
-    }
-
-    /**
-     * @param string $identifier
-     * @return static
-     */
-    public static function resolve(string $identifier = null)
-    {
-        return app()->make(static::class, ['identifier' => $identifier]);
     }
 }

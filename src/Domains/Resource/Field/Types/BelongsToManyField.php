@@ -138,13 +138,18 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
 
         $entryLabel = $resource->config()->getEntryLabel('#{id}');
 
-        return $query->get()->map(function (EntryContract $item) use ($resource, $entryLabel) {
-            if ($keyName = $resource->config()->getKeyName()) {
-                $item->setKeyName($keyName);
-            }
+        return $query->get()
+                     ->map(function (EntryContract $item) use ($resource, $entryLabel) {
+                         if ($keyName = $resource->config()->getKeyName()) {
+                             // @todo.Ali aga bu neydi ?
+                             $item->setKeyName($keyName);
+                         }
 
-            return ['value' => $item->getId(), 'text' => sv_parse($entryLabel, $item->toArray())];
-        })->all();
+                         return [
+                             'value' => $item->getId(),
+                             'text'  => sv_parse($entryLabel, $item->toArray()),
+                         ];
+                     })->all();
     }
 
     protected function rpcValues(array $params, array $request = [])
