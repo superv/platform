@@ -30,6 +30,11 @@ trait CreatesFields
                                          ->all());
     }
 
+    public function image($name, $path = '/', $disk = 'public'): ColumnDefinition
+    {
+        return $this->file(...func_get_args())->rules(['image', 'mimes:jpeg,png,gif']);
+    }
+
     public function select($name, $options = []): ColumnDefinition
     {
         return $this->string($name)->fieldType('select')->setConfigValue('options', $options);
