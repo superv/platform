@@ -27,4 +27,8 @@ interface FormBuilderInterface
     public function setRequest($request): FormBuilder;
 
     public function setFormEntry(FormModel $formEntry): FormBuilder;
+
+    public function getIdentifier(): string;
+
+    public function setIdentifier(string $identifier): FormBuilder;
 }

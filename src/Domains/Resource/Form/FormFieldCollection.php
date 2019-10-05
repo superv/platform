@@ -3,7 +3,9 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
+use SuperV\Platform\Domains\Resource\Form\FormField as ConcreteFormField;
 
 class FormFieldCollection extends Collection
 {
@@ -26,6 +28,17 @@ class FormFieldCollection extends Collection
         $field->setTemporal(true);
 
         return $this->push($field);
+    }
+
+    public function addFieldFromArray(array $params)
+    {
+        $params['identifier'] = $params['identifier'] ?? $params['name'];
+        $this->addField(ConcreteFormField::make($params));
+    }
+
+    public function addFromFieldEntry(FieldModel $fieldEntry)
+    {
+        $this->addFieldFromArray($fieldEntry->toArray());
     }
 
     public function hide(string $name): FormFieldCollection

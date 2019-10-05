@@ -38,6 +38,11 @@ class FormBuilder implements FormBuilderInterface
      */
     protected $form;
 
+    /**
+     * @var string
+     */
+    protected $identifier;
+
     public function __construct(Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
@@ -46,7 +51,7 @@ class FormBuilder implements FormBuilderInterface
     public function getForm(): FormInterface
     {
         $this->form = app(FormInterface::class);
-        $this->form->setIdentifier($this->formEntry->getIdentifier());
+        $this->form->setIdentifier($this->getIdentifier());
         $this->form->setUrl(sv_url()->path());
 
         $this->makeFormFields();
@@ -112,8 +117,23 @@ class FormBuilder implements FormBuilderInterface
         return $this->formEntry;
     }
 
+    public function setIdentifier(string $identifier): FormBuilder
+    {
+        $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getIdentifier(): string
+    {
+        return $this->identifier ?? $this->formEntry->getIdentifier();
+    }
+
     protected function makeFormFields()
     {
+        if (! $this->formEntry) {
+            return;
+        }
         $formFields = $this->formEntry->getFormFields()
                                       ->map(function (FieldModel $field) {
                                           $field = FieldFactory::createFromEntry($field, FormField::class);
