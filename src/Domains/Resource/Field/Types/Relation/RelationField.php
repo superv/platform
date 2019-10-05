@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne as EloquentHasOne;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersDatabaseTable;
+use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Jobs\CreatePivotTableV2;
 
-class RelationField extends FieldType implements AltersDatabaseTable
+class RelationField extends FieldType implements AltersDatabaseTable, DoesNotInteractWithTable
 {
     public function onMakingConfig(RelationFieldConfig $config)
     {
