@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use PHPUnit\Framework\Assert;
 use SuperV\Platform\Domains\Auth\Contracts\Users;
 use SuperV\Platform\Domains\Auth\User;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Port\Port;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 
 trait TestHelpers
@@ -97,6 +99,20 @@ trait TestHelpers
     protected function getListComponent($resource): ListComponent
     {
         return ListComponent::get($resource, $this);
+    }
+
+    protected function getFormComponent($resource, $entry = null): FormComponent
+    {
+        if ($resource instanceof Resource) {
+            $resource = $resource->getIdentifier();
+        }
+
+        if ($resource instanceof EntryContract) {
+            $entry = $resource;
+            $resource = $resource->getResourceIdentifier();
+        }
+
+        return FormComponent::get($resource.'.forms:default', $this, $entry);
     }
 
     protected function getComponentFromUrl($url): HelperComponent
