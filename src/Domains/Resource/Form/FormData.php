@@ -32,7 +32,12 @@ class FormData
 
     public function get()
     {
-        return $this->data;
+        $keys = $this->fields
+            ->visible()
+            ->bound()
+            ->keys();
+
+        return \Illuminate\Support\Arr::only($this->data, $keys);
     }
 
     public function getForValidation(EntryContract $entry)

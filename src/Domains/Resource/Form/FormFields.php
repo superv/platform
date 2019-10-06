@@ -16,6 +16,20 @@ class FormFields extends Collection
         });
     }
 
+    public function bound(): FormFields
+    {
+        return $this->filter(function (FormFieldInterface $field) {
+            return ! $field->isUnbound();
+        });
+    }
+
+    public function keys()
+    {
+        return $this->map(function (FormFieldInterface $field) {
+            return $field->getColumnName();
+        })->all();
+    }
+
     public function mergeFields($fields)
     {
         $this->items = $this->merge($fields)->all();
@@ -33,7 +47,10 @@ class FormFields extends Collection
     public function addFieldFromArray(array $params)
     {
         $params['identifier'] = $params['identifier'] ?? $params['name'];
-        $this->addField(ConcreteFormField::make($params));
+
+        $field = ConcreteFormField::make($params);
+        $field->addFlag('unbound');
+        $this->addField($field);
     }
 
     public function addFromFieldEntry(FieldModel $fieldEntry)

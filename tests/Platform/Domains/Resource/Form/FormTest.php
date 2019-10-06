@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormData;
@@ -49,9 +50,10 @@ class FormTest extends ResourceTestCase
 
         FormComponent::get('testing.categories.forms:default', $this);
 
-        Event::assertDispatched($eventName, function ($eventName, Form $form) {
-            return $form->getIdentifier() === 'testing.categories.forms:default';
-        });
+        Event::assertDispatched($eventName,
+            function ($eventName, $payload) {
+                return $payload['form']->getIdentifier() === 'testing.categories.forms:default';
+            });
     }
 
     function test_makes_update_form()
@@ -108,11 +110,17 @@ class FormTest extends ResourceTestCase
         $form = FormFactory::builderFromEntry($entry = new FormTestUser)->getForm();
         $this->assertEquals(3, $form->fields()->count());
 
-        $form->addField($this->makeField(['type' => 'text', 'name' => 'profession']));
+        $form->fields()->addFieldFromArray(['type' => 'text', 'name' => 'profession']);
 
         $field = $form->getField('profession');
         $this->assertNotNull($field);
-        $this->assertInstanceOf(\SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface::class, $field);
+        $this->assertInstanceOf(FormFieldInterface::class, $field);
+
+        $this->assertTrue($field->isUnbound());
+
+        $form->getData()->resolveRequest($this->makePostRequest(['profession' => 'developer']), $entry);
+        $this->assertArrayNotHasKey('profession', $form->getData()->get());
+        $this->assertArrayHasKey('profession', $form->getData()->getForValidation($entry));
     }
 
     function test__saves_form()
