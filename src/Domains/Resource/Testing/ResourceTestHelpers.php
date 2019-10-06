@@ -4,8 +4,9 @@ namespace SuperV\Platform\Domains\Resource\Testing;
 
 use Closure;
 use Current;
-use Exception;
+use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Support\Str;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
@@ -53,7 +54,9 @@ trait ResourceTestHelpers
     /**
      * @param               $table
      * @param \Closure|null $callback
+     * @param null          $connection
      * @return \SuperV\Platform\Domains\Resource\Resource
+     * @throws \Exception
      */
     protected function create($table, Closure $callback = null, $connection = null)
     {
@@ -83,6 +86,7 @@ trait ResourceTestHelpers
     /**
      * @param \Closure|null $callback
      * @return \SuperV\Platform\Domains\Resource\Resource
+     * @throws \Exception
      */
     protected function randomTable(Closure $callback = null)
     {
@@ -91,7 +95,13 @@ trait ResourceTestHelpers
         return ResourceFactory::make($config->getIdentifier());
     }
 
-    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    /**
+     * @param       $table
+     * @param array $columns
+     * @param array $resource
+     * @return \SuperV\Platform\Domains\Resource\Resource
+     * @throws \Exception
+     */
     protected function makeResource($table, array $columns = ['name'], array $resource = [])
     {
         if (str_contains($table, '.')) {
@@ -173,7 +183,7 @@ trait ResourceTestHelpers
         ], $overrides);
     }
 
-    protected function postCreateResource($resource, array $post = [])
+    protected function postCreateResource($resource, array $post = []): TestResponse
     {
         /** @var \SuperV\Platform\Domains\Resource\Resource $resource */
         if (is_string($resource)) {
@@ -182,15 +192,19 @@ trait ResourceTestHelpers
 
         $response = $this->postJsonUser($resource->router()->createForm(), $post);
 
-        if (! $response->isOk()) {
-            $data = $response->decodeResponseJson();
+        return $response;
+//
+//
+//        $entryId = $response->decodeResponseJson('data')['entry']['id'];
+//
+//        return $resource->find($entryId);
+    }
 
-            dd($data);
-            throw new Exception('Can not post create resource: '.$resource->getIdentifier().' ['.json_encode($data).']');
-        }
+    protected function postUpdateResource(EntryContract $entry, array $post = []): TestResponse
+    {
+        $response = $this->postJsonUser($entry->router()->updateForm(), $post);
 
-        $entryId = $response->decodeResponseJson('data')['entry']['id'];
+        return $response;
 
-        return $resource->find($entryId);
     }
 }

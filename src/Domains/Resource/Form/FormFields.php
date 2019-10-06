@@ -78,18 +78,20 @@ class FormFields extends Collection
         return $this->put($field->getName(), $field);
     }
 
-    public function addFieldFromArray(array $params)
+    public function addFieldFromArray(array $params): FormFieldInterface
     {
         $params['identifier'] = $params['identifier'] ?? $params['name'];
 
         $field = ConcreteFormField::make($params);
         $field->addFlag('unbound');
         $this->addField($field);
+
+        return $field;
     }
 
-    public function addFromFieldEntry(FieldModel $fieldEntry)
+    public function addFromFieldEntry(FieldModel $fieldEntry): FormFieldInterface
     {
-        $this->addFieldFromArray($fieldEntry->toArray());
+        return $this->addFieldFromArray($fieldEntry->toArray());
     }
 
     public function hide(string $name): FormFields
