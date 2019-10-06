@@ -12,25 +12,40 @@ use SuperV\Platform\Domains\Resource\Form\FormField as ConcreteFormField;
 
 class FormFields extends Collection
 {
+    public function __construct($items = [])
+    {
+        parent::__construct($items);
+    }
+
     public function visible(): FormFields
     {
-        return $this->filter(function (FormFieldInterface $field) {
+        return $this->filter(function (FieldInterface $field) {
             return ! $field->isHidden();
         });
     }
 
     public function bound(): FormFields
     {
-        return $this->filter(function (FormFieldInterface $field) {
+        return $this->filter(function (FieldInterface $field) {
             return ! $field->isUnbound();
         });
     }
 
     public function keys()
     {
-        return $this->map(function (FormFieldInterface $field) {
+        return $this->map(function (FieldInterface $field) {
             return $field->getColumnName();
         })->all();
+    }
+
+    /**
+     * @param      $key
+     * @param null $default
+     * @return FormFieldInterface
+     */
+    public function get($key, $default = null)
+    {
+        return parent::get($key, $default);
     }
 
     public function rules(EntryContract $entry = null)
@@ -50,7 +65,7 @@ class FormFields extends Collection
     {
         $this->items = $this->merge($fields)
                             ->keyBy(function (FieldInterface $field) {
-                                return $field->getColumnName();
+                                return $field->getName();
                             })->all();
     }
 
@@ -60,7 +75,7 @@ class FormFields extends Collection
         //
         $field->setTemporal(true);
 
-        return $this->put($field->getColumnName(), $field);
+        return $this->put($field->getName(), $field);
     }
 
     public function addFieldFromArray(array $params)

@@ -15,7 +15,9 @@ use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Jobs\GetRules;
+use SuperV\Platform\Domains\Resource\Field\Jobs\ParseFieldRules;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
+use SuperV\Platform\Domains\Resource\Form\FormFields;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\Extender;
 use SuperV\Platform\Domains\Resource\Resource\Fields;
@@ -272,93 +274,14 @@ class Resource implements
 
     public function getRules(EntryContract $entry = null)
     {
-        return (new GetRules($this->getFields()))->get($entry);
-//
-//        return $this->getFields()
-//                    ->filter(function (Field $field) {
-//                        return ! $field->isUnbound();
-//                    })
-//                    ->keyBy(function (Field $field) {
-//                        return $field->getColumnName();
-//                    })
-//                    ->map(function (Field $field) use ($entry) {
-//                        return $this->parseFieldRules($field, $entry);
-//                    })
-//                    ->filter()
-//                    ->all();
-    }
-
-    public function getRuleMessages()
-    {
-        return $this->getFields()
-                    ->filter(function (FieldInterface $field) {
-                        return ! $field->isUnbound();
-                    })
-                    ->map(function (FieldInterface $field) {
-                        return $this->parseFieldRuleMessages($field);
-                    })
-                    ->filter()
-                    ->reduce(function ($pass, $pair) {
-                        return $pass->merge($pair);
-                    }, collect())
-                    ->reduce(function ($pass, $pair) {
-                        return $pass->merge($pair);
-                    }, collect())
-                    ->all();
-    }
-
-    public function parseFieldRuleMessages(FieldInterface $field)
-    {
-        return collect($field->getRules())
-            ->map(function ($rule) use ($field) {
-                if (is_array($rule)) {
-                    $key = $rule['rule'];
-                    if (str_contains($key, ':')) {
-                        $key = explode(':', $rule['rule'])[0];
-                    }
-
-                    return [$field->getColumnName().'.'.$key => $rule['message']];
-                }
-
-                return null;
-            })
-            ->filter()
-            ->all();
+        return (new FormFields($this->getFields()))->rules($entry);
     }
 
     public function parseFieldRules($field, ?EntryContract $entry = null)
     {
         $field = is_string($field) ? $this->getField($field) : $field;
 
-        $rules = $field->getRules();
-
-        if ($field->isUnique()) {
-            $rules[] = sprintf(
-                'unique:%s,%s,%s,id',
-                $this->config()->getDriver()->getParam('table'),
-                $field->getColumnName(),
-                $entry ? $entry->getId() : 'NULL'
-            );
-        }
-        if ($field->isRequired()) {
-            if ($entry && $entry->exists) {
-                $rules[] = 'sometimes';
-            }
-            $rules[] = 'required';
-        } else {
-            $rules[] = 'nullable';
-        }
-
-        return collect($rules)
-            ->map(function ($rule) {
-                if (is_array($rule)) {
-                    return $rule['rule'];
-                }
-
-                return $rule;
-            })
-            ->filter()
-            ->all();
+        return (new ParseFieldRules($field))->parse($entry);
     }
 
     public function isOwned()

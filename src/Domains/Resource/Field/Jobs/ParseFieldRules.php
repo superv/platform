@@ -27,19 +27,17 @@ class ParseFieldRules
 
         if ($field->isUnique()) {
             try {
-                $resourceConfig = ResourceConfig::find($field->identifier()->getParent());
                 $rules[] = sprintf(
                     'unique:%s,%s,%s,id',
-                    $resourceConfig->getTable(),
+                    $this->resourceConfig()->getTable(),
                     $field->getColumnName(),
                     $entry ? $entry->getId() : 'NULL'
                 );
             } catch (Exception $e) {
             }
-
         }
         if ($field->isRequired()) {
-            if ($entry && $entry->exists) {
+            if ($entry && $entry->exists()) {
                 $rules[] = 'sometimes';
             }
             $rules[] = 'required';
@@ -57,5 +55,10 @@ class ParseFieldRules
             })
             ->filter()
             ->all();
+    }
+
+    protected function resourceConfig(): ResourceConfig
+    {
+        return ResourceConfig::find($this->field->identifier()->getParent());
     }
 }
