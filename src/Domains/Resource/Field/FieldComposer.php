@@ -38,6 +38,10 @@ class FieldComposer
             }
         }
 
+        if ($form && ! isset($value)) {
+            $value = $form->getData()->getForDisplay($field->getName());
+        }
+
         $payload = (new Payload([
             'identifier'  => $field->getIdentifier(),
             'type'        => $field->getType(),

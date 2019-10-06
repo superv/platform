@@ -15,6 +15,9 @@ class FormData
     /** @var array */
     protected $dataToValidate = [];
 
+    /** @var array */
+    protected $dataToDisplay = [];
+
     /**
      * @var \SuperV\Platform\Domains\Resource\Form\FormFields
      */
@@ -30,8 +33,12 @@ class FormData
         $this->fields = $fields;
     }
 
-    public function get()
+    public function get($key = null)
     {
+        if ($key) {
+            return $this->data[$key] ?? null;
+        }
+
         $keys = $this->fields
             ->visible()
             ->bound()
@@ -43,6 +50,11 @@ class FormData
     public function getForValidation(EntryContract $entry)
     {
         return array_merge($this->data, $this->dataToValidate);
+    }
+
+    public function getForDisplay($key)
+    {
+        return $this->dataToDisplay[$key] ?? null;
     }
 
     public function resolveRequest(Request $request, EntryContract $entry)
@@ -82,5 +94,10 @@ class FormData
     public function toValidate($key, $value)
     {
         $this->dataToValidate[$key] = $value;
+    }
+
+    public function toDisplay($key, $value)
+    {
+        $this->dataToDisplay[$key] = $value;
     }
 }
