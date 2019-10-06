@@ -32,7 +32,7 @@ class CreateNavigation
             ]);
         } elseif (is_array($nav)) {
             if (! isset($nav['url'])) {
-                $nav['url'] = 'sv/res/'.$this->config->getName();
+                $nav['url'] = 'sv/res/'.$this->config->getIdentifier();
             }
             $section = Section::createFromArray($nav);
         }

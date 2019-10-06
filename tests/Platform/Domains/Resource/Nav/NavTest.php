@@ -179,6 +179,7 @@ class NavTest extends ResourceTestCase
     function test__creates_from_resource_blueprint()
     {
         Schema::create('tbl_users', function (Blueprint $table, ResourceConfig $resource) {
+            $resource->setIdentifier('testing.users');
             $table->increments('id');
             $resource->nav([
                 'parent' => 'acp.settings.auth',
