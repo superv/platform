@@ -131,8 +131,11 @@ trait TestHelpers
 
             return true;
         }
-
-        $this->assertEquals($needle, array_intersect($needle, $haystack), 'Failed asserting array contains');
+        if (is_array(array_values($needle)[0])) {
+            $this->assertEquals($needle, array_intersect_key($needle, $haystack), 'Failed asserting array contains');
+        } else {
+            $this->assertEquals($needle, array_intersect($needle, $haystack), 'Failed asserting array contains');
+        }
 
 //        if (is_numeric(array_keys($needle)[0])) {
 //            $actual = array_intersect($needle, $haystack);
