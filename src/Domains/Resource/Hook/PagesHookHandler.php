@@ -12,17 +12,5 @@ class PagesHookHandler extends HookHandler
         'rendered' => PageRenderedHook::class,
     ];
 
-    public function hook(string $identifier, string $hookHandler, string $subKey = null)
-    {
-        $implements = class_implements($hookHandler);
-
-        foreach ($this->map as $eventType => $contract) {
-            if (! in_array($contract, $implements)) {
-                continue;
-            }
-            $eventName = sprintf("%s.pages:%s.events:%s", $identifier, $subKey, $eventType);
-
-            $this->registerListener($eventName, $eventType, $hookHandler);
-        }
-    }
+    protected $hookType = 'pages';
 }

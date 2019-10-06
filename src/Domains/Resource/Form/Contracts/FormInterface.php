@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Form\Contracts;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Form\FormData;
-use SuperV\Platform\Domains\Resource\Form\FormFieldCollection;
+use SuperV\Platform\Domains\Resource\Form\FormFields;
 use SuperV\Platform\Domains\Resource\Form\FormResponse;
 
 interface FormInterface
@@ -32,9 +32,9 @@ interface FormInterface
 
     public function addField(FormFieldInterface $field);
 
-    public function setFields(FormFieldCollection $fields);
+    public function setFields(FormFields $fields);
 
-    public function fields(): FormFieldCollection;
+    public function fields(): FormFields;
 
     public function isCreating();
 

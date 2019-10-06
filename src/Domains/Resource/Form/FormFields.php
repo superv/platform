@@ -7,9 +7,9 @@ use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
 use SuperV\Platform\Domains\Resource\Form\FormField as ConcreteFormField;
 
-class FormFieldCollection extends Collection
+class FormFields extends Collection
 {
-    public function visible(): FormFieldCollection
+    public function visible(): FormFields
     {
         return $this->filter(function (FormFieldInterface $field) {
             return ! $field->isHidden();
@@ -21,7 +21,7 @@ class FormFieldCollection extends Collection
         $this->items = $this->merge($fields)->all();
     }
 
-    public function addField(FormFieldInterface $field): FormFieldCollection
+    public function addField(FormFieldInterface $field): FormFields
     {
         // Fields added on the fly should be marked as temporal
         //
@@ -41,7 +41,7 @@ class FormFieldCollection extends Collection
         $this->addFieldFromArray($fieldEntry->toArray());
     }
 
-    public function hide(string $name): FormFieldCollection
+    public function hide(string $name): FormFields
     {
         $this->field($name)->hide();
 
@@ -55,7 +55,7 @@ class FormFieldCollection extends Collection
         });
     }
 
-    public function fieldTypes(): FormFieldCollection
+    public function fieldTypes(): FormFields
     {
         return $this->map(function (FormFieldInterface $field) {
             return $field->getFieldType();

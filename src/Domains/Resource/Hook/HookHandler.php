@@ -12,19 +12,48 @@ abstract class HookHandler implements HookHandlerInterface
      */
     protected $dispatcher;
 
+    protected $hookType;
+
     protected $map = [];
+
+    protected static $locks = [];
 
     public function __construct(Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }
 
+    public function hook(string $identifier, string $hookHandler, string $subKey = null)
+    {
+        $implements = class_implements($hookHandler);
+
+        foreach ($this->map as $eventType => $contract) {
+            if (! in_array($contract, $implements)) {
+                continue;
+            }
+            $eventName = sprintf("%s.%s:%s.events:%s", $identifier, $this->hookType, $subKey, $eventType);
+            if (! $subKey) {
+                $eventName = str_replace(':.', '.', $eventName);
+            }
+
+            $this->registerListener($eventName, $eventType, $hookHandler);
+        }
+    }
+
     protected function registerListener($eventName, $eventType, $handler)
     {
         $this->dispatcher->listen(
             $eventName,
-            function () use ($eventType, $handler) {
+            function () use ($eventType, $handler, $eventName) {
+                $lock = md5($eventName);
+                if (isset(static::$locks[$lock])) {
+                    return;
+                }
+                static::$locks[$lock] = true;
+
                 $this->handle($handler, $eventType, func_get_args());
+
+                unset(static::$locks[$lock]);
             }
         );
     }

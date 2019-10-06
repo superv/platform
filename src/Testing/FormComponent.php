@@ -27,7 +27,11 @@ class FormComponent extends HelperComponent
 
         $url = sv_route('sv::forms.display', ['form' => $identifier]);
 
-        $response = $testCase->getJsonUser($url)->assertOk();
+        $response = $testCase->getJsonUser($url);
+        if (! $response->isOk()) {
+            dd($response->decodeResponseJson());
+        }
+
 
         return static::fromArray($response->decodeResponseJson('data'));
     }

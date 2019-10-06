@@ -31,7 +31,7 @@ class Form implements FormInterface, ProvidesUIComponent
     /** @var EntryContract */
     protected $entry;
 
-    /** @var \SuperV\Platform\Domains\Resource\Form\FormFieldCollection */
+    /** @var \SuperV\Platform\Domains\Resource\Form\FormFields */
     protected $fields;
 
     /** @var string */
@@ -58,13 +58,15 @@ class Form implements FormInterface, ProvidesUIComponent
     {
         $this->dispatcher = $dispatcher;
 
-        $this->fields = new FormFieldCollection();
+        $this->fields = new FormFields();
 
         $this->data = new FormData($this->fields);
     }
 
     public function resolve(): FormInterface
     {
+        $this->fireEvent('resolving');
+
         if ($this->entry) {
             $this->data->resolveEntry($this->entry);
         }
@@ -73,9 +75,16 @@ class Form implements FormInterface, ProvidesUIComponent
             $this->data->resolveRequest($this->request, $this->entry);
         }
 
-        $this->dispatcher->dispatch($this->getIdentifier().'.events:resolved', $this);
+        $this->fireEvent('resolved');
 
         return $this;
+    }
+
+    protected function fireEvent($event)
+    {
+        $eventName = sprintf("%s.events:%s", $this->getIdentifier(), $event);
+
+        $this->dispatcher->dispatch($eventName, ['form' => $this, 'fields' => $this->fields()]);
     }
 
     public function save(): FormResponse
@@ -104,12 +113,12 @@ class Form implements FormInterface, ProvidesUIComponent
         return $this->fields()->addField($field);
     }
 
-    public function fields(): FormFieldCollection
+    public function fields(): FormFields
     {
         return $this->fields;
     }
 
-    public function setFields(FormFieldCollection $fields)
+    public function setFields(FormFields $fields)
     {
         $this->fields = $fields;
 

@@ -16,7 +16,7 @@ class FormData
     protected $dataToValidate = [];
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Form\FormFieldCollection
+     * @var \SuperV\Platform\Domains\Resource\Form\FormFields
      */
     protected $fields;
 
@@ -25,7 +25,7 @@ class FormData
      */
     protected $callbacks;
 
-    public function __construct(FormFieldCollection $fields)
+    public function __construct(FormFields $fields)
     {
         $this->fields = $fields;
     }

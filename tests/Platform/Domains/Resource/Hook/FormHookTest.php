@@ -15,12 +15,23 @@ use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormDefault;
  */
 class FormHookTest extends HookTestCase
 {
+    function test_resolving()
+    {
+        $_SERVER['__hooks::form.resolving'] = null;
+        $this->blueprints()->orders();
+
+        $formComponent = FormComponent::get(OrdersFormDefault::class, $this);
+        $this->assertNotNull($_SERVER['__hooks::form.resolving']);
+        $formComponent->assertIdentifier($_SERVER['__hooks::form.resolving']);
+    }
+
     function test_resolved()
     {
         $_SERVER['__hooks::form.resolved'] = null;
         $this->blueprints()->orders();
 
         $formComponent = FormComponent::get(OrdersFormDefault::class, $this);
+        $this->assertNotNull($_SERVER['__hooks::form.resolved']);
         $formComponent->assertIdentifier($_SERVER['__hooks::form.resolved']);
     }
 
