@@ -3,7 +3,10 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\Jobs\ParseFieldRules;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
 use SuperV\Platform\Domains\Resource\Form\FormField as ConcreteFormField;
 
@@ -30,9 +33,25 @@ class FormFields extends Collection
         })->all();
     }
 
+    public function rules(EntryContract $entry = null)
+    {
+        return $this->visible()
+                    ->keyBy(function (FieldInterface $field) {
+                        return $field->getColumnName();
+                    })
+                    ->map(function (FieldInterface $field) use ($entry) {
+                        return (new ParseFieldRules($field))->parse($entry);
+                    })
+                    ->filter()
+                    ->all();
+    }
+
     public function mergeFields($fields)
     {
-        $this->items = $this->merge($fields)->all();
+        $this->items = $this->merge($fields)
+                            ->keyBy(function (FieldInterface $field) {
+                                return $field->getColumnName();
+                            })->all();
     }
 
     public function addField(FormFieldInterface $field): FormFields
@@ -41,7 +60,7 @@ class FormFields extends Collection
         //
         $field->setTemporal(true);
 
-        return $this->push($field);
+        return $this->put($field->getColumnName(), $field);
     }
 
     public function addFieldFromArray(array $params)

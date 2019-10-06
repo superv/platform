@@ -36,7 +36,9 @@ class ValidationException extends \Exception
      */
     public function getData()
     {
-        return $this->data;
+        return collect($this->data)->filter(function ($value) {
+            return ! is_object($value);
+        })->all();
     }
 
     /**

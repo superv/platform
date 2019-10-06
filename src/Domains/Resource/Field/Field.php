@@ -20,7 +20,6 @@ class Field implements FieldContract
     use Hydratable;
     use FiresCallbacks;
     use HasConfig;
-    use FieldFlags;
 
     /** @var \SuperV\Platform\Domains\Resource\Field\FieldType */
     protected $fieldType;

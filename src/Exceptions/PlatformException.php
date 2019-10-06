@@ -42,6 +42,7 @@ class PlatformException extends \Exception
     {
         $code = ($e instanceof QueryException) ? '0' : $e->getCode();
         $message = ($e instanceof ValidationException) ? $e->getErrorsAsString() : $e->getMessage();
+
         throw new static($message, $code, $e);
     }
 
