@@ -54,6 +54,7 @@ trait TestHelpers
      *
      * @param string $path
      * @return $this
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     protected function withFactories(string $path)
     {
@@ -66,6 +67,7 @@ trait TestHelpers
      * @param \Illuminate\Contracts\Foundation\Application $app
      * @param string                                       $path
      * @return $this
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     protected function loadFactoriesUsing($app, string $path)
     {
@@ -154,6 +156,15 @@ trait TestHelpers
     protected function assertProviderNotRegistered($provider)
     {
         $this->assertNotContains($provider, array_keys($this->app->getLoadedProviders()));
+    }
+
+    protected function assertValidationErrors(TestResponse $response, array $errorKeys = [])
+    {
+        $response->assertStatus(422);
+
+        if ($errorKeys) {
+            $this->assertEquals($errorKeys, array_keys($response->decodeResponseJson('errors')));
+        }
     }
 
     protected function bindMock($abstract, $instance = null): \Mockery\MockInterface
