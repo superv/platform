@@ -14,7 +14,6 @@ use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryCreatedEvent;
 use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
-use SuperV\Platform\Domains\Resource\Field\Jobs\GetRules;
 use SuperV\Platform\Domains\Resource\Field\Jobs\ParseFieldRules;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
 use SuperV\Platform\Domains\Resource\Form\FormFields;
@@ -89,11 +88,6 @@ class Resource implements
     /**
      * @var Collection
      */
-    protected $columns;
-
-    /**
-     * @var Collection
-     */
     protected $relations;
 
     protected $mergeRelations;
@@ -105,14 +99,6 @@ class Resource implements
      */
     protected $actions;
 
-    /**
-     * @var Closure
-     */
-    protected $relationProvider;
-
-    /** @var Closure */
-    protected $viewResolver;
-
     protected $searchable = [];
 
     protected $filters = [];
@@ -121,8 +107,6 @@ class Resource implements
      * @var \SuperV\Platform\Domains\Resource\Resource\IndexFields
      */
     protected $indexFields;
-
-    protected $onCreatedCallbacks = [];
 
     protected $restorable = false;
 
@@ -465,25 +449,16 @@ class Resource implements
         return $this->namespace;
     }
 
-    /**
-     * @return bool
-     */
     public function isExtended(): bool
     {
         return $this->extended;
     }
 
-    /**
-     * @param bool $extended
-     */
     public function setExtended(bool $extended): void
     {
         $this->extended = $extended;
     }
 
-    /**
-     * @return mixed
-     */
     public function getName()
     {
         return $this->name;
