@@ -23,6 +23,16 @@ class Router
         ]);
     }
 
+    public function store()
+    {
+        return $this->createForm();
+    }
+
+    public function edit(EntryContract $entry)
+    {
+        return $this->updateForm($entry);
+    }
+
     public function updateForm(EntryContract $entry)
     {
         return sv_route('sv::forms.display', [
