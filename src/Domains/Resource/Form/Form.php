@@ -60,17 +60,19 @@ class Form implements FormInterface, ProvidesUIComponent
         $this->dispatcher = $dispatcher;
 
         $this->fields = new FormFields();
-
-        $this->data = new FormData($this->fields);
     }
 
     public function resolve(): FormInterface
     {
+        if (! $this->data) {
+            $this->data = new FormData($this->fields);
+        }
+
         Event::listen($this->getIdentifier().'.events:saving', [$this->fields(), 'saving']);
 
         $this->fireEvent('resolving');
 
-        if ($this->entry) {
+        if ($this->entry && $this->entry->exists()) {
             $this->data->resolveEntry($this->entry);
         }
 
@@ -101,13 +103,10 @@ class Form implements FormInterface, ProvidesUIComponent
 
     public function submit()
     {
-//        $this->fields->saving($this);
-
         $this->fireEvent('saving');
 
         $this->entry->fill($this->data->get());
 
-//        sv_debug('save', $this->entry->toArray());
         $this->entry->save();
 
         $this->data->callbacks()
