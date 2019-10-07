@@ -5,7 +5,9 @@ namespace SuperV\Platform\Domains\Resource\Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface as FieldType;
+use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 
 class FormData
 {
@@ -46,6 +48,9 @@ class FormData
         $keys = $this->fields
             ->visible()
             ->bound()
+            ->filter(function (FieldInterface $field) {
+                return ! $field->getFieldType() instanceof DoesNotInteractWithTable;
+            })
             ->keys();
 
         $data = \Illuminate\Support\Arr::only($this->data, $keys);
