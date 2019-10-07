@@ -47,7 +47,7 @@ class Media extends ResourceEntry
             return 'https://'.config('filesystems.disks.s3.bucket').'.s3.amazonaws.com/'.$this->filename;
         }
 
-        return url('storage/'.$this->filename);
+        return url('storage/'.ltrim($this->filename, '/'));
     }
 
     public function getUrl()
