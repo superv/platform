@@ -18,6 +18,9 @@ class FormData
     /** @var array */
     protected $dataToDisplay = [];
 
+    /** @var array */
+    protected $dataToSave = [];
+
     /**
      * @var \SuperV\Platform\Domains\Resource\Form\FormFields
      */
@@ -44,10 +47,12 @@ class FormData
             ->bound()
             ->keys();
 
-        return \Illuminate\Support\Arr::only($this->data, $keys);
+        $data = \Illuminate\Support\Arr::only($this->data, $keys);
+
+        return array_merge($data, $this->dataToSave);
     }
 
-    public function getForValidation(EntryContract $entry)
+    public function getForValidation(?EntryContract $entry)
     {
         return array_merge($this->data, $this->dataToValidate);
     }
@@ -99,5 +104,10 @@ class FormData
     public function toDisplay($key, $value)
     {
         $this->dataToDisplay[$key] = $value;
+    }
+
+    public function toSave($key, $value)
+    {
+        $this->dataToSave[$key] = $value;
     }
 }
