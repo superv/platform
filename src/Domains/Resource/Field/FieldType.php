@@ -72,7 +72,7 @@ class FieldType implements FieldTypeInterface
         $data->set($this->getColumnName(), $value);
     }
 
-    public function resolveDataFromRequest(FormData $data, Request $request, EntryContract $entry)
+    public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)
     {
         if (! $request->has($this->getName()) && ! $request->has($this->getColumnName())) {
             return;
@@ -85,6 +85,10 @@ class FieldType implements FieldTypeInterface
         $value = $requestValue;
         if ($this instanceof HasModifier) {
             $value = (new Modifier($this))->set(['entry' => $entry, 'value' => $requestValue]);
+        }
+
+        if ($callback = $this->field->getCallback('resolving_request')) {
+            $value = app()->call($callback, ['request' => $request, 'value' => $value]);
         }
 
         if ($value instanceof Closure) {

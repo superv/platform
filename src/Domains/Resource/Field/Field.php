@@ -4,22 +4,20 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
 use Event;
-use Illuminate\Http\Request;
 use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface as FieldContract;
-use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
-use SuperV\Platform\Support\Concerns\HasConfig;
 use SuperV\Platform\Support\Concerns\Hydratable;
 use SuperV\Platform\Support\Identifier;
 
-class Field implements FieldContract
+class Field implements FieldInterface
 {
     use Hydratable;
     use FiresCallbacks;
-    use HasConfig;
+
+//    use HasConfig;
 
     /** @var \SuperV\Platform\Domains\Resource\Field\FieldType */
     protected $fieldType;
@@ -83,6 +81,8 @@ class Field implements FieldContract
     /** @var FormInterface */
     protected $form;
 
+    protected $config = [];
+
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);
@@ -124,40 +124,45 @@ class Field implements FieldContract
         return str_unslug($this->getName());
     }
 
-    public function setLabel(string $label): FieldContract
+    public function setLabel(string $label): FieldInterface
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function resolveRequest(Request $request, ?EntryContract $entry = null)
+    public function whenResolvingRequest(Closure $callback)
     {
-        if (! $request->has($this->getName())
-            && ! $request->has($this->getColumnName())) {
-            return null;
-        }
-
-        if (! $value = $request->__get($this->getColumnName())) {
-            $value = $request->__get($this->getName());
-        }
-
-        if ($this->fieldType instanceof HasModifier) {
-            $value = (new Modifier($this->fieldType))->set(['entry' => $entry, 'value' => $value]);
-        } elseif ($mutator = $this->getMutator('form')) {
-            $value = ($mutator)($value, $entry);
-        }
-
-        if ($value instanceof Closure) {
-            return $value;
-        }
-
-        if ($entry && ! $this->doesNotInteractWithTable()) {
-            $entry->setAttribute($this->getColumnName(), $value);
-        }
-
-        $this->setValue($value);
+        $this->callbacks['resolving_request'] = $callback;
     }
+//
+//    public function resolveRequest(Request $request, ?EntryContract $entry = null)
+//    {
+//        if (! $request->has($this->getName())
+//            && ! $request->has($this->getColumnName())) {
+//            return null;
+//        }
+//
+//        if (! $value = $request->__get($this->getColumnName())) {
+//            $value = $request->__get($this->getName());
+//        }
+//
+//        if ($this->fieldType instanceof HasModifier) {
+//            $value = (new Modifier($this->fieldType))->set(['entry' => $entry, 'value' => $value]);
+//        } elseif ($mutator = $this->getMutator('form')) {
+//            $value = ($mutator)($value, $entry);
+//        }
+//
+//        if ($value instanceof Closure) {
+//            return $value;
+//        }
+//
+//        if ($entry && ! $this->doesNotInteractWithTable()) {
+//            $entry->setAttribute($this->getColumnName(), $value);
+//        }
+//
+//        $this->setValue($value);
+//    }
 
     public function getValue()
     {
@@ -220,14 +225,14 @@ class Field implements FieldContract
         return $this->rules;
     }
 
-    public function removeRules(): FieldContract
+    public function removeRules(): FieldInterface
     {
         $this->rules = [];
 
         return $this;
     }
 
-    public function addRule($rule, $message = null): FieldContract
+    public function addRule($rule, $message = null): FieldInterface
     {
         if ($message) {
             $this->rules[] = ['rule' => $rule, 'message' => $message];
@@ -243,7 +248,7 @@ class Field implements FieldContract
         return $this->placeholder;
     }
 
-    public function copyToFilters(array $params = []): FieldContract
+    public function copyToFilters(array $params = []): FieldInterface
     {
         if ($params) {
             $this->setConfigValue('filter', $params);
@@ -252,7 +257,7 @@ class Field implements FieldContract
         return $this->addFlag('filter');
     }
 
-    public function displayOrder($order): FieldContract
+    public function displayOrder($order): FieldInterface
     {
         return $this->setConfigValue('sort_order', $order);
     }
@@ -262,7 +267,7 @@ class Field implements FieldContract
         return $this->revisionId;
     }
 
-    public function setPresenter(Closure $callback): FieldContract
+    public function setPresenter(Closure $callback): FieldInterface
     {
         $this->presenter = $callback;
 
@@ -285,7 +290,7 @@ class Field implements FieldContract
         return $this->alterQueryCallback;
     }
 
-    public function addClass(string $class): FieldContract
+    public function addClass(string $class): FieldInterface
     {
         $previous = $this->getConfigValue('classes');
 
@@ -297,7 +302,7 @@ class Field implements FieldContract
         return $this->fieldType->getType() ?? $this->type;
     }
 
-    public function setType(string $type): FieldContract
+    public function setType(string $type): FieldInterface
     {
         $this->type = $type;
 
@@ -336,7 +341,7 @@ class Field implements FieldContract
         return $this;
     }
 
-    public function removeFlag(string $flag): FieldContract
+    public function removeFlag(string $flag): FieldInterface
     {
         $this->flags = array_diff($this->flags, [$flag]);
 
@@ -348,16 +353,43 @@ class Field implements FieldContract
         return in_array($flag, $this->flags);
     }
 
+    /// config
+
+    public function getConfigValue($key, $default = null)
+    {
+        return array_get($this->getConfig(), $key, $default);
+    }
+
+    public function setConfigValue($key, $value = null): FieldInterface
+    {
+        if (! is_null($value)) {
+            array_set($this->config, $key, $value);
+        }
+
+        return $this;
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config ?: [];
+    }
+
+    public function mergeConfig(array $config): FieldInterface
+    {
+        $this->config = array_replace_recursive($this->config, $config);
+
+        return $this;
+    }
 
     //////// FLAGS
     ///
 
-    public function showOnIndex(): FieldContract
+    public function showOnIndex(): FieldInterface
     {
         return $this->addFlag('table.show');
     }
 
-    public function hide(): FieldContract
+    public function hide(): FieldInterface
     {
         return $this->addFlag('hidden');
     }
@@ -392,7 +424,7 @@ class Field implements FieldContract
         Event::dispatch(sprintf("%s.events:%s", $this->getIdentifier(), $eventName), $this);
     }
 
-    public function searchable(): FieldContract
+    public function searchable(): FieldInterface
     {
         return $this->addFlag('searchable');
     }

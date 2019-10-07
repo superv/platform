@@ -16,7 +16,7 @@ interface FieldTypeInterface
 
     public function getName();
 
-    public function resolveDataFromRequest(FormData $data, Request $request, EntryContract $entry);
+    public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null);
 
     public function resolveDataFromEntry(FormData $data, EntryContract $entry);
 

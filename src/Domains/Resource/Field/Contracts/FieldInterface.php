@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
 use Closure;
-use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Support\Identifier;
@@ -42,7 +41,9 @@ interface FieldInterface
 
     public function getConfigValue($key, $default = null);
 
-    public function setConfigValue($key, $value = null);
+    public function setConfigValue($key, $value = null): FieldInterface;
+
+    public function mergeConfig(array $config): FieldInterface;
 
     public function isHidden();
 
@@ -68,11 +69,13 @@ interface FieldInterface
 
     public function fillFromEntry(EntryContract $entry);
 
+    public function whenResolvingRequest(Closure $callback);
+
     public function setCallback($trigger, $callback);
 
     public function getCallback($trigger);
 
-    public function resolveRequest(Request $request, ?EntryContract $entry = null);
+//    public function resolveRequest(Request $request, ?EntryContract $entry = null);
 
     public function resolveFromEntry($entry);
 
