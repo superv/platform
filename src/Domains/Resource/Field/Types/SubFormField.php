@@ -27,7 +27,8 @@ class SubFormField extends FieldType
 
     public function resolveValueFromRequest(Request $request, ?EntryContract $entry = null)
     {
-        $this->formData = $request->get($this->getColumnName());
+        $this->formData = $request->all()[$this->getColumnName()];
+
 
         return null;
     }
