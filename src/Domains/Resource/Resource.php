@@ -14,9 +14,7 @@ use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryCreatedEvent;
 use SuperV\Platform\Domains\Resource\Database\Entry\Events\EntryDeletedEvent;
 use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
-use SuperV\Platform\Domains\Resource\Field\Jobs\ParseFieldRules;
 use SuperV\Platform\Domains\Resource\Filter\SearchFilter;
-use SuperV\Platform\Domains\Resource\Form\FormFields;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Resource\Extender;
 use SuperV\Platform\Domains\Resource\Resource\Fields;
@@ -254,18 +252,6 @@ class Resource implements
     {
         $key = $this->getIdentifier().'.'.$relation->getName();
         superv('relations')->put($key, $relation);
-    }
-
-    public function getRules(EntryContract $entry = null)
-    {
-        return (new FormFields($this->getFields()))->rules($entry);
-    }
-
-    public function parseFieldRules($field, ?EntryContract $entry = null)
-    {
-        $field = is_string($field) ? $this->getField($field) : $field;
-
-        return (new ParseFieldRules($field))->parse($entry);
     }
 
     public function isOwned()
