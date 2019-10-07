@@ -2,8 +2,8 @@
 
 namespace Tests\Platform\Domains\Resource\Hook;
 
-use SuperV\Platform\Domains\Resource\Form\FormBuilder;
-use SuperV\Platform\Domains\Resource\Form\FormModel;
+use SuperV\Platform\Domains\Resource\Form\FormFactory;
+use SuperV\Platform\Exceptions\ValidationException;
 use SuperV\Platform\Testing\FormComponent;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormDefault;
 
@@ -35,20 +35,13 @@ class FormHookTest extends HookTestCase
         $formComponent->assertIdentifier($_SERVER['__hooks::form.resolved']);
     }
 
-    function __validating()
+    function test__validating()
     {
-        $this->blueprints()->orders();
-
-        $form = FormBuilder::resolve()
-                           ->setRequest(['number' => 1, 'status' => 'pending'])
-                           ->setFormEntry(FormModel::withIdentifier(OrdersFormDefault::$identifier))
-                           ->getForm();
-
-        $this->assertNotNull($form);
-
         $_SERVER['__hooks::form.validating'] = null;
+        $orders = $this->blueprints()->orders();
 
-        $form->save();
+        $this->expectException(ValidationException::class);
+        FormFactory::builderFromResource($orders)->resolveForm()->validate();
 
         $this->assertNotNull($_SERVER['__hooks::form.validating']);
     }
