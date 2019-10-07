@@ -131,7 +131,14 @@ class Field implements FieldInterface
         return $this;
     }
 
-    public function whenResolvingRequest(Closure $callback)
+    public function beforeResolvingEntry(Closure $callback)
+    {
+        $this->callbacks['resolving_entry'] = $callback;
+
+        return $this;
+    }
+
+    public function beforeResolvingRequest(Closure $callback)
     {
         $this->callbacks['resolving_request'] = $callback;
     }

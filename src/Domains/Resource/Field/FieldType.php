@@ -77,6 +77,12 @@ class FieldType implements FieldTypeInterface
 
     public function resolveDataFromEntry(FormData $data, EntryContract $entry)
     {
+        if ($callback = $this->field->getCallback('resolving_entry')) {
+            $fieldType = $this;
+
+            return app()->call($callback, compact('data', 'entry', 'fieldType'));
+        }
+
         if ($this instanceof DoesNotInteractWithTable) {
             return;
         }

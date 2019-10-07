@@ -69,7 +69,11 @@ interface FieldInterface
 
     public function fillFromEntry(EntryContract $entry);
 
-    public function whenResolvingRequest(Closure $callback);
+    public function beforeResolvingEntry(Closure $callback);
+
+    public function beforeResolvingRequest(Closure $callback);
+
+    public function beforeSaving(Closure $callback);
 
     public function setCallback($trigger, $callback);
 
