@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -62,6 +63,18 @@ class FieldType implements FieldTypeInterface
         return $this->type;
     }
 
+    public function validating(FormData $data, ?EntryContract $entry = null)
+    {
+    }
+
+    public function saving(FormInterface $form)
+    {
+    }
+
+    public function saved(FormInterface $form)
+    {
+    }
+
     public function resolveDataFromEntry(FormData $data, EntryContract $entry)
     {
         if ($this instanceof DoesNotInteractWithTable) {
@@ -79,23 +92,6 @@ class FieldType implements FieldTypeInterface
         }
 
         [$value, $requestValue] = $this->resolveValueFromRequest($request, $entry);
-
-//        if (! $request->has($this->getName()) && ! $request->has($this->getColumnName())) {
-//            return null;
-//        }
-//
-//        if (! $requestValue = $request->__get($this->getColumnName())) {
-//            $requestValue = $request->__get($this->getName());
-//        }
-//
-//        $value = $requestValue;
-//        if ($this instanceof HasModifier) {
-//            $value = (new Modifier($this))->set(['entry' => $entry, 'value' => $requestValue]);
-//        }
-//
-//        if ($callback = $this->field->getCallback('resolving_request')) {
-//            $value = app()->call($callback, ['request' => $request, 'value' => $value]);
-//        }
 
         if ($value instanceof Closure) {
             $data->callbacks()->push($value);

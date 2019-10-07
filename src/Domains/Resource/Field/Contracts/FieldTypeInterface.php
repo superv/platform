@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormData;
 
 interface FieldTypeInterface
@@ -11,6 +12,12 @@ interface FieldTypeInterface
     public function getConfigValue($key, $default = null);
 
     public function getType(): ?string;
+
+    public function validating(FormData $data, ?EntryContract $entry = null);
+
+    public function saving(FormInterface $form);
+
+    public function saved(FormInterface $form);
 
     public function setField(FieldInterface $field): void;
 
