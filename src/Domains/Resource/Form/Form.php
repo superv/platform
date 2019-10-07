@@ -164,6 +164,8 @@ class Form implements FormInterface, ProvidesUIComponent
 
     public function validate()
     {
+        $this->fireEvent('validating');
+
         ValidateForm::dispatch($this->fields, $this->data, $this->entry);
     }
 
