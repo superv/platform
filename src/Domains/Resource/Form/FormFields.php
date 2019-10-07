@@ -94,7 +94,13 @@ class FormFields extends Collection
 
     public function hide(string $name): FormFields
     {
-        $this->field($name)->hide();
+        $names = func_num_args() === 1 ? [$name] : func_get_args();
+        array_map(function ($name) {
+            if (! $field = $this->field($name)) {
+                PlatformException::runtime("Field [{$name}] does not exist");
+            }
+            $field->hide();
+        }, $names);
 
         return $this;
     }
