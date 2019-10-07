@@ -107,7 +107,7 @@ class FormTest extends ResourceTestCase
 
     function test__add_field()
     {
-        $form = FormFactory::builderFromEntry($entry = new FormTestUser)->getForm();
+        $form = FormFactory::builderFromEntry($entry = new FormTestUser)->resolveForm();
         $this->assertEquals(3, $form->fields()->count());
 
         $form->fields()->addFieldFromArray(['type' => 'text', 'name' => 'profession']);

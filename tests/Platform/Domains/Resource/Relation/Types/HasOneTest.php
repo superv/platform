@@ -51,7 +51,7 @@ class HasOneTest extends ResourceTestCase
         $relation->acceptParentEntry($user);
 
         /** @var Form $form */
-        $form = $relation->makeForm();
+        $form = $relation->makeForm()->resolve();
         $this->assertInstanceOf(Form::class, $form);
         $this->assertEquals(2, $form->fields()->count());
         $this->assertFalse($form->getField('user')->isVisible());
