@@ -80,8 +80,6 @@ class FormFields extends Collection
 
     public function addFieldFromArray(array $params): FormFieldInterface
     {
-        $params['identifier'] = $params['identifier'] ?? $params['name'];
-
         $field = ConcreteFormField::make($params);
         $field->addFlag('unbound');
         $this->addField($field);

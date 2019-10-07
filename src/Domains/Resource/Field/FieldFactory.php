@@ -39,6 +39,9 @@ class FieldFactory
      */
     public static function createFromArray(array $params, string $resolveFrom = null)
     {
+        $params['identifier'] = $params['identifier'] ?? $params['name'];
+
+
         $factory = new static;
         $factory->params = $params;
 
