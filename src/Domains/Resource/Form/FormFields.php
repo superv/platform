@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
-use SuperV\Platform\Domains\Resource\Field\Jobs\ParseFieldRules;
+use SuperV\Platform\Domains\Resource\Field\FieldRules;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormField as ConcreteFormField;
@@ -57,19 +57,23 @@ class FormFields extends Collection
                         return $field->getColumnName();
                     })
                     ->map(function (FieldInterface $field) use ($entry) {
-                        return (new ParseFieldRules($field))->parse($entry);
+                        $rules = (new FieldRules($field, $entry));
+
+                        $fieldType = $field->getFieldType();
+
+                        if ($entry) {
+                            if ($entry->exists() && method_exists($fieldType, 'updateRules')) {
+                                $fieldType->updateRules($rules);
+                            }
+                            if (! $entry->exists() && method_exists($fieldType, 'createRules')) {
+                                $fieldType->createRules($rules);
+                            }
+                        }
+
+                        return $rules->get();
                     })
                     ->filter()
                     ->all();
-    }
-
-    public function validating(FormData $data, ?EntryContract $entry = null)
-    {
-        $this->visible()
-             ->fieldTypes()
-             ->each(function (FieldTypeInterface $fieldType) use ($entry, $data) {
-                 $fieldType->validating($data, $entry);
-             });
     }
 
     public function saving(FormInterface $form, FormFields $fields)

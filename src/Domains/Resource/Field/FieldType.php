@@ -63,10 +63,6 @@ class FieldType implements FieldTypeInterface
         return $this->type;
     }
 
-    public function validating(FormData $data, ?EntryContract $entry = null)
-    {
-    }
-
     public function saving(FormInterface $form)
     {
     }
@@ -84,7 +80,7 @@ class FieldType implements FieldTypeInterface
         }
 
         if ($this instanceof DoesNotInteractWithTable) {
-            return;
+            return null;
         }
         $value = $entry->getAttribute($this->getColumnName());
 

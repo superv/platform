@@ -13,8 +13,6 @@ interface FieldTypeInterface
 
     public function getType(): ?string;
 
-    public function validating(FormData $data, ?EntryContract $entry = null);
-
     public function saving(FormInterface $form);
 
     public function saved(FormInterface $form);

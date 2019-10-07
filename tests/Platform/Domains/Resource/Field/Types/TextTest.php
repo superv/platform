@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\Field\FieldRules;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class TextTest extends ResourceTestCase
@@ -18,7 +19,7 @@ class TextTest extends ResourceTestCase
         $field = $res->getField('name');
 
         $this->assertEquals('text', $field->getFieldType());
-        $this->assertEquals(['max:255', 'required'], $res->parseFieldRules('name'));
+        $this->assertEquals(['max:255', 'required'], (new FieldRules($field))->get());
         $this->assertEquals('text', $field->getFieldType());
     }
 }

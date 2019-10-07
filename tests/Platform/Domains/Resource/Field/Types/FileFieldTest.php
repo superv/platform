@@ -22,6 +22,7 @@ class FileFieldTest extends ResourceTestCase
     {
         $avatar = $this->resource->getField('avatar');
         $this->assertFalse($avatar->isRequired());
+        $this->assertTrue($avatar->hasFlag('nullable'));
     }
 
     function test__type_file()

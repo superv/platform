@@ -3,6 +3,7 @@
 namespace Tests\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\Field\FieldRules;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class NumberTest extends ResourceTestCase
@@ -18,7 +19,7 @@ class NumberTest extends ResourceTestCase
         $age = $res->getField('age');
 
         $this->assertEquals('number', $age->getFieldType());
-        $this->assertEquals(['integer', 'min:0', 'max:4294967295', 'required'], $res->parseFieldRules('age'));
+        $this->assertEquals(['integer', 'min:0', 'max:4294967295', 'required'], (new FieldRules($age))->get());
         $this->assertEquals('integer', $age->getConfigValue('type'));
         $this->assertTrue($age->getConfigValue('unsigned'));
     }
@@ -35,7 +36,7 @@ class NumberTest extends ResourceTestCase
 
         $this->assertEquals('number', $height->getFieldType());
         $this->assertEquals('decimal', $height->getConfigValue('type'));
-        $this->assertEquals(['numeric', 'max:9.99', 'required'], $res->parseFieldRules('height'));
+        $this->assertEquals(['numeric', 'max:9.99', 'required'], (new FieldRules($height))->get());
 
         $this->assertEquals(3, $height->getConfigValue('total'));
         $this->assertEquals(2, $height->getConfigValue('places'));
