@@ -31,9 +31,10 @@ class FormData
      */
     protected $callbacks;
 
-    public function __construct(FormFields $fields)
+    public function __construct(FormFields $fields, array $data = [])
     {
         $this->fields = $fields;
+        $this->data = $data;
     }
 
     public function get($key = null)
