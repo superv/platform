@@ -9,6 +9,11 @@ use SuperV\Platform\Exceptions\PlatformException;
 
 class FormFactory
 {
+    public static function builder(): FormBuilderInterface
+    {
+        return FormBuilder::resolve();
+    }
+
     public static function builderFromResource($resource): FormBuilderInterface
     {
         if ($resource instanceof Resource) {

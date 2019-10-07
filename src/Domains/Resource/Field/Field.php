@@ -7,6 +7,7 @@ use Event;
 use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -131,16 +132,25 @@ class Field implements FieldInterface
         return $this;
     }
 
-    public function beforeResolvingEntry(Closure $callback)
+    public function beforeResolvingEntry(Closure $callback): FieldInterface
     {
         $this->callbacks['resolving_entry'] = $callback;
 
         return $this;
     }
 
-    public function beforeResolvingRequest(Closure $callback)
+    public function beforeResolvingRequest(Closure $callback): FieldInterface
     {
         $this->callbacks['resolving_request'] = $callback;
+
+        return $this;
+    }
+
+    public function beforeSaving(Closure $callback): FieldInterface
+    {
+        $this->callbacks['before_saving'] = $callback;
+
+        return $this;
     }
 //
 //    public function resolveRequest(Request $request, ?EntryContract $entry = null)
@@ -201,7 +211,7 @@ class Field implements FieldInterface
         $this->value = $this->resolveFromEntry($entry);
     }
 
-    public function getFieldType(): FieldType
+    public function getFieldType(): FieldTypeInterface
     {
         return $this->fieldType;
     }

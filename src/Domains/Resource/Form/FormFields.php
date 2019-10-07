@@ -5,9 +5,11 @@ namespace SuperV\Platform\Domains\Resource\Form;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\Jobs\ParseFieldRules;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormField as ConcreteFormField;
 
 class FormFields extends Collection
@@ -48,7 +50,7 @@ class FormFields extends Collection
         return parent::get($key, $default);
     }
 
-    public function rules(EntryContract $entry = null)
+    public function rules(?EntryContract $entry = null)
     {
         return $this->visible()
                     ->keyBy(function (FieldInterface $field) {
@@ -59,6 +61,36 @@ class FormFields extends Collection
                     })
                     ->filter()
                     ->all();
+    }
+
+    public function validating(FormData $data, ?EntryContract $entry = null)
+    {
+        $this->visible()
+             ->fieldTypes()
+             ->each(function (FieldTypeInterface $fieldType) use ($entry, $data) {
+                 $fieldType->validating($data, $entry);
+             });
+    }
+
+    public function saving(FormInterface $form, FormFields $fields)
+    {
+        $fields->visible()->each(function (FormFieldInterface $field) use ($form) {
+            $fieldType = $field->getFieldType();
+            $fieldType->saving($form);
+
+            if ($callback = $field->getCallback('before_saving')) {
+                app()->call($callback, ['form' => $form, 'fieldType' => $fieldType]);
+            }
+        });
+    }
+
+    public function saved(FormInterface $form)
+    {
+        $this->visible()
+             ->fieldTypes()
+             ->each(function (FieldTypeInterface $fieldType) use ($form) {
+                 $fieldType->saved($form);
+             });
     }
 
     public function mergeFields($fields)

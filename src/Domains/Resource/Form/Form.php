@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Closure;
+use Event;
 use Illuminate\Http\Request;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
@@ -65,6 +66,8 @@ class Form implements FormInterface, ProvidesUIComponent
 
     public function resolve(): FormInterface
     {
+        Event::listen($this->getIdentifier().'.events:saving', [$this->fields(), 'saving']);
+
         $this->fireEvent('resolving');
 
         if ($this->entry) {
@@ -80,7 +83,7 @@ class Form implements FormInterface, ProvidesUIComponent
         return $this;
     }
 
-    protected function fireEvent($event)
+    public function fireEvent($event)
     {
         $eventName = sprintf("%s.events:%s", $this->getIdentifier(), $event);
 
@@ -98,7 +101,13 @@ class Form implements FormInterface, ProvidesUIComponent
 
     public function submit()
     {
+//        $this->fields->saving($this);
+
+        $this->fireEvent('saving');
+
         $this->entry->fill($this->data->get());
+
+//        sv_debug('save', $this->entry->toArray());
         $this->entry->save();
 
         $this->data->callbacks()
@@ -106,6 +115,8 @@ class Form implements FormInterface, ProvidesUIComponent
                    ->map(function (Closure $callback) {
                        $callback();
                    });
+
+        $this->fields->saved($this);
     }
 
     public function addField(FormFieldInterface $field)
@@ -169,9 +180,9 @@ class Form implements FormInterface, ProvidesUIComponent
         ValidateForm::dispatch($this->fields, $this->data, $this->entry);
     }
 
-    public function setData(FormData $data): FormInterface
+    public function setData($data): FormInterface
     {
-        $this->data = $data;
+        $this->data = new FormData($this->fields, $data);
 
         return $this;
     }

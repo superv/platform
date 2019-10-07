@@ -18,6 +18,8 @@ interface FormInterface
 
     public function submit();
 
+    public function fireEvent($event);
+
     public function getIdentifier();
 
     public function setIdentifier(string $identifier): FormInterface;

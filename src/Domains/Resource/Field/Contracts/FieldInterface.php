@@ -4,7 +4,6 @@ namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Support\Identifier;
 
 interface FieldInterface
@@ -27,7 +26,7 @@ interface FieldInterface
 
     public function setLabel(string $label): FieldInterface;
 
-    public function getFieldType(): FieldType;
+    public function getFieldType(): FieldTypeInterface;
 
     public function getValue();
 
@@ -69,11 +68,11 @@ interface FieldInterface
 
     public function fillFromEntry(EntryContract $entry);
 
-    public function beforeResolvingEntry(Closure $callback);
+    public function beforeResolvingEntry(Closure $callback): FieldInterface;
 
-    public function beforeResolvingRequest(Closure $callback);
+    public function beforeResolvingRequest(Closure $callback): FieldInterface;
 
-    public function beforeSaving(Closure $callback);
+    public function beforeSaving(Closure $callback): FieldInterface;
 
     public function setCallback($trigger, $callback);
 
