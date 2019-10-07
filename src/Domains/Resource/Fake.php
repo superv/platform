@@ -44,7 +44,7 @@ class Fake
                  ->toAssoc()
                  ->all();
 
-        return array_filter_null($this->attributes);
+        return array_filter_null(array_merge($this->attributes, $overrides));
     }
 
     public static function field(FieldInterface $field)
