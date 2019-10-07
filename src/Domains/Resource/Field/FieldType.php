@@ -75,7 +75,40 @@ class FieldType implements FieldTypeInterface
     public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)
     {
         if (! $request->has($this->getName()) && ! $request->has($this->getColumnName())) {
-            return;
+            return null;
+        }
+
+        [$value, $requestValue] = $this->resolveValueFromRequest($request, $entry);
+
+//        if (! $request->has($this->getName()) && ! $request->has($this->getColumnName())) {
+//            return null;
+//        }
+//
+//        if (! $requestValue = $request->__get($this->getColumnName())) {
+//            $requestValue = $request->__get($this->getName());
+//        }
+//
+//        $value = $requestValue;
+//        if ($this instanceof HasModifier) {
+//            $value = (new Modifier($this))->set(['entry' => $entry, 'value' => $requestValue]);
+//        }
+//
+//        if ($callback = $this->field->getCallback('resolving_request')) {
+//            $value = app()->call($callback, ['request' => $request, 'value' => $value]);
+//        }
+
+        if ($value instanceof Closure) {
+            $data->callbacks()->push($value);
+            $data->toValidate($this->getColumnName(), $requestValue);
+        } else {
+            $data->set($this->getColumnName(), $value);
+        }
+    }
+
+    public function resolveValueFromRequest(Request $request, ?EntryContract $entry = null)
+    {
+        if (! $request->has($this->getName()) && ! $request->has($this->getColumnName())) {
+            return null;
         }
 
         if (! $requestValue = $request->__get($this->getColumnName())) {
@@ -91,12 +124,7 @@ class FieldType implements FieldTypeInterface
             $value = app()->call($callback, ['request' => $request, 'value' => $value]);
         }
 
-        if ($value instanceof Closure) {
-            $data->callbacks()->push($value);
-            $data->toValidate($this->getColumnName(), $requestValue);
-        } else {
-            $data->set($this->getColumnName(), $value);
-        }
+        return [$value, $requestValue];
     }
 
     public static function resolveType($type)

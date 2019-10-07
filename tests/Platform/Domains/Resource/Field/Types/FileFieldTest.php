@@ -29,22 +29,24 @@ class FileFieldTest extends ResourceTestCase
         $this->assertColumnNotExists('avatar', 'tmp_table');
         $this->assertFalse(in_array('avatar', \Schema::getColumnListing('tmp_table')));
 
-        $fake = $this->resource->fake();
+        $entry = $this->resource->fake();
         /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface $field */
-        $field = $fake->getResource()->getField('avatar');
+        $field = $entry->getResource()->getField('avatar');
 
         $this->assertEquals('file', $field->getType());
         $this->assertEquals(['disk' => 'fakedisk'], $field->getConfig());
 
         $uploadedFile = UploadedFile::fake()->image('square.png');
-        $callback = $field->resolveRequest($this->makePostRequest('', ['avatar' => $uploadedFile]), $fake);
+        $request = $this->makePostRequest('', ['avatar' => $uploadedFile]);
+        [$callback,] = $field->getFieldType()->resolveValueFromRequest($request, $entry);
+
         $this->assertInstanceOf(Closure::class, $callback);
 
         /** @var \SuperV\Platform\Domains\Media\Media $media */
         $media = $callback();
         $this->assertNotNull($media);
         $this->assertEquals('testing.tbl', $media->owner_type);
-        $this->assertNotNull((new FieldComposer($field))->forView($fake)->get('image_url'));
+        $this->assertNotNull((new FieldComposer($field))->forView($entry)->get('image_url'));
 
         $this->assertFileExists($media->filePath());
         $this->assertEquals('square.png', $media->getOriginalFilename());
