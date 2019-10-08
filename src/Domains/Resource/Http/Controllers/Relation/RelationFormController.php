@@ -44,8 +44,11 @@ class RelationFormController extends BaseApiController
 
     public function edit()
     {
-        return $this->resolveRelation()
-                    ->makeForm()
+        /** @var \SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface $form */
+        $form = $this->resolveRelation()
+                     ->makeForm();
+
+        return $form->resolve()
                     ->setUrl(str_replace_last('/edit', '', url()->current()))
                     ->makeComponent();
     }
