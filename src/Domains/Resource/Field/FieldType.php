@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Exceptions\PlatformException;
+use SuperV\Platform\Support\Composer\Payload;
 
 class FieldType implements FieldTypeInterface
 {
@@ -68,6 +69,14 @@ class FieldType implements FieldTypeInterface
     }
 
     public function saved(FormInterface $form)
+    {
+    }
+
+    public function formComposed(Payload $formPayload, FormInterface $form)
+    {
+    }
+
+    public function fieldComposed(Payload $payload, $context = null)
     {
     }
 

@@ -74,6 +74,12 @@ interface FieldInterface
 
     public function beforeSaving(Closure $callback): FieldInterface;
 
+    public function beforeCreating(Closure $callback): FieldInterface;
+
+    public function beforeUpdating(Closure $callback): FieldInterface;
+
+    public function beforeValidating(Closure $callback): FieldInterface;
+
     public function setCallback($trigger, $callback);
 
     public function getCallback($trigger);

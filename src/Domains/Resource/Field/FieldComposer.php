@@ -56,6 +56,8 @@ class FieldComposer
 
         ]))->setFilterNull(true);
 
+        $field->getFieldType()->fieldComposed($payload, $form);
+
         if ($callback = $field->getCallback('form.composing')) {
             app()->call($callback, ['form' => $form, 'entry' => $entry, 'payload' => $payload]);
         }

@@ -69,6 +69,8 @@ class Form implements FormInterface, ProvidesUIComponent
         }
 
         Event::listen($this->getIdentifier().'.events:saving', [$this->fields(), 'saving']);
+        Event::listen($this->getIdentifier().'.events:validating', [$this->fields(), 'validating']);
+        Event::listen($this->getIdentifier().'.events:composed', [$this->fields(), 'composed']);
 
         $this->fireEvent('resolving');
 
@@ -85,11 +87,13 @@ class Form implements FormInterface, ProvidesUIComponent
         return $this;
     }
 
-    public function fireEvent($event)
+    public function fireEvent($event, array $payload = [])
     {
         $eventName = sprintf("%s.events:%s", $this->getIdentifier(), $event);
 
-        $this->dispatcher->dispatch($eventName, ['form' => $this, 'fields' => $this->fields()]);
+        $payload = array_merge(['form' => $this, 'fields' => $this->fields()], $payload);
+
+        $this->dispatcher->dispatch($eventName, $payload);
     }
 
     public function save(): FormResponse
@@ -116,6 +120,15 @@ class Form implements FormInterface, ProvidesUIComponent
                    });
 
         $this->fields->saved($this);
+    }
+
+    public function compose(): Payload
+    {
+        $payload = FormComposer::make($this)->setRequest($this->request)->payload();
+
+        $this->fireEvent('composed', ['payload' => $payload]);
+
+        return $payload;
     }
 
     public function addField(FormFieldInterface $field)
@@ -203,11 +216,6 @@ class Form implements FormInterface, ProvidesUIComponent
         $this->identifier = $identifier;
 
         return $this;
-    }
-
-    public function compose(): Payload
-    {
-        return FormComposer::make($this)->setRequest($this->request)->payload();
     }
 
     public function makeComponent(): ComponentContract

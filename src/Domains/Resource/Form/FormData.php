@@ -102,6 +102,11 @@ class FormData
         $this->data[$key] = $value;
     }
 
+    public function remove($key)
+    {
+        unset($this->data[$key]);
+    }
+
     public function toValidate($key, $value)
     {
         $this->dataToValidate[$key] = $value;

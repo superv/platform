@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormData;
+use SuperV\Platform\Support\Composer\Payload;
 
 interface FieldTypeInterface
 {
@@ -16,6 +17,10 @@ interface FieldTypeInterface
     public function saving(FormInterface $form);
 
     public function saved(FormInterface $form);
+
+    public function formComposed(Payload $formPayload, FormInterface $form);
+
+    public function fieldComposed(Payload $payload, $context = null);
 
     public function setField(FieldInterface $field): void;
 

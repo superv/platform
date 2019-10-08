@@ -152,34 +152,27 @@ class Field implements FieldInterface
 
         return $this;
     }
-//
-//    public function resolveRequest(Request $request, ?EntryContract $entry = null)
-//    {
-//        if (! $request->has($this->getName())
-//            && ! $request->has($this->getColumnName())) {
-//            return null;
-//        }
-//
-//        if (! $value = $request->__get($this->getColumnName())) {
-//            $value = $request->__get($this->getName());
-//        }
-//
-//        if ($this->fieldType instanceof HasModifier) {
-//            $value = (new Modifier($this->fieldType))->set(['entry' => $entry, 'value' => $value]);
-//        } elseif ($mutator = $this->getMutator('form')) {
-//            $value = ($mutator)($value, $entry);
-//        }
-//
-//        if ($value instanceof Closure) {
-//            return $value;
-//        }
-//
-//        if ($entry && ! $this->doesNotInteractWithTable()) {
-//            $entry->setAttribute($this->getColumnName(), $value);
-//        }
-//
-//        $this->setValue($value);
-//    }
+
+    public function beforeCreating(Closure $callback): FieldInterface
+    {
+        $this->callbacks['before_creating'] = $callback;
+
+        return $this;
+    }
+
+    public function beforeUpdating(Closure $callback): FieldInterface
+    {
+        $this->callbacks['before_updating'] = $callback;
+
+        return $this;
+    }
+
+    public function beforeValidating(Closure $callback): FieldInterface
+    {
+        $this->callbacks['before_validating'] = $callback;
+
+        return $this;
+    }
 
     public function getValue()
     {
@@ -436,19 +429,9 @@ class Field implements FieldInterface
         return $this->fieldType instanceof DoesNotInteractWithTable;
     }
 
-    public function fireEvent($eventName)
-    {
-        Event::dispatch(sprintf("%s.events:%s", $this->getIdentifier(), $eventName), $this);
-    }
-
     public function searchable(): FieldInterface
     {
         return $this->addFlag('searchable');
-    }
-
-    public function setHint($hint)
-    {
-        $this->setConfigValue('hint', $hint);
     }
 
     public function isFilter()
@@ -459,5 +442,15 @@ class Field implements FieldInterface
     public function isVisible(): bool
     {
         return ! $this->isHidden();
+    }
+
+    public function fireEvent($eventName)
+    {
+        Event::dispatch(sprintf("%s.events:%s", $this->getIdentifier(), $eventName), $this);
+    }
+
+    public function setHint($hint)
+    {
+        $this->setConfigValue('hint', $hint);
     }
 }
