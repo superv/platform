@@ -82,6 +82,11 @@ trait CreatesFields
         return $this->addColumn('text', $column);
     }
 
+    public function encrypted($column): ColumnDefinition
+    {
+        return $this->string($column)->fieldType('encrypted');
+    }
+
     public function dictionary($column)
     {
         return $this->text($column)->fieldType('dictionary')->nullable();

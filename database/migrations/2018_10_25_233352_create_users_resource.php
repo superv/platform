@@ -17,7 +17,7 @@ class CreateUsersResource extends Migration
             $table->increments('id');
             $table->string('name')->nullable();
             $table->string('email')->unique();
-            $table->string('password');
+            $table->encrypted('password');
             $table->string('remember_token')->nullable();
 
             $table->hasOne('platform.profiles', 'profile', 'user_id');
