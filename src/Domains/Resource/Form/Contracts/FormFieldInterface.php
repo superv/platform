@@ -21,4 +21,9 @@ interface FormFieldInterface extends FieldInterface
     public function setTemporal($temporal);
 
     public function isTemporal(): bool;
+
+    /**
+     * Inline get underlying relation form
+     */
+    public function inline();
 }

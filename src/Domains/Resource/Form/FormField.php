@@ -3,10 +3,12 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\InlinesForm;
 use SuperV\Platform\Domains\Resource\Field\Field;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
+use SuperV\Platform\Exceptions\PlatformException;
 
 class FormField extends Field implements FormFieldInterface
 {
@@ -72,5 +74,17 @@ class FormField extends Field implements FormFieldInterface
     public static function make(array $params): FormFieldInterface
     {
         return FieldFactory::createFromArray($params, self::class);
+    }
+
+    /**
+     * Inline get underlying relation form
+     */
+    public function inline()
+    {
+        if (! $this->fieldType instanceof InlinesForm) {
+            PlatformException::runtime('Field type '.$this->type.' does not provide any form to inline');
+        }
+
+        $this->fieldType->inlineForm($this->form);
     }
 }

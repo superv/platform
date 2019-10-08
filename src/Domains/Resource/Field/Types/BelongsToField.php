@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\InlinesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
@@ -11,6 +12,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Support\Composer\Payload;
@@ -18,6 +20,7 @@ use SuperV\Platform\Support\Composer\Payload;
 class BelongsToField extends FieldType implements
     RequiresDbColumn,
     ProvidesFilter,
+    InlinesForm,
     HandlesRpc,
     HasPresenter,
     SortsQuery
@@ -27,6 +30,9 @@ class BelongsToField extends FieldType implements
 
     /** @var array */
     protected $options;
+
+    /** @var RelationConfig */
+    protected $relationConfig;
 
     protected function boot()
     {
@@ -78,11 +84,9 @@ class BelongsToField extends FieldType implements
 
     public function makeFilter(?array $params = [])
     {
-        $this->relatedResource = $this->resolveRelatedResource();
-
         $this->buildOptions($params['query'] ?? null);
 
-        return SelectFilter::make($this->getName(), $this->relatedResource->getSingularLabel())
+        return SelectFilter::make($this->getName(), $this->getRelatedResource()->getSingularLabel())
                            ->setAttribute($this->getColumnName())
                            ->setOptions($this->options)
                            ->setDefaultValue($params['default_value'] ?? null);
@@ -91,7 +95,7 @@ class BelongsToField extends FieldType implements
     public function getRpcResult(array $params, array $request = [])
     {
         if (! $method = $params['method'] ?? null) {
-            return;
+            return null;
         }
 
         if (method_exists($this, $method = 'rpc'.studly_case($method))) {
@@ -101,14 +105,14 @@ class BelongsToField extends FieldType implements
 
     public function buildOptions(?array $queryParams = [])
     {
-        $query = $this->relatedResource->newQuery();
+        $query = $this->getRelatedResource()->newQuery();
         if ($queryParams) {
             $query->where($queryParams);
         }
 
-        $entryLabel = $this->relatedResource->config()->getEntryLabel(sprintf("#%s", $this->relatedResource->getKeyName()));
+        $entryLabel = $this->getRelatedResource()->config()->getEntryLabel(sprintf("#%s", $this->getRelatedResource()->getKeyName()));
 
-        if ($entryLabelField = $this->relatedResource->fields()->getEntryLabelField()) {
+        if ($entryLabelField = $this->getRelatedResource()->fields()->getEntryLabelField()) {
             $query->orderBy($entryLabelField->getColumnName(), 'ASC');
         }
 
@@ -126,11 +130,13 @@ class BelongsToField extends FieldType implements
     /**
      * @return \SuperV\Platform\Domains\Resource\Resource
      */
-    public function resolveRelatedResource()
+    public function getRelatedResource()
     {
-        $relationConfig = RelationConfig::create($this->field->getType(), $this->field->getConfig());
+        if (! $this->relatedResource) {
+            $this->relatedResource = ResourceFactory::make($this->getRelationConfig()->getRelatedResource());
+        }
 
-        return sv_resource($relationConfig->getRelatedResource());
+        return $this->relatedResource;
     }
 
     public function getPresenter(): Closure
@@ -146,6 +152,28 @@ class BelongsToField extends FieldType implements
         };
     }
 
+    public function getRelationConfig(): RelationConfig
+    {
+        if (! $this->relationConfig) {
+            $this->relationConfig = RelationConfig::create($this->field->getType(), $this->field->getConfig());
+        }
+
+        return $this->relationConfig;
+    }
+
+    public function inlineForm(FormInterface $parent): void
+    {
+        $this->field->hide();
+
+        $parent->fields()->addFieldFromArray([
+            'type'   => 'sub_form',
+            'name'   => $this->getColumnName(),
+            'config' => [
+                'resource' => $this->getRelatedResource()->getIdentifier(),
+            ],
+        ]);
+    }
+
     protected function formComposer()
     {
         return function (Payload $payload, ?EntryContract $entry = null) {
@@ -154,7 +182,7 @@ class BelongsToField extends FieldType implements
                     $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
                 }
             }
-            $this->relatedResource = $this->resolveRelatedResource();
+            $this->relatedResource = $this->getRelatedResource();
 
             $options = $this->getConfigValue('meta.options');
             if (! is_null($options)) {
@@ -175,7 +203,7 @@ class BelongsToField extends FieldType implements
 
     protected function rpcOptions(array $params, array $request = [])
     {
-        $this->relatedResource = $this->resolveRelatedResource();
+        $this->relatedResource = $this->getRelatedResource();
 
         return $this->buildOptions($request['query'] ?? []);
     }

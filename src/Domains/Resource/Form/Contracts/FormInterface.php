@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Domains\Resource\Form\FormFields;
 use SuperV\Platform\Domains\Resource\Form\FormResponse;
+use SuperV\Platform\Support\Composer\Payload;
 
 interface FormInterface
 {
@@ -18,7 +19,9 @@ interface FormInterface
 
     public function submit();
 
-    public function fireEvent($event);
+    public function compose(): Payload;
+
+    public function fireEvent($event, array $payload = []);
 
     public function getIdentifier();
 

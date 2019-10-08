@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
+use SuperV\Platform\Domains\Resource\Form\Features\SubmitForm;
 use SuperV\Platform\Domains\Resource\Form\FormData;
+use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Support\Composer\Payload;
 
 class SubFormField extends FieldType
@@ -15,6 +18,9 @@ class SubFormField extends FieldType
 
     protected $entryId;
 
+    /** @var \SuperV\Platform\Domains\Resource\Resource */
+    protected $resource;
+
     protected function boot()
     {
         $this->field->on('form.composing', $this->composer());
@@ -22,13 +28,34 @@ class SubFormField extends FieldType
 
     public function saving(FormInterface $form)
     {
-//        sv_debug('saving', $this->formData);
+        $formSubmitter = (new SubmitForm)
+            ->setResource($this->getResource())
+            ->setFormData($this->getFormData());
+
+        if ($form->isUpdating()) {
+            $subEntryId = $form->getEntry()->getAttribute($this->getColumnName());
+            $subEntry = $this->getResource()->find($subEntryId);
+
+            $formSubmitter->setEntry($subEntry);
+        }
+
+        $subForm = $formSubmitter->submit();
+
+        if ($form->isCreating()) {
+            $form->getData()->toSave($this->getColumnName(), $subForm->getEntry()->getId());
+        }
+    }
+
+    public function resolveDataFromEntry(FormData $data, EntryContract $entry)
+    {
+        parent::resolveDataFromEntry($data, $entry);
+
+        $this->setEntryId($entry->getAttribute($this->getColumnName()));
     }
 
     public function resolveValueFromRequest(Request $request, ?EntryContract $entry = null)
     {
         $this->formData = $request->all()[$this->getColumnName()];
-
 
         return null;
     }
@@ -53,14 +80,32 @@ class SubFormField extends FieldType
         return $this;
     }
 
+    /** @return \SuperV\Platform\Domains\Resource\Resource */
+    public function getResource(): Resource
+    {
+        if (! $this->resource) {
+            $this->resource = ResourceFactory::make($this->getConfigValue('resource'));
+        }
+
+        return $this->resource;
+    }
+
+    public function getFormUrl()
+    {
+        if (! $formUrl = $this->getConfigValue('form')) {
+            $formUrl = $this->getResource()->router()->createForm();
+        }
+        if ($this->entryId) {
+            $formUrl .= '/'.$this->entryId;
+        }
+
+        return $formUrl;
+    }
+
     protected function composer()
     {
         return function (Payload $payload) {
-            $formUrl = $this->getConfigValue('form');
-            if ($this->entryId) {
-                $formUrl .= '/'.$this->entryId;
-            }
-            $payload->set('config.form', $formUrl);
+            $payload->set('config.form', $this->getFormUrl());
             $payload->set('meta.full', true);
         };
     }
