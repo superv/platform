@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\FileField;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Features\SubmitForm;
+use SuperV\Platform\Exceptions\ValidationException;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class SubmitFormTest extends ResourceTestCase
@@ -79,5 +80,22 @@ class SubmitFormTest extends ResourceTestCase
 
         $media = FileField::getMedia($entry, 'photo');
         $this->assertNull($media);
+    }
+
+    function test__validation()
+    {
+        $categories = $this->blueprints()->categories();
+
+        $entry = $categories->fake();
+
+        Storage::fake('fakedisk');
+
+        $this->expectException(ValidationException::class);
+
+        (new SubmitForm())
+            ->setResource($categories)
+            ->setFormData(['title' => null])
+            ->setEntry($entry)
+            ->submit();
     }
 }
