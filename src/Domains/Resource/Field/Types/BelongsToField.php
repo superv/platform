@@ -161,16 +161,16 @@ class BelongsToField extends FieldType implements
         return $this->relationConfig;
     }
 
-    public function inlineForm(FormInterface $parent): void
+    public function inlineForm(FormInterface $parent, array $config = []): void
     {
         $this->field->hide();
 
         $parent->fields()->addFieldFromArray([
             'type'   => 'sub_form',
             'name'   => $this->getColumnName(),
-            'config' => [
+            'config' => array_merge([
                 'resource' => $this->getRelatedResource()->getIdentifier(),
-            ],
+            ], $config),
         ]);
     }
 

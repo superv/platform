@@ -4,10 +4,12 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Features\SubmitForm;
 use SuperV\Platform\Domains\Resource\Form\FormData;
+use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Support\Composer\Payload;
@@ -39,7 +41,11 @@ class SubFormField extends FieldType
             $formSubmitter->setEntry($subEntry);
         }
 
-        $subForm = $formSubmitter->submit();
+        $subForm = $formSubmitter->getForm();
+
+        $this->bindFields($subForm, $form);
+
+        $subForm->submit();
 
         if ($form->isCreating()) {
             $form->getData()->toSave($this->getColumnName(), $subForm->getEntry()->getId());
@@ -63,6 +69,16 @@ class SubFormField extends FieldType
     public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)
     {
         return parent::resolveDataFromRequest($data, $request, $entry);
+    }
+
+    public function bindFields(FormInterface $subForm, FormInterface $parentForm)
+    {
+        // normalize
+        foreach ($this->getConfigValue('bind', []) as $parentKey => $subKey) {
+            $parentKey = is_numeric($parentKey) ? $subKey : $parentKey;
+
+            $subForm->getData()->set($subKey, $parentForm->getData()->get($parentKey));
+        }
     }
 
     /**
@@ -90,22 +106,28 @@ class SubFormField extends FieldType
         return $this->resource;
     }
 
-    public function getFormUrl()
+    public function getFormComponent()
     {
-        if (! $formUrl = $this->getConfigValue('form')) {
-            $formUrl = $this->getResource()->router()->createForm();
-        }
+        $builder = FormFactory::builderFromResource($this->getResource());
+
         if ($this->entryId) {
-            $formUrl .= '/'.$this->entryId;
+            $builder->setEntry(EntryRepository::for($this->getResource())->find($this->entryId));
         }
 
-        return $formUrl;
+        $form = $builder->resolveForm();
+
+        if ($bindFields = $this->getConfigValue('bind')) {
+            $form->fields()->hide($bindFields);
+        }
+        $composed = $form->compose();
+
+        return $composed->get('fields');
     }
 
     protected function composer()
     {
         return function (Payload $payload) {
-            $payload->set('config.form', $this->getFormUrl());
+            $payload->set('config.fields', $this->getFormComponent());
             $payload->set('meta.full', true);
         };
     }

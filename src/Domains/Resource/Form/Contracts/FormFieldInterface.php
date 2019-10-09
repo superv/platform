@@ -24,6 +24,8 @@ interface FormFieldInterface extends FieldInterface
 
     /**
      * Inline get underlying relation form
+     *
+     * @param array $config
      */
-    public function inline();
+    public function inlineForm(array $config = []);
 }

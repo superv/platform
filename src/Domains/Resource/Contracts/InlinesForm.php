@@ -6,5 +6,5 @@ use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 
 interface InlinesForm
 {
-    public function inlineForm(FormInterface $parent): void;
+    public function inlineForm(FormInterface $parent, array $config = []): void;
 }

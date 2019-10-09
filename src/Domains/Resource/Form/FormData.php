@@ -107,6 +107,16 @@ class FormData
         unset($this->data[$key]);
     }
 
+    public function merge(array $data)
+    {
+        $this->data = array_merge($this->data, $data);
+    }
+
+    public function only(array $keys)
+    {
+        return array_only($this->data, $keys);
+    }
+
     public function toValidate($key, $value)
     {
         $this->dataToValidate[$key] = $value;

@@ -78,13 +78,15 @@ class FormField extends Field implements FormFieldInterface
 
     /**
      * Inline get underlying relation form
+     *
+     * @param array $config
      */
-    public function inline()
+    public function inlineForm(array $config = [])
     {
         if (! $this->fieldType instanceof InlinesForm) {
             PlatformException::runtime('Field type '.$this->type.' does not provide any form to inline');
         }
 
-        $this->fieldType->inlineForm($this->form);
+        $this->fieldType->inlineForm($this->form, $config);
     }
 }
