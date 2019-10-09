@@ -36,13 +36,8 @@ class SubmitForm
 
     public function submit(): FormInterface
     {
-        $builder = FormFactory::builderFromResource($this->resource);
-        $builder->setEntry($this->entry ?? EntryRepository::for($this->resource)->newInstance());
+        $form = $this->getForm();
 
-        $builder->setRequest(new Request($this->formData));
-
-        $form = $builder->getForm()
-                        ->resolve();
         $form->save();
 
         return $form;
@@ -53,5 +48,18 @@ class SubmitForm
         $this->entry = $entry;
 
         return $this;
+    }
+
+    public function getForm(): FormInterface
+    {
+        $builder = FormFactory::builderFromResource($this->resource);
+        $builder->setEntry($this->entry ?? EntryRepository::for($this->resource)->newInstance());
+
+        $builder->setRequest(new Request($this->formData));
+
+        $form = $builder->getForm()
+                        ->resolve();
+
+        return $form;
     }
 }
