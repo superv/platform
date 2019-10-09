@@ -167,10 +167,11 @@ class BelongsToField extends FieldType implements
 
         $parent->fields()->addFieldFromArray([
             'type'   => 'sub_form',
-            'name'   => $this->getColumnName(),
+            'name'   => $this->getName(),
             'config' => array_merge([
-                'resource' => $this->getRelatedResource()->getIdentifier(),
-            ], $config),
+                'parent_type' => $this,
+                'resource'    => $this->getRelatedResource()->getIdentifier(),
+            ], $config, $this->getConfigValue('inline', [])),
         ]);
     }
 

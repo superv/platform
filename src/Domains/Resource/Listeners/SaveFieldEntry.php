@@ -94,7 +94,7 @@ class SaveFieldEntry
                 return;
             }
 
-            $this->column->config($relationConfig->toArray());
+            $this->column->config(array_merge($relationConfig->toArray(), $this->makeConfig($this->column)));
         }
 
         if (! $this->column->fieldType) {

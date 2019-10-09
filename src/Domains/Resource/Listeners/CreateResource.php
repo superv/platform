@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Events\TableCreatingEvent;
 use SuperV\Platform\Domains\Resource\Database\ResourceRepository;
 use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
+use SuperV\Platform\Domains\Resource\Features\UserType;
 use SuperV\Platform\Domains\Resource\Jobs\CreateNavigation;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -93,6 +94,18 @@ class CreateResource
             $this->event->blueprint->unsignedBigInteger('sort_order')->default(0);;
         }
 
+        if ($role = $this->config->getUserRole()) {
+            $this->event->blueprint->belongsTo('platform.users', 'user')
+                                   ->static()
+                                   ->config(
+                                       [
+                                           'inline' => [
+                                               'bind'      => ['name'],
+                                               'params'    => ['role' => 'manager'],
+                                               'on_create' => UserType::class,
+                                           ],
+                                       ]);
+        }
     }
 
     /**

@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Features\SubmitForm;
@@ -26,6 +27,16 @@ class SubFormField extends FieldType
     protected function boot()
     {
         $this->field->on('form.composing', $this->composer());
+    }
+
+    public function getParentType(): FieldTypeInterface
+    {
+        return $this->getConfigValue('parent_type');
+    }
+
+    public function getColumnName()
+    {
+        return $this->getParentType()->getColumnName();
     }
 
     public function saving(FormInterface $form)
@@ -50,6 +61,12 @@ class SubFormField extends FieldType
         if ($form->isCreating()) {
             $form->getData()->toSave($this->getColumnName(), $subForm->getEntry()->getId());
         }
+
+        if ($handler = $this->getConfigValue('on_create')) {
+            if (class_exists($handler)) {
+                (new $handler)->handle($subForm->getEntry(), $this->getParentType()->getConfig());
+            }
+        }
     }
 
     public function resolveDataFromEntry(FormData $data, EntryContract $entry)
@@ -61,7 +78,9 @@ class SubFormField extends FieldType
 
     public function resolveValueFromRequest(Request $request, ?EntryContract $entry = null)
     {
-        $this->formData = $request->all()[$this->getColumnName()];
+        $all = $request->all();
+
+        $this->formData = array_get($all, $this->getName());
 
         return null;
     }
