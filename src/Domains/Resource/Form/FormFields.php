@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\Resource\Field\FieldRules;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormField as ConcreteFormField;
+use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Composer\Payload;
 
 class FormFields extends Collection
@@ -156,9 +157,12 @@ class FormFields extends Collection
         return $this->addFieldFromArray($fieldEntry->toArray());
     }
 
-    public function hide(string $name): FormFields
+    public function hide($names): FormFields
     {
-        $names = func_num_args() === 1 ? [$name] : func_get_args();
+        if (! is_array($names)) {
+            $names = func_num_args() === 1 ? [$names] : func_get_args();
+        }
+
         array_map(function ($name) {
             if (! $field = $this->field($name)) {
                 PlatformException::runtime("Field [{$name}] does not exist");
