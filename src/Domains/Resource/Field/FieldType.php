@@ -54,6 +54,11 @@ class FieldType implements FieldTypeInterface
         return $this->field->getConfigValue($key, $default);
     }
 
+    public function getConfig()
+    {
+        return $this->field->getConfig();
+    }
+
     public function setConfig(array $config)
     {
         return $this->field->setConfig($config);

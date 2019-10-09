@@ -32,6 +32,8 @@ interface FieldTypeInterface
 
     public function setConfig(array $config);
 
+    public function getConfig();
+
     public function addFlag($flag);
 
     public function getColumnName();
