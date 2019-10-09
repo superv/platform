@@ -98,6 +98,16 @@ class FormFields extends Collection
         });
     }
 
+    public function resolving(FormInterface $form, FormFields $fields)
+    {
+        $fields->visible()
+               ->each(function (FormFieldInterface $field) use ($form) {
+                   if ($field->hasFlag('static')) {
+                       $field->inlineForm();
+                   }
+               });
+    }
+
     public function validating(FormInterface $form, FormFields $fields)
     {
         $fields->visible()

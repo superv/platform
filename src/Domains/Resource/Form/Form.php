@@ -64,13 +64,15 @@ class Form implements FormInterface, ProvidesUIComponent
 
     public function resolve(): FormInterface
     {
+        Event::listen($this->getIdentifier().'.events:resolving', [$this->fields(), 'resolving']);
+        Event::listen($this->getIdentifier().'.events:saving', [$this->fields(), 'saving']);
+        Event::listen($this->getIdentifier().'.events:validating', [$this->fields(), 'validating']);
+        Event::listen($this->getIdentifier().'.events:composed', [$this->fields(), 'composed']);
+
         if (! $this->data) {
             $this->data = new FormData($this->fields);
         }
 
-        Event::listen($this->getIdentifier().'.events:saving', [$this->fields(), 'saving']);
-        Event::listen($this->getIdentifier().'.events:validating', [$this->fields(), 'validating']);
-        Event::listen($this->getIdentifier().'.events:composed', [$this->fields(), 'composed']);
 
         $this->fireEvent('resolving');
 
@@ -87,13 +89,11 @@ class Form implements FormInterface, ProvidesUIComponent
         return $this;
     }
 
-    public function fireEvent($event, array $payload = [])
+    public function validate()
     {
-        $eventName = sprintf("%s.events:%s", $this->getIdentifier(), $event);
+        $this->fireEvent('validating');
 
-        $payload = array_merge(['form' => $this, 'fields' => $this->fields()], $payload);
-
-        $this->dispatcher->dispatch($eventName, $payload);
+        ValidateForm::dispatch($this->fields, $this->data, $this->entry);
     }
 
     public function save(): FormResponse
@@ -129,6 +129,15 @@ class Form implements FormInterface, ProvidesUIComponent
         $this->fireEvent('composed', ['payload' => $payload]);
 
         return $payload;
+    }
+
+    public function fireEvent($event, array $payload = [])
+    {
+        $eventName = sprintf("%s.events:%s", $this->getIdentifier(), $event);
+
+        $payload = array_merge(['form' => $this, 'fields' => $this->fields()], $payload);
+
+        $this->dispatcher->dispatch($eventName, $payload);
     }
 
     public function addField(FormFieldInterface $field)
@@ -185,13 +194,6 @@ class Form implements FormInterface, ProvidesUIComponent
         return ! $this->isUpdating();
     }
 
-    public function validate()
-    {
-        $this->fireEvent('validating');
-
-        ValidateForm::dispatch($this->fields, $this->data, $this->entry);
-    }
-
     public function setData($data): FormInterface
     {
         $this->data = new FormData($this->fields, $data);
@@ -218,14 +220,6 @@ class Form implements FormInterface, ProvidesUIComponent
         return $this;
     }
 
-    public function makeComponent(): ComponentContract
-    {
-        return Component::make('sv-form')
-                        ->setProps(
-                            $this->compose()->get()
-                        );
-    }
-
     public function getActions(): array
     {
         return $this->actions;
@@ -246,6 +240,14 @@ class Form implements FormInterface, ProvidesUIComponent
         $this->url = $url;
 
         return $this;
+    }
+
+    public function makeComponent(): ComponentContract
+    {
+        return Component::make('sv-form')
+                        ->setProps(
+                            $this->compose()->get()
+                        );
     }
 
     public function getMethod(): string
