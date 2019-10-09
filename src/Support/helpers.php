@@ -496,6 +496,13 @@ if (! function_exists('array_first')) {
         return Arr::first($array, $callback, $default);
     }
 }
+if (! function_exists('array_only')) {
+    function array_only($array, $keys)
+    {
+        return Arr::only($array, $keys);
+    }
+}
+
 if (! function_exists('array_random')) {
     function array_random($array, $number = null)
     {
