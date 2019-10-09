@@ -13,6 +13,28 @@ class Blueprints
     use ResourceTestHelpers;
 
     /** @return Resource */
+    public function clients(?Closure $callback = null)
+    {
+        $this->users();
+
+        $clients = $this->create('tbl_clients',
+            function (Blueprint $table, Config $config) use ($callback) {
+                $config->resourceKey('client');
+                $config->setNamespace('testing');
+                $config->setName('clients');
+
+                $table->increments('id');
+                $table->string('name')->entryLabel();
+                $table->belongsTo('platform.users', 'user')->static();
+
+                if ($callback) {
+                    $callback($table, $config);
+                }
+            });
+
+        return $clients;
+    }
+    /** @return Resource */
     public function users(?Closure $callback = null)
     {
         $this->groups();
