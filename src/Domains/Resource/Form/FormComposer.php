@@ -73,7 +73,7 @@ class FormComposer
                                   return $location->row;
                               }
 
-                              return 0;
+                              return 10;
                           })
                           ->map(function (FormField $field) {
                               $composed = array_filter(
