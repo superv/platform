@@ -16,7 +16,7 @@ class CreateUsersResource extends Migration
 
             $table->increments('id');
             $table->string('name')->entryLabel()->nullable();
-            $table->string('email')->unique();
+            $table->email('email')->unique();
             $table->encrypted('password');
             $table->string('remember_token')->nullable();
 
