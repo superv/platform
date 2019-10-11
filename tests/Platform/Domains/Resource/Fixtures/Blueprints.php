@@ -105,6 +105,8 @@ class Blueprints
     /** @return Resource */
     public function posts($namespace = 'testing')
     {
+        $this->users();
+
         return $this->create('tbl_posts', function (Blueprint $table, Config $config) use ($namespace) {
             $config->label('Posts');
             $config->setName('posts');

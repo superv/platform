@@ -2,7 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Hook;
 
+use Current;
 use SuperV\Platform\Contracts\Dispatcher;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\HookByRole;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\HookHandlerInterface;
 
 abstract class HookHandler implements HookHandlerInterface
@@ -62,6 +64,12 @@ abstract class HookHandler implements HookHandlerInterface
     {
         if (is_string($hookHandler)) {
             $hookHandler = app($hookHandler);
+        }
+
+        if ($hookHandler instanceof HookByRole) {
+            if (Current::hasUser() && ! Current::user()->isA($hookHandler::getRole())) {
+                return;
+            }
         }
 
         $hookHandler->{camel_case($eventType)}(...$payload);

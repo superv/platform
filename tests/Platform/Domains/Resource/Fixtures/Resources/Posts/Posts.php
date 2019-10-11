@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
 
-class PostsResource implements ConfigResolvedHook, ResourceResolvedHook, QueryResolvedHook
+class Posts implements ConfigResolvedHook, ResourceResolvedHook, QueryResolvedHook
 {
     public static $identifier = 'testing.posts';
 
@@ -20,7 +20,7 @@ class PostsResource implements ConfigResolvedHook, ResourceResolvedHook, QueryRe
 
     public function resolved(Resource $resource)
     {
-        $_SERVER['__hooks::resource.resolved'] = $resource;
+        $_SERVER['__hooks::resource.resolved'] = $resource->getIdentifier();
     }
 
     public function queryResolved($query)

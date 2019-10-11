@@ -25,7 +25,7 @@ class ResourceHookTest extends HookTestCase
         $_SERVER['__hooks::resource.resolved'] = null;
         $posts = $this->blueprints()->posts();
 
-        $this->assertEquals($posts, $_SERVER['__hooks::resource.resolved']);
+        $this->assertEquals($posts->getIdentifier(), $_SERVER['__hooks::resource.resolved']);
     }
 
     function test__query_resolved()

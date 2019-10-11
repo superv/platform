@@ -2,8 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Hook;
 
-use Log;
 use SuperV\Platform\Contracts\Dispatcher;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\HookByRole;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\HookHandlerInterface;
 use SuperV\Platform\Exceptions\PlatformException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -69,57 +70,81 @@ class HookManager
             }
 
             $className = str_replace('.php', '', $file->getFilename());
-            $hook = $namespace.'\\'.$className;
+            $hookClass = $namespace.'\\'.$className;
 
-            if (! ($identifier = isset($hook::$identifier) ? $hook::$identifier : null)) {
-                sv_console(sprintf("Identifier not found for hook [%s]", $hook));
+            if (! ($identifier = isset($hookClass::$identifier) ? $hookClass::$identifier : null)) {
+                sv_console(sprintf("Identifier not found for hook [%s]", $hookClass));
                 continue;
             }
 
-            $this->register($identifier, $hook, $className);
+            if (! class_exists($hookClass)) {
+                return sv_console("Hook handler class does not exist: ".$hookClass);
+            }
+            $this->register($identifier, $hookClass, $className);
         }
 
         return $this;
     }
 
-    public function register($identifier, $hook, $className)
+    public function register($identifier, $hookClass, $className)
     {
-        [$identifier, $hookType, $subKey] = $this->parseIdentifier($identifier, $className);
+        [$identifier, $hookType, $subKey] = $this->parseIdentifier($identifier, $hookClass, $className);
+
+        $hookHandler = $this->resolveHookHandler($hookType);
 
         if (! isset($this->map[$identifier])) {
             $this->map[$identifier] = [];
         }
 
         if (! $subKey) {
-            $this->map[$identifier][$hookType] = $hook;
+            $this->map[$identifier][$hookType] = $hookClass;
         } else {
-            if (! isset($this->map[$identifier][$hookType][$subKey])) {
-                $this->map[$identifier][$hookType][$subKey] = [];
+//            $contracts = class_implements($hook);
+//            if (in_array(HookByRole::class, $contracts)) {
+            if ($this->hasContract($hookClass, HookByRole::class)) {
+                /** @var HookByRole $hookClass */
+//                $subKey2 = $subKey.':'.$hookClass::getRole();
+                $subKey2 = $hookClass::getRole();
+            } else {
+                $subKey2 = $subKey;
             }
 
-            $this->map[$identifier][$hookType][$subKey] = $hook;
+            if (! isset($this->map[$identifier][$hookType][$subKey2])) {
+                $this->map[$identifier][$hookType][$subKey2] = [];
+            }
+
+            $this->map[$identifier][$hookType][$subKey2] = $hookClass;
         }
 
-        $this->hookType($identifier, $hookType, $hook, $subKey);
+        if ($hookHandler) {
+            $hookHandler->hook($identifier, $hookClass, $subKey);
+        }
 
         return $this;
     }
 
-    public function hookType($identifier, $type, $hook, $subKey = null)
+    public function resolveHookHandler($hookType): ?HookHandlerInterface
     {
-        if (! class_exists($hook)) {
-            return Log::error("Hook handler class does not exist: ".$hook);
+        $hookHandlerClass = $this->getHookHandlerClass($hookType);
+        if (class_exists($hookHandlerClass)) {
+            return app($hookHandlerClass);
         }
-        $hookHandler = str_replace_last("\\HookManager", "\\".studly_case($type.'_hook_handler'), get_class($this));
-        if (class_exists($hookHandler)) {
-            app($hookHandler)->hook($identifier, $hook, $subKey);
-        }
+
+        return null;
     }
 
-    /** @return static */
-    public static function resolve()
+    public function getHookHandlerClass($hookType): string
     {
-        return app(static::class);
+        $hookHandler = str_replace_last("\\HookManager", "\\".studly_case($hookType.'_hook_handler'), get_class($this));
+
+        return $hookHandler;
+    }
+
+    protected function hasContract($class, $contract): bool
+    {
+        $contracts = class_implements($class);
+
+        return in_array($contract, $contracts);
     }
 
     /**
@@ -127,7 +152,7 @@ class HookManager
      * @param $className
      * @return array
      */
-    protected function parseIdentifier($identifier, $className): array
+    protected function parseIdentifier($identifier, $hookClass, $className): array
     {
         $_identifier = sv_identifier($identifier);
         $subKey = null;
@@ -138,10 +163,22 @@ class HookManager
             $identifier = $_identifier->getParent();
         } else {
             $parts = explode('_', snake_case($className));
-            $hookType = end($parts);
-//            $hookType = 'resource';
+
+            if ($this->hasContract($hookClass, HookByRole::class)) {
+                $hookType = count($parts) === 3 ? end($parts) : 'resource';
+                $subKey = $hookClass::getRole();
+            } else {
+                $hookType = count($parts) === 2 ? end($parts) : 'resource';
+                $subKey = null;
+            }
         }
 
         return [$identifier, $hookType, $subKey];
+    }
+
+    /** @return static */
+    public static function resolve()
+    {
+        return app(static::class);
     }
 }

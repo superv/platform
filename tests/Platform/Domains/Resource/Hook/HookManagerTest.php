@@ -16,8 +16,10 @@ use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormCustom;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormDefault;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostObserver;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\Posts;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsFields;
-use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsResource;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsForm;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsManagerForm;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostUserScope;
 
 /**
@@ -70,11 +72,15 @@ class HookManagerTest extends HookTestCase
         );
 
         $this->assertEquals([
-            'resource' => PostsResource::class,
+            'resource' => Posts::class,
             'observer' => PostObserver::class,
             'fields'   => PostsFields::class,
             'scopes'   => [
                 'user' => PostUserScope::class,
+            ],
+            'forms'    => [
+                'default' => PostsForm::class,
+                'manager' => PostsManagerForm::class,
             ],
         ], $hook->get('testing.posts'));
 
@@ -109,5 +115,4 @@ class HookManagerTest extends HookTestCase
 
         (new RegisterAddonHooks)->handle(new AddonBootedEvent($addon));
     }
-
 }
