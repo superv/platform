@@ -50,6 +50,8 @@ interface FieldInterface
 
     public function isRequired();
 
+    public function readOnly(): FieldInterface;
+
     public function setNotRequired();
 
     public function isUnbound();

@@ -183,6 +183,22 @@ class FormFields extends Collection
         return $this;
     }
 
+    public function readOnly($names): FormFields
+    {
+        if (! is_array($names)) {
+            $names = func_num_args() === 1 ? [$names] : func_get_args();
+        }
+
+        array_map(function ($name) {
+            if (! $field = $this->field($name)) {
+                PlatformException::runtime("Field [{$name}] does not exist");
+            }
+            $field->readOnly();
+        }, $names);
+
+        return $this;
+    }
+
     public function field(string $name): ?FormFieldInterface
     {
         return $this->first(function (FormFieldInterface $field) use ($name) {

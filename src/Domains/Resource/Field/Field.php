@@ -419,6 +419,11 @@ class Field implements FieldInterface
         return $this->hasFlag('required');
     }
 
+    public function readOnly(): FieldInterface
+    {
+        return $this->setConfigValue('meta.disabled', true);
+    }
+
     public function isUnbound()
     {
         return $this->hasFlag('unbound');
