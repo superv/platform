@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Database\Entry;
 
+use Event;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -50,6 +51,9 @@ class EntryRepository implements EntryRepositoryInterface
     public function newQuery(): \Illuminate\Database\Eloquent\Builder
     {
         $query = $this->newInstance()->newQuery()->with($this->resource->getWith());
+
+        Event::dispatch($this->resource->getIdentifier().'.events:query_resolved', ['query'    => $query,
+                                                                                    'resource' => $this->resource]);
 
         return $query;
     }
@@ -123,6 +127,6 @@ class EntryRepository implements EntryRepositoryInterface
     /** * @return static */
     public static function resolve()
     {
-        return app(static::class);
+        return app(EntryRepositoryInterface::class);
     }
 }

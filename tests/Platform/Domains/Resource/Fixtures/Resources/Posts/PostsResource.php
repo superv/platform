@@ -3,12 +3,13 @@
 namespace Tests\Platform\Domains\Resource\Fixtures\Resources\Posts;
 
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ConfigResolvedHook;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\QueryResolvedHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ResourceResolvedHook;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
 
-class PostsResource implements ConfigResolvedHook, ResourceResolvedHook
+class PostsResource implements ConfigResolvedHook, ResourceResolvedHook, QueryResolvedHook
 {
     public static $identifier = 'testing.posts';
 
@@ -20,5 +21,10 @@ class PostsResource implements ConfigResolvedHook, ResourceResolvedHook
     public function resolved(Resource $resource)
     {
         $_SERVER['__hooks::resource.resolved'] = $resource;
+    }
+
+    public function queryResolved($query)
+    {
+        $_SERVER['__hooks::resource.query_resolved'] = $query;
     }
 }

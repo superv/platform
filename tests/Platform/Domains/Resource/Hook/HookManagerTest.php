@@ -18,6 +18,7 @@ use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsFields;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsResource;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostUserScope;
 
 /**
  * Class HookManagerTest
@@ -72,6 +73,9 @@ class HookManagerTest extends HookTestCase
             'resource' => PostsResource::class,
             'observer' => PostObserver::class,
             'fields'   => PostsFields::class,
+            'scopes'   => [
+                'user' => PostUserScope::class,
+            ],
         ], $hook->get('testing.posts'));
 
         $this->assertEquals([

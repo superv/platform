@@ -27,4 +27,14 @@ class ResourceHookTest extends HookTestCase
 
         $this->assertEquals($posts, $_SERVER['__hooks::resource.resolved']);
     }
+
+    function test__query_resolved()
+    {
+        $_SERVER['__hooks::resource.query_resolved'] = null;
+        $posts = $this->blueprints()->posts();
+        $posts->newQuery();
+
+        $this->assertNotNull($_SERVER['__hooks::resource.query_resolved']);
+    }
+
 }
