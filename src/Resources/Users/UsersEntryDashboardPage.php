@@ -13,5 +13,6 @@ class UsersEntryDashboardPage implements PageResolvedHook
     public function resolved(ResourcePage $page, Resource $resource)
     {
         $page->addAction('update_password');
+        $page->addAction('impersonate');
     }
 }
