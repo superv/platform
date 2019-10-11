@@ -27,6 +27,6 @@ class ResourceEntryAction extends Action implements RequiresResource, RequiresEn
 
     public function getRequestUrl()
     {
-        return $this->resource->route('entry.actions', $this->entry, ['action' => $this->name]);
+        return $this->entry->router()->actions($this->getName());
     }
 }
