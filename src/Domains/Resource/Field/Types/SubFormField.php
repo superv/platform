@@ -56,6 +56,7 @@ class SubFormField extends FieldType
 
         $this->bindFields($subForm, $form);
 
+        $subForm->validate();
         $subForm->submit();
 
         if ($form->isCreating()) {
