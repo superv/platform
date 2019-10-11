@@ -34,6 +34,12 @@ class FormComponent extends HelperComponent
         return $this->fields;
     }
 
+    public function assertFieldKeys($keys)
+    {
+        $diff = $this->getFields()->keys()->diff($keys);
+        $this->testCase->assertTrue($diff->isEmpty(), 'Keys: '.implode(',', $diff->all()));
+    }
+
     public function getField($name, $key = null)
     {
         $field = $this->getFields()->get($name);
@@ -64,6 +70,9 @@ class FormComponent extends HelperComponent
             dd($response->decodeResponseJson());
         }
 
-        return static::fromArray($response->decodeResponseJson('data'));
+        $self = static::fromArray($response->decodeResponseJson('data'));
+        $self->testCase = $testCase;
+
+        return $self;
     }
 }

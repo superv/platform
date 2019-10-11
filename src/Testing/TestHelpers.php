@@ -33,13 +33,13 @@ trait TestHelpers
         return $this->postJson($uri, $data, $this->getHeaderWithAccessToken());
     }
 
-    public function getJsonUser($uri): TestResponse
+    public function getJsonUser($uri, $user = null): TestResponse
     {
-        if (! $this->testUser) {
-            $this->newUser();
+        if (! $user && ! $this->testUser) {
+            $user = $this->newUser();
         }
 
-        return $this->getJson($uri, $this->getHeaderWithAccessToken());
+        return $this->getJson($uri, $this->getHeaderWithAccessToken($user));
     }
 
     public function deleteJsonUser($uri): TestResponse
@@ -271,7 +271,7 @@ trait TestHelpers
         $this->testUser->assign('user');
         $this->testUser->allow($allow);
 
-        return $this->testUser->fresh();
+        return $this->testUser = $this->testUser->fresh();
     }
 
     protected function getHeaderWithAccessToken($user = null)
