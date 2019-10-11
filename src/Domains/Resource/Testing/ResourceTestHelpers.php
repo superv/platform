@@ -192,6 +192,7 @@ trait ResourceTestHelpers
 
         $response = $this->postJsonUser($resource->router()->createForm(), $post);
 
+//        dd($resource->router()->createForm(), $post);
         return $response;
 //
 //

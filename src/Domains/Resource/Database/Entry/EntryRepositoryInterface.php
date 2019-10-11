@@ -23,4 +23,6 @@ interface EntryRepositoryInterface
     public function first(): ?EntryContract;
 
     public function find($id): ?EntryContract;
+
+    public function setResource($resource): EntryRepositoryInterface;
 }

@@ -47,7 +47,7 @@ interface FormInterface
 
     public function setRequest(?Request $request): FormInterface;
 
-    public function setData(FormData $data): FormInterface;
+    public function setData($data): FormInterface;
 
     public function getData(): FormData;
 

@@ -45,7 +45,7 @@ class ResourceConfig
     /** @var \SuperV\Platform\Domains\Resource\ResourceDriver */
     protected $driver;
 
-    protected $userRole;
+    protected $userTypeConfig;
 
     public static $__cache = [];
 
@@ -96,9 +96,9 @@ class ResourceConfig
         return $this->setIdentifier($identifier);
     }
 
-    public function hasUserWithRole($role)
+    public function hasUserWithRole($role, array $userTypeConfig = [])
     {
-        $this->userRole = $role;
+        $this->userTypeConfig = array_merge($userTypeConfig, compact('role'));
 
         return $this;
     }
@@ -291,9 +291,9 @@ class ResourceConfig
         $this->name = $name;
     }
 
-    public function getUserRole()
+    public function getUserTypeConfig()
     {
-        return $this->userRole;
+        return $this->userTypeConfig;
     }
 
     public function merge(string $otherClass)
