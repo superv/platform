@@ -6,6 +6,8 @@ class HookByRoleTest extends HookTestCase
 {
     function test__normal_user()
     {
+        $this->blueprints()->users();
+
         $this->testUser = $this->newUser(['name' => 'only user']);
         $this->be($this->testUser);
 
@@ -20,6 +22,8 @@ class HookByRoleTest extends HookTestCase
 
     function test__manager_user()
     {
+        $this->blueprints()->users();
+
         $this->testUser = $this->newUser(['name' => 'only user']);
         $this->testUser->assign('manager');
         $this->be($this->testUser);
