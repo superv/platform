@@ -2,6 +2,8 @@
 
 namespace Tests\Platform\Domains\Resource\Hook;
 
+use Illuminate\Database\Eloquent\Builder;
+
 /**
  * Class ListHookTest
  *
@@ -27,7 +29,7 @@ class ListHookTest extends HookTestCase
         $_SERVER['__hooks::list.config'] = null;
         $categories = $this->blueprints()->categories();
 
-        $this->getListComponent($categories);
+        $list = $this->getListComponent($categories);
         $this->assertEquals(['table', 'fields'], array_keys($_SERVER['__hooks::list.config']));
     }
 
@@ -42,6 +44,16 @@ class ListHookTest extends HookTestCase
 
         $listData = $list->getData();
         $this->assertEquals(2, $_SERVER['__hooks::list.config.calls']);
+    }
+
+    function test__query_resolved()
+    {
+        $_SERVER['__hooks::list.query.resolved'] = null;
+        $categories = $this->blueprints()->categories();
+        $categories->fake([], 3);
+
+        $this->getListComponent($categories)->getData();
+        $this->assertInstanceOf(Builder::class, $_SERVER['__hooks::list.query.resolved']);
     }
 
     function test__data()

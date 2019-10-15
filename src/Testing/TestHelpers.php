@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factory as ModelFactory;
 use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use PHPUnit\Framework\Assert;
 use SuperV\Platform\Domains\Auth\Contracts\Users;
 use SuperV\Platform\Domains\Auth\User;
@@ -15,6 +16,13 @@ use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 
+/**
+ * Trait TestHelpers
+ *
+ * @package SuperV\Platform\Testing
+ * @mixin \SuperV\Platform\Testing\PlatformTestCase
+ * @mixin \Illuminate\Foundation\Testing\Concerns\MakesHttpRequests
+ */
 trait TestHelpers
 {
     protected $platformInstalled = false;
@@ -23,6 +31,16 @@ trait TestHelpers
 
     /** @var \SuperV\Platform\Domains\Auth\User */
     protected $testUser;
+
+    public function json($method, $uri, array $data = [], array $headers = [])
+    {
+        $result = parent::json($method, $uri, $data, $headers);
+
+        $route = app()->make(Route::class);
+        $route->controller = null;
+
+        return $result;
+    }
 
     public function postJsonUser($uri, array $data = []): TestResponse
     {
@@ -96,9 +114,9 @@ trait TestHelpers
         }
     }
 
-    protected function getListComponent($resource): ListComponent
+    protected function getListComponent($resource, $user = null): ListComponent
     {
-        return ListComponent::get($resource, $this);
+        return ListComponent::get($resource, $this, $user);
     }
 
     protected function getFormComponent($resource, $entry = null): FormComponent

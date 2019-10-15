@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Event;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
@@ -79,10 +80,16 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     protected $orderBy;
 
-    public function __construct(TableDataProviderInterface $provider)
+    /**
+     * @var \SuperV\Platform\Contracts\Dispatcher
+     */
+    protected $dispatcher;
+
+    public function __construct(TableDataProviderInterface $provider, Dispatcher $dispatcher)
     {
         $this->provider = $provider;
         $this->options = collect();
+        $this->dispatcher = $dispatcher;
     }
 
     public function mergeFields($fields): TableInterface
@@ -262,7 +269,20 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
             'resource' => $this->resource,
         ]);
 
+//        $this->fireEvent('config');
+
         return (new TableComposer($this))->forConfig();
+    }
+
+    public function fireEvent($event, array $payload = [])
+    {
+        $eventName = sprintf("%s.events:%s", $this->getIdentifier(), $event);
+
+        $payload = array_merge($payload, ['table'    => $this,
+                                          'fields'   => $this->resource->indexFields(),
+                                          'resource' => $this->resource]);
+
+        $this->dispatcher->dispatch($eventName, $payload);
     }
 
     public function build()
@@ -272,16 +292,18 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
             'fields'   => $this->resource->indexFields(),
             'resource' => $this->resource,
         ]);
-
+//        $this->fireEvent('config');
         $fields = $this->makeFields();
 
         $query = $this->getQuery();
         if ($this->resource->isRestorable()) {
             $query->where('deleted_at', null);
         }
-        $this->resource->fire('table.querying', ['query' => $query]);
 
+        $this->fireEvent('query_resolved', ['query' => $query]);
+        $this->resource->fire('table.querying', ['query' => $query]);
         $this->fire('querying', ['query' => $query]);
+
         $this->applyFilters($query);
         $this->applyOptions($query);
 
@@ -422,12 +444,6 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     {
     }
 
-    /** * @return static */
-    public static function resolve()
-    {
-        return app(TableInterface::class);
-    }
-
     protected function makeTokens(): array
     {
         return [];
@@ -519,5 +535,11 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     protected function getRequest()
     {
         return $this->request;
+    }
+
+    /** * @return static */
+    public static function resolve()
+    {
+        return app(TableInterface::class);
     }
 }

@@ -4,11 +4,12 @@ namespace Tests\Platform\Domains\Resource\Fixtures\Resources;
 
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ListConfigHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ListDataHook;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\ListQueryResolvedHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ListResolvedHook;
 use SuperV\Platform\Domains\Resource\Resource\IndexFields;
 use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 
-class CategoryList implements ListResolvedHook, ListConfigHook, ListDataHook
+class CategoryList implements ListResolvedHook, ListConfigHook, ListDataHook, ListQueryResolvedHook
 {
     public static $identifier = 'testing.categories.lists:default';
 
@@ -30,5 +31,10 @@ class CategoryList implements ListResolvedHook, ListConfigHook, ListDataHook
     public function data(TableInterface $table)
     {
         $_SERVER['__hooks::list.data'] = ['rows' => $table->getRows()];
+    }
+
+    public function queryResolved($query, TableInterface $table)
+    {
+        $_SERVER['__hooks::list.query.resolved'] = $query;
     }
 }

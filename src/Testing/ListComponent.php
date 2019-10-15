@@ -2,29 +2,38 @@
 
 namespace SuperV\Platform\Testing;
 
-use SuperV\Platform\Domains\Resource\Resource;
-use Tests\Platform\TestCase;
+use SuperV\Platform\Domains\Auth\Contracts\User;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class ListComponent extends HelperComponent
 {
-    /** @var \Tests\Platform\TestCase */
+    /** @var PlatformTestCase */
     protected $testCase;
+
+    protected $user;
 
     public function assertDataUrl($url)
     {
-        TestCase::assertEquals($url, $this->getDataUrl());
+        PlatformTestCase::assertEquals($url, $this->getDataUrl());
     }
 
     public function getData()
     {
-        $response = $this->testCase->getJsonUser($this->getDataUrl());
+//        Config::set('app.debug', true);
+        $response = $this->testCase->getJsonUser($this->getDataUrl(), $this->user);
+
+//        dd($response->decodeResponseJson());
 
         return new ListData($response->decodeResponseJson('data'), $this->testCase);
     }
 
-    public static function get(Resource $resource, TestCase $testCase)
+    public static function get($resource, PlatformTestCase $testCase, User $user = null)
     {
-        $response = $testCase->getJsonUser($resource->router()->defaultList());
+        if (is_string($resource)) {
+            $resource = ResourceFactory::make($resource);
+        }
+
+        $response = $testCase->getJsonUser($resource->router()->defaultList(), $user);
 
         if (! $response->isOk()) {
             dd($response->content());
@@ -32,6 +41,7 @@ class ListComponent extends HelperComponent
 
         $list = static::fromArray($response->decodeResponseJson('data'));
         $list->testCase = $testCase;
+        $list->user = $user;
 
         return $list;
     }
@@ -54,7 +64,7 @@ class ListData
      */
     protected $testCase;
 
-    public function __construct(array $data = [], TestCase $testCase)
+    public function __construct(array $data = [], $testCase)
     {
         $this->data = $data;
         $this->testCase = $testCase;
@@ -62,11 +72,11 @@ class ListData
 
     public function rowCount()
     {
-        return count($this->rows());
+        return $this->rows()->count();
     }
 
     public function rows()
     {
-        return $this->data['rows'];
+        return collect($this->data['rows']);
     }
 }

@@ -67,7 +67,11 @@ abstract class HookHandler implements HookHandlerInterface
         }
 
         if ($hookHandler instanceof HookByRole) {
-            if (Current::hasUser() && ! Current::user()->isA($hookHandler::getRole())) {
+            if (! Current::hasUser()) {
+                return;
+            }
+
+            if (! Current::user()->isA($hookHandler::getRole())) {
                 return;
             }
         }
