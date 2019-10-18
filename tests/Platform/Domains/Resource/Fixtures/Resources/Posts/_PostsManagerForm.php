@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\Form\FormFields;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\FormResolvingHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\HookByRole;
 
-class PostsManagerForm implements FormResolvingHook, HookByRole
+class _PostsManagerForm implements FormResolvingHook, HookByRole
 {
     public static $identifier = 'testing.posts.forms:default';
 

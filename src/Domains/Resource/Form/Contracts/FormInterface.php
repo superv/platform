@@ -41,6 +41,8 @@ interface FormInterface
 
     public function fields(): FormFields;
 
+    public function isPublic();
+
     public function isCreating();
 
     public function isUpdating();
@@ -58,4 +60,6 @@ interface FormInterface
     public function getUrl();
 
     public function setActions(array $actions): void;
+
+    public function setPublic(bool $public): void;
 }

@@ -178,7 +178,7 @@ class BelongsToField extends FieldType implements
 
     protected function formComposer()
     {
-        return function (Payload $payload, ?EntryContract $entry = null) {
+        return function (Payload $payload, FormInterface $form, ?EntryContract $entry = null) {
             if ($entry) {
                 if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
                     $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
@@ -192,7 +192,8 @@ class BelongsToField extends FieldType implements
             } else {
 //                $url = sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
 
-                $url = sv_route('sv::forms.fields', [
+                $route = $form->isPublic() ? 'sv::public_forms.fields' : 'sv::forms.fields';
+                $url = sv_route($route, [
                     'form'  => $this->field->getForm()->getIdentifier(),
                     'field' => $this->getName(),
                     'rpc'   => 'options',

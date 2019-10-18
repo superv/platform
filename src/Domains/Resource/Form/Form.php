@@ -55,6 +55,8 @@ class Form implements FormInterface, ProvidesUIComponent
     /** @var \SuperV\Platform\Domains\Resource\Form\FormData */
     protected $data;
 
+    protected $public = false;
+
     public function __construct(Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
@@ -265,5 +267,15 @@ class Form implements FormInterface, ProvidesUIComponent
         $this->title = $title;
 
         return $this;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->public;
+    }
+
+    public function setPublic(bool $public): void
+    {
+        $this->public = $public;
     }
 }

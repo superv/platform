@@ -16,7 +16,7 @@ interface FormBuilderInterface
 
     public function getResource(): ?Resource;
 
-    public function getFormEntry(): FormModel;
+    public function getFormEntry(): ?FormModel;
 
     public function getEntry(): ?EntryContract;
 

@@ -54,6 +54,10 @@ class FormBuilder implements FormBuilderInterface
         $this->form->setIdentifier($this->getIdentifier());
         $this->form->setUrl(sv_url()->path());
 
+        if ($this->getFormEntry() && $this->getFormEntry()->isPublic()) {
+            $this->form->setPublic(true);
+        }
+
         $this->makeFormFields();
 
         $this->form->setEntry($this->entry);
@@ -112,7 +116,7 @@ class FormBuilder implements FormBuilderInterface
         return $this->formEntry->getOwnerResource();
     }
 
-    public function getFormEntry(): FormModel
+    public function getFormEntry(): ?FormModel
     {
         return $this->formEntry;
     }

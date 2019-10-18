@@ -15,11 +15,11 @@ use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFields;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormCustom;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormDefault;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersObserver;
+use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\_PostsManagerForm;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostObserver;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\Posts;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsFields;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsForm;
-use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostsManagerForm;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostUserScope;
 
 /**
@@ -30,7 +30,7 @@ use Tests\Platform\Domains\Resource\Fixtures\Resources\Posts\PostUserScope;
  */
 class HookManagerTest extends HookTestCase
 {
-    function test__registers_hooks_globally()
+    function __registers_hooks_globally()
     {
         $hook = HookManager::resolve();
         $hook->register('sv.users', stdClass::class, 'UsersConfig');
@@ -56,7 +56,7 @@ class HookManagerTest extends HookTestCase
         $this->assertEquals(stdClass::class, $hook->get('sv.users', 'config'));
     }
 
-    function test__scan_path_for_hooks()
+    function __scan_path_for_hooks()
     {
         $hook = HookManager::resolve();
 
@@ -80,7 +80,7 @@ class HookManagerTest extends HookTestCase
             ],
             'forms'    => [
                 'default' => PostsForm::class,
-                'manager' => PostsManagerForm::class,
+                'manager' => _PostsManagerForm::class,
             ],
         ], $hook->get('testing.posts'));
 

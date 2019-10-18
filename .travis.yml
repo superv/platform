@@ -4,16 +4,9 @@ php:
   - 7.2
   - 7.3
 
-env:
-  - LARAVEL="6.*" TESTBENCH="4.*"
-
-install:
-  - composer require orchestra/testbench:${TESTBENCH}
-  - composer require laravel/framework:${LARAVEL}
-
 before_script:
-  - phpenv config-rm xdebug.ini || true
-  - travis_retry composer install --prefer-source --no-interaction --dev
+  - phpenv config-rm xdebug.ini
+  - travis_retry composer install --prefer-source --no-interaction
 
 script:
   - vendor/bin/phpunit --exclude-group excluded

@@ -18,6 +18,8 @@ class HookManager
      */
     protected $dispatcher;
 
+    protected $callbacks = [];
+
     protected static $locks = [];
 
     public function __construct(Dispatcher $dispatcher)
@@ -56,12 +58,15 @@ class HookManager
      * Scan path for hooks
      *
      * @param $path
+     * @return \SuperV\Platform\Domains\Resource\Hook\HookManager
      */
     public function scan($path): HookManager
     {
         if (! file_exists($path)) {
             PlatformException::runtime(sprintf("Path not found: %s", $path));
         }
+
+        $this->callbacks = [];
 
         /** @var SplFileInfo $file */
         foreach ((new Finder)->in($path)->files() as $file) {
@@ -80,7 +85,20 @@ class HookManager
             if (! class_exists($hookClass)) {
                 return sv_console("Hook handler class does not exist: ".$hookClass);
             }
-            $this->register($identifier, $hookClass, $className);
+            if ($this->hasContract($hookClass, HookByRole::class)) {
+                $this->callbacks[] = function () use ($className, $hookClass, $identifier) {
+                    $this->register($identifier, $hookClass, $className);
+                };
+            } else {
+                $this->register($identifier, $hookClass, $className);
+            }
+        }
+
+        /**
+         * Register deferred hooks
+         */
+        foreach ($this->callbacks as $callback) {
+            $callback();
         }
 
         return $this;
@@ -92,26 +110,26 @@ class HookManager
 
         $hookHandler = $this->resolveHookHandler($hookType);
 
-        if (! isset($this->map[$identifier])) {
-            $this->map[$identifier] = [];
-        }
+//        if (! isset($this->map[$identifier])) {
+//            $this->map[$identifier] = [];
+//        }
 
-        if (! $subKey) {
-            $this->map[$identifier][$hookType] = $hookClass;
-        } else {
-            if ($this->hasContract($hookClass, HookByRole::class)) {
-                /** @var HookByRole $hookClass */
-                $subKey2 = $hookClass::getRole();
-            } else {
-                $subKey2 = $subKey;
-            }
-
-            if (! isset($this->map[$identifier][$hookType][$subKey2])) {
-                $this->map[$identifier][$hookType][$subKey2] = [];
-            }
-
-            $this->map[$identifier][$hookType][$subKey2] = $hookClass;
-        }
+//        if (! $subKey) {
+//            $this->map[$identifier][$hookType] = $hookClass;
+//        } else {
+//            if ($this->hasContract($hookClass, HookByRole::class)) {
+//                /** @var HookByRole $hookClass */
+//                $subKey2 = $subKey.':'. $hookClass::getRole();
+//            } else {
+//                $subKey2 = $subKey;
+//            }
+//
+//            if (! isset($this->map[$identifier][$hookType][$subKey2])) {
+//                $this->map[$identifier][$hookType][$subKey2] = [];
+//            }
+//
+//            $this->map[$identifier][$hookType][$subKey2] = $hookClass;
+//        }
 
         if ($hookHandler) {
             $hookHandler->hook($identifier, $hookClass, $subKey);
