@@ -99,11 +99,8 @@ class HookManager
         if (! $subKey) {
             $this->map[$identifier][$hookType] = $hookClass;
         } else {
-//            $contracts = class_implements($hook);
-//            if (in_array(HookByRole::class, $contracts)) {
             if ($this->hasContract($hookClass, HookByRole::class)) {
                 /** @var HookByRole $hookClass */
-//                $subKey2 = $subKey.':'.$hookClass::getRole();
                 $subKey2 = $hookClass::getRole();
             } else {
                 $subKey2 = $subKey;

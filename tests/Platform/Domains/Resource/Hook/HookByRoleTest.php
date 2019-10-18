@@ -17,7 +17,7 @@ class HookByRoleTest extends HookTestCase
         $this->assertEquals($posts->getIdentifier(), $_SERVER['__hooks::resource.resolved']);
 
         $this->getFormComponent($posts);
-        $this->assertEquals('default', $_SERVER['__hooks::form.default.resolving']);
+        $this->assertEquals('PostsForm', $_SERVER['__hooks::form.default.resolving']);
     }
 
     function test__manager_user()
@@ -33,6 +33,6 @@ class HookByRoleTest extends HookTestCase
         $this->assertEquals($posts->getIdentifier().'.role:manager', $_SERVER['__hooks::resource.manager.resolved']);
 
         $this->getFormComponent($posts);
-        $this->assertEquals('default.manager', $_SERVER['__hooks::form.default.resolving']);
+        $this->assertEquals('PostsForm.PostsManagerForm', $_SERVER['__hooks::form.default.resolving']);
     }
 }

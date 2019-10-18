@@ -13,7 +13,7 @@ class PostsManagerForm implements FormResolvingHook, HookByRole
 
     public function resolving(FormInterface $form, FormFields $fields)
     {
-        $_SERVER['__hooks::form.default.resolving'] .= '.manager';
+        $_SERVER['__hooks::form.default.resolving'] .= '.PostsManagerForm';
     }
 
     public static function getRole(): string

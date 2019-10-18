@@ -60,11 +60,9 @@ abstract class HookHandler implements HookHandlerInterface
         );
     }
 
-    protected function handle($hookHandler, $eventType, $payload)
+    protected function handle($hookHandlerClass, $eventType, $payload)
     {
-        if (is_string($hookHandler)) {
-            $hookHandler = app($hookHandler);
-        }
+        $hookHandler = app($hookHandlerClass);
 
         if ($hookHandler instanceof HookByRole) {
             if (! Current::hasUser()) {

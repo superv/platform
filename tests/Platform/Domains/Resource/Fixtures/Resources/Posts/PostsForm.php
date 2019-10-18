@@ -12,6 +12,6 @@ class PostsForm implements FormResolvingHook
 
     public function resolving(FormInterface $form, FormFields $fields)
     {
-        $_SERVER['__hooks::form.default.resolving'] = 'default';
+        $_SERVER['__hooks::form.default.resolving'] = 'PostsForm';
     }
 }

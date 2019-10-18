@@ -91,8 +91,9 @@ class FormModel extends Entry
 
     public function getUrl()
     {
-        return sv_route('sv::forms.display', ['form' => $this->getIdentifier()]);
-        return sprintf("sv/forms/%s", $this->uuid);
+        $route = $this->isPublic() ? 'sv::public_forms.display' : 'sv::forms.display';
+
+        return sv_route($route, ['form' => $this->getIdentifier()]);
     }
 
     public function getTitle()
