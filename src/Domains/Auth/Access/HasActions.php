@@ -19,6 +19,11 @@ trait HasActions
         return $this->roles;
     }
 
+    public function getRoleList(): array
+    {
+        return $this->getRoles()->pluck('slug')->all();
+    }
+
     public function roles()
     {
         return $this->morphToMany(Role::class, 'owner', 'sv_auth_assigned_roles');
