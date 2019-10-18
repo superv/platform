@@ -69,7 +69,9 @@ class Blueprint extends LaravelBlueprint
         $this->postBuildCallbacks = collect();
         $this->columns = collect($this->columns)->keyBy('name');
 
-        DB::beginTransaction();
+        if (DB::transactionLevel() === 0) {
+            DB::beginTransaction();
+        }
         if ($this->creating()) {
             TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->resourceConfig(), Current::migrationScope(), $this);
         } else {
@@ -97,8 +99,9 @@ class Blueprint extends LaravelBlueprint
         if ($this->creating()) {
             TableCreatedEvent::dispatch($this->tableName(), $this->resourceConfig(), $this->columns);
         }
-
-        DB::commit();
+        if (DB::transactionLevel() === 0) {
+            DB::commit();
+        }
     }
 
     /**

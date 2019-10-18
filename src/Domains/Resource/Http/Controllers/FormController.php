@@ -6,6 +6,7 @@ use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormBuilderInterface;
 use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Http\Controllers\BaseController;
@@ -54,10 +55,6 @@ class FormController extends BaseController
         $field = FieldFactory::createFromEntry($fieldEntry, FormField::class);
         $field->setForm($form);
 
-//        if ($resource = $builder->getResource()) {
-//            $field->setResource($resource);
-//        }
-
         if (! $rpcMethod = $this->route->parameter('rpc')) {
             return [
                 'data' => (new FieldComposer($field))->forForm()->get(),
@@ -72,12 +69,8 @@ class FormController extends BaseController
         abort(404);
     }
 
-    /**
-     * @param $formIdentifier
-     * @return \SuperV\Platform\Domains\Resource\Form\Contracts\FormBuilderInterface
-     */
     protected function resolveFormBuilder($formIdentifier
-    ): \SuperV\Platform\Domains\Resource\Form\Contracts\FormBuilderInterface {
+    ): FormBuilderInterface {
         $builder = FormFactory::builderFromFormEntry($formIdentifier);
 
         if (! $builder->getFormEntry()->isPublic()) {

@@ -178,6 +178,7 @@ class SaveFieldEntry
         $this->field = $this->repository
             ->getResourceField($this->resource, $column->getFieldName())
             ->fill([
+                'label'       => $column->label ?: str_unslug($column->getFieldName()),
                 'type'        => $column->fieldType,
                 'column_type' => $column->type,
                 'flags'       => $column->flags,

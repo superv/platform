@@ -10,7 +10,7 @@ interface FieldInterface
 {
     public function getName();
 
-//    public function getResource(): Resource;
+    public function getLabel(): string;
 
     public function getIdentifier();
 
@@ -22,7 +22,6 @@ interface FieldInterface
 
     public function getColumnName(): ?string;
 
-    public function getLabel(): string;
 
     public function setLabel(string $label): FieldInterface;
 

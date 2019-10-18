@@ -30,6 +30,14 @@ trait TestHelpers
     /** @var \SuperV\Platform\Domains\Auth\User */
     protected $testUser;
 
+    /**
+     *  Visit the given URI with a POST request as a User
+     *  expecting a JSON response
+     *
+     * @param       $uri
+     * @param array $data
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
     public function postJsonUser($uri, array $data = []): TestResponse
     {
         if (! $this->testUser) {
@@ -39,6 +47,14 @@ trait TestHelpers
         return $this->postJson($uri, $data, $this->getHeaderWithAccessToken());
     }
 
+    /**
+     *  Visit the given URI with a GET request as a User
+     *  expecting a JSON response
+     *
+     * @param      $uri
+     * @param null $user
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
     public function getJsonUser($uri, $user = null): TestResponse
     {
         if (! $user && ! $this->testUser) {

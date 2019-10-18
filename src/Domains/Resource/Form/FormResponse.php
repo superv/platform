@@ -74,11 +74,10 @@ class FormResponse implements Responsable
 
     protected function getMessage()
     {
-        $transKey = $this->form->isUpdating() ? ':Resource :Entry was updated' : ':Resource :Entry was created';
+        $transKey = $this->form->isUpdating() ? ':Entry was updated' : ':Entry was created';
 
         $transData = [
             'Entry'    => $this->resource->getEntryLabel($this->entry),
-            'Resource' => $this->resource->getLabel(),
         ];
 
         return __($transKey, $transData);

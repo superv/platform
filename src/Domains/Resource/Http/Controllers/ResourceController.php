@@ -15,11 +15,7 @@ class ResourceController extends BaseApiController
 
         $this->entry->delete();
 
-        $message = __(':Resource :Entry was deleted',
-            [
-                'Entry'    => $resource->getEntryLabel($this->entry),
-                'Resource' => $resource->getSingularLabel(),
-            ]);
+        $message = __(':Entry was deleted', ['Entry' => $resource->getEntryLabel($this->entry)]);
 
         return ['data' => ['message' => $message]];
     }

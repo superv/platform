@@ -120,6 +120,13 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this->nullable();
     }
 
+    public function label($label)
+    {
+        $this->offsetSet('label', $label);
+
+        return $this;
+    }
+
     public function unit($unit)
     {
         return $this->setConfigValue('unit', $unit);

@@ -129,6 +129,7 @@ class BelongsToField extends FieldType implements
 
     /**
      * @return \SuperV\Platform\Domains\Resource\Resource
+     * @throws \Exception
      */
     public function getRelatedResource()
     {

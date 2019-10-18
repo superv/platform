@@ -108,21 +108,26 @@ class Field implements FieldInterface
 
     public function getLabel(): string
     {
-        if ($this->resource) {
-            $key = $this->resource->getNamespace().'.resources.'.$this->resource->getIdentifier().'.fields.'.$this->name;
-            $value = trans($key);
-            if ($value !== $key) {
-                return $value['label'] ?? $value;
-            }
-        }
+//        if ($this->resource) {
+//            $key = $this->resource->getNamespace().'.resources.'.$this->resource->getIdentifier().'.fields.'.$this->name;
+//            $value = trans($key);
+//            if ($value !== $key) {
+//                return $value['label'] ?? $value;
+//            }
+//        }
+
+//        return __($this->label);
 
         $label = __($this->label ?? str_unslug($this->getName()));
 
-        if (is_string($label)) {
-            return $label;
-        }
-
-        return str_unslug($this->getName());
+//
+        return $label;
+//
+//        if (is_string($label)) {
+//            return $label;
+//        }
+//
+//        return str_unslug($this->getName());
     }
 
     public function setLabel(string $label): FieldInterface
@@ -328,16 +333,6 @@ class Field implements FieldInterface
     {
         $this->defaultValue = $defaultValue;
     }
-
-//    public function getResource(): Resource
-//    {
-//        return $this->resource;
-//    }
-//
-//    public function setResource(\SuperV\Platform\Domains\Resource\Resource $resource): void
-//    {
-//        $this->resource = $resource;
-//    }
 
     public function setNotRequired()
     {

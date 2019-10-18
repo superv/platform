@@ -40,6 +40,10 @@ class FieldRepository
             ValidationException::throw('identifier', 'Field identifier format not valid: ['.$identifier.']');
         }
 
+        if (! isset($attributes['label'])) {
+            $attributes['label'] = str_unslug($attributes['name']);
+        }
+
         $field = $this->model->newQuery()->create($attributes);
 
         if (! starts_with($identifier, 'platform.')) {
