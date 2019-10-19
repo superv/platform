@@ -4,6 +4,7 @@ namespace SuperV\Platform\Testing;
 
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\UI\Components\Component;
 
 class ListComponent extends HelperComponent
 {
@@ -12,9 +13,67 @@ class ListComponent extends HelperComponent
 
     protected $user;
 
+    /** @var \Illuminate\Support\Collection */
+    protected $fields;
+
+    /** @var \Illuminate\Support\Collection */
+    protected $rowActions;
+
     public function assertDataUrl($url)
     {
         PlatformTestCase::assertEquals($url, $this->getDataUrl());
+    }
+
+    public function getFieldCount()
+    {
+        return $this->getFields()->count();
+    }
+
+    public function getFields()
+    {
+        if (! $this->fields) {
+            $this->fields = collect($this->getProp('config.fields'))
+                ->keyBy(function ($field) {
+                    return $field['name'];
+                });
+        }
+
+        return $this->fields;
+    }
+
+    public function getRowActions()
+    {
+        if (! $this->rowActions) {
+            $this->rowActions = collect($this->getProp('config.row_actions'))
+                ->map(function($action) {
+                    return HelperComponent::fromArray($action);
+                })
+                ->keyBy(function (HelperComponent $action) {
+                    return $action->getProp('name');
+                });
+        }
+
+        return $this->rowActions;
+    }
+
+    public function assertFieldKeys($keys)
+    {
+        $diff = $this->getFields()->keys()->diff($keys);
+        $this->testCase->assertTrue($diff->isEmpty(), 'Keys: '.implode(',', $diff->all()));
+    }
+
+    public function getField($name, $key = null)
+    {
+        $field = $this->getFields()->get($name);
+        if (is_null($key)) {
+            return $field;
+        }
+
+        return array_get($field, $key);
+    }
+    public function getRowAction($name )
+    {
+        return $this->getRowActions()->get($name);
     }
 
     public function getData()

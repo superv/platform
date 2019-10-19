@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
-interface GhostField extends FieldInterface
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
+
+interface GhostField extends FormFieldInterface
 {
 }

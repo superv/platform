@@ -22,6 +22,7 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
     protected function boot()
     {
         $this->field->on('form.composing', $this->formComposer());
+        $this->field->addFlag('view.hide');
     }
 
     public function getModifier(): Closure

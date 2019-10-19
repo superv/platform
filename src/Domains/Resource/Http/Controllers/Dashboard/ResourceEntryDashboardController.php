@@ -33,19 +33,23 @@ class ResourceEntryDashboardController extends BaseApiController
             'name' => $resource->getIdentifier().':'.$this->entry->getId(),
         ]));
 
-        $page->addSection([
-            'identifier' => 'view',
-            'title'      => __('View'),
-            'url'        => $this->entry->router()->view(),
-            'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
-        ]);
+        if ($page->isViewable()) {
+            $page->addSection([
+                'identifier' => 'view',
+                'title'      => __('View'),
+                'url'        => $this->entry->router()->view(),
+                'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
+            ]);
+        }
 
-        $page->addSection([
-            'identifier' => 'edit',
-            'title'      => __('Edit'),
-            'url'        => $this->entry->router()->updateForm(),
-            'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
-        ]);
+        if ($page->isEditable()) {
+            $page->addSection([
+                'identifier' => 'edit',
+                'title'      => __('Edit'),
+                'url'        => $this->entry->router()->updateForm(),
+                'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
+            ]);
+        }
 
         $page->setMeta('url', 'sv/res/'.$resource->getIdentifier().'/'.$this->entry->getId());
 

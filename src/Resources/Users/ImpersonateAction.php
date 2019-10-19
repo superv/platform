@@ -53,7 +53,7 @@ class ImpersonateAction extends ResourceEntryAction implements HandlesRequests
     protected function getLoginUrl()
     {
         if (app()->environment() === 'local') {
-            return 'http://'.env('SV_HOSTNAME').':8090/?token='.$this->getToken();
+            return 'http://'.env('SV_ACP_HOST').'/?token='.$this->getToken();
         }
 
         return 'http://supreme.dev.io/superv?token='.$this->getToken();

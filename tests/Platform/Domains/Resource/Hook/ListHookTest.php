@@ -2,6 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource\Hook;
 
+use Config;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -16,6 +17,7 @@ class ListHookTest extends HookTestCase
 
     function test_resolved()
     {
+        Config::set('app.debug', true);
         $_SERVER['__hooks::list.resolved'] = null;
         $categories = $this->blueprints()->categories();
 
@@ -24,7 +26,7 @@ class ListHookTest extends HookTestCase
         $categoryList->assertDataUrl($_SERVER['__hooks::list.resolved']);
     }
 
-    function test__config()
+    function  __config()
     {
         $_SERVER['__hooks::list.config'] = null;
         $categories = $this->blueprints()->categories();
@@ -33,7 +35,7 @@ class ListHookTest extends HookTestCase
         $this->assertEquals(['table', 'fields'], array_keys($_SERVER['__hooks::list.config']));
     }
 
-    function test__config_is_also_hooked_before_data()
+    function  __config_is_also_hooked_before_data()
     {
         $_SERVER['__hooks::list.config.calls'] = 0;
         $categories = $this->blueprints()->categories();

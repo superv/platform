@@ -3,16 +3,16 @@
 namespace SuperV\Platform\Resources;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Hook\Contracts\ListConfigHook;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\ListResolvedHook;
 use SuperV\Platform\Domains\Resource\Resource\IndexFields;
 use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 use SuperV\Platform\Support\Composer\Payload;
 
-class MediaList implements ListConfigHook
+class MediaList implements ListResolvedHook
 {
     public static $identifier = 'platform.media.lists:default';
 
-    public function config(TableInterface $table, IndexFields $fields)
+    public function resolved(TableInterface $table, IndexFields $fields)
     {
         $fields->hideLabel();
 

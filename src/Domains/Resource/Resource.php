@@ -198,11 +198,6 @@ class Resource implements
         return $this->fields()->getAll();
     }
 
-    public function provideFields(): Collection
-    {
-        return $this->getFields();
-    }
-
     public function getField($name): ?FieldInterface
     {
         return $this->fields()->get($name);
@@ -364,11 +359,12 @@ class Resource implements
             $filters->push((new SearchFilter)->setFields($searchables));
         }
 
-        $this->getRelations()->filter(function (Relation $relation) {
-            return $relation->hasFlag('filter') && $relation instanceof ProvidesFilter;
-        })->map(function (ProvidesFilter $relation) use ($filters) {
-            $filters->push($relation->makeFilter());
-        });
+        $this->getRelations()
+             ->filter(function (Relation $relation) {
+                 return $relation->hasFlag('filter') && $relation instanceof ProvidesFilter;
+             })->map(function (ProvidesFilter $relation) use ($filters) {
+                $filters->push($relation->makeFilter());
+            });
 
         $this->fields()
              ->getFilters()
@@ -387,7 +383,7 @@ class Resource implements
 
         $this->fire('table.resolved', ['table' => $table]);
 
-        $this->fireEvent('lists:default.events:resolved', ['table' => $table]);
+        $this->fireEvent('lists:default.events:resolved', ['table' => $table, 'fields' => $this->indexFields()]);
 
         return $table;
     }
@@ -498,5 +494,10 @@ class Resource implements
     {
         $eventName = $this->getIdentifier().'.'.$event;
         app('events')->dispatch($eventName, $payload);
+    }
+
+    public function provideFields(): Collection
+    {
+        return $this->getFields();
     }
 }

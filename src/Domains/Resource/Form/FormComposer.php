@@ -108,7 +108,7 @@ class FormComposer
                     'default'    => true,
                     'identifier' => 'save',
                     'title'      => __('Save'),
-                    'color'      => 'primary',
+                    'color'      => 'secondary',
                 ],
             ];
         }
@@ -128,7 +128,7 @@ class FormComposer
                 'default'    => true,
                 'identifier' => 'create',
                 'title'      => __('Create'),
-                'color'      => 'success',
+                'color'      => 'primary',
             ],
         ];
     }

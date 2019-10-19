@@ -11,6 +11,7 @@ use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
 use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
 use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
+use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
@@ -102,6 +103,13 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     public function mergeFilters($filters): TableInterface
     {
         $this->mergeFilters = $filters;
+
+        return $this;
+    }
+
+    public function addFilter(Filter $filter): TableInterface
+    {
+        $this->mergeFilters[] = $filter;
 
         return $this;
     }
@@ -263,35 +271,24 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     public function composeConfig()
     {
-        Event::dispatch($this->getIdentifier().'.events:config', [
-            'table'    => $this,
-            'fields'   => $this->resource->indexFields(),
-            'resource' => $this->resource,
-        ]);
+//        Event::dispatch($this->getIdentifier().'.events:config', [
+//            'table'    => $this,
+//            'fields'   => $this->resource->indexFields(),
+//            'resource' => $this->resource,
+//        ]);
 
 //        $this->fireEvent('config');
 
         return (new TableComposer($this))->forConfig();
     }
 
-    public function fireEvent($event, array $payload = [])
-    {
-        $eventName = sprintf("%s.events:%s", $this->getIdentifier(), $event);
-
-        $payload = array_merge($payload, ['table'    => $this,
-                                          'fields'   => $this->resource->indexFields(),
-                                          'resource' => $this->resource]);
-
-        $this->dispatcher->dispatch($eventName, $payload);
-    }
-
     public function build()
     {
-        Event::dispatch($this->getIdentifier().'.events:config', [
-            'table'    => $this,
-            'fields'   => $this->resource->indexFields(),
-            'resource' => $this->resource,
-        ]);
+//        Event::dispatch($this->getIdentifier().'.events:config', [
+//            'table'    => $this,
+//            'fields'   => $this->resource->indexFields(),
+//            'resource' => $this->resource,
+//        ]);
 //        $this->fireEvent('config');
         $fields = $this->makeFields();
 
@@ -381,6 +378,38 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         $this->setOption('order_by', ['created_at' => 'desc']);
     }
 
+    public function notDeletable(): TableInterface
+    {
+        $this->deletable = false;
+
+        return $this;
+    }
+
+    public function notViewable(): TableInterface
+    {
+        $this->viewable = false;
+
+        return $this;
+    }
+
+    public function notSelectable(): TableInterface
+    {
+        $this->selectable = false;
+
+        return $this;
+    }
+
+    public function fireEvent($event, array $payload = [])
+    {
+        $eventName = sprintf("%s.events:%s", $this->getIdentifier(), $event);
+
+        $payload = array_merge($payload, ['table'    => $this,
+                                          'fields'   => $this->resource->indexFields(),
+                                          'resource' => $this->resource]);
+
+        $this->dispatcher->dispatch($eventName, $payload);
+    }
+
     public function make()
     {
         if (empty($this->rowActions)) {
@@ -393,6 +422,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
             }
 
             $this->addRowAction(EditEntryAction::class);
+        } else {
         }
 
         return $this;
@@ -412,20 +442,6 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 //            'data' => sv_compose($this->compose(), $this->makeTokens()),
 'data' => $this->compose(),
         ]);
-    }
-
-    public function notDeletable(): Table
-    {
-        $this->deletable = false;
-
-        return $this;
-    }
-
-    public function notViewable(): Table
-    {
-        $this->viewable = false;
-
-        return $this;
     }
 
     public function setIdentifier($identifier)

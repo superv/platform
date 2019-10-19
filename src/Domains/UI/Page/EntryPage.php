@@ -38,7 +38,7 @@ class EntryPage extends ResourcePage
                          'sections' => $this->buildSections(),
                          'links'    => array_filter_null(
                              [
-                                 'image'  => $imageUrl ?? '',
+                                 'image' => $imageUrl ?? '',
                              ]
                          ),
                      ]);
@@ -56,6 +56,16 @@ class EntryPage extends ResourcePage
         $this->viewable = false;
 
         return $this;
+    }
+
+    public function isViewable(): bool
+    {
+        return $this->viewable;
+    }
+
+    public function isEditable(): bool
+    {
+        return $this->editable;
     }
 
     protected function buildSections()

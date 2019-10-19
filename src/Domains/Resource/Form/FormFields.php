@@ -159,6 +159,8 @@ class FormFields extends Collection
         $field->addFlag('unbound');
         $this->addField($field);
 
+
+
         return $field;
     }
 
@@ -174,10 +176,10 @@ class FormFields extends Collection
         }
 
         array_map(function ($name) {
-            if (! $field = $this->field($name)) {
-                PlatformException::runtime("Field [{$name}] does not exist");
+            if ($field = $this->field($name)) {
+                $field->hide();
             }
-            $field->hide();
+//            PlatformException::runtime("Field [{$name}] does not exist");
         }, $names);
 
         return $this;
