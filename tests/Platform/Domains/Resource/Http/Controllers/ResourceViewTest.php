@@ -27,7 +27,7 @@ class ResourceViewTest extends ResourceTestCase
 
         $this->withoutExceptionHandling();
         $view = $this->getResourceView($user);
-        $this->assertEquals(7, $view->countProp('fields'));
+        $this->assertEquals(6, $view->countProp('fields'));
 
         $fields = $view->getProp('fields');
 
