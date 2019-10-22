@@ -16,15 +16,17 @@ class MorphMany extends Relation implements ProvidesTable, ProvidesForm
 {
     public function makeTable()
     {
+        $relatedResource = $this->getRelatedResource();
+        $modalAction = ModalAction::make($relatedResource->getChildIdentifier('actions', 'create'));
+
         return Table::resolve()
-                    ->setResource($this->getRelatedResource())
+                    ->setResource($relatedResource)
                     ->setQuery($this)
                     ->setDataUrl(url()->current().'/data')
                     ->addContextAction(
-                ModalAction::make('New '.str_singular(str_unslug($this->getName())))
-                           ->setModalUrl($this->route('create', $this->parentEntry))
-            );
-//            ->mergeFields($this->getPivotFields());
+                        $modalAction->setTitle('New '.str_singular(str_unslug($this->getName())))
+                                    ->setModalUrl($this->route('create', $this->parentEntry))
+                    );
     }
 
     public function makeForm($request = null): \SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface

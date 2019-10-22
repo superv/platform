@@ -9,8 +9,6 @@ class ModalAction extends Action
 {
     protected $title;
 
-    protected $identifier;
-
     protected $modalUrl;
 
     public function onComposed(Payload $payload)
@@ -37,14 +35,4 @@ class ModalAction extends Action
         return $this;
     }
 
-    /**
-     * @param mixed $identifier
-     * @return ModalAction
-     */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
-
-        return $this;
-    }
 }

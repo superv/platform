@@ -49,13 +49,7 @@ class TableComposer
     protected function makeRowActions()
     {
         return collect($this->table->getRowActions())
-            ->map(function ($action) {
-                if (is_string($action)) {
-                    $action = $action::make();
-                }
-
-                return $action;
-            })->filter(function (Action $action) {
+            ->filter(function (Action $action) {
                 return Current::user()->can($action->getIdentifier());
             });
     }
