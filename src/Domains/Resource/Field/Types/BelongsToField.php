@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use Closure;
+use Current;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\InlinesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
@@ -176,7 +177,7 @@ class BelongsToField extends FieldType implements
         ]);
     }
 
-    protected function formComposer()
+    public function formComposer()
     {
         return function (Payload $payload, FormInterface $form, ?EntryContract $entry = null) {
             if ($entry) {
@@ -204,52 +205,65 @@ class BelongsToField extends FieldType implements
         };
     }
 
-    protected function rpcOptions(array $params, array $request = [])
+    public function rpcOptions(array $params, array $request = [])
     {
         $this->relatedResource = $this->getRelatedResource();
 
         return $this->buildOptions($request['query'] ?? []);
     }
 
-    protected function presenter()
+    public function presenter()
     {
         return function (EntryContract $entry) {
             if (! $entry->relationLoaded($this->getName())) {
                 $entry->load($this->getName());
             }
-            if ($relatedEntry = $entry->getRelation($this->getName())) {
-                return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
-            }
+
+            return $this->getRelatedEntryLabel($entry->getRelation($this->getName()));
         };
     }
 
-    protected function viewPresenter()
+    public function viewPresenter()
     {
         return function (EntryContract $entry) {
-            if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
-                return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
-            }
+            return $this->getRelatedEntryLabel($entry->{$this->getName()}()->newQuery()->first());
         };
     }
 
-    protected function viewComposer()
+    public function viewComposer()
     {
         return function (Payload $payload, EntryContract $entry) {
-            if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
-                $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
-            }
+            $this->setMetaLink($entry->{$this->getName()}()->newQuery()->first(), $payload);
         };
     }
 
-    protected function tableComposer()
+    public function tableComposer()
     {
         return function (Payload $payload, EntryContract $entry) {
             if (! $entry->relationLoaded($this->getName())) {
                 $entry->load($this->getName());
             }
-            if ($relatedEntry = $entry->getRelation($this->getName())) {
-                $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
-            }
+            $this->setMetaLink($entry->getRelation($this->getName()), $payload);
         };
+    }
+
+    protected function getRelatedEntryLabel(?EntryContract $relatedEntry = null)
+    {
+        if (is_null($relatedEntry)) {
+            return null;
+        }
+
+        return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
+    }
+
+    protected function setMetaLink(?EntryContract $relatedEntry = null, Payload $payload)
+    {
+        if (is_null($relatedEntry)) {
+            return;
+        }
+        if (Current::user()->canNot($relatedEntry->getResourceIdentifier())) {
+            return;
+        }
+        $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
     }
 }

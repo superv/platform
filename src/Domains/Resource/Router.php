@@ -25,7 +25,9 @@ class Router
 
     public function store()
     {
-        return $this->createForm();
+        return sv_route('sv::forms.submit', [
+            'form' => $this->resource->getIdentifier().'.forms:default',
+        ]);
     }
 
     public function edit(EntryContract $entry)

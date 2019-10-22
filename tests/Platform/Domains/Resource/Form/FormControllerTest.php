@@ -54,6 +54,7 @@ class FormControllerTest extends ResourceTestCase
 
     function test__user_form()
     {
+        $this->withoutExceptionHandling();
         $formEntry = $this->makeForm(['public' => false]);
         $this->assertFalse($formEntry->isPublic());
         $this->getUserPage($formEntry->getUrl());

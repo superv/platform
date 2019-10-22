@@ -47,9 +47,11 @@ class FieldRepository
         $field = $this->model->newQuery()->create($attributes);
 
         if (! starts_with($identifier, 'platform.')) {
+            $identifier = sv_identifier($identifier);
             Action::query()->create([
-                'namespace' => explode('.fields:', $identifier)[0].'.fields',
-                'slug'      => $identifier,
+//                'namespace' => explode('.fields:', $identifier)[0].'.fields',
+'namespace' => $identifier->getParent(),
+'slug'      => $identifier,
             ]);
         }
 

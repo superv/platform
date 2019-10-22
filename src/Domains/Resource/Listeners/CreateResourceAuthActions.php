@@ -10,19 +10,30 @@ class CreateResourceAuthActions
     public function handle(ResourceCreatedEvent $event)
     {
         $resourceEntry = $event->resourceEntry;
+        $namespace = $resourceEntry->getNamespace();
 
-        if ($resourceEntry->getNamespace() !== 'platform') {
-            Action::query()->create([
-                'namespace' => $resourceEntry->getNamespace(),
-                'slug'      => $resourceEntry->getNamespace().'.'.$resourceEntry->getName(),
-            ]);
-
-//            $resourceEntry->getFields()->map(function(FieldModel $field) use ($resourceEntry) {
-//                Action::query()->create([
-//                    'namespace' => $resourceEntry->getNamespace(),
-//                    'slug'      => $resourceEntry->getNamespace().'.'.$resourceEntry->getName(),
-//                ]);
-//            });
+        if ($namespace === 'platform') {
+            return;
         }
+
+        $identifier = $namespace.'.'.$resourceEntry->getName();
+
+        $this->createAction($namespace, sprintf("%s", $identifier));
+        $this->createAction($namespace, sprintf("%s.*", $identifier));
+        $this->createAction($identifier, sprintf("%s.fields.*", $identifier));
+        $this->createAction($identifier, sprintf("%s.actions.*", $identifier));
+
+        collect(['view', 'create', 'edit', 'list'])
+            ->map(function ($action) use ($identifier) {
+                $this->createAction($identifier, sprintf("%s.actions:%s", $identifier, $action));
+            });
+    }
+
+    public function createAction($namespace, $identifier): void
+    {
+        Action::query()->create([
+            'namespace' => $namespace,
+            'slug'      => $identifier,
+        ]);
     }
 }

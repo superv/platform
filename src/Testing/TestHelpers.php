@@ -36,15 +36,16 @@ trait TestHelpers
      *
      * @param       $uri
      * @param array $data
+     * @param null  $user
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    public function postJsonUser($uri, array $data = []): TestResponse
+    public function postJsonUser($uri, array $data = [], $user = null): TestResponse
     {
-        if (! $this->testUser) {
-            $this->newUser();
+        if (! $user && ! $this->testUser) {
+            $user = $this->newUser();
         }
 
-        return $this->postJson($uri, $data, $this->getHeaderWithAccessToken());
+        return $this->postJson($uri, $data, $this->getHeaderWithAccessToken($user));
     }
 
     /**
@@ -291,7 +292,10 @@ trait TestHelpers
             'password' => '$2y$10$lEElUpT9ssdSw4XVVEUt5OaJnBzgcmcE6MJ2Rrov4dKPEjuRD6dd.',
         ], $overrides));
         $this->testUser->assign('user');
-        $this->testUser->allow($allow);
+
+        if ($allow) {
+            $this->testUser->allow($allow);
+        }
 
         return $this->testUser = $this->testUser->fresh();
     }

@@ -21,4 +21,10 @@ interface User extends EntryContract
     public function isNotA($role);
 
     public function isNotAn($role);
+
+    public function can($action);
+
+    public function canNot($action);
+
+    public function canOrFail($action);
 }

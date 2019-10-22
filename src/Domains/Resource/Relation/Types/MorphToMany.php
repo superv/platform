@@ -15,12 +15,16 @@ class MorphToMany extends Relation implements ProvidesTable
 {
     public function makeTable()
     {
+        $relatedResource = $this->getRelatedResource();
+        $detachAction = DetachEntryAction::make($relatedResource->getChildIdentifier('actions', 'detach'))->setRelation($this);
+        $attachAction = AttachEntryAction::make($relatedResource->getChildIdentifier('actions', 'attach'))->setRelation($this);
+
         return Table::resolve()
-                    ->setResource($this->getRelatedResource())
+                    ->setResource($relatedResource)
                     ->setQuery($this->newQuery())
-                    ->addRowAction(DetachEntryAction::make()->setRelation($this))
+                    ->addRowAction($detachAction)
                     ->setDataUrl(url()->current().'/data')
-                    ->addContextAction(AttachEntryAction::make()->setRelation($this))
+                    ->addContextAction($attachAction)
                     ->mergeFields($this->getPivotFields());
     }
 

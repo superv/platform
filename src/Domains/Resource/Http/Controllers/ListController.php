@@ -2,6 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
+use Current;
+use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
+use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
+use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\HandlesRequests;
 use SuperV\Platform\Domains\Resource\Contracts\RequiresEntry;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
@@ -9,7 +13,7 @@ use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Http\Controllers\BaseApiController;
 
-class ResourceIndexController extends BaseApiController
+class ListController extends BaseApiController
 {
     use ResolvesResource;
 
@@ -34,18 +38,28 @@ class ResourceIndexController extends BaseApiController
 
     public function table()
     {
-        $table = ($resource = $this->resolveResource())->resolveTable();
+        $resource = $this->resolveResource();
 
-//        if ($callback = $resource->getCallback('index.config')) {
-//            app()->call($callback, ['table' => $table, 'fields' => $resource->indexFields()]);
-//        }
+        Current::user()
+               ->canOrFail($resource->getChildIdentifier('actions', 'list'));
+
+        $table = $resource->resolveTable();
 
         if ($this->route->parameter('data')) {
-//            if ($callback = $resource->getCallback('index.data')) {
-//                app()->call($callback, ['table' => $table, 'fields' => $resource->indexFields()]);
-//            }
-
             return $table->setRequest($this->request)->build();
+        }
+
+        if (empty($table->getRowActions())) {
+            if ($table->isDeletable()) {
+                $table->addRowAction(DeleteEntryAction::make($resource->getChildIdentifier('actions', 'delete')));
+            }
+
+            if ($table->isViewable()) {
+                $table->addRowAction(ViewEntryAction::make($resource->getChildIdentifier('actions', 'view')));
+            }
+            if ($table->isEditable()) {
+                $table->addRowAction(EditEntryAction::make($resource->getChildIdentifier('actions', 'edit')));
+            }
         }
 
         return MakeComponentTree::dispatch($table)->withTokens(['res' => $resource->toArray()]);

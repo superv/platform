@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\UI;
 
+use Current;
 use Event;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\Component;
@@ -53,24 +54,28 @@ class ResourceDashboard
             'name' => $resource->getIdentifier(),
         ]));
 
-        $page->addSection([
-            'identifier' => 'all',
-            'title'      => trans('All'),
-            'url'        => $resource->router()->dashboard('table'),
-            //            'url'        => $resource->route('dashboard', null, ['section' => 'table']),
-            'target'     => 'portal:'.$resource->getIdentifier(),
-            'default'    => ! $section || $section === 'all',
-        ]);
-
-        if ($page->isCreatable() && empty($page->getActions())) {
+        if (Current::user()->can($this->resource->getChildIdentifier('actions', 'list'))) {
             $page->addSection([
-                'identifier' => 'create',
-                'title'      => trans('Create'),
-                'url'        => $resource->router()->createForm(),
-                //                'url'        => $resource->route('forms.create'),
+                'identifier' => 'all',
+                'title'      => trans('All'),
+                'url'        => $resource->router()->dashboard('table'),
+                //            'url'        => $resource->route('dashboard', null, ['section' => 'table']),
                 'target'     => 'portal:'.$resource->getIdentifier(),
-                'default'    => $section === 'create',
+                'default'    => ! $section || $section === 'all',
             ]);
+        }
+
+        if (Current::user()->can($this->resource->getChildIdentifier('actions', 'create'))) {
+            if ($page->isCreatable() && empty($page->getActions())) {
+                $page->addSection([
+                    'identifier' => 'create',
+                    'title'      => trans('Create'),
+                    'url'        => $resource->router()->createForm(),
+                    //                'url'        => $resource->route('forms.create'),
+                    'target'     => 'portal:'.$resource->getIdentifier(),
+                    'default'    => $section === 'create',
+                ]);
+            }
         }
 
 //        if ($page->isCreatable() && empty($page->getActions())) {

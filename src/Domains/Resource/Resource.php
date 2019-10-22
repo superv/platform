@@ -143,11 +143,11 @@ class Resource implements
         return $this;
     }
 
-    public function getAction($identifier)
+    public function getAction($name)
     {
-        $action = $this->actions->get($identifier);
+        $action = $this->actions->get($name);
         if (is_string($action)) {
-            $action = $action::make();
+            $action = $action::make($this->getChildIdentifier('actions', $name));
         }
 
         if ($action instanceof RequiresResource) {

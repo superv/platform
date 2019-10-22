@@ -8,9 +8,6 @@ use Illuminate\Support\Collection;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\Action;
-use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
-use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
-use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
@@ -53,7 +50,9 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     protected $fields;
 
-    protected $selectable = true;
+    protected $selectable = false;
+
+    protected $editable = true;
 
     protected $deletable = true;
 
@@ -176,7 +175,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     public function makeComponent(): ComponentContract
     {
-        $this->make();
+//        $this->make();
 
         return Component::make('sv-table')->card()->setProps($this->composeConfig());
     }
@@ -284,12 +283,6 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     public function build()
     {
-//        Event::dispatch($this->getIdentifier().'.events:config', [
-//            'table'    => $this,
-//            'fields'   => $this->resource->indexFields(),
-//            'resource' => $this->resource,
-//        ]);
-//        $this->fireEvent('config');
         $fields = $this->makeFields();
 
         $query = $this->getQuery();
@@ -399,6 +392,34 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         return $this;
     }
 
+    public function isDeletable(): bool
+    {
+        return $this->deletable;
+    }
+
+//    public function make()
+//    {
+//        if (empty($this->rowActions)) {
+//            if ($this->deletable) {
+//                $this->addRowAction(DeleteEntryAction::class);
+//            }
+//
+//            if ($this->viewable) {
+//                $this->addRowAction(ViewEntryAction::class);
+//            }
+//
+//            $this->addRowAction(EditEntryAction::class);
+//        } else {
+//        }
+//
+//        return $this;
+//    }
+
+    public function isViewable(): bool
+    {
+        return $this->viewable;
+    }
+
     public function fireEvent($event, array $payload = [])
     {
         $eventName = sprintf("%s.events:%s", $this->getIdentifier(), $event);
@@ -408,24 +429,6 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
                                           'resource' => $this->resource]);
 
         $this->dispatcher->dispatch($eventName, $payload);
-    }
-
-    public function make()
-    {
-        if (empty($this->rowActions)) {
-            if ($this->deletable) {
-                $this->addRowAction(DeleteEntryAction::class);
-            }
-
-            if ($this->viewable) {
-                $this->addRowAction(ViewEntryAction::class);
-            }
-
-            $this->addRowAction(EditEntryAction::class);
-        } else {
-        }
-
-        return $this;
     }
 
     public function compose(Tokens $tokens = null)
@@ -458,6 +461,11 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     public function onQuerying($on)
     {
+    }
+
+    public function isEditable(): bool
+    {
+        return $this->editable;
     }
 
     protected function makeTokens(): array

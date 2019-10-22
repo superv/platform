@@ -6,8 +6,8 @@ use Exception;
 
 class AuthorizationFailedException extends Exception
 {
-    public static function actionFailed($action)
+    public static function action($action)
     {
-        throw new self("Authorization check failed on action [{$action}]");
+        throw new static("Authorization check failed on action [{$action}]", 403);
     }
 }

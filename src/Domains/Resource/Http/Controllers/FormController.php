@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
+use Current;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Field\Jobs\HandleFieldRpc;
 use SuperV\Platform\Domains\Resource\Form\FormFactory;
@@ -13,6 +14,10 @@ class FormController extends BaseApiController
     {
         $builder = FormFactory::builderFromFormEntry($formIdentifier);
         $resource = $builder->getFormEntry()->getOwnerResource();
+
+        if ($resource) {
+            Current::user()->canOrFail($resource->getChildIdentifier('actions', $entryId ? 'edit' : 'create'));
+        }
 
         if ($entryId) {
             $builder->setEntry(EntryRepository::for($resource)->find($entryId));
@@ -26,6 +31,8 @@ class FormController extends BaseApiController
     {
         $builder = FormFactory::builderFromFormEntry($formIdentifier);
         $resource = $builder->getFormEntry()->getOwnerResource();
+
+        Current::user()->canOrFail($resource->getChildIdentifier('actions', $entryId ? 'edit' : 'create'));
 
         if ($entryId) {
             $entry = EntryRepository::for($resource)->find($entryId);

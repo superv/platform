@@ -45,7 +45,7 @@ class ActionsTest extends TestCase
         Role::withSlug('admin')->allow('*');
         Role::withSlug('user')->allow('user.action');
 
-        $this->assertTrue($user->cannot('admin.action'));
+        $this->assertTrue($user->canNot('admin.action'));
         $this->assertTrue($user->can('user.action'));
 
         $this->assertTrue($admin->can('admin.action'));
@@ -70,7 +70,7 @@ class ActionsTest extends TestCase
         $user->allow('*');
         $user->forbid('forbidden.action');
 
-        $this->assertTrue($user->cannot('forbidden.action'));
+        $this->assertTrue($user->canNot('forbidden.action'));
     }
 
     function test__supports_wildcard_actions()
@@ -83,13 +83,13 @@ class ActionsTest extends TestCase
 
         $this->assertTrue($userA->can('moduleA.read'));
         $this->assertTrue($userA->can('moduleA.write'));
-        $this->assertTrue($userB->cannot('moduleA.read'));
-        $this->assertTrue($userB->cannot('moduleA.write'));
+        $this->assertTrue($userB->canNot('moduleA.read'));
+        $this->assertTrue($userB->canNot('moduleA.write'));
 
         $this->assertTrue($userB->can('moduleB.read'));
         $this->assertTrue($userB->can('moduleB.write'));
-        $this->assertTrue($userA->cannot('moduleB.read'));
-        $this->assertTrue($userA->cannot('moduleB.write'));
+        $this->assertTrue($userA->canNot('moduleB.read'));
+        $this->assertTrue($userA->canNot('moduleB.write'));
     }
 
     function test__forbid_precedes_over_wildcard()

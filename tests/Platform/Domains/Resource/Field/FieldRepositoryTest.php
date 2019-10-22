@@ -47,7 +47,7 @@ class FieldRepositoryTest extends ResourceTestCase
 
         $action = Action::withSlug($field->getIdentifier());
         $this->assertNotNull($action);
-        $this->assertEquals('testing.servers.fields', $action->namespace);
+        $this->assertEquals('testing.servers', $action->namespace);
     }
 
     function test__returns_ghost_if_authorization_fails()
