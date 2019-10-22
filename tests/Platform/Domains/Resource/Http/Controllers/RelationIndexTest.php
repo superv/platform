@@ -71,7 +71,7 @@ class RelationIndexTest extends ResourceTestCase
         //
         $this->assertEquals(5, count($rows));
 
-        // check the View Action Url
+        // check the Edit Action Url
         //
         $viewAction = HelperComponent::fromArray($table->getProp('config.row_actions.0'));
         $firstPost = $userPosts->first();

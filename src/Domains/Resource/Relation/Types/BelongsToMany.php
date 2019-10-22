@@ -29,8 +29,8 @@ class BelongsToMany extends Relation implements ProvidesTable, ProvidesField
                     ->setQuery($this->newQuery())
                     ->addRowAction($viewAction)
                     ->addRowAction($detachAction)
-                    ->setDataUrl(url()->current().'/data')
                     ->addContextAction($attachAction)
+                    ->setDataUrl(url()->current().'/data')
                     ->mergeFields($this->getPivotFields());
     }
 
