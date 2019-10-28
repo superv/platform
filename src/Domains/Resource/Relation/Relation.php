@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -146,10 +146,10 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
 
         return $pivotResource->fields()
                              ->keyByName()
-                             ->filter(function (Field $field) use ($pivotColumns) {
+                             ->filter(function (FieldInterface $field) use ($pivotColumns) {
                                  return in_array($field->getColumnName(), $pivotColumns);
                              })
-                             ->map(function (Field $field) {
+                             ->map(function (FieldInterface $field) {
                                  $field->setCallback('table.presenting', function (EntryContract $entry) use ($field) {
                                      if ($pivot = $entry->pivot) {
                                          return $pivot->{$field->getColumnName()};

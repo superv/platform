@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Resource;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -29,10 +29,10 @@ class IndexFields
         $this->fields = $resource->fields()->getAll();
     }
 
-    public function getField($name): Field
+    public function getField($name): FieldInterface
     {
         $field = $this->fields->first(
-            function (Field $field) use ($name) {
+            function (FieldInterface $field) use ($name) {
                 return $field->getName() === $name;
             });
 
@@ -105,11 +105,11 @@ class IndexFields
         }
 
         $fields = $this->fields
-            ->filter(function (Field $field) {
+            ->filter(function (FieldInterface $field) {
                 return $field->hasFlag('table.show') || $field->getName() === $this->resource->config()->getEntryLabelField();
             })
             ->values()
-            ->sortBy(function (Field $field, $key) {
+            ->sortBy(function (FieldInterface $field, $key) {
                 return $field->getConfigValue('sort_order', $key);
             });
 

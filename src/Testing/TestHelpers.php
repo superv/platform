@@ -10,9 +10,17 @@ use Illuminate\Http\Request;
 use PHPUnit\Framework\Assert;
 use SuperV\Platform\Domains\Auth\Contracts\Users;
 use SuperV\Platform\Domains\Auth\User;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Port\Port;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 
+/**
+ * Trait TestHelpers
+ *
+ * @package SuperV\Platform\Testing
+ * @mixin \Illuminate\Foundation\Testing\Concerns\MakesHttpRequests
+ */
 trait TestHelpers
 {
     protected $platformInstalled = false;
@@ -22,22 +30,39 @@ trait TestHelpers
     /** @var \SuperV\Platform\Domains\Auth\User */
     protected $testUser;
 
-    public function postJsonUser($uri, array $data = []): TestResponse
+    /**
+     *  Visit the given URI with a POST request as a User
+     *  expecting a JSON response
+     *
+     * @param       $uri
+     * @param array $data
+     * @param null  $user
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    public function postJsonUser($uri, array $data = [], $user = null): TestResponse
     {
-        if (! $this->testUser) {
-            $this->newUser();
+        if (! $user && ! $this->testUser) {
+            $user = $this->newUser();
         }
 
-        return $this->postJson($uri, $data, $this->getHeaderWithAccessToken());
+        return $this->postJson($uri, $data, $this->getHeaderWithAccessToken($user));
     }
 
-    public function getJsonUser($uri): TestResponse
+    /**
+     *  Visit the given URI with a GET request as a User
+     *  expecting a JSON response
+     *
+     * @param      $uri
+     * @param null $user
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    public function getJsonUser($uri, $user = null): TestResponse
     {
-        if (! $this->testUser) {
-            $this->newUser();
+        if (! $user && ! $this->testUser) {
+            $user = $this->newUser();
         }
 
-        return $this->getJson($uri, $this->getHeaderWithAccessToken());
+        return $this->getJson($uri, $this->getHeaderWithAccessToken($user));
     }
 
     public function deleteJsonUser($uri): TestResponse
@@ -54,6 +79,7 @@ trait TestHelpers
      *
      * @param string $path
      * @return $this
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     protected function withFactories(string $path)
     {
@@ -66,6 +92,7 @@ trait TestHelpers
      * @param \Illuminate\Contracts\Foundation\Application $app
      * @param string                                       $path
      * @return $this
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     protected function loadFactoriesUsing($app, string $path)
     {
@@ -92,9 +119,23 @@ trait TestHelpers
         }
     }
 
-    protected function getListComponent($resource): ListComponent
+    protected function getListComponent($resource, $user = null): ListComponent
     {
-        return ListComponent::get($resource, $this);
+        return ListComponent::get($resource, $this, $user);
+    }
+
+    protected function getFormComponent($resource, $entry = null): FormComponent
+    {
+        if ($resource instanceof Resource) {
+            $resource = $resource->getIdentifier();
+        }
+
+        if ($resource instanceof EntryContract) {
+            $entry = $resource;
+            $resource = $resource->getResourceIdentifier();
+        }
+
+        return FormComponent::get($resource.'.forms:default', $this, $entry);
     }
 
     protected function getComponentFromUrl($url): HelperComponent
@@ -113,12 +154,18 @@ trait TestHelpers
 
             return true;
         }
-        if (is_numeric(array_keys($needle)[0])) {
-            $actual = array_intersect($needle, $haystack);
+        if (is_array(array_values($needle)[0])) {
+            $this->assertEquals($needle, array_intersect_key($needle, $haystack), 'Failed asserting array contains');
         } else {
-            $actual = array_intersect_key($needle, $haystack);
+            $this->assertEquals($needle, array_intersect($needle, $haystack), 'Failed asserting array contains');
         }
-        $this->assertEquals($needle, $actual, 'Failed asserting array contains');
+
+//        if (is_numeric(array_keys($needle)[0])) {
+//            $actual = array_intersect($needle, $haystack);
+//        } else {
+//            $actual = array_intersect_key($needle, $haystack);
+//        }
+//        $this->assertEquals($needle, $actual, 'Failed asserting array contains');
     }
 
     protected function assertColumnNotExists(string $table, string $column)
@@ -154,6 +201,15 @@ trait TestHelpers
     protected function assertProviderNotRegistered($provider)
     {
         $this->assertNotContains($provider, array_keys($this->app->getLoadedProviders()));
+    }
+
+    protected function assertValidationErrors(TestResponse $response, array $errorKeys = [])
+    {
+        $response->assertStatus(422);
+
+        if ($errorKeys) {
+            $this->assertEquals($errorKeys, array_keys($response->decodeResponseJson('errors')));
+        }
     }
 
     protected function bindMock($abstract, $instance = null): \Mockery\MockInterface
@@ -236,9 +292,12 @@ trait TestHelpers
             'password' => '$2y$10$lEElUpT9ssdSw4XVVEUt5OaJnBzgcmcE6MJ2Rrov4dKPEjuRD6dd.',
         ], $overrides));
         $this->testUser->assign('user');
-        $this->testUser->allow($allow);
 
-        return $this->testUser->fresh();
+        if ($allow) {
+            $this->testUser->allow($allow);
+        }
+
+        return $this->testUser = $this->testUser->fresh();
     }
 
     protected function getHeaderWithAccessToken($user = null)

@@ -202,6 +202,8 @@ class PlatformTestCase extends OrchestraTestCase
 
     protected function makeUploadedFile($filename = 'square.png')
     {
+        return UploadedFile::fake()->image($filename);
+
         return new UploadedFile($this->basePath('__fixtures__/'.$filename), $filename);
     }
 

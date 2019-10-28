@@ -45,7 +45,7 @@ class MakeAddonModel
         $psrNamespace = ucfirst(camel_case(($vendor == 'superv' ? 'super_v' : $vendor))).'\\'.ucfirst(camel_case($typePlural)).'\\'.ucfirst(camel_case($name));
 
         return new AddonModel([
-            'identifier'    => $this->identifier,
+            'identifier'    => $this->getName(),
             'name'          => $this->getName(),
             'vendor'        => $this->getVendor(),
             'type'          => str_singular($this->addonType),

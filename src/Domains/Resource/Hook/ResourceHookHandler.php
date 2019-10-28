@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Hook;
 
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ConfigResolvedHook;
+use SuperV\Platform\Domains\Resource\Hook\Contracts\QueryResolvedHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ResourceResolvedHook;
 
 class ResourceHookHandler extends HookHandler
@@ -10,6 +11,7 @@ class ResourceHookHandler extends HookHandler
     protected $map = [
         'resolved'        => ResourceResolvedHook::class,
         'config_resolved' => ConfigResolvedHook::class,
+        'query_resolved'  => QueryResolvedHook::class,
     ];
 
     public function hook(string $identifier, string $hookHandler, string $subKey = null)

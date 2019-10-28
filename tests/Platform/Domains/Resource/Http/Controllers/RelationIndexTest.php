@@ -71,12 +71,12 @@ class RelationIndexTest extends ResourceTestCase
         //
         $this->assertEquals(5, count($rows));
 
-        // check the View Action Url
+        // check the Edit Action Url
         //
-        $viewAction = HelperComponent::fromArray($table->getProp('config.row_actions.1'));
+        $viewAction = HelperComponent::fromArray($table->getProp('config.row_actions.0'));
         $firstPost = $userPosts->first();
         $actual = str_replace('{entry.id}', $firstPost->getId(), $viewAction->getProp('url'));
-        $this->assertEquals($firstPost->router()->dashboard('view'), sv_url($actual));
+        $this->assertEquals($firstPost->router()->dashboard('edit'), sv_url($actual));
     }
 
     function test__index_listing_with_belongs_to_many_relations()

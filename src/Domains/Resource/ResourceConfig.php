@@ -45,6 +45,8 @@ class ResourceConfig
     /** @var \SuperV\Platform\Domains\Resource\ResourceDriver */
     protected $driver;
 
+    protected $userTypeConfig;
+
     public static $__cache = [];
 
     protected function __construct(array $attributes = [], $overrideDefault = true)
@@ -92,6 +94,13 @@ class ResourceConfig
     public function identifier($identifier)
     {
         return $this->setIdentifier($identifier);
+    }
+
+    public function hasUserWithRole($role, array $userTypeConfig = [])
+    {
+        $this->userTypeConfig = array_merge($userTypeConfig, compact('role'));
+
+        return $this;
     }
 
     public function getHandle()
@@ -262,36 +271,36 @@ class ResourceConfig
         return $this->getDriver()->getParam('connection');
     }
 
-    /**
-     * @return mixed
-     */
     public function getNamespace()
     {
         return $this->namespace;
     }
 
-    /**
-     * @param mixed $namespace
-     */
     public function setNamespace($namespace): void
     {
         $this->namespace = $namespace;
     }
 
-    /**
-     * @return mixed
-     */
     public function getName()
     {
         return $this->name;
     }
 
-    /**
-     * @param mixed $name
-     */
     public function setName($name): void
     {
         $this->name = $name;
+    }
+
+    public function getUserTypeConfig()
+    {
+        return $this->userTypeConfig;
+    }
+
+    public function merge(string $otherClass)
+    {
+        $other = new $otherClass;
+
+        $this->fill($other->toArray());
     }
 
     public function toArray(): array
@@ -309,13 +318,6 @@ class ResourceConfig
         }
 
         return array_except($attributes, 'resource');
-    }
-
-    public function merge(string $otherClass)
-    {
-        $other = new $otherClass;
-
-        $this->fill($other->toArray());
     }
 
     public static function make(array $config = [], $overrideDefault = true)

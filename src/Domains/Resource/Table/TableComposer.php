@@ -2,8 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Table;
 
+use Current;
+use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 use SuperV\Platform\Support\Composer\Payload;
@@ -46,13 +48,10 @@ class TableComposer
 
     protected function makeRowActions()
     {
-        return collect($this->table->getRowActions())->map(function ($action) {
-            if (is_string($action)) {
-                $action = $action::make();
-            }
-
-            return $action;
-        });
+        return collect($this->table->getRowActions())
+            ->filter(function (Action $action) {
+                return Current::user()->can($action->getIdentifier());
+            });
     }
 
     protected function makeSelectionActions()
@@ -80,9 +79,9 @@ class TableComposer
     protected function makeFields()
     {
         $fields = $this->table->makeFields()
-                              ->map(function (Field $field) {
-                                  return (new FieldComposer($field))->forTableConfig();
-                              })->values();
+            ->map(function (FieldInterface $field) {
+                return (new FieldComposer($field))->forTableConfig();
+            })->values();
 
         return $fields;
     }

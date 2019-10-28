@@ -2,6 +2,9 @@
 
 namespace Tests\Platform\Domains\Resource\Hook;
 
+use Config;
+use Illuminate\Database\Eloquent\Builder;
+
 /**
  * Class ListHookTest
  *
@@ -14,6 +17,7 @@ class ListHookTest extends HookTestCase
 
     function test_resolved()
     {
+        Config::set('app.debug', true);
         $_SERVER['__hooks::list.resolved'] = null;
         $categories = $this->blueprints()->categories();
 
@@ -22,16 +26,16 @@ class ListHookTest extends HookTestCase
         $categoryList->assertDataUrl($_SERVER['__hooks::list.resolved']);
     }
 
-    function test__config()
+    function  __config()
     {
         $_SERVER['__hooks::list.config'] = null;
         $categories = $this->blueprints()->categories();
 
-        $this->getListComponent($categories);
+        $list = $this->getListComponent($categories);
         $this->assertEquals(['table', 'fields'], array_keys($_SERVER['__hooks::list.config']));
     }
 
-    function test__config_is_also_hooked_before_data()
+    function  __config_is_also_hooked_before_data()
     {
         $_SERVER['__hooks::list.config.calls'] = 0;
         $categories = $this->blueprints()->categories();
@@ -42,6 +46,16 @@ class ListHookTest extends HookTestCase
 
         $listData = $list->getData();
         $this->assertEquals(2, $_SERVER['__hooks::list.config.calls']);
+    }
+
+    function test__query_resolved()
+    {
+        $_SERVER['__hooks::list.query.resolved'] = null;
+        $categories = $this->blueprints()->categories();
+        $categories->fake([], 3);
+
+        $this->getListComponent($categories)->getData();
+        $this->assertInstanceOf(Builder::class, $_SERVER['__hooks::list.query.resolved']);
     }
 
     function test__data()

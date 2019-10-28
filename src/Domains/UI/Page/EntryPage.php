@@ -38,11 +38,7 @@ class EntryPage extends ResourcePage
                          'sections' => $this->buildSections(),
                          'links'    => array_filter_null(
                              [
-                                 'image'  => $imageUrl ?? '',
-                                 //                                 'create' => $this->creatable ? $this->resource->route('create') : null,
-                                 //                                 'edit'   => $this->editable ? $this->resource->route('edit', $this->entry) : null,
-                                 //                                 'view'   => $this->viewable ? $this->resource->route('view', $this->entry) : null,
-                                 //                                 'index'  => $this->resource->route('index'),
+                                 'image' => $imageUrl ?? '',
                              ]
                          ),
                      ]);
@@ -60,6 +56,16 @@ class EntryPage extends ResourcePage
         $this->viewable = false;
 
         return $this;
+    }
+
+    public function isViewable(): bool
+    {
+        return $this->viewable;
+    }
+
+    public function isEditable(): bool
+    {
+        return $this->editable;
     }
 
     protected function buildSections()
@@ -102,7 +108,7 @@ class EntryPage extends ResourcePage
                                       'identifier' => $relation->getName(),
                                       'url'        => $url,
                                       'target'     => 'portal:'.$this->resource->getIdentifier().':'.$this->entry->getId(),
-                                      'title'      => str_unslug($relation->getName()),
+                                      'title'      => trans(str_unslug($relation->getName())),
                                   ];
                               })
                               ->filter()->values();

@@ -2,29 +2,97 @@
 
 namespace SuperV\Platform\Testing;
 
-use SuperV\Platform\Domains\Resource\Resource;
-use Tests\Platform\TestCase;
+use SuperV\Platform\Domains\Auth\Contracts\User;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
+use SuperV\Platform\Domains\UI\Components\Component;
 
 class ListComponent extends HelperComponent
 {
-    /** @var \Tests\Platform\TestCase */
+    /** @var PlatformTestCase */
     protected $testCase;
+
+    protected $user;
+
+    /** @var \Illuminate\Support\Collection */
+    protected $fields;
+
+    /** @var \Illuminate\Support\Collection */
+    protected $rowActions;
 
     public function assertDataUrl($url)
     {
-        TestCase::assertEquals($url, $this->getDataUrl());
+        PlatformTestCase::assertEquals($url, $this->getDataUrl());
+    }
+
+    public function getFieldCount()
+    {
+        return $this->getFields()->count();
+    }
+
+    public function getFields()
+    {
+        if (! $this->fields) {
+            $this->fields = collect($this->getProp('config.fields'))
+                ->keyBy(function ($field) {
+                    return $field['name'];
+                });
+        }
+
+        return $this->fields;
+    }
+
+    public function getRowActions()
+    {
+        if (! $this->rowActions) {
+            $this->rowActions = collect($this->getProp('config.row_actions'))
+                ->map(function($action) {
+                    return HelperComponent::fromArray($action);
+                })
+                ->keyBy(function (HelperComponent $action) {
+                    return $action->getProp('name');
+                });
+        }
+
+        return $this->rowActions;
+    }
+
+    public function assertFieldKeys($keys)
+    {
+        $diff = $this->getFields()->keys()->diff($keys);
+        $this->testCase->assertTrue($diff->isEmpty(), 'Keys: '.implode(',', $diff->all()));
+    }
+
+    public function getField($name, $key = null)
+    {
+        $field = $this->getFields()->get($name);
+        if (is_null($key)) {
+            return $field;
+        }
+
+        return array_get($field, $key);
+    }
+    public function getRowAction($name )
+    {
+        return $this->getRowActions()->get($name);
     }
 
     public function getData()
     {
-        $response = $this->testCase->getJsonUser($this->getDataUrl());
+//        Config::set('app.debug', true);
+        $response = $this->testCase->getJsonUser($this->getDataUrl(), $this->user);
+
+//        dd($response->decodeResponseJson());
 
         return new ListData($response->decodeResponseJson('data'), $this->testCase);
     }
 
-    public static function get(Resource $resource, TestCase $testCase)
+    public static function get($resource, PlatformTestCase $testCase, User $user = null)
     {
-        $response = $testCase->getJsonUser($resource->router()->defaultList());
+        if (is_string($resource)) {
+            $resource = ResourceFactory::make($resource);
+        }
+
+        $response = $testCase->getJsonUser($resource->router()->defaultList(), $user);
 
         if (! $response->isOk()) {
             dd($response->content());
@@ -32,6 +100,7 @@ class ListComponent extends HelperComponent
 
         $list = static::fromArray($response->decodeResponseJson('data'));
         $list->testCase = $testCase;
+        $list->user = $user;
 
         return $list;
     }
@@ -54,7 +123,7 @@ class ListData
      */
     protected $testCase;
 
-    public function __construct(array $data = [], TestCase $testCase)
+    public function __construct(array $data = [], $testCase)
     {
         $this->data = $data;
         $this->testCase = $testCase;
@@ -62,11 +131,11 @@ class ListData
 
     public function rowCount()
     {
-        return count($this->rows());
+        return $this->rows()->count();
     }
 
     public function rows()
     {
-        return $this->data['rows'];
+        return collect($this->data['rows']);
     }
 }

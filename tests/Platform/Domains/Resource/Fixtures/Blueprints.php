@@ -13,6 +13,28 @@ class Blueprints
     use ResourceTestHelpers;
 
     /** @return Resource */
+    public function clients(?Closure $callback = null)
+    {
+        $this->users();
+
+        $clients = $this->create('tbl_clients',
+            function (Blueprint $table, Config $config) use ($callback) {
+                $config->resourceKey('client');
+                $config->setNamespace('testing');
+                $config->setName('clients');
+
+                $table->increments('id');
+                $table->string('name')->entryLabel();
+                $table->belongsTo('platform.users', 'user')->static();
+
+                if ($callback) {
+                    $callback($table, $config);
+                }
+            });
+
+        return $clients;
+    }
+    /** @return Resource */
     public function users(?Closure $callback = null)
     {
         $this->groups();
@@ -31,7 +53,8 @@ class Blueprints
                 $table->string('bio')->rules(['string'])->nullable();
                 $table->unsignedTinyInteger('age')->nullable()->showOnIndex();
 
-                $table->file('avatar')->config(['disk' => 'fakedisk']);
+                $table->file('avatar')->config(['disk' => 'fakedisk'])
+                      ->addRule('image');
 
                 $table->belongsTo('testing.groups', 'group')->showOnIndex();
 
@@ -95,16 +118,20 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function categories($namespace = 'testing')
+    public function categories(?Closure $callback = null): Resource
     {
         return $this->create('tbl_categories',
-            function (Blueprint $table, Config $config) use ($namespace) {
+            function (Blueprint $table, Config $config) use ($callback) {
                 $config->label('Categories');
                 $config->setName('categories');
-                $config->setNamespace($namespace);
+                $config->setNamespace('testing');
 
                 $table->increments('id');
                 $table->string('title')->entryLabel();
+
+                if ($callback) {
+                    $callback($table, $config);
+                }
             }
         );
     }

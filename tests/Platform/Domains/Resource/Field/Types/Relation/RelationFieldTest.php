@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Resource\Field\Types\Relation;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\Relation\RelationFieldConfig;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -93,7 +94,8 @@ class RelationFieldTest extends ResourceTestCase
 
 //        Relator::relate()->one($address)->toOne($student);
 
-        $this->create('students', function (Blueprint $table) {
+        $this->create('students', function (Blueprint $table, ResourceConfig $config) {
+            $config->nav('acp.supreme');
             $table->increments('id');
             $table->string('name');
 
@@ -104,7 +106,8 @@ class RelationFieldTest extends ResourceTestCase
                   ->withPivotTable('students_courses');
         });
 
-        $this->create('courses', function (Blueprint $table) {
+        $this->create('courses', function (Blueprint $table, ResourceConfig $config) {
+            $config->nav('acp.supreme');
             $table->increments('id');
             $table->string('title');
 
@@ -112,7 +115,8 @@ class RelationFieldTest extends ResourceTestCase
                   ->withLocalKey('teacher_id');
         });
 
-        $this->create('teachers', function (Blueprint $table) {
+        $this->create('teachers', function (Blueprint $table, ResourceConfig $config) {
+            $config->nav('acp.supreme');
             $table->increments('id');
             $table->string('name');
 

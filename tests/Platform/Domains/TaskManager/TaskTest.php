@@ -14,7 +14,7 @@ class TaskTest extends TaskManagerTest
         $task = $this->makeTaskModel($taskData);
 
         $this->assertNotNull($task);
-        $this->assertArrayContains($taskData, $task->toArray());
+        $this->assertEquals($taskData, $task->only('title', 'handler', 'payload'));
         $this->assertInstanceOf(Task::class, $task);
 
         $this->assertEquals(TestHandler::class, $task->getHandlerClass());

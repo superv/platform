@@ -101,6 +101,8 @@ class Installer
 
     public function seed()
     {
+        optional($this->command)->comment('Seeding Addon ['.$this->addon->getIdentifier().']');
+
         SeedAddon::dispatch($this->addon);
     }
 
@@ -184,9 +186,9 @@ class Installer
         return $this->identifier;
     }
 
-    public function setIdentifier($identifer)
+    public function setIdentifier($identifier)
     {
-        $this->identifier = $identifer;
+        $this->identifier = $identifier;
 
         return $this;
     }

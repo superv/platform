@@ -40,7 +40,7 @@ class DeleteResource
 
         Section::query()->where('resource_id', $this->resourceEntry->getId())->delete();
 
-        Action::query()->where('slug', $this->resourceEntry->getIdentifier())->delete();
+        Action::query()->where('slug', 'LIKE', $this->resourceEntry->getIdentifier().'%')->delete();
         Action::query()->where('namespace', $this->resourceEntry->getIdentifier().'.fields')->delete();
     }
 }

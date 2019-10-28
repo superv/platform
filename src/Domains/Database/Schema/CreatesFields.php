@@ -14,7 +14,7 @@ trait CreatesFields
 {
     public function email($name): ColumnDefinition
     {
-        return $this->string($name)->fieldType('email');
+        return $this->string($name)->fieldType('email')->rules(['email:rfc,dns']);
     }
 
     public function file($name, $path = '/', $disk = 'public'): ColumnDefinition
@@ -28,6 +28,11 @@ trait CreatesFields
                                          ->disk($disk)
                                          ->path($path)
                                          ->all());
+    }
+
+    public function image($name, $path = '/', $disk = 'public'): ColumnDefinition
+    {
+        return $this->file(...func_get_args())->rules(['image', 'mimes:jpeg,png,gif']);
     }
 
     public function select($name, $options = []): ColumnDefinition
@@ -75,6 +80,11 @@ trait CreatesFields
     public function text($column): ColumnDefinition
     {
         return $this->addColumn('text', $column);
+    }
+
+    public function encrypted($column): ColumnDefinition
+    {
+        return $this->string($column)->fieldType('encrypted');
     }
 
     public function dictionary($column)

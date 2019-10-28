@@ -17,19 +17,6 @@ class ResourceEntry extends Entry
         SerializesModels::__sleep as parentSleep;
     }
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::saving(function (ResourceEntry $entry) {
-//            if (! starts_with($entry->getTable(), 'sv_')) {
-//                if ($entry->getResourceConfig()->hasUuid() && is_null($entry->uuid)) {
-//                    $entry->setAttribute('uuid', uuid());
-//                }
-//            }
-        });
-    }
-
     public function __call($name, $arguments)
     {
         /**
@@ -60,7 +47,8 @@ class ResourceEntry extends Entry
          *  Dynamic Relations
          */
         if (! method_exists($this, $name) && ! in_array($name, ['create', 'first', 'find', 'hydrate'])) {
-            if (in_array($name, $this->relationKeys)) {
+//            if (in_array($name, $this->relationKeys)) {
+            if ($relation = $this->getRelationshipFromConfig($name)) {
                 $svRelation = $this->resolveRelation($name);
 
                 return $svRelation->newQuery();

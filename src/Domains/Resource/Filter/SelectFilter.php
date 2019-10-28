@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Filter;
 
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 
 class SelectFilter extends Filter
 {
@@ -10,7 +10,7 @@ class SelectFilter extends Filter
 
     protected $options = [];
 
-    public function onFieldBuilt(Field $field)
+    public function onFieldBuilt(FieldInterface $field)
     {
         $field->setConfigValue('options', $this->getOptions());
         $field->setConfigValue('placeholder', $this->getLabel());

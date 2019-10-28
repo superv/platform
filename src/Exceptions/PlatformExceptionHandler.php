@@ -66,7 +66,7 @@ class PlatformExceptionHandler extends ExceptionHandler
         return parent::render($request, $exception);
     }
 
-    protected function convertExceptionToArray(Exception $e)
+    protected function ___convertExceptionToArray(Exception $e)
     {
 //        if (! $this->isHttpException($e) || Current::envIsLocal()) {
 //            PlatformException::debug(['exception' => get_class($e)]);

@@ -18,7 +18,7 @@ class MakeTablePage
     /** @var \SuperV\Platform\Domains\UI\Page\Page * */
     protected $page;
 
-    /** @var \SuperV\Platform\Domains\Resource\Form\EntryForm */
+    /** @var \SuperV\Platform\Domains\Resource\Form\Form */
     protected $form;
 
     /** @var array */

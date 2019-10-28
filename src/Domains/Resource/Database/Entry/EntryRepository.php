@@ -2,8 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Database\Entry;
 
+use Event;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class EntryRepository implements EntryRepositoryInterface
@@ -51,6 +52,9 @@ class EntryRepository implements EntryRepositoryInterface
     {
         $query = $this->newInstance()->newQuery()->with($this->resource->getWith());
 
+        Event::dispatch($this->resource->getIdentifier().'.events:query_resolved', ['query'    => $query,
+                                                                                    'resource' => $this->resource]);
+
         return $query;
     }
 
@@ -95,7 +99,7 @@ class EntryRepository implements EntryRepositoryInterface
         $entry->setKeyName($this->resource->getKeyName());
         $entry->setResourceIdentifier($this->resource->getIdentifier());
 
-        $this->resource->getFields()->map(function (Field $field) use ($entry) {
+        $this->resource->getFields()->map(function (FieldInterface $field) use ($entry) {
             if ($value = $field->getConfigValue('default_value')) {
                 $entry->setAttribute($field->getColumnName(), $value);
             }
@@ -123,6 +127,6 @@ class EntryRepository implements EntryRepositoryInterface
     /** * @return static */
     public static function resolve()
     {
-        return app(static::class);
+        return app(EntryRepositoryInterface::class);
     }
 }

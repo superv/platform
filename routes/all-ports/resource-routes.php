@@ -1,9 +1,9 @@
 <?php
 
+use SuperV\Platform\Domains\Resource\Http\Controllers\Dashboard\ResourceDashboardController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\Dashboard\ResourceEntryDashboardController;
+use SuperV\Platform\Domains\Resource\Http\Controllers\ListController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
-use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceDashboardController;
-use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceEntryDashboardController;
-use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceIndexController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceViewController;
 
 return [
@@ -33,7 +33,7 @@ return [
 
     'ANY@'.'sv/res/{resource}/{entry}/actions/{action}' => [
         'as'    => 'resource.entry.actions',
-        'uses'  => ResourceIndexController::at('action'),
+        'uses'  => ListController::at('action'),
         'where' => ['entry' => '[0-9]*'],
     ],
 
@@ -53,15 +53,15 @@ return [
 
     'GET@'.'sv/res/{resource}/table/{data?}' => [
         'as'   => 'resource.table',
-        'uses' => ResourceIndexController::at('table'),
+        'uses' => ListController::at('table'),
     ],
 
     'GET@'.'sv/res/{resource}/table/actions/{action}' => [
-        'uses' => ResourceIndexController::at('tableAction'),
+        'uses' => ListController::at('tableAction'),
     ],
 
     'POST@'.'sv/res/{resource}/table/actions/{action}' => [
-        'uses' => ResourceIndexController::at('tableActionPost'),
+        'uses' => ListController::at('tableActionPost'),
     ],
 
 

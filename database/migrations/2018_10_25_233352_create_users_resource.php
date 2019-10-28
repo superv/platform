@@ -15,9 +15,9 @@ class CreateUsersResource extends Migration
             $config->model(config('superv.auth.user.model'));
 
             $table->increments('id');
-            $table->string('name')->nullable();
-            $table->string('email')->unique();
-            $table->string('password');
+            $table->string('name')->entryLabel()->nullable();
+            $table->email('email')->unique();
+            $table->encrypted('password');
             $table->string('remember_token')->nullable();
 
             $table->hasOne('platform.profiles', 'profile', 'user_id');

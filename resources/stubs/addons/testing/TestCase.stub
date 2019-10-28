@@ -11,6 +11,6 @@ class TestCase extends PlatformTestCase
 
     protected $shouldBootPlatform = true;
 
-    protected $installs = ['{addon.relative_path}'];
+    protected $installs = ['{addon.path}'];
 
 }

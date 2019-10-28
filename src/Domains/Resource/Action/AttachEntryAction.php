@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Action;
 
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
@@ -51,7 +51,7 @@ class AttachEntryAction extends Action
     protected function getPivotForm()
     {
         if ($pivotColumns = $this->relation->getRelationConfig()->getPivotColumns()) {
-            return $this->relation->getPivotFields()->map(function (Field $field) {
+            return $this->relation->getPivotFields()->map(function (FieldInterface $field) {
                 return (new FieldComposer($field))->forForm();
             });
         }

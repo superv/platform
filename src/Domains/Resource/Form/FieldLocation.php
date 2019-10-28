@@ -17,4 +17,9 @@ class FieldLocation
     {
         return new static;
     }
+
+    public static function atRow($row)
+    {
+        return static::make()->setRow($row);
+    }
 }

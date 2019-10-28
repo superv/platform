@@ -158,6 +158,7 @@ class PlatformBlueprints
             $table->text('config')->nullable();
         }
 
+        $table->string('label')->showOnIndex();;
         $table->string('name')->showOnIndex();;
         $table->string('column_type')->nullable();
         $table->string('type')->showOnIndex();;

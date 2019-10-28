@@ -49,6 +49,14 @@ class EntryRouter
         ]);
     }
 
+    public function update()
+    {
+        return sv_route('sv::forms.submit', [
+            'form'  => $this->entry->getResourceIdentifier().'.forms:default',
+            'entry' => $this->entry->getId(),
+        ]);
+    }
+
     public function view()
     {
         return sv_route('sv::entry.view', [

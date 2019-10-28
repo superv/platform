@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Field;
 
-class GhostField extends Field implements \SuperV\Platform\Domains\Resource\Field\Contracts\GhostField
+use SuperV\Platform\Domains\Resource\Form\FormField;
+
+class GhostField extends FormField implements \SuperV\Platform\Domains\Resource\Field\Contracts\GhostField
 {
 }

@@ -49,6 +49,11 @@ class Identifier
         return $this->getNodes()[0];
     }
 
+    public function getResource()
+    {
+        return $this->getNodes()[1];
+    }
+
     public function isNamespace($namespace): bool
     {
         return $this->getNamespace() === $namespace;

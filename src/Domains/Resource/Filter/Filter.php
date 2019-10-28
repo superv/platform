@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Filter;
 use Closure;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter as FilterContract;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -135,9 +135,9 @@ abstract class Filter implements FilterContract, ProvidesField
         return $this;
     }
 
-    public function onFieldBuilt(Field $field) { }
+    public function onFieldBuilt(FieldInterface $field) { }
 
-    public function makeField(): Field
+    public function makeField(): FieldInterface
     {
         $field = FieldFactory::createFromArray([
             'revision_id' => uuid(),

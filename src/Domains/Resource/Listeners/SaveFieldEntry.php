@@ -27,7 +27,7 @@ class SaveFieldEntry
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
     protected $resourceConfig;
 
-    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\Field */
+    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface */
     protected $fieldType;
 
     protected $fieldWithoutEloquent = true;
@@ -94,7 +94,7 @@ class SaveFieldEntry
                 return;
             }
 
-            $this->column->config($relationConfig->toArray());
+            $this->column->config(array_merge($relationConfig->toArray(), $this->makeConfig($this->column)));
         }
 
         if (! $this->column->fieldType) {
@@ -178,6 +178,7 @@ class SaveFieldEntry
         $this->field = $this->repository
             ->getResourceField($this->resource, $column->getFieldName())
             ->fill([
+                'label'       => $column->label ?: str_unslug($column->getFieldName()),
                 'type'        => $column->fieldType,
                 'column_type' => $column->type,
                 'flags'       => $column->flags,

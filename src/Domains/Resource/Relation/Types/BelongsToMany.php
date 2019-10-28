@@ -15,6 +15,25 @@ use SuperV\Platform\Domains\Resource\Table\Table;
 
 class BelongsToMany extends Relation implements ProvidesTable, ProvidesField
 {
+    public function makeTable()
+    {
+        $relatedResource = $this->getRelatedResource();
+        $detachAction = DetachEntryAction::make($relatedResource->getChildIdentifier('actions', 'detach'))
+                                         ->setRelation($this);
+        $attachAction = AttachEntryAction::make($relatedResource->getChildIdentifier('actions', 'attach'))
+                                         ->setRelation($this);
+        $viewAction = ViewEntryAction::make($relatedResource->getChildIdentifier('actions', 'view'));
+
+        return Table::resolve()
+                    ->setResource($relatedResource)
+                    ->setQuery($this->newQuery())
+                    ->addRowAction($viewAction)
+                    ->addRowAction($detachAction)
+                    ->addContextAction($attachAction)
+                    ->setDataUrl(url()->current().'/data')
+                    ->mergeFields($this->getPivotFields());
+    }
+
     protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
     {
         return new EloquentBelongsToMany(
@@ -26,17 +45,5 @@ class BelongsToMany extends Relation implements ProvidesTable, ProvidesField
             $this->parentEntry->getKeyName(),
             $relatedEntryInstance->getKeyName()
         );
-    }
-
-    public function makeTable()
-    {
-        return Table::resolve()
-                    ->setResource($this->getRelatedResource())
-                    ->setQuery($this->newQuery())
-                    ->addRowAction(ViewEntryAction::class)
-                    ->addRowAction(DetachEntryAction::make()->setRelation($this))
-                    ->setDataUrl(url()->current().'/data')
-                    ->addContextAction(AttachEntryAction::make()->setRelation($this))
-                    ->mergeFields($this->getPivotFields());
     }
 }

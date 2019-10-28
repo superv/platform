@@ -31,6 +31,11 @@ class Media extends ResourceEntry
         return $this->disk;
     }
 
+    public function getOriginalFilename()
+    {
+        return $this->getAttribute('original');
+    }
+
     public function owner()
     {
         return $this->morphTo();
@@ -42,7 +47,7 @@ class Media extends ResourceEntry
             return 'https://'.config('filesystems.disks.s3.bucket').'.s3.amazonaws.com/'.$this->filename;
         }
 
-        return url('storage/'.$this->filename);
+        return url('storage/'.ltrim($this->filename, '/'));
     }
 
     public function getUrl()

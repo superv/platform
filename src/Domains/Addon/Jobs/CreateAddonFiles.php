@@ -34,16 +34,15 @@ class CreateAddonFiles
             'provider'    => [
                 'class_name' => $providerClass = "{$addonName}{$type}ServiceProvider",
             ],
-            'addon'       => [
-                'vendor'        => $this->model->getVendor(),
-                'name'          => $this->model->getName(),
-                'type'          => $this->model->getType(),
-                'class_name'    => $addonClass = "{$addonName}{$type}",
-                'extends'       => ucwords($type),
-                'domain'        => $addonName,
-                'psr_namespace' => $this->model->getPsrNamespace(),
-            ],
-            'model'       => $this->model->toArray(),
+            'addon'       => array_merge($this->model->toArray(), [
+//                'vendor'        => $this->model->getVendor(),
+//                'name'          => $this->model->getName(),
+//                'type'          => $this->model->getType(),
+'class_name'    => $addonClass = "{$addonName}{$type}",
+'extends'       => ucwords($type),
+'domain'        => $addonName,
+//                'psr_namespace' => $this->model->getPsrNamespace(),
+            ]),
             'psr4_prefix' => str_replace('\\', '\\\\', $this->model->getPsrNamespace()),
         ];
 

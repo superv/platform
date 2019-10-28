@@ -5,14 +5,13 @@ namespace SuperV\Platform\Domains\Resource\Table;
 use Event;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Support\Collection;
+use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Action\Action;
-use SuperV\Platform\Domains\Resource\Action\DeleteEntryAction;
-use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
-use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
+use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
-use SuperV\Platform\Domains\Resource\Field\Contracts\Field;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldQuerySorter;
 use SuperV\Platform\Domains\Resource\Filter\ApplyFilters;
@@ -51,7 +50,9 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     protected $fields;
 
-    protected $selectable = true;
+    protected $selectable = false;
+
+    protected $editable = true;
 
     protected $deletable = true;
 
@@ -79,10 +80,16 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     protected $orderBy;
 
-    public function __construct(TableDataProviderInterface $provider)
+    /**
+     * @var \SuperV\Platform\Contracts\Dispatcher
+     */
+    protected $dispatcher;
+
+    public function __construct(TableDataProviderInterface $provider, Dispatcher $dispatcher)
     {
         $this->provider = $provider;
         $this->options = collect();
+        $this->dispatcher = $dispatcher;
     }
 
     public function mergeFields($fields): TableInterface
@@ -95,6 +102,13 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     public function mergeFilters($filters): TableInterface
     {
         $this->mergeFilters = $filters;
+
+        return $this;
+    }
+
+    public function addFilter(Filter $filter): TableInterface
+    {
+        $this->mergeFilters[] = $filter;
 
         return $this;
     }
@@ -161,7 +175,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     public function makeComponent(): ComponentContract
     {
-        $this->make();
+//        $this->make();
 
         return Component::make('sv-table')->card()->setProps($this->composeConfig());
     }
@@ -236,7 +250,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     public function makeFields(): Collection
     {
         $mergeFields = wrap_collect($this->mergeFields)
-            ->map(function (Field $field) {
+            ->map(function (FieldInterface $field) {
                 return clone $field;
             });
 
@@ -245,7 +259,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
                                                       return is_array($field) ? sv_field($field) : $field;
                                                   });
 
-        return $fields->map(function (Field $field) {
+        return $fields->map(function (FieldInterface $field) {
             if ($callback = $field->getCallback('table.querying')) {
                 $this->on('querying', $callback);
             }
@@ -256,32 +270,30 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     public function composeConfig()
     {
-        Event::dispatch($this->getIdentifier().'.events:config', [
-            'table'    => $this,
-            'fields'   => $this->resource->indexFields(),
-            'resource' => $this->resource,
-        ]);
+//        Event::dispatch($this->getIdentifier().'.events:config', [
+//            'table'    => $this,
+//            'fields'   => $this->resource->indexFields(),
+//            'resource' => $this->resource,
+//        ]);
+
+//        $this->fireEvent('config');
 
         return (new TableComposer($this))->forConfig();
     }
 
     public function build()
     {
-        Event::dispatch($this->getIdentifier().'.events:config', [
-            'table'    => $this,
-            'fields'   => $this->resource->indexFields(),
-            'resource' => $this->resource,
-        ]);
-
         $fields = $this->makeFields();
 
         $query = $this->getQuery();
         if ($this->resource->isRestorable()) {
             $query->where('deleted_at', null);
         }
-        $this->resource->fire('table.querying', ['query' => $query]);
 
+        $this->fireEvent('query_resolved', ['query' => $query]);
+        $this->resource->fire('table.querying', ['query' => $query]);
         $this->fire('querying', ['query' => $query]);
+
         $this->applyFilters($query);
         $this->applyOptions($query);
 
@@ -359,21 +371,64 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         $this->setOption('order_by', ['created_at' => 'desc']);
     }
 
-    public function make()
+    public function notDeletable(): TableInterface
     {
-        if (empty($this->rowActions)) {
-            if ($this->deletable) {
-                $this->addRowAction(DeleteEntryAction::class);
-            }
-
-            if ($this->viewable) {
-                $this->addRowAction(ViewEntryAction::class);
-            }
-
-            $this->addRowAction(EditEntryAction::class);
-        }
+        $this->deletable = false;
 
         return $this;
+    }
+
+    public function notViewable(): TableInterface
+    {
+        $this->viewable = false;
+
+        return $this;
+    }
+
+    public function notSelectable(): TableInterface
+    {
+        $this->selectable = false;
+
+        return $this;
+    }
+
+    public function isDeletable(): bool
+    {
+        return $this->deletable;
+    }
+
+//    public function make()
+//    {
+//        if (empty($this->rowActions)) {
+//            if ($this->deletable) {
+//                $this->addRowAction(DeleteEntryAction::class);
+//            }
+//
+//            if ($this->viewable) {
+//                $this->addRowAction(ViewEntryAction::class);
+//            }
+//
+//            $this->addRowAction(EditEntryAction::class);
+//        } else {
+//        }
+//
+//        return $this;
+//    }
+
+    public function isViewable(): bool
+    {
+        return $this->viewable;
+    }
+
+    public function fireEvent($event, array $payload = [])
+    {
+        $eventName = sprintf("%s.events:%s", $this->getIdentifier(), $event);
+
+        $payload = array_merge($payload, ['table'    => $this,
+                                          'fields'   => $this->resource->indexFields(),
+                                          'resource' => $this->resource]);
+
+        $this->dispatcher->dispatch($eventName, $payload);
     }
 
     public function compose(Tokens $tokens = null)
@@ -392,20 +447,6 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         ]);
     }
 
-    public function notDeletable(): Table
-    {
-        $this->deletable = false;
-
-        return $this;
-    }
-
-    public function notViewable(): Table
-    {
-        $this->viewable = false;
-
-        return $this;
-    }
-
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
@@ -422,10 +463,9 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     {
     }
 
-    /** * @return static */
-    public static function resolve()
+    public function isEditable(): bool
     {
-        return app(TableInterface::class);
+        return $this->editable;
     }
 
     protected function makeTokens(): array
@@ -439,7 +479,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
             function (EntryContract $entry) use ($fields) {
                 return [
                     'id'      => $this->getRowId($entry),
-                    'fields'  => $fields->map(function (Field $field) use ($entry) {
+                    'fields'  => $fields->map(function (FieldInterface $field) use ($entry) {
                         return (new FieldComposer($field))->forTableRow($entry)->get();
                     })->values()->all(),
                     'actions' => ['view'],
@@ -519,5 +559,11 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     protected function getRequest()
     {
         return $this->request;
+    }
+
+    /** * @return static */
+    public static function resolve()
+    {
+        return app(TableInterface::class);
     }
 }

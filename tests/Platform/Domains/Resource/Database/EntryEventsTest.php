@@ -19,7 +19,7 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_before_creating()
     {
-        $eventName = sprintf("testing.posts::entry.creating");
+        $eventName = sprintf("testing.posts.entry.events:creating");
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
             $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
@@ -33,7 +33,7 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_after_created()
     {
-        $eventName = sprintf("testing.posts::entry.created");
+        $eventName = sprintf("testing.posts.entry.events:created");
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
             $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
@@ -47,7 +47,7 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_before_saving()
     {
-        $eventName = sprintf("testing.posts::entry.saving");
+        $eventName = sprintf("testing.posts.entry.events:saving");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
@@ -63,7 +63,7 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_after_saved()
     {
-        $eventName = sprintf("testing.posts::entry.saved");
+        $eventName = sprintf("testing.posts.entry.events:saved");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
@@ -78,7 +78,7 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_when_deleted()
     {
-        $eventName = sprintf("testing.posts::entry.deleted");
+        $eventName = sprintf("testing.posts.entry.events:deleted");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
@@ -93,7 +93,7 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_when_retrieved()
     {
-        $eventName = sprintf("testing.posts::entry.retrieved");
+        $eventName = sprintf("testing.posts.entry.events:retrieved");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($myPost, $eventName) {

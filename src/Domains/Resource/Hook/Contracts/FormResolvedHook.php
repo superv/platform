@@ -2,9 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Hook\Contracts;
 
-use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
+use SuperV\Platform\Domains\Resource\Form\FormFields;
 
 interface FormResolvedHook
 {
-    public function resolved(Form $form);
+    public function resolved(FormInterface $form, FormFields $fields);
 }

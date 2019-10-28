@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Http;
 
+use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 
@@ -32,7 +33,7 @@ trait ResolvesResource
         return $this->resource;
     }
 
-    protected function resolveRelation()
+    protected function resolveRelation(): Relation
     {
         $relation = $this->resolveResource()->getRelation($this->route->parameter('relation'));
         if ($this->entry) {

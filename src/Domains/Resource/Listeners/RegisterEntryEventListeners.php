@@ -34,7 +34,7 @@ class RegisterEntryEventListeners
                 sprintf("eloquent.%s:*", $eventName),
                 function ($event, $payload) use ($eventClass, $eventName) {
                     if (($entry = $payload[0]) instanceof EntryContract) {
-                        $this->dispatcher->dispatch(sprintf("%s::entry.%s", $entry->getResourceIdentifier(), $eventName), $entry);
+                        $this->dispatcher->dispatch(sprintf("%s.entry.events:%s", $entry->getResourceIdentifier(), $eventName), $entry);
                         $eventClass::dispatch($entry);
                     }
                 }

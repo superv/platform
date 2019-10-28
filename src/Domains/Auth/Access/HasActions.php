@@ -8,6 +8,7 @@ use SuperV\Platform\Domains\Auth\Access\Guard\Guardable;
 /**
  * Trait HasActions
  *
+ * @mixin \SuperV\Platform\Domains\Auth\Contracts\User
  * @property \Illuminate\Database\Eloquent\Collection $roles
  */
 trait HasActions
@@ -17,6 +18,11 @@ trait HasActions
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    public function getRoleList(): array
+    {
+        return $this->getRoles()->pluck('slug')->all();
     }
 
     public function roles()
@@ -116,15 +122,16 @@ trait HasActions
         return false;
     }
 
-    public function cannot($action)
+    public function canNot($action)
     {
         return ! $this->can($action);
     }
 
     public function canOrFail($action)
     {
-        if (! $this->can($action)) {
-            AuthorizationFailedException::actionFailed($action);
+        if ($this->canNot($action)) {
+            abort(403);
+            AuthorizationFailedException::action($action);
         }
     }
 

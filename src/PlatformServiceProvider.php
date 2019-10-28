@@ -17,6 +17,8 @@ use SuperV\Platform\Domains\Addon\Console\AddonReinstallCommand;
 use SuperV\Platform\Domains\Addon\Console\AddonRunMigrationCommand;
 use SuperV\Platform\Domains\Addon\Console\AddonUninstallCommand;
 use SuperV\Platform\Domains\Addon\Console\MakeAddonCommand;
+use SuperV\Platform\Domains\Addon\Console\MakeDropCommand;
+use SuperV\Platform\Domains\Addon\Console\MakeModuleCommand;
 use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
 use SuperV\Platform\Domains\Addon\Events\AddonInstalledEvent;
 use SuperV\Platform\Domains\Addon\Listeners\AddonBootedListener;
@@ -70,6 +72,8 @@ class PlatformServiceProvider extends BaseServiceProvider
         AddonUninstallCommand::class,
         AddonReinstallCommand::class,
         MakeAddonCommand::class,
+        MakeModuleCommand::class,
+        MakeDropCommand::class,
         AddonMakeMigrationCommand::class,
         AddonRunMigrationCommand::class,
     ];

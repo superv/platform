@@ -17,10 +17,13 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
     use Hydratable;
 
     /**
-     * Unique name of the action
+     * Unique identifier of the action
      *
      * @var string
      */
+    protected $identifier;
+
+    /** @var string */
     protected $name;
 
     /** @var string */
@@ -96,13 +99,37 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
         return $this;
     }
 
+    public function setIdentifier(string $identifier): Action
+    {
+        $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
+    }
+
     public function uuid(): string
     {
         return $this->uuid;
     }
 
+    /**
+     * @param string $identifier
+     * @return static
+     */
+    public static function make(string $identifier)
+    {
+        return new static(array_filter(compact('identifier')));
+    }
+
     /** @return static */
-    public static function make(?string $title = null, ?string $name = null)
+    public static function make222(?string $title = null, ?string $name = null)
     {
 //        if ($title && ! $name) {
 //            $name = str_slug($title, '_');

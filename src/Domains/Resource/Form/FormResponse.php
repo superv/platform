@@ -4,14 +4,14 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Contracts\Support\Responsable;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Form\Contracts\Form;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class FormResponse implements Responsable
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Form\EntryForm
+     * @var \SuperV\Platform\Domains\Resource\Form\Form
      */
     protected $form;
 
@@ -27,7 +27,7 @@ class FormResponse implements Responsable
 
     protected $events;
 
-    public function __construct(Form $form, EntryContract $entry, ?Resource $resource = null)
+    public function __construct(FormInterface $form, EntryContract $entry, ?Resource $resource = null)
     {
         $this->form = $form;
         $this->resource = $resource;
@@ -74,11 +74,10 @@ class FormResponse implements Responsable
 
     protected function getMessage()
     {
-        $transKey = $this->form->isUpdating() ? ':Resource :Entry was updated' : ':Resource :Entry was created';
+        $transKey = $this->form->isUpdating() ? ':Entry was updated' : ':Entry was created';
 
         $transData = [
             'Entry'    => $this->resource->getEntryLabel($this->entry),
-            'Resource' => $this->resource->getLabel(),
         ];
 
         return __($transKey, $transData);

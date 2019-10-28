@@ -76,6 +76,11 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         return $this->addFlag('required');
     }
 
+    public function static()
+    {
+        return $this->addFlag('static');
+    }
+
     public function setRequired(bool $isRequired)
     {
         if ($isRequired) {
@@ -113,6 +118,13 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         $this->offsetSet('default', $value);
 
         return $this->nullable();
+    }
+
+    public function label($label)
+    {
+        $this->offsetSet('label', $label);
+
+        return $this;
     }
 
     public function unit($unit)

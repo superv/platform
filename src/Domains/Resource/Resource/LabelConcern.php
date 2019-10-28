@@ -7,8 +7,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 /**
  * Trait LabelConcern
  *
- * @package SuperV\Platform\Domains\Resource\Resource
- * @method \SuperV\Platform\Domains\Resource\ResourceConfig config()
+ * @mixin \SuperV\Platform\Domains\Resource\Resource
  */
 trait LabelConcern
 {
@@ -24,11 +23,6 @@ trait LabelConcern
 
     public function getSingularLabel($translated = true)
     {
-//        $key = $this->getNamespace().'.resources.'.$this->getIdentifier().'.singular';
-//        $key = $this->getIdentifier().'.singular';
-//        if ($value = trans($key)) {
-//            return __($value);
-//        }
         if (! $singularLabel = $this->config()->getSingularLabel()) {
             $singularLabel = str_singular($this->config()->getLabel());
         }

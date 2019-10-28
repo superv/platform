@@ -26,6 +26,7 @@ class DeleteResourceTest extends ResourceTestCase
 
         $this->assertFalse(Resource::exists($categories->getIdentifier()));
     }
+
     function test__deletes_field_when_a_column_is_dropped()
     {
         $resourceEntry = $this->makeResourceModel('test_users', ['name', 'title']);
@@ -56,15 +57,10 @@ class DeleteResourceTest extends ResourceTestCase
     {
         $this->blueprints()->posts('testing');
 
-//        $addon = $this->bindMock(Addon::class);
-//        $addon->shouldReceive('getIdentifier')->andReturn('testing');
-//        AddonUninstallingEvent::dispatch($addon);
-
         DeleteResource::dispatch('testing.posts');
 
-        $this->assertEquals(0, Action::query()->where('slug', 'testing.posts')->count());
-        $this->assertEquals(0, Action::query()->where('namespace', 'testing')->count());
-        $this->assertEquals(0, Action::query()->where('namespace', 'testing.posts.fields')->count());
+        $this->assertEquals(0, Action::query()->where('slug', 'LIKE', 'testing.posts%')->count());
+        $this->assertEquals(0, Action::query()->where('namespace', 'LIKE', 'testing.posts%')->count());
     }
 
     function __deletes_pivot_resources()

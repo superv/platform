@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Table\Contracts;
 
 use Illuminate\Support\Collection;
+use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
@@ -28,18 +29,17 @@ interface TableInterface
 
     public function makeComponent(): ComponentContract;
 
-    public function isSelectable();
-
     public function showIdColumn();
 
     public function shouldShowIdColumn(): bool;
-
 
     public function getFilters(): Collection;
 
     public function setFilters($filters): TableInterface;
 
     public function mergeFilters($filters): TableInterface;
+
+    public function addFilter(Filter $filter): TableInterface;
 
     public function setRequest($request): TableInterface;
 
@@ -78,4 +78,18 @@ interface TableInterface
     public function getAction($name);
 
     public function setRowActions($actions);
+
+    public function notViewable(): TableInterface;
+
+    public function notDeletable(): TableInterface;
+
+    public function notSelectable(): TableInterface;
+
+    public function isViewable(): bool;
+
+    public function isDeletable(): bool;
+
+    public function isEditable(): bool;
+
+    public function isSelectable(): bool;
 }
