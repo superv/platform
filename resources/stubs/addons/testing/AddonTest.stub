@@ -6,6 +6,6 @@ class {addon.domain}Test extends TestCase
 {
     function test_addon_is_installed()
     {
-        $this->assertNotNull(sv_addons('{addon.identifer}'));
+        $this->assertNotNull(sv_addons('{addon.identifier}'));
     }
 }

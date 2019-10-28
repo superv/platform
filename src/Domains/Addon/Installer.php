@@ -186,9 +186,9 @@ class Installer
         return $this->identifier;
     }
 
-    public function setIdentifier($identifer)
+    public function setIdentifier($identifier)
     {
-        $this->identifier = $identifer;
+        $this->identifier = $identifier;
 
         return $this;
     }

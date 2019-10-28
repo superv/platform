@@ -34,24 +34,32 @@ class CreateAddonPaths
 
         $filesystem->makeDirectory($path, 0755, true, true);
 
-        foreach ($this->getDirectoryList() as $dir) {
+        foreach ($this->getDirectoryList($this->model->getType()) as $dir) {
             $filesystem->makeDirectory("{$path}/{$dir}", 0755, true, true);
         }
     }
 
-    protected function getDirectoryList()
+    protected function getDirectoryList($type)
     {
-        return [
+        $map = [
+            'module' => [
+                "src/Domains",
+                "src/Resources",
+                "src/Console",
+                "config",
+                "database/migrations",
+            ],
+            'drop'   => [
+                "js",
+            ],
+        ];
+
+        return array_merge($map[$type], [
             "src",
-            "src/Domains",
-            "src/Extensions",
-            "src/Console",
             "resources",
             "routes",
-            "config",
-            "database/migrations",
             "tests",
             "tests/".studly_case($this->model->getName()),
-        ];
+        ]);
     }
 }
