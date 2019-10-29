@@ -4,7 +4,7 @@ namespace Tests\Platform\Domains\Resource\Field\Types\Relation;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\Relation\RelationFieldConfig;
-use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -12,7 +12,6 @@ class RelationFieldTest extends ResourceTestCase
 {
     function test__config_one_to_one()
     {
-
         $config = $this->getFieldConfig('students', 'address');
         $this->assertEquals('students', $config->getSelf());
         $this->assertEquals('testing.addresses', $config->getRelated());
@@ -83,7 +82,7 @@ class RelationFieldTest extends ResourceTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $config = $this->create('addresses', function (Blueprint $table) {
+        $this->create('addresses', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
 
@@ -92,9 +91,7 @@ class RelationFieldTest extends ResourceTestCase
                   ->required(false);
         });
 
-//        Relator::relate()->one($address)->toOne($student);
-
-        $this->create('students', function (Blueprint $table, ResourceConfig $config) {
+        $this->create('students', function (Blueprint $table, Config $config) {
             $config->nav('acp.supreme');
             $table->increments('id');
             $table->string('name');
@@ -106,7 +103,7 @@ class RelationFieldTest extends ResourceTestCase
                   ->withPivotTable('students_courses');
         });
 
-        $this->create('courses', function (Blueprint $table, ResourceConfig $config) {
+        $this->create('courses', function (Blueprint $table, Config $config) {
             $config->nav('acp.supreme');
             $table->increments('id');
             $table->string('title');
@@ -115,7 +112,7 @@ class RelationFieldTest extends ResourceTestCase
                   ->withLocalKey('teacher_id');
         });
 
-        $this->create('teachers', function (Blueprint $table, ResourceConfig $config) {
+        $this->create('teachers', function (Blueprint $table, Config $config) {
             $config->nav('acp.supreme');
             $table->increments('id');
             $table->string('name');

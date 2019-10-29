@@ -84,8 +84,6 @@ interface FieldInterface
 
     public function getCallback($trigger);
 
-//    public function resolveRequest(Request $request, ?EntryContract $entry = null);
-
     public function resolveFromEntry($entry);
 
     public function getComposer($for);
