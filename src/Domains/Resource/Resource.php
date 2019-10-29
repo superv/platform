@@ -34,11 +34,9 @@ class Resource implements
     Contracts\ProvidesQuery
 {
     use Hydratable;
-//    use HasConfig;
     use LabelConcern;
     use RepoConcern;
     use FiresCallbacks;
-    use ResourceCallbacks;
 
     /**
      * Database id

@@ -25,10 +25,6 @@ class RelationIndexController extends BaseApiController
             return $table->setRequest($this->request)->build();
         }
 
-        if ($callback = $relation->getCallback('index.config')) {
-            app()->call($callback, ['table' => $table]);
-        }
-
         return MakeComponentTree::dispatch($table)->withTokens(['res' => $relation->getRelatedResource()->toArray()]);
     }
 }

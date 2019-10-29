@@ -25,10 +25,6 @@ class ResourceEntryDashboardController extends BaseApiController
 
         Event::dispatch($resource->getIdentifier().'.pages:entry_dashboard.events:resolved', compact('page', 'resource'));
 
-        if ($callback = $resource->getCallback('entry.dashboard')) {
-            app()->call($callback, ['page' => $page, 'entry' => $this->entry]);
-        }
-
         $page->addBlock(Component::make('sv-router-portal')->setProps([
             'name' => $resource->getIdentifier().':'.$this->entry->getId(),
         ]));
@@ -36,7 +32,7 @@ class ResourceEntryDashboardController extends BaseApiController
         if ($page->isViewable()) {
             $page->addSection([
                 'identifier' => 'view',
-                'title'      => __('View'),
+                'title'      => sv_trans('View'),
                 'url'        => $this->entry->router()->view(),
                 'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
             ]);
@@ -45,7 +41,7 @@ class ResourceEntryDashboardController extends BaseApiController
         if ($page->isEditable()) {
             $page->addSection([
                 'identifier' => 'edit',
-                'title'      => __('Edit'),
+                'title'      => sv_trans('Edit'),
                 'url'        => $this->entry->router()->updateForm(),
                 'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
             ]);

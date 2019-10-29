@@ -24,6 +24,7 @@ class RelationController extends BaseApiController
     public function attach()
     {
         $this->resolveResource();
+
         $relationName = $this->route->parameter('relation');
         $items = $this->request->get('items');
         if ($pivotColumns = $this->resolveRelation()->getRelationConfig()->getPivotColumns()) {
@@ -47,6 +48,7 @@ class RelationController extends BaseApiController
     public function detach()
     {
         $this->resolveResource();
+
         $relationName = $this->route->parameter('relation');
         $res = $this->entry->{$relationName}()->detach($this->route->parameter('related'));
 

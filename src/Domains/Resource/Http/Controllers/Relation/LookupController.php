@@ -16,7 +16,6 @@ class LookupController extends BaseApiController
         $relation = $this->resolveRelation();
         $resource = $relation->getRelatedResource();
 
-//        $table->setResource($resource);
         $table = $resource->resolveTable();
         $table->setDataUrl(url()->current().'/data');
 
@@ -28,7 +27,6 @@ class LookupController extends BaseApiController
                                                 ->pluck($resource->config()->getTable().'.'.$query->getModel()->getKeyName());
 
             $query->whereNotIn($query->getModel()->getQualifiedKeyName(), $alreadyAttachedItems);
-//            $table->setQuery($query);
 
             return $table->setRequest($this->request)->build();
         }
