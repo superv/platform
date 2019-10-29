@@ -94,9 +94,7 @@ class EntryPage extends ResourcePage
                                   return ! $relation->hasFlag('view.hide');
                               })
                               ->map(function (Relation $relation) {
-                                  if ($url = $relation->getConfigValue('view.url')) {
-                                      $portal = true;
-                                  } elseif ($relation instanceof ProvidesTable) {
+                                   if ($relation instanceof ProvidesTable) {
                                       $url = $relation->indexRoute($this->entry);
                                   } elseif ($relation instanceof ProvidesForm) {
                                       $url = $relation->route('edit', $this->entry);
@@ -108,7 +106,7 @@ class EntryPage extends ResourcePage
                                       'identifier' => $relation->getName(),
                                       'url'        => $url,
                                       'target'     => 'portal:'.$this->resource->getIdentifier().':'.$this->entry->getId(),
-                                      'title'      => trans(str_unslug($relation->getName())),
+                                      'title'      => sv_trans(str_unslug($relation->getName())),
                                   ];
                               })
                               ->filter()->values();

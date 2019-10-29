@@ -73,9 +73,7 @@ function sv_trans($key = null, $replace = [], $locale = null)
         return $line;
     }
 
-    $parts = explode('.', $key);
-
-    return end($parts);
+    return __($line);
 }
 
 function dump_callers($limit = 10)

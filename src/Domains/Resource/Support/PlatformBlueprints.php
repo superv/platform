@@ -55,6 +55,8 @@ class PlatformBlueprints
         foreach (PlatformBlueprints::$resources as $resource => $table) {
             Schema::dropIfExists($table);
         }
+
+        Schema::dropIfExists('sv_form_fields');
     }
 
     /**

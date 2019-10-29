@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Hook;
 
-use SuperV\Platform\Domains\Resource\Hook\Contracts\ListConfigHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ListDataHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ListQueryResolvedHook;
 use SuperV\Platform\Domains\Resource\Hook\Contracts\ListResolvedHook;
@@ -16,7 +15,6 @@ class ListsHookHandler extends HookHandler
 
     protected $map = [
         'resolved'       => ListResolvedHook::class,
-        'config'         => ListConfigHook::class,
         'data'           => ListDataHook::class,
         'query_resolved' => ListQueryResolvedHook::class,
     ];

@@ -57,7 +57,7 @@ class ResourceDashboard
         if (Current::user()->can($this->resource->getChildIdentifier('actions', 'list'))) {
             $page->addSection([
                 'identifier' => 'all',
-                'title'      => trans('All'),
+                'title'      => sv_trans('All'),
                 'url'        => $resource->router()->dashboard('table'),
                 //            'url'        => $resource->route('dashboard', null, ['section' => 'table']),
                 'target'     => 'portal:'.$resource->getIdentifier(),
@@ -69,7 +69,7 @@ class ResourceDashboard
             if ($page->isCreatable() && empty($page->getActions())) {
                 $page->addSection([
                     'identifier' => 'create',
-                    'title'      => trans('Create'),
+                    'title'      => sv_trans('Create'),
                     'url'        => $resource->router()->createForm(),
                     //                'url'        => $resource->route('forms.create'),
                     'target'     => 'portal:'.$resource->getIdentifier(),
