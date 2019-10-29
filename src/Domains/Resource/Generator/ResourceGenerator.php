@@ -4,7 +4,6 @@ namespace SuperV\Platform\Domains\Resource\Generator;
 
 use SuperV\Platform\Platform;
 use SuperV\Platform\Support\Parser;
-use const PHP_EOL;
 
 class ResourceGenerator
 {
