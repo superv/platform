@@ -54,10 +54,10 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
     public function compose(\SuperV\Platform\Support\Composer\Tokens $tokens = null)
     {
         $payload = new Payload([
-            'name'  => $this->getName(),
-            'type'  => $this->getType(),
+            'name'   => $this->getName(),
+            'type'   => $this->getType(),
             'target' => $this->getTarget(),
-            'title' => $this->getTitle(),
+            'title'  => $this->getTitle(),
         ]);
 
         $this->fire('composed', ['payload' => $payload]);
@@ -72,7 +72,7 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
 
     public function getTitle(): string
     {
-        return $this->title ?? ucwords($this->name);
+        return sv_trans($this->title ?? ucwords($this->name));
     }
 
     public function setTitle($title): ActionContract

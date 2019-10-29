@@ -16,7 +16,7 @@ interface FormFieldInterface extends FieldInterface
 
     public function getLocation(): ?FieldLocation;
 
-    public function setLocation(FieldLocation $location): void;
+    public function setLocation(FieldLocation $location): FormFieldInterface;
 
     public function setTemporal($temporal);
 

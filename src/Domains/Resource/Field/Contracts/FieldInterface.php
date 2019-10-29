@@ -22,7 +22,6 @@ interface FieldInterface
 
     public function getColumnName(): ?string;
 
-
     public function setLabel(string $label): FieldInterface;
 
     public function getFieldType(): FieldTypeInterface;
