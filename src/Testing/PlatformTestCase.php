@@ -18,7 +18,7 @@ use SuperV\Platform\Exceptions\ValidationException;
 use SuperV\Platform\PlatformServiceProvider;
 use Tests\Platform\ComposerLoader;
 
-class PlatformTestCase extends OrchestraTestCase
+abstract class PlatformTestCase extends OrchestraTestCase
 {
     use TestHelpers;
 
