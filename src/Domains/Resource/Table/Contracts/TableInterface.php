@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Table\Contracts;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\Table\Actions\SelectionAction;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
 interface TableInterface
@@ -43,6 +44,9 @@ interface TableInterface
 
     public function setRequest($request): TableInterface;
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function getQuery();
 
     public function setQuery($query): TableInterface;
@@ -69,7 +73,7 @@ interface TableInterface
 
     public function removeRowAction($actionName);
 
-    public function addSelectionAction($action): TableInterface;
+    public function addSelectionAction(SelectionAction $action): TableInterface;
 
     public function addRowAction($action): TableInterface;
 
@@ -84,6 +88,8 @@ interface TableInterface
     public function notDeletable(): TableInterface;
 
     public function notSelectable(): TableInterface;
+
+    public function makeSelectable(): TableInterface;
 
     public function isViewable(): bool;
 

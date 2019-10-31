@@ -16,6 +16,7 @@ use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldQuerySorter;
 use SuperV\Platform\Domains\Resource\Filter\ApplyFilters;
 use SuperV\Platform\Domains\Resource\Resource;
+use SuperV\Platform\Domains\Resource\Table\Actions\SelectionAction;
 use SuperV\Platform\Domains\Resource\Table\Contracts\TableDataProviderInterface;
 use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 use SuperV\Platform\Domains\UI\Components\Component;
@@ -120,9 +121,11 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         return $this;
     }
 
-    public function addSelectionAction($action): TableInterface
+    public function addSelectionAction(SelectionAction $action): TableInterface
     {
         $this->selectionActions[] = $action;
+        $action->setRequestUrl($this->getUrl('actions/'.$action->getName()));
+        $action->setTable($this);
 
         return $this;
     }
@@ -189,13 +192,10 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
 
     public function getAction($name)
     {
-        return collect($this->getSelectionActions())->map(function ($action) {
-            if (is_string($action)) {
-                $action = $action::make();
-            }
-
-            return $action;
-        })->first(function (Action $action) use ($name) { return $action->getName() === $name; });
+        return collect($this->getSelectionActions())
+            ->first(function (Action $action) use ($name) {
+                return $action->getName() === $name;
+            });
     }
 
     public function setDataUrl($url): TableInterface
@@ -290,7 +290,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
             $query->where('deleted_at', null);
         }
 
-        $this->fireEvent('query_resolved', ['query' => $query]);
+
         $this->resource->fire('table.querying', ['query' => $query]);
         $this->fire('querying', ['query' => $query]);
 
@@ -310,13 +310,21 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         return $this;
     }
 
+    public function getAllEntries()
+    {
+        $query = $this->getQuery();
+
+        $this->applyFilters($query);
+    }
+
+
     public function getDataUrl()
     {
         if ($this->dataUrl) {
             return $this->dataUrl;
         }
 
-        return $this->resource->route('table').'/data';
+        return $this->getUrl('data');
     }
 
     public function getFilters(): Collection
@@ -335,6 +343,7 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     {
         if (! $this->query) {
             $this->query = $this->resource->newQuery()->selectRaw($this->resource->config()->getTable().'.*');
+            $this->fireEvent('query_resolved', ['query' => $this->query]);
         }
 
         return $this->query;
@@ -392,32 +401,26 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         return $this;
     }
 
+    public function makeSelectable(): TableInterface
+    {
+        $this->selectable = true;
+
+        return $this;
+    }
+
     public function isDeletable(): bool
     {
         return $this->deletable;
     }
 
-//    public function make()
-//    {
-//        if (empty($this->rowActions)) {
-//            if ($this->deletable) {
-//                $this->addRowAction(DeleteEntryAction::class);
-//            }
-//
-//            if ($this->viewable) {
-//                $this->addRowAction(ViewEntryAction::class);
-//            }
-//
-//            $this->addRowAction(EditEntryAction::class);
-//        } else {
-//        }
-//
-//        return $this;
-//    }
-
     public function isViewable(): bool
     {
         return $this->viewable;
+    }
+
+    public function isEditable(): bool
+    {
+        return $this->editable;
     }
 
     public function fireEvent($event, array $payload = [])
@@ -463,9 +466,9 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
     {
     }
 
-    public function isEditable(): bool
+    public function getUrl($suffix = null)
     {
-        return $this->editable;
+        return $this->resource->route('table').($suffix ? '/'.$suffix : '');
     }
 
     protected function makeTokens(): array

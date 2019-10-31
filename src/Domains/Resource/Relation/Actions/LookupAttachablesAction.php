@@ -1,14 +1,15 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Action;
+namespace SuperV\Platform\Domains\Resource\Relation\Actions;
 
+use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Support\Composer\Payload;
 
-class AttachEntryAction extends Action
+class LookupAttachablesAction extends Action
 {
     protected $name = 'attach';
 
@@ -20,7 +21,7 @@ class AttachEntryAction extends Action
     public function makeComponent(): ComponentContract
     {
         return parent::makeComponent()
-                     ->setName('sv-attach-entry-action')
+                     ->setName('sv-attach-action')
                      ->setProp('modal-size', 'w-5/6');
     }
 
@@ -41,7 +42,7 @@ class AttachEntryAction extends Action
         return $this->relation->route('attach', $this->relation->getParentEntry());
     }
 
-    public function setRelation(Relation $relation): AttachEntryAction
+    public function setRelation(Relation $relation): LookupAttachablesAction
     {
         $this->relation = $relation;
 

@@ -7,10 +7,21 @@ use SuperV\Platform\Testing\PlatformTestCase;
 
 class ApplyFiltersTest extends PlatformTestCase
 {
-    function test__success()
+    function test__success_with_encoded_filters()
     {
         $request = $this->makeGetRequest([
             'filters' => base64_encode(json_encode(['filter-id' => 'filter-value'])),
+        ]);
+        ApplyFilters::dispatch(collect([$filterMock = new FilterMock]), 'the-query', $request);
+
+        $this->assertEquals('the-query', $filterMock->appliedQuery);
+        $this->assertEquals('filter-value', $filterMock->appliedValue);
+    }
+
+    function test__success_with_non_encoded_filters()
+    {
+        $request = $this->makeGetRequest([
+            'filters' => ['filter-id' => 'filter-value'],
         ]);
         ApplyFilters::dispatch(collect([$filterMock = new FilterMock]), 'the-query', $request);
 

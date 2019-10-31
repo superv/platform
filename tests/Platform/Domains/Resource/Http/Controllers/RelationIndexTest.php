@@ -115,7 +115,7 @@ class RelationIndexTest extends ResourceTestCase
         $this->assertEquals(1, count($table->getProp('config.context_actions')));
         $action = HelperComponent::fromArray($table->getProp('config.context_actions.0'));
 
-        $this->assertEquals('sv-attach-entry-action', $action->getName());
+        $this->assertEquals('sv-attach-action', $action->getName());
         $this->assertEquals(sv_url($relation->route('lookup', $userA)), $action->getProp('lookup-url'));
         $this->assertEquals(sv_url($relation->route('attach', $userA)), $action->getProp('attach-url'));
 
@@ -167,7 +167,7 @@ class RelationIndexTest extends ResourceTestCase
         $this->assertEquals(1, count($table->getProp('config.context_actions')));
         $action = HelperComponent::fromArray($table->getProp('config.context_actions.0'));
 
-        $this->assertEquals('sv-attach-entry-action', $action->getName());
+        $this->assertEquals('sv-attach-action', $action->getName());
         $this->assertEquals(sv_url($relation->route('lookup', $userA)), $action->getProp('lookup-url'));
         $this->assertEquals(sv_url($relation->route('attach', $userA)), $action->getProp('attach-url'));
         $this->assertEquals('provision', $action->getProp('pivot-fields.provision.name'));
