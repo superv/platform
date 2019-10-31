@@ -17,7 +17,8 @@ class LookupController extends BaseApiController
         $resource = $relation->getRelatedResource();
 
         $table = $resource->resolveTable();
-        $table->setDataUrl(url()->current().'/data');
+        $table->setDataUrl(url()->current().'/data')
+              ->makeSelectable();
 
         if ($this->route->parameter('data')) {
             /** @var \Illuminate\Database\Eloquent\Builder $query */
