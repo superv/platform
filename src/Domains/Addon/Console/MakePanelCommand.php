@@ -4,15 +4,15 @@ namespace SuperV\Platform\Domains\Addon\Console;
 
 use SuperV\Platform\Contracts\Command;
 
-class MakeDropCommand extends Command
+class MakePanelCommand extends Command
 {
-    protected $signature = 'make:drop {identifier} {--path=} {--force}';
+    protected $signature = 'make:panel {identifier} {--path=} {--force}';
 
     public function handle()
     {
         $this->call('make:addon', [
             'identifier' => $this->argument('identifier'),
-            '--type'     => 'drop',
+            '--type'     => 'panel',
             '--path'     => $this->option('path'),
             '--force'    => $this->option('force'),
         ]);
