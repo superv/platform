@@ -45,7 +45,7 @@ class UrlGenerator extends \Illuminate\Routing\UrlGenerator
             return $pathInfo;
         }
 
-        return str_replace_last($port->baseUrl(), '', $pathInfo);
+        return str_replace_last($port->baseUrl().'/', '', $pathInfo);
     }
 
     private function getRequestRoot()

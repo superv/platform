@@ -54,7 +54,7 @@ class Port
 
     public function root()
     {
-        return $this->hostname().($this->baseUrl() ? $this->baseUrl() : '');
+        return $this->hostname().($this->baseUrl() !== '/' ? $this->baseUrl() : '');
     }
 
     public function hostname()
