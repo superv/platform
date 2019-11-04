@@ -64,19 +64,22 @@ class CreateAddonFiles
             $port = Hub::get($portSlug);
 
             $contentTokens = array_merge($tokens, [
-                'panel' => [
+                'panel'    => [
                     'title'           => "{$addonLabel}{$typeLabel}",
                     'label'           => $addonLabel,
                     'name'            => $this->addon->getName(),
-                    'base_url'        => $this->addon->getName(),
+                    'base_path'       => $this->addon->getName(),
                     'port'            => $port->slug(),
                     'dev_server_host' => $port->hostname(),
                     'dev_server_port' => '8091',
                 ],
-                'api'   => [
+                'api'      => [
                     'scheme'    => $port->scheme(),
                     'host'      => $port->hostname(),
                     'base_path' => $port->baseUrl(),
+                ],
+                'platform' => [
+                    'version' => \SuperV\Platform\Platform::$version,
                 ],
             ]);
 

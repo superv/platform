@@ -2,7 +2,14 @@
 
 namespace Tests\Platform\Domains\Resource\Generator;
 
+use Illuminate\Database\Eloquent\Model;
+use ReflectionClass;
+use SuperV\Platform\Domains\Auth\Profile;
+use SuperV\Platform\Domains\Resource\Generator\RelationGenerator;
 use SuperV\Platform\Domains\Resource\Generator\ResourceGenerator;
+use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
@@ -30,44 +37,72 @@ class ResourceGeneratorTest extends ResourceTestCase
         );
     }
 
-    protected function setUp(): void
+    function test__model_test()
     {
-        parent::setUp();
-//        Config::set('database.connections.testing', [
-//            'driver'   => 'mysql',
-//            'host'     => 'localhost',
-//            'database' => 'sv_testing',
-//            'username' => 'superv',
-//            'password' => 'secret',
-//        ]);
+        $path = __DIR__;
 
-//        Config::set('database.default', 'sqlite');
+        $classList = [];
+        /** @var SplFileInfo $file */
+        foreach ((new Finder)->in($path)->files() as $file) {
+            if (! $namespace = get_ns_from_file($file->getPathname())) {
+                continue;
+            }
 
-//        Schema::disableForeignKeyConstraints();
-//        Schema::dropIfExists('users');
-//        Schema::dropIfExists('posts');
-//        Schema::create('users', function (Blueprint $table) {
-//            $table->increments('id');
-//            $table->string('name');
-//            $table->integer('age');
-//        });
-//        Schema::create('posts', function (Blueprint $table) {
-//            $table->increments('id');
-//            $table->string('title');
-//            $table->unsignedInteger('user_id');
-//
-//            $table->foreign('user_id')->references('id')->on('users');
-//        });
+            $className = str_replace('.php', '', $file->getFilename());
+            $class = $namespace.'\\'.$className;
+
+            $classList[] = $class;
+        }
+
+        $models = collect($classList)
+            ->filter(function ($class) {
+                if (! class_exists($class)) {
+                    return false;
+                }
+
+                $reflection = new ReflectionClass($class);
+                if (! $reflection->isUserDefined()) {
+                    return false;
+                }
+
+                if ($reflection->isAbstract()) {
+                    return false;
+                }
+
+                return $reflection->isSubclassOf(Model::class);
+            })
+            ->keyBy(function ($model) {
+                return (new $model)->getTable();
+            });
+
+        $this->assertEquals(ImportUserModel::class, $models->get('imp_users'));
+        $this->assertEquals(ImportPostModel::class, $models->get('imp_posts'));
     }
 
-    protected function tearDown(): void
+    function test__relation_test()
     {
-//        Schema::disableForeignKeyConstraints();
-//        Schema::dropIfExists('users');
-//        Schema::dropIfExists('posts');
-//
-//        Config::set('database.default', 'sqlite');
-        parent::tearDown();
+        $generator = new RelationGenerator(ImportUserModel::class);
+
+        $relations = $generator->make();
+
+        $this->assertEquals(2, $relations->count());
+
+        /** @var RelationConfig $posts */
+        $posts = $relations->get('posts');
+        $this->assertInstanceOf(RelationConfig::class, $posts);
+        $this->assertEquals([
+            'related_model' => ImportPostModel::class,
+            'foreign_key'   => 'user_id',
+            'local_key'     => 'id',
+        ], $posts->toArray());
+
+        /** @var RelationConfig $posts */
+        $profile = $relations->get('profile');
+        $this->assertInstanceOf(RelationConfig::class, $profile);
+        $this->assertEquals([
+            'related_model' => Profile::class,
+            'foreign_key'   => 'user_id',
+        ], $profile->toArray());
     }
 
     protected function getUsersTable()

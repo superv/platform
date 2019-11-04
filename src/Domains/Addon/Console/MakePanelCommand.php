@@ -3,6 +3,8 @@
 namespace SuperV\Platform\Domains\Addon\Console;
 
 use SuperV\Platform\Contracts\Command;
+use SuperV\Platform\Domains\Addon\Features\MakeAddon;
+use SuperV\Platform\Domains\Addon\Features\MakeAddonRequest;
 
 class MakePanelCommand extends Command
 {
@@ -10,11 +12,17 @@ class MakePanelCommand extends Command
 
     public function handle()
     {
-        $this->call('make:addon', [
-            'identifier' => $this->argument('identifier'),
-            '--type'     => 'panel',
-            '--path'     => $this->option('path'),
-            '--force'    => $this->option('force'),
-        ]);
+        $request = new MakeAddonRequest(
+            $this->argument('identifier'),
+            'panel'
+        );
+
+        if ($this->hasOption('path')) {
+            $request->setTargetPath($this->option('path'));
+        }
+
+        MakeAddon::dispatch($request, $this->option('force'));
+
+        $this->info('The ['.$this->argument('identifier').'] panel was created.');
     }
 }
