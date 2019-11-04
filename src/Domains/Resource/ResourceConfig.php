@@ -276,9 +276,11 @@ class ResourceConfig
         return $this->namespace;
     }
 
-    public function setNamespace($namespace): void
+    public function setNamespace($namespace): self
     {
         $this->namespace = $namespace;
+
+        return $this;
     }
 
     public function getName()
@@ -286,9 +288,16 @@ class ResourceConfig
         return $this->name;
     }
 
-    public function setName($name): void
+    public function setName($name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function name($name)
+    {
+        return $this->setName($name);
     }
 
     public function getUserTypeConfig()

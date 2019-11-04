@@ -4,6 +4,6 @@ namespace SuperV\Platform\Domains\Addon\Types;
 
 use SuperV\Platform\Domains\Addon\Addon;
 
-abstract class Module extends Addon
+abstract class Tool extends Addon
 {
 }

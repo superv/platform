@@ -226,6 +226,12 @@ function sv_addons($addon = null)
     return superv('addons')->get($addon);
 }
 
+function sv_resource($handle)
+{
+    return ResourceFactory::make($handle);
+}
+
+
 /**
  * @param      $key
  * @param null $default
@@ -371,11 +377,6 @@ function sv_loader($url, array $props = [])
 function sv_field(array $params)
 {
     return FormField::make($params);
-}
-
-function sv_resource($handle)
-{
-    return ResourceFactory::make($handle);
 }
 
 function wrap_collect($obj)
