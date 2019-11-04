@@ -40,9 +40,9 @@ module.exports = {
     alias.set('@assets', path.resolve(__dirname, 'public/assets'))
 
     // if yarn link used
-    let svjsPath = path.resolve(__dirname, 'node_modules/superv-js/src/main.js')
+    let svjsPath = path.resolve(__dirname, 'node_modules/@superv/ui/src/main.js')
     if (fs.existsSync(svjsPath)) {
-      alias.set('superv-js', 'superv-js/src/main')
+      alias.set('@superv/ui', '@superv/ui/src/main')
     }
   },
 }

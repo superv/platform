@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import supervjs from 'superv-js'
+import supervjs from '@superv/ui'
 import {panel.title} from './{panel.title}'
 import routes from './app/routes'
 import tools from '../../tools'
@@ -28,5 +28,5 @@ new Vue({
       layouts: { default: {panel.title} },
     }
   },
-  mixins: [require('superv-js').LayoutMixin],
+  mixins: [require('@superv/ui').LayoutMixin],
 })

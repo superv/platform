@@ -6,7 +6,7 @@
         "build": "vue-cli-service build"
     },
     "dependencies": {
-        "superv-js": "^0.21.6",
+        "@superv/ui": "^{platform.version}",
         "tailwindcss": "^1.0.4",
         "core-js": "^3.3.2",
         "vue": "^2.6.10"

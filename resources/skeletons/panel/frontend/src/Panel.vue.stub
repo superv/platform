@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { LayoutDefault, SvSidebar, SvSiteHeader } from 'superv-js'
+import { LayoutDefault, SvSidebar, SvSiteHeader } from '@superv/ui'
 
 export default {
   name: '{panel.title}',

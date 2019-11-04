@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { SvLoginForm } from 'superv-js'
+import { SvLoginForm } from '@superv/ui'
 
 export default {
   name: 'Login',

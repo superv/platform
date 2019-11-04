@@ -15,7 +15,7 @@ class {panel.title}Controller
         return view('{addon.identifier}::panel', [
             'config' => [
                 'apiUrl' => $port->url(),
-                'baseUrl' => '{panel.base_url}'
+                'baseUrl' => '{panel.base_path}'
             ]
         ]);
     }

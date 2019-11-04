@@ -3,7 +3,7 @@
 use {addon.psr_namespace}\{panel.title}Controller;
 
 return [
-    '{panel.base_url}{path}' => [
+    '{panel.base_path}{path}' => [
         'uses'  => {panel.title}Controller::class,
         'where' => ['path' => '.*'],
     ],
