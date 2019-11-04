@@ -20,10 +20,15 @@ class AddonModel extends Entry
 
         if (class_exists($class)) {
             return new $class($this);
-        } else {
+        }
+
+        if (file_exists($this->getRealPath())) {
             $this->update(['enabled' => false]);
             PlatformException::runtime(sprintf("Disabled unresolvable addon: [%s]", $class));
         }
+
+        $this->delete();
+        PlatformException::runtime(sprintf("Uninstalled addon [%s] because addon path could not found", $class));
     }
 
     public function getPsrNamespace()
@@ -74,6 +79,7 @@ class AddonModel extends Entry
         if (str_is('*.*', $identifier)) {
             list($vendor, $identifier) = explode('.', $identifier);
         }
+
         return static::query()->where('identifier', $identifier)
                      ->first();
     }
