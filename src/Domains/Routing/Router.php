@@ -19,7 +19,7 @@ class Router
      *
      * @var string
      */
-    protected $wildcard = 'all-ports';
+    protected $wildcard = 'all-ports|global';
 
     public function __construct(RouteRegistrar $loader)
     {
@@ -51,7 +51,7 @@ class Router
     public function loadFromPath($path)
     {
         foreach ($this->portFilesIn($path) as $port => $files) {
-            if ($port === $this->wildcard) {
+            if (in_array($port, explode('|', $this->wildcard))) {
                 $this->registrar->globally(true);
             } elseif (! $port = Hub::get($port)) {
                 continue;

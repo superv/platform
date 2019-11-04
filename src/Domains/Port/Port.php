@@ -14,9 +14,7 @@ class Port
 
     protected $secure = false;
 
-    protected $prefix = null;
-
-    protected $theme = null;
+    protected $baseUrl = '/';
 
     protected $roles = [];
 
@@ -45,14 +43,18 @@ class Port
         $this->slug = $slug;
     }
 
-    public function prefix()
+    public function baseUrl()
     {
-        return $this->prefix;
+        if (! starts_with($this->baseUrl, '/')) {
+            return '/'.$this->baseUrl;
+        }
+
+        return $this->baseUrl;
     }
 
     public function root()
     {
-        return $this->hostname().($this->prefix() ? '/'.$this->prefix() : '');
+        return $this->hostname().($this->baseUrl() ? $this->baseUrl() : '');
     }
 
     public function hostname()
@@ -62,12 +64,7 @@ class Port
 
     public function url()
     {
-        return $this->protocol().$this->root();
-    }
-
-    public function theme()
-    {
-        return $this->theme;
+        return $this->scheme().'://'.$this->root();
     }
 
     public function roles()
@@ -105,8 +102,8 @@ class Port
         $this->navigationSlug = $navigationSlug;
     }
 
-    protected function protocol()
+    public function scheme()
     {
-        return $this->isSecure() ? 'https://' : 'http://';
+        return $this->isSecure() ? 'https' : 'http';
     }
 }
