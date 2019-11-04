@@ -1,5 +1,5 @@
 {
-    "name": "{addon.vendor}/{addon.name}",
+    "name": "{addon.vendor}/{addon.name}-{addon.type}",
     "type": "superv-{addon.type}",
     "autoload": {
         "psr-4": {
@@ -12,7 +12,8 @@
         }
     },
     "require": {
-        "superv/platform": "*"
-    }
+        "superv/platform": "0.*|dev-*"
+    },
+    "minimum-stability": "dev"
 }
 

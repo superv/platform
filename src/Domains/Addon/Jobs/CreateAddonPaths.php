@@ -43,23 +43,33 @@ class CreateAddonPaths
     {
         $map = [
             'module' => [
-                "src/Domains",
-                "src/Resources",
-                "src/Console",
-                "config",
-                "database/migrations",
+                'src/Domains',
+                'src/Resources',
+                'src/Console',
+                'config',
+                'resources',
+                'database/migrations',
             ],
             'drop'   => [
-                "js",
+                'resources',
+                'js',
+            ],
+            'panel'  => [
+                'frontend',
+                'resources',
+                'tools',
+            ],
+            'tool'   => [
+                'frontend',
+                'database/migrations',
             ],
         ];
 
         return array_merge($map[$type], [
-            "src",
-            "resources",
-            "routes",
-            "tests",
-            "tests/".studly_case($this->model->getName()),
+            'src',
+            'routes',
+            'tests',
+            'tests/'.studly_case($this->model->getName()),
         ]);
     }
 }

@@ -1,0 +1,10 @@
+<?php
+
+namespace {addon.psr_namespace};
+
+use SuperV\Platform\Domains\Addon\Types\Panel\PanelServiceProvider;
+
+class {panel.title}ServiceProvider extends PanelServiceProvider
+{
+
+}

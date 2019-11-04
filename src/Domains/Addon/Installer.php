@@ -59,6 +59,8 @@ class Installer
 
         $this->addonEntry = $maker->make();
 
+//        dd($this->addonEntry->toArray());
+
         $this->addonEntry->fill([
             'identifier' => $this->addonEntry->getName(),
             'path'       => $this->relativePath(),
@@ -109,7 +111,6 @@ class Installer
     public function ensureNotInstalledBefore()
     {
         if ($addon = AddonModel::byIdentifier($this->getIdentifier())) {
-//            return $addon->delete();
             throw new RuntimeException(sprintf("Addon already installed: [%s]", $this->getIdentifier()));
         }
     }
@@ -150,7 +151,7 @@ class Installer
             throw new \Exception('Name parameter in composer.json not found');
         }
 
-        if (! preg_match('/^([a-zA-Z0-9_]+)\/([a-zA-Z0-9_]+)$/', $name)) {
+        if (! preg_match('/^([a-zA-Z0-9_]+)\/([a-zA-Z0-9_\-]+)$/', $name)) {
             throw new \Exception('Name parameter in composer.json should be formatted like: {vendor}/{package}: '.$name);
         }
         list($vendor, $addonName) = explode('/', $name);

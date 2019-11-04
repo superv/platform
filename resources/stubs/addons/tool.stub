@@ -2,12 +2,12 @@
 
 namespace {addon.psr_namespace};
 
-use SuperV\Platform\Domains\Addon\Addon;
+use SuperV\Platform\Domains\Addon\Types\Tool;
 
-class {addon.class_name} extends Addon
+class {addon.class_name} extends Tool
 {
     /**
-     * Run after the addon is installed
+     * Run after the tool is installed
      */
     public function onInstalled()
     {
@@ -15,7 +15,7 @@ class {addon.class_name} extends Addon
     }
 
     /**
-     * Run after the addon is booted
+     * Run after the tool is booted
      */
     public function onBooted()
     {

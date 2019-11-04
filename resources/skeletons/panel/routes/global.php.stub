@@ -1,0 +1,10 @@
+<?php
+
+use {addon.psr_namespace}\{panel.title}Controller;
+
+return [
+    '{panel.base_url}{path}' => [
+        'uses'  => {panel.title}Controller::class,
+        'where' => ['path' => '.*'],
+    ],
+];

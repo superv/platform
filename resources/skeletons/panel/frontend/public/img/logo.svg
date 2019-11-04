@@ -1,0 +1,11 @@
+<svg fill="none" viewBox="0 -20 100 120" xmlns="http://www.w3.org/2000/svg"
+     style="width: 2rem;
+    color: #2f855a;
+    fill: currentColor;
+    display: inline-block;">
+    <path clip-rule="evenodd"
+          d="M73.063 0L100 23.547 50.037 75 0 23.547 26.79 0h46.273zm16.014 23.547L70.332 7.195H29.52L10.996 23.547l39.04 40.48 39.041-40.48z"
+          fill-rule="evenodd"></path>
+    <path d="M23.173 23.547h9.963l17.417 19.269 17.122-19.27h9.373L50.553 53.489l-27.38-29.941z"
+          style="color: #48bb78; fill: currentColor;"></path>
+</svg>

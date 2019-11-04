@@ -1,0 +1,22 @@
+<?php
+
+namespace {addon.psr_namespace};
+
+use SuperV\Platform\Domains\Addon\Types\Panel\Panel;
+
+class {panel.title}Controller
+{
+    public function __invoke()
+    {
+        if (! $port = Panel::make('{addon.identifier}')->getPort()) {
+            return 'Please specify a port for this panel';
+        }
+
+        return view('{addon.identifier}::panel', [
+            'config' => [
+                'apiUrl' => $port->url(),
+                'baseUrl' => '{panel.base_url}'
+            ]
+        ]);
+    }
+}

@@ -2,9 +2,11 @@
 
 namespace SuperV\Platform\Domains\Addon\Jobs;
 
+use Hub;
 use Platform;
 use SuperV\Platform\Contracts\Filesystem;
 use SuperV\Platform\Domains\Addon\AddonModel;
+use SuperV\Platform\Domains\Addon\Skeleton;
 use SuperV\Platform\Support\Dispatchable;
 use SuperV\Platform\Support\Parser;
 
@@ -16,53 +18,84 @@ class CreateAddonFiles
     protected $filesystem;
 
     /** @var \SuperV\Platform\Domains\Addon\AddonModel */
-    private $model;
+    private $addon;
 
-    public function __construct(AddonModel $model)
+    protected $skeletons = [
+        'panel' => 'skeletons/panel',
+    ];
+
+    public function __construct(AddonModel $addon)
     {
-        $this->model = $model;
+        $this->addon = $addon;
     }
 
     public function handle(Filesystem $filesystem)
     {
         $this->filesystem = $filesystem;
 
-        $addonName = ucfirst(camel_case($this->model->getName()));
-        $type = ucfirst(camel_case($this->model->type));
+        $addonLabel = ucfirst(camel_case($this->addon->getName()));
+        $typeLabel = ucfirst(camel_case($this->addon->getType()));
 
         $tokens = [
             'provider'    => [
-                'class_name' => $providerClass = "{$addonName}{$type}ServiceProvider",
+                'class_name' => $providerClass = "{$addonLabel}{$typeLabel}ServiceProvider",
             ],
-            'addon'       => array_merge($this->model->toArray(), [
-//                'vendor'        => $this->model->getVendor(),
-//                'name'          => $this->model->getName(),
-//                'type'          => $this->model->getType(),
-'class_name'    => $addonClass = "{$addonName}{$type}",
-'extends'       => ucwords($type),
-'domain'        => $addonName,
-//                'psr_namespace' => $this->model->getPsrNamespace(),
+            'addon'       => array_merge($this->addon->toArray(), [
+                'class_name' => $addonClass = "{$addonLabel}{$typeLabel}",
+                'extends'    => ucwords($typeLabel),
+                'domain'     => $addonLabel,
             ]),
-            'psr4_prefix' => str_replace('\\', '\\\\', $this->model->getPsrNamespace()),
+            'psr4_prefix' => str_replace('\\', '\\\\', $this->addon->getPsrNamespace()),
         ];
 
-        $this->makeStub('addons/'.strtolower($type).'.stub', $tokens, "src/{$addonClass}.php");
+        $this->makeStub('addons/'.strtolower($typeLabel).'.stub', $tokens, "src/{$addonClass}.php");
         $this->makeStub('addons/provider.stub', $tokens, "src/{$providerClass}.php");
         $this->makeStub('addons/composer.stub', $tokens, 'composer.json');
 
         /**
          * test files
          */
-        $this->makeStub('addons/testing/phpunit.xml', [], 'phpunit.xml');
-        $this->makeStub('addons/testing/TestCase.stub', $tokens, "tests/{$addonName}/TestCase.php");
-        $this->makeStub('addons/testing/AddonTest.stub', $tokens, "tests/{$addonName}/{$addonName}Test.php");
+        $this->makeStub('addons/testing/phpunit.xml.dist', [], 'phpunit.xml.dist');
+        $this->makeStub('addons/testing/TestCase.stub', $tokens, "tests/{$addonLabel}/TestCase.php");
+        $this->makeStub('addons/testing/AddonTest.stub', $tokens, "tests/{$addonLabel}/{$addonLabel}Test.php");
+
+        if ($skeletonPath = array_get($this->skeletons, $this->addon->getType())) {
+            $portSlug = 'api';
+            $port = Hub::get($portSlug);
+
+            $contentTokens = array_merge($tokens, [
+                'panel' => [
+                    'title'           => "{$addonLabel}{$typeLabel}",
+                    'label'           => $addonLabel,
+                    'name'            => $this->addon->getName(),
+                    'base_url'        => $this->addon->getName(),
+                    'port'            => $port->slug(),
+                    'dev_server_host' => $port->hostname(),
+                    'dev_server_port' => '8091',
+                ],
+                'api'   => [
+                    'scheme'    => $port->scheme(),
+                    'host'      => $port->hostname(),
+                    'base_path' => $port->baseUrl(),
+                ],
+            ]);
+
+            $fileTokens = [
+                'Panel' => "{$addonLabel}{$typeLabel}",
+            ];
+
+            Skeleton::resolve()
+                    ->from(Platform::resourcePath($skeletonPath))
+                    ->withTokens($contentTokens, $fileTokens)
+                    ->copyTo($this->getTargetPath());
+        }
     }
 
     protected function makeStub($stub, $tokens, $target)
     {
         $stubbed = app(Parser::class)->parse($this->stubContent($stub), $tokens);
 
-        $this->filesystem->put(base_path($this->model->path.'/'.$target), $stubbed);
+        $this->filesystem->put($this->getTargetPath($target), $stubbed);
 
         return $stubbed;
     }
@@ -75,5 +108,10 @@ class CreateAddonFiles
     protected function stubPath($path)
     {
         return Platform::resourcePath("stubs/{$path}");
+    }
+
+    protected function getTargetPath($target = null): string
+    {
+        return base_path($this->addon->path.($target ? '/'.$target : ''));
     }
 }

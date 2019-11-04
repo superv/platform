@@ -1,0 +1,32 @@
+import Vue from 'vue'
+import supervjs from 'superv-js'
+import {panel.title} from './{panel.title}'
+import routes from './app/routes'
+import tools from '../../tools'
+
+let config = { apiUrl: '/api' }
+if (process.env.NODE_ENV !== 'development') {
+  config = JSON.parse(document.getElementById('config').innerHTML)
+}
+
+Vue.config.productionTip = false
+Vue.use(supervjs, {
+  config: {
+    name: process.env.VUE_APP_PANEL_NAME,
+    apiUrl: config.apiUrl,
+    baseUrl: config.baseUrl,
+  },
+  routes,
+  tools,
+})
+
+new Vue({
+  el: '#app',
+  name: 'root',
+  data() {
+    return {
+      layouts: { default: {panel.title} },
+    }
+  },
+  mixins: [require('superv-js').LayoutMixin],
+})
