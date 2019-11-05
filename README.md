@@ -9,11 +9,19 @@ Click [here](https://docs.superv.io/tutorials/videos.html) for video tutorials.
 
 ## Installation
 
-### Install as a package to an existing project
+### Requirements
+superV has the following requirments:
+ 
+- Laravel 5.8+ or 6.*
+- PHP 7.2.0+
+- NPM (If you are willing to customize the frontend)
 
-Pull in the superV platform package:
+  
+### Install as a Composer Package
+
+Pull in the latest superV Platform package:
 ```bash
-composer require superv/platform 0.21.x-dev
+composer require superv/platform
 ```
 
 Run the installer
@@ -22,30 +30,30 @@ php artisan superv:install
 ```
 
 Installer will try to complete the following configurations for you:
-- [Configure composer.json for the Merge Plugin](https://docs.superv.io/getting-started/Configuration.html#configure-composer-json-for-the-merge-plugin)
-- [Create a full privileged User](https://docs.superv.io/getting-started/Configuration.html#create-a-full-privileged-user)
-- [Create the Addons directory](https://docs.superv.io/getting-started/Configuration.html#create-the-addons-directory)
+- [Configure composer.json for the Merge Plugin](./configuration.html#configure-composer-json-for-the-merge-plugin)
+- [Create a full privileged User](./configuration.html#create-a-full-privileged-user)
+- [Create the Addons directory](./configuration.html#create-the-addons-directory)
 
 
-Pull the Admin Panel SPA addon:
+Install the composer package for Admin Panel addon:
 ```bash
-composer require superv/acp 0.21.x-dev
+composer require superv/admin-panel
 ```
 
-And install the addon to enable it:
+Install the Admin Panel
 ```bash
-php artisan addon:install addons/superv/drops/acp
+php artisan addon:install superv.panels.admin
 ```
 
 
-You can now navigate to `http://your-base-hostname/superv` using your browser and login with the user credentials you created during the installation process.
+You can now navigate to `http://your-base-hostname/admin` using your browser and login with the user credentials you created during the installation process.
 
 
-### Install as a new project
+### Install as a Fresh Project
 
 Create project with composer in your terminal:
 ```bash
-composer create-project superv/superv-project 0.21.x-dev@dev
+composer create-project superv/superv-project 
 ```
 
 Your web server should point to project's `public` folder for your hostname (eg: `superv.test`). Just as it would in a normal Laravel application.
@@ -61,13 +69,20 @@ DB_USERNAME=superv
 DB_PASSWORD=secret
 ```
 
-
-And install superV:
+And install superV
 ```bash
 php artisan superv:install
 ```
 
-You can now navigate to `http://your-base-hostname/superv` using your browser and login with the user credentials you created during the installation process.
+Install the Admin Panel
+```bash
+php artisan addon:install superv.panels.admin
+```
+
+
+You can now navigate to `http://your-base-hostname/admin` using your browser and login with the user credentials you created during the installation process.
+
+
 
 ## Support
 If you any questions, feel free to contact me on [Twitter](https://twitter.com/daliselcuk).
