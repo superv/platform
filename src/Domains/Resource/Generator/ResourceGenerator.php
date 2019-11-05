@@ -4,7 +4,6 @@ namespace SuperV\Platform\Domains\Resource\Generator;
 
 use SuperV\Platform\Platform;
 use SuperV\Platform\Support\Parser;
-use const PHP_EOL;
 
 class ResourceGenerator
 {
@@ -22,6 +21,8 @@ class ResourceGenerator
      * @var string
      */
     protected $target;
+
+    protected $table;
 
     public function __construct(Platform $platform, Parser $parser)
     {
@@ -53,14 +54,14 @@ class ResourceGenerator
             }
             $decorators = array_get($field, 'decorators', []);
 
-            if (ends_with($column, '_id')) {
-                $relation = str_replace_last('_id', '', $column);
-                if ($relation !== 'parent') {
-                    $related = str_plural($relation);
-                    $method = in_array('nullable', $decorators) ? 'nullableBelongsTo' : 'belongsTo';
-                    $item = sprintf("\$table->%s('%s', '%s', '%s');", $method, $related, $relation, $column);
-                }
-            }
+//            if (ends_with($column, '_id')) {
+//                $relation = str_replace_last('_id', '', $column);
+//                if ($relation !== 'parent') {
+//                    $related = str_plural($relation);
+//                    $method = in_array('nullable', $decorators) ? 'nullableBelongsTo' : 'belongsTo';
+//                    $item = sprintf("\$table->%s('%s', '%s', '%s');", $method, $related, $relation, $column);
+//                }
+//            }
 
             if (! $entryLabel && $field['type'] === 'string') {
                 $decorators[] = 'entryLabel';
@@ -77,6 +78,8 @@ class ResourceGenerator
 
     public function withTableData($table, $tableData)
     {
+        $this->setTable($table);
+
         $template = file_get_contents($this->platform->resourcePath('stubs/generator/migration.stub'));
 
         $data = [
@@ -100,6 +103,14 @@ class ResourceGenerator
     public function setTarget(string $target): void
     {
         $this->target = $target;
+    }
+
+    /**
+     * @param mixed $table
+     */
+    public function setTable($table): void
+    {
+        $this->table = $table;
     }
 
     public static function make(): ResourceGenerator

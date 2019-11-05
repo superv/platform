@@ -6,7 +6,7 @@ class ApiPort extends Port
 {
     protected $slug = 'api';
 
-    protected $prefix = 'sv-api';
+    protected $baseUrl = 'sv-api';
 
     protected $guard = 'sv-api';
 

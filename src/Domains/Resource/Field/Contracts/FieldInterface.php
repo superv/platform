@@ -22,7 +22,6 @@ interface FieldInterface
 
     public function getColumnName(): ?string;
 
-
     public function setLabel(string $label): FieldInterface;
 
     public function getFieldType(): FieldTypeInterface;
@@ -84,8 +83,6 @@ interface FieldInterface
     public function setCallback($trigger, $callback);
 
     public function getCallback($trigger);
-
-//    public function resolveRequest(Request $request, ?EntryContract $entry = null);
 
     public function resolveFromEntry($entry);
 

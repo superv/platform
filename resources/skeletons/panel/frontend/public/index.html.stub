@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width,initial-scale=1.0" name="viewport">
+    <link href="<%= BASE_URL %>img/favicon.png" rel="icon"/>
+    <link href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css" rel="stylesheet">
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700" rel="stylesheet">
+    <title>{panel.label} Panel</title>
+</head>
+<body class="font-sans font-normal antialiased text-smooth min-h-screen">
+    <div id="app"></div>
+    <script id="config" type="application/json"><?php echo json_encode($config); ?></script>
+    <!-- built files will be auto injected -->
+</body>
+</html>

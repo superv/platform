@@ -75,17 +75,11 @@ class RelationFieldConfig extends FieldConfig
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getRelated()
     {
         return $this->related;
     }
 
-    /**
-     * @return mixed
-     */
     public function getLocalKey()
     {
         return $this->localKey;
@@ -98,9 +92,6 @@ class RelationFieldConfig extends FieldConfig
         return $this;
     }
 
-    /**
-     * @return \SuperV\Platform\Domains\Resource\Field\Types\Relation\RelationType
-     */
     public function getRelationType(): RelationType
     {
         return new RelationType($this->relationType);
@@ -118,9 +109,6 @@ class RelationFieldConfig extends FieldConfig
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isRequired(): bool
     {
         return $this->required;
@@ -133,25 +121,16 @@ class RelationFieldConfig extends FieldConfig
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPivotTable(): ?string
     {
         return $this->pivotTable;
     }
 
-    /**
-     * @return array
-     */
     public function getPivotColumns(): array
     {
         return $this->pivotColumns;
     }
 
-    /**
-     * @return mixed
-     */
     public function getPivotForeignKey()
     {
         if ($this->pivotForeignKey) {
@@ -161,9 +140,6 @@ class RelationFieldConfig extends FieldConfig
         return str_singular($this->getSelf()).'_id';
     }
 
-    /**
-     * @return mixed
-     */
     public function getPivotRelatedKey()
     {
         if ($this->pivotRelatedKey) {

@@ -29,8 +29,14 @@ class MakeAddonRequest
      */
     protected $targetPath;
 
+    protected $params = [];
+
     public function __construct(string $identifier, string $addonType)
     {
+        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $identifier)) {
+            throw new \Exception('Identifier should be in this format: {vendor}.{addon}: '.$identifier);
+        }
+
         list($this->vendor, $this->package) = explode('.', $identifier);
         $this->identifier = $identifier;
         $this->addonType = $addonType;

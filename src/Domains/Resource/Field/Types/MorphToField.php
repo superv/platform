@@ -63,7 +63,7 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
     protected function getRelatedEntry(EntryContract $parentEntry, ?Resource $resource = null)
     {
         if (! $resource) {
-            if (! $resource = $this->getRelatedResource($parentEntry)) {
+            if (! $resource = $this->getOtherResource($parentEntry)) {
                 return null;
             }
         }
@@ -72,7 +72,7 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
         return $resource->find($relatedEntryId);
     }
 
-    protected function getRelatedResource(EntryContract $entry)
+    protected function getOtherResource(EntryContract $entry)
     {
         $type = $entry->{$this->getName().'_type'};
 

@@ -12,26 +12,17 @@ class MakeAddonCommand extends Command
 
     public function handle()
     {
-        $identifier = $this->argument('identifier');
-
-        if (! preg_match('/^([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)$/', $identifier)) {
-            throw new \Exception('Identifier should be in this format: {vendor}.{addon}: '.$identifier);
-        }
         $request = new MakeAddonRequest(
-            $identifier,
+            $this->argument('identifier'),
             $this->option('type')
         );
-
-        if ($this->hasOption('identifier')) {
-            $request->setIdentifier($this->option('identifier'));
-        }
 
         if ($this->hasOption('path')) {
             $request->setTargetPath($this->option('path'));
         }
 
-        $identifier = MakeAddon::dispatch($request, $this->option('force'));
+        MakeAddon::dispatch($request, $this->option('force'));
 
-        $this->info('The ['.$identifier.'] addon was created.');
+        $this->info('The ['.$this->argument('identifier').'] addon was created.');
     }
 }

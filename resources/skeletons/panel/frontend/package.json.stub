@@ -1,0 +1,24 @@
+{
+    "name": "{addon.vendor}-{addon.name}",
+    "private": true,
+    "scripts": {
+        "serve": "vue-cli-service serve",
+        "build": "vue-cli-service build"
+    },
+    "dependencies": {
+        "@superv/ui": "^{platform.version}",
+        "tailwindcss": "^1.1.3",
+        "core-js": "^3.3.2",
+        "vue": "^2.6.10"
+    },
+    "devDependencies": {
+        "@fullhuman/postcss-purgecss": "^1.3.0",
+        "@vue/cli-plugin-babel": "^4.0.0",
+        "@vue/cli-service": "^4.0.0",
+        "vue-template-compiler": "^2.6.10"
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions"
+    ]
+}

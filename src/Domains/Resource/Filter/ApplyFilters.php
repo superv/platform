@@ -73,6 +73,10 @@ class ApplyFilters
 
     protected function decodeRequest()
     {
-        $this->filterValues = DecodeRequest::dispatch($this->request, 'filters');
+        if (is_array($this->request->get('filters'))) {
+            $this->filterValues = $this->request->get('filters');
+        } else {
+            $this->filterValues = DecodeRequest::dispatch($this->request, 'filters');
+        }
     }
 }

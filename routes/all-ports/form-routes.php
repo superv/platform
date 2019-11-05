@@ -11,6 +11,7 @@ return [
     'sv/frm/{form}/{entry?}' => [
         'as'   => 'sv::forms.display',
         'uses' => FormController::at('display'),
+        'where' => ['entry' => '[0-9]*'],
     ],
 
     'POST@'.'sv/frm/{form}/{entry?}' => [

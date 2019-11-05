@@ -46,10 +46,6 @@ class ResourceDashboard
         $section = $this->section;
         $page = $this->page;
 
-        if ($callback = $resource->getCallback('index.page')) {
-            app()->call($callback, ['page' => $page]);
-        }
-
         $page->addBlock(Component::make('sv-router-portal')->setProps([
             'name' => $resource->getIdentifier(),
         ]));
@@ -57,9 +53,8 @@ class ResourceDashboard
         if (Current::user()->can($this->resource->getChildIdentifier('actions', 'list'))) {
             $page->addSection([
                 'identifier' => 'all',
-                'title'      => trans('All'),
+                'title'      => sv_trans('All'),
                 'url'        => $resource->router()->dashboard('table'),
-                //            'url'        => $resource->route('dashboard', null, ['section' => 'table']),
                 'target'     => 'portal:'.$resource->getIdentifier(),
                 'default'    => ! $section || $section === 'all',
             ]);
@@ -69,21 +64,13 @@ class ResourceDashboard
             if ($page->isCreatable() && empty($page->getActions())) {
                 $page->addSection([
                     'identifier' => 'create',
-                    'title'      => trans('Create'),
+                    'title'      => sv_trans('Create'),
                     'url'        => $resource->router()->createForm(),
-                    //                'url'        => $resource->route('forms.create'),
                     'target'     => 'portal:'.$resource->getIdentifier(),
                     'default'    => $section === 'create',
                 ]);
             }
         }
-
-//        if ($page->isCreatable() && empty($page->getActions())) {
-//            $action = CreateEntryAction::make('New '.$resource->getSingularLabel());
-//            $action->setTarget($resource->getHandle());
-//            $action->setUrl($resource->route('forms.create'));
-//            $page->addAction($action);
-//        }
 
         $page->setMeta('url', 'sv/res/'.$resource->getIdentifier());
 

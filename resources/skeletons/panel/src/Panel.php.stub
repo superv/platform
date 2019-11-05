@@ -1,0 +1,16 @@
+<?php
+
+namespace {addon.psr_namespace};
+
+use Artisan;
+use SuperV\Platform\Domains\Addon\Types\Panel\Panel;
+
+class {panel.title} extends Panel
+{
+    protected $portSlug = '{panel.port}';
+
+    public function onInstalled()
+    {
+        Artisan::call('vendor:publish', ['--tag' => '{addon.identifier}.assets', '--force' => true]);
+    }
+}

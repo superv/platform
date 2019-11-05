@@ -24,7 +24,7 @@ class Action
 
     protected $domain;
 
-    protected $prefix;
+    protected $baseUrl;
 
     /** @var array */
     protected $middleware = [];
@@ -76,7 +76,7 @@ class Action
             'verb'       => $this->verb,
             'port'       => $this->port ? $this->port->slug() : null,
             'domain'     => $this->domain,
-            'prefix'     => $this->prefix,
+            'prefix'     => $this->baseUrl,
             'middleware' => $this->middleware,
             'where'      => $this->where,
         ]);
@@ -103,7 +103,7 @@ class Action
             $this->domain = explode(':', $domain)[0];
         }
 
-        $this->prefix = $this->port->prefix();
+        $this->baseUrl = $this->port->baseUrl();
 
         $this->mergeMiddlewares($this->port->middlewares());
     }

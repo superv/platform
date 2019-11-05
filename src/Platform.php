@@ -13,6 +13,8 @@ class Platform extends Addon
 {
     use FiresCallbacks;
 
+    public static $version = '0.22';
+
     protected $booted = false;
 
     /**

@@ -41,11 +41,11 @@ class UrlGenerator extends \Illuminate\Routing\UrlGenerator
         $pathInfo = $this->request->getPathInfo();
         $port = Current::port();
 
-        if (! $port || ! $port->prefix()) {
+        if (! $port || $port->baseUrl() === '/') {
             return $pathInfo;
         }
 
-        return str_replace_last('/'.$port->prefix(), '', $pathInfo);
+        return str_replace_last($port->baseUrl().'/', '', $pathInfo);
     }
 
     private function getRequestRoot()

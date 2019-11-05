@@ -59,7 +59,7 @@ class ApiV1Port extends Port
 
     protected $guard = 'sv-api';
 
-    protected $prefix = 'api/v1';
+    protected $baseUrl = 'api/v1';
 
     public function hostname()
     {
@@ -73,7 +73,7 @@ class ApiV2Port extends Port
 
     protected $guard = 'sv-api';
 
-    protected $prefix = 'api/v2';
+    protected $baseUrl = 'api/v2';
 
     public function hostname()
     {

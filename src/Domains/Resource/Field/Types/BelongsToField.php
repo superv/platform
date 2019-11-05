@@ -14,6 +14,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
+use SuperV\Platform\Domains\Resource\Jobs\MakeLookupOptions;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Support\Composer\Payload;
@@ -26,18 +27,12 @@ class BelongsToField extends FieldType implements
     HasPresenter,
     SortsQuery
 {
-    /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $relatedResource;
 
     /** @var array */
     protected $options;
 
-    /** @var RelationConfig */
-    protected $relationConfig;
-
     protected function boot()
     {
-//        $this->field->on('form.presenting', $this->presenter());
         $this->field->on('form.composing', $this->formComposer());
 
         $this->field->on('view.presenting', $this->viewPresenter());
@@ -106,14 +101,15 @@ class BelongsToField extends FieldType implements
 
     public function buildOptions(?array $queryParams = [])
     {
-        $query = $this->getRelatedResource()->newQuery();
+        $relatedResource = $this->getRelatedResource();
+        $query = $relatedResource->newQuery();
         if ($queryParams) {
             $query->where($queryParams);
         }
 
-        $entryLabel = $this->getRelatedResource()->config()->getEntryLabel(sprintf("#%s", $this->getRelatedResource()->getKeyName()));
+        $entryLabel = $relatedResource->config()->getEntryLabel(sprintf("#%s", $relatedResource->getKeyName()));
 
-        if ($entryLabelField = $this->getRelatedResource()->fields()->getEntryLabelField()) {
+        if ($entryLabelField = $relatedResource->fields()->getEntryLabelField()) {
             $query->orderBy($entryLabelField->getColumnName(), 'ASC');
         }
 
@@ -128,18 +124,6 @@ class BelongsToField extends FieldType implements
         return $this->options;
     }
 
-    /**
-     * @return \SuperV\Platform\Domains\Resource\Resource
-     * @throws \Exception
-     */
-    public function getRelatedResource()
-    {
-        if (! $this->relatedResource) {
-            $this->relatedResource = ResourceFactory::make($this->getRelationConfig()->getRelatedResource());
-        }
-
-        return $this->relatedResource;
-    }
 
     public function getPresenter(): Closure
     {
@@ -152,15 +136,6 @@ class BelongsToField extends FieldType implements
                 return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
             }
         };
-    }
-
-    public function getRelationConfig(): RelationConfig
-    {
-        if (! $this->relationConfig) {
-            $this->relationConfig = RelationConfig::create($this->field->getType(), $this->field->getConfig());
-        }
-
-        return $this->relationConfig;
     }
 
     public function inlineForm(FormInterface $parent, array $config = []): void
@@ -185,14 +160,11 @@ class BelongsToField extends FieldType implements
                     $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
                 }
             }
-            $this->relatedResource = $this->getRelatedResource();
 
             $options = $this->getConfigValue('meta.options');
             if (! is_null($options)) {
                 $payload->set('meta.options', $options);
             } else {
-//                $url = sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
-
                 $route = $form->isPublic() ? 'sv::public_forms.fields' : 'sv::forms.fields';
                 $url = sv_route($route, [
                     'form'  => $this->field->getForm()->getIdentifier(),
@@ -201,13 +173,17 @@ class BelongsToField extends FieldType implements
                 ]);
                 $payload->set('meta.options', $url);
             }
-            $payload->set('placeholder', __('Select :Object', ['object' => $this->relatedResource->getSingularLabel()]));
+            $payload->set('placeholder', __('Select :Object', [
+                'object' => $this->getRelatedResource()->getSingularLabel(),
+            ]));
         };
     }
 
     public function rpcOptions(array $params, array $request = [])
     {
-        $this->relatedResource = $this->getRelatedResource();
+//        $this->relatedResource = $this->getRelatedResource();
+
+        return (new MakeLookupOptions($this->getRelatedResource(), $request['query'] ?? []))->make();
 
         return $this->buildOptions($request['query'] ?? []);
     }
@@ -245,15 +221,6 @@ class BelongsToField extends FieldType implements
             }
             $this->setMetaLink($entry->getRelation($this->getName()), $payload);
         };
-    }
-
-    protected function getRelatedEntryLabel(?EntryContract $relatedEntry = null)
-    {
-        if (is_null($relatedEntry)) {
-            return null;
-        }
-
-        return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
     }
 
     protected function setMetaLink(?EntryContract $relatedEntry = null, Payload $payload)

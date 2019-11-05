@@ -21,8 +21,6 @@ class MakeAddonModel
 
     public function __construct(string $identifier, string $addonType)
     {
-//        $this->vendor = $vendor;
-//        $this->name = $name;
         $this->addonType = $addonType;
         $this->identifier = $identifier;
     }
@@ -33,10 +31,6 @@ class MakeAddonModel
         $vendor = $this->getVendor();
         $name = $this->getName();
         $typePlural = str_plural($this->addonType);
-
-//        if (! $this->identifier) {
-//            $this->identifier = sprintf("%s.%s.%s", $vendor, $typePlural, $name);
-//        }
 
         if (! $this->addonPath) {
             $this->addonPath = sprintf("%s/%s/%s/%s", $addonsDirectory, $vendor, $typePlural, $name);
@@ -70,7 +64,14 @@ class MakeAddonModel
 
     public function getName()
     {
-        return explode('.', $this->identifier)[1];
+        $name = explode('.', $this->identifier)[1];
+
+        // Strip trailing {-type} from addon name
+        if (ends_with($name, '-'.$this->addonType)) {
+            return str_replace_last('-'.$this->addonType, '', $name);
+        }
+
+        return $name;
     }
 
     /**

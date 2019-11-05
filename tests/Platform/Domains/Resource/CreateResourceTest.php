@@ -124,9 +124,10 @@ class CreateResourceTest extends ResourceTestCase
         $this->create('core_locations', function (Blueprint $table, Config $config) {
             $table->increments('id');
 
-            $table->belongsToMany('servers', 'servers')->pivotForeignKey('location_id')
+            $table->belongsToMany('servers', 'servers')
+                  ->pivotForeignKey('location_id')
                   ->pivotRelatedKey('server_id')
-                  ->pivotTable('testing.ore_location_servers');
+                  ->pivotTable('testing.core_location_servers');
         });
 
         $this->create('core_servers', function (Blueprint $table, Config $config) {

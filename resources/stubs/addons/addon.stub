@@ -1,7 +1,24 @@
-<?php namespace {addon.psr_namespace};
+<?php
+
+namespace {addon.psr_namespace};
 
 use SuperV\Platform\Domains\Addon\Addon;
 
 class {addon.class_name} extends Addon
 {
+    /**
+     * Run after the addon is installed
+     */
+    public function onInstalled()
+    {
+
+    }
+
+    /**
+     * Run after the addon is booted
+     */
+    public function onBooted()
+    {
+
+    }
 }

@@ -16,9 +16,9 @@ class LookupController extends BaseApiController
         $relation = $this->resolveRelation();
         $resource = $relation->getRelatedResource();
 
-//        $table->setResource($resource);
         $table = $resource->resolveTable();
-        $table->setDataUrl(url()->current().'/data');
+        $table->setDataUrl(url()->current().'/data')
+              ->makeSelectable();
 
         if ($this->route->parameter('data')) {
             /** @var \Illuminate\Database\Eloquent\Builder $query */
@@ -28,7 +28,6 @@ class LookupController extends BaseApiController
                                                 ->pluck($resource->config()->getTable().'.'.$query->getModel()->getKeyName());
 
             $query->whereNotIn($query->getModel()->getQualifiedKeyName(), $alreadyAttachedItems);
-//            $table->setQuery($query);
 
             return $table->setRequest($this->request)->build();
         }

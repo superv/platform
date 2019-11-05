@@ -56,9 +56,11 @@ class FormField extends Field implements FormFieldInterface
         return $this->location;
     }
 
-    public function setLocation(FieldLocation $location): void
+    public function setLocation(FieldLocation $location): FormFieldInterface
     {
         $this->location = $location;
+
+        return $this;
     }
 
     public function setTemporal($temporal)

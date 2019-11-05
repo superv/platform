@@ -72,7 +72,7 @@ class Current
 
     public function requestPath()
     {
-        return str_replace_last('/'.Current::port()->prefix(), '', request()->getPathInfo());
+        return str_replace_last(Current::port()->baseUrl(), '', request()->getPathInfo());
     }
 
     /**

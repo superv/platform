@@ -4,18 +4,20 @@ namespace SuperV\Platform\Domains\Resource\Command;
 
 use Illuminate\Support\Facades\DB;
 use SuperV\Platform\Contracts\Command;
+use SuperV\Platform\Domains\Resource\Generator\FieldGenerator;
 use SuperV\Platform\Domains\Resource\Generator\ResourceGenerator;
 use SuperV\Platform\Domains\Resource\Resource;
-use Xethron\MigrationsGenerator\Generators\FieldGenerator;
 
 class ResourceImportCommand extends Command
 {
-    protected $signature = 'sv:resource:import';
+    protected $signature = 'sv:resource:import {--connection=}';
 
     /** @var \Doctrine\DBAL\Connection */
     protected $connection;
 
     protected $tables;
+
+    protected $excluded = ['migrations', 'jobs', 'users', 'password_resets', 'failed_jobs'];
 
     public function handle()
     {
@@ -35,7 +37,8 @@ class ResourceImportCommand extends Command
 
     protected function prepareConnection()
     {
-        $connection = DB::connection()->getDoctrineConnection();;
+        $connectionName = $this->option('connection');
+        $connection = DB::connection($connectionName)->getDoctrineConnection();;
 
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('json', 'text');
         $connection->getDatabasePlatform()->registerDoctrineTypeMapping('jsonb', 'text');
@@ -75,6 +78,8 @@ class ResourceImportCommand extends Command
 
         return collect($tables)
             ->filter(function ($table) {
+                return ! in_array($table, $this->excluded);
+            })->filter(function ($table) {
                 return ! starts_with($table, 'sv_');
             })->filter(function ($table) {
                 return ! Resource::exists($table);

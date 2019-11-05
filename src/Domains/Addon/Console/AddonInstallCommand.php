@@ -14,9 +14,12 @@ class AddonInstallCommand extends Command
     public function handle(Installer $installer)
     {
         try {
-
+            $path = $this->argument('path');
+            if (str_is('*.*.*', $path)) {
+                $path = sv_config('addons.location').'/'.str_replace('.', '/', $path);
+            }
             $installer->setCommand($this);
-            $installer->setPath($this->argument('path'));
+            $installer->setPath($path);
 
             $this->comment('Installing Addon '.$installer->getIdentifier());
 

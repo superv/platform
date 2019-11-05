@@ -13,9 +13,6 @@ class MorphTo extends Relation
 {
     protected function newRelationQuery(?EntryContract $relatedEntryInstance = null): EloquentRelation
     {
-//        $ownerKey = $this->relationConfig->getName().'_id';
-//        $type = $this->relationConfig->getName().'_type';
-
         [$type, $ownerKey] = $this->getMorphs($this->relationConfig->getName());
 
         return new EloquentMorphTo(
@@ -46,34 +43,6 @@ class MorphTo extends Relation
 
         return $query;
     }
-
-//    protected function morphEagerTo($name, $type, $id, $ownerKey)
-//    {
-//        return $this->newMorphTo(
-//            $this->newQuery()->setEagerLoads([]), $this, $id, $ownerKey, $type, $name
-//        );
-//    }
-//
-//    /**
-//     * Define a polymorphic, inverse one-to-one or many relationship.
-//     *
-//     * @param  string  $target
-//     * @param  string  $name
-//     * @param  string  $type
-//     * @param  string  $id
-//     * @param  string  $ownerKey
-//     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
-//     */
-//    protected function morphInstanceTo($target, $name, $type, $id, $ownerKey)
-//    {
-//        $instance = $this->newRelatedInstance(
-//            static::getActualClassNameForMorph($target)
-//        );
-//
-//        return $this->newMorphTo(
-//            $instance->newQuery(), $this, $id, $ownerKey ?? $instance->getKeyName(), $type, $name
-//        );
-//    }
 
     protected function getMorphs($name)
     {

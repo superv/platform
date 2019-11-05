@@ -1,0 +1,24 @@
+<?php
+
+namespace {addon.psr_namespace};
+
+use SuperV\Platform\Domains\Addon\Types\Tool;
+
+class {addon.class_name} extends Tool
+{
+    /**
+     * Run after the tool is installed
+     */
+    public function onInstalled()
+    {
+
+    }
+
+    /**
+     * Run after the tool is booted
+     */
+    public function onBooted()
+    {
+
+    }
+}

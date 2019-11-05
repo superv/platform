@@ -3,12 +3,10 @@
 namespace Tests\Platform\Domains\UI\Component;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use SuperV\Platform\Contracts\Hibernatable;
 use SuperV\Platform\Domains\UI\Components\BaseComponent;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 use SuperV\Platform\Domains\UI\Components\Props;
 use SuperV\Platform\Support\Composer\Composable;
-use SuperV\Platform\Support\Concerns\HibernatableConcern;
 use Tests\Platform\TestCase;
 
 /**
@@ -49,10 +47,8 @@ class BaseUIComponentTest extends TestCase
     }
 }
 
-class TestComponent extends BaseComponent implements Hibernatable
+class TestComponent extends BaseComponent
 {
-    use HibernatableConcern;
-
     public function uuid()
     {
         return 'abc-123';

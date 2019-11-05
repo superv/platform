@@ -87,6 +87,11 @@ class Addon
         return $this->entry->getVendor();
     }
 
+    public function getName()
+    {
+        return $this->entry->getName();
+    }
+
     public function getType()
     {
         return $this->entry->getType();

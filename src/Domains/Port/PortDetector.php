@@ -22,7 +22,7 @@ class PortDetector
     public function detectFor($httpHost, $requestUri)
     {
         $ports = Hub::ports();
-        $requestUri = ltrim($requestUri, '/');
+//        $requestUri = ltrim($requestUri, '/');
 
         /**
          * First loop all ports with prefixes
@@ -35,11 +35,11 @@ class PortDetector
                 continue;
             }
 
-            if (! $prefix = $port->prefix()) {
+            if ($port->baseUrl() === '/') {
                 continue;
             }
 
-            if ($requestUri && starts_with($requestUri, $prefix)) {
+            if ($requestUri && starts_with(ltrim($requestUri, '/'), ltrim($port->baseUrl(), '/'))) {
                 return $port->slug();
             }
         }
@@ -51,7 +51,7 @@ class PortDetector
          * @var \SuperV\Platform\Domains\Port\Port $port
          */
         foreach ($ports as $port) {
-            if ($port->prefix()) {
+            if ($port->baseUrl() !== '/') {
                 continue;
             }
 

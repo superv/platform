@@ -1,7 +1,7 @@
 
 # SuperV Platform for Laravel [![Build Status](https://travis-ci.org/superv/platform.svg?branch=master)](https://travis-ci.org/superv/platform)
 
-SuperV is a Laravel package that provides an SPA Admin Panel based on your migration files, without generating or needing additional files.
+SuperV is a Laravel package that provides an SPA Admin Panel based on your migration files, without generating or requiring additional files.
 
 Please visit https://docs.superv.io for documentation.
 

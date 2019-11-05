@@ -5,7 +5,7 @@ namespace Tests\{addon.domain};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SuperV\Platform\Testing\PlatformTestCase;
 
-class TestCase extends PlatformTestCase
+abstract class TestCase extends PlatformTestCase
 {
     use RefreshDatabase;
 

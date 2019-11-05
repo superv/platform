@@ -1,0 +1,24 @@
+<?php
+
+namespace {addon.psr_namespace};
+
+use SuperV\Platform\Domains\Addon\Types\Panel\Panel;
+
+class {addon.class_name} extends Panel
+{
+    /**
+     * Run after the panel is installed
+     */
+    public function onInstalled()
+    {
+
+    }
+
+    /**
+     * Run after the panel is booted
+     */
+    public function onBooted()
+    {
+
+    }
+}

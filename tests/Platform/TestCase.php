@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Addon\Locator;
 use SuperV\Platform\Testing\PlatformTestCase;
 
-class TestCase extends PlatformTestCase
+abstract class TestCase extends PlatformTestCase
 {
     protected function setUp(): void
     {

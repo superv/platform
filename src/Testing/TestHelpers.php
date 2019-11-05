@@ -238,7 +238,6 @@ trait TestHelpers
         $concentrate = is_array($port) ? $port : [
             'slug'     => $port,
             'hostname' => $hostname,
-            'theme'    => $theme,
             'roles'    => $roles,
             'model'    => $model,
         ];

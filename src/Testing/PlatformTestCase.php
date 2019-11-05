@@ -18,7 +18,7 @@ use SuperV\Platform\Exceptions\ValidationException;
 use SuperV\Platform\PlatformServiceProvider;
 use Tests\Platform\ComposerLoader;
 
-class PlatformTestCase extends OrchestraTestCase
+abstract class PlatformTestCase extends OrchestraTestCase
 {
     use TestHelpers;
 
@@ -47,6 +47,8 @@ class PlatformTestCase extends OrchestraTestCase
     protected $basePath;
 
     protected $bindings = [];
+
+    protected $realBasePath;
 
     public function basePath($path = null)
     {
@@ -89,6 +91,8 @@ class PlatformTestCase extends OrchestraTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->realBasePath = realpath(__DIR__.'/../../../../../');
 
         \Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
 
@@ -167,7 +171,7 @@ class PlatformTestCase extends OrchestraTestCase
 
             protected $hostname = 'superv.io';
 
-            protected $prefix = 'acp';
+            protected $baseUrl = 'acp';
         });
 
         Hub::register(new class extends Port
@@ -181,13 +185,13 @@ class PlatformTestCase extends OrchestraTestCase
     /**
      * Setup and Activate a test port
      *
-     * @param      $hostname
-     * @param null $prefix
+     * @param        $hostname
+     * @param string $baseUrl
      * @return \SuperV\Platform\Domains\Port\Port
      */
-    protected function setUpCustomPort($hostname, $prefix = null)
+    protected function setUpCustomPort($hostname, $baseUrl = '/')
     {
-        $port = $this->setUpPort(['slug' => 'api', 'hostname' => $hostname, 'prefix' => $prefix]);
+        $port = $this->setUpPort(['slug' => 'api', 'hostname' => $hostname, 'base_url' => $baseUrl]);
         PortDetectedEvent::dispatch($port);
 
         return $port;

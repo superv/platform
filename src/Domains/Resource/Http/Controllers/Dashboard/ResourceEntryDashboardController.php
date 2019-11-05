@@ -19,15 +19,11 @@ class ResourceEntryDashboardController extends BaseApiController
         $page = EntryPage::make($resource->getEntryLabel($this->entry));
         $page->setResource($resource);
         $page->setEntry($this->entry);
-        $page->setParent(['title' => trans($resource->getLabel()), 'url' => $resource->router()->dashboardSPA()]);
+        $page->setParent(['title' => sv_trans($resource->getLabel()), 'url' => $resource->router()->dashboardSPA()]);
         $page->setSelectedSection($this->route->parameter('section'));
         $page->setDefaultSection('view');
 
         Event::dispatch($resource->getIdentifier().'.pages:entry_dashboard.events:resolved', compact('page', 'resource'));
-
-        if ($callback = $resource->getCallback('entry.dashboard')) {
-            app()->call($callback, ['page' => $page, 'entry' => $this->entry]);
-        }
 
         $page->addBlock(Component::make('sv-router-portal')->setProps([
             'name' => $resource->getIdentifier().':'.$this->entry->getId(),
@@ -36,7 +32,7 @@ class ResourceEntryDashboardController extends BaseApiController
         if ($page->isViewable()) {
             $page->addSection([
                 'identifier' => 'view',
-                'title'      => __('View'),
+                'title'      => sv_trans('View'),
                 'url'        => $this->entry->router()->view(),
                 'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
             ]);
@@ -45,7 +41,7 @@ class ResourceEntryDashboardController extends BaseApiController
         if ($page->isEditable()) {
             $page->addSection([
                 'identifier' => 'edit',
-                'title'      => __('Edit'),
+                'title'      => sv_trans('Edit'),
                 'url'        => $this->entry->router()->updateForm(),
                 'target'     => 'portal:'.$resource->getIdentifier().':'.$this->entry->getId(),
             ]);
