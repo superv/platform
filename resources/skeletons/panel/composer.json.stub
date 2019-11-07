@@ -1,0 +1,27 @@
+{
+    "name": "{addon.vendor}/{addon.name}-{addon.type}",
+    "type": "superv-{addon.type}",
+    "autoload": {
+        "psr-4": {
+            "{psr4_prefix}\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
+        }
+    },
+    "require": {
+        "superv/platform": "0.*|dev-develop",
+        "superv/composer-plugin": "*"
+    },
+    "extra": {
+        "merge-plugin": {
+            "include": [
+                "addons/{addon.vendor}/panels/{addon.name}/tools/*/*/composer.json"
+            ]
+        }
+    },
+    "minimum-stability": "dev"
+}
+
