@@ -462,10 +462,6 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
         return $this->identifier;
     }
 
-    public function onQuerying($on)
-    {
-    }
-
     public function getUrl($suffix = null)
     {
         return $this->resource->route('table').($suffix ? '/'.$suffix : '');

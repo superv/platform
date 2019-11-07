@@ -12,7 +12,7 @@
         }
     },
     "require": {
-        "superv/platform": "0.*|dev-*"
+        "superv/platform": "0.*|dev-develop"
     },
     "minimum-stability": "dev"
 }

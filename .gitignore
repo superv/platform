@@ -4,11 +4,11 @@
 /.idea
 npm-debug.log
 .env
-.env.*
+./.env.*
 composer.lock
 .phpstorm.meta.php
 _ide_helper.php
 notes.txt
-phpunit.xml.dist
+phpunit.xml
 /tests/config/superv.php
 /.phpunit.result.cache
