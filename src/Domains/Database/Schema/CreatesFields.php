@@ -7,6 +7,7 @@ use SuperV\Platform\Support\ValueObject;
 
 /**
  * Trait CreatesFields
+ * @method ColumnDefinition text($column)
  * @method ColumnDefinition string($column, $length = null)
  * @method ColumnDefinition unsignedInteger($column, $autoIncrement = false)
  */
@@ -77,7 +78,7 @@ trait CreatesFields
         return $this->integer($column);
     }
 
-    public function text($column): ColumnDefinition
+    public function textarea($column): ColumnDefinition
     {
         return $this->addColumn('text', $column);
     }

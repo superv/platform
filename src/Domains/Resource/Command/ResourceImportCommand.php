@@ -22,6 +22,7 @@ class ResourceImportCommand extends Command
     public function handle()
     {
         $this->prepareConnection();
+
         $generator = ResourceGenerator::make();
 
         $generator->setTarget(base_path('database/migrations'));

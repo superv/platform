@@ -97,6 +97,27 @@ class ResourceGenerator
         return $templateData;
     }
 
+    public function withBlueprint($table, $blueprint)
+    {
+        $this->setTable($table);
+
+        $template = file_get_contents($this->platform->resourcePath('stubs/generator/migration.stub'));
+
+        $data = [
+            'class_name'          => studly_case("create_{$table}_resource"),
+            'table_name'          => $table,
+            'migration_namespace' => 'sv_import',
+            'resource'            => $table,
+            'config'              => $this->getResourceConfig($table),
+            'blueprint'           => $blueprint,
+        ];
+        $templateData = $this->parser->parse($template, $data);
+
+        file_put_contents($this->target.'/'.date('Y_m_d_His').'_create_'.$table.'_resource.php', $templateData);
+
+        return $templateData;
+    }
+
     /**
      * @param string $target
      */
@@ -132,11 +153,7 @@ class ResourceGenerator
 
         $type = $field['type'];
 
-        $output = sprintf(
-            "\$table->%s(%s)",
-            $type,
-            $property
-        );
+        $output = sprintf("\$table->%s(%s)", $type, $property);
 
         // If we have args, then it needs
         // to be formatted a bit differently
@@ -155,10 +172,6 @@ class ResourceGenerator
         return $output.';';
     }
 
-    /**
-     * @param $decorators
-     * @return string
-     */
     protected function addDecorators($decorators)
     {
         $output = '';

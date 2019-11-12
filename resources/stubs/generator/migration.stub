@@ -11,7 +11,7 @@ class {class_name} extends Migration
 
     public function up()
     {
-        $this->run('{table_name}',
+        $this->{up_method}('{table_name}',
             function (Blueprint $table, Config $config) {
                 {config}
 
@@ -21,6 +21,6 @@ class {class_name} extends Migration
 
     public function down()
     {
-        DeleteResource::dispatch('{resource}');
+        DeleteResource::dispatch('{resource.identifier}');
     }
 }
