@@ -85,7 +85,7 @@ class InstallSuperVCommand extends Command
         if ($this->confirm('Would you like to create a user with full access now ?', true)) {
             $name = $this->ask('Enter the name for user');
             $email = $this->ask('Enter the email for user');
-            $password = $this->ask('Enter the password');
+            $password = $this->secret('Enter the password');
 
             $user = Users::resolve()->create([
                 'name'     => $name,
