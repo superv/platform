@@ -30,10 +30,9 @@ php artisan superv:install
 ```
 
 Installer will try to complete the following configurations for you:
-- [Configure composer.json for the Merge Plugin](https://docs.superv.io/getting-started/Configuration.html#configure-composer-json-for-the-merge-plugin)
-- [Create a full privileged User](https://docs.superv.io/getting-started/Configuration.html#create-a-full-privileged-user)
-- [Create the Addons directory](https://docs.superv.io/getting-started/Configuration.html#create-the-addons-directory)
-
+- [Configure composer.json for the Merge Plugin](./configuration.html#configure-composer-json-for-the-merge-plugin)
+- [Create a full privileged User](./configuration.html#create-a-full-privileged-user)
+- [Create the Addons directory](./configuration.html#create-the-addons-directory)
 
 
 Install the composer package for Admin Panel addon:
