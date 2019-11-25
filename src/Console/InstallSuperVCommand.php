@@ -85,17 +85,17 @@ class InstallSuperVCommand extends Command
         if ($this->confirm('Would you like to create a user with full access now ?', true)) {
             $name = $this->ask('Enter the name for user');
             $email = $this->ask('Enter the email for user');
-            $password_error = false;
+            $confirmed = false;
 
-            do {
-                if ($password_error) {
-                    $this->error('The passwords do not match. Please try again.');
-                }
-
+            while ($confirmed === false) {
                 $password = $this->secret('Enter the password');
-                $password_confirm = $this->secret('Re-Enter the password');
-                $password_error = true;
-            } while ($password != $password_confirm);
+                $confirmation = $this->secret('Re-Enter the password');
+                $confirmed = ($password === $confirmation);
+
+                if (! $confirmed) {
+                    $this->warn('The passwords do not match. Please try again.');
+                }
+            }
 
             $user = Users::resolve()->create([
                 'name'     => $name,
