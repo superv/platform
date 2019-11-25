@@ -34,7 +34,9 @@ class ColumnFieldMapper
         }
         $mapperMethod = camel_case('map_'.snake_case($this->columnType));
 
-        $this->$mapperMethod();
+        if (method_exists($this, $mapperMethod)) {
+            $this->$mapperMethod();
+        }
 
         return $this;
     }

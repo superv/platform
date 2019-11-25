@@ -62,10 +62,10 @@ class EntryRepositoryTest extends ResourceTestCase
     function test__instantiates_entries_using_provided_model()
     {
         $resource = $this->create('t_entries',
-            function (Blueprint $table, ResourceConfig $resource) {
+            function (Blueprint $table, ResourceConfig $config) {
                 $table->increments('id');
 
-                $resource->model(TestResourceEntry::class);
+                $config->model(TestResourceEntry::class);
             });
 
         $entry = EntryRepository::for($resource)->newInstance();

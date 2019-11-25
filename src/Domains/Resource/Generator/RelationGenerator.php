@@ -70,6 +70,7 @@ class RelationGenerator
         if ($relation instanceof MorphMany) {
             return RelationConfig::create('morph_many', [
                 'name'          => $method->getName(),
+                'morph_name'    => str_replace_last('_type', '', $relation->getMorphType()),
                 'related_model' => get_class($relation->getModel()),
                 'foreign_key'   => $relation->getForeignKeyName(),
             ]);
@@ -77,9 +78,11 @@ class RelationGenerator
 
         if ($relation instanceof MorphToMany) {
             return RelationConfig::create('morph_to_many', [
-                'name'          => $method->getName(),
-                'related_model' => get_class($relation->getModel()),
-                'morph_name'    => $relation->getMorphType(),
+                'name'              => $method->getName(),
+                'related_model'     => get_class($relation->getModel()),
+                'morph_name'        => str_replace_last('_type', '', $relation->getMorphType()),
+                'pivot_table'       => $relation->getTable(),
+                'pivot_related_key' => $relation->getRelatedPivotKeyName(),
             ]);
         }
 
@@ -112,8 +115,9 @@ class RelationGenerator
 
         if ($relation instanceof MorphOne) {
             return RelationConfig::create('morph_one', [
-                'name'       => $method->getName(),
-                'morph_name' => $relation->getMorphType(),
+                'name'          => $method->getName(),
+                'related_model' => get_class($relation->getModel()),
+                'morph_name'    => str_replace_last('_type', '', $relation->getMorphType()),
             ]);
         }
         if ($relation instanceof HasOne) {

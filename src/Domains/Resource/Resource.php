@@ -126,7 +126,7 @@ class Resource implements
 
         $this->actions = collect();
 
-        $this->entryRepository = EntryRepository::resolve()->setResource($this);
+        $this->entryRepository = EntryRepository::for($this);
     }
 
     public function config(): ResourceConfig

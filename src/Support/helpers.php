@@ -11,8 +11,6 @@ use SuperV\Platform\Domains\Routing\UrlGenerator;
 use SuperV\Platform\Domains\UI\Components\Component;
 use SuperV\Platform\Domains\UI\Nucleo\SvBlock;
 use SuperV\Platform\Domains\UI\Nucleo\SvComponent;
-use SuperV\Platform\Domains\UI\Nucleo\SvTab;
-use SuperV\Platform\Domains\UI\Nucleo\SvTabs;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Composer\Composer;
 use SuperV\Platform\Support\Identifier;
@@ -332,22 +330,6 @@ function str_unslug(string $slug)
 function str_prefix(?string $str, $prefix, $glue = '.')
 {
     return is_null($str) ? $str : "{$prefix}{$glue}{$str}";
-}
-
-/** @return SvTabs */
-function sv_tabs()
-{
-    return SvTabs::make();
-}
-
-/**
- * @param $title
- * @param $block
- * @return SvTab
- */
-function sv_tab($title, $block)
-{
-    return (new SvTab)->title($title)->content($block);
 }
 
 function sv_block($url = null)

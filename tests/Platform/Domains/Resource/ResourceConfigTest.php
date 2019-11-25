@@ -92,8 +92,8 @@ class ResourceConfigTest extends ResourceTestCase
         $assertKeySaved(function (Blueprint $table) { $table->increments('entry_id'); });
         $assertKeySaved(function (Blueprint $table) { $table->id('entry_id'); });
         $assertKeySaved(function (Blueprint $table) { $table->integer('entry_id')->primary(); });
-        $assertKeySaved(function (Blueprint $table, Config $resource) {
-            $resource->keyName('entry_id');
+        $assertKeySaved(function (Blueprint $table, Config $config) {
+            $config->keyName('entry_id');
             $table->integer('entry_id');
         });
 

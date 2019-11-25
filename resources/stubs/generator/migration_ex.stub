@@ -11,16 +11,11 @@ class {class_name} extends Migration
 
     public function up()
     {
-        $this->{connection}{up_method}('{table_name}',
-            function (Blueprint $table, Config $config) {
-                {config}
-
-                {blueprint}
-            });
+       {up}
     }
 
     public function down()
     {
-        DeleteResource::dispatch('{resource.identifier}');
+        {down}
     }
 }

@@ -178,10 +178,10 @@ class NavTest extends ResourceTestCase
 
     function test__creates_from_resource_blueprint()
     {
-        Schema::create('tbl_users', function (Blueprint $table, ResourceConfig $resource) {
-            $resource->setIdentifier('testing.users');
+        Schema::create('tbl_users', function (Blueprint $table, ResourceConfig $config) {
+            $config->setIdentifier('testing.users');
             $table->increments('id');
-            $resource->nav([
+            $config->nav([
                 'parent' => 'acp.settings.auth',
                 'title'  => 'System Users',
                 'handle' => 'users',
@@ -196,10 +196,10 @@ class NavTest extends ResourceTestCase
             'url'    => 'sv/res/testing.users',
         ], Section::get('acp.settings.auth.users')->compose());
 
-        Schema::create('t_templates', function (Blueprint $table, ResourceConfig $resource) {
+        Schema::create('t_templates', function (Blueprint $table, ResourceConfig $config) {
             $table->increments('id');
-            $resource->label('Templates'); // modifies section handle and title
-            $resource->nav('acp.settings');
+            $config->label('Templates'); // modifies section handle and title
+            $config->nav('acp.settings');
         });
 
         $this->assertEquals([

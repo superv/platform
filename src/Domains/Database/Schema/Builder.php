@@ -18,16 +18,6 @@ class Builder extends \Illuminate\Database\Schema\Builder
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
     protected $resourceConfig;
 
-    public function connection($connection)
-    {
-        $this->connection = DB::connection($connection);
-        $this->connection->useDefaultQueryGrammar();
-
-        $this->resourceConfig->getDriver()->setParam('connection', $connection);
-
-        return $this;
-    }
-
     public function __construct(Connection $connection, Schema $schema)
     {
         parent::__construct($connection);
@@ -47,6 +37,16 @@ class Builder extends \Illuminate\Database\Schema\Builder
         );
     }
 
+    public function connection($connection)
+    {
+        $this->connection = DB::connection($connection);
+        $this->connection->useDefaultQueryGrammar();
+
+        $this->resourceConfig->getDriver()->setParam('connection', $connection);
+
+        return $this;
+    }
+
     public function create($table, Closure $callback): ResourceConfig
     {
         $mainBlueprint = $this->createBlueprint($table);
@@ -56,8 +56,8 @@ class Builder extends \Illuminate\Database\Schema\Builder
 
             $blueprint->create();
 
-            $callback($blueprint, $this->resourceConfig);
-
+//            $callback($blueprint, $this->resourceConfig);
+            app()->call($callback, ['table' => $blueprint, 'config' => $this->resourceConfig]);
         }));
 
         return $this->resourceConfig;

@@ -271,6 +271,11 @@ class ResourceConfig
         return $this->getDriver()->getParam('connection');
     }
 
+    public function connection($connection)
+    {
+        return $this->getDriver()->setParam('connection', $connection);
+    }
+
     public function getNamespace()
     {
         return $this->namespace;

@@ -54,9 +54,9 @@ class CreateResourceTest extends ResourceTestCase
 
     function test__saves_resource_model_class_if_provided()
     {
-        $this->create('test_users', function (Blueprint $table, Config $resource) {
+        $this->create('test_users', function (Blueprint $table, Config $config) {
             $table->increments('id');
-            $resource->model(TestUser::class);
+            $config->model(TestUser::class);
         });
 
         $this->assertEquals(TestUser::class, ResourceModel::withIdentifier('testing.test_users')->getModelClass());
@@ -107,13 +107,13 @@ class CreateResourceTest extends ResourceTestCase
     function test__custom_connection()
     {
         file_put_contents($this->basePath('sv-testing.sqlite'), '');
-        $resource = $this->create('core_servers2', function (Blueprint $table, Config $config) {
+        $resource = $this->create('core_servers', function (Config $config, Blueprint $table) {
             $table->increments('id');
         }, 'sqlite2');
 
-        $this->assertTrue((\Schema::connection('sqlite2')->hasTable('core_servers2')));
+        $this->assertTrue((\Schema::connection('sqlite2')->hasTable('core_servers')));
 
-        $this->assertEquals('database@sqlite2://core_servers2', $resource->getDsn());
+        $this->assertEquals('database@sqlite2://core_servers', $resource->getDsn());
 
         $server = $resource->fake();
         $this->assertEquals('sqlite2', $server->getConnectionName());
@@ -175,11 +175,7 @@ class CreateResourceTest extends ResourceTestCase
             $table->number('age')->nullable();
         });
 
-        $users = sv_resource('testing.test_users');
-
-//        dd(FieldModel::query()->where('identifier', 'LIKE', 'testing.test_users%')->get());
-
-        $this->assertNotNull($users->getField('age'));
+        $this->assertNotNull(sv_resource('testing.test_users')->getField('age'));
     }
 
     function test__fields_are_unique_per_resource()

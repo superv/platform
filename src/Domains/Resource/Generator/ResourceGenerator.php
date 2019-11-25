@@ -40,63 +40,6 @@ class ResourceGenerator
         return implode(PHP_EOL.str_pad('', 4 * 4, ' '), $config);
     }
 
-    private function getBlueprint($tableData)
-    {
-        $fields = [];
-        $entryLabel = null;
-
-        foreach ($tableData['fields'] as $key => $field) {
-            $item = null;
-            $fieldType = $field['type'];
-            $column = $field['field'];
-            if (in_array($fieldType, ['unique']) || is_array($column)) {
-                continue;
-            }
-            $decorators = array_get($field, 'decorators', []);
-
-//            if (ends_with($column, '_id')) {
-//                $relation = str_replace_last('_id', '', $column);
-//                if ($relation !== 'parent') {
-//                    $related = str_plural($relation);
-//                    $method = in_array('nullable', $decorators) ? 'nullableBelongsTo' : 'belongsTo';
-//                    $item = sprintf("\$table->%s('%s', '%s', '%s');", $method, $related, $relation, $column);
-//                }
-//            }
-
-            if (! $entryLabel && $field['type'] === 'string') {
-                $decorators[] = 'entryLabel';
-                $entryLabel = $field;
-            }
-
-            $field['decorators'] = $decorators;
-
-            $fields[$key] = $item ?? $this->getItem($field);
-        }
-
-        return implode(PHP_EOL.str_pad('', 4 * 4, ' '), $fields);
-    }
-
-    public function withTableData($table, $tableData)
-    {
-        $this->setTable($table);
-
-        $template = file_get_contents($this->platform->resourcePath('stubs/generator/migration.stub'));
-
-        $data = [
-            'class_name'          => studly_case("create_{$table}_resource"),
-            'table_name'          => $table,
-            'migration_namespace' => 'sv_import',
-            'resource'            => $table,
-            'config'              => $this->getResourceConfig($table),
-            'blueprint'           => $this->getBlueprint($tableData),
-        ];
-        $templateData = $this->parser->parse($template, $data);
-
-        file_put_contents($this->target.'/'.date('Y_m_d_His').'_create_'.$table.'_resource.php', $templateData);
-
-        return $templateData;
-    }
-
     public function withBlueprint($table, $blueprint)
     {
         $this->setTable($table);

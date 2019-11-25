@@ -12,15 +12,15 @@ class PolymorphicField extends FieldType implements AltersDatabaseTable
 {
     public function alterBlueprint(Blueprint $blueprint, array $config = [])
     {
-        $config = new PolymorphicFieldConfig($config);
+        $fieldConfig = new PolymorphicFieldConfig($config);
 
-        foreach ($config->getTypes() as $typeName => $callback) {
-            $callback = function (Blueprint $table, ResourceConfig $resourceConfig) use ($config, $callback) {
-                $table->belongsTo($config->getSelf());
-                $callback($table, $resourceConfig);
+        foreach ($fieldConfig->getTypes() as $typeName => $callback) {
+            $callback = function (Blueprint $table, ResourceConfig $config) use ($fieldConfig, $callback) {
+                $table->belongsTo($fieldConfig->getSelf());
+                $callback($table, $config);
             };
 
-            Schema::create($config->getSelf().'_'.$typeName, $callback);
+            Schema::create($fieldConfig->getSelf().'_'.$typeName, $callback);
         }
     }
 }

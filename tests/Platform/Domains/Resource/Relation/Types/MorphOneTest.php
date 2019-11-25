@@ -119,8 +119,8 @@ class MorphOneTest extends ResourceTestCase
     {
         parent::setUp();
 
-        $this->parent = $this->create('tbl_users', function (Blueprint $table, ResourceConfig $resource) {
-            $resource->resourceKey('user');
+        $this->parent = $this->create('tbl_users', function (Blueprint $table, ResourceConfig $config) {
+            $config->resourceKey('user');
 
             $table->increments('id');
             $table->string('name');
@@ -135,8 +135,8 @@ class MorphOneTest extends ResourceTestCase
             $table->morphTo('owner');
         });
 
-        $this->create('t_tacs', function (Blueprint $table, ResourceConfig $resource) {
-            $resource->model(TestTac::class);
+        $this->create('t_tacs', function (Blueprint $table, ResourceConfig $config) {
+            $config->model(TestTac::class);
 
             $table->increments('id');
             $table->string('label');

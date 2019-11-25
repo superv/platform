@@ -36,11 +36,9 @@ class EntryRepository implements EntryRepositoryInterface
     {
         $identifier = sv_identifier($identifier);
 
-        $resource = ResourceFactory::make($identifier->getParent());
-
-        $entry = $resource->find($identifier->id());
-
-        $entry->update($attributes);
+        EntryRepository::for($identifier->getParent())
+                       ->find($identifier->id())
+                       ->update($attributes);
     }
 
     public function count(): int
@@ -119,6 +117,10 @@ class EntryRepository implements EntryRepositoryInterface
         return $this;
     }
 
+    /**
+     * @param \SuperV\Platform\Domains\Resource\Resource|string $resource
+     * @return \SuperV\Platform\Domains\Resource\Database\Entry\EntryRepositoryInterface
+     */
     public static function for($resource): EntryRepositoryInterface
     {
         return static::resolve()->setResource($resource);

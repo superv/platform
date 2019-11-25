@@ -11,12 +11,12 @@ class EntryLabelTest extends ResourceTestCase
 {
     function test__builds_label_for_resource_entry()
     {
-        $res = $this->create('customers', function (Blueprint $table, Config $resource) {
+        $res = $this->create('customers', function (Blueprint $table, Config $config) {
             $table->increments('id');
             $table->string('first_name');
             $table->string('last_name');
 
-            $resource->entryLabel('{last_name}, {first_name}');
+            $config->entryLabel('{last_name}, {first_name}');
         });
 
         $entry = $res->fake(['first_name' => 'Nicola', 'last_name' => 'Tesla']);

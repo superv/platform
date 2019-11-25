@@ -7,7 +7,6 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 /**
  * Trait LabelConcern
  *
- * @mixin \SuperV\Platform\Domains\Resource\Resource
  */
 trait LabelConcern
 {
