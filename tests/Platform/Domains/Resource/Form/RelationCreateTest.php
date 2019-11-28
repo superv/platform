@@ -69,7 +69,7 @@ class RelationCreateTest extends ResourceTestCase
         $this->blueprints()->comments();
         ResourceFactory::wipe();
 
-        Resource::extend('testing.users')->with(function (Resource $resource) {
+        Resource::extend('testing.users', function (Resource $resource) {
             $resource->getRelation('comments')
                      ->on('create.displaying', function (Form $form) {
                          $form->fields()->hide('status');
@@ -88,13 +88,13 @@ class RelationCreateTest extends ResourceTestCase
         $this->assertEquals('comment', $form->getProp('fields.0.name'));
     }
 
-    function __post_extended_form()
+    function test__post_extended_form()
     {
         $users = $this->blueprints()->users();
         $comments = $this->blueprints()->comments();
         ResourceFactory::wipe();
 
-        Resource::extend('testing.users')->with(function (Resource $resource) {
+        Resource::extend('testing.users', function (Resource $resource) {
             $resource->getRelation('comments')
                      ->on('create.storing', function (Request $request, Form $form, $entry) {
                          $comment = $request->get('comment')." (by {$entry->name})";

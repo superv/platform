@@ -38,7 +38,7 @@ return [
     ColumnDroppedEvent::class                => Listeners\DeleteField::class,
     TableCreatingEvent::class                => Listeners\CreateResource::class,
     TableCreatedEvent::class                 => Listeners\CreateResourceForm::class,
-    AddonBootedEvent::class                  => [Listeners\RegisterExtensions::class, RegisterAddonHooks::class],
+    AddonBootedEvent::class                  => RegisterAddonHooks::class,
     DatabaseEvents\EntrySavingEvent::class   => [
         Listeners\SaveUpdatedBy::class,
         ModifyEntryAttributes::class,

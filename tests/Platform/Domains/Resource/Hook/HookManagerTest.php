@@ -10,8 +10,6 @@ use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoriesDashboardPage;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoryList;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\CategoryObserver;
-use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersConfig;
-use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFields;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormCustom;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersFormDefault;
 use Tests\Platform\Domains\Resource\Fixtures\Resources\OrdersObserver;

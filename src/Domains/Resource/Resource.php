@@ -449,6 +449,11 @@ class Resource implements
         return $this->dsn;
     }
 
+    public function provideFields(): Collection
+    {
+        return $this->getFields();
+    }
+
     public function uuid(): string
     {
         return $this->uuid;
@@ -468,9 +473,13 @@ class Resource implements
         ];
     }
 
-    public static function extend($identifier)
+    public static function extend($identifier, Closure $callback = null)
     {
         Extension::register($extender = new Extender($identifier));
+
+        if ($callback) {
+            $extender->with($callback);
+        }
 
         return $extender;
     }
@@ -492,10 +501,5 @@ class Resource implements
     {
         $eventName = $this->getIdentifier().'.'.$event;
         app('events')->dispatch($eventName, $payload);
-    }
-
-    public function provideFields(): Collection
-    {
-        return $this->getFields();
     }
 }
