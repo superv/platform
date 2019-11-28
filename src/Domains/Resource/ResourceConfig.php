@@ -14,6 +14,8 @@ class ResourceConfig
 
     protected $name;
 
+    protected $handle;
+
     protected $namespace;
 
     protected $hasUuid;
@@ -86,7 +88,7 @@ class ResourceConfig
 
     public function setIdentifier($identifier)
     {
-        list($this->namespace, $this->name) = explode('.', $identifier);
+        [$this->namespace, $this->name] = explode('.', $identifier);
 
         return $this;
     }
@@ -105,7 +107,7 @@ class ResourceConfig
 
     public function getHandle()
     {
-        return $this->getIdentifier();
+        return $this->handle;
     }
 
     public function label($label)
@@ -296,6 +298,7 @@ class ResourceConfig
     public function setName($name): self
     {
         $this->name = $name;
+        $this->handle = $name;
 
         return $this;
     }

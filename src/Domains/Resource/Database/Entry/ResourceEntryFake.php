@@ -8,6 +8,12 @@ use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 
+/**
+ * Class ResourceEntryFake
+ *
+ * @todo    .ali: Rename to FakeResourceEntry
+ * @package SuperV\Platform\Domains\Resource\Database\Entry
+ */
 class ResourceEntryFake
 {
     /** @return \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract|\Illuminate\Support\Collection */

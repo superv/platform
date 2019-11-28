@@ -50,55 +50,41 @@ class Builder extends \Illuminate\Database\Schema\Builder
     public function create($table, Closure $callback): ResourceConfig
     {
         $mainBlueprint = $this->createBlueprint($table);
-        $this->build(tap($mainBlueprint, function ($blueprint) use ($table, $callback) {
-            $this->resourceConfig->setName($table);
-            $this->resourceConfig->getDriver()->setParam('table', $table);
+        $this->build(tap($mainBlueprint,
+                function (Blueprint $blueprint) use ($table, $callback) {
+                    $this->resourceConfig->setName($table);
+                    $this->resourceConfig->getDriver()->setParam('table', $table);
 
-            $blueprint->create();
+                    $blueprint->create();
 
-//            $callback($blueprint, $this->resourceConfig);
-            app()->call($callback, ['table' => $blueprint, 'config' => $this->resourceConfig]);
-        }));
+                    app()->call($callback, [
+                        'table'  => $blueprint,
+                        'config' => $this->resourceConfig,
+                    ]);
+                })
+        );
 
         return $this->resourceConfig;
     }
 
     public function table($table, Closure $callback)
     {
-        $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($table, $callback) {
-            $this->resourceConfig->setName($table);
-            $this->resourceConfig->getDriver()->setParam('table', $table);
+        $this->build(tap($this->createBlueprint($table),
+                function (Blueprint $blueprint) use ($table, $callback) {
+                    $this->resourceConfig->setName($table);
+                    $this->resourceConfig->getDriver()->setParam('table', $table);
 
-            $callback($blueprint, $this->resourceConfig);
-        }));
+//                    $callback($blueprint, $this->resourceConfig);
+                    app()->call($callback, [
+                        'table'  => $blueprint,
+                        'config' => $this->resourceConfig,
+                    ]);
+                })
+        );
     }
-
-    /**
-     * Drop a table from the schema if it exists.
-     *
-     * @param string $table
-     * @return void
-     */
-//    public function dropIfExists($table)
-//    {
-//        $this->build(tap($this->createBlueprint($table), function ($blueprint) use ($table) {
-//            $blueprint->drop();
-//        }));
-//    }
 
     public function resource(): ?ResourceConfig
     {
         return $this->resourceConfig;
-    }
-
-    protected function fillResourceConfig($table)
-    {
-//        if (! $this->resourceConfig->getName()) {
-//            $this->resourceConfig->setName($table);
-//        }
-//        $this->resourceConfig->setIdentifier(
-//            $this->resourceConfig->getNamespace().'::'.$this->resourceConfig->getName()
-//        );
-
     }
 }

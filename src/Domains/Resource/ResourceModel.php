@@ -71,6 +71,11 @@ class ResourceModel extends Entry implements ProvidesFields
         return $this->name;
     }
 
+    public function getHandle()
+    {
+        return $this->handle;
+    }
+
     public function getDsn()
     {
         return $this->dsn;

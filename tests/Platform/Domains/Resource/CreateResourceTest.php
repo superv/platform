@@ -71,6 +71,7 @@ class CreateResourceTest extends ResourceTestCase
 
         $config = $resource->config();
         $driver = $config->getDriver();
+
         $this->assertInstanceOf(ResourceDriver::class, $driver);
         $this->assertEquals('core_servers', $driver->getParam('table'));
         $this->assertEquals('sqlite', $driver->getParam('connection'));

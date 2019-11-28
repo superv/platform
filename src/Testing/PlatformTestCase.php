@@ -55,7 +55,7 @@ abstract class PlatformTestCase extends OrchestraTestCase
         return __DIR__.($path ? '/'.$path : '');
     }
 
-    protected function runTest()
+    protected function runTestsssss()
     {
         try {
             return parent::runTest();

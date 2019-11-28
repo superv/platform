@@ -22,6 +22,7 @@ class ResourceRepository
         $attributes = [
             'uuid'       => uuid(),
             'name'       => $config->getName(),
+            'handle'     => $config->getHandle(),
             'namespace'  => $config->getNamespace(),
             'identifier' => $config->getNamespace().'.'.$config->getName(),
             'dsn'        => $config->getDriver()->toDsn(),

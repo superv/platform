@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Database\Schema;
 
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Table;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
@@ -21,9 +22,23 @@ class SchemaService
         $this->db->connection()->getDoctrineSchemaManager()->dropTable($table);
     }
 
+    public function createTable($tableName, array $primaryKeys)
+    {
+        $table = new Table($tableName);
+        foreach ($primaryKeys as $primaryKey) {
+            if ($primaryKey['type'] === 'integer') {
+                $options = ['unsigned' => true, 'autoincrement' => $primaryKey['autoincrement'] ?? false];
+            }
+            $table->addColumn($primaryKey['name'], $primaryKey['type'], $options ?? []);
+        }
+
+        $this->db->connection()->getDoctrineSchemaManager()->createTable($table);
+    }
+
     public function getDatabaseTables($connection = null): Collection
     {
         return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableNames());
+
         return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableNames())
             ->map(function (string $table) {
                 return [
@@ -65,5 +80,11 @@ class SchemaService
                     'nullable'   => ! $column->getNotnull(),
                 ];
             })->values();
+    }
+
+    /** * @return static */
+    public static function resolve()
+    {
+        return app(static::class);
     }
 }

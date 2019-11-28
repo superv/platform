@@ -99,6 +99,7 @@ class PlatformBlueprints
         $table->uuid('rev_id')->nullable()->unique();
 
         $table->string('name')->showOnIndex()->entryLabel();
+        $table->string('handle')->showOnIndex()->entryLabel();
         $table->string('identifier')->showOnIndex()->unique();
         $table->string('namespace');
 
