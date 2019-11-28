@@ -30,9 +30,9 @@
     "require": {
         "php": "^7.2",
         "superv/composer-plugin": "^0.2",
-        "laravel/framework": "^5.5|^6",
+        "laravel/framework": "^6.0",
         "barryvdh/laravel-cors": "^0.11",
-        "tymon/jwt-auth": "dev-develop",
+        "tymon/jwt-auth": "^1.0",
         "nicmart/string-template": "~0.1",
         "wikimedia/composer-merge-plugin": "^1.4"
     },

@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Resource;
 use Event;
 use Exception;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Extension\Extension;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
@@ -68,8 +67,7 @@ class ResourceFactory
             $attributes['config'] = ResourceConfig::make($attributes['config']);
 
             $resource = new Resource($attributes);
-
-            Extension::extend($resource);
+//            Extension::extend($resource);
         } catch (PlatformException $e) {
             throw $e;
         } catch (Exception $e) {

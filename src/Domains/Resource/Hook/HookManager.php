@@ -58,9 +58,8 @@ class HookManager
      * Scan path for hooks
      *
      * @param $path
-     * @return \SuperV\Platform\Domains\Resource\Hook\HookManager
      */
-    public function scan($path): HookManager
+    public function scan($path)
     {
         if (! file_exists($path)) {
             PlatformException::runtime(sprintf("Path not found: %s", $path));
@@ -94,14 +93,7 @@ class HookManager
             }
         }
 
-        /**
-         * Register deferred hooks
-         */
-        foreach ($this->callbacks as $callback) {
-            $callback();
-        }
-
-        return $this;
+        $this->registerDeferredHooks();
     }
 
     public function register($identifier, $hookClass, $className)
@@ -110,32 +102,10 @@ class HookManager
 
         $hookHandler = $this->resolveHookHandler($hookType);
 
-//        if (! isset($this->map[$identifier])) {
-//            $this->map[$identifier] = [];
-//        }
-
-//        if (! $subKey) {
-//            $this->map[$identifier][$hookType] = $hookClass;
-//        } else {
-//            if ($this->hasContract($hookClass, HookByRole::class)) {
-//                /** @var HookByRole $hookClass */
-//                $subKey2 = $subKey.':'. $hookClass::getRole();
-//            } else {
-//                $subKey2 = $subKey;
-//            }
-//
-//            if (! isset($this->map[$identifier][$hookType][$subKey2])) {
-//                $this->map[$identifier][$hookType][$subKey2] = [];
-//            }
-//
-//            $this->map[$identifier][$hookType][$subKey2] = $hookClass;
-//        }
-
         if ($hookHandler) {
             $hookHandler->hook($identifier, $hookClass, $subKey);
         }
 
-        return $this;
     }
 
     public function resolveHookHandler($hookType): ?HookHandlerInterface
@@ -164,6 +134,7 @@ class HookManager
 
     /**
      * @param $identifier
+     * @param $hookClass
      * @param $className
      * @return array
      */
@@ -178,17 +149,29 @@ class HookManager
             $identifier = $_identifier->getParent();
         } else {
             $parts = explode('_', snake_case($className));
+            $last = end($parts);
+
+            if (in_array($last, ['list', 'form', 'observer', 'page'])) {
+                $hookType = $last;
+            } else {
+                $hookType = 'resource';
+            }
 
             if ($this->hasContract($hookClass, HookByRole::class)) {
-                $hookType = count($parts) === 3 ? end($parts) : 'resource';
                 $subKey = $hookClass::getRole();
             } else {
-                $hookType = count($parts) === 2 ? end($parts) : 'resource';
                 $subKey = null;
             }
         }
 
         return [$identifier, $hookType, $subKey];
+    }
+
+    protected function registerDeferredHooks(): void
+    {
+        foreach ($this->callbacks as $callback) {
+            $callback();
+        }
     }
 
     /** @return static */
