@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Field;
 use Closure;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
@@ -83,6 +84,10 @@ class FieldType implements FieldTypeInterface
     }
 
     public function saved(FormInterface $form)
+    {
+    }
+
+    public function driverCreating(DriverInterface $driver)
     {
     }
 

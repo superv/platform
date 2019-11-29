@@ -2,14 +2,18 @@
 
 namespace SuperV\Platform\Domains\Resource\Driver;
 
+use Doctrine\DBAL\Schema\Table;
 use SuperV\Platform\Domains\Database\Schema\SchemaService;
 use SuperV\Platform\Domains\Resource\Blueprint\Blueprint;
+use SuperV\Platform\Domains\Resource\Blueprint\FieldBlueprint;
 
 class DatabaseDriver implements DriverInterface
 {
     protected $type = 'database';
 
-    /** @var string */
+    /**
+     * @var \Doctrine\DBAL\Schema\Table
+     */
     protected $table;
 
     /**
@@ -56,7 +60,24 @@ class DatabaseDriver implements DriverInterface
 
     public function run(Blueprint $blueprint)
     {
-        SchemaService::resolve()->createTable($this->getTable(), $this->primaryKeys);
+        $this->table = new Table($this->getParam('table'));
+
+        $keys = [];
+        foreach ($this->primaryKeys as $primaryKey) {
+            if ($primaryKey['type'] === 'integer') {
+                $options = ['unsigned' => true, 'autoincrement' => $primaryKey['autoincrement'] ?? false];
+            }
+            $this->table->addColumn($primaryKey['name'], $primaryKey['type'], $options ?? []);
+            $keys[] = $primaryKey['name'];
+        }
+
+        $this->table->setPrimaryKey($keys);
+
+        $blueprint->getFields()->map(function (FieldBlueprint $field) {
+            $field->getField()->getFieldType()->driverCreating($this);
+        });
+
+        SchemaService::resolve()->createTable($this->table);
     }
 
     /**
@@ -70,9 +91,9 @@ class DatabaseDriver implements DriverInterface
         ];
     }
 
-    public function getTable(): string
+    public function getTable(): Table
     {
-        return $this->getParam('table');
+        return $this->table;
     }
 
     public function table(string $table, string $connection = 'default'): DatabaseDriver

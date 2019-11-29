@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Database\Schema;
 
+use Closure;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Database\DatabaseManager;
@@ -22,7 +23,17 @@ class SchemaService
         $this->db->connection()->getDoctrineSchemaManager()->dropTable($table);
     }
 
-    public function createTable($tableName, array $primaryKeys)
+    public function createTable(Table $table)
+    {
+        $this->db->connection()->getDoctrineSchemaManager()->createTable($table);
+    }
+
+    public function getIndexes($table)
+    {
+        return $this->db->connection()->getDoctrineSchemaManager()->listTableIndexes($table);
+    }
+
+    public function createTablexxxxxxxx($tableName, array $primaryKeys, Closure $callback = null)
     {
         $table = new Table($tableName);
         foreach ($primaryKeys as $primaryKey) {
@@ -30,6 +41,10 @@ class SchemaService
                 $options = ['unsigned' => true, 'autoincrement' => $primaryKey['autoincrement'] ?? false];
             }
             $table->addColumn($primaryKey['name'], $primaryKey['type'], $options ?? []);
+        }
+
+        if ($callback) {
+            $callback($table);
         }
 
         $this->db->connection()->getDoctrineSchemaManager()->createTable($table);

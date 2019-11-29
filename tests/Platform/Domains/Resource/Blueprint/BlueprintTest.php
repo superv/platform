@@ -5,6 +5,7 @@ namespace Tests\Platform\Domains\Resource\Blueprint;
 use SuperV\Platform\Domains\Resource\Blueprint\Blueprint;
 use SuperV\Platform\Domains\Resource\Blueprint\Builder;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
+use SuperV\Platform\Domains\Resource\Field\Types\TextField;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class BlueprintTest extends ResourceTestCase
@@ -39,5 +40,15 @@ class BlueprintTest extends ResourceTestCase
             'type'          => 'integer',
             'autoincrement' => true,
         ], $blueprint->getDriver()->getParam('primary_keys')[0]);
+    }
+
+    function test__fields()
+    {
+        $blueprint = Builder::resource('core.posts', function (Blueprint $resource) {
+            $resource->addField('title', TextField::class)->useAsEntryLabel();
+        });
+
+        $this->assertNotNull($blueprint->getField('title'));
+        $this->assertTrue($blueprint->getField('title')->isEntryLabel());
     }
 }

@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Blueprint;
 
+use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 
@@ -22,15 +23,41 @@ class Blueprint
      */
     protected $label;
 
-    /**
-     * @var array
-     */
     protected $nav;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\Driver\DriverInterface
      */
     protected $driver;
+
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    protected $fields;
+
+    public function __construct()
+    {
+        $this->fields = collect();
+    }
+
+    public function addField($fieldName, $fieldType): FieldBlueprint
+    {
+        $field = new FieldBlueprint($this, $fieldName, $fieldType);
+
+        $this->fields->put($fieldName, $field);
+
+        return $field;
+    }
+
+    public function getField($fieldName): FieldBlueprint
+    {
+        return $this->fields->get($fieldName);
+    }
+
+    public function getFields(): Collection
+    {
+        return $this->fields;
+    }
 
     public function namespace($namespace): self
     {
@@ -55,10 +82,6 @@ class Blueprint
 
     public function nav($nav): self
     {
-        if (is_string($nav)) {
-            $nav = ['parent' => $nav];
-        }
-
         $this->nav = $nav;
 
         return $this;
@@ -94,6 +117,11 @@ class Blueprint
     public function getDriver(): ?DriverInterface
     {
         return $this->driver;
+    }
+
+    public function getNav()
+    {
+        return $this->nav;
     }
 
     /** * @return static */
