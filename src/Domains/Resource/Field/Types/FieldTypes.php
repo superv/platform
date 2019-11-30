@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
+use SuperV\Platform\Domains\Resource\Field\Types\Text\TextField;
 use SuperV\Platform\Support\ValueObject;
 
 class FieldTypes extends ValueObject

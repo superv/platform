@@ -11,7 +11,7 @@ class RelationRepository
 {
     public function create(ResourceModel $resource, RelationConfig $config, Blueprint $blueprint, bool $isRequired)
     {
-        $relationType = Relation::resolve($config->getType());
+        $relationType = Relation::resolveType($config->getType());
 
         if ($config->hasPivotTable()) {
             (new CreatePivotTable)($config);
@@ -51,7 +51,7 @@ class RelationRepository
     }
 
     /** * @return static */
-    public static function make()
+    public static function resolve()
     {
         return app(static::class);
     }

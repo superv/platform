@@ -317,6 +317,11 @@ class Field implements FieldInterface
         return $this->fieldType->getType() ?? $this->type;
     }
 
+    public function getComponent(): ?string
+    {
+        return $this->fieldType->getComponent() ?? $this->getType();
+    }
+
     public function setType(string $type): FieldInterface
     {
         $this->type = $type;
@@ -402,6 +407,11 @@ class Field implements FieldInterface
     public function isHidden(): bool
     {
         return (bool)$this->hasFlag('hidden');
+    }
+
+    public function isHiddenOnView(): bool
+    {
+        return (bool)$this->hasFlag('view.hide');
     }
 
     public function isUnique()

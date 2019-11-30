@@ -37,4 +37,6 @@ interface FieldTypeInterface
     public function addFlag($flag);
 
     public function getColumnName();
+
+    public function getComponent(): ?string;
 }

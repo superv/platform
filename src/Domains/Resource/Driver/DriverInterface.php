@@ -15,5 +15,7 @@ interface DriverInterface extends Arrayable
 
     public function getType();
 
+    public function primaryKey($name, $type = 'integer', array $options = []): DriverInterface;
+
     public function run(Blueprint $blueprint);
 }

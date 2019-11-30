@@ -21,6 +21,9 @@ class FieldType implements FieldTypeInterface
     /** @var string */
     protected $type;
 
+    /** @var string */
+    protected $component;
+
     /** @var FieldInterface */
     protected $field;
 
@@ -151,6 +154,11 @@ class FieldType implements FieldTypeInterface
         }
 
         return [$value, $requestValue];
+    }
+
+    public function getComponent(): ?string
+    {
+        return $this->component;
     }
 
     public static function resolveType($type)

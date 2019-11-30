@@ -81,7 +81,7 @@ class CreateResourceTest extends ResourceTestCase
     function test__custom_name()
     {
         $resource = $this->create('core_servers', function (Blueprint $table, Config $config) {
-            $config->setName('servers');
+            $config->name('servers');
             $table->increments('id');
         });
 
@@ -94,8 +94,8 @@ class CreateResourceTest extends ResourceTestCase
     function test__custom_namespace()
     {
         $resource = $this->create('core_servers', function (Blueprint $table, Config $config) {
-            $config->setNamespace('custom');
-            $config->setName('servers');
+            $config->namespace('custom');
+            $config->name('servers');
             $table->increments('id');
         });
 
@@ -132,7 +132,7 @@ class CreateResourceTest extends ResourceTestCase
         });
 
         $this->create('core_servers', function (Blueprint $table, Config $config) {
-            $config->setName('servers');
+            $config->name('servers');
             $table->increments('id');
 
             $table->belongsToMany('core_locations', 'locations')->pivotForeignKey('server_id')

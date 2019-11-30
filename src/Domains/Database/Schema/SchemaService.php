@@ -2,16 +2,27 @@
 
 namespace SuperV\Platform\Domains\Database\Schema;
 
-use Closure;
-use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Support\Collection;
-use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
 
 class SchemaService
 {
-    private $db;
+    /**
+     * Database connection name;
+     *
+     * @var string
+     */
+    protected $connectionName;
+
+    /**
+     * @var \Doctrine\DBAL\Connection
+     */
+    protected $connection;
+
+    /**
+     * @var \Illuminate\Database\DatabaseManager
+     */
+    protected $db;
 
     public function __construct(DatabaseManager $db)
     {
@@ -20,86 +31,91 @@ class SchemaService
 
     public function dropTable($table)
     {
-        $this->db->connection()->getDoctrineSchemaManager()->dropTable($table);
+        $this->getSchemaManager()->dropTable($table);
     }
 
     public function createTable(Table $table)
     {
-        $this->db->connection()->getDoctrineSchemaManager()->createTable($table);
+        $this->getSchemaManager()->createTable($table);
     }
 
     public function getIndexes($table)
     {
-        return $this->db->connection()->getDoctrineSchemaManager()->listTableIndexes($table);
+        return $this->getSchemaManager()->listTableIndexes($table);
     }
 
-    public function createTablexxxxxxxx($tableName, array $primaryKeys, Closure $callback = null)
+    public function setConnection(string $connectionName = null): SchemaService
     {
-        $table = new Table($tableName);
-        foreach ($primaryKeys as $primaryKey) {
-            if ($primaryKey['type'] === 'integer') {
-                $options = ['unsigned' => true, 'autoincrement' => $primaryKey['autoincrement'] ?? false];
-            }
-            $table->addColumn($primaryKey['name'], $primaryKey['type'], $options ?? []);
-        }
+        $this->connectionName = $connectionName;
 
-        if ($callback) {
-            $callback($table);
-        }
+        $this->prepareConnection();
 
-        $this->db->connection()->getDoctrineSchemaManager()->createTable($table);
+        return $this;
     }
 
-    public function getDatabaseTables($connection = null): Collection
+    public function getConnection(): \Doctrine\DBAL\Connection
     {
-        return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableNames());
-
-        return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableNames())
-            ->map(function (string $table) {
-                return [
-                    'id'       => $table,
-                    'table'    => $table,
-                    'singular' => $this->formatSingular($table),
-                ];
-            })->keyBy('table');
+        return $this->connection;
     }
 
-    public function getTable($tableName)
+    protected function prepareConnection()
     {
-        return $this->getDatabaseTables()->first(function ($table) use ($tableName) {
-            return $tableName === $table;
-        });
+        $this->connection = $this->db->connection($this->connectionName)->getDoctrineConnection();
     }
 
-    public function formatSingular($table)
+    public function getSchemaManager(): \Doctrine\DBAL\Schema\AbstractSchemaManager
     {
-        $replace = camel_case($table);
-
-        return str_singular(ucwords($replace));
+        return $this->getConnection()->getSchemaManager();
     }
 
-    public function getTableColumns($table, $connection = null)
+    /** *
+     * @param string $connection
+     * @return static
+     */
+    public static function resolve(string $connection = null)
     {
-        return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableColumns($table))
-            ->map(function (Column $column) use ($table, $connection) {
-                $columnType = $column->getType()->getName();
-                $mapper = ColumnFieldMapper::for($columnType)->map();
+        /** @var \SuperV\Platform\Domains\Database\Schema\SchemaService $instance */
+        $instance = app(static::class);
 
-                return [
-                    'id'         => $column->getName(),
-                    'label'      => str_unslug($column->getName()),
-                    'type'       => $columnType,
-                    'field_type' => $mapper->getFieldType(),
-                    'rules'      => $mapper->getRules(),
-                    'config'     => $mapper->getConfig(),
-                    'nullable'   => ! $column->getNotnull(),
-                ];
-            })->values();
+        return $instance->setConnection($connection);
     }
 
-    /** * @return static */
-    public static function resolve()
-    {
-        return app(static::class);
-    }
+//    public function getDatabaseTables_xxxxxxx($connection = null): Collection
+//    {
+//        return collect($this->getSchemaManager()->listTableNames());
+//    }
+//
+//    public function getTable_xxxxxxx($tableName)
+//    {
+//        return $this->getDatabaseTables()->first(function ($table) use ($tableName) {
+//            return $tableName === $table;
+//        });
+//    }
+//
+//    public function formatSingular_xxxxxxx($table)
+//    {
+//        $replace = camel_case($table);
+//
+//        return str_singular(ucwords($replace));
+//    }
+//
+//    public function getTableColumns_xxxxxxx($table, $connection = null)
+//    {
+//        return collect($this->db->connection($connection)->getDoctrineSchemaManager()->listTableColumns($table))
+//            ->map(function (Column $column) use ($table, $connection) {
+//                $columnType = $column->getType()->getName();
+//                $mapper = ColumnFieldMapper::for($columnType)->map();
+//
+//                return [
+//                    'id'         => $column->getName(),
+//                    'label'      => str_unslug($column->getName()),
+//                    'type'       => $columnType,
+//                    'field_type' => $mapper->getFieldType(),
+//                    'rules'      => $mapper->getRules(),
+//                    'config'     => $mapper->getConfig(),
+//                    'nullable'   => ! $column->getNotnull(),
+//                ];
+//            })->values();
+//    }
+
 }

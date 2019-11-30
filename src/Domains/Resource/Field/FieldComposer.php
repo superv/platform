@@ -44,7 +44,7 @@ class FieldComposer
 
         $payload = (new Payload([
             'identifier'  => $field->getIdentifier(),
-            'type'        => $field->getType(),
+            'type'        => $field->getComponent(),
             'revision_id' => $field->revisionId(),
             'name'        => $field->getName(),
             'label'       => $field->getLabel(),
@@ -100,7 +100,7 @@ class FieldComposer
         $payload = (new Payload([
             'identifier'  => $field->getIdentifier(),
             'revision_id' => $field->revisionId(),
-            'type'        => $field->getType(),
+            'type'        => $field->getComponent(),
             'name'        => $field->getColumnName(),
             'value'       => $value,
             'presenting'  => true,
@@ -130,7 +130,7 @@ class FieldComposer
 
         $payload = (new Payload([
             'identifier'  => $field->getIdentifier(),
-            'type'        => $field->getType(),
+            'type'        => $field->getComponent(),
             'revision_id' => $field->revisionId(),
             'name'        => $field->getColumnName(),
             'label'       => $field->getLabel(),

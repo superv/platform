@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
+use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -162,6 +163,10 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
                              });
     }
 
+    public function driverCreating(DriverInterface $driver)
+    {
+    }
+
     public static function fromEntry(RelationModel $entry): self
     {
         $relation = new static;
@@ -192,18 +197,25 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
         return $relation;
     }
 
-    public static function resolve($type)
+    public static function resolveType($type)
     {
-        $class = static::resolveClass($type);
+        $class = static::resolveTypeClass($type);
 
         return new $class(new RelationModel());
     }
 
-    public static function resolveClass($type)
+    public static function resolveTypeClass($type)
     {
+        $type = (string)$type;
+
         $base = 'SuperV\Platform\Domains\Resource\Relation\Types';
 
         $class = $base."\\".studly_case($type);
+
+        // custom directory
+        if (! class_exists($class)) {
+            $class = $base."\\".studly_case($type)."\\".studly_case($type);
+        }
 
         return $class;
     }

@@ -19,7 +19,7 @@ class EntryLabelTest extends ResourceTestCase
             $config->entryLabel('{last_name}, {first_name}');
         });
 
-        $entry = $res->fake(['first_name' => 'Nicola', 'last_name' => 'Tesla']);
+        $entry = $res->create(['first_name' => 'Nicola', 'last_name' => 'Tesla']);
 
         $this->assertEquals('Tesla, Nicola', $res->getEntryLabel($entry));
     }

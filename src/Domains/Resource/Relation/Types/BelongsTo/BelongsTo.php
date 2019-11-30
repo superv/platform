@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Relation\Types;
+namespace SuperV\Platform\Domains\Resource\Relation\Types\BelongsTo;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentBelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
@@ -35,5 +35,4 @@ class BelongsTo extends Relation implements AcceptsParentEntry, ProvidesFilter, 
                            ->setOptions($options)
                            ->setAttribute($this->getRelationConfig()->getForeignKey());
     }
-
 }

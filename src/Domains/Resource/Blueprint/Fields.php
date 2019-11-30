@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Blueprint;
 
-use SuperV\Platform\Domains\Resource\Field\Types\NumberField;
-use SuperV\Platform\Domains\Resource\Field\Types\TextareaField;
-use SuperV\Platform\Domains\Resource\Field\Types\TextField;
+use SuperV\Platform\Domains\Resource\Field\Types\Number\NumberField;
+use SuperV\Platform\Domains\Resource\Field\Types\Text\TextField;
+use SuperV\Platform\Domains\Resource\Field\Types\Textarea\TextareaField;
 
 class Fields
 {

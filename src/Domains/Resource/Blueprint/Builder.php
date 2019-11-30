@@ -29,6 +29,7 @@ class Builder
     public function save(Blueprint $blueprint)
     {
         // build config from blue print
+        //
         $config = ResourceConfig::make([
                 'name'      => $blueprint->getHandle(),
                 'handle'    => $blueprint->getHandle(),
@@ -39,6 +40,7 @@ class Builder
         );
 
         // Entry field
+        //
         $entryLabelField = $blueprint->getFields()
                                      ->first(function (FieldBlueprint $field) use ($config) {
                                          return $field->isEntryLabel();
@@ -46,20 +48,32 @@ class Builder
         if ($entryLabelField) {
             $config->entryLabel('{'.$entryLabelField->getName().'}');
             $config->entryLabelField($entryLabelField->getName());
+        } else {
+            $config->entryLabel('{'.$config->getKeyName().'}');
         }
 
         // create resource
+        //
         $resourceEntry = $this->repository->create($config);
 
-        // driver actions
+        // Run Field Blueprints
+        //
         $blueprint->getFields()
                   ->map(function (FieldBlueprint $field) use ($config, $resourceEntry) {
                       $field->run($resourceEntry);
                   });
 
+        // Run Relation Blueprints
+        //
+        $blueprint->getRelations()
+                  ->map(function (RelationBlueprint $relation) use ($config, $resourceEntry) {
+                      $relation->run($resourceEntry);
+                  });
+
         $blueprint->getDriver()->run($blueprint);
 
         //  create nav
+        //
         if ($nav = $config->getNav()) {
             $section = CreateNavigation::resolve($config)
                                        ->create($nav, $resourceEntry->getId());
@@ -67,8 +81,12 @@ class Builder
             $section->update(['namespace' => $config->getNamespace()]);
         }
 
-        // dispatch event, create forms
+        // dispatch event
+        //
         ResourceCreatedEvent::fire($resourceEntry);
+
+        // create forms
+        //
         FormRepository::createForResource($blueprint->getIdentifier());
     }
 
@@ -90,9 +108,9 @@ class Builder
         $resource = Blueprint::resolve();
         $resource->namespace($namespace);
         $resource->handle($handle);
-        $resource->databaseDriver()
-                 ->table($handle)
-                 ->primaryKey('id');
+//        $resource->databaseDriver()
+//                 ->table($handle)
+//                 ->primaryKey('id');
 
         return $resource;
     }

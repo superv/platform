@@ -1,13 +1,17 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types;
+namespace SuperV\Platform\Domains\Resource\Field\Types\Number;
 
+use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
+use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class NumberField extends FieldType implements RequiresDbColumn, SortsQuery
 {
+    protected $component = 'number';
+
     protected function boot()
     {
         $this->field->on('form.accessing', $this->accessor());
@@ -53,5 +57,12 @@ class NumberField extends FieldType implements RequiresDbColumn, SortsQuery
         }
 
         return $rules;
+    }
+
+    public function driverCreating(DriverInterface $driver)
+    {
+        if ($driver instanceof DatabaseDriver) {
+            $driver->getTable()->addColumn($this->getColumnName(), 'integer');
+        }
     }
 }

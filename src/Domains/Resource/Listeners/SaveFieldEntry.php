@@ -145,7 +145,7 @@ class SaveFieldEntry
 
     protected function createRelations(RelationConfig $relationConfig)
     {
-        $relationType = RelationRepository::make()
+        $relationType = RelationRepository::resolve()
                                           ->create(
                                               $this->resource,
                                               $relationConfig,

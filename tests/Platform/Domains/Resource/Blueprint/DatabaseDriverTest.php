@@ -2,10 +2,8 @@
 
 namespace Tests\Platform\Domains\Resource\Blueprint;
 
-use SuperV\Platform\Domains\Database\Schema\SchemaService;
 use SuperV\Platform\Domains\Resource\Blueprint\Blueprint;
 use SuperV\Platform\Domains\Resource\Blueprint\Builder;
-use SuperV\Platform\Domains\Resource\Field\Types\TextField;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class DatabaseDriverTest extends ResourceTestCase
@@ -13,7 +11,13 @@ class DatabaseDriverTest extends ResourceTestCase
     function test__run()
     {
         $blueprint = Builder::resource('core.posts', function (Blueprint $resource) {
-            $resource->addField('title', TextField::class);
+            $resource->id();
+
+            $resource->text('title');
+
+            $resource->belongsTo('testing.users', 'user')
+                     ->foreignKey('user_id')
+                     ->ownerKey('id');
         });
 
         $blueprint->getDriver()->run($blueprint);
@@ -21,7 +25,7 @@ class DatabaseDriverTest extends ResourceTestCase
         $this->assertTableExists('posts');
         $this->assertColumnExists('posts', 'id');
         $this->assertColumnExists('posts', 'title');
+        $this->assertColumnExists('posts', 'user_id');
 
-        $indexes = SchemaService::resolve()->getIndexes('posts');
     }
 }

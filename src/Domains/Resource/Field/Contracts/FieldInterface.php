@@ -18,6 +18,8 @@ interface FieldInterface
 
     public function getType(): string;
 
+    public function getComponent(): ?string;
+
     public function setType(string $type): FieldInterface;
 
     public function getColumnName(): ?string;
@@ -43,6 +45,8 @@ interface FieldInterface
     public function mergeConfig(array $config): FieldInterface;
 
     public function isHidden();
+
+    public function isHiddenOnView();
 
     public function isUnique();
 

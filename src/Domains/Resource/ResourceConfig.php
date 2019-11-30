@@ -133,6 +133,12 @@ class ResourceConfig
         return $this->keyName ?? $default;
     }
 
+    /**
+     * Primary Key Name
+     *
+     * @param $keyName
+     * @return $this
+     */
     public function keyName($keyName)
     {
         $this->keyName = $keyName;
@@ -283,11 +289,16 @@ class ResourceConfig
         return $this->namespace;
     }
 
-    public function setNamespace($namespace): self
+    public function namespace($namespace): self
     {
         $this->namespace = $namespace;
 
         return $this;
+    }
+
+    public function setNamespace($namespace): self
+    {
+        return $this->namespace($namespace);
     }
 
     public function getName()

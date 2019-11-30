@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types;
+namespace SuperV\Platform\Domains\Resource\Field\Types\File;
 
 use Closure;
 use Illuminate\Database\Query\JoinClause;
@@ -21,6 +21,8 @@ class FileField extends FieldType implements
     HasModifier,
     SortsQuery
 {
+    protected $component = 'file';
+
     protected $requestFile;
 
     protected function boot()

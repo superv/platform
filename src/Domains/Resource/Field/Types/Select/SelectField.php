@@ -1,8 +1,10 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types;
+namespace SuperV\Platform\Domains\Resource\Field\Types\Select;
 
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
+use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
+use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
@@ -10,6 +12,8 @@ use SuperV\Platform\Support\Composer\Payload;
 
 class SelectField extends FieldType implements RequiresDbColumn, ProvidesFilter
 {
+    protected $component = 'select';
+
     protected function boot()
     {
         $this->field->on('form.composing', $this->composer());
@@ -62,5 +66,12 @@ class SelectField extends FieldType implements RequiresDbColumn, ProvidesFilter
 //            $payload->set('placeholder', sv_trans('sv::resource.select', ['resource' => $this->field->getPlaceholder()]));
             $payload->set('placeholder', __('Select :Object', ['object' => $this->field->getPlaceholder()]));
         };
+    }
+
+    public function driverCreating(DriverInterface $driver)
+    {
+        if ($driver instanceof DatabaseDriver) {
+            $driver->getTable()->addColumn($this->getColumnName(), 'string');
+        }
     }
 }

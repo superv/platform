@@ -1,13 +1,17 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types;
+namespace SuperV\Platform\Domains\Resource\Field\Types\Textarea;
 
+use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
+use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Support\Composer\Payload;
 
 class TextareaField extends FieldType implements RequiresDbColumn
 {
+    protected $component = 'textarea';
+
     protected function boot()
     {
         $this->field->on('form.composing', $this->composer());
@@ -20,5 +24,12 @@ class TextareaField extends FieldType implements RequiresDbColumn
                 $payload->set('meta.rich', true);
             }
         };
+    }
+
+    public function driverCreating(DriverInterface $driver)
+    {
+        if ($driver instanceof DatabaseDriver) {
+            $driver->getTable()->addColumn($this->getColumnName(), 'text');
+        }
     }
 }

@@ -165,12 +165,16 @@ class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInterac
         }
 
         return $entry->{$this->getName()}()
-                     ->get()->map(function (EntryContract $item) use ($relatedResource, $entryLabel) {
-                if ($keyName = $relatedResource->config()->getKeyName()) {
-                    $item->setKeyName($keyName);
-                }
+                     ->get()
+                     ->map(function (EntryContract $item) use ($relatedResource, $entryLabel) {
+                         if ($keyName = $relatedResource->config()->getKeyName()) {
+                             $item->setKeyName($keyName);
+                         }
 
-                return ['value' => $item->getId(), 'text' => sv_parse($entryLabel, $item->toArray())];
-            })->all();
+                         return [
+                             'value' => $item->getId(),
+                             'text'  => sv_parse($entryLabel, $item->toArray()),
+                         ];
+                     })->all();
     }
 }

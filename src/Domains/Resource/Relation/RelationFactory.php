@@ -21,7 +21,7 @@ class RelationFactory
     public static function resolveFromRelationEntry(Entry $entry): Relation
     {
         /** @var \SuperV\Platform\Domains\Resource\Relation\Relation $class */
-        $class = Relation::resolveClass($entry->type);
+        $class = Relation::resolveTypeClass($entry->type);
         if (! class_exists($class)) {
             throw new PlatformException("Relation class not found for type ".$entry->type);
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types;
+namespace SuperV\Platform\Domains\Resource\Field\Types\Text;
 
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
@@ -12,7 +12,7 @@ use SuperV\Platform\Domains\Resource\Filter\DistinctFilter;
 
 class TextField extends FieldType implements RequiresDbColumn, ProvidesFilter, SortsQuery
 {
-    protected $type = 'text';
+    protected $component = 'text';
 
     public function makeRules()
     {
