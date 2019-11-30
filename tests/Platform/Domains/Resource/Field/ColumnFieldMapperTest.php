@@ -83,14 +83,14 @@ class ColumnFieldMapperTest extends PlatformTestCase
     function test__maps_date_column_to_datetime_field()
     {
         $mapper = Mapper::for('date')->map();
-        $this->assertEquals('datetime', $mapper->getFieldType());
+        $this->assertEquals('date_time', $mapper->getFieldType());
         $this->assertEquals(false, $mapper->getConfigValue('time'));
     }
 
     function test__maps_datetime_column_to_datetime_field()
     {
         $mapper = Mapper::for('datetime')->map();
-        $this->assertEquals('datetime', $mapper->getFieldType());
+        $this->assertEquals('date_time', $mapper->getFieldType());
         $this->assertEquals(true, $mapper->getConfigValue('time'));
     }
 }
