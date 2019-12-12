@@ -61,9 +61,13 @@ class InstallSuperVCommand extends Command
 
         if (! $composer->get('extra.merge-plugin')) {
             if ($this->confirm("I will modify your main composer.json to add merge-plugin configuration. Is that OK?", true)) {
-                $composer->merge('extra', ['merge-plugin' => ["include" => [
-                    "addons/*/*/*/composer.json",
-                ]]]);
+                $composer->merge('extra', [
+                    'merge-plugin' => [
+                        "include" => [
+                            "addons/*/*/*/composer.json",
+                        ],
+                    ],
+                ]);
 
                 $composer->write();
             }

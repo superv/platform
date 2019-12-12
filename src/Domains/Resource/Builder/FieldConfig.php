@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Blueprint;
+namespace SuperV\Platform\Domains\Resource\Builder;
 
 class FieldConfig
 {

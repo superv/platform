@@ -241,7 +241,7 @@ trait TestHelpers
             'roles'    => $roles,
             'model'    => $model,
         ];
-        Hub::register($port = (new Port)->hydrate($concentrate));
+        Hub::register($port = (new Port())->hydrate($concentrate));
 
         return $port;
     }
@@ -270,7 +270,7 @@ trait TestHelpers
             Assert::assertEquals(count($this), count($items));
 
             $this->zip($items)->each(function ($pair) {
-                list($a, $b) = $pair;
+                [$a, $b] = $pair;
                 Assert::assertTrue($a->is($b));
             });
         });

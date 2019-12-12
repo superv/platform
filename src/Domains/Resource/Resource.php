@@ -39,16 +39,36 @@ class Resource implements
     use FiresCallbacks;
 
     /**
+     * @var \SuperV\Platform\Domains\Resource\Database\Entry\EntryRepositoryInterface
+     */
+    protected $entryRepository;
+
+    /**
+     * @var \SuperV\Platform\Domains\Resource\ResourceConfig
+     */
+    protected $config;
+
+    /**
      * Database id
      *
      * @var int
      */
     protected $id;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $identifier;
 
+    /**
+     * @var string
+     */
     protected $name;
+
+    /**
+     * @var string
+     */
+    protected $handle;
 
     /**
      * Database connection string
@@ -86,7 +106,10 @@ class Resource implements
      */
     protected $relations;
 
-    protected $mergeRelations;
+    /**
+     * @var array
+     */
+    protected $mergeRelations = [];
 
     /**
      * Registered resource actions
@@ -95,8 +118,16 @@ class Resource implements
      */
     protected $actions;
 
+    /**
+     * Searchable fields
+     *
+     * @var array
+     */
     protected $searchable = [];
 
+    /**
+     * @var array
+     */
     protected $filters = [];
 
     /**
@@ -104,17 +135,25 @@ class Resource implements
      */
     protected $indexFields;
 
+    /**
+     * @var bool
+     */
+    protected $pivot = false;
+
+    /**
+     * @var bool
+     */
     protected $restorable = false;
 
+    /**
+     * @var bool
+     */
     protected $sortable = false;
 
-    /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
-    protected $config;
-
-    protected $extended = false;
-
-    /** @var \SuperV\Platform\Domains\Resource\Database\Entry\EntryRepositoryInterface */
-    protected $entryRepository;
+//    /**
+//     * @var bool
+//     */
+//    protected $extended = false;
 
     public function __construct(array $attributes = [])
     {
@@ -429,15 +468,15 @@ class Resource implements
         return $this->namespace;
     }
 
-    public function isExtended(): bool
-    {
-        return $this->extended;
-    }
-
-    public function setExtended(bool $extended): void
-    {
-        $this->extended = $extended;
-    }
+//    public function isExtended(): bool
+//    {
+//        return $this->extended;
+//    }
+//
+//    public function setExtended(bool $extended): void
+//    {
+//        $this->extended = $extended;
+//    }
 
     public function getName()
     {
@@ -452,6 +491,16 @@ class Resource implements
     public function provideFields(): Collection
     {
         return $this->getFields();
+    }
+
+    public function isPivot(): bool
+    {
+        return $this->pivot;
+    }
+
+    public function getHandle(): string
+    {
+        return $this->handle;
     }
 
     public function uuid(): string

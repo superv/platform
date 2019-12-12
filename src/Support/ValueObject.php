@@ -61,8 +61,7 @@ abstract class ValueObject
     protected static function all(): array
     {
         $reflection = new ReflectionClass(static::class);
-        $vars = $reflection->getConstants();
 
-        return $vars;
+        return $reflection->getConstants();
     }
 }

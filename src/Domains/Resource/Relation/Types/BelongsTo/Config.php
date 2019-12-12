@@ -2,10 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Relation\Types\BelongsTo;
 
-use SuperV\Platform\Domains\Resource\Blueprint\RelationBlueprint;
+use SuperV\Platform\Domains\Resource\Builder\RelationBlueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\BelongsTo\BelongsToField;
 
-class BelongsToBlueprint extends RelationBlueprint
+class Config extends RelationBlueprint
 {
     /**
      * @var string
@@ -18,13 +18,13 @@ class BelongsToBlueprint extends RelationBlueprint
     protected $foreignKey;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Blueprint\FieldBlueprint
+     * @var \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint
      */
     protected $field;
 
     protected function boot()
     {
-        $this->field = $this->blueprint->addField('user', BelongsToField::class);
+        $this->field = $this->parent->addField($this->getRelationName(), BelongsToField::class);
     }
 
     public function relatedResource($relatedResource)
@@ -54,7 +54,7 @@ class BelongsToBlueprint extends RelationBlueprint
         return $this->foreignKey;
     }
 
-    public function ownerKey(string $ownerKey): BelongsToBlueprint
+    public function ownerKey(string $ownerKey): Config
     {
         $this->ownerKey = $ownerKey;
 
@@ -63,11 +63,18 @@ class BelongsToBlueprint extends RelationBlueprint
         return $this;
     }
 
-    public function foreignKey(string $foreignKey): BelongsToBlueprint
+    public function foreignKey(string $foreignKey): Config
     {
         $this->foreignKey = $foreignKey;
 
         $this->field->setConfigValue('foreign_key', $foreignKey);
+
+        return $this;
+    }
+
+    public function showOnLists()
+    {
+        $this->field->showOnLists();
 
         return $this;
     }

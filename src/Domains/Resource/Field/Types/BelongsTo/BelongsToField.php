@@ -13,7 +13,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
-use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Types\RelationFieldType;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Jobs\MakeLookupOptions;
@@ -21,7 +21,7 @@ use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Support\Composer\Payload;
 
-class BelongsToField extends FieldType implements
+class BelongsToField extends RelationFieldType implements
     RequiresDbColumn,
     ProvidesFilter,
     InlinesForm,
@@ -237,8 +237,10 @@ class BelongsToField extends FieldType implements
         $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
     }
 
-    public function driverCreating(DriverInterface $driver)
-    {
+    public function driverCreating(
+        DriverInterface $driver,
+        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
+    ) {
         if ($driver instanceof DatabaseDriver) {
             $driver->getTable()->addColumn($this->getColumnName(), 'integer');
         }

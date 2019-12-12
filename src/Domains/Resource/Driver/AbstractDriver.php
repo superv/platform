@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Driver;
 
+use SuperV\Platform\Domains\Resource\Builder\PrimaryKey;
+
 abstract class AbstractDriver implements DriverInterface
 {
     protected $type = 'database';
@@ -9,24 +11,25 @@ abstract class AbstractDriver implements DriverInterface
     /**
      * @var array
      */
-    protected $primaryKeys;
+    protected $primaryKeys = [];
 
     /**
      * @var array
      */
     protected $params;
 
-    public function primaryKey($name, $type = 'integer', array $options = []): DriverInterface
+    public function primaryKey(PrimaryKey $key): DriverInterface
     {
-        if ($type === 'integer' && empty($options)) {
-            $options = ['unsigned' => true, 'autoincrement' => true];
-        }
-
-        $this->primaryKeys[] = array_filter(compact('name', 'type', 'options'));
+        $this->primaryKeys[$key->getName()] = $key;
 
         $this->setParam('primary_keys', $this->primaryKeys);
 
         return $this;
+    }
+
+    public function getPrimaryKey(string $keyName): ?PrimaryKey
+    {
+        return $this->primaryKeys[$keyName] ?? null;
     }
 
     public function getParam($key)
@@ -60,6 +63,11 @@ abstract class AbstractDriver implements DriverInterface
             'type'   => $this->type,
             'params' => $this->params,
         ];
+    }
+
+    public function getPrimaryKeys(): array
+    {
+        return $this->primaryKeys;
     }
 
     /** * @return static */

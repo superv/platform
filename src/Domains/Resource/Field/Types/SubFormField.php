@@ -86,11 +86,6 @@ class SubFormField extends FieldType
         return null;
     }
 
-    public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)
-    {
-        return parent::resolveDataFromRequest($data, $request, $entry);
-    }
-
     public function bindFields(FormInterface $subForm, FormInterface $parentForm)
     {
         // normalize

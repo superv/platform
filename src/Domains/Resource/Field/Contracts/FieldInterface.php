@@ -34,7 +34,7 @@ interface FieldInterface
 
     public function getDefaultValue();
 
-    public function setDefaultValue($defaultValue): void;
+//    public function setDefaultValue($defaultValue): void;
 
     public function getConfig();
 

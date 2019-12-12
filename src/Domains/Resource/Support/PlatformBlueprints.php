@@ -126,6 +126,7 @@ class PlatformBlueprints
             $table->unsignedInteger('created_by_id')->nullable();
             $table->unsignedInteger('updated_by_id')->nullable();
         }
+        $table->boolean('pivot')->default(false);
         $table->boolean('restorable')->default(false);
         $table->boolean('sortable')->default(false);
     }
@@ -161,10 +162,10 @@ class PlatformBlueprints
             $table->text('config')->nullable();
         }
 
-        $table->string('label')->showOnIndex();;
-        $table->string('name')->showOnIndex();;
+        $table->string('label')->showOnIndex();
+        $table->string('name')->showOnIndex();
         $table->string('column_type')->nullable();
-        $table->string('type')->showOnIndex();;
+        $table->string('type')->showOnIndex();
 
         $table->timestamps();
     }
@@ -212,7 +213,7 @@ class PlatformBlueprints
             $table->unsignedInteger('updated_by_id')->nullable();
         }
 
-        $table->string('title')->showOnIndex();;
+        $table->string('title')->showOnIndex();
     }
 
     /**
@@ -228,15 +229,15 @@ class PlatformBlueprints
             $config->resourceKey('relation');
             $config->nav('acp.platform.system');
 
-            $table->belongsTo('platform.resources', 'resource')->showOnIndex();;
+            $table->belongsTo('platform.resources', 'resource')->showOnIndex();
             $table->dictionary('config')->nullable();
         } else {
             $table->unsignedInteger('resource_id');
             $table->text('config')->nullable();
         }
 
-        $table->string('name')->showOnIndex();;
-        $table->string('type')->showOnIndex();;
+        $table->string('name')->showOnIndex();
+        $table->string('type')->showOnIndex();
 
         $table->timestamps();
     }
@@ -253,8 +254,8 @@ class PlatformBlueprints
             $config->resourceKey('nav');
             $config->nav('acp.platform.system');
 
-            $table->nullableBelongsTo('platform.navigation', 'parent')->showOnIndex();;
-            $table->nullableBelongsTo('platform.resources', 'resource')->showOnIndex();;
+            $table->nullableBelongsTo('platform.navigation', 'parent')->showOnIndex();
+            $table->nullableBelongsTo('platform.resources', 'resource')->showOnIndex();
         } else {
             $table->unsignedInteger('parent_id')->nullable();
             $table->unsignedInteger('resource_id')->nullable();

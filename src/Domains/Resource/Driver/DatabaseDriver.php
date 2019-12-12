@@ -4,9 +4,9 @@ namespace SuperV\Platform\Domains\Resource\Driver;
 
 use Doctrine\DBAL\Schema\Table;
 use SuperV\Platform\Domains\Database\Schema\SchemaService;
-use SuperV\Platform\Domains\Resource\Blueprint\Blueprint;
-use SuperV\Platform\Domains\Resource\Blueprint\FieldBlueprint;
-use SuperV\Platform\Domains\Resource\Blueprint\RelationBlueprint;
+use SuperV\Platform\Domains\Resource\Builder\Blueprint;
+use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
+use SuperV\Platform\Domains\Resource\Builder\RelationBlueprint;
 
 class DatabaseDriver extends AbstractDriver
 {
@@ -33,21 +33,19 @@ class DatabaseDriver extends AbstractDriver
         $this->table = new Table($this->getParam('table'));
 
         $keys = [];
+        /** @var \SuperV\Platform\Domains\Resource\Builder\PrimaryKey $primaryKey */
         foreach ($this->primaryKeys as $primaryKey) {
-            if ($primaryKey['type'] === 'integer') {
-//                $options = ['unsigned' => true, 'autoincrement' => $primaryKey['autoincrement'] ?? false];
-                $this->table->addColumn($primaryKey['name'], $primaryKey['type'], $primaryKey['options'] ?? []);
-            }
+            $this->table->addColumn($primaryKey->getName(), $primaryKey->getType(), $primaryKey->getOptions());
 
-            $keys[] = $primaryKey['name'];
+            $keys[] = $primaryKey->getName();
         }
 
         $blueprint->getFields()->map(function (FieldBlueprint $field) {
-            $field->getField()->getFieldType()->driverCreating($this);
+            $field->getField()->getFieldType()->driverCreating($this, $field);
         });
 
         $blueprint->getRelations()->map(function (RelationBlueprint $relation) {
-            $relation->getRelation()->driverCreating($this);
+            $relation->getRelation()->driverCreating($relation, $this);
         });
 
         $this->table->setPrimaryKey($keys);

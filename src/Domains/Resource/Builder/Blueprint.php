@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Blueprint;
+namespace SuperV\Platform\Domains\Resource\Builder;
 
 use Illuminate\Support\Collection;
 use Psy\Exception\RuntimeException;
@@ -26,9 +26,22 @@ class Blueprint
     /**
      * @var string
      */
+    protected $key;
+
+    /**
+     * @var string
+     */
     protected $label;
 
+    /**
+     * @var string
+     */
     protected $nav;
+
+    /**
+     * @var bool
+     */
+    protected $pivot = false;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\Driver\DriverInterface
@@ -61,11 +74,11 @@ class Blueprint
         return $this->primaryKey(...func_get_args());
     }
 
-    public function primaryKey($name = 'id', $type = 'integer', array $options = []): self
+    public function primaryKey($name = 'id', $type = 'integer', array $options = []): PrimaryKey
     {
-        $this->getDriver()->primaryKey($name, $type, $options);
+        $this->getDriver()->primaryKey($key = new PrimaryKey($name));
 
-        return $this;
+        return $key;
     }
 
     public function addRelation(string $relatedResource, string $relationName, RelationType $relationType)
@@ -88,14 +101,16 @@ class Blueprint
         $fieldBlueprint = FieldBlueprint::make($this, $fieldName, $fieldTypeClass);
         $fieldBlueprint->label($label);
 
-        $this->fields->put($fieldName, $fieldBlueprint);
+        $this->fields->push($fieldBlueprint);
 
         return $fieldBlueprint;
     }
 
     public function getField($fieldName): ?FieldBlueprint
     {
-        return $this->fields->get($fieldName);
+        return $this->fields->first(function (FieldBlueprint $fieldBlueprint) use ($fieldName) {
+            return $fieldBlueprint->getName() === $fieldName;
+        });
     }
 
     public function getFieldRules($fieldName): array
@@ -132,6 +147,13 @@ class Blueprint
     public function nav($nav): self
     {
         $this->nav = $nav;
+
+        return $this;
+    }
+
+    public function identifier(string $identifier)
+    {
+        [$this->namespace, $this->handle] = explode('.', $identifier);
 
         return $this;
     }
@@ -190,5 +212,59 @@ class Blueprint
     public static function resolve()
     {
         return app(static::class);
+    }
+
+    public function pivot(bool $pivot = true): Blueprint
+    {
+        $this->pivot = $pivot;
+
+        return $this;
+    }
+
+    public function isPivot(): bool
+    {
+        return $this->pivot;
+    }
+
+    public function createdBy()
+    {
+        return $this;
+    }
+
+    public function updatedBy()
+    {
+        return $this;
+    }
+
+    public function deletedBy()
+    {
+        return $this;
+    }
+
+    public function createdAt()
+    {
+        return $this;
+    }
+
+    public function updatedAt()
+    {
+        return $this;
+    }
+
+    public function deletedAt()
+    {
+        return $this;
+    }
+
+    public function key(string $key): Blueprint
+    {
+        $this->key = $key;
+
+        return $this;
+    }
+
+    public function getKey(): string
+    {
+        return $this->key ?? str_singular($this->getHandle());
     }
 }

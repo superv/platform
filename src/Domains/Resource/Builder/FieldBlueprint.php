@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Blueprint;
+namespace SuperV\Platform\Domains\Resource\Builder;
 
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldRepository;
@@ -12,7 +12,7 @@ class FieldBlueprint
     use HasConfig;
 
     /**
-     * @var \SuperV\Platform\Domains\Resource\Blueprint\Blueprint
+     * @var \SuperV\Platform\Domains\Resource\Builder\Blueprint
      */
     protected $blueprint;
 
@@ -127,7 +127,9 @@ class FieldBlueprint
 
     public function default($value): FieldBlueprint
     {
-        $this->defaultValue = $value;
+        $this->config['default_value'] = $value;
+
+        $this->nullable();
 
         return $this;
     }
@@ -139,12 +141,19 @@ class FieldBlueprint
 
     public function getDefaultValue()
     {
-        return $this->defaultValue;
+        return $this->config['default_value'] ?? null;
     }
 
     public function addFlag(string $flag): FieldBlueprint
     {
         $this->flags[] = $flag;
+
+        return $this;
+    }
+
+    public function addRule($rule): FieldBlueprint
+    {
+        $this->rules[] = $rule;
 
         return $this;
     }
@@ -169,6 +178,11 @@ class FieldBlueprint
         return $this->addFlag('nullable');
     }
 
+    public function showOnLists()
+    {
+        return $this->addFlag('table.show');
+    }
+
     public function hideOnView()
     {
         return $this->addFlag('view.hide');
@@ -179,14 +193,19 @@ class FieldBlueprint
         return $this->addFlag('hidden');
     }
 
-    public static function make(Blueprint $blueprint, string $fieldName, string $fieldTypeClass): FieldBlueprint
+    public static function make(Blueprint $blueprint, string $fieldName, string $typeClass): FieldBlueprint
     {
-        $fieldBlueprintClass = sprintf("%sBlueprint", $fieldTypeClass);
+        $blueprintClass = sprintf("%sBlueprint", $typeClass);
 
-        if (! class_exists($fieldBlueprintClass)) {
-            $fieldBlueprintClass = self::class;
+        if (! class_exists($blueprintClass)) {
+            $parts = explode("\\", $typeClass);
+            $className = end($parts);
+            $blueprintClass = str_replace_last($className, 'Blueprint', $typeClass);
+            if (! class_exists($blueprintClass)) {
+                $blueprintClass = self::class;
+            }
         }
 
-        return new $fieldBlueprintClass($blueprint, $fieldName, $fieldTypeClass);
+        return new $blueprintClass($blueprint, $fieldName, $typeClass);
     }
 }

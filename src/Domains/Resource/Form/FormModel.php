@@ -23,9 +23,9 @@ class FormModel extends Entry
         parent::boot();
 
         static::saving(function (FormModel $entry) {
-            if (is_null($entry->uuid)) {
+//            if (is_null($entry->uuid)) {
 //                $entry->setAttribute('uuid', uuid());
-            }
+//            }
             $entry->setAttribute('rev_id', uuid());
         });
     }

@@ -1,10 +1,11 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource\Blueprint;
+namespace Tests\Platform\Domains\Resource\Builder;
 
 use Event;
-use SuperV\Platform\Domains\Resource\Blueprint\Blueprint;
-use SuperV\Platform\Domains\Resource\Blueprint\Builder;
+use SuperV\Platform\Domains\Resource\Builder\Blueprint;
+use SuperV\Platform\Domains\Resource\Builder\Builder;
+use SuperV\Platform\Domains\Resource\Builder\PrimaryKey;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
@@ -14,9 +15,74 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class BuilderTest extends ResourceTestCase
 {
+    function test__relates_to_one()
+    {
+        Builder::create('sv.posts', function (Blueprint $resource) {
+            $resource->relatesToOne('sv.users', 'user')
+                     ->withLocalKey('user_id');
+
+            $resource->relatesToOne('sv.posts_body', 'body')
+                     ->withRemoteKey('post_id');
+        });
+
+        $posts = ResourceFactory::make('sv.posts');
+
+        $userField = $posts->getField('user');
+        $this->assertNotNull($userField);
+//        dd($userField->getType());
+    }
+
+    function test__belongs_to_many_pivot()
+    {
+        Builder::create('testing.roles', function (Blueprint $resource) {
+            $resource->id();
+            $resource->manyToMany('testing.actions', 'actions')
+                     ->pivot('testing.roles_actions');
+        });
+
+        Builder::create('testing.actions', function (Blueprint $resource) {
+            $resource->id();
+            $resource->manyToMany('testing.roles', 'roles')
+                     ->pivot('testing.roles_actions');
+        });
+
+        $posts = ResourceFactory::make('testing.roles');
+        $this->assertFalse($posts->isPivot());
+
+        $pivot = ResourceFactory::make('testing.roles_actions');
+        $this->assertTrue($pivot->isPivot());
+    }
+
+    function test__belongs_to_many_relation()
+    {
+        Builder::create('testing.roles', function (Blueprint $resource) {
+            $resource->id();
+            $resource->manyToMany('testing.actions', 'actions')
+                     ->pivot('testing.roles_actions');
+        });
+
+        $resource = ResourceFactory::make('testing.roles');
+        $actionsRelation = $resource->getRelation('actions');
+        $this->assertEquals([
+            'related_resource'  => 'testing.actions',
+            'pivot_identifier'  => 'testing.roles_actions',
+            'pivot_table'       => 'roles_actions',
+            'pivot_foreign_key' => 'role_id',
+            'pivot_related_key' => 'action_id',
+        ], $actionsRelation->getConfig());
+
+        $pivot = ResourceFactory::make('testing.roles_actions');
+        $this->assertEquals('action_id', $pivot->getField('action')->getConfigValue('foreign_key'));
+        $this->assertEquals('role_id', $pivot->getField('role')->getConfigValue('foreign_key'));
+
+        $actionsField = $resource->getField('actions');
+        $this->assertEquals('belongs_to_many', $actionsField->getType());
+        $this->assertEquals($actionsRelation->getConfig(), $actionsField->getConfig());
+    }
+
     function test__belongs_to_relation()
     {
-        Builder::run('testing.posts', function (Blueprint $resource) {
+        Builder::create('testing.posts', function (Blueprint $resource) {
             $resource->id();
 
             $resource->belongsTo('testing.users', 'user')
@@ -41,12 +107,14 @@ class BuilderTest extends ResourceTestCase
 
     function test__creates_fields()
     {
-        Builder::run('testing.posts', function (Blueprint $resource) {
+        Builder::create('testing.posts', function (Blueprint $resource) {
             $resource->id();
 
             $resource->text('title', 'Post Title')->useAsEntryLabel();
             $resource->select('gender')->options(['male', 'female'])->hideOnView();
             $resource->text('email')->rules('email|unique')->unique();
+
+            $resource->boolean('active')->default(false);
         });
 
         $resource = ResourceFactory::make('testing.posts');
@@ -59,32 +127,38 @@ class BuilderTest extends ResourceTestCase
         $genderField = $resource->getField('gender');
         $this->assertEquals(['options' => ['male', 'female']], $genderField->getConfig());
         $this->assertTrue($genderField->isHiddenOnView());
+
         $emailField = $resource->getField('email');
         $this->assertEquals(['email', 'unique'], $emailField->getRules());
         $this->assertTrue($emailField->isUnique());
+
+        $this->assertFalse($resource->getField('active')->isRequired());
+        $this->assertFalse($resource->getField('active')->getDefaultValue());
     }
 
     function test__creates_resource()
     {
-        Builder::run('testing.posts', function (Blueprint $resource) {
+        Builder::create('testing.posts', function (Blueprint $resource) {
+            $resource->key('postkey');
             $resource->databaseDriver()
                      ->table('tbl_posts', 'default')
-                     ->primaryKey('post_id');
+                     ->primaryKey(new PrimaryKey('post_id'));
         });
 
-        $resource = ResourceModel::withIdentifier('testing.posts');
+        $resource = ResourceFactory::make('testing.posts');
         $this->assertNotNull($resource);
 
         $this->assertEquals('posts', $resource->getHandle());
         $this->assertEquals('database@default://tbl_posts', $resource->getDsn());
         $this->assertTableExists('tbl_posts');
+        $this->assertEquals('postkey', $resource->config()->getResourceKey());
     }
 
     function test__dispatches_event_when_resource_is_created()
     {
         Event::fake([ResourceCreatedEvent::class]);
 
-        Builder::run('testing.posts', function (Blueprint $resource) {
+        Builder::create('testing.posts', function (Blueprint $resource) {
             $resource->id();
         });
 

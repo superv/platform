@@ -70,7 +70,7 @@ class Identifier
             return str_contains($this->identifier, ':') ? 'entries' : 'resources';
         }
 
-        list($type, $typeId) = $this->getTypeNode();
+        [$type,] = $this->getTypeNode();
 
         return $type;
     }
@@ -87,7 +87,7 @@ class Identifier
 
     public function getTypeId()
     {
-        list(, $typeId) = $this->getTypeNode();
+        [, $typeId] = $this->getTypeNode();
 
         return $typeId ?? null;
     }
@@ -136,7 +136,7 @@ class Identifier
 
         $type = count($nodes) === 2 ? $this->identifier : array_pop($nodes);
         if (str_contains($type, ':')) {
-            list($type, $typeId) = explode(':', $type);
+            [$type, $typeId] = explode(':', $type);
         }
 
         return [$type, $typeId ?? null];

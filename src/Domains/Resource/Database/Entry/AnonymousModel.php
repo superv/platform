@@ -6,10 +6,10 @@ class AnonymousModel extends ResourceEntry
 {
     public $timestamps = false;
 
-    public function setTable($table)
-    {
-        return $this->table = $table;
-    }
+//    public function setTable($table)
+//    {
+//        return $this->table = $table;
+//    }
 
     /**
      * Create a new instance of the given model.

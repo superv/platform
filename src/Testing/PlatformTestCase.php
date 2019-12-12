@@ -158,15 +158,13 @@ abstract class PlatformTestCase extends OrchestraTestCase
 
     protected function setUpPorts()
     {
-        Hub::register(new class extends Port
-        {
+        Hub::register(new class() extends Port {
             protected $slug = 'web';
 
             protected $hostname = 'superv.io';
         });
 
-        Hub::register(new class extends Port
-        {
+        Hub::register(new class() extends Port {
             protected $slug = 'acp';
 
             protected $hostname = 'superv.io';
@@ -174,8 +172,7 @@ abstract class PlatformTestCase extends OrchestraTestCase
             protected $baseUrl = 'acp';
         });
 
-        Hub::register(new class extends Port
-        {
+        Hub::register(new class() extends Port {
             protected $slug = 'api';
 
             protected $hostname = 'api.superv.io';

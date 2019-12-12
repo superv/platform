@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Blueprint;
+namespace SuperV\Platform\Domains\Resource\Builder;
 
 use SuperV\Platform\Domains\Resource\Field\Types\Number\NumberField;
 use SuperV\Platform\Domains\Resource\Field\Types\Text\TextField;

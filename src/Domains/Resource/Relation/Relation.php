@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Relation;
 
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Builder\RelationBlueprint;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
@@ -163,7 +164,7 @@ abstract class Relation implements AcceptsParentEntry, ProvidesQuery
                              });
     }
 
-    public function driverCreating(DriverInterface $driver)
+    public function driverCreating(RelationBlueprint $blueprint, DriverInterface $driver)
     {
     }
 
