@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Blueprint;
+namespace SuperV\Platform\Domains\Resource\Builder;
 
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationType;
@@ -9,9 +9,9 @@ use SuperV\Platform\Domains\Resource\ResourceModel;
 class RelationBlueprint
 {
     /**
-     * @var \SuperV\Platform\Domains\Resource\Blueprint\Blueprint
+     * @var \SuperV\Platform\Domains\Resource\Builder\Blueprint
      */
-    protected $blueprint;
+    protected $parent;
 
     /**
      * @var string
@@ -21,19 +21,21 @@ class RelationBlueprint
     /**
      * @var string
      */
-    protected $relatedResource;
+    protected $related;
 
     /**
      * @var \SuperV\Platform\Domains\Resource\Relation\Relation
      */
     protected $relation;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $type;
 
-    public function __construct(Blueprint $blueprint)
+    public function __construct(Blueprint $parent)
     {
-        $this->blueprint = $blueprint;
+        $this->parent = $parent;
     }
 
     protected function boot() { }
@@ -51,7 +53,7 @@ class RelationBlueprint
     final public function getConfig()
     {
         return array_merge(
-            ['related_resource' => $this->getRelatedResource()],
+            ['related_resource' => $this->getRelated()],
             $this->mergeConfig()
         );
     }
@@ -63,14 +65,14 @@ class RelationBlueprint
 
     public function relatedResource($relatedResource)
     {
-        $this->relatedResource = $relatedResource;
+        $this->related = $relatedResource;
 
         return $this;
     }
 
-    public function getRelatedResource(): string
+    public function getRelated(): string
     {
-        return $this->relatedResource;
+        return $this->related;
     }
 
     public function getRelation(): Relation
@@ -88,25 +90,39 @@ class RelationBlueprint
         return $this->type;
     }
 
-    public static function make(Blueprint $blueprint, string $name, RelationType $type): RelationBlueprint
+    public function getParent(): Blueprint
     {
-        $relation = Relation::resolveType($type);
-        $typeClass = Relation::resolveTypeClass($type);
+        return $this->parent;
+    }
 
-        $blueprintClass = sprintf("%sBlueprint", $typeClass);
-
-        if (! class_exists($blueprintClass)) {
-            $blueprintClass = self::class;
-        }
-
-        /** @var \SuperV\Platform\Domains\Resource\Blueprint\RelationBlueprint $blueprint */
-        $blueprint = new $blueprintClass($blueprint);
+    public static function make(Blueprint $resource, string $name, RelationType $type): RelationBlueprint
+    {
+        /** @var \SuperV\Platform\Domains\Resource\Builder\RelationBlueprint $blueprint */
+        $blueprint = static::resolve($type, $resource);
         $blueprint->relationName = $name;
-        $blueprint->relation = $relation;
+        $blueprint->relation = Relation::resolveType($type);
         $blueprint->type = $type->getValue();
 
         $blueprint->boot();
 
         return $blueprint;
+    }
+
+    public static function resolve($type, Blueprint $resource): RelationBlueprint
+    {
+        $typeClass = Relation::resolveTypeClass($type);
+
+        $blueprintClass = sprintf("%sBlueprint", $typeClass);
+
+        if (! class_exists($blueprintClass)) {
+            $parts = explode("\\", $typeClass);
+            $className = end($parts);
+            $blueprintClass = str_replace_last($className, 'Config', $typeClass);
+            if (! class_exists($blueprintClass)) {
+                $blueprintClass = self::class;
+            }
+        }
+
+        return new $blueprintClass($resource);
     }
 }

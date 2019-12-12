@@ -1,34 +1,36 @@
 <?php
 
 use SuperV\Platform\Domains\Database\Migrations\Migration;
-use SuperV\Platform\Domains\Resource\Blueprint\Blueprint;
-use SuperV\Platform\Domains\Resource\Blueprint\Builder;
-use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
+use SuperV\Platform\Domains\Resource\Builder\Blueprint;
+use SuperV\Platform\Domains\Resource\Builder\Builder;
 use SuperV\Platform\Domains\Resource\Jobs\DeleteResource;
 
-class {class_name} extends Migration
+class {class} extends Migration
 {
-    protected $namespace = '{migration_namespace}';
+    protected $namespace = '{namespace}';
 
     public function up()
     {
-        Builder::run('{resource.identifier}',
-            function (Blueprint $resource) {
-                /**
-                *   Resource Config
-                */
-                {config}
+        Builder::create('{identifier}', function (Blueprint $resource) {
+            /**
+             *   Resource Config
+             */
+            {config}
 
-                /**
-                *   Fields and Relations
-                */
-                {blueprint}
-            }
-        );
+            /**
+             *   Fields
+             */
+            {fields}
+
+            /**
+             *   Relations
+             */
+            {relations}
+        });
     }
 
     public function down()
     {
-        DeleteResource::dispatch('{resource.identifier}');
+        DeleteResource::dispatch('{identifier}');
     }
 }

@@ -15,12 +15,24 @@ use SuperV\Platform\Support\Composer\Payload;
 
 class DateTimeField extends FieldType implements RequiresDbColumn, HasPresenter, SortsQuery
 {
+    protected $component = 'datetime';
+
     protected function boot()
     {
         $this->field->on('table.presenting', $this->getPresenter());
         $this->field->on('view.accessing', $this->formPresenter());
         $this->field->on('form.accessing', $this->formPresenter());
         $this->field->on('form.composing', $this->formComposer());
+    }
+
+    public function driverCreating(
+        DriverInterface $driver,
+        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
+    ) {
+        if ($driver instanceof DatabaseDriver) {
+            $options = ['Notnull' => ! $blueprint->hasFlag('nullable')];
+            $driver->getTable()->addColumn($this->getColumnName(), 'datetime', $options);
+        }
     }
 
     public function sortQuery($query, $direction)
@@ -75,12 +87,5 @@ class DateTimeField extends FieldType implements RequiresDbColumn, HasPresenter,
     protected function hasTime()
     {
         return $this->getConfigValue('time') === true;
-    }
-
-    public function driverCreating(DriverInterface $driver)
-    {
-        if ($driver instanceof DatabaseDriver) {
-            $driver->getTable()->addColumn($this->getColumnName(), 'datetime');
-        }
     }
 }

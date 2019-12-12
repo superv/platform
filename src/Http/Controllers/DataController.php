@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Http\Controllers;
 
+use Current;
 use Platform;
 use SuperV\Platform\Domains\Resource\Nav\Nav;
 use SuperV\Platform\Domains\Resource\Nav\NavGuard;
@@ -34,7 +35,7 @@ class DataController extends BaseApiController
         }
 
         // @TODO.dali
-        $nav = (new NavGuard(auth()->user(), Nav::get($port->getNavigationSlug())))->compose();
+        $nav = (new NavGuard(Current::user(), Nav::get($portNav)))->compose();
 
         $payload = new Payload([
             'nav' => $nav,

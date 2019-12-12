@@ -17,7 +17,7 @@ class ResourceRepository
         $this->model = $model;
     }
 
-    public function create(ResourceConfig $config)
+    public function create(ResourceConfig $config, bool $isPivot = false)
     {
         $attributes = [
             'uuid'       => uuid(),
@@ -28,6 +28,7 @@ class ResourceRepository
             'dsn'        => $config->getDriver()->toDsn(),
             'model'      => $config->getModel(),
             'config'     => $config->toArray(),
+            'pivot'      => $isPivot,
             'restorable' => (bool)$config->isRestorable(),
             'sortable'   => (bool)$config->isSortable(),
         ];

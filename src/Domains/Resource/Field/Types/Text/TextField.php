@@ -14,6 +14,8 @@ class TextField extends FieldType implements RequiresDbColumn, ProvidesFilter, S
 {
     protected $component = 'text';
 
+    protected $type = 'text';
+
     public function makeRules()
     {
         if ($length = $this->getConfigValue('length')) {
@@ -31,8 +33,10 @@ class TextField extends FieldType implements RequiresDbColumn, ProvidesFilter, S
         $query->orderBy($this->field->getColumnName(), $direction);
     }
 
-    public function driverCreating(DriverInterface $driver)
-    {
+    public function driverCreating(
+        DriverInterface $driver,
+        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
+    ) {
         if ($driver instanceof DatabaseDriver) {
             $driver->getTable()->addColumn($this->getColumnName(), 'string');
         }

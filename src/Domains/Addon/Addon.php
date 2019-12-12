@@ -104,7 +104,7 @@ class Addon
      */
     public function providerClass()
     {
-        return get_class($this).'ServiceProvider';
+        return static::class.'ServiceProvider';
     }
 
     public function loadConfigFiles()

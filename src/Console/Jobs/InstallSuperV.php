@@ -106,7 +106,6 @@ class InstallSuperV
 
         config(['superv.installed' => true]);
 
-
         Artisan::call('migrate', ['--namespace' => 'platform', '--force' => true]);
 
         CreatePlatformResourceForms::dispatch();

@@ -2,7 +2,6 @@
 
 namespace Tests\Platform;
 
-use DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
@@ -16,12 +15,11 @@ class ToDoTest extends TestCase
 {
     use RefreshDatabase;
 
-    function test__pdo()
+    function test__()
     {
-        $conn = DB::connection()->getDoctrineConnection();
+        $this->addToAssertionCount(1);
 
-        $this->newUser();
-        $this->assertEquals(1, count($conn->fetchAll("SELECT * FROM users")));
+        \DB::raw();
     }
 
     function test__platform_detects_active_module_from_route_data()

@@ -5,18 +5,17 @@ namespace SuperV\Platform\Domains\Resource\Field;
 use Closure;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormData;
-use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
-use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Composer\Payload;
 
-class FieldType implements FieldTypeInterface
+abstract class FieldType implements FieldTypeInterface
 {
     /** @var string */
     protected $type;
@@ -27,11 +26,6 @@ class FieldType implements FieldTypeInterface
     /** @var FieldInterface */
     protected $field;
 
-    /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $relatedResource;
-
-    /** @var RelationConfig */
-    protected $relationConfig;
 
     protected function boot() { }
 
@@ -90,10 +84,6 @@ class FieldType implements FieldTypeInterface
     {
     }
 
-    public function driverCreating(DriverInterface $driver)
-    {
-    }
-
     public function formComposed(Payload $formPayload, FormInterface $form)
     {
     }
@@ -134,6 +124,15 @@ class FieldType implements FieldTypeInterface
         }
     }
 
+    public function getComponent(): ?string
+    {
+        return $this->component;
+    }
+
+    public function driverCreating(DriverInterface $driver, FieldBlueprint $blueprint)
+    {
+    }
+
     public function resolveValueFromRequest(Request $request, ?EntryContract $entry = null)
     {
         if (! $request->has($this->getName()) && ! $request->has($this->getColumnName())) {
@@ -154,11 +153,6 @@ class FieldType implements FieldTypeInterface
         }
 
         return [$value, $requestValue];
-    }
-
-    public function getComponent(): ?string
-    {
-        return $this->component;
     }
 
     public static function resolveType($type)
@@ -185,34 +179,5 @@ class FieldType implements FieldTypeInterface
         return $class;
     }
 
-    /**
-     * @return \SuperV\Platform\Domains\Resource\Resource
-     * @throws \Exception
-     */
-    protected function getRelatedResource()
-    {
-        if (! $this->relatedResource) {
-            $this->relatedResource = ResourceFactory::make($this->getRelationConfig()->getRelatedResource());
-        }
 
-        return $this->relatedResource;
-    }
-
-    protected function getRelationConfig(): RelationConfig
-    {
-        if (! $this->relationConfig) {
-            $this->relationConfig = RelationConfig::create($this->field->getType(), $this->field->getConfig());
-        }
-
-        return $this->relationConfig;
-    }
-
-    protected function getRelatedEntryLabel(?EntryContract $relatedEntry = null)
-    {
-        if (is_null($relatedEntry)) {
-            return null;
-        }
-
-        return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
-    }
 }

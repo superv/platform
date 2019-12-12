@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Blueprint;
+namespace SuperV\Platform\Domains\Resource\Builder;
 
 use SuperV\Platform\Domains\Resource\Field\Types\Boolean\BooleanField;
 use SuperV\Platform\Domains\Resource\Field\Types\DateTime\DateTimeField;
@@ -14,8 +14,8 @@ use SuperV\Platform\Domains\Resource\Field\Types\Textarea\TextareaField;
 /**
  * Trait FieldHelpers
  *
- * @mixin \SuperV\Platform\Domains\Resource\Blueprint\Blueprint
- * @package SuperV\Platform\Domains\Resource\Blueprint
+ * @mixin \SuperV\Platform\Domains\Resource\Builder\Blueprint
+ * @package SuperV\Platform\Domains\Resource\Builder
  */
 trait FieldHelpers
 {

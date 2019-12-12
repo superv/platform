@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types\Text;
 
-use SuperV\Platform\Domains\Resource\Blueprint\FieldBlueprint;
+use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 
 class TextFieldBlueprint extends FieldBlueprint
 {
@@ -11,5 +11,10 @@ class TextFieldBlueprint extends FieldBlueprint
         $this->entryLabel = true;
 
         return $this;
+    }
+
+    public function maxLength(int $length)
+    {
+        return $this->addRule('max:'.$length);
     }
 }

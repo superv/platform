@@ -77,7 +77,6 @@ class FieldFactory
         $fieldClass = $resolveFrom ?? Field::class;
 
         /** @var \SuperV\Platform\Domains\Resource\Field\Field $field */
-//        $field = new $fieldClass($fieldType, $this->params);
         $field = new $fieldClass($this->params);
 
         if ($field->getFieldType() instanceof RequiresDbColumn) {

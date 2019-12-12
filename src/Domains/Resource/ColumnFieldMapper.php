@@ -206,7 +206,7 @@ class ColumnFieldMapper
 
     protected function mapDate()
     {
-        $this->fieldType = 'datetime';
+        $this->fieldType = 'date_time';
         $this->setConfigValue('time', false);
     }
 
@@ -217,7 +217,7 @@ class ColumnFieldMapper
 
     protected function mapDateTime()
     {
-        $this->fieldType = 'datetime';
+        $this->fieldType = 'date_time';
         $this->setConfigValue('time', true);
     }
 }

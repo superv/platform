@@ -331,10 +331,11 @@ class Field implements FieldInterface
 
     public function getDefaultValue()
     {
-        return $this->defaultValue;
+        return $this->config['default_value'] ?? null;
+//        return $this->defaultValue;
     }
 
-    public function setDefaultValue($defaultValue): void
+    public function setDefaultValue_xxxx($defaultValue): void
     {
         $this->defaultValue = $defaultValue;
     }

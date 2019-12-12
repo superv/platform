@@ -3,7 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Driver;
 
 use SuperV\Platform\Contracts\Arrayable;
-use SuperV\Platform\Domains\Resource\Blueprint\Blueprint;
+use SuperV\Platform\Domains\Resource\Builder\Blueprint;
+use SuperV\Platform\Domains\Resource\Builder\PrimaryKey;
 
 interface DriverInterface extends Arrayable
 {
@@ -15,7 +16,9 @@ interface DriverInterface extends Arrayable
 
     public function getType();
 
-    public function primaryKey($name, $type = 'integer', array $options = []): DriverInterface;
+    public function primaryKey(PrimaryKey $key): DriverInterface;
+
+    public function getPrimaryKey(string $keyName): ?PrimaryKey;
 
     public function run(Blueprint $blueprint);
 }

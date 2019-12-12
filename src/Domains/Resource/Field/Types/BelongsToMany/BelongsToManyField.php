@@ -1,21 +1,20 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types;
+namespace SuperV\Platform\Domains\Resource\Field\Types\BelongsToMany;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
-use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Types\RelationFieldType;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Support\Composer\Payload;
 
-class BelongsToManyField extends FieldType implements HandlesRpc, DoesNotInteractWithTable, HasModifier
+class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNotInteractWithTable, HasModifier
 {
-    /** @var \SuperV\Platform\Domains\Resource\Resource */
-    protected $relatedResource;
+    protected $type = 'belongs_to_many';
 
     protected $value;
 

@@ -68,8 +68,10 @@ class SelectField extends FieldType implements RequiresDbColumn, ProvidesFilter
         };
     }
 
-    public function driverCreating(DriverInterface $driver)
-    {
+    public function driverCreating(
+        DriverInterface $driver,
+        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
+    ) {
         if ($driver instanceof DatabaseDriver) {
             $driver->getTable()->addColumn($this->getColumnName(), 'string');
         }

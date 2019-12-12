@@ -76,7 +76,7 @@ class HookManager
             $className = str_replace('.php', '', $file->getFilename());
             $hookClass = $namespace.'\\'.$className;
 
-            if (! ($identifier = isset($hookClass::$identifier) ? $hookClass::$identifier : null)) {
+            if (! ($identifier = $hookClass::$identifier ?? null)) {
                 sv_console(sprintf("Identifier not found for hook [%s]", $hookClass));
                 continue;
             }
@@ -105,7 +105,6 @@ class HookManager
         if ($hookHandler) {
             $hookHandler->hook($identifier, $hookClass, $subKey);
         }
-
     }
 
     public function resolveHookHandler($hookType): ?HookHandlerInterface

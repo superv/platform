@@ -177,7 +177,7 @@ class Fake
 
     protected function fakeTextarea()
     {
-        return $this->faker->text;
+        return $this->faker->paragraph;
     }
 
     protected function fakeDictionary()
