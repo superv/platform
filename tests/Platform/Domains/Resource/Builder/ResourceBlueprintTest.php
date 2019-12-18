@@ -189,17 +189,6 @@ class ResourceBlueprintTest extends ResourceTestCase
         $this->assertTrue($blueprint->getField('description')->hasFlag('nullable'));
     }
 
-    function test__text_field()
-    {
-        $blueprint = Builder::blueprint('testing.posts', function (Blueprint $resource) {
-            $resource->text('title')->useAsEntryLabel();
-        });
-
-        $titleBlueprint = $blueprint->getField('title');
-        $this->assertTrue($titleBlueprint->isEntryLabel());
-        $this->assertEquals('text', $titleBlueprint->getField()->getType());
-    }
-
     function test__textarea_field()
     {
         $blueprint = Builder::blueprint('testing.posts', function (Blueprint $resource) {

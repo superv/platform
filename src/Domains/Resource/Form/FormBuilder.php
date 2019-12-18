@@ -158,13 +158,6 @@ class FormBuilder implements FormBuilderInterface
             ->map(function (FormField $field) {
                 $field->setForm($this->form);
 
-                /**
-                 *  ????????????
-                 */
-                if ($this->getEntry()) {
-                    $field->fillFromEntry($this->getEntry());
-                }
-
                 return $field;
             });
 

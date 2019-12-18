@@ -5,14 +5,11 @@ namespace Tests\Platform\Domains\Resource\Form;
 use Illuminate\Support\Facades\Event;
 use SuperV\Platform\Domains\Database\Model\Entry;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Domains\Resource\Form\FormFactory;
-use SuperV\Platform\Domains\Resource\Form\FormField;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Testing\FormComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -224,24 +221,7 @@ class FormTest extends ResourceTestCase
             $field = $form->getField($field);
         }
 
-        return (new FieldComposer($field))->forForm($form)->get('value');
-    }
-
-    protected function makeFields(): array
-    {
-        return [
-            $this->makeField(['name' => 'name', 'type' => 'text']),
-            $this->makeField(['name' => 'age', 'type' => 'number']),
-        ];
-    }
-
-    protected function makeField(array $params): \SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface
-    {
-        if (! isset($params['identifier'])) {
-            $params['identifier'] = uuid();
-        }
-
-        return FieldFactory::createFromArray($params, FormField::class);
+        return $field->getComposer()->toForm($form)->get('value');
     }
 }
 

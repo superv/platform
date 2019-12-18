@@ -3,10 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
 use Closure;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Composer\DefaultFieldComposer;
-use SuperV\Platform\Domains\Resource\Field\Composer\FormComposerInterface;
-use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Support\Identifier;
 
 interface FieldInterface
@@ -31,13 +28,9 @@ interface FieldInterface
 
     public function getFieldType(): FieldTypeInterface;
 
-    public function getValue();
-
-    public function setValue($value): void;
-
     public function getDefaultValue();
 
-//    public function setDefaultValue($defaultValue): void;
+    public function getComposer(): ComposerInterface;
 
     public function getConfig();
 
@@ -73,8 +66,6 @@ interface FieldInterface
 
     public function getPlaceholder();
 
-    public function fillFromEntry(EntryContract $entry);
-
     public function beforeResolvingEntry(Closure $callback): FieldInterface;
 
     public function beforeResolvingRequest(Closure $callback): FieldInterface;
@@ -93,7 +84,7 @@ interface FieldInterface
 
     public function resolveFromEntry($entry);
 
-    public function getFormComposer(?FormInterface $form = null): FormComposerInterface;
+//    public function getComposer(): ComposerInterface;
 
     public function setPresenter(Closure $callback): FieldInterface;
 

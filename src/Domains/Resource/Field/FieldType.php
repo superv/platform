@@ -7,10 +7,13 @@ use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ComposerInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FakerInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
+use SuperV\Platform\Domains\Resource\Field\Contracts\MutatorInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -68,11 +71,6 @@ abstract class FieldType implements FieldTypeInterface
         return $this->field->getConfig();
     }
 
-//    public function setConfig(array $config)
-//    {
-//        return $this->field->setConfig($config);
-//    }
-
     public function getHandle(): ?string
     {
         return $this->handle;
@@ -129,6 +127,30 @@ abstract class FieldType implements FieldTypeInterface
     public function getComponent(): ?string
     {
         return $this->component;
+    }
+
+    public function resolveComposer(): ?ComposerInterface
+    {
+        $class = str_replace_last(class_basename(get_called_class()), 'Composer', get_called_class());
+
+        if (! class_exists($class)) {
+            $class = Composer::class;
+        }
+
+        return app()->make($class, ['field' => $this->field]);
+    }
+
+    public function resolveFaker(): ?FakerInterface
+    {
+        $className = class_basename(get_called_class());
+
+        $fakerClass = str_replace_last($className, 'Faker', get_called_class());
+
+        if (class_exists($fakerClass)) {
+            return app($fakerClass);
+        }
+
+        return null;
     }
 
     public function driverCreating(DriverInterface $driver, FieldBlueprint $blueprint)

@@ -44,7 +44,7 @@ class ListComponent extends HelperComponent
     {
         if (! $this->rowActions) {
             $this->rowActions = collect($this->getProp('config.row_actions'))
-                ->map(function($action) {
+                ->map(function ($action) {
                     return HelperComponent::fromArray($action);
                 })
                 ->keyBy(function (HelperComponent $action) {
@@ -70,7 +70,8 @@ class ListComponent extends HelperComponent
 
         return array_get($field, $key);
     }
-    public function getRowAction($name )
+
+    public function getRowAction($name)
     {
         return $this->getRowActions()->get($name);
     }
@@ -91,6 +92,7 @@ class ListComponent extends HelperComponent
             $resource = ResourceFactory::make($resource);
         }
 
+        config(['app.debug' => true]);
         $response = $testCase->getJsonUser($resource->router()->defaultList(), $user);
 
         if (! $response->isOk()) {

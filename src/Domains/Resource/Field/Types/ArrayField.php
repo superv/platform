@@ -11,6 +11,10 @@ use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class ArrayField extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier
 {
+    protected $handle = 'array';
+
+    protected $component = 'sv_array_field';
+
     protected function boot()
     {
         $this->field->on('form.accessing', $this->getAccessor());

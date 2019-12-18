@@ -26,7 +26,7 @@ class FormModel extends Entry
 //            if (is_null($entry->uuid)) {
 //                $entry->setAttribute('uuid', uuid());
 //            }
-            $entry->setAttribute('rev_id', uuid());
+//            $entry->setAttribute('rev_id', uuid());
         });
     }
 

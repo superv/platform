@@ -32,7 +32,7 @@ class HandleFieldRpc
 
         if (! $rpcMethod) {
             return [
-                'data' => $field->getFormComposer($this->form)->compose()->get(),
+                'data' => $field->getComposer()->toForm($this->form)->get(),
             ];
         }
 

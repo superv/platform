@@ -12,6 +12,10 @@ use SuperV\Platform\Support\Composer\Payload;
 
 class EncryptedField extends FieldType implements RequiresDbColumn
 {
+    protected $handle = 'encrypted';
+
+    protected $component = 'sv_encrypted_field';
+
     public function fieldComposed(Payload $payload, $context = null)
     {
         $payload->set('value', null);

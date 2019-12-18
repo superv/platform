@@ -7,7 +7,6 @@ use SuperV\Platform\Domains\Database\Model\Repository;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\Testing\FormTester;
@@ -58,7 +57,8 @@ class MorphOneTest extends ResourceTestCase
         $form = $relation->makeForm()->resolve();
         $this->assertInstanceOf(Form::class, $form);
         $this->assertNull($form->getField('user'));
-        $this->assertNull((new FieldComposer($form->getField('label')))->forForm($form)->get('value'));
+        $this->assertNull($form->getField('label')->getComposer()->toForm($form)->get('value'));
+//        $this->assertNull((new FieldComposer($form->getField('label')))->forForm($form)->get('value'));
 
         $relatedEntry = $form->getEntry();
         $this->assertEquals($user->getId(), $relatedEntry->owner_id);

@@ -7,12 +7,11 @@ use Event;
 use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Composer\DefaultFieldComposer;
-use SuperV\Platform\Domains\Resource\Field\Composer\FormComposer;
-use SuperV\Platform\Domains\Resource\Field\Composer\FormComposerInterface;
-use SuperV\Platform\Domains\Resource\Field\Contracts\DecoratesFormComposer;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ComposerInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\MutatorInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\Hydratable;
@@ -22,8 +21,6 @@ class Field implements FieldInterface
 {
     use Hydratable;
     use FiresCallbacks;
-
-//    use HasConfig;
 
     /** @var \SuperV\Platform\Domains\Resource\Field\FieldType */
     protected $fieldType;
@@ -66,10 +63,6 @@ class Field implements FieldInterface
      */
     protected $label;
 
-    protected $value;
-
-    protected $defaultValue;
-
     protected $rules;
 
     protected $alterQueryCallback;
@@ -102,8 +95,7 @@ class Field implements FieldInterface
                 }
             }
         }
-
-        $this->uuid = $this->uuid ?? uuid();
+//        $this->uuid = $this->uuid ?? uuid();
     }
 
     public function identifier(): Identifier
@@ -140,23 +132,6 @@ class Field implements FieldInterface
         $this->label = $label;
 
         return $this;
-    }
-
-    public function getFormComposer(?FormInterface $form = null): FormComposerInterface
-    {
-        $composer = FormComposer::resolve()->setField($this);
-        if ($form) {
-            $composer->setForm($form);
-        }
-
-        $fieldType = $this->getFieldType();
-        if ($fieldType instanceof DecoratesFormComposer) {
-            $decaratorClass = $fieldType->getFormComposerDecoratorClass();
-            return new $decaratorClass($composer, $form, $this);
-        } else {
-            return $composer;
-        }
-
     }
 
     public function beforeResolvingEntry(Closure $callback): FieldInterface
@@ -201,16 +176,6 @@ class Field implements FieldInterface
         return $this;
     }
 
-    public function getValue()
-    {
-        return $this->value ?? $this->defaultValue;
-    }
-
-    public function setValue($value): void
-    {
-        $this->value = $value;
-    }
-
     public function resolveFromEntry($entry)
     {
         $attribute = $this->getColumnName();
@@ -224,11 +189,6 @@ class Field implements FieldInterface
         }
 
         return null;
-    }
-
-    public function fillFromEntry(EntryContract $entry)
-    {
-        $this->value = $this->resolveFromEntry($entry);
     }
 
     public function getFieldType(): FieldTypeInterface
@@ -299,11 +259,6 @@ class Field implements FieldInterface
         return $this->setConfigValue('sort_order', $order);
     }
 
-    public function revisionId(): ?string
-    {
-        return $this->revisionId;
-    }
-
     public function setPresenter(Closure $callback): FieldInterface
     {
         $this->presenter = $callback;
@@ -327,8 +282,9 @@ class Field implements FieldInterface
     public function getType(): string
     {
         if (! $this->fieldType->getHandle()) {
-            dd($this->fieldType);
+            dd(get_called_class(), $this->fieldType);
         }
+
         return $this->fieldType->getHandle();
     }
 
@@ -347,7 +303,6 @@ class Field implements FieldInterface
     public function getDefaultValue()
     {
         return $this->config['default_value'] ?? null;
-//        return $this->defaultValue;
     }
 
     public function setNotRequired()
@@ -374,8 +329,12 @@ class Field implements FieldInterface
         return in_array($flag, $this->flags);
     }
 
-    /// config
+    public function getComposer(): ComposerInterface
+    {
+        return $this->getFieldType()->resolveComposer();
+    }
 
+    /// config
     public function getConfigValue($key, $default = null)
     {
         return array_get($this->getConfig(), $key, $default);
@@ -402,13 +361,13 @@ class Field implements FieldInterface
         return $this;
     }
 
-    //////// FLAGS
-    ///
-
     public function showOnIndex(): FieldInterface
     {
         return $this->addFlag('table.show');
     }
+
+    //////// FLAGS
+    ///
 
     public function hide(): FieldInterface
     {
@@ -463,6 +422,11 @@ class Field implements FieldInterface
     public function isVisible(): bool
     {
         return ! $this->isHidden();
+    }
+
+    public function revisionId(): ?string
+    {
+        return $this->revisionId;
     }
 
     public function fireEvent($eventName)

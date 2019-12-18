@@ -12,7 +12,7 @@ class FieldsList implements ListResolvedHook
 
     public function resolved(TableInterface $table, IndexFields $fields)
     {
-        $fields->get('name')->searchable();
+        $fields->get('handle')->searchable();
         $fields->get('resource')->copyToFilters();
         $fields->get('type')->copyToFilters();
 

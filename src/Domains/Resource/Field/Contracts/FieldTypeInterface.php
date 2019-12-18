@@ -37,4 +37,8 @@ interface FieldTypeInterface
     public function getColumnName();
 
     public function getComponent(): ?string;
+
+    public function resolveComposer(): ?ComposerInterface;
+
+    public function resolveFaker(): ?FakerInterface;
 }

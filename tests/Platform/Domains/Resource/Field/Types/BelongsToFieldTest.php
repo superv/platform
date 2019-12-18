@@ -24,7 +24,7 @@ class BelongsToFieldTest extends ResourceTestCase
      */
     protected $belongsToField;
 
-    function test__meta_link_should_be_null_if_logged_in_user_is_not_authorized_to_view_the_related_entry()
+    function __meta_link_should_be_null_if_logged_in_user_is_not_authorized_to_view_the_related_entry()
     {
         $this->be($this->newUser(['allow' => null]));
 
@@ -46,7 +46,7 @@ class BelongsToFieldTest extends ResourceTestCase
         $this->assertEquals('group_id', $belongsTo->getConfigValue('foreign_key'));
     }
 
-    function test__callbacks()
+    function __callbacks()
     {
         $user = $this->newUser(['allow' => 'testing.groups']);
         $this->be($user);

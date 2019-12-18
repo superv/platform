@@ -12,7 +12,6 @@ use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesQuery;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldQuerySorter;
 use SuperV\Platform\Domains\Resource\Filter\ApplyFilters;
 use SuperV\Platform\Domains\Resource\Resource;
@@ -479,7 +478,8 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
                 return [
                     'id'      => $this->getRowId($entry),
                     'fields'  => $fields->map(function (FieldInterface $field) use ($entry) {
-                        return (new FieldComposer($field))->forTableRow($entry)->get();
+//                        return (new FieldComposer($field))->forTableRow($entry)->get();
+                        return $field->getComposer()->toTable($entry)->get();
                     })->values()->all(),
                     'actions' => ['view'],
                 ];

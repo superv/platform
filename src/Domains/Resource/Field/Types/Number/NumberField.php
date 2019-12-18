@@ -2,13 +2,15 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types\Number;
 
+use Closure;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class NumberField extends FieldType implements RequiresDbColumn, SortsQuery
+class NumberField extends FieldType implements RequiresDbColumn, SortsQuery, HasAccessor
 {
     protected $component = 'sv_number_field';
 
@@ -16,11 +18,10 @@ class NumberField extends FieldType implements RequiresDbColumn, SortsQuery
 
     protected function boot()
     {
-        $this->field->on('form.accessing', $this->accessor());
-        $this->field->on('form.mutating', $this->accessor());
-
-        $this->field->on('view.presenting', $this->accessor());
-        $this->field->on('table.presenting', $this->accessor());
+//        $this->field->on('form.accessing', $this->accessor());
+//        $this->field->on('form.mutating', $this->accessor());
+//
+//        $this->field->on('view.presenting', $this->accessor());
     }
 
     public function driverCreating(
@@ -54,7 +55,23 @@ class NumberField extends FieldType implements RequiresDbColumn, SortsQuery
         return $rules;
     }
 
-    protected function accessor()
+//    protected function accessor()
+//    {
+//        return function ($value) {
+//            if ($this->getConfigValue('type') === 'decimal') {
+//                return (float)number_format(
+//                    $value,
+//                    $this->getConfigValue('places'),
+//                    $this->getConfigValue('dec_point', '.'),
+//                    $this->getConfigValue('thousands_sep', '')
+//                );
+//            }
+//
+//            return (int)$value;
+//        };
+//    }
+
+    public function getAccessor(): Closure
     {
         return function ($value) {
             if ($this->getConfigValue('type') === 'decimal') {

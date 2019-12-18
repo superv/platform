@@ -96,7 +96,7 @@ class PlatformBlueprints
     {
         $table->increments('id');
         $table->uuid('uuid')->unique();
-        $table->uuid('rev_id')->nullable()->unique();
+//        $table->uuid('rev_id')->nullable()->unique();
 
         $table->string('name')->showOnIndex()->entryLabel();
         $table->string('handle')->showOnIndex()->entryLabel();
@@ -180,7 +180,7 @@ class PlatformBlueprints
         $table->increments('id');
 
         $table->string('uuid')->unique();
-        $table->uuid('rev_id')->nullable()->unique();
+//        $table->uuid('rev_id')->nullable()->unique();
 
         $table->string('name')->showOnIndex();
         $table->string('identifier')->showOnIndex()->unique();

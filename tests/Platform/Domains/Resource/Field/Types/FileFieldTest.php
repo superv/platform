@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Http\UploadedFile;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -47,7 +46,8 @@ class FileFieldTest extends ResourceTestCase
         $media = $callback();
         $this->assertNotNull($media);
         $this->assertEquals('testing.tbl', $media->owner_type);
-        $this->assertNotNull((new FieldComposer($field))->forView($entry)->get('image_url'));
+        $this->assertNotNull($field->getComposer()->toView($entry)->get('image_url'));
+//        $this->assertNotNull((new FieldComposer($field))->forView($entry)->get('image_url'));
 
         $this->assertFileExists($media->filePath());
         $this->assertEquals('square.png', $media->getOriginalFilename());

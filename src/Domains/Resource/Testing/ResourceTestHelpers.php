@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 use SuperV\Platform\Domains\Resource\ResourceModel;
@@ -183,6 +185,18 @@ trait ResourceTestHelpers
         ], $overrides);
     }
 
+    protected function makeField(string $handle = 'foo', $type = 'text', array $config = []): FieldInterface
+    {
+        $field = FieldFactory::createFromArray([
+            'identifier' => 'testing.'.$handle,
+            'handle'     => $handle,
+            'type'       => $type,
+            'config'     => $config,
+        ]);
+
+        return $field;
+    }
+
     protected function postCreateResource($resource, array $post = []): TestResponse
     {
         /** @var \SuperV\Platform\Domains\Resource\Resource $resource */
@@ -206,6 +220,5 @@ trait ResourceTestHelpers
         $response = $this->postJsonUser($entry->router()->updateForm(), $post);
 
         return $response;
-
     }
 }

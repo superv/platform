@@ -119,7 +119,7 @@ class RelationIndexTest extends ResourceTestCase
         $this->assertEquals(sv_url($relation->route('lookup', $userA)), $action->getProp('lookup-url'));
         $this->assertEquals(sv_url($relation->route('attach', $userA)), $action->getProp('attach-url'));
 
-        $this->assertEquals('status', $action->getProp('pivot-fields.status.name'));
+        $this->assertEquals('status', $action->getProp('pivot-fields.status.handle'));
 
         $response = $this->getJsonUser($table->getProp('config.data_url'));
         $response->assertOk();
@@ -170,7 +170,7 @@ class RelationIndexTest extends ResourceTestCase
         $this->assertEquals('sv-attach-action', $action->getName());
         $this->assertEquals(sv_url($relation->route('lookup', $userA)), $action->getProp('lookup-url'));
         $this->assertEquals(sv_url($relation->route('attach', $userA)), $action->getProp('attach-url'));
-        $this->assertEquals('provision', $action->getProp('pivot-fields.provision.name'));
+        $this->assertEquals('provision', $action->getProp('pivot-fields.provision.handle'));
 
         $response = $this->getJsonUser($table->getProp('config.data_url'));
         $response->assertOk();

@@ -28,9 +28,11 @@ class Payload implements Arrayable, Composable
         $this->params = $params;
     }
 
-    public function set($key, $value)
+    public function set($key, $value): Payload
     {
         array_set($this->params, $key, $value);
+
+        return $this;
     }
 
     public function remove($key)

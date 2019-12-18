@@ -9,19 +9,16 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
-use SuperV\Platform\Domains\Resource\Field\Contracts\DecoratesFormComposer;
 use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldRules;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
-use SuperV\Platform\Support\Composer\Payload;
 
 class FileType extends FieldType implements
     DoesNotInteractWithTable,
     HasModifier,
-    SortsQuery,
-    DecoratesFormComposer
+    SortsQuery
 {
     protected $handle = 'file';
 
@@ -29,20 +26,11 @@ class FileType extends FieldType implements
 
     protected $requestFile;
 
-    protected function boot()
-    {
-//        $this->field->on('form.composing', $this->composer());
-
-        $this->field->on('view.composing', $this->composer());
-        $this->field->on('table.composing', $this->composer());
-    }
-
     public function updateRules(FieldRules $rules)
     {
         if (is_null($this->requestFile)) {
             $rules->removeAll();
         }
-
     }
 
     public function getModifier(): Closure
@@ -94,29 +82,11 @@ class FileType extends FieldType implements
         return $query->first();
     }
 
-    protected function composer()
-    {
-        return function (Payload $payload, ?EntryContract $entry) {
-            if (! $entry) {
-                return;
-            }
-            if ($media = $this->getMedia($entry, $this->getFieldHandle())) {
-                $payload->set('image_url', $media->getUrl());
-                $payload->set('config', null);
-            }
-        };
-    }
-
     protected function getConfigAsMediaOptions()
     {
         return MediaOptions::one()
                            ->disk($this->getConfigValue('disk', 'local'))
                            ->path($this->getConfigValue('path'))
                            ->visibility($this->getConfigValue('visibility', 'private'));
-    }
-
-    public function getFormComposerDecoratorClass()
-    {
-        return FormComposer::class;
     }
 }

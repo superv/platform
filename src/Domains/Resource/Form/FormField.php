@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\Resource\Form;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\InlinesForm;
 use SuperV\Platform\Domains\Resource\Field\Field;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
@@ -90,11 +89,9 @@ class FormField extends Field implements FormFieldInterface
 
     public function compose()
     {
-        $composer = $this->getFormComposer($this->form);
+        $composer = $this->getFieldType()->resolveComposer();
 
-        return $composer->compose();
-
-        return array_filter((new FieldComposer($this))->forForm($this->form)->get());
+        return $composer->toForm($this->form);
     }
 
     public function getRow()

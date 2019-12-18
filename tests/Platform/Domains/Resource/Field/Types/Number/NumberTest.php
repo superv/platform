@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource\Field\Types;
+namespace Tests\Platform\Domains\Resource\Field\Types\Number;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldRules;

@@ -84,6 +84,10 @@ class Fake
 
             return $value;
         }
+        if ($faker = $field->getFieldType()->resolveFaker()) {
+            return $faker->fake($this->resource, $field);
+        }
+
         if (method_exists($this, $method = camel_case('fake_'.$field->getType()))) {
             return $this->$method($field);
         }

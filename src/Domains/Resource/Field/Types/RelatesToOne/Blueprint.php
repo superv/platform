@@ -14,6 +14,11 @@ class Blueprint extends FieldBlueprint
     /**
      * @var string
      */
+    protected $ownerKey = 'id';
+
+    /**
+     * @var string
+     */
     protected $localKey;
 
     /**
@@ -32,6 +37,7 @@ class Blueprint extends FieldBlueprint
     {
         return [
             'related'    => $this->related,
+            'owner_key'  => $this->getOwnerKey(),
             'local_key'  => $this->getLocalKey(),
             'remote_key' => $this->getRemoteKey(),
         ];
@@ -64,5 +70,17 @@ class Blueprint extends FieldBlueprint
     public function getRemoteKey(): ?string
     {
         return $this->remoteKey;
+    }
+
+    public function ownerKey(string $ownerKey): Blueprint
+    {
+        $this->ownerKey = $ownerKey;
+
+        return $this;
+    }
+
+    public function getOwnerKey(): string
+    {
+        return $this->ownerKey;
     }
 }

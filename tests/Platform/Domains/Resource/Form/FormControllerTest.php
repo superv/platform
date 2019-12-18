@@ -37,8 +37,7 @@ class FormControllerTest extends ResourceTestCase
         foreach ($form->getProp('fields') as $fieldArray) {
             $field = $this->posts->getField($fieldArray['handle']);
             $this->assertEquals(
-//                (new FieldComposer($field))->forForm()->get(),
-                $field->getFormComposer()->compose()->get(),
+                $field->getComposer()->toForm()->get(),
                 $fieldArray
             );
         }
@@ -84,8 +83,7 @@ class FormControllerTest extends ResourceTestCase
 
         $field = FieldFactory::createFromArray($fieldArray);
         $this->assertEquals(
-//            (new FieldComposer($field))->forForm()->get(),
-            $field->getFormComposer()->compose()->get(),
+            $field->getComposer()->toForm()->get(),
             $fieldArray
         );
     }

@@ -50,7 +50,7 @@ class FormController extends BaseApiController
     {
         $builder = FormFactory::builderFromFormEntry($formIdentifier);
 
-        $form = $builder->getForm();
+        $form = $builder->resolveForm();
         $fieldEntry = $builder->getFormEntry()->getFormField($field);
 
         $response = (new HandleFieldRpc($form, $fieldEntry))

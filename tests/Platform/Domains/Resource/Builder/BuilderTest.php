@@ -19,13 +19,11 @@ class BuilderTest extends ResourceTestCase
     function test__belongs_to_many_pivot()
     {
         Builder::create('testing.roles', function (Blueprint $resource) {
-            $resource->id();
             $resource->manyToMany('testing.actions', 'actions')
                      ->pivot('testing.roles_actions');
         });
 
         Builder::create('testing.actions', function (Blueprint $resource) {
-            $resource->id();
             $resource->manyToMany('testing.roles', 'roles')
                      ->pivot('testing.roles_actions');
         });
@@ -40,7 +38,6 @@ class BuilderTest extends ResourceTestCase
     function test__belongs_to_many_relation()
     {
         Builder::create('testing.roles', function (Blueprint $resource) {
-            $resource->id();
             $resource->manyToMany('testing.actions', 'actions')
                      ->pivot('testing.roles_actions');
         });
@@ -67,8 +64,6 @@ class BuilderTest extends ResourceTestCase
     function test__belongs_to_relation()
     {
         Builder::create('testing.posts', function (Blueprint $resource) {
-            $resource->id();
-
             $resource->belongsTo('testing.users', 'user')
                      ->foreignKey('user_id')
                      ->ownerKey('id');
@@ -92,8 +87,6 @@ class BuilderTest extends ResourceTestCase
     function test__creates_fields()
     {
         Builder::create('testing.posts', function (Blueprint $resource) {
-            $resource->id();
-
             $resource->text('title', 'Post Title')->useAsEntryLabel();
             $resource->select('gender')->options(['male', 'female'])->hideOnView();
             $resource->text('email')->rules('email|unique')->unique();

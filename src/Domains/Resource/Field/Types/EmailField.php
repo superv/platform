@@ -10,6 +10,8 @@ class EmailField extends FieldType implements RequiresDbColumn, SortsQuery
 {
     protected $handle = 'email';
 
+    protected $component = 'sv_email_field';
+
     public function sortQuery($query, $direction)
     {
         $query->orderBy($this->field->getColumnName(), $direction);

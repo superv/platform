@@ -28,7 +28,7 @@ class PublicFormController extends BaseController
     {
         $builder = $this->resolveFormBuilder($formIdentifier);
 
-        $form = $builder->getForm();
+        $form = $builder->resolveForm();
         $fieldEntry = $builder->getFormEntry()->getFormField($field);
 
         $response = (new HandleFieldRpc($form, $fieldEntry))

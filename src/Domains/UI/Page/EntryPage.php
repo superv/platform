@@ -5,7 +5,6 @@ namespace SuperV\Platform\Domains\UI\Page;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
@@ -27,9 +26,11 @@ class EntryPage extends ResourcePage
     public function makeComponent(): ComponentContract
     {
         if ($imageField = $this->resource->fields()->getHeaderImage()) {
-            $imageUrl = (new FieldComposer($imageField))
-                ->forView($this->entry)
-                ->get('image_url');
+//            $imageUrl = (new FieldComposer($imageField))
+//                ->forView($this->entry)
+//                ->get('image_url');
+
+            $imageUrl = $imageField->getComposer()->toView($this->entry)->get('image_url');
         }
 
         return parent::makeComponent()

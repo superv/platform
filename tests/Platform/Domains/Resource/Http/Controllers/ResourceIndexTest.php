@@ -47,10 +47,10 @@ class ResourceIndexTest extends ResourceTestCase
             $this->assertTrue(is_numeric($key));
             $this->assertEquals([
                 'identifier',
-                'revision_id',
                 'handle',
+                'type',
+                'component',
                 'label',
-                'classes',
                 'sortable',
             ], array_keys($field));
 
@@ -93,7 +93,7 @@ class ResourceIndexTest extends ResourceTestCase
 
         $group = $rowA['fields'][2];
         $this->assertEquals('belongs_to', $group['type']);
-        $this->assertEquals('group_id', $group['handle']);
+        $this->assertEquals('group', $group['handle']);
         $this->assertNull(array_get($group, 'meta.options'));
 
         $groups = sv_resource('testing.groups');

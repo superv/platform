@@ -32,7 +32,6 @@ class ResourceViewTest extends ResourceTestCase
         $fields = $view->getProp('fields');
 
         $name = $fields['name'];
-        $this->assertNotNull($name['revision_id']);
         $this->assertFalse(isset($name['config']));
         $this->assertEquals('text', $name['type']);
         $this->assertEquals('name', $name['handle']);
@@ -53,31 +52,9 @@ class ResourceViewTest extends ResourceTestCase
 
         $avatar = $fields['avatar'];
         $this->assertEquals('file', $avatar['type']);
-        $this->assertNull($avatar['value']);
+        $this->assertNull($avatar['value'] ?? null);
         $this->assertEquals(Media::first()->getUrl(), $avatar['image_url'] ?? null);
     }
-
-//    function test__fields_those_should_be_hidden_in_view()
-//    {
-//        $users = $this->schema()->users(function (Blueprint $table) {
-//            $table->restorable();
-//        });
-//
-//        $user = $users->fake();
-//        $this->withoutExceptionHandling();
-//        $view = $this->getResourceView($user);
-//
-//        $this->assertEquals(7, $view->countProp('fields'));
-//
-//        $this->assertEquals([
-//            'handle',
-//            'email',
-//            'bio',
-//            'age',
-//            'avatar',
-//            'group',
-//        ], array_keys($view->getProp('fields')));
-//    }
 }
 
 

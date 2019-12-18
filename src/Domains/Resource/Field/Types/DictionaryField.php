@@ -11,6 +11,10 @@ use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class DictionaryField extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier
 {
+    protected $handle = 'dictionary';
+
+    protected $component = 'sv_dictionary_field';
+
     protected function boot()
     {
         $this->field->on('form.accessing', $this->getAccessor());

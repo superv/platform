@@ -9,7 +9,6 @@ use PHPUnit\Framework\Assert;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Fake;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Form\Form;
 use SuperV\Platform\Testing\TestHelpers;
 
@@ -55,12 +54,15 @@ class FormTester extends Assert
         $entryForHandle = $form->getEntry();
         $original = $entryForHandle->toArray();
         $fields = [];
+
+        /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface $field */
         foreach ($form->fields() as $field) {
             if ($field->isHidden() || $field->doesNotInteractWithTable()) {
                 continue;
             }
 
-            $fields[] = (new FieldComposer($field))->forForm($form)->get('value');
+//            $fields[] = (new FieldComposer($field))->forForm($form)->get('value');
+            $fields[] = $field->getComposer()->toForm($form)->get('value');
             $post[$field->getColumnName()] = Fake::field($field);
         }
 

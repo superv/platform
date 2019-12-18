@@ -63,6 +63,7 @@ class FormComponent extends HelperComponent
             $identifier = $identifier::$identifier;
         }
 
+        config(['app.debug' => true]);
         $url = sv_route('sv::forms.display', ['form' => $identifier, 'entry' => $entry]);
 
         $response = $testCase->getJsonUser($url);

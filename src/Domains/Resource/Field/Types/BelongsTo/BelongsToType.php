@@ -2,16 +2,13 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types\BelongsTo;
 
-use Closure;
 use Current;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\InlinesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
-use SuperV\Platform\Domains\Resource\Field\Contracts\DecoratesFormComposer;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
-use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\Types\RelationFieldType;
@@ -27,9 +24,7 @@ class BelongsToType extends RelationFieldType implements
     ProvidesFilter,
     InlinesForm,
     HandlesRpc,
-    HasPresenter,
-    SortsQuery,
-    DecoratesFormComposer
+    SortsQuery
 {
     protected $handle = 'belongs_to';
 
@@ -50,12 +45,10 @@ class BelongsToType extends RelationFieldType implements
 
     protected function boot()
     {
-//        $this->field->on('form.composing', $this->formComposer());
-
         $this->field->on('view.presenting', $this->viewPresenter());
         $this->field->on('view.composing', $this->viewComposer());
 
-        $this->field->on('table.presenting', $this->presenter());
+//        $this->field->on('table.presenting', $this->presenter());
         $this->field->on('table.composing', $this->tableComposer());
         $this->field->on('table.querying', function ($query) {
             $query->with($this->getFieldHandle());
@@ -150,19 +143,6 @@ class BelongsToType extends RelationFieldType implements
         return $this->options;
     }
 
-    public function getPresenter(): Closure
-    {
-        return function (EntryContract $entry) {
-            if (! $entry->relationLoaded($this->getFieldHandle())) {
-                $entry->load($this->getFieldHandle());
-            }
-
-            if ($relatedEntry = $entry->getRelation($this->getFieldHandle())) {
-                return sv_resource($relatedEntry)->getEntryLabel($relatedEntry);
-            }
-        };
-    }
-
     public function inlineForm(FormInterface $parent, array $config = []): void
     {
         $this->field->hide();
@@ -177,54 +157,13 @@ class BelongsToType extends RelationFieldType implements
         ]);
     }
 
-    public function formComposer()
-    {
-        return function (Payload $payload, FormInterface $form, ?EntryContract $entry = null) {
-            if ($entry) {
-                if ($relatedEntry = $entry->{$this->getFieldHandle()}()->newQuery()->first()) {
-                    $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
-                }
-            }
-
-            $options = $this->getConfigValue('meta.options');
-            if (! is_null($options)) {
-                $payload->set('meta.options', $options);
-            } else {
-                $route = $form->isPublic() ? 'sv::public_forms.fields' : 'sv::forms.fields';
-                $url = sv_route($route, [
-                    'form'  => $this->field->getForm()->getIdentifier(),
-                    'field' => $this->getFieldHandle(),
-                    'rpc'   => 'options',
-                ]);
-                $payload->set('meta.options', $url);
-            }
-            $payload->set('placeholder', __('Select :Object', [
-                'object' => $this->getRelatedResource()->getSingularLabel(),
-            ]));
-        };
-    }
-
     public function rpcOptions(array $params, array $request = [])
     {
         return $this->lookupOptions->setResource($this->getRelatedResource())
-                                   ->setResource($request['query'] ?? [])
+                                   ->setQueryParams($request['query'] ?? [])
                                    ->make();
-//
-//        return (new MakeLookupOptions($this->getRelatedResource(), $request['query'] ?? []))->make();
-//
-//        return $this->buildOptions($request['query'] ?? []);
     }
 
-    public function presenter()
-    {
-        return function (EntryContract $entry) {
-            if (! $entry->relationLoaded($this->getFieldHandle())) {
-                $entry->load($this->getFieldHandle());
-            }
-
-            return $this->getRelatedEntryLabel($entry->getRelation($this->getFieldHandle()));
-        };
-    }
 
     public function viewPresenter()
     {
@@ -247,6 +186,8 @@ class BelongsToType extends RelationFieldType implements
                 $entry->load($this->getFieldHandle());
             }
             $this->setMetaLink($entry->getRelation($this->getFieldHandle()), $payload);
+
+            $payload->set('value', $this->getRelatedEntryLabel($entry->getRelation($this->getFieldHandle())));
         };
     }
 
@@ -259,10 +200,5 @@ class BelongsToType extends RelationFieldType implements
             return;
         }
         $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
-    }
-
-    public function getFormComposerDecoratorClass()
-    {
-        return FormComposer::class;
     }
 }

@@ -2,16 +2,19 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentBelongsTo;
+use Illuminate\Http\Request;
+use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
-use SuperV\Platform\Domains\Resource\Field\Contracts\DecoratesFormComposer;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Domains\Resource\Jobs\MakeLookupOptions;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
-class RelatesToOneType extends FieldType implements DecoratesFormComposer, HandlesRpc
+class RelatesToOneType extends FieldType implements HandlesRpc
 {
     protected $handle = 'relates_to_one';
 
@@ -31,6 +34,35 @@ class RelatesToOneType extends FieldType implements DecoratesFormComposer, Handl
     {
         $this->lookupOptions = $lookupOptions;
         $this->factory = $factory;
+    }
+
+    public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)
+    {
+        if (! $request->has($this->getFieldHandle()) && ! $request->has($this->getColumnName())) {
+            return null;
+        }
+
+        [$value, $requestValue] = $this->resolveValueFromRequest($request, $entry);
+
+        $data->toSave($this->getColumnName(), $value);
+    }
+
+    public function newQuery(EntryContract $parent)
+    {
+        $config = $this->field->getConfig();
+
+        return new EloquentBelongsTo(
+            $this->getRelated()->newQuery(),
+            $parent,
+            $config['local_key'],
+            $config['owner_key'],
+            $this->getFieldHandle()
+        );
+    }
+
+    public function getColumnName(): ?string
+    {
+        return $this->getConfigValue('local_key', $this->getFieldHandle().'_id');
     }
 
     public function getRelated(): \SuperV\Platform\Domains\Resource\Resource
@@ -53,11 +85,6 @@ class RelatesToOneType extends FieldType implements DecoratesFormComposer, Handl
         if ($driver instanceof DatabaseDriver) {
             $driver->getTable()->addColumn($this->getFieldHandle().'_id', 'integer');
         }
-    }
-
-    public function getFormComposerDecoratorClass()
-    {
-        return FormComposer::class;
     }
 
     public function getRpcResult(array $params, array $request = [])

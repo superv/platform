@@ -6,7 +6,6 @@ use Current;
 use SuperV\Platform\Domains\Resource\Action\Action;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\Filter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 use SuperV\Platform\Support\Composer\Payload;
 
@@ -40,8 +39,7 @@ class TableComposer
 
         $payload->set('config.filters', $this->table->getFilters()
                                                     ->map(function (Filter $filter) {
-//                                                        return (new FieldComposer($filter))->forForm();
-                                                        return $filter->makeField()->getFormComposer()->compose()->get();
+                                                        return $filter->makeField()->getComposer()->toForm()->get();
                                                     }));
 
         return $payload->get();
@@ -81,7 +79,8 @@ class TableComposer
     {
         $fields = $this->table->makeFields()
             ->map(function (FieldInterface $field) {
-                return (new FieldComposer($field))->forTableConfig();
+//                return (new FieldComposer($field))->forTableConfig();
+                return $field->getComposer()->toTable();
             })->values();
 
         return $fields;

@@ -29,41 +29,41 @@ class IndexFields
         $this->fields = $resource->fields()->getAll();
     }
 
-    public function getField($name): FieldInterface
+    public function getField($handle): FieldInterface
     {
         $field = $this->fields->first(
-            function (FieldInterface $field) use ($name) {
-                return $field->getHandle() === $name;
+            function (FieldInterface $field) use ($handle) {
+                return $field->getHandle() === $handle;
             });
 
         if (! $field) {
-            PlatformException::fail("Field not found: [{$name}]");
+            PlatformException::fail("Field not found: [{$handle}]");
         }
 
         return $field;
     }
 
-    public function hide($name)
+    public function hide($handle)
     {
-        $field = $this->getField($name);
+        $field = $this->getField($handle);
         $field->removeFlag('table.show');
 
         return $field;
     }
 
-    public function showFirst($name, $label = null)
+    public function showFirst($handle, $label = null)
     {
-        return $this->show($name, $label)->displayOrder(-999);
+        return $this->show($handle, $label)->displayOrder(-999);
     }
 
-    public function showLast($name, $label = null)
+    public function showLast($handle, $label = null)
     {
-        return $this->show($name, $label)->displayOrder(+999);
+        return $this->show($handle, $label)->displayOrder(+999);
     }
 
-    public function show($name, $label = null)
+    public function show($handle, $label = null)
     {
-        $field = $this->getField($name);
+        $field = $this->getField($handle);
         $field->showOnIndex();
 
         if ($label) {
@@ -98,10 +98,10 @@ class IndexFields
         return $this;
     }
 
-    public function get($name = null)
+    public function get($handle = null)
     {
-        if ($name) {
-            return $this->getField($name);
+        if ($handle) {
+            return $this->getField($handle);
         }
 
         $fields = $this->fields
