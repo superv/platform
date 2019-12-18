@@ -49,7 +49,7 @@ class Fields
     {
         return $this->fields->first(
             function (FieldInterface $field) use ($name) {
-                return $field->getName() === $name;
+                return $field->getHandle() === $name;
             });
     }
 
@@ -77,7 +77,7 @@ class Fields
     public function keyByName(): Collection
     {
         return $this->fields->keyBy(function (FieldInterface $field) {
-            return $field->getName();
+            return $field->getHandle();
         });
     }
 

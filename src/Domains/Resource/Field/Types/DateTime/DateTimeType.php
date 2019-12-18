@@ -13,9 +13,11 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Support\Composer\Payload;
 
-class DateTimeField extends FieldType implements RequiresDbColumn, HasPresenter, SortsQuery
+class DateTimeType extends FieldType implements RequiresDbColumn, HasPresenter, SortsQuery
 {
-    protected $component = 'datetime';
+    protected $handle = 'datetime';
+
+    protected $component = 'sv_datetime_field';
 
     protected function boot()
     {
@@ -43,7 +45,7 @@ class DateTimeField extends FieldType implements RequiresDbColumn, HasPresenter,
     public function getPresenter(): Closure
     {
         return function (EntryContract $entry) {
-            if (! $value = $entry->getAttribute($this->getName())) {
+            if (! $value = $entry->getAttribute($this->getFieldHandle())) {
                 return null;
             }
 
@@ -65,7 +67,7 @@ class DateTimeField extends FieldType implements RequiresDbColumn, HasPresenter,
     protected function formPresenter()
     {
         return function (EntryContract $entry) {
-            if (! $value = $entry->getAttribute($this->getName())) {
+            if (! $value = $entry->getAttribute($this->getFieldHandle())) {
                 return null;
             }
 

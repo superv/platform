@@ -4,9 +4,9 @@ namespace SuperV\Platform\Domains\Resource\Field\Types\Text;
 
 use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 
-class TextFieldBlueprint extends FieldBlueprint
+class Blueprint extends FieldBlueprint
 {
-    public function useAsEntryLabel(): TextFieldBlueprint
+    public function useAsEntryLabel(): Blueprint
     {
         $this->entryLabel = true;
 

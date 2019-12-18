@@ -109,7 +109,7 @@ class Blueprint
     public function getField($fieldName): ?FieldBlueprint
     {
         return $this->fields->first(function (FieldBlueprint $fieldBlueprint) use ($fieldName) {
-            return $fieldBlueprint->getName() === $fieldName;
+            return $fieldBlueprint->getHandle() === $fieldName;
         });
     }
 

@@ -10,7 +10,9 @@ use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class NumberField extends FieldType implements RequiresDbColumn, SortsQuery
 {
-    protected $component = 'number';
+    protected $component = 'sv_number_field';
+
+    protected $handle = 'number';
 
     protected function boot()
     {
@@ -21,20 +23,13 @@ class NumberField extends FieldType implements RequiresDbColumn, SortsQuery
         $this->field->on('table.presenting', $this->accessor());
     }
 
-    protected function accessor()
-    {
-        return function ($value) {
-            if ($this->getConfigValue('type') === 'decimal') {
-                return (float)number_format(
-                    $value,
-                    $this->getConfigValue('places'),
-                    $this->getConfigValue('dec_point', '.'),
-                    $this->getConfigValue('thousands_sep', '')
-                );
-            }
-
-            return (int)$value;
-        };
+    public function driverCreating(
+        DriverInterface $driver,
+        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
+    ) {
+        if ($driver instanceof DatabaseDriver) {
+            $driver->getTable()->addColumn($this->getColumnName(), 'integer');
+        }
     }
 
     public function sortQuery($query, $direction)
@@ -59,12 +54,19 @@ class NumberField extends FieldType implements RequiresDbColumn, SortsQuery
         return $rules;
     }
 
-    public function driverCreating(
-        DriverInterface $driver,
-        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
-    ) {
-        if ($driver instanceof DatabaseDriver) {
-            $driver->getTable()->addColumn($this->getColumnName(), 'integer');
-        }
+    protected function accessor()
+    {
+        return function ($value) {
+            if ($this->getConfigValue('type') === 'decimal') {
+                return (float)number_format(
+                    $value,
+                    $this->getConfigValue('places'),
+                    $this->getConfigValue('dec_point', '.'),
+                    $this->getConfigValue('thousands_sep', '')
+                );
+            }
+
+            return (int)$value;
+        };
     }
 }

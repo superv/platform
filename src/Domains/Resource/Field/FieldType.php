@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
@@ -18,7 +19,7 @@ use SuperV\Platform\Support\Composer\Payload;
 abstract class FieldType implements FieldTypeInterface
 {
     /** @var string */
-    protected $type;
+    protected $handle;
 
     /** @var string */
     protected $component;
@@ -26,12 +27,11 @@ abstract class FieldType implements FieldTypeInterface
     /** @var FieldInterface */
     protected $field;
 
-
     protected function boot() { }
 
     public function __toString()
     {
-        return $this->type ?? $this->field->getType();
+        return $this->handle ?? $this->field->getType();
     }
 
     public function setField(FieldInterface $field): void
@@ -46,14 +46,14 @@ abstract class FieldType implements FieldTypeInterface
         $this->field->addFlag($flag);
     }
 
-    public function getName()
+    public function getFieldHandle()
     {
-        return $this->field->getName();
+        return $this->field->getHandle();
     }
 
     public function getColumnName()
     {
-        return $this->getName();
+        return $this->getFieldHandle();
     }
 
     public function getConfigValue($key, $default = null)
@@ -71,9 +71,9 @@ abstract class FieldType implements FieldTypeInterface
         return $this->field->setConfig($config);
     }
 
-    public function getType(): ?string
+    public function getHandle(): ?string
     {
-        return $this->type;
+        return $this->handle;
     }
 
     public function saving(FormInterface $form)
@@ -110,7 +110,7 @@ abstract class FieldType implements FieldTypeInterface
 
     public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)
     {
-        if (! $request->has($this->getName()) && ! $request->has($this->getColumnName())) {
+        if (! $request->has($this->getFieldHandle()) && ! $request->has($this->getColumnName())) {
             return null;
         }
 
@@ -135,12 +135,12 @@ abstract class FieldType implements FieldTypeInterface
 
     public function resolveValueFromRequest(Request $request, ?EntryContract $entry = null)
     {
-        if (! $request->has($this->getName()) && ! $request->has($this->getColumnName())) {
+        if (! $request->has($this->getFieldHandle()) && ! $request->has($this->getColumnName())) {
             return null;
         }
 
         if (! $requestValue = $request->__get($this->getColumnName())) {
-            $requestValue = $request->__get($this->getName());
+            $requestValue = $request->__get($this->getFieldHandle());
         }
 
         $value = $requestValue;
@@ -174,6 +174,10 @@ abstract class FieldType implements FieldTypeInterface
         // custom directory
         if (! class_exists($class)) {
             $class = $base."\\".studly_case($type)."\\".studly_case($type.'_field');
+            // with type suffix
+            if (! class_exists($class)) {
+                $class = $base."\\".studly_case($type)."\\".studly_case($type.'_type');
+            }
         }
 
         return $class;

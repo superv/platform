@@ -88,4 +88,9 @@ class Payload implements Arrayable, Composable
     {
         return $this->get();
     }
+
+    public static function make(array $payload = [])
+    {
+        return new self($payload);
+    }
 }

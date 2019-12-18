@@ -110,7 +110,7 @@ class FormTest extends ResourceTestCase
         $form = FormFactory::builderFromEntry($entry = new FormTestUser)->resolveForm();
         $this->assertEquals(3, $form->fields()->count());
 
-        $form->fields()->addFieldFromArray(['type' => 'text', 'name' => 'profession']);
+        $form->fields()->addFieldFromArray(['type' => 'text', 'handle' => 'profession']);
 
         $field = $form->getField('profession');
         $this->assertNotNull($field);

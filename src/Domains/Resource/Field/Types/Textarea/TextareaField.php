@@ -10,7 +10,9 @@ use SuperV\Platform\Support\Composer\Payload;
 
 class TextareaField extends FieldType implements RequiresDbColumn
 {
-    protected $component = 'textarea';
+    protected $handle = 'textarea';
+
+    protected $component = 'sv_textarea_field';
 
     protected function boot()
     {

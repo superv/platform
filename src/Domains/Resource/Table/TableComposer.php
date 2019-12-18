@@ -40,7 +40,8 @@ class TableComposer
 
         $payload->set('config.filters', $this->table->getFilters()
                                                     ->map(function (Filter $filter) {
-                                                        return (new FieldComposer($filter))->forForm();
+//                                                        return (new FieldComposer($filter))->forForm();
+                                                        return $filter->makeField()->getFormComposer()->compose()->get();
                                                     }));
 
         return $payload->get();

@@ -13,7 +13,9 @@ use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class BooleanField extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier, SortsQuery
 {
-    protected $component = 'boolean';
+    protected $handle = 'boolean';
+
+    protected $component = 'sv_boolean_field';
 
     public function sortQuery($query, $direction)
     {

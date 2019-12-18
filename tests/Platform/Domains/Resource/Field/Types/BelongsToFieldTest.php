@@ -4,7 +4,6 @@ namespace Tests\Platform\Domains\Resource\Field\Types;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
 use SuperV\Platform\Support\Composer\Payload;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -65,7 +64,7 @@ class BelongsToFieldTest extends ResourceTestCase
     {
         parent::setUp();
 
-        $this->blueprints()->users(function (Blueprint $table, Config $config) {
+        $this->blueprints()->users(function (Blueprint $table) {
             $table->getColumn('email')->nullable();
         });
 

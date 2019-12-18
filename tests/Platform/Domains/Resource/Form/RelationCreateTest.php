@@ -36,8 +36,8 @@ class RelationCreateTest extends ResourceTestCase
         $this->assertEquals(2, count($form->getProp('fields')));
         $this->assertEquals(sv_url($relation->route('store', $user)), $form->getProp('url'));
 
-        $this->assertEquals('comment', $form->getProp('fields.0.name'));
-        $this->assertEquals('status', $form->getProp('fields.1.name'));
+        $this->assertEquals('comment', $form->getProp('fields.0.handle'));
+        $this->assertEquals('status', $form->getProp('fields.1.handle'));
     }
 
     function test__post_standard_form()
@@ -85,7 +85,7 @@ class RelationCreateTest extends ResourceTestCase
         $this->assertEquals(1, count($form->getProp('fields')));
         $this->assertEquals(sv_url($relation->route('store', $user)), $form->getProp('url'));
 
-        $this->assertEquals('comment', $form->getProp('fields.0.name'));
+        $this->assertEquals('comment', $form->getProp('fields.0.handle'));
     }
 
     function test__post_extended_form()

@@ -3,14 +3,14 @@
 namespace SuperV\Platform\Domains\Resource\Builder;
 
 use SuperV\Platform\Domains\Resource\Field\Types\Boolean\BooleanField;
-use SuperV\Platform\Domains\Resource\Field\Types\DateTime\DateTimeField;
+use SuperV\Platform\Domains\Resource\Field\Types\DateTime\DateTimeType;
 use SuperV\Platform\Domains\Resource\Field\Types\Number\NumberField;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\RelatesToOneType;
-use SuperV\Platform\Domains\Resource\Field\Types\Select\SelectField;
-use SuperV\Platform\Domains\Resource\Field\Types\Select\SelectFieldBlueprint;
-use SuperV\Platform\Domains\Resource\Field\Types\Text\TextField;
-use SuperV\Platform\Domains\Resource\Field\Types\Text\TextFieldBlueprint;
+use SuperV\Platform\Domains\Resource\Field\Types\Select\Blueprint as SelectTypeBlueprint;
+use SuperV\Platform\Domains\Resource\Field\Types\Select\SelectType;
+use SuperV\Platform\Domains\Resource\Field\Types\Text\Blueprint as TextTypeBlueprint;
+use SuperV\Platform\Domains\Resource\Field\Types\Text\TextType;
 use SuperV\Platform\Domains\Resource\Field\Types\Textarea\TextareaField;
 
 /**
@@ -29,14 +29,14 @@ trait FieldHelpers
         return $blueprint->related($related);
     }
 
-    public function select(string $fieldName, string $label = null): SelectFieldBlueprint
+    public function select(string $fieldName, string $label = null): SelectTypeBlueprint
     {
-        return $this->addField($fieldName, SelectField::class, $label);
+        return $this->addField($fieldName, SelectType::class, $label);
     }
 
-    public function text(string $fieldName, string $label = null): TextFieldBlueprint
+    public function text(string $fieldName, string $label = null): TextTypeBlueprint
     {
-        return $this->addField($fieldName, TextField::class, $label);
+        return $this->addField($fieldName, TextType::class, $label);
     }
 
     public function textarea(string $fieldName, string $label = null)
@@ -46,7 +46,7 @@ trait FieldHelpers
 
     public function datetime(string $fieldName, string $label = null)
     {
-        return $this->addField($fieldName, DateTimeField::class, $label);
+        return $this->addField($fieldName, DateTimeType::class, $label);
     }
 
     public function number(string $fieldName, string $label = null)

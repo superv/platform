@@ -4,7 +4,6 @@ namespace SuperV\Platform\Testing;
 
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Domains\UI\Components\Component;
 
 class ListComponent extends HelperComponent
 {
@@ -34,7 +33,7 @@ class ListComponent extends HelperComponent
         if (! $this->fields) {
             $this->fields = collect($this->getProp('config.fields'))
                 ->keyBy(function ($field) {
-                    return $field['name'];
+                    return $field['handle'];
                 });
         }
 

@@ -120,15 +120,18 @@ class Builder
             ]
         );
 
-        // Entry field
-        //
+        /**
+         * Entry field
+         *
+         * @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface $entryLabelField
+         */
         $entryLabelField = $this->blueprint->getFields()
                                            ->first(function (FieldBlueprint $field) use ($config) {
                                                return $field->isEntryLabel();
                                            });
         if ($entryLabelField) {
-            $config->entryLabel('{'.$entryLabelField->getName().'}');
-            $config->entryLabelField($entryLabelField->getName());
+            $config->entryLabel('{'.$entryLabelField->getHandle().'}');
+            $config->entryLabelField($entryLabelField->getHandle());
         } else {
             $config->entryLabel('{'.$config->getKeyName().'}');
         }

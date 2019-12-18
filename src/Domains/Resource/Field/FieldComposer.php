@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\ComposerContext;
 use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
@@ -22,6 +23,13 @@ class FieldComposer
         $this->field = $field instanceof ProvidesField ? $field->makeField() : $field;
     }
 
+    public function composeFor(ComposerContext $context)
+    {
+        $composer = $this->field->getFieldType()->getComposerForContext($context);
+
+        return $composer->compose();
+    }
+
     public function forForm(Form $form = null)
     {
         $field = $this->field;
@@ -39,14 +47,13 @@ class FieldComposer
         }
 
         if ($form && ! isset($value)) {
-            $value = $form->getData()->getForDisplay($field->getName());
+            $value = $form->getData()->getForDisplay($field->getHandle());
         }
 
         $payload = (new Payload([
             'identifier'  => $field->getIdentifier(),
-            'type'        => $field->getComponent(),
-            'revision_id' => $field->revisionId(),
-            'name'        => $field->getName(),
+            'type'        => $field->getType(),
+            'name'        => $field->getHandle(),
             'label'       => $field->getLabel(),
             'placeholder' => $field->getPlaceholder(),
             'value'       => $value ?? $field->getValue(),
@@ -72,7 +79,7 @@ class FieldComposer
         $payload = (new Payload([
             'identifier'  => $field->getIdentifier(),
             'revision_id' => $field->revisionId(),
-            'name'        => $field->getName(),
+            'handle'      => $field->getHandle(),
             'label'       => $field->getLabel(),
             'classes'     => $field->getConfigValue('classes'),
             'sortable'    => $field->getFieldType() instanceof SortsQuery,
@@ -100,8 +107,9 @@ class FieldComposer
         $payload = (new Payload([
             'identifier'  => $field->getIdentifier(),
             'revision_id' => $field->revisionId(),
-            'type'        => $field->getComponent(),
-            'name'        => $field->getColumnName(),
+            'type'        => $field->getType(),
+            'component'   => $field->getComponent(),
+            'handle'      => $field->getColumnName(),
             'value'       => $value,
             'presenting'  => true,
             'classes'     => $field->getConfigValue('classes'),
@@ -130,9 +138,10 @@ class FieldComposer
 
         $payload = (new Payload([
             'identifier'  => $field->getIdentifier(),
-            'type'        => $field->getComponent(),
+            'type'        => $field->getType(),
+            'component'   => $field->getComponent(),
             'revision_id' => $field->revisionId(),
-            'name'        => $field->getColumnName(),
+            'handle'      => $field->getColumnName(),
             'label'       => $field->getLabel(),
             'value'       => $value,
             'presenting'  => true,

@@ -19,7 +19,7 @@ class EncryptedField extends FieldType implements RequiresDbColumn
 
     public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)
     {
-        if (! $value = $request->get($this->getName())) {
+        if (! $value = $request->get($this->getFieldHandle())) {
             return null;
         }
 

@@ -5,7 +5,7 @@ namespace Tests\Platform\Domains\Resource\Form\Features;
 use Illuminate\Http\UploadedFile;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Field\Types\File\FileField;
+use SuperV\Platform\Domains\Resource\Field\Types\File\FileType;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Features\SubmitForm;
 use SuperV\Platform\Exceptions\ValidationException;
@@ -30,7 +30,7 @@ class SubmitFormTest extends ResourceTestCase
         $entry = $categories->first();
         $this->assertEquals('Books', $entry->title);
 
-        $media = FileField::getMedia($entry, 'photo');
+        $media = FileType::getMedia($entry, 'photo');
         $this->assertNotNull($media);
         $this->assertFileExists($media->filePath());
     }
@@ -54,7 +54,7 @@ class SubmitFormTest extends ResourceTestCase
         $entry = $entry->fresh();
         $this->assertEquals('Books', $entry->title);
 
-        $media = FileField::getMedia($entry, 'photo');
+        $media = FileType::getMedia($entry, 'photo');
         $this->assertNotNull($media);
         $this->assertFileExists($media->filePath());
     }
@@ -78,7 +78,7 @@ class SubmitFormTest extends ResourceTestCase
         $entry = $entry->fresh();
         $this->assertEquals('Books', $entry->title);
 
-        $media = FileField::getMedia($entry, 'photo');
+        $media = FileType::getMedia($entry, 'photo');
         $this->assertNull($media);
     }
 

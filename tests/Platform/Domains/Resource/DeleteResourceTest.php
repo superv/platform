@@ -32,6 +32,7 @@ class DeleteResourceTest extends ResourceTestCase
         $resourceEntry = $this->makeResourceModel('test_users', ['name', 'title']);
 
         $this->assertNotNull($resourceEntry->getField('name'));
+
         $this->assertNotNull($resourceEntry->getField('title'));
 
         Schema::table('test_users', function (Blueprint $table) {

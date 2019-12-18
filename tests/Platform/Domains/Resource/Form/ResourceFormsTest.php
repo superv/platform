@@ -38,10 +38,11 @@ class ResourceFormsTest extends ResourceTestCase
 
         $this->assertEquals(8, $form->countProp('fields'));
 
-        $fields = collect($form->getProp('fields'))->keyBy('name');
+        $fields = collect($form->getProp('fields'))->keyBy('handle');
 
         $group = $fields->get('group');
-        $this->assertEquals('belongs_to', $group['type']);
+
+        $this->assertEquals('sv_belongs_to_field', $group['component']);
     }
 
     function test__displays_update_form()
@@ -62,6 +63,7 @@ class ResourceFormsTest extends ResourceTestCase
 
         // Get Update form
         //
+        $this->withoutExceptionHandling();
         $form = $this->getUserPage($user->router()->updateForm());
 
 //        $this->assertEquals($users->router()->editForm($user), $form->getProp('url'));
@@ -71,24 +73,23 @@ class ResourceFormsTest extends ResourceTestCase
         //
         $this->assertNotNull($form->getProp('fields.0'));
 
-        $fields = collect($form->getProp('fields'))->keyBy('name');
+        $fields = collect($form->getProp('fields'))->keyBy('handle');
         $this->assertEquals(8, $fields->count());
 
         $name = $fields->get('name');
-        $this->assertNotNull($name['revision_id']);
-        $this->assertEquals('text', $name['type']);
-        $this->assertEquals('name', $name['name']);
+        $this->assertEquals('sv_text_field', $name['component']);
+        $this->assertEquals('name', $name['handle']);
         $this->assertEquals('Name', $name['label']);
         $this->assertSame($user->name, $name['value']);
 
         $avatar = $fields->get('avatar');
-        $this->assertEquals('file', $avatar['type']);
+        $this->assertEquals('sv_file_field', $avatar['component']);
         $this->assertNull($avatar['value'] ?? null);
         $this->assertEquals(Media::first()->getUrl(), $avatar['image_url'] ?? null);
         $this->assertFalse(isset($avatar['config']));
 
         $gender = $fields->get('gender');
-        $this->assertEquals('select', $gender['type']);
+        $this->assertEquals('sv_select_field', $gender['component']);
         $this->assertEquals([
             ['value' => 'm', 'text' => 'Male'],
             ['value' => 'f', 'text' => 'Female'],
@@ -97,7 +98,7 @@ class ResourceFormsTest extends ResourceTestCase
 //        $this->assertEquals('Gender Placeholder', $gender['placeholder']);
 
         $group = $fields->get('group');
-        $this->assertEquals('belongs_to', $group['type']);
+        $this->assertEquals('sv_belongs_to_field', $group['component']);
         $this->assertEquals(1, $group['value']);
 
 //        $this->assertEquals(sv_resource('testing.groups')->count(), count($group['meta']['options']));

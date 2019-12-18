@@ -42,7 +42,7 @@ class FieldsHookHandler implements \SuperV\Platform\Domains\Resource\Hook\Contra
         /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface $field */
         $field = $payload[0];
 
-        $method = camel_case('resolved_'.$field->getName());
+        $method = camel_case('resolved_'.$field->getHandle());
 
         if (method_exists($hookHandler, $method)) {
             $hookHandler->{$method}($field);

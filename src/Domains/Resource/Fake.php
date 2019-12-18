@@ -101,7 +101,6 @@ class Fake
             } else {
                 $relatedResource->fake([]);
             }
-//            $relatedResource->fake([]);
         }
 
         return $relatedResource->newQuery()->inRandomOrder()->value('id');
@@ -116,7 +115,7 @@ class Fake
 
     protected function fakeText(FieldInterface $field)
     {
-        $fieldName = $field->getName();
+        $fieldName = $field->getHandle();
 
         if (in_array($fieldName, [
                 'email',
@@ -198,7 +197,7 @@ class Fake
             return $this->faker->randomFloat($field->getConfigValue('places', 2), 0, $max);
         }
 
-        return $field->getName() === 'age' ? $this->faker->numberBetween(10, 99) : $this->faker->randomNumber();
+        return $field->getHandle() === 'age' ? $this->faker->numberBetween(10, 99) : $this->faker->randomNumber();
     }
 
     protected function fakeEmail()

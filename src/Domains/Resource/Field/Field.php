@@ -6,6 +6,11 @@ use Closure;
 use Event;
 use stdClass;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\Composer\DefaultFieldComposer;
+use SuperV\Platform\Domains\Resource\Field\Composer\FormComposer;
+use SuperV\Platform\Domains\Resource\Field\Composer\FormComposerInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\DecoratesFormComposer;
+use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
@@ -30,7 +35,7 @@ class Field implements FieldInterface
     protected $revisionId;
 
     /** @var string */
-    protected $name;
+    protected $handle;
 
     /** @var string */
     protected $identifier;
@@ -118,7 +123,7 @@ class Field implements FieldInterface
 
 //        return __($this->label);
 
-        $label = __($this->label ?? str_unslug($this->getName()));
+        $label = __($this->label ?? str_unslug($this->getHandle()));
 
 //
         return $label;
@@ -135,6 +140,23 @@ class Field implements FieldInterface
         $this->label = $label;
 
         return $this;
+    }
+
+    public function getFormComposer(?FormInterface $form = null): FormComposerInterface
+    {
+        $composer = FormComposer::resolve()->setField($this);
+        if ($form) {
+            $composer->setForm($form);
+        }
+
+        $fieldType = $this->getFieldType();
+        if ($fieldType instanceof DecoratesFormComposer) {
+            $decaratorClass = $fieldType->getFormComposerDecoratorClass();
+
+            return new $decaratorClass($composer, $form, $this);
+        } else {
+            return $composer;
+        }
     }
 
     public function beforeResolvingEntry(Closure $callback): FieldInterface
@@ -214,9 +236,9 @@ class Field implements FieldInterface
         return $this->fieldType;
     }
 
-    public function getName(): string
+    public function getHandle(): string
     {
-        return $this->name;
+        return $this->handle;
     }
 
     public function getIdentifier()
@@ -290,16 +312,6 @@ class Field implements FieldInterface
 //        $this->on('presenting', $callback);
     }
 
-    public function getComposer($for)
-    {
-        return $this->getCallback("{$for}.composing");
-    }
-
-    public function getMutator($for)
-    {
-        return $this->getCallback("{$for}.mutating");
-    }
-
     public function getAlterQueryCallback()
     {
         return $this->alterQueryCallback;
@@ -314,12 +326,16 @@ class Field implements FieldInterface
 
     public function getType(): string
     {
-        return $this->fieldType->getType() ?? $this->type;
+        if (! $this->fieldType->getHandle()) {
+            dd($this->fieldType);
+        }
+
+        return $this->fieldType->getHandle();
     }
 
     public function getComponent(): ?string
     {
-        return $this->fieldType->getComponent() ?? $this->getType();
+        return $this->fieldType->getComponent();
     }
 
     public function setType(string $type): FieldInterface
@@ -333,11 +349,6 @@ class Field implements FieldInterface
     {
         return $this->config['default_value'] ?? null;
 //        return $this->defaultValue;
-    }
-
-    public function setDefaultValue_xxxx($defaultValue): void
-    {
-        $this->defaultValue = $defaultValue;
     }
 
     public function setNotRequired()

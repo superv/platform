@@ -100,9 +100,9 @@ class FieldModel extends Entry
         return $this->rules;
     }
 
-    public function getName()
+    public function getHandle()
     {
-        return $this->name;
+        return $this->handle;
     }
 
     public function setRulesAttribute($rules)

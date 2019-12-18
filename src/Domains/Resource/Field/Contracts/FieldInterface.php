@@ -4,11 +4,14 @@ namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\Composer\DefaultFieldComposer;
+use SuperV\Platform\Domains\Resource\Field\Composer\FormComposerInterface;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Support\Identifier;
 
 interface FieldInterface
 {
-    public function getName();
+    public function getHandle();
 
     public function getLabel(): string;
 
@@ -90,9 +93,7 @@ interface FieldInterface
 
     public function resolveFromEntry($entry);
 
-    public function getComposer($for);
-
-    public function getMutator($for);
+    public function getFormComposer(?FormInterface $form = null): FormComposerInterface;
 
     public function setPresenter(Closure $callback): FieldInterface;
 
@@ -157,8 +158,6 @@ interface FieldInterface
      * @return \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
      */
     public function removeFlag(string $flag): FieldInterface;
-
-    public function revisionId(): ?string;
 
     public function isFilter();
 

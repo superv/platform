@@ -4,9 +4,9 @@ namespace SuperV\Platform\Domains\Resource\Field\Types\BelongsToMany;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
-use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Types\RelationFieldType;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -14,7 +14,9 @@ use SuperV\Platform\Support\Composer\Payload;
 
 class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNotInteractWithTable, HasModifier
 {
-    protected $type = 'belongs_to_many';
+    protected $handle = 'belongs_to_many';
+
+    protected $component = 'sv_belongs_to_many_field';
 
     protected $value;
 
@@ -34,7 +36,7 @@ class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNo
                     return null;
                 }
 
-                $entry->{$this->getName()}()->sync($this->value ?? []);
+                $entry->{$this->getFieldHandle()}()->sync($this->value ?? []);
             };
         };
     }
@@ -43,7 +45,7 @@ class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNo
     {
         $url = sv_route('sv::forms.fields', [
             'form'  => $this->field->getForm()->getIdentifier(),
-            'field' => $this->getName(),
+            'field' => $this->getFieldHandle(),
             'rpc'   => 'options',
         ]);
         if ($entry && $entry->exists) {
@@ -59,7 +61,7 @@ class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNo
     {
         $url = sv_route('sv::forms.fields', [
             'form'  => $this->field->getForm()->getIdentifier(),
-            'field' => $this->getName(),
+            'field' => $this->getFieldHandle(),
             'rpc'   => 'values',
         ]);
         if ($entry && $entry->exists) {
@@ -98,7 +100,7 @@ class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNo
             $this->relatedResource = $this->resolveRelatedResource();
 
             if ($entry) {
-                if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
+                if ($relatedEntry = $entry->{$this->getFieldHandle()}()->newQuery()->first()) {
                     $payload->set('meta.link', $relatedEntry->router()->view());
                 }
             }
@@ -131,7 +133,7 @@ class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNo
         $keyName = $query->getModel()->getKeyName();
         $tableName = $query->getModel()->getTable();
         if ($entry) {
-            $alreadyAttachedItems = $entry->{$this->getName()}()
+            $alreadyAttachedItems = $entry->{$this->getFieldHandle()}()
                                           ->pluck($tableName.'.'.$keyName);
             $query->whereNotIn($keyName, $alreadyAttachedItems);
         }
@@ -163,7 +165,7 @@ class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNo
             return [];
         }
 
-        return $entry->{$this->getName()}()
+        return $entry->{$this->getFieldHandle()}()
                      ->get()
                      ->map(function (EntryContract $item) use ($relatedResource, $entryLabel) {
                          if ($keyName = $relatedResource->config()->getKeyName()) {

@@ -41,7 +41,7 @@ class FieldRepository
         }
 
         if (! isset($attributes['label'])) {
-            $attributes['label'] = str_unslug($attributes['name']);
+            $attributes['label'] = str_unslug($attributes['handle']);
         }
 
         $field = $this->model->newQuery()->create($attributes);
@@ -49,9 +49,8 @@ class FieldRepository
         if (! starts_with($identifier, 'platform.')) {
             $identifier = sv_identifier($identifier);
             Action::query()->create([
-//                'namespace' => explode('.fields:', $identifier)[0].'.fields',
-'namespace' => $identifier->getParent(),
-'slug'      => $identifier,
+                'namespace' => $identifier->getParent(),
+                'slug'      => $identifier,
             ]);
         }
 
@@ -69,13 +68,13 @@ class FieldRepository
         return true;
     }
 
-    public function getResourceField(ResourceModel $resource, string $fieldName)
+    public function getResourceField(ResourceModel $resource, string $fieldHandle)
     {
-        if ($resource->hasField($fieldName)) {
-            return $resource->getField($fieldName);
+        if ($resource->hasField($fieldHandle)) {
+            return $resource->getField($fieldHandle);
         }
 
-        return $resource->makeField($fieldName);
+        return $resource->makeField($fieldHandle);
     }
 
     /** * @return static */

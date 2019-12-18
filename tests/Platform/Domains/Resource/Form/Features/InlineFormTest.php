@@ -2,7 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource\Form\Features;
 
-use SuperV\Platform\Domains\Resource\Field\Types\BelongsTo\BelongsToField;
+use SuperV\Platform\Domains\Resource\Field\Types\BelongsTo\BelongsToType;
 use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -21,7 +21,7 @@ class InlineFormTest extends ResourceTestCase
         $this->assertTrue($userField->isHidden());
 
         $subFormField = $form->fields()->get('user');
-        $this->assertInstanceOf(BelongsToField::class, $subFormField->getConfigValue('parent_type'));
+        $this->assertInstanceOf(BelongsToType::class, $subFormField->getConfigValue('parent_type'));
         $this->assertEquals('platform.users', $subFormField->getConfigValue('resource'));
         $this->assertEquals($userField->getColumnName(), $subFormField->getColumnName());
     }
@@ -30,6 +30,6 @@ class InlineFormTest extends ResourceTestCase
     {
         $form = $this->getFormComponent($this->blueprints()->clients());
 
-        $this->assertEquals('sub_form', $form->getField('user', 'type'));
+        $this->assertEquals('sv_sub_form_field', $form->getField('user', 'component'));
     }
 }

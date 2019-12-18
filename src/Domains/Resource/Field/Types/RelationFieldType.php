@@ -19,7 +19,7 @@ abstract class RelationFieldType extends FieldType
      * @return \SuperV\Platform\Domains\Resource\Resource
      * @throws \Exception
      */
-    protected function getRelatedResource()
+    public function getRelatedResource()
     {
         if (! $this->relatedResource) {
             $this->relatedResource = ResourceFactory::make($this->getRelationConfig()->getRelatedResource());

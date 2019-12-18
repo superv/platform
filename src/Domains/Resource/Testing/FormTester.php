@@ -87,7 +87,7 @@ class FormTester extends Assert
 
         foreach ($fields as $field) {
             $value = $field['value'] ?? null;
-            $fieldName = $field['name'];
+            $fieldName = $field['handle'];
             if ($fieldName === 'avatar') {
                 $this->assertEquals(['url' => $avatarFile->url(),], $field['config']);
             } elseif ($value !== $fake->{$fieldName}) {
@@ -112,7 +112,7 @@ class FormTester extends Assert
         $fake = Fake::make($this->resource);
 
         foreach ($props['fields'] as $field) {
-            $name = $field['name'];
+            $name = $field['handle'];
             $post[$name] = $fake[$name] ?? null;
         }
 

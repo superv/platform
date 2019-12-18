@@ -48,7 +48,7 @@ class ResourceIndexTest extends ResourceTestCase
             $this->assertEquals([
                 'identifier',
                 'revision_id',
-                'name',
+                'handle',
                 'label',
                 'classes',
                 'sortable',
@@ -83,17 +83,17 @@ class ResourceIndexTest extends ResourceTestCase
 
         $label = $rowA['fields'][0];
         $this->assertEquals('text', $label['type']);
-        $this->assertEquals('name', $label['name']);
+        $this->assertEquals('name', $label['handle']);
         $this->assertEquals($users->getEntryLabel($userA), $label['value']);
 
         $age = $rowA['fields'][1];
         $this->assertEquals('number', $age['type']);
-        $this->assertEquals('age', $age['name']);
+        $this->assertEquals('age', $age['handle']);
         $this->assertSame((int)$userA->age, $age['value']);
 
         $group = $rowA['fields'][2];
         $this->assertEquals('belongs_to', $group['type']);
-        $this->assertEquals('group_id', $group['name']);
+        $this->assertEquals('group_id', $group['handle']);
         $this->assertNull(array_get($group, 'meta.options'));
 
         $groups = sv_resource('testing.groups');
@@ -125,7 +125,7 @@ class ResourceIndexTest extends ResourceTestCase
 
         $row = $this->getJsonUser($posts->route('dashboard', null, ['section' => 'table']).'/data')->decodeResponseJson('data.rows.0');
 
-        $fields = collect($row['fields'])->keyBy('name');
+        $fields = collect($row['fields'])->keyBy('handle');
         $this->assertEquals($userA->email, $fields->get('user_id')['value']);
     }
 
@@ -138,7 +138,7 @@ class ResourceIndexTest extends ResourceTestCase
         $table = $this->getTableConfigOfResource($this->blueprints()->users());
 
         $filter = $table->getProp('config.filters.0');
-        $this->assertEquals('search', $filter['name']);
+        $this->assertEquals('search', $filter['handle']);
         $this->assertEquals('text', $filter['type']);
     }
 
@@ -199,7 +199,7 @@ class ResourceIndexTest extends ResourceTestCase
         $table = $this->getTableConfigOfResource($users);
 
         $filter = $table->getProp('config.filters.0');
-        $this->assertEquals('group', $filter['name']);
+        $this->assertEquals('group', $filter['handle']);
         $this->assertEquals('select', $filter['type']);
         $this->assertEquals(
             sv_resource('testing.groups')->testHelper()->asOptions(),
@@ -234,7 +234,7 @@ class ResourceIndexTest extends ResourceTestCase
         $table = $this->getTableConfigOfResource($users);
 
         $filter = $table->getProp('config.filters.0');
-        $this->assertEquals('gender', $filter['name']);
+        $this->assertEquals('gender', $filter['handle']);
         $this->assertEquals('select', $filter['type']);
         $this->assertEquals([
             ['value' => 'm', 'text' => 'Male'],
@@ -259,7 +259,7 @@ class ResourceIndexTest extends ResourceTestCase
         $table = $this->getTableConfigOfResource($users);
 
         $filter = $table->getProp('config.filters.0');
-        $this->assertEquals('name', $filter['name']);
+        $this->assertEquals('name', $filter['handle']);
         $this->assertEquals('select', $filter['type']);
         $this->assertEquals(
             [

@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Resource\Form;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\FormRepository;
@@ -36,9 +35,10 @@ class FormControllerTest extends ResourceTestCase
         $this->assertEquals($this->posts->getFields()->count(), $form->countProp('fields'));
 
         foreach ($form->getProp('fields') as $fieldArray) {
-            $field = $this->posts->getField($fieldArray['name']);
+            $field = $this->posts->getField($fieldArray['handle']);
             $this->assertEquals(
-                (new FieldComposer($field))->forForm()->get(),
+//                (new FieldComposer($field))->forForm()->get(),
+                $field->getFormComposer()->compose()->get(),
                 $fieldArray
             );
         }
@@ -75,16 +75,17 @@ class FormControllerTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $form = $this->makePublicForm();
+        $formEntry = $this->makePublicForm();
 
-        $response = $this->getJson($form->getUrl().'/fields/name');
+        $response = $this->getJson($formEntry->getUrl().'/fields/name');
         $response->assertOk();
 
         $fieldArray = $response->decodeResponseJson('data');
 
         $field = FieldFactory::createFromArray($fieldArray);
         $this->assertEquals(
-            (new FieldComposer($field))->forForm()->get(),
+//            (new FieldComposer($field))->forForm()->get(),
+            $field->getFormComposer()->compose()->get(),
             $fieldArray
         );
     }
@@ -96,11 +97,11 @@ class FormControllerTest extends ResourceTestCase
             'public' => false,
         ], $overrides));
 
-        $formEntry->createField(['identifier' => 'sv.forms.fields:name', 'type' => 'text', 'name' => 'name']);
-        $formEntry->createField(['identifier' => 'sv.forms.fields:email', 'type' => 'text', 'name' => 'email']);
+        $formEntry->createField(['identifier' => 'sv.forms.fields:name', 'type' => 'text', 'handle' => 'name']);
+        $formEntry->createField(['identifier' => 'sv.forms.fields:email', 'type' => 'text', 'handle' => 'email']);
         $formEntry->createField(['identifier' => 'sv.forms.fields:user',
                                  'type'       => 'belongs_to',
-                                 'name'       => 'user',
+                                 'handle'     => 'user',
                                  'config'     => [
                                      'related_resource' => 'platform.users',
                                  ]]);

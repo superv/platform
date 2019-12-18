@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Builder;
 
 use SuperV\Platform\Domains\Resource\Field\Types\Number\NumberField;
-use SuperV\Platform\Domains\Resource\Field\Types\Text\TextField;
+use SuperV\Platform\Domains\Resource\Field\Types\Text\TextType;
 use SuperV\Platform\Domains\Resource\Field\Types\Textarea\TextareaField;
 
 class Fields
@@ -13,7 +13,7 @@ class Fields
     public function text($name)
     {
         $this->fields[$name] = [
-            'type' => TextField::class,
+            'type' => TextType::class,
         ];
     }
 

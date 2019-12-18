@@ -22,7 +22,7 @@ class FormFieldsTest extends ResourceTestCase
 
         $fieldMock = $this->bindPartialMock(
             FieldInterface::class,
-            FormField::make(['type' => 'text', 'name' => 'phone'])
+            FormField::make(['type' => 'text', 'handle' => 'phone'])
         );
         $form->fields()->addField($fieldMock);
 

@@ -6,11 +6,8 @@ use SuperV\Platform\Domains\Resource\Builder\Blueprint;
 use SuperV\Platform\Domains\Resource\Builder\Builder;
 use SuperV\Platform\Domains\Resource\Builder\PrimaryKey;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
-use SuperV\Platform\Domains\Resource\Field\Types\Boolean\BooleanField;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Blueprint as RelatesToOne;
-use SuperV\Platform\Domains\Resource\Field\Types\Select\SelectField;
-use SuperV\Platform\Domains\Resource\Field\Types\Select\SelectFieldBlueprint;
-use SuperV\Platform\Domains\Resource\Field\Types\Textarea\TextareaField;
+use SuperV\Platform\Domains\Resource\Field\Types\Select\Blueprint as SelectTypeBlueprint;
 use SuperV\Platform\Domains\Resource\Relation\Types\BelongsTo\Config;
 use SuperV\Platform\Domains\Resource\Relation\Types\HasMany\HasManyBlueprint;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -234,7 +231,7 @@ class ResourceBlueprintTest extends ResourceTestCase
         });
 
         $descriptionBlueprint = $blueprint->getField('description');
-        $this->assertEquals(TextareaField::class, $descriptionBlueprint->getField()->getType());
+        $this->assertEquals('textarea', $descriptionBlueprint->getField()->getType());
     }
 
     function test__boolean_field()
@@ -244,7 +241,7 @@ class ResourceBlueprintTest extends ResourceTestCase
         });
 
         $activeBlueprint = $blueprint->getField('active');
-        $this->assertEquals(BooleanField::class, $activeBlueprint->getField()->getType());
+        $this->assertEquals('boolean', $activeBlueprint->getField()->getType());
     }
 
     function test__select_field()
@@ -254,8 +251,8 @@ class ResourceBlueprintTest extends ResourceTestCase
         });
 
         $genderBlueprint = $blueprint->getField('gender');
-        $this->assertInstanceOf(SelectFieldBlueprint::class, $genderBlueprint);
-        $this->assertEquals(SelectField::class, $genderBlueprint->getField()->getType());
+        $this->assertInstanceOf(SelectTypeBlueprint::class, $genderBlueprint);
+        $this->assertEquals('select', $genderBlueprint->getField()->getType());
         $this->assertEquals(['m', 'f'], $genderBlueprint->getConfigValue('options'));
     }
 }

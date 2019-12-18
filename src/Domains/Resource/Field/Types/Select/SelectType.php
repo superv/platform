@@ -5,25 +5,35 @@ namespace SuperV\Platform\Domains\Resource\Field\Types\Select;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\DecoratesFormComposer;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
-use SuperV\Platform\Support\Composer\Payload;
 
-class SelectField extends FieldType implements RequiresDbColumn, ProvidesFilter
+class SelectType extends FieldType implements RequiresDbColumn, ProvidesFilter, DecoratesFormComposer
 {
-    protected $component = 'select';
+    protected $handle = 'select';
+
+    protected $component = 'sv_select_field';
 
     protected function boot()
     {
-        $this->field->on('form.composing', $this->composer());
         $this->field->on('view.presenting', $this->presenter());
         $this->field->on('table.presenting', $this->presenter());
     }
 
+    public function driverCreating(
+        DriverInterface $driver,
+        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
+    ) {
+        if ($driver instanceof DatabaseDriver) {
+            $driver->getTable()->addColumn($this->getColumnName(), 'string');
+        }
+    }
+
     public function makeFilter(?array $params = [])
     {
-        return SelectFilter::make($this->getName(), $this->field->getLabel())
+        return SelectFilter::make($this->getFieldHandle(), $this->field->getLabel())
                            ->setOptions($this->getOptions())
                            ->setDefaultValue($params['default_value'] ?? null);
     }
@@ -31,6 +41,11 @@ class SelectField extends FieldType implements RequiresDbColumn, ProvidesFilter
     public function getOptions()
     {
         return $this->getConfigValue('options', []);
+    }
+
+    public function getFormComposerDecoratorClass()
+    {
+        return FormComposer::class;
     }
 
     public static function parseOptions(array $options = [])
@@ -55,25 +70,5 @@ class SelectField extends FieldType implements RequiresDbColumn, ProvidesFilter
 
             return array_get($options, $value, $value);
         };
-    }
-
-    protected function composer()
-    {
-        return function (Payload $payload) {
-            $options = static::parseOptions(($this->getOptions()));
-
-            $payload->set('meta.options', $options);
-//            $payload->set('placeholder', sv_trans('sv::resource.select', ['resource' => $this->field->getPlaceholder()]));
-            $payload->set('placeholder', __('Select :Object', ['object' => $this->field->getPlaceholder()]));
-        };
-    }
-
-    public function driverCreating(
-        DriverInterface $driver,
-        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
-    ) {
-        if ($driver instanceof DatabaseDriver) {
-            $driver->getTable()->addColumn($this->getColumnName(), 'string');
-        }
     }
 }

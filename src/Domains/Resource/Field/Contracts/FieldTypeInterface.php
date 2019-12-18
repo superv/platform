@@ -12,7 +12,7 @@ interface FieldTypeInterface
 {
     public function getConfigValue($key, $default = null);
 
-    public function getType(): ?string;
+    public function getHandle(): ?string;
 
     public function saving(FormInterface $form);
 
@@ -24,7 +24,7 @@ interface FieldTypeInterface
 
     public function setField(FieldInterface $field): void;
 
-    public function getName();
+    public function getFieldHandle();
 
     public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null);
 

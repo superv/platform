@@ -143,7 +143,7 @@ abstract class Filter implements FilterContract, ProvidesField
             'revision_id' => uuid(),
             'type'        => $this->getType(),
             'identifier'  => $this->getIdentifier(),
-            'name'        => $this->getIdentifier(),
+            'handle'      => $this->getIdentifier(),
             'placeholder' => __($this->getPlaceholder()),
             'value'       => $this->getDefaultValue(),
 
@@ -185,7 +185,7 @@ abstract class Filter implements FilterContract, ProvidesField
 
     protected function applyRelationQuery($query, $slug, $value, $operator = '=', $method = 'whereHas')
     {
-        list($relation, $column) = explode('.', $slug);
+        [$relation, $column] = explode('.', $slug);
         $query->{$method}($relation, function ($query) use ($column, $value, $operator) {
             $query->where($column, $operator, $value);
         });

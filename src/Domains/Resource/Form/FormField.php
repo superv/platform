@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Form;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\InlinesForm;
 use SuperV\Platform\Domains\Resource\Field\Field;
+use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
@@ -22,11 +23,11 @@ class FormField extends Field implements FormFieldInterface
 
     public function observe(FormFieldInterface $parent, ?EntryContract $entry = null)
     {
-        $parent->setConfigValue('meta.on_change_event', $parent->getName().':'.$parent->getColumnName().'={value}');
+        $parent->setConfigValue('meta.on_change_event', $parent->getHandle().':'.$parent->getColumnName().'={value}');
 
         $this->mergeConfig([
             'meta' => [
-                'listen_event' => $parent->getName(),
+                'listen_event' => $parent->getHandle(),
                 'autofetch'    => false,
             ],
         ]);
@@ -73,11 +74,6 @@ class FormField extends Field implements FormFieldInterface
         return $this->temporal;
     }
 
-    public static function make(array $params): FormFieldInterface
-    {
-        return FieldFactory::createFromArray($params, self::class);
-    }
-
     /**
      * Inline get underlying relation form
      *
@@ -90,5 +86,28 @@ class FormField extends Field implements FormFieldInterface
         }
 
         $this->fieldType->inlineForm($this->form, $config);
+    }
+
+    public function compose()
+    {
+        $composer = $this->getFormComposer($this->form);
+
+        return $composer->compose();
+
+        return array_filter((new FieldComposer($this))->forForm($this->form)->get());
+    }
+
+    public function getRow()
+    {
+        if ($location = $this->getLocation()) {
+            return $location->row;
+        }
+
+        return 10;
+    }
+
+    public static function make(array $params): FormFieldInterface
+    {
+        return FieldFactory::createFromArray($params, self::class);
     }
 }

@@ -29,7 +29,7 @@ class FieldBlueprint
     /**
      * @var string
      */
-    protected $fieldName = '';
+    protected $fieldHandle = '';
 
     /**
      * @var mixed
@@ -51,25 +51,25 @@ class FieldBlueprint
      */
     protected $flags = [];
 
-    public function __construct(Blueprint $blueprint, string $fieldName, string $fieldTypeClass)
+    public function __construct(Blueprint $blueprint, string $fieldHandle, string $fieldTypeClass)
     {
-        $this->field = FieldFactory::createFromArray(['type' => $fieldTypeClass, 'name' => $fieldName]);
+        $this->field = FieldFactory::createFromArray(['type' => $fieldTypeClass, 'handle' => $fieldHandle]);
         $this->blueprint = $blueprint;
-        $this->fieldName = $fieldName;
+        $this->fieldHandle = $fieldHandle;
     }
 
-    public function getName()
+    public function getHandle()
     {
-        return $this->field->getName();
+        return $this->field->getHandle();
     }
 
     public function run(ResourceModel $resource)
     {
         $fieldRepository = FieldRepository::resolve();
         $field = $fieldRepository
-            ->getResourceField($resource, $this->fieldName)
+            ->getResourceField($resource, $this->fieldHandle)
             ->fill([
-                'label'       => str_unslug($this->getLabel() ?? $this->fieldName),
+                'label'       => str_unslug($this->getLabel() ?? $this->fieldHandle),
                 'type'        => $this->field->getType(),
                 'column_type' => '',
                 'flags'       => $this->flags,

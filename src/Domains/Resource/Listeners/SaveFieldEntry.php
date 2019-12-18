@@ -203,7 +203,6 @@ class SaveFieldEntry
         }
 
         if (! $resourceEntry) {
-//            dd(DB::table('sv_resources')->where('name','t_posts')->get());
             throw new \Exception(sprintf("Error saving field entry [%s]: Resource model entry not found for table [%s]", $this->field, $this->resourceConfig->getIdentifier()));
         }
 

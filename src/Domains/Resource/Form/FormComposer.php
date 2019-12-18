@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Support\Composer\Payload;
 
@@ -67,20 +66,13 @@ class FormComposer
 
     protected function composeFields()
     {
-        return $this->form->fields()->visible()
+        return $this->form->fields()
+                          ->visible()
                           ->sortBy(function (FormField $field) {
-                              if ($location = $field->getLocation()) {
-                                  return $location->row;
-                              }
-
-                              return 10;
+                              return $field->getRow();
                           })
                           ->map(function (FormField $field) {
-                              $composed = array_filter(
-                                  (new FieldComposer($field))->forForm($this->form)->get()
-                              );
-
-                              return $composed;
+                              return $field->compose();
                           })
                           ->values()
                           ->all();

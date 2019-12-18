@@ -10,11 +10,11 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Filter\DistinctFilter;
 
-class TextField extends FieldType implements RequiresDbColumn, ProvidesFilter, SortsQuery
+class TextType extends FieldType implements RequiresDbColumn, ProvidesFilter, SortsQuery
 {
-    protected $component = 'text';
+    protected $component = 'sv_text_field';
 
-    protected $type = 'text';
+    protected $handle = 'text';
 
     public function makeRules()
     {
@@ -25,7 +25,7 @@ class TextField extends FieldType implements RequiresDbColumn, ProvidesFilter, S
 
     public function makeFilter(?array $params = [])
     {
-        return DistinctFilter::make($this->getName());
+        return DistinctFilter::make($this->getFieldHandle());
     }
 
     public function sortQuery($query, $direction)

@@ -9,25 +9,29 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
+use SuperV\Platform\Domains\Resource\Field\Contracts\DecoratesFormComposer;
+use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
-use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\FieldRules;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Support\Composer\Payload;
 
-class FileField extends FieldType implements
+class FileType extends FieldType implements
     DoesNotInteractWithTable,
     HasModifier,
-    SortsQuery
+    SortsQuery,
+    DecoratesFormComposer
 {
-    protected $component = 'file';
+    protected $handle = 'file';
+
+    protected $component = 'sv_file_field';
 
     protected $requestFile;
 
     protected function boot()
     {
-        $this->field->on('form.composing', $this->composer());
+//        $this->field->on('form.composing', $this->composer());
 
         $this->field->on('view.composing', $this->composer());
         $this->field->on('table.composing', $this->composer());
@@ -55,7 +59,7 @@ class FileField extends FieldType implements
                     return null;
                 }
 
-                $bag = new MediaBag($entry, $this->getName());
+                $bag = new MediaBag($entry, $this->getFieldHandle());
 
                 $media = $bag->addFromUploadedFile($this->requestFile, $this->getConfigAsMediaOptions());
 
@@ -96,7 +100,7 @@ class FileField extends FieldType implements
             if (! $entry) {
                 return;
             }
-            if ($media = $this->getMedia($entry, $this->getName())) {
+            if ($media = $this->getMedia($entry, $this->getFieldHandle())) {
                 $payload->set('image_url', $media->getUrl());
                 $payload->set('config', null);
             }
@@ -109,5 +113,10 @@ class FileField extends FieldType implements
                            ->disk($this->getConfigValue('disk', 'local'))
                            ->path($this->getConfigValue('path'))
                            ->visibility($this->getConfigValue('visibility', 'private'));
+    }
+
+    public function getFormComposerDecoratorClass()
+    {
+        return FormComposer::class;
     }
 }

@@ -121,7 +121,7 @@ class FormModel extends Entry
 
     public function getFormField($name)
     {
-        return $this->fields()->where('name', $name)->first();
+        return $this->fields()->where('handle', $name)->first();
     }
 
     public function compileFields(): Collection

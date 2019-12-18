@@ -29,7 +29,7 @@ class BuilderTest extends ResourceTestCase
 
         $userField = $posts->getField('user');
         $this->assertNotNull($userField);
-//        dd($userField->getType());
+        $this->assertEquals('relates_to_one', $userField->getType());
     }
 
     function test__belongs_to_many_pivot()

@@ -140,7 +140,7 @@ class FormFields extends Collection
     {
         $this->items = $this->merge($fields)
                             ->keyBy(function (FieldInterface $field) {
-                                return $field->getName();
+                                return $field->getHandle();
                             })->all();
     }
 
@@ -150,7 +150,7 @@ class FormFields extends Collection
         //
         $field->setTemporal(true);
 
-        return $this->put($field->getName(), $field);
+        return $this->put($field->getHandle(), $field);
     }
 
     public function addFieldFromArray(array $params): FormFieldInterface
@@ -204,7 +204,7 @@ class FormFields extends Collection
     public function field(string $name): ?FormFieldInterface
     {
         return $this->first(function (FormFieldInterface $field) use ($name) {
-            return $field->getName() === $name;
+            return $field->getHandle() === $name;
         });
     }
 

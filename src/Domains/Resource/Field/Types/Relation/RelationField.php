@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersDatabaseTable;
+use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
-use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormData;
@@ -31,7 +31,7 @@ class RelationField extends FieldType implements AltersDatabaseTable, DoesNotInt
 
     public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)
     {
-        if (! $request->has($this->getName()) && ! $request->has($this->getColumnName())) {
+        if (! $request->has($this->getFieldHandle()) && ! $request->has($this->getColumnName())) {
             return null;
         }
 
@@ -65,7 +65,7 @@ class RelationField extends FieldType implements AltersDatabaseTable, DoesNotInt
     {
         return function (Payload $payload, FormInterface $form, ?EntryContract $entry = null) {
             if ($entry) {
-                if ($relatedEntry = $entry->{$this->getName()}()->newQuery()->first()) {
+                if ($relatedEntry = $entry->{$this->getFieldHandle()}()->newQuery()->first()) {
                     $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
                 }
             }
@@ -77,7 +77,7 @@ class RelationField extends FieldType implements AltersDatabaseTable, DoesNotInt
                 $route = $form->isPublic() ? 'sv::public_forms.fields' : 'sv::forms.fields';
                 $url = sv_route($route, [
                     'form'  => $this->field->getForm()->getIdentifier(),
-                    'field' => $this->getName(),
+                    'field' => $this->getFieldHandle(),
                     'rpc'   => 'options',
                 ]);
                 $payload->set('meta.options', $url);
@@ -98,7 +98,7 @@ class RelationField extends FieldType implements AltersDatabaseTable, DoesNotInt
         return $this->relatedResource;
     }
 
-    public function getType(): ?string
+    public function getHandle(): ?string
     {
         return 'belongs_to';
     }
@@ -134,7 +134,7 @@ class RelationField extends FieldType implements AltersDatabaseTable, DoesNotInt
                     $parent,
                     $config->getLocalKey(),
                     'id',
-                    $this->getName()
+                    $this->getFieldHandle()
                 );
             }
 

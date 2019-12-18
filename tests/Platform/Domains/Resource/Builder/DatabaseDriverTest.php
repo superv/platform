@@ -8,6 +8,19 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class DatabaseDriverTest extends ResourceTestCase
 {
+    function test__relates_to_one()
+    {
+        Builder::create('sv.posts', function (Blueprint $resource) {
+            $resource->relatesToOne('sv.users', 'user')
+                     ->withLocalKey('user_id');
+
+            $resource->relatesToOne('sv.posts_body', 'body')
+                     ->withRemoteKey('post_id');
+        });
+
+        $this->assertColumnExists('posts', 'user_id');
+    }
+
     function test__primary_keys()
     {
         $blueprint = Builder::blueprint('core.posts', function (Blueprint $resource) {

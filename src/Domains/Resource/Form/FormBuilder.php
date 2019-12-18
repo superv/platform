@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
+use Exception;
 use Illuminate\Http\Request;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
@@ -50,6 +51,9 @@ class FormBuilder implements FormBuilderInterface
 
     public function getForm(): FormInterface
     {
+        if (! $this->identifier && ! $this->getFormEntry()) {
+            throw new Exception('Either identifier or form entry required to build a form');
+        }
         $this->form = app(FormInterface::class);
         $this->form->setIdentifier($this->getIdentifier());
         $this->form->setUrl(sv_url()->path());
@@ -139,30 +143,30 @@ class FormBuilder implements FormBuilderInterface
             return;
         }
         $formFields = $this->formEntry->getFormFields()
-                                      ->map(function (FieldModel $field) {
-                                          $field = FieldFactory::createFromEntry($field, FormField::class);
+            ->map(function (FieldModel $field) {
+                $field = FieldFactory::createFromEntry($field, FormField::class);
 
 //                                          if ($this->resource) {
 //                                              $field->setResource($this->resource);
 //                                          }
 
-                                          return $field;
-                                      })
-                                      ->filter(function (FieldInterface $field) {
-                                          return ! $field instanceof GhostField;
-                                      })
-                                      ->map(function (FormField $field) {
-                                          $field->setForm($this->form);
+                return $field;
+            })
+            ->filter(function (FieldInterface $field) {
+                return ! $field instanceof GhostField;
+            })
+            ->map(function (FormField $field) {
+                $field->setForm($this->form);
 
-                                          /**
-                                           *  ????????????
-                                           */
-                                          if ($this->getEntry()) {
-                                              $field->fillFromEntry($this->getEntry());
-                                          }
+                /**
+                 *  ????????????
+                 */
+                if ($this->getEntry()) {
+                    $field->fillFromEntry($this->getEntry());
+                }
 
-                                          return $field;
-                                      });
+                return $field;
+            });
 
         $this->form->fields()->mergeFields($formFields);
     }

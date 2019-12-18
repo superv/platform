@@ -278,4 +278,9 @@ class Form implements FormInterface, ProvidesUIComponent
     {
         $this->public = $public;
     }
+
+    public function getContextKey(): string
+    {
+        return 'form';
+    }
 }

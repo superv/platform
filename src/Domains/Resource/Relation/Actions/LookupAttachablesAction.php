@@ -29,7 +29,7 @@ class LookupAttachablesAction extends Action
     {
         $payload->set('lookup-url', sv_url($this->getLookupUrl()));
         $payload->set('attach-url', sv_url($this->getAttachUrl()));
-        $payload->set('pivot-fields', $this->getPivotForm());
+        $payload->set('pivot-fields', $this->getPivotFormFields());
     }
 
     public function getLookupUrl()
@@ -49,7 +49,7 @@ class LookupAttachablesAction extends Action
         return $this;
     }
 
-    protected function getPivotForm()
+    protected function getPivotFormFields()
     {
         if ($pivotColumns = $this->relation->getRelationConfig()->getPivotColumns()) {
             return $this->relation->getPivotFields()->map(function (FieldInterface $field) {

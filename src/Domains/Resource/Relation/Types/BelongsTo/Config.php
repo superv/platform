@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Relation\Types\BelongsTo;
 
 use SuperV\Platform\Domains\Resource\Builder\RelationBlueprint;
-use SuperV\Platform\Domains\Resource\Field\Types\BelongsTo\BelongsToField;
+use SuperV\Platform\Domains\Resource\Field\Types\BelongsTo\BelongsToType;
 
 class Config extends RelationBlueprint
 {
@@ -24,7 +24,7 @@ class Config extends RelationBlueprint
 
     protected function boot()
     {
-        $this->field = $this->parent->addField($this->getRelationName(), BelongsToField::class);
+        $this->field = $this->parent->addField($this->getRelationName(), BelongsToType::class);
     }
 
     public function relatedResource($relatedResource)

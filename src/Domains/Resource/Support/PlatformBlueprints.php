@@ -163,7 +163,8 @@ class PlatformBlueprints
         }
 
         $table->string('label')->showOnIndex();
-        $table->string('name')->showOnIndex();
+//        $table->string('name')->showOnIndex();
+        $table->string('handle')->showOnIndex();
         $table->string('column_type')->nullable();
         $table->string('type')->showOnIndex();
 

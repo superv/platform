@@ -26,8 +26,8 @@ class FieldRepositoryTest extends ResourceTestCase
     {
         $this->expectException(ValidationException::class);
         $this->repo->create([
-            'name' => 'title',
-            'type' => 'text',
+            'handle' => 'title',
+            'type'   => 'text',
         ]);
     }
 
@@ -36,7 +36,7 @@ class FieldRepositoryTest extends ResourceTestCase
         $this->expectException(ValidationException::class);
         $this->repo->create($attributes = [
             'identifier' => 'testing.core.title',
-            'name'       => 'title',
+            'handle'     => 'title',
             'type'       => 'text',
         ]);
     }

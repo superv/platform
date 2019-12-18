@@ -101,9 +101,9 @@ class ResourceModel extends Entry implements ProvidesFields
         return array_get($this->getConfig(), $key, $default);
     }
 
-    public function getField($name): ?FieldModel
+    public function getField($handle): ?FieldModel
     {
-        return $this->fields()->where('name', $name)->first();
+        return $this->fields()->where('handle', $handle)->first();
     }
 
     public function fields()
@@ -116,22 +116,22 @@ class ResourceModel extends Entry implements ProvidesFields
         return $this->hasMany(FormModel::class, 'resource_id');
     }
 
-    public function makeField(string $name): FieldModel
+    public function makeField(string $handle): FieldModel
     {
-        if ($this->hasField($name)) {
-            throw new \Exception("Field with name [{$name}] already exists");
+        if ($this->hasField($handle)) {
+            throw new \Exception("Field with handle [{$handle}] already exists");
         }
 
         return $this->fields()->make([
             'revision_id' => uuid(),
-            'identifier'  => $this->getIdentifier().'.fields:'.$name,
-            'name'        => $name,
+            'identifier'  => $this->getIdentifier().'.fields:'.$handle,
+            'handle'      => $handle,
         ]);
     }
 
     public function hasField($name)
     {
-        return $this->fields()->where('name', $name)->exists();
+        return $this->fields()->where('handle', $name)->exists();
     }
 
     public function resourceRelations()

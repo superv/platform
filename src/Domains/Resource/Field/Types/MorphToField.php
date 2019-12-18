@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\DoesNotInteractWithTable;
+use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Support\Composer\Payload;
@@ -67,14 +67,14 @@ class MorphToField extends FieldType implements DoesNotInteractWithTable
                 return null;
             }
         }
-        $relatedEntryId = $parentEntry->{$this->getName().'_id'};
+        $relatedEntryId = $parentEntry->{$this->getFieldHandle().'_id'};
 
         return $resource->find($relatedEntryId);
     }
 
     protected function getOtherResource(EntryContract $entry)
     {
-        $type = $entry->{$this->getName().'_type'};
+        $type = $entry->{$this->getFieldHandle().'_type'};
 
         if (class_exists($type)) {
             $type = (new $type)->getTable();

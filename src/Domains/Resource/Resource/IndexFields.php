@@ -33,7 +33,7 @@ class IndexFields
     {
         $field = $this->fields->first(
             function (FieldInterface $field) use ($name) {
-                return $field->getName() === $name;
+                return $field->getHandle() === $name;
             });
 
         if (! $field) {
@@ -106,7 +106,7 @@ class IndexFields
 
         $fields = $this->fields
             ->filter(function (FieldInterface $field) {
-                return $field->hasFlag('table.show') || $field->getName() === $this->resource->config()->getEntryLabelField();
+                return $field->hasFlag('table.show') || $field->getHandle() === $this->resource->config()->getEntryLabelField();
             })
             ->values()
             ->sortBy(function (FieldInterface $field, $key) {
@@ -130,7 +130,7 @@ class IndexFields
         $fieldParams = [
             'identifier' => $this->resource->getIdentifier().'.fields:entry_label',
             'type'       => 'text',
-            'name'       => 'label',
+            'handle'     => 'label',
             'label'      => $this->resource->getSingularLabel(),
         ];
 

@@ -388,8 +388,9 @@ class Resource implements
     {
         $filters = wrap_collect($this->filters);
         if (! $searchables = $this->searchable) {
+            /** @var FieldInterface $field */
             foreach ($this->fields()->withFlag('searchable') as $field) {
-                $searchables[] = $field->getName();
+                $searchables[] = $field->getHandle();
             }
         }
         if ($searchables) {

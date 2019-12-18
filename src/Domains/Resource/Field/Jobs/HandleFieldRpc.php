@@ -3,7 +3,6 @@
 namespace SuperV\Platform\Domains\Resource\Field\Jobs;
 
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
@@ -33,7 +32,7 @@ class HandleFieldRpc
 
         if (! $rpcMethod) {
             return [
-                'data' => (new FieldComposer($field))->forForm()->get(),
+                'data' => $field->getFormComposer($this->form)->compose()->get(),
             ];
         }
 

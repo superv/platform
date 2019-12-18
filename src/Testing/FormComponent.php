@@ -27,7 +27,7 @@ class FormComponent extends HelperComponent
         if (! $this->fields) {
             $this->fields = collect($this->getProp('fields'))
                 ->keyBy(function ($field) {
-                    return $field['name'];
+                    return $field['handle'];
                 });
         }
 
@@ -53,7 +53,7 @@ class FormComponent extends HelperComponent
     public function getFieldValues()
     {
         return collect($this->getFields())->map(function ($field) {
-            return [$field['name'], $field['value'] ?? null];
+            return [$field['handle'], $field['value'] ?? null];
         })->toAssoc()->all();
     }
 

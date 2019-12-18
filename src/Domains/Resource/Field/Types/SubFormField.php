@@ -17,6 +17,10 @@ use SuperV\Platform\Support\Composer\Payload;
 
 class SubFormField extends FieldType
 {
+    protected $handle = 'sub_form';
+
+    protected $component = 'sv_sub_form_field';
+
     protected $formData;
 
     protected $entryId;
@@ -81,7 +85,7 @@ class SubFormField extends FieldType
     {
         $all = $request->all();
 
-        $this->formData = array_get($all, $this->getName());
+        $this->formData = array_get($all, $this->getFieldHandle());
 
         return null;
     }

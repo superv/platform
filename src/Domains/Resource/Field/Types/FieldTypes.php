@@ -2,12 +2,12 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types;
 
-use SuperV\Platform\Domains\Resource\Field\Types\Text\TextField;
+use SuperV\Platform\Domains\Resource\Field\Types\Text\TextType;
 use SuperV\Platform\Support\ValueObject;
 
 class FieldTypes extends ValueObject
 {
-    private const TEXT = TextField::class;
+    private const TEXT = TextType::class;
 
     public function isText(): bool
     {

@@ -35,7 +35,7 @@ class ResourceViewTest extends ResourceTestCase
         $this->assertNotNull($name['revision_id']);
         $this->assertFalse(isset($name['config']));
         $this->assertEquals('text', $name['type']);
-        $this->assertEquals('name', $name['name']);
+        $this->assertEquals('name', $name['handle']);
         $this->assertEquals('Name', $name['label']);
         $this->assertSame('Ali Selcuk', $name['value']);
 
@@ -47,7 +47,7 @@ class ResourceViewTest extends ResourceTestCase
 
         $age = $fields['age'];
         $this->assertEquals('number', $age['type']);
-        $this->assertEquals('age', $age['name']);
+        $this->assertEquals('age', $age['handle']);
         $this->assertEquals('Age', $age['label']);
         $this->assertSame(40, $age['value']);
 
@@ -70,7 +70,7 @@ class ResourceViewTest extends ResourceTestCase
 //        $this->assertEquals(7, $view->countProp('fields'));
 //
 //        $this->assertEquals([
-//            'name',
+//            'handle',
 //            'email',
 //            'bio',
 //            'age',
