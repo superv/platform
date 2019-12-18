@@ -38,6 +38,16 @@ class BelongsToType extends RelationFieldType implements
     /** @var array */
     protected $options;
 
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Jobs\MakeLookupOptions
+     */
+    protected $lookupOptions;
+
+    public function __construct(MakeLookupOptions $lookupOptions)
+    {
+        $this->lookupOptions = $lookupOptions;
+    }
+
     protected function boot()
     {
 //        $this->field->on('form.composing', $this->formComposer());
@@ -196,11 +206,13 @@ class BelongsToType extends RelationFieldType implements
 
     public function rpcOptions(array $params, array $request = [])
     {
-//        $this->relatedResource = $this->getRelatedResource();
-
-        return (new MakeLookupOptions($this->getRelatedResource(), $request['query'] ?? []))->make();
-
-        return $this->buildOptions($request['query'] ?? []);
+        return $this->lookupOptions->setResource($this->getRelatedResource())
+                                   ->setResource($request['query'] ?? [])
+                                   ->make();
+//
+//        return (new MakeLookupOptions($this->getRelatedResource(), $request['query'] ?? []))->make();
+//
+//        return $this->buildOptions($request['query'] ?? []);
     }
 
     public function presenter()

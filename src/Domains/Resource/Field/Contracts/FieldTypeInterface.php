@@ -22,15 +22,13 @@ interface FieldTypeInterface
 
     public function fieldComposed(Payload $payload, $context = null);
 
-    public function setField(FieldInterface $field): void;
+    public function setField(FieldInterface $field): FieldTypeInterface;
 
     public function getFieldHandle();
 
     public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null);
 
     public function resolveDataFromEntry(FormData $data, EntryContract $entry);
-
-    public function setConfig(array $config);
 
     public function getConfig();
 

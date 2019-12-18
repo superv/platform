@@ -28,6 +28,15 @@ class Blueprint extends FieldBlueprint
         return $this;
     }
 
+    public function mergeConfig(): array
+    {
+        return [
+            'related'    => $this->related,
+            'local_key'  => $this->getLocalKey(),
+            'remote_key' => $this->getRemoteKey(),
+        ];
+    }
+
     public function getRelated(): string
     {
         return $this->related;
@@ -40,7 +49,7 @@ class Blueprint extends FieldBlueprint
         return $this;
     }
 
-    public function getLocalKey(): string
+    public function getLocalKey(): ?string
     {
         return $this->localKey;
     }
@@ -52,7 +61,7 @@ class Blueprint extends FieldBlueprint
         return $this;
     }
 
-    public function getRemoteKey(): string
+    public function getRemoteKey(): ?string
     {
         return $this->remoteKey;
     }

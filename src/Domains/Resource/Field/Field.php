@@ -152,11 +152,11 @@ class Field implements FieldInterface
         $fieldType = $this->getFieldType();
         if ($fieldType instanceof DecoratesFormComposer) {
             $decaratorClass = $fieldType->getFormComposerDecoratorClass();
-
             return new $decaratorClass($composer, $form, $this);
         } else {
             return $composer;
         }
+
     }
 
     public function beforeResolvingEntry(Closure $callback): FieldInterface
@@ -329,7 +329,6 @@ class Field implements FieldInterface
         if (! $this->fieldType->getHandle()) {
             dd($this->fieldType);
         }
-
         return $this->fieldType->getHandle();
     }
 

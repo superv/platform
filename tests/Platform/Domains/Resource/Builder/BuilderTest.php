@@ -15,22 +15,6 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class BuilderTest extends ResourceTestCase
 {
-    function test__relates_to_one()
-    {
-        Builder::create('sv.posts', function (Blueprint $resource) {
-            $resource->relatesToOne('sv.users', 'user')
-                     ->withLocalKey('user_id');
-
-            $resource->relatesToOne('sv.posts_body', 'body')
-                     ->withRemoteKey('post_id');
-        });
-
-        $posts = ResourceFactory::make('sv.posts');
-
-        $userField = $posts->getField('user');
-        $this->assertNotNull($userField);
-        $this->assertEquals('relates_to_one', $userField->getType());
-    }
 
     function test__belongs_to_many_pivot()
     {
@@ -138,14 +122,14 @@ class BuilderTest extends ResourceTestCase
 
     function test__creates_resource()
     {
-        Builder::create('testing.posts', function (Blueprint $resource) {
+        $resource = Builder::create('testing.posts', function (Blueprint $resource) {
             $resource->key('postkey');
             $resource->databaseDriver()
                      ->table('tbl_posts', 'default')
                      ->primaryKey(new PrimaryKey('post_id'));
         });
 
-        $resource = ResourceFactory::make('testing.posts');
+//        $resource = ResourceFactory::make('testing.posts');
         $this->assertNotNull($resource);
 
         $this->assertEquals('posts', $resource->getHandle());

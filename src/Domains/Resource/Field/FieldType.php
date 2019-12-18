@@ -34,11 +34,13 @@ abstract class FieldType implements FieldTypeInterface
         return $this->handle ?? $this->field->getType();
     }
 
-    public function setField(FieldInterface $field): void
+    public function setField(FieldInterface $field): FieldTypeInterface
     {
         $this->field = $field;
 
         $this->boot();
+
+        return $this;
     }
 
     public function addFlag($flag)
@@ -66,10 +68,10 @@ abstract class FieldType implements FieldTypeInterface
         return $this->field->getConfig();
     }
 
-    public function setConfig(array $config)
-    {
-        return $this->field->setConfig($config);
-    }
+//    public function setConfig(array $config)
+//    {
+//        return $this->field->setConfig($config);
+//    }
 
     public function getHandle(): ?string
     {
@@ -162,7 +164,7 @@ abstract class FieldType implements FieldTypeInterface
             PlatformException::fail("Can not resolve field type from [".$class."]");
         }
 
-        return new $class;
+        return $class::resolve();
     }
 
     public static function resolveTypeClass($type)
@@ -183,5 +185,9 @@ abstract class FieldType implements FieldTypeInterface
         return $class;
     }
 
-
+    /** * @return static */
+    public static function resolve()
+    {
+        return app(static::class);
+    }
 }

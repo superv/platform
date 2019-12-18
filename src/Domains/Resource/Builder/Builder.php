@@ -7,7 +7,9 @@ use SuperV\Platform\Domains\Resource\Database\ResourceRepository;
 use SuperV\Platform\Domains\Resource\Events\ResourceCreatedEvent;
 use SuperV\Platform\Domains\Resource\Form\FormRepository;
 use SuperV\Platform\Domains\Resource\Jobs\CreateNavigation;
+use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
+use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class Builder
 {
@@ -26,7 +28,7 @@ class Builder
         $this->repository = $repository;
     }
 
-    public function save(Blueprint $blueprint)
+    public function save(Blueprint $blueprint): Resource
     {
         $this->blueprint = $blueprint;
 
@@ -68,6 +70,8 @@ class Builder
         // create forms
         //
         FormRepository::createForResource($blueprint->getIdentifier());
+
+        return ResourceFactory::make($blueprint->getIdentifier());
     }
 
     public static function blueprint($identifier, Closure $callback = null)
@@ -96,14 +100,14 @@ class Builder
         return $resource;
     }
 
-    public static function create($identifier, Closure $callback = null)
+    public static function create($identifier, Closure $callback = null): \SuperV\Platform\Domains\Resource\Resource
     {
-        static::resolve()->_create($identifier, $callback);
+        return static::resolve()->_create($identifier, $callback);
     }
 
-    protected function _create($identifier, Closure $callback = null)
+    protected function _create($identifier, Closure $callback = null): Resource
     {
-        $this->save($this->blueprint($identifier, $callback));
+        return $this->save($this->blueprint($identifier, $callback));
     }
 
     protected function buildConfig(): ResourceConfig

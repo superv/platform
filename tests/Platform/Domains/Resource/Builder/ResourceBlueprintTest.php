@@ -6,7 +6,6 @@ use SuperV\Platform\Domains\Resource\Builder\Blueprint;
 use SuperV\Platform\Domains\Resource\Builder\Builder;
 use SuperV\Platform\Domains\Resource\Builder\PrimaryKey;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
-use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Blueprint as RelatesToOne;
 use SuperV\Platform\Domains\Resource\Field\Types\Select\Blueprint as SelectTypeBlueprint;
 use SuperV\Platform\Domains\Resource\Relation\Types\BelongsTo\Config;
 use SuperV\Platform\Domains\Resource\Relation\Types\HasMany\HasManyBlueprint;
@@ -14,29 +13,6 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ResourceBlueprintTest extends ResourceTestCase
 {
-    function test__relates_to_one()
-    {
-        $blueprint = Builder::blueprint('sv.posts', function (Blueprint $resource) {
-            $resource->relatesToOne('sv.users', 'user')
-                     ->withLocalKey('user_id');
-
-            $resource->relatesToOne('sv.posts_body', 'body')
-                     ->withRemoteKey('post_id');
-        });
-
-        $userField = $blueprint->getField('user');
-        $this->assertNotNull($userField);
-        $this->assertInstanceOf(RelatesToOne::class, $userField);
-        $this->assertEquals('sv.users', $userField->getRelated());
-        $this->assertEquals('user_id', $userField->getLocalKey());
-
-        $bodyField = $blueprint->getField('body');
-        $this->assertNotNull($bodyField);
-        $this->assertInstanceOf(RelatesToOne::class, $bodyField);
-        $this->assertEquals('sv.posts_body', $bodyField->getRelated());
-        $this->assertEquals('post_id', $bodyField->getRemoteKey());
-    }
-
     function test__belongs_to_many_relation()
     {
         $rolesBlueprint = Builder::blueprint('testing.roles',

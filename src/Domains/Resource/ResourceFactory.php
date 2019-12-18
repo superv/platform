@@ -33,15 +33,25 @@ class ResourceFactory
 
     public static $cache = [];
 
-    protected function __construct(string $identifier, ?EntryContract $entry = null)
+//    public function __construct(string $identifier, ?EntryContract $entry = null)
+//    {
+//        $this->identifier = $identifier;
+//        $this->entry = $entry;
+//    }
+
+    public function withIdentifier($identifier)
     {
-        $this->identifier = $identifier;
-        $this->entry = $entry;
+        return static::make($identifier);
     }
 
     public static function attributesFor(string $identifier, ?EntryContract $entry = null): array
     {
-        return (new static($identifier, $entry))->get();
+        $factory = new static;
+        $factory->identifier = $identifier;
+        $factory->entry = $entry;
+
+        return $factory->get();
+//        return (new static($identifier, $entry))->get();
     }
 
     /**

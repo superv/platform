@@ -212,9 +212,14 @@ trait TestHelpers
         }
     }
 
+    protected function makeMock($abstract, $instance = null)
+    {
+        return \Mockery::mock($instance ?? $abstract);
+    }
+
     protected function bindMock($abstract, $instance = null): \Mockery\MockInterface
     {
-        $this->app->instance($abstract, $mockInstance = \Mockery::mock($instance ?? $abstract));
+        $this->app->instance($abstract, $mockInstance = $this->makeMock($abstract, $instance));
 
         return $mockInstance;
     }

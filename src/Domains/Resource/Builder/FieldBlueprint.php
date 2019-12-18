@@ -74,7 +74,7 @@ class FieldBlueprint
                 'column_type' => '',
                 'flags'       => $this->flags,
                 'rules'       => $this->rules,
-                'config'      => $this->config,
+                'config'      => $this->getConfig(),
             ]);
 
         if (! $field->exists()) {
@@ -84,6 +84,19 @@ class FieldBlueprint
         }
 
         return $field;
+    }
+
+    final public function getConfig()
+    {
+        return array_merge(
+            $this->config,
+            array_filter($this->mergeConfig())
+        );
+    }
+
+    public function mergeConfig(): array
+    {
+        return [];
     }
 
     public function getField(): \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface

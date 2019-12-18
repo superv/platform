@@ -94,7 +94,7 @@ class FieldFactory
             $fieldTypeClass = FieldType::resolveTypeClass($type);
         }
 
-        $this->params['field_type'] = new $fieldTypeClass();
+        $this->params['field_type'] = $fieldTypeClass::resolve();
     }
 
     protected function resolveFieldInstance(?string $resolveFrom): FieldInterface
