@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class GeniusType extends FieldType
 {
-    protected $component = 'text';
+    protected $handle = 'genius';
 
-    protected $handle = 'text';
+    protected $component = 'sv_genius_field';
 }

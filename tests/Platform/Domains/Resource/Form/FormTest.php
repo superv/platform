@@ -115,7 +115,7 @@ class FormTest extends ResourceTestCase
 
         $this->assertTrue($field->isUnbound());
 
-        $form->getData()->resolveRequest($this->makePostRequest(['profession' => 'developer']), $entry);
+        $form->resolveRequest($this->makePostRequest(['profession' => 'developer']), $entry);
         $this->assertArrayNotHasKey('profession', $form->getData()->get());
         $this->assertArrayHasKey('profession', $form->getData()->getForValidation($entry));
     }

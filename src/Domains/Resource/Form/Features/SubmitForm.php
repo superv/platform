@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Form\Features;
 
 use Illuminate\Http\Request;
+use SplFileInfo;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
@@ -55,11 +56,24 @@ class SubmitForm
         $builder = FormFactory::builderFromResource($this->resource);
         $builder->setEntry($this->entry ?? EntryRepository::for($this->resource)->newInstance());
 
-        $builder->setRequest(new Request($this->formData));
+        $builder->setRequest($this->makeRequest());
 
         $form = $builder->getForm()
                         ->resolve();
 
         return $form;
+    }
+
+    protected function makeRequest()
+    {
+        $parameters = collect($this->formData)->filter(function ($value) {
+            return ! $value instanceof SplFileInfo;
+        })->all();
+
+        $files = collect($this->formData)->filter(function ($value) {
+            return $value instanceof SplFileInfo;
+        })->all();
+
+        return Request::create('/', 'POST', $parameters, [], $files);
     }
 }

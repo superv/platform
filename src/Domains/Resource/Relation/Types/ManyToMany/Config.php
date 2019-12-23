@@ -5,7 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Relation\Types\ManyToMany;
 use Closure;
 use SuperV\Platform\Domains\Resource\Builder\Pivot;
 use SuperV\Platform\Domains\Resource\Builder\RelationBlueprint;
-use SuperV\Platform\Domains\Resource\Field\Types\BelongsToMany\BelongsToManyField;
+use SuperV\Platform\Domains\Resource\Field\Types\BelongsToMany\BelongsToManyType;
 
 class Config extends RelationBlueprint
 {
@@ -31,7 +31,7 @@ class Config extends RelationBlueprint
 
     protected function boot()
     {
-        $this->field = $this->parent->addField($this->getRelationName(), BelongsToManyField::class);
+        $this->field = $this->parent->addField($this->getRelationName(), BelongsToManyType::class);
     }
 
     public function mergeConfig(): array

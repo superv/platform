@@ -6,6 +6,8 @@ use Platform;
 use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepositoryInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldValueInterface;
+use SuperV\Platform\Domains\Resource\Field\FieldValue;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormBuilderInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Form;
@@ -28,6 +30,7 @@ class ResourceServiceProvider extends BaseServiceProvider
 
         FormBuilderInterface::class => FormBuilder::class,
         FormInterface::class        => Form::class,
+        FieldValueInterface::class  => FieldValue::class,
     ];
 
     protected $_singletons = [

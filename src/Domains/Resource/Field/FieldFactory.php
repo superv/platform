@@ -102,7 +102,9 @@ class FieldFactory
         $fieldClass = $resolveFrom ?? Field::class;
 
         /** @var \SuperV\Platform\Domains\Resource\Field\Field $field */
-        $field = new $fieldClass($this->params);
+        $field = app($fieldClass)->init($this->params);
+
+//        $field = new $fieldClass($this->params);
 
         return $field;
     }

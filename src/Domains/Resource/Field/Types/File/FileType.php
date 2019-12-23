@@ -10,14 +10,12 @@ use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
-use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldRules;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class FileType extends FieldType implements
     DoesNotInteractWithTable,
-    HasModifier,
     SortsQuery
 {
     protected $handle = 'file';
@@ -73,6 +71,11 @@ class FileType extends FieldType implements
         $query->orderBy('sv_media.size', $direction);
     }
 
+    public function setRequestFile($requestFile): void
+    {
+        $this->requestFile = $requestFile;
+    }
+
     public static function getMedia(EntryContract $entry, $label): ?Media
     {
         $bag = new MediaBag($entry, $label);
@@ -82,7 +85,7 @@ class FileType extends FieldType implements
         return $query->first();
     }
 
-    protected function getConfigAsMediaOptions()
+    public function getConfigAsMediaOptions()
     {
         return MediaOptions::one()
                            ->disk($this->getConfigValue('disk', 'local'))

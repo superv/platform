@@ -10,9 +10,8 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Field\Types\RelationFieldType;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Support\Composer\Payload;
 
-class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNotInteractWithTable, HasModifier
+class BelongsToManyType extends RelationFieldType implements HandlesRpc, DoesNotInteractWithTable, HasModifier
 {
     protected $handle = 'belongs_to_many';
 
@@ -22,7 +21,7 @@ class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNo
 
     protected function boot()
     {
-        $this->field->on('form.composing', $this->formComposer());
+//        $this->field->on('form.composing', $this->formComposer());
         $this->field->addFlag('view.hide');
     }
 
@@ -41,37 +40,7 @@ class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNo
         };
     }
 
-    public function getOptionsUrl(?EntryContract $entry = null)
-    {
-        $url = sv_route('sv::forms.fields', [
-            'form'  => $this->field->getForm()->getIdentifier(),
-            'field' => $this->getFieldHandle(),
-            'rpc'   => 'options',
-        ]);
-        if ($entry && $entry->exists) {
-            $url .= '?entry='.$entry->getId();
-        }
 
-        return $url;
-//            return sprintf("sv/forms/%s/fields/%s/options?entry=%d", $this->field->getForm()->uuid(), $this->getName(), $entry->getId());
-//        return sprintf("sv/forms/%s/fields/%s/options", $this->field->getForm()->uuid(), $this->getName());
-    }
-
-    public function getValuesUrl(?EntryContract $entry = null)
-    {
-        $url = sv_route('sv::forms.fields', [
-            'form'  => $this->field->getForm()->getIdentifier(),
-            'field' => $this->getFieldHandle(),
-            'rpc'   => 'values',
-        ]);
-        if ($entry && $entry->exists) {
-            $url .= '?entry='.$entry->getId();
-        }
-
-        return $url;
-//            return sprintf("sv/forms/%s/fields/%s/values?entry=%d", $this->field->getForm()->uuid(), $this->getName(), $entry->getId());
-//        return sprintf("sv/forms/%s/fields/%s/values", $this->field->getForm()->uuid(), $this->getName());
-    }
 
     /**
      * @return \SuperV\Platform\Domains\Resource\Resource
@@ -94,26 +63,26 @@ class BelongsToManyField extends RelationFieldType implements HandlesRpc, DoesNo
         }
     }
 
-    protected function formComposer()
-    {
-        return function (Payload $payload, ?EntryContract $entry = null) {
-            $this->relatedResource = $this->resolveRelatedResource();
-
-            if ($entry) {
-                if ($relatedEntry = $entry->{$this->getFieldHandle()}()->newQuery()->first()) {
-                    $payload->set('meta.link', $relatedEntry->router()->view());
-                }
-            }
-
-            $payload->set('meta.options', $this->getOptionsUrl($entry));
-
-            if ($entry && $entry->exists) {
-                $payload->set('meta.values', $this->getValuesUrl($entry));
-            }
-            $payload->set('meta.full', true);
-            $payload->set('placeholder', 'Select '.$this->relatedResource->getSingularLabel());
-        };
-    }
+//    protected function formComposer()
+//    {
+//        return function (Payload $payload, ?EntryContract $entry = null) {
+//            $this->relatedResource = $this->resolveRelatedResource();
+//
+//            if ($entry) {
+//                if ($relatedEntry = $entry->{$this->getFieldHandle()}()->newQuery()->first()) {
+//                    $payload->set('meta.link', $relatedEntry->router()->view());
+//                }
+//            }
+//
+//            $payload->set('meta.options', $this->getOptionsUrl($entry));
+//
+//            if ($entry && $entry->exists) {
+//                $payload->set('meta.values', $this->getValuesUrl($entry));
+//            }
+//            $payload->set('meta.full', true);
+//            $payload->set('placeholder', 'Select '.$this->relatedResource->getSingularLabel());
+//        };
+//    }
 
     protected function rpcOptions(array $params, array $request = [])
     {

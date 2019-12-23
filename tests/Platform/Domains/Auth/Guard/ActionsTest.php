@@ -70,6 +70,7 @@ class ActionsTest extends TestCase
         $user->allow('*');
         $user->forbid('forbidden.action');
 
+        $this->assertTrue($user->forbidden('forbidden.action'));
         $this->assertTrue($user->canNot('forbidden.action'));
     }
 

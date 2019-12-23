@@ -15,11 +15,6 @@ class ToDoTest extends TestCase
 {
     use RefreshDatabase;
 
-    function test__()
-    {
-        $this->addToAssertionCount(1);
-    }
-
     function test__platform_detects_active_module_from_route_data()
     {
         $this->addToAssertionCount(1);
@@ -40,3 +35,4 @@ class ToDoTest extends TestCase
         parent::setUp();
     }
 }
+

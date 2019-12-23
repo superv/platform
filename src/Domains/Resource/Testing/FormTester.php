@@ -66,7 +66,7 @@ class FormTester extends Assert
             $post[$field->getColumnName()] = Fake::field($field);
         }
 
-        $form->getData()->resolveRequest($this->makePostRequest('', $post), $form->getEntry());
+        $form->resolveRequest($this->makePostRequest('', $post), $form->getEntry());
         $form->save();
 
         $entry = $form->getEntry()->newQuery()->first();

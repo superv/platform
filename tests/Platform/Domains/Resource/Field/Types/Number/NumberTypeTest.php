@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\FieldRules;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class NumberTest extends ResourceTestCase
+class NumberTypeTest extends ResourceTestCase
 {
     function test_type_number_integer()
     {

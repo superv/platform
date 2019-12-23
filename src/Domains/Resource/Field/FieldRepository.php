@@ -27,7 +27,7 @@ class FieldRepository
             return $field;
         }
 
-        return new GhostField();
+        return app(GhostField::class);
     }
 
     public function create(array $attributes = []): FieldModel

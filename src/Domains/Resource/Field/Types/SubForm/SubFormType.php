@@ -1,21 +1,17 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types;
+namespace SuperV\Platform\Domains\Resource\Field\Types\SubForm;
 
-use Illuminate\Http\Request;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Features\SubmitForm;
-use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
-use SuperV\Platform\Support\Composer\Payload;
 
-class SubFormField extends FieldType
+class SubFormType extends FieldType
 {
     protected $handle = 'sub_form';
 
@@ -27,16 +23,6 @@ class SubFormField extends FieldType
 
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $resource;
-
-    protected function boot()
-    {
-        $this->field->on('form.composing', $this->composer());
-    }
-
-    public function getParentType(): FieldTypeInterface
-    {
-        return $this->getConfigValue('parent_type');
-    }
 
     public function getColumnName()
     {
@@ -74,20 +60,9 @@ class SubFormField extends FieldType
         }
     }
 
-    public function resolveDataFromEntry(FormData $data, EntryContract $entry)
+    public function getParentType(): FieldTypeInterface
     {
-        parent::resolveDataFromEntry($data, $entry);
-
-        $this->setEntryId($entry->getAttribute($this->getColumnName()));
-    }
-
-    public function resolveValueFromRequest(Request $request, ?EntryContract $entry = null)
-    {
-        $all = $request->all();
-
-        $this->formData = array_get($all, $this->getFieldHandle());
-
-        return null;
+        return $this->getConfigValue('parent_type');
     }
 
     public function bindFields(FormInterface $subForm, FormInterface $parentForm)
@@ -100,9 +75,6 @@ class SubFormField extends FieldType
         }
     }
 
-    /**
-     * @return mixed
-     */
     public function getFormData()
     {
         return $this->formData;
@@ -143,11 +115,8 @@ class SubFormField extends FieldType
         return $composed->get('fields');
     }
 
-    protected function composer()
+    public function setFormData($formData): void
     {
-        return function (Payload $payload) {
-            $payload->set('config.fields', $this->getFormComponent());
-            $payload->set('meta.full', true);
-        };
+        $this->formData = $formData;
     }
 }

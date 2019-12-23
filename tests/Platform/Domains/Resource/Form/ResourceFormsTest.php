@@ -129,8 +129,6 @@ class ResourceFormsTest extends ResourceTestCase
 
     function test__validation()
     {
-//        $this->withExceptionHandling();
-
         $users = $this->blueprints()->users();
         $users->fake(['email' => 'ali@superv.io']);
 

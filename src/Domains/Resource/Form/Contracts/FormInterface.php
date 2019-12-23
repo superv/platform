@@ -13,6 +13,10 @@ interface FormInterface
 {
     public function resolve(): FormInterface;
 
+    public function resolveRequest(?Request $request = null): FormInterface;
+
+    public function resolveEntry(): FormInterface;
+
     public function validate();
 
     public function save(): FormResponse;
@@ -62,4 +66,6 @@ interface FormInterface
     public function setActions(array $actions): void;
 
     public function setPublic(bool $public): void;
+
+    public function getRequest(): ?Request;
 }

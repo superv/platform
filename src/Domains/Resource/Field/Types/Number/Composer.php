@@ -3,7 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types\Number;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\Composer as BaseComposer;
+use SuperV\Platform\Domains\Resource\Field\FieldComposer as BaseComposer;
 
 class Composer extends BaseComposer
 {

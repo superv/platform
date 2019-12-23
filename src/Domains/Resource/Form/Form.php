@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use SuperV\Platform\Contracts\Dispatcher;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesUIComponent;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormFieldInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Jobs\ValidateForm;
@@ -75,18 +76,51 @@ class Form implements FormInterface, ProvidesUIComponent
             $this->data = new FormData($this->fields);
         }
 
-
         $this->fireEvent('resolving');
 
         if ($this->entry && $this->entry->exists()) {
-            $this->data->resolveEntry($this->entry);
+            $this->resolveEntry();
+//            $this->data->resolveEntry($this->entry);
         }
 
         if ($this->request) {
-            $this->data->resolveRequest($this->request, $this->entry);
+            $this->resolveRequest();
+//            $this->data->resolveRequest($this->request, $this->entry);
         }
 
         $this->fireEvent('resolved');
+
+        return $this;
+    }
+
+    public function resolveEntry(): FormInterface
+    {
+        $this->fields
+            ->visible()
+            ->map(function (FieldInterface $field) {
+                $field->getValue()
+                      ->setEntry($this->getEntry())
+                      ->resolve()
+                      ->mapTo($this->getData());
+            });
+
+        return $this;
+    }
+
+    public function resolveRequest(?Request $request = null): FormInterface
+    {
+        if ($request) {
+            $this->setRequest($request);
+        }
+
+        $this->fields
+            ->visible()
+            ->map(function (FieldInterface $field) {
+                $field->getValue()
+                      ->setRequest($this->getRequest())
+                      ->resolve()
+                      ->mapTo($this->getData());
+            });
 
         return $this;
     }
@@ -118,7 +152,7 @@ class Form implements FormInterface, ProvidesUIComponent
         $this->data->callbacks()
                    ->filter()
                    ->map(function (Closure $callback) {
-                       $callback();
+                       $callback($this->getEntry());
                    });
 
         $this->fields->saved($this);
@@ -244,6 +278,21 @@ class Form implements FormInterface, ProvidesUIComponent
         return $this;
     }
 
+    public function isPublic(): bool
+    {
+        return $this->public;
+    }
+
+    public function setPublic(bool $public): void
+    {
+        $this->public = $public;
+    }
+
+    public function getRequest(): ?Request
+    {
+        return $this->request;
+    }
+
     public function makeComponent(): ComponentContract
     {
         return Component::make('sv-form')
@@ -267,20 +316,5 @@ class Form implements FormInterface, ProvidesUIComponent
         $this->title = $title;
 
         return $this;
-    }
-
-    public function isPublic(): bool
-    {
-        return $this->public;
-    }
-
-    public function setPublic(bool $public): void
-    {
-        $this->public = $public;
-    }
-
-    public function getContextKey(): string
-    {
-        return 'form';
     }
 }

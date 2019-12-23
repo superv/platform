@@ -199,16 +199,6 @@ class ResourceBlueprintTest extends ResourceTestCase
         $this->assertEquals('textarea', $descriptionBlueprint->getField()->getType());
     }
 
-    function test__boolean_field()
-    {
-        $blueprint = Builder::blueprint('testing.posts', function (Blueprint $resource) {
-            $resource->boolean('active');
-        });
-
-        $activeBlueprint = $blueprint->getField('active');
-        $this->assertEquals('boolean', $activeBlueprint->getField()->getType());
-    }
-
     function test__select_field()
     {
         $blueprint = Builder::blueprint('testing.posts', function (Blueprint $resource) {
@@ -218,6 +208,6 @@ class ResourceBlueprintTest extends ResourceTestCase
         $genderBlueprint = $blueprint->getField('gender');
         $this->assertInstanceOf(SelectTypeBlueprint::class, $genderBlueprint);
         $this->assertEquals('select', $genderBlueprint->getField()->getType());
-        $this->assertEquals(['m', 'f'], $genderBlueprint->getConfigValue('options'));
+        $this->assertEquals(['m', 'f'], $genderBlueprint->getOptions());
     }
 }

@@ -39,7 +39,7 @@ class NavGuard
                 // because it's not set in actions for now
                 //
                 $colophon = str_replace_first($this->nav->entry()->getHandle().'.', '', $colophon);
-                if (! $this->user->can($colophon)) {
+                if ($this->user->canNot($colophon) || $this->user->forbidden($colophon.'.*')) {
                     unset($sections[$key]);
                     continue;
                 }

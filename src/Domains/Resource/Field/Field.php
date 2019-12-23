@@ -4,13 +4,13 @@ namespace SuperV\Platform\Domains\Resource\Field;
 
 use Closure;
 use Event;
-use stdClass;
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use Illuminate\Contracts\Container\Container;
 use SuperV\Platform\Domains\Resource\Field\Composer\DefaultFieldComposer;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ComposerInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldValueInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\MutatorInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
@@ -82,7 +82,17 @@ class Field implements FieldInterface
 
     protected $config = [];
 
-    public function __construct(array $attributes = [])
+    /**
+     * @var \Illuminate\Contracts\Container\Container
+     */
+    protected $container;
+
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+    }
+
+    public function init(array $attributes = []): FieldInterface
     {
         $this->hydrate($attributes);
 
@@ -95,7 +105,10 @@ class Field implements FieldInterface
                 }
             }
         }
+
 //        $this->uuid = $this->uuid ?? uuid();
+
+        return $this;
     }
 
     public function identifier(): Identifier
@@ -176,24 +189,28 @@ class Field implements FieldInterface
         return $this;
     }
 
-    public function resolveFromEntry($entry)
+    public function value(): FieldValueInterface
     {
-        $attribute = $this->getColumnName();
+        return $this->getValue();
+    }
 
-        if ($entry instanceof EntryContract) {
-            return $entry->getAttribute($attribute);
-        } elseif ($entry instanceof stdClass) {
-            return $entry->{$attribute};
-        } elseif (is_array($entry)) {
-            return $entry[$attribute] ?? null;
+    public function getValue(): FieldValueInterface
+    {
+        if ($fieldValue = $this->fieldType->resolveFieldValue()) {
+            return $fieldValue;
         }
 
-        return null;
+        return $this->container->make(FieldValueInterface::class)->setField($this);
     }
 
     public function getFieldType(): FieldTypeInterface
     {
         return $this->fieldType;
+    }
+
+    public function type(): FieldTypeInterface
+    {
+        return $this->getFieldType();
     }
 
     public function getHandle(): string
@@ -437,5 +454,12 @@ class Field implements FieldInterface
     public function setHint($hint)
     {
         $this->setConfigValue('hint', $hint);
+    }
+
+    public function setFieldType(\SuperV\Platform\Domains\Resource\Field\FieldType $fieldType): Field
+    {
+        $this->fieldType = $fieldType;
+
+        return $this;
     }
 }

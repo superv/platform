@@ -3,143 +3,150 @@
 namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Contracts\Filter\ProvidesField;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ComposerInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
-use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
-use SuperV\Platform\Domains\Resource\Form\Form;
+use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Support\Composer\Payload;
 
-class FieldComposer
+class FieldComposer implements ComposerInterface
 {
-    /**
-     * @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface
-     */
+    /** @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface */
     protected $field;
 
-    public function __construct($field)
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface
+     */
+    protected $fieldType;
+
+    /** @var \SuperV\Platform\Support\Composer\Payload */
+    protected $payload;
+
+    public function __construct(FieldInterface $field)
     {
-        $this->field = $field instanceof ProvidesField ? $field->makeField() : $field;
+        $this->field = $field;
+        $this->fieldType = $field->getFieldType();
+        $this->payload = Payload::make([
+            'identifier' => $this->field->getIdentifier(),
+            'handle'     => $this->field->getHandle(),
+            'type'       => $this->field->getType(),
+            'component'  => $this->field->getComponent(),
+            'label'      => $this->field->getLabel(),
+        ]);
     }
 
-    public function ______________forTableConfig()
+    public function compose(): Payload
     {
-        $field = $this->field;
-
-        $payload = (new Payload([
-            'identifier'  => $field->getIdentifier(),
-            'revision_id' => $field->revisionId(),
-            'handle'      => $field->getHandle(),
-            'label'       => $field->getLabel(),
-            'classes'     => $field->getConfigValue('classes'),
-            'sortable'    => $field->getFieldType() instanceof SortsQuery,
-        ]))->setFilterNull(false);
-
-        return $payload;
+        return $this->getPayload();
     }
 
-    public function ________________forTableRow($entry)
+    public function toForm(FormInterface $form = null): Payload
     {
-        $field = $this->field;
-
-        $value = $field->resolveFromEntry($entry);
-
-        if ($callback = $field->getCallback('table.accessing')) {
-            $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
-        }
-
-        if ($field instanceof HasPresenter) {
-            $value = app()->call($field->getPresenter(), ['entry' => $entry, 'value' => $value]);
-        } elseif ($callback = $field->getCallback('table.presenting')) {
-            $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
-        }
-
-        $payload = (new Payload([
-            'identifier'  => $field->getIdentifier(),
-            'revision_id' => $field->revisionId(),
-            'type'        => $field->getType(),
-            'component'   => $field->getComponent(),
-            'handle'      => $field->getColumnName(),
-            'value'       => $value,
-            'presenting'  => true,
-            'classes'     => $field->getConfigValue('classes'),
-        ]))->setFilterNull(false);
-
-        if ($callback = $field->getCallback('table.composing')) {
-            app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
-        }
-
-        return $payload;
-    }
-
-    protected function ____________forForm(Form $form = null)
-    {
-        $field = $this->field;
-
-        $entry = $form ? $form->getEntry() : null;
-
-        if ($entry) {
-            $value = $field->resolveFromEntry($entry);
-
-            if ($field instanceof HasAccessor) {
-                $value = (new Accessor($field))->get(['entry' => $entry, 'value' => $value]);
-            } elseif ($callback = $field->getCallback('form.accessing')) {
-                $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
+        if ($form) {
+            if ($entry = $form->getEntry()) {
+                $value = $this->field->getValue()->setEntry($entry)->resolve()->get();
             }
         }
+//        if ($form && ! isset($value)) {
+//            $value = $form->getData()->getForDisplay($this->getFieldHandle());
+//        }
 
-        if ($form && ! isset($value)) {
-            $value = $form->getData()->getForDisplay($field->getHandle());
+        $this->payload->merge([
+            'value'       => $value ?? $this->field->getDefaultValue(),
+            'placeholder' => $this->field->getPlaceholder(),
+            'hint'        => $this->field->getConfigValue('hint'),
+            'meta'        => $this->field->getConfigValue('meta'),
+            'presenting'  => $this->field->getConfigValue('presenting'),
+        ]);
+
+        $this->form($form);
+
+        $this->fieldType->fieldComposed($this->payload, $form);
+
+        return $this->payload;
+    }
+
+    public function toTable(?EntryContract $entry = null): Payload
+    {
+//        $value = $this->field->resolveFromEntry($entry);
+//        $value = $this->fieldType->getValue($entry);
+
+        $value = $this->field->getValue()->setEntry($entry)->resolve()->get();
+
+        if (! $entry) {
+            $this->payload->merge([
+                'sortable' => $this->fieldType instanceof SortsQuery,
+            ]);
+        } else {
+            if ($this->fieldType instanceof HasAccessor) {
+                $value = (new Accessor($this->fieldType))->get(['entry' => $entry, 'value' => $value]);
+            }
+            if ($callback = $this->field->getCallback('table.presenting')) {
+                $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $this->field]);
+            }
+
+            $this->payload->merge([
+                'value'      => $value,
+                'presenting' => true,
+            ]);
         }
 
-        $payload = (new Payload([
-            'identifier'  => $field->getIdentifier(),
-            'type'        => $field->getType(),
-            'name'        => $field->getHandle(),
-            'label'       => $field->getLabel(),
-            'placeholder' => $field->getPlaceholder(),
-            'value'       => $value ?? $field->getValue(),
-            'hint'        => $field->getConfigValue('hint'),
-            'meta'        => $field->getConfigValue('meta'),
-            'presenting'  => $field->getConfigValue('presenting'),
+        $this->payload->merge([
+            'classes' => $this->field->getConfigValue('classes'),
+        ]);
 
-        ]))->setFilterNull(true);
+        $this->table($entry);
 
-        $field->getFieldType()->fieldComposed($payload, $form);
+        return $this->payload;
+    }
 
-        if ($callback = $field->getCallback('form.composing')) {
-            app()->call($callback, ['form' => $form, 'entry' => $entry, 'payload' => $payload]);
-        }
+    public function toView(EntryContract $entry): Payload
+    {
+//        $value = $this->field->resolveFromEntry($entry);
+//        $value = $this->fieldType->getValue($entry);
+        $value = $this->field->getValue()->setEntry($entry)->resolve()->get();
+//        if ($callback = $this->field->getCallback('view.presenting')) {
+//            $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $this->field]);
+//        }
+
+//        if ($this->fieldType instanceof HasAccessor) {
+//            $value = (new Accessor($this->fieldType))->get(['entry' => $entry, 'value' => $value]);
+//        }
+
+        $payload = $this->compose()->merge([
+            'value'      => $value,
+            'classes'    => $this->field->getConfigValue('classes'),
+            'presenting' => true,
+        ]);
+
+//        if ($callback = $this->field->getCallback('view.composing')) {
+//            app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
+//        }
+
+        $this->view($entry);
 
         return $payload;
     }
 
-    protected function ___________________forView(EntryContract $entry)
+    public function table(?EntryContract $entry = null): void { }
+
+    public function view(EntryContract $entry): void { }
+
+    public function form(?FormInterface $form = null): void { }
+
+    public function getPayload(): Payload
     {
-        $field = $this->field;
+        return $this->payload;
+    }
 
-        $value = $field->resolveFromEntry($entry);
+    protected function getConfigValue($key, $default = null)
+    {
+        return $this->field->getConfigValue($key, $default);
+    }
 
-        if ($callback = $field->getCallback('view.presenting')) {
-            $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $field]);
-        }
-
-        $payload = (new Payload([
-            'identifier'  => $field->getIdentifier(),
-            'type'        => $field->getType(),
-            'component'   => $field->getComponent(),
-            'revision_id' => $field->revisionId(),
-            'handle'      => $field->getColumnName(),
-            'label'       => $field->getLabel(),
-            'value'       => $value,
-            'presenting'  => true,
-            'classes'     => $field->getConfigValue('classes'),
-        ]))->setFilterNull(false);
-
-        if ($callback = $field->getCallback('view.composing')) {
-            app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
-        }
-
-        return $payload;
+    protected function getFieldHandle(): string
+    {
+        return $this->field->getHandle();
     }
 }

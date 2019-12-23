@@ -12,8 +12,8 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FakerInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldValueInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
-use SuperV\Platform\Domains\Resource\Field\Contracts\MutatorInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Exceptions\PlatformException;
@@ -92,6 +92,7 @@ abstract class FieldType implements FieldTypeInterface
     {
     }
 
+
     public function resolveDataFromEntry(FormData $data, EntryContract $entry)
     {
         if ($callback = $this->field->getCallback('resolving_entry')) {
@@ -103,12 +104,32 @@ abstract class FieldType implements FieldTypeInterface
         if ($this instanceof DoesNotInteractWithTable) {
             return null;
         }
-        $value = $entry->getAttribute($this->getColumnName());
-
-        $data->set($this->getColumnName(), $value);
+        $this->field->getValue()->resolve($entry)->mapTo($data);
     }
 
-    public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)
+    public function ___resolveValueFromRequest(Request $request, ?EntryContract $entry = null)
+    {
+        if (! $request->has($this->getFieldHandle()) && ! $request->has($this->getColumnName())) {
+            return null;
+        }
+
+        if (! $requestValue = $request->__get($this->getColumnName())) {
+            $requestValue = $request->__get($this->getFieldHandle());
+        }
+
+        $value = $requestValue;
+        if ($this instanceof HasModifier) {
+            $value = (new Modifier($this))->set(['entry' => $entry, 'value' => $requestValue]);
+        }
+
+        if ($callback = $this->field->getCallback('resolving_request')) {
+            $value = app()->call($callback, ['request' => $request, 'value' => $value]);
+        }
+
+        return [$value, $requestValue];
+    }
+
+    public function ___resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)
     {
         if (! $request->has($this->getFieldHandle()) && ! $request->has($this->getColumnName())) {
             return null;
@@ -134,7 +155,7 @@ abstract class FieldType implements FieldTypeInterface
         $class = str_replace_last(class_basename(get_called_class()), 'Composer', get_called_class());
 
         if (! class_exists($class)) {
-            $class = Composer::class;
+            $class = FieldComposer::class;
         }
 
         return app()->make($class, ['field' => $this->field]);
@@ -153,30 +174,27 @@ abstract class FieldType implements FieldTypeInterface
         return null;
     }
 
-    public function driverCreating(DriverInterface $driver, FieldBlueprint $blueprint)
+    public function resolveFieldValue(): ?FieldValueInterface
     {
+        $class = str_replace_last(class_basename(get_called_class()), 'Value', get_called_class());
+
+        if (class_exists($class)) {
+            return $class::of($this->field);
+        }
+
+        return null;
     }
 
-    public function resolveValueFromRequest(Request $request, ?EntryContract $entry = null)
+    public function mapValueFromEntry(FormData $data, EntryContract $entry)
     {
-        if (! $request->has($this->getFieldHandle()) && ! $request->has($this->getColumnName())) {
-            return null;
-        }
+        $value = $entry->getAttribute($this->getColumnName());
+        $data->set($this->getColumnName(), $value);
 
-        if (! $requestValue = $request->__get($this->getColumnName())) {
-            $requestValue = $request->__get($this->getFieldHandle());
-        }
+        return $value;
+    }
 
-        $value = $requestValue;
-        if ($this instanceof HasModifier) {
-            $value = (new Modifier($this))->set(['entry' => $entry, 'value' => $requestValue]);
-        }
-
-        if ($callback = $this->field->getCallback('resolving_request')) {
-            $value = app()->call($callback, ['request' => $request, 'value' => $value]);
-        }
-
-        return [$value, $requestValue];
+    public function driverCreating(DriverInterface $driver, FieldBlueprint $blueprint)
+    {
     }
 
     public static function resolveType($type)

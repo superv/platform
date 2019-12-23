@@ -26,7 +26,13 @@ interface FieldInterface
 
     public function setLabel(string $label): FieldInterface;
 
+    public function type(): FieldTypeInterface;
+
     public function getFieldType(): FieldTypeInterface;
+
+    public function value(): FieldValueInterface;
+
+    public function getValue(): FieldValueInterface;
 
     public function getDefaultValue();
 
@@ -82,7 +88,7 @@ interface FieldInterface
 
     public function getCallback($trigger);
 
-    public function resolveFromEntry($entry);
+//    public function resolveFromEntry($entry);
 
 //    public function getComposer(): ComposerInterface;
 

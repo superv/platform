@@ -28,6 +28,7 @@ class ResourceUpdateTest extends ResourceTestCase
             'email' => 'ali@superv.io',
             'group' => 2,
         ];
+//        config(['app.debug' => true]);
         $response = $this->postJsonUser($user->router()->updateForm(), $post);
 //        dd($response->decodeResponseJson());
         $response->assertOk();

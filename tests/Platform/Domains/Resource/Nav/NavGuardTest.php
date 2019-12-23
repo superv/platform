@@ -24,24 +24,39 @@ class NavGuardTest extends ResourceTestCase
         $nav->add('foo.bom.tic');
         $nav->add('foo.bom.toe');
 
+        $nav->add('app.zac');
+        $nav->add('app.top');
+
+        $nav->add('core.foo');
+
         $user = $this->newUser(['allow' => false]);
         $user->allow('foo');
         $user->allow('foo.baz');
         $user->allow('foo.bom.*');
         $user->forbid('foo.bom.toe');
 
+        $user->allow('app.*');
+        $user->forbid('app.zac.*');
+
+        $user->forbid('core.*');
+
         $filtered = (new NavGuard($user, Nav::get('acp')))->compose();
+
+//        dd($filtered['sections']);
 
         $baz = __section('baz');
         $bom = __section('bom', [
-           'tac' => __section('tac'),
-           'tic' => __section('tic'),
+            'tac' => __section('tac'),
+            'tic' => __section('tic'),
         ]);
-        $expected = ['foo' => __section('foo', [
+        $this->assertEquals(__section('foo', [
             'baz' => $baz,
             'bom' => $bom,
-        ])];
-        $this->assertEquals($expected, $filtered['sections']);
+        ]), $filtered['sections']['foo']);
+
+        $this->assertTrue(collect($filtered['sections']['app']['sections'])->keys()->diff(['top'])->isEmpty());
+
+        $this->assertNull($filtered['sections']['core'] ?? null);
     }
 
     protected function setUp(): void
@@ -59,9 +74,4 @@ function __section($handle, array $sections = null)
         'handle'   => $handle,
         'sections' => $sections,
     ]);
-    return [$handle => array_filter([
-        'title'    => ucwords(str_unslug($handle)),
-        'handle'   => $handle,
-        'sections' => $sections,
-    ])];
 }

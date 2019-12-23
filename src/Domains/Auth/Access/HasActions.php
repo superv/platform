@@ -47,7 +47,66 @@ trait HasActions
         $this->actions()->syncWithoutDetaching([$entry->id => ['provision' => 'pass']]);
 
         static::$__cache = [];
+
         return $this;
+    }
+
+    /**
+     * Check if has access to a guardable object
+     * Pass if the object is not guardable
+     *
+     * @param $subject
+     * @return bool
+     */
+    public function canAccess($subject)
+    {
+        $guard = new Guard($this);
+
+        return $guard->guard($subject);
+    }
+
+    /**
+     * Determine if an action is valid for a given list of actions
+     *
+     * @param $action
+     * @param $actions
+     * @return bool
+     */
+    public function matchAction($action, $actions): bool
+    {
+        return in_array($action, $actions) || $this->matchWild($actions, $action);
+    }
+
+    /**
+     * Get all assigned actions
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getAssignedActions()
+    {
+        if (! isset(static::$__cache[$this->getId()])) {
+            static::$__cache[$this->getId()] = $this->roles->map(
+                function (Role $role) {
+                    return $role->actions;
+                }
+            )->flatten(1)->merge($this->actions()->get());
+        }
+
+        return static::$__cache[$this->getId()];
+    }
+
+    /**
+     * Get only assigned actions that are allowed
+     *
+     * @return array
+     */
+    public function getAllowedActions()
+    {
+        $allowed = $this->getAssignedActions()->filter(function (Action $action) {
+            return $action->pivot->provision === 'pass';
+        })->pluck('slug')->all();
+
+        return $allowed;
     }
 
     public function forbid($action)
@@ -62,6 +121,7 @@ trait HasActions
         $this->actions()->syncWithoutDetaching([$entry->id => ['provision' => 'fail']]);
 
         static::$__cache = [];
+
         return $this;
     }
 
@@ -96,14 +156,14 @@ trait HasActions
         return ! $this->isA($role);
     }
 
-    public function can($action)
+    public function can($action): bool
     {
         if ($action instanceof Guardable) {
             return $this->canAccess($action);
         }
 
         // first check forbidden
-        if ($this->matchAction($action, $this->getForbiddenActions())) {
+        if ($this->forbidden($action)) {
             return false;
         }
 
@@ -122,7 +182,7 @@ trait HasActions
         return false;
     }
 
-    public function canNot($action)
+    public function canNot($action): bool
     {
         return ! $this->can($action);
     }
@@ -135,30 +195,9 @@ trait HasActions
         }
     }
 
-    /**
-     * Check if has access to a guardable object
-     * Pass if the object is not guardable
-     *
-     * @param $subject
-     * @return bool
-     */
-    public function canAccess($subject)
+    public function forbidden($action): bool
     {
-        $guard = new Guard($this);
-
-        return $guard->guard($subject);
-    }
-
-    /**
-     * Determine if an action is valid for a given list of actions
-     *
-     * @param $action
-     * @param $actions
-     * @return bool
-     */
-    public function matchAction($action, $actions): bool
-    {
-        return in_array($action, $actions) || $this->matchWild($actions, $action);
+        return $this->matchAction($action, $this->getForbiddenActions());
     }
 
     /**
@@ -193,23 +232,6 @@ trait HasActions
     }
 
     /**
-     * Get all assigned actions
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getAssignedActions()
-    {
-        if (! isset(static::$__cache[$this->getId()]))
-            static::$__cache[$this->getId()] = $this->roles->map(
-            function (Role $role) {
-                return $role->actions;
-            }
-        )->flatten(1)->merge($this->actions()->get());
-
-        return static::$__cache[$this->getId()];
-    }
-
-    /**
      * Get only assigned actions that are forbidden
      *
      * @return array
@@ -221,19 +243,5 @@ trait HasActions
         })->pluck('slug')->all();
 
         return $forbidden;
-    }
-
-    /**
-     * Get only assigned actions that are allowed
-     *
-     * @return array
-     */
-    public function getAllowedActions()
-    {
-        $allowed = $this->getAssignedActions()->filter(function (Action $action) {
-            return $action->pivot->provision === 'pass';
-        })->pluck('slug')->all();
-
-        return $allowed;
     }
 }

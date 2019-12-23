@@ -97,7 +97,7 @@ class RelatesToOneTypeTest extends ResourceTestCase
 
     function test__builder()
     {
-        Builder::create('sv.posts', function (Blueprint $resource) {
+        $posts = Builder::create('sv.posts', function (Blueprint $resource) {
             $resource->relatesToOne('sv.users', 'user')
                      ->ownerKey('post_id')
                      ->withLocalKey('user_id');
@@ -105,8 +105,6 @@ class RelatesToOneTypeTest extends ResourceTestCase
             $resource->relatesToOne('sv.posts_body', 'body')
                      ->withRemoteKey('post_id');
         });
-
-        $posts = ResourceFactory::make('sv.posts');
 
         $userField = $posts->getField('user');
         $this->assertNotNull($userField);

@@ -2,7 +2,6 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
-use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\FormData;
@@ -26,7 +25,9 @@ interface FieldTypeInterface
 
     public function getFieldHandle();
 
-    public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null);
+//    public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null);
+
+//    public function resolveValueFromRequest(Request $request, ?EntryContract $entry = null);
 
     public function resolveDataFromEntry(FormData $data, EntryContract $entry);
 
@@ -41,4 +42,7 @@ interface FieldTypeInterface
     public function resolveComposer(): ?ComposerInterface;
 
     public function resolveFaker(): ?FakerInterface;
+
+    public function resolveFieldValue(): ?FieldValueInterface;
+//    public function resolveMutator(): ?FieldMutatorInterface;
 }

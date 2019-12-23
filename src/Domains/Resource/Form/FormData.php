@@ -2,23 +2,19 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Contracts\DataMapInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
-use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface as FieldType;
 
-class FormData
+class FormData implements DataMapInterface
 {
     /** @var array */
     protected $data = [];
 
     /** @var array */
     protected $dataToValidate = [];
-
-    /** @var array */
-    protected $dataToDisplay = [];
 
     /** @var array */
     protected $dataToSave = [];
@@ -63,31 +59,6 @@ class FormData
         return array_merge($this->data, $this->dataToValidate);
     }
 
-    public function getForDisplay($key)
-    {
-        return $this->dataToDisplay[$key] ?? null;
-    }
-
-    public function resolveRequest(Request $request, EntryContract $entry)
-    {
-        $this->fields
-            ->visible()
-            ->fieldTypes()
-            ->map(function (FieldType $fieldType) use ($entry, $request) {
-                $fieldType->resolveDataFromRequest($this, $request, $entry);
-            });
-    }
-
-    public function resolveEntry(EntryContract $entry)
-    {
-        $this->fields
-            ->visible()
-            ->fieldTypes()
-            ->map(function (FieldType $fieldType) use ($entry) {
-                $fieldType->resolveDataFromEntry($this, $entry);
-            });
-    }
-
     public function callbacks(): Collection
     {
         if (! $this->callbacks) {
@@ -120,11 +91,6 @@ class FormData
     public function toValidate($key, $value)
     {
         $this->dataToValidate[$key] = $value;
-    }
-
-    public function toDisplay($key, $value)
-    {
-        $this->dataToDisplay[$key] = $value;
     }
 
     public function toSave($key, $value)

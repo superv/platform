@@ -12,10 +12,10 @@ class EntryModifierTest extends ResourceTestCase
         $items = $this->create('tbl_any', function (Blueprint $table) {
             $table->id();
             $table->boolean('active');
-            $table->dictionary('config');
+//            $table->dictionary('config');
         });
 
-        $entry = $items->create(['active' => 'true', 'config' => ['foo' => 'bar']]);
+        $entry = $items->create(['active' => 'true']);
 
         $this->assertSame(true, $entry->active);
     }

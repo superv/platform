@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types\Checkbox;
 
-use SuperV\Platform\Domains\Resource\Field\Types\Boolean\BooleanField;
+use SuperV\Platform\Domains\Resource\Field\Types\Boolean\BooleanType;
 
-class CheckboxField extends BooleanField
+class CheckboxType extends BooleanType
 {
     protected $handle = 'checkbox';
 

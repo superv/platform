@@ -11,7 +11,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class BooleanField extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier, SortsQuery
+class BooleanType extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier, SortsQuery
 {
     protected $handle = 'boolean';
 
@@ -20,6 +20,11 @@ class BooleanField extends FieldType implements RequiresDbColumn, HasAccessor, H
     public function sortQuery($query, $direction)
     {
         $query->orderBy($this->field->getColumnName(), $direction);
+    }
+
+    protected function formatValue($value)
+    {
+        return ($value === 'false' || ! $value) ? false : true;
     }
 
     public function getAccessor(): Closure

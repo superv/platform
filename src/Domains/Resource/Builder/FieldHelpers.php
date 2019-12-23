@@ -2,8 +2,10 @@
 
 namespace SuperV\Platform\Domains\Resource\Builder;
 
-use SuperV\Platform\Domains\Resource\Field\Types\Boolean\BooleanField;
+use SuperV\Platform\Domains\Resource\Field\Types\Boolean\BooleanType;
 use SuperV\Platform\Domains\Resource\Field\Types\DateTime\DateTimeType;
+use SuperV\Platform\Domains\Resource\Field\Types\File\Blueprint as FileTypeBlueprint;
+use SuperV\Platform\Domains\Resource\Field\Types\File\FileType;
 use SuperV\Platform\Domains\Resource\Field\Types\Number\NumberField;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Blueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\RelatesToOneType;
@@ -56,6 +58,11 @@ trait FieldHelpers
 
     public function boolean(string $fieldName, string $label = null)
     {
-        return $this->addField($fieldName, BooleanField::class, $label);
+        return $this->addField($fieldName, BooleanType::class, $label);
+    }
+
+    public function file(string $fieldName, string $label = null): FileTypeBlueprint
+    {
+        return $this->addField($fieldName, FileType::class, $label);
     }
 }

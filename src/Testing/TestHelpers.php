@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factory as ModelFactory;
 use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\Assert;
+use SplFileInfo;
 use SuperV\Platform\Domains\Auth\Contracts\Users;
 use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
@@ -325,7 +326,15 @@ trait TestHelpers
             $uri = '?'.http_build_query($uri);
         }
 
-        return Request::create($uri, 'POST', $data);
+        $parameters = collect($data)->filter(function ($value) {
+            return ! $value instanceof SplFileInfo;
+        })->all();
+
+        $files = collect($data)->filter(function ($value) {
+            return $value instanceof SplFileInfo;
+        })->all();
+
+        return Request::create($uri, 'POST', $parameters, [], $files);
     }
 
     protected function makeGetRequest($uri = '', array $data = []): Request
