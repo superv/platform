@@ -4,8 +4,6 @@ namespace SuperV\Platform\Domains\Resource\Field\Types\File;
 
 use SplFileInfo;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Media\MediaBag;
-use SuperV\Platform\Domains\Resource\Field\Contracts\FieldValueInterface;
 use SuperV\Platform\Domains\Resource\Field\FieldValue;
 
 class Value extends FieldValue
@@ -15,29 +13,14 @@ class Value extends FieldValue
      */
     protected $requestFile;
 
-    public function resolveeeeee(): FieldValueInterface
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Field\Types\File\Uploader
+     */
+    protected $manager;
+
+    public function __construct(Uploader $manager)
     {
-        parent::resolve();
-
-        if ($this->request) {
-            $this->value = function (EntryContract $entry) {
-                if (! $file = $this->request->file($this->getFieldHandle())) {
-                    return null;
-                }
-
-                if (! $file instanceof SplFileInfo) {
-                    return null;
-                }
-
-                $bag = new MediaBag($entry, $this->getFieldHandle());
-
-                $media = $bag->addFromUploadedFile($file, $this->field->getFieldType()->getConfigAsMediaOptions());
-
-                return $media;
-            };
-        }
-
-        return $this;
+        $this->manager = $manager;
     }
 
     protected function resolveRequest(): void
@@ -53,11 +36,12 @@ class Value extends FieldValue
                 return null;
             }
 
-            $bag = new MediaBag($entry, $this->getFieldHandle());
+            $this->manager->setEntry($entry)
+                          ->setLabel($this->getFieldHandle())
+                          ->setUploadedFile($file)
+                          ->setOptions($this->field->type()->getConfigAsMediaOptions());
 
-            $media = $bag->addFromUploadedFile($file, $this->field->getFieldType()->getConfigAsMediaOptions());
-
-            return $media;
+            return $this->manager->save();
         };
     }
 }

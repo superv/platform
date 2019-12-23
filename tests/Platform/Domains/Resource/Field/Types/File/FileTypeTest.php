@@ -6,9 +6,14 @@ use Closure;
 use Illuminate\Http\UploadedFile;
 use Storage;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Resource\Builder\Blueprint as ResourceBlueprint;
 use SuperV\Platform\Domains\Resource\Builder\Builder;
 use SuperV\Platform\Domains\Resource\Field\Types\File\Blueprint as FileTypeBlueprint;
+use SuperV\Platform\Domains\Resource\Field\Types\File\Composer;
+use SuperV\Platform\Domains\Resource\Field\Types\File\FileType;
+use SuperV\Platform\Domains\Resource\Field\Types\File\Repository;
+use SuperV\Platform\Domains\Resource\Field\Types\File\Uploader;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
@@ -52,6 +57,46 @@ class FileTypeTest extends ResourceTestCase
             'public'        => true,
             'allowed_types' => ['pdf', 'docx'],
         ], $contractField->getConfig());
+    }
+
+    function test__value_resolver()
+    {
+        $file = UploadedFile::fake()->image('square.png');
+        $entryMock = $this->makePartialEntryMock();
+        $mediaMock = $this->makeMock(Media::class);
+
+        $field = $this->makeField('avatar', FileType::class, ['disk' => 'fake-disk']);
+
+        $mediaBag = $this->bindMock(Uploader::class);
+        $mediaBag->expects('setEntry')->with($entryMock)->andReturnSelf();
+        $mediaBag->expects('setLabel')->with('avatar')->andReturnSelf();
+        $mediaBag->expects('setUploadedFile')->with($file)->andReturnSelf();
+        $mediaBag->expects('setOptions')->andReturnSelf();
+        $mediaBag->expects('save')->andReturn($mediaMock);
+
+        $request = $this->makePostRequest('', ['avatar' => $file]);
+        $callback = $field->value()
+                          ->setRequest($request)
+                          ->resolve()->get();
+        $this->assertInstanceOf(Closure::class, $callback);
+
+        $this->assertEquals($mediaMock, $callback($entryMock));
+    }
+
+    function test__composer()
+    {
+        $entryMock = $this->makePartialEntryMock();
+        $mediaMock = $this->makeMock(Media::class);
+        $mediaMock->expects('getUrl')->andReturn('media-url');
+        $field = $this->makeField('avatar', FileType::class, ['disk' => 'fake-disk']);
+
+        $repoMock = $this->bindMock(Repository::class);
+        $repoMock->expects('setOwner')->with($entryMock)->andReturnSelf();
+        $repoMock->expects('withLabel')->with('avatar')->andReturn($mediaMock);
+
+        $composer = $field->getComposer();
+        $this->assertInstanceOf(Composer::class, $composer);
+        $this->assertEquals('media-url', $composer->toView($entryMock)->get('image_url'));
     }
 
     function test_type_file_is_not_required_by_default()
@@ -102,6 +147,7 @@ class FileTypeTest extends ResourceTestCase
 
     function test__max_size_success()
     {
+        $this->withoutExceptionHandling();
         $response = $this->uploadFile($this->resource, UploadedFile::fake()->image('square.png')->size(300));
         $response->assertOk();
     }

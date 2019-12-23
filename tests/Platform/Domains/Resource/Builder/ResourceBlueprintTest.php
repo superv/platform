@@ -13,7 +13,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ResourceBlueprintTest extends ResourceTestCase
 {
-    function test__belongs_to_many_relation()
+    function __many_to_many_relation()
     {
         $rolesBlueprint = Builder::blueprint('testing.roles',
             function (Blueprint $resource) {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Platform\Domains\Resource\Field\Types;
+namespace Tests\Platform\Domains\Resource\Field\Types\BelongsToMany;
 
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class BelongsToManyFieldTest extends ResourceTestCase
+class BelongsToManyTypeTest extends ResourceTestCase
 {
     function test__rpc_options()
     {

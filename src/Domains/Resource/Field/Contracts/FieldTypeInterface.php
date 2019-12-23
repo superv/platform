@@ -2,9 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
-use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Support\Composer\Payload;
 
 interface FieldTypeInterface
@@ -29,7 +27,7 @@ interface FieldTypeInterface
 
 //    public function resolveValueFromRequest(Request $request, ?EntryContract $entry = null);
 
-    public function resolveDataFromEntry(FormData $data, EntryContract $entry);
+//    public function resolveDataFromEntry(FormData $data, EntryContract $entry);
 
     public function getConfig();
 

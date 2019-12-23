@@ -16,7 +16,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 class BuilderTest extends ResourceTestCase
 {
 
-    function test__belongs_to_many_pivot()
+    function __many_to_many_pivot()
     {
         Builder::create('testing.roles', function (Blueprint $resource) {
             $resource->manyToMany('testing.actions', 'actions')
@@ -35,7 +35,7 @@ class BuilderTest extends ResourceTestCase
         $this->assertTrue($pivot->isPivot());
     }
 
-    function test__belongs_to_many_relation()
+    function __many_to_many_relation()
     {
         Builder::create('testing.roles', function (Blueprint $resource) {
             $resource->manyToMany('testing.actions', 'actions')
@@ -57,7 +57,7 @@ class BuilderTest extends ResourceTestCase
         $this->assertEquals('role_id', $pivot->getField('role')->getConfigValue('foreign_key'));
 
         $actionsField = $resource->getField('actions');
-        $this->assertEquals('belongs_to_many', $actionsField->getType());
+        $this->assertEquals('many_to_many', $actionsField->getType());
         $this->assertEquals($actionsRelation->getConfig(), $actionsField->getConfig());
     }
 

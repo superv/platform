@@ -13,6 +13,7 @@ use SuperV\Platform\Domains\Auth\Contracts\Users;
 use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Port\Port;
+use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Routing\RouteRegistrar;
 
@@ -73,33 +74,6 @@ trait TestHelpers
         }
 
         return $this->json('DELETE', $uri, [], $this->getHeaderWithAccessToken());
-    }
-
-    /**
-     * Load model factories from path.
-     *
-     * @param string $path
-     * @return $this
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    protected function withFactories(string $path)
-    {
-        return $this->loadFactoriesUsing($this->app, $path);
-    }
-
-    /**
-     * Load model factories from path using Application.
-     *
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     * @param string                                       $path
-     * @return $this
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    protected function loadFactoriesUsing($app, string $path)
-    {
-        $app->make(ModelFactory::class)->load($path);
-
-        return $this;
     }
 
     protected function afterPlatformInstalled(callable $callback)
@@ -216,6 +190,16 @@ trait TestHelpers
     protected function makeMock($abstract, $instance = null)
     {
         return \Mockery::mock($instance ?? $abstract);
+    }
+
+    protected function makePartialMock($abstract)
+    {
+        return $this->makeMock($abstract)->makePartial();
+    }
+
+    protected function makePartialEntryMock()
+    {
+        return $this->makePartialMock(ResourceEntry::class);
     }
 
     protected function bindMock($abstract, $instance = null): \Mockery\MockInterface
@@ -345,5 +329,32 @@ trait TestHelpers
         }
 
         return Request::create($uri, 'GET', $data);
+    }
+
+    /**
+     * Load model factories from path.
+     *
+     * @param string $path
+     * @return $this
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    protected function withFactories(string $path)
+    {
+        return $this->loadFactoriesUsing($this->app, $path);
+    }
+
+    /**
+     * Load model factories from path using Application.
+     *
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param string                                       $path
+     * @return $this
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    protected function loadFactoriesUsing($app, string $path)
+    {
+        $app->make(ModelFactory::class)->load($path);
+
+        return $this;
     }
 }

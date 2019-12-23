@@ -23,7 +23,7 @@ class FieldComposer implements ComposerInterface
     /** @var \SuperV\Platform\Support\Composer\Payload */
     protected $payload;
 
-    public function __construct(FieldInterface $field)
+    public function setField(FieldInterface $field): ComposerInterface
     {
         $this->field = $field;
         $this->fieldType = $field->getFieldType();
@@ -34,6 +34,8 @@ class FieldComposer implements ComposerInterface
             'component'  => $this->field->getComponent(),
             'label'      => $this->field->getLabel(),
         ]);
+
+        return $this;
     }
 
     public function compose(): Payload

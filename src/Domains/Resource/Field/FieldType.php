@@ -93,7 +93,7 @@ abstract class FieldType implements FieldTypeInterface
     }
 
 
-    public function resolveDataFromEntry(FormData $data, EntryContract $entry)
+    public function ____resolveDataFromEntry(FormData $data, EntryContract $entry)
     {
         if ($callback = $this->field->getCallback('resolving_entry')) {
             $fieldType = $this;
@@ -157,6 +157,8 @@ abstract class FieldType implements FieldTypeInterface
         if (! class_exists($class)) {
             $class = FieldComposer::class;
         }
+
+        return app($class)->setField($this->field);
 
         return app()->make($class, ['field' => $this->field]);
     }

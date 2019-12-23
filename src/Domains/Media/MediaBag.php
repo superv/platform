@@ -51,23 +51,15 @@ class MediaBag
         );
     }
 
-    protected function createEntry($file, $filename, MediaOptions $options)
+    public function addFile($file, MediaOptions $options)
     {
-        $original = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
+        $fileHashName = $this->saveFileToDisk($options, $file);
 
-        $media = new Media([
-            'filename'  => ($options->getPath() ? $options->getPath().'/' : '').$filename,
-            'disk'      => $options->getDisk(),
-            'original'  => $original,
-            'label'     => $this->label,
-            'mime_type' => $file->getMimeType(),
-            'extension' => $this->getFileExtension($file),
-            'size'      => $file->getSize(),
-        ]);
-
-        $media->associateOwner($this->owner)->save();
-
-        return $media;
+        if ($fileHashName) {
+            return $this->createEntry($file, $fileHashName, $options);
+        } else {
+            throw  new \Exception('Upload failed');
+        }
     }
 
     public function addFromPath($fullPath, MediaOptions $options)
@@ -97,46 +89,18 @@ class MediaBag
         }
 
         return $this->addFile($this->reverseTransform($base64EncodedData, $filename), MediaOptions::one('photo')->disk($diskName)->visibility($visibility)->path($path));
-
-
-
-        $data = substr($base64EncodedData, strpos($base64EncodedData, ',') + 1);
-        $mimeType = strtolower($type[1]); // jpg, png, gif
-        $extension = strtolower($type[3]); // jpg, png, gif
-        $target = ($path ? $path.'/' : '').md5($filename.uniqid()).'.'.$extension;
-//        $uploadSuccess = Storage::disk($diskName)->put($target, base64_decode($data));
-//        $uploadSuccess = Storage::disk($diskName)->put($target, base64_decode($data), $visibility);
-
-        $name = Str::random(40).'.'.$extension;
-        $uploadSuccess =  Storage::disk($diskName)
-               ->putFileAs(
-                   $path,
-                   $this->reverseTransform($base64EncodedData),
-                   $name,
-                   $visibility
-               );
-
-        if ($uploadSuccess) {
-            $media = new Media([
-                'filename'   => $name,
-                'disk'       => $diskName,
-                'original'   => $filename,
-                'owner_type' => $this->owner->getMorphClass(),
-                'owner_id'   => $this->owner->id,
-                'label'      => $this->label,
-                'mime_type'  => $mimeType,
-                'extension'  => $extension,
-                'size'       => Storage::disk($diskName)->size($target),
-            ]);
-            $media->save();
-
-            return $media;
-        }
     }
 
+    /**
+     * Convert from base64-encoded to UploadedFile
+     *
+     * @param $value
+     * @param $filename
+     * @return \Illuminate\Http\UploadedFile
+     */
     public function reverseTransform($value, $filename)
     {
-        $tmpFilePath = tempnam(sys_get_temp_dir(), 'lackom');
+        $tmpFilePath = tempnam(sys_get_temp_dir(), 'vsuper');
 
         $tmp = fopen($tmpFilePath, 'wb+');
 
@@ -149,24 +113,7 @@ class MediaBag
 
         $mimeType = strtolower($matches[1]); // jpg, png, gif
 
-        return new UploadedFile($tmpFilePath,  $filename, $mimeType, $size, 0, true);
-    }
-
-    /**
-     * @param \SuperV\Platform\Domains\Media\MediaOptions     $options
-     * @param                                                 $file
-     * @return \SuperV\Platform\Domains\Media\Media
-     * @throws \Exception
-     */
-    protected function addFile($file, MediaOptions $options)
-    {
-        $fileHashName = $this->saveFileToDisk($options, $file);
-
-        if ($fileHashName) {
-            return $this->createEntry($file, $fileHashName, $options);
-        } else {
-            throw  new \Exception('Upload failed');
-        }
+        return new UploadedFile($tmpFilePath, $filename, $mimeType, $size, 0, true);
     }
 
     /**
@@ -178,6 +125,25 @@ class MediaBag
         $this->bagConfig = $bagConfig;
 
         return $this;
+    }
+
+    protected function createEntry($file, $filename, MediaOptions $options)
+    {
+        $original = $file instanceof UploadedFile ? $file->getClientOriginalName() : $file->getFilename();
+
+        $media = new Media([
+            'filename'  => ($options->getPath() ? $options->getPath().'/' : '').$filename,
+            'disk'      => $options->getDisk(),
+            'original'  => $original,
+            'label'     => $this->label,
+            'mime_type' => $file->getMimeType(),
+            'extension' => $this->getFileExtension($file),
+            'size'      => $file->getSize(),
+        ]);
+
+        $media->associateOwner($this->owner)->save();
+
+        return $media;
     }
 
     /**

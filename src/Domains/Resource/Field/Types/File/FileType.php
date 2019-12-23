@@ -2,9 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types\File;
 
-use Closure;
 use Illuminate\Database\Query\JoinClause;
-use SplFileInfo;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
@@ -31,28 +29,6 @@ class FileType extends FieldType implements
         }
     }
 
-    public function getModifier(): Closure
-    {
-        return function ($value, ?EntryContract $entry) {
-            $this->requestFile = $value instanceof SplFileInfo ? $value : null;
-
-            return function () use ($entry) {
-                if (! $this->requestFile || ! $entry) {
-                    return null;
-                }
-
-                if (! $this->requestFile instanceof SplFileInfo) {
-                    return null;
-                }
-
-                $bag = new MediaBag($entry, $this->getFieldHandle());
-
-                $media = $bag->addFromUploadedFile($this->requestFile, $this->getConfigAsMediaOptions());
-
-                return $media;
-            };
-        };
-    }
 
     /**
      * @param \Illuminate\Database\Eloquent\Builder $query

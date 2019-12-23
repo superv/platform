@@ -11,9 +11,19 @@ class Composer extends BaseComposer
     /** @var \SuperV\Platform\Domains\Resource\Field\Types\File\FileType */
     protected $fieldType;
 
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Field\Types\File\Repository
+     */
+    protected $repository;
+
+    public function __construct(Repository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function view(EntryContract $entry): void
     {
-        if ($media = $this->fieldType->getMedia($entry, $this->getFieldHandle())) {
+        if ($media = $this->repository->setOwner($entry)->withLabel($this->getFieldHandle())) {
             $this->payload->set('image_url', $media->getUrl());
             $this->payload->set('config', null);
             $this->payload->set('value', null);

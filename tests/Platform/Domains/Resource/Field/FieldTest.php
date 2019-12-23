@@ -61,9 +61,6 @@ class FieldTest extends ResourceTestCase
         $formDataMock->expects('set')->with('phone', '0532');
 
         $field->getValue()->setRequest($requestMock)->resolve()->mapTo($formDataMock);
-
-//        $field->getFieldType()
-//              ->resolveDataFromRequest($formDataMock, $requestMock);
     }
 
     function test__before_resolving_entry_callback()
@@ -71,12 +68,6 @@ class FieldTest extends ResourceTestCase
         $entryMock = $this->makeMock(EntryContract::class);
 
         $field = $this->makeField('phone');
-//        $field->beforeResolvingEntry(
-//            function (FormData $data, EntryContract $entry, FieldTypeInterface $fieldType) use ($entryMock) {
-//                $data->set('phone', '532');
-//                $this->assertSame($entryMock, $entry);
-//                $this->assertEquals('phone', $fieldType->getFieldHandle());
-//            });
 
         $field->beforeResolvingEntry(
             function (FieldValueInterface $fieldValue, EntryContract $entry) use ($entryMock) {
@@ -88,8 +79,5 @@ class FieldTest extends ResourceTestCase
         $formDataMock->expects('set')->with('phone', '0532');
 
         $field->getValue()->setEntry($entryMock)->resolve()->mapTo($formDataMock);
-//
-//        $field->getFieldType()
-//              ->resolveDataFromEntry($formDataMock, $entryMock);
     }
 }
