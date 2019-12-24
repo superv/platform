@@ -197,9 +197,25 @@ trait TestHelpers
         return $this->makeMock($abstract)->makePartial();
     }
 
-    protected function makePartialEntryMock()
+    protected function makeEntryMock(string $resourceIdentifier = null, array $attributes = [])
     {
-        return $this->makePartialMock(ResourceEntry::class);
+        $mock = $this->makePartialMock(ResourceEntry::class);
+        if (! empty($attributes)) {
+            $mock->fill($attributes);
+        }
+        if ($resourceIdentifier) {
+            $mock->shouldReceive('getResourceIdentifier')->andReturn($resourceIdentifier);
+        }
+
+        return $mock;
+    }
+
+    protected function makeResourceMock(string $identifier)
+    {
+        $mock = $this->makePartialMock(Resource::class);
+        $mock->shouldReceive('getIdentifier')->andReturn($identifier);
+
+        return $mock;
     }
 
     protected function bindMock($abstract, $instance = null): \Mockery\MockInterface

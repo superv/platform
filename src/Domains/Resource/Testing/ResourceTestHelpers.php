@@ -197,6 +197,11 @@ trait ResourceTestHelpers
         return $field;
     }
 
+    protected function makeFieldMock()
+    {
+        return $this->makePartialMock($this->makeField());
+    }
+
     protected function postCreateResource($resource, array $post = []): TestResponse
     {
         /** @var \SuperV\Platform\Domains\Resource\Resource $resource */

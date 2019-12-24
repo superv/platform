@@ -85,6 +85,11 @@ abstract class Entry extends Eloquent implements EntryContract
         return $this->exists;
     }
 
+    public function getEntryLabel()
+    {
+        return sv_parse($this->getResourceConfig()->getEntryLabel(), $this->toArray());
+    }
+
     public function getResource()
     {
         if (! $this->resource) {

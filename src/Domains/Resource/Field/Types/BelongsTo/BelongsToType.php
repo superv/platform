@@ -164,6 +164,16 @@ class BelongsToType extends RelationFieldType implements
                                    ->make();
     }
 
+    public function presenter()
+    {
+        return function (EntryContract $entry) {
+            if (! $entry->relationLoaded($this->getFieldHandle())) {
+                $entry->load($this->getFieldHandle());
+            }
+
+            return $this->getRelatedEntryLabel($entry->getRelation($this->getFieldHandle()));
+        };
+    }
 
     public function viewPresenter()
     {

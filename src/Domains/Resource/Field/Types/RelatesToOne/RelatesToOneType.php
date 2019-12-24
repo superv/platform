@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentBelongsTo;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
+use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
@@ -34,6 +35,16 @@ class RelatesToOneType extends FieldType implements HandlesRpc
     {
         $this->lookupOptions = $lookupOptions;
         $this->factory = $factory;
+    }
+
+    public function getRelatedEntry(EntryContract $parent)
+    {
+        return EntryRepository::for($this->field->getConfigValue('related'))
+                              ->newQuery()
+                              ->where(
+                                  $this->field->getConfigValue('owner_key'),
+                                  $parent->getAttribute($this->field->getConfigValue('local_key'))
+                              )->first();
     }
 
     public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)

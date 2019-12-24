@@ -14,6 +14,16 @@ class EntryRepository implements EntryRepositoryInterface
      */
     protected $resource;
 
+    /**
+     * @var \SuperV\Platform\Domains\Resource\ResourceFactory
+     */
+    protected $resourceFactory;
+
+    public function __construct(ResourceFactory $resourceFactory)
+    {
+        $this->resourceFactory = $resourceFactory;
+    }
+
     public function getEntry(string $identifier, int $id = null): ?EntryContract
     {
         if (is_null($id)) {
@@ -109,7 +119,7 @@ class EntryRepository implements EntryRepositoryInterface
     public function setResource($resource): EntryRepositoryInterface
     {
         if (is_string($resource)) {
-            $resource = ResourceFactory::make($resource);
+            $resource = $this->resourceFactory->withIdentifier($resource);
         }
 
         $this->resource = $resource;

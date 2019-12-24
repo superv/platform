@@ -478,7 +478,6 @@ class Table implements TableInterface, Composable, ProvidesUIComponent, Responsa
                 return [
                     'id'      => $this->getRowId($entry),
                     'fields'  => $fields->map(function (FieldInterface $field) use ($entry) {
-//                        return (new FieldComposer($field))->forTableRow($entry)->get();
                         return $field->getComposer()->toTable($entry)->get();
                     })->values()->all(),
                     'actions' => ['view'],

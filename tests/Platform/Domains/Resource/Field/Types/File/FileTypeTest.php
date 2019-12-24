@@ -62,7 +62,7 @@ class FileTypeTest extends ResourceTestCase
     function test__value_resolver()
     {
         $file = UploadedFile::fake()->image('square.png');
-        $entryMock = $this->makePartialEntryMock();
+        $entryMock = $this->makeEntryMock();
         $mediaMock = $this->makeMock(Media::class);
 
         $field = $this->makeField('avatar', FileType::class, ['disk' => 'fake-disk']);
@@ -85,7 +85,7 @@ class FileTypeTest extends ResourceTestCase
 
     function test__composer()
     {
-        $entryMock = $this->makePartialEntryMock();
+        $entryMock = $this->makeEntryMock();
         $mediaMock = $this->makeMock(Media::class);
         $mediaMock->expects('getUrl')->andReturn('media-url');
         $field = $this->makeField('avatar', FileType::class, ['disk' => 'fake-disk']);

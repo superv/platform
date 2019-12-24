@@ -2,23 +2,35 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne;
 
-use Current;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\FieldComposer as BaseComposer;
+use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 
-class Composer extends BaseComposer
+class Composer extends FieldComposer
 {
+    public function table(?EntryContract $entry = null): void
+    {
+        if ($entry) {
+            $relatedEntry = $entry->{$this->getFieldHandle()}()->first();
+
+            $this->payload->set('value', $relatedEntry->getEntryLabel());
+        }
+    }
+
     public function view(EntryContract $entry): void
     {
-        $relatedEntry = $entry->{$this->getFieldHandle()}()->newQuery()->first();
+        $relatedEntry = $this->field->type()->getRelatedEntry($entry);
 
-        if ($relatedEntry) {
-            $this->payload->set('value', sv_resource($relatedEntry)->getEntryLabel($relatedEntry));
-            if (Current::user()->can($this->field->getConfigValue('related'))) {
-                $this->payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
-            }
-        }
+        $this->payload->set('value', $relatedEntry->getEntryLabel());
+
+//        $relatedEntry = $entry->{$this->getFieldHandle()}()->newQuery()->first();
+//
+//        if ($relatedEntry) {
+//            $this->payload->set('value', sv_resource($relatedEntry)->getEntryLabel($relatedEntry));
+//            if (Current::user()->can($this->field->getConfigValue('related'))) {
+//                $this->payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
+//            }
+//        }
     }
 
     public function form(?FormInterface $form = null): void

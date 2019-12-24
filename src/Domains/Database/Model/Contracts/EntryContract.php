@@ -16,6 +16,8 @@ interface EntryContract
 
     public function getForeignKey();
 
+    public function getEntryLabel();
+
     public function getResourceIdentifier();
 
     public function getConnection();

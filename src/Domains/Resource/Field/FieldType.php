@@ -150,7 +150,7 @@ abstract class FieldType implements FieldTypeInterface
         return $this->component;
     }
 
-    public function resolveComposer(): ?ComposerInterface
+    public function resolveComposer(): ComposerInterface
     {
         $class = str_replace_last(class_basename(get_called_class()), 'Composer', get_called_class());
 
@@ -159,8 +159,17 @@ abstract class FieldType implements FieldTypeInterface
         }
 
         return app($class)->setField($this->field);
+    }
 
-        return app()->make($class, ['field' => $this->field]);
+    public function resolveQuery(): QueryInterface
+    {
+        $class = str_replace_last(class_basename(get_called_class()), 'Query', get_called_class());
+
+        if (! class_exists($class)) {
+            $class = FieldQuery::class;
+        }
+
+        return app($class)->setField($this->field);
     }
 
     public function resolveFaker(): ?FakerInterface

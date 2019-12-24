@@ -37,7 +37,7 @@ interface FieldTypeInterface
 
     public function getComponent(): ?string;
 
-    public function resolveComposer(): ?ComposerInterface;
+    public function resolveComposer(): ComposerInterface;
 
     public function resolveFaker(): ?FakerInterface;
 

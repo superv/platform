@@ -11,7 +11,7 @@ use SuperV\Platform\Support\Composer\Payload;
 use Tests\Platform\Domains\Resource\Fixtures\FieldTypes\Genius\GeniusType;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class ComposerTest extends ResourceTestCase
+class FieldComposerTest extends ResourceTestCase
 {
     function test__composer_to_table_data()
     {

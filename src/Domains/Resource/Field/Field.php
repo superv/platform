@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Field\Composer\DefaultFieldComposer;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ComposerInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldQueryInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldValueInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\MutatorInterface;
