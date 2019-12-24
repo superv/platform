@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Listeners;
 
 use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
-use SuperV\Platform\Domains\Resource\ColumnFieldMapper;
+use SuperV\Platform\Domains\Resource\Field\ColumnFieldMapper;
 use SuperV\Platform\Domains\Resource\Field\Contracts\AltersDatabaseTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldRepository;

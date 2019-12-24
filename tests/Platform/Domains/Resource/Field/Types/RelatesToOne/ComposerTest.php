@@ -38,18 +38,6 @@ class ComposerTest extends ResourceTestCase
         $composer->setField($field);
 
         $this->assertEquals('my address', $composer->toTable($student)->get('value'));
-
-        return;
-        $relatedEntry = $this->makeEntryMock();
-        $relatedEntry->expects('getEntryLabel')->andReturn('address-title');
-
-        $parentEntry = $this->makeEntryMock();
-        $parentEntry->expects('getRelation')->with('address')->andReturn($relatedEntry);
-
-        $composer = new Composer();
-        $composer->setField($this->makeField('address'));
-
-        $this->assertEquals('my address', $composer->toTable($parentEntry)->get('value'));
     }
 
     protected function setUp(): void
@@ -57,46 +45,13 @@ class ComposerTest extends ResourceTestCase
         parent::setUp();
 
         Builder::create('tst.students', function (Blueprint $resource) {
-            /**
-             *   Resource Config
-             */
-            $resource->label('Students');
-            $resource->nav('acp.app');
-
-            /**
-             *   Fields
-             */
-            $resource->primaryKey('id')
-                     ->number();
             $resource->text('name', 'Student Name')->useAsEntryLabel();
-
-            /**
-             *   Relations
-             */
-//            $resource->manyToMany('tst.courses', 'courses')
-//                     ->pivot('tst.students_courses', function (Pivot $pivot) {
-//                         $pivot->boolean('active')->default(false)->showOnLists();
-//                     });
-
             $resource->relatesToOne('tst.addresses', 'address')
                      ->withLocalKey('address_id')
                      ->showOnLists();
-//
-//            $resource->relatesToOne('platform.resources', 'resource')
-//                     ->withLocalKey('resource_id')
-//                     ->showOnLists();
         });
 
         Builder::create('tst.addresses', function (Blueprint $resource) {
-            /**
-             *   Resource Config
-             */
-            $resource->label('Student Addresses');
-            $resource->nav('acp.app');
-
-            /**
-             *   Fields
-             */
             $resource->primaryKey('id')
                      ->number();
             $resource->text('title', 'Address Title')->useAsEntryLabel();

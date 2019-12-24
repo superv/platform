@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource;
+namespace SuperV\Platform\Domains\Resource\Field;
 
 use SuperV\Platform\Support\Concerns\HasConfig;
 

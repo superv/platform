@@ -42,5 +42,4 @@ interface FieldTypeInterface
     public function resolveFaker(): ?FakerInterface;
 
     public function resolveFieldValue(): ?FieldValueInterface;
-//    public function resolveMutator(): ?FieldMutatorInterface;
 }

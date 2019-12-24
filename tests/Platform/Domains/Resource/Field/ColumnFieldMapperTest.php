@@ -2,7 +2,7 @@
 
 namespace Tests\Platform\Domains\Resource\Field;
 
-use SuperV\Platform\Domains\Resource\ColumnFieldMapper as Mapper;
+use SuperV\Platform\Domains\Resource\Field\ColumnFieldMapper as Mapper;
 use SuperV\Platform\Testing\PlatformTestCase;
 
 /**
