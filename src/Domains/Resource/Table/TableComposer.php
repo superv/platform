@@ -33,14 +33,13 @@ class TableComposer
                 'row_actions'       => $this->makeRowActions(),
                 'selection_actions' => $this->makeSelectionActions(),
                 'context_actions'   => $this->makeContextActions(),
+                'filters'           => $this->table->getFilters()
+                                                   ->map(function (Filter $filter) {
+                                                       return $filter->makeField()->getComposer()->toForm()->get();
+                                                   }),
 
             ],
         ]);
-
-        $payload->set('config.filters', $this->table->getFilters()
-                                                    ->map(function (Filter $filter) {
-                                                        return $filter->makeField()->getComposer()->toForm()->get();
-                                                    }));
 
         return $payload->get();
     }
@@ -78,10 +77,9 @@ class TableComposer
     protected function makeFields()
     {
         $fields = $this->table->makeFields()
-            ->map(function (FieldInterface $field) {
-//                return (new FieldComposer($field))->forTableConfig();
-                return $field->getComposer()->toTable();
-            })->values();
+                              ->map(function (FieldInterface $field) {
+                                  return $field->getComposer()->toTable();
+                              })->values();
 
         return $fields;
     }

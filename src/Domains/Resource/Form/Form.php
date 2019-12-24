@@ -186,6 +186,17 @@ class Form implements FormInterface, ProvidesUIComponent
         return $this->fields;
     }
 
+    public function getFieldRpcUrl($fieldHandle, $rpcKey)
+    {
+        $route = $this->isPublic() ? 'sv::public_forms.fields' : 'sv::forms.fields';
+
+        return sv_route($route, [
+            'form'  => $this->getIdentifier(),
+            'field' => $fieldHandle,
+            'rpc'   => 'options',
+        ]);
+    }
+
     public function setFields(FormFields $fields)
     {
         $this->fields = $fields;

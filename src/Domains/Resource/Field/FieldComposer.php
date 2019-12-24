@@ -50,9 +50,6 @@ class FieldComposer implements ComposerInterface
                 $value = $this->field->getValue()->setEntry($entry)->resolve()->get();
             }
         }
-//        if ($form && ! isset($value)) {
-//            $value = $form->getData()->getForDisplay($this->getFieldHandle());
-//        }
 
         $this->payload->merge([
             'value'       => $value ?? $this->field->getDefaultValue(),
@@ -71,9 +68,6 @@ class FieldComposer implements ComposerInterface
 
     public function toTable(?EntryContract $entry = null): Payload
     {
-//        $value = $this->field->resolveFromEntry($entry);
-//        $value = $this->fieldType->getValue($entry);
-
         $value = $this->field->getValue()->setEntry($entry)->resolve()->get();
 
         if (! $entry) {
@@ -105,26 +99,13 @@ class FieldComposer implements ComposerInterface
 
     public function toView(EntryContract $entry): Payload
     {
-//        $value = $this->field->resolveFromEntry($entry);
-//        $value = $this->fieldType->getValue($entry);
         $value = $this->field->getValue()->setEntry($entry)->resolve()->get();
-//        if ($callback = $this->field->getCallback('view.presenting')) {
-//            $value = app()->call($callback, ['entry' => $entry, 'value' => $value, 'field' => $this->field]);
-//        }
-
-//        if ($this->fieldType instanceof HasAccessor) {
-//            $value = (new Accessor($this->fieldType))->get(['entry' => $entry, 'value' => $value]);
-//        }
 
         $payload = $this->compose()->merge([
             'value'      => $value,
             'classes'    => $this->field->getConfigValue('classes'),
             'presenting' => true,
         ]);
-
-//        if ($callback = $this->field->getCallback('view.composing')) {
-//            app()->call($callback, ['entry' => $entry, 'payload' => $payload]);
-//        }
 
         $this->view($entry);
 

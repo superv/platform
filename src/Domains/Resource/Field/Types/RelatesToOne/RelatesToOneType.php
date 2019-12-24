@@ -3,19 +3,18 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentBelongsTo;
-use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesRelationQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
-use SuperV\Platform\Domains\Resource\Form\FormData;
 use SuperV\Platform\Domains\Resource\Jobs\MakeLookupOptions;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
-class RelatesToOneType extends FieldType implements HandlesRpc
+class RelatesToOneType extends FieldType implements HandlesRpc, ProvidesRelationQuery
 {
     protected $handle = 'relates_to_one';
 
@@ -47,18 +46,7 @@ class RelatesToOneType extends FieldType implements HandlesRpc
                               )->first();
     }
 
-    public function resolveDataFromRequest(FormData $data, Request $request, ?EntryContract $entry = null)
-    {
-        if (! $request->has($this->getFieldHandle()) && ! $request->has($this->getColumnName())) {
-            return null;
-        }
-
-        [$value, $requestValue] = $this->resolveValueFromRequest($request, $entry);
-
-        $data->toSave($this->getColumnName(), $value);
-    }
-
-    public function newQuery(EntryContract $parent)
+    public function getRelationQuery(EntryContract $parent)
     {
         $config = $this->field->getConfig();
 
@@ -70,6 +58,8 @@ class RelatesToOneType extends FieldType implements HandlesRpc
             $this->getFieldHandle()
         );
     }
+
+
 
     public function getColumnName(): ?string
     {

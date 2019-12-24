@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Resource\Builder\Blueprint;
 use SuperV\Platform\Domains\Resource\Builder\Builder;
 use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesRelationQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Blueprint as RelatesToOne;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\RelatesToOneType;
@@ -78,7 +79,7 @@ class RelatesToOneTypeTest extends ResourceTestCase
             'owner_key' => 'owner_id',
         ]);
 
-        $query = $fieldType->newQuery($this->partialMock(ResourceEntry::class));
+        $query = $fieldType->getRelationQuery($this->partialMock(ResourceEntry::class));
         $this->assertInstanceOf(BelongsTo::class, $query);
 
         $this->assertEquals('resource', $query->getRelationName());
@@ -121,6 +122,7 @@ class RelatesToOneTypeTest extends ResourceTestCase
     {
         $fieldType = RelatesToOneType::resolve();
         $this->assertInstanceOf(HandlesRpc::class, $fieldType);
+        $this->assertInstanceOf(ProvidesRelationQuery::class, $fieldType);
     }
 
     protected function makeFieldType(array $config = []): RelatesToOneType

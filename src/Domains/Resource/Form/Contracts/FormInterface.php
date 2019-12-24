@@ -45,6 +45,8 @@ interface FormInterface
 
     public function fields(): FormFields;
 
+    public function getFieldRpcUrl($fieldHandle, $rpcKey);
+
     public function isPublic();
 
     public function isCreating();

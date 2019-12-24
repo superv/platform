@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne;
 
+use Current;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\FieldComposer;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
@@ -23,40 +24,22 @@ class Composer extends FieldComposer
 
         $this->payload->set('value', $relatedEntry->getEntryLabel());
 
-//        $relatedEntry = $entry->{$this->getFieldHandle()}()->newQuery()->first();
-//
-//        if ($relatedEntry) {
-//            $this->payload->set('value', sv_resource($relatedEntry)->getEntryLabel($relatedEntry));
-//            if (Current::user()->can($this->field->getConfigValue('related'))) {
-//                $this->payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
-//            }
-//        }
+        if (Current::user()->can($this->field->getConfigValue('related'))) {
+            $this->payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
+        }
     }
 
     public function form(?FormInterface $form = null): void
     {
-        $entry = $form->getEntry();
-
-        if ($entry) {
-            if ($relatedEntry = $entry->{$this->field->getHandle()}()->newQuery()->first()) {
-                $this->payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
+        if (! $options = $this->field->getConfigValue('meta.options')) {
+            if ($form) {
+                $options = $form->getFieldRpcUrl($this->getFieldHandle(), 'options');
             }
         }
 
-        $options = $this->field->getConfigValue('meta.options');
-        if (! is_null($options)) {
-            $this->payload->set('meta.options', $options);
-        } else {
-            $route = $form->isPublic() ? 'sv::public_forms.fields' : 'sv::forms.fields';
-            $url = sv_route($route, [
-                'form'  => $form->getIdentifier(),
-                'field' => $this->field->getHandle(),
-                'rpc'   => 'options',
-            ]);
-            $this->payload->set('meta.options', $url);
-        }
+        $this->payload->set('meta.options', $options);
         $this->payload->set('placeholder', __('Select :Object', [
-            'object' => $this->field->getFieldType()->getRelated()->getSingularLabel(),
+            'object' => $this->field->type()->getRelated()->getSingularLabel(),
         ]));
     }
 }

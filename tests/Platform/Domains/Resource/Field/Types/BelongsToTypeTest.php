@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Support\Composer\Payload;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
-class BelongsToFieldTest extends ResourceTestCase
+class BelongsToTypeTest extends ResourceTestCase
 {
     /**
      * @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract
@@ -24,7 +24,7 @@ class BelongsToFieldTest extends ResourceTestCase
      */
     protected $belongsToField;
 
-    function __meta_link_should_be_null_if_logged_in_user_is_not_authorized_to_view_the_related_entry()
+    function test__meta_link_should_be_null_if_logged_in_user_is_not_authorized_to_view_the_related_entry()
     {
         $this->be($this->newUser(['allow' => null]));
 

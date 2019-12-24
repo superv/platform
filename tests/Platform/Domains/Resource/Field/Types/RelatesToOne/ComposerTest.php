@@ -5,87 +5,107 @@ namespace Tests\Platform\Domains\Resource\Field\Types\RelatesToOne;
 use SuperV\Platform\Domains\Resource\Builder\Blueprint;
 use SuperV\Platform\Domains\Resource\Builder\Builder;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Composer;
-use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\RelatesToOneType;
+use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ComposerTest extends ResourceTestCase
 {
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Resource
+     */
+    protected $addresses;
+
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Resource
+     */
+    protected $students;
+
+    /**
+     * @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract
+     */
+    protected $addressEntry;
+
+    /**
+     * @var array|\SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry
+     */
+    protected $studentEntry;
+
+    function test__create_form()
+    {
+        $field = $this->students->getField('address');
+        $field->setConfigValue('meta.options', ['options-array']);
+        $payload = $field->getComposer()->toForm();
+
+        $this->assertEquals(['options-array'], $payload->get('meta.options'));
+
+        $placeholder = __('Select :Object', [
+            'object' => $field->type()->getRelated()->getSingularLabel(),
+        ]);
+        $this->assertEquals($placeholder, $payload->get('placeholder'));
+    }
+
+    function test__update_form()
+    {
+        $form = $this->makePartialMock(FormFactory::builderFromResource($this->students)->getForm());
+
+        $form->expects('getFieldRpcUrl')->with('address', 'options')->andReturn('rpc-url');
+        $field = $this->students->getField('address');
+        $payload = $field->getComposer()->toForm($form);
+
+        $this->assertEquals('rpc-url', $payload->get('meta.options'));
+    }
+
     function test__view()
     {
-        $relatedEntry = $this->makeEntryMock();
-        $relatedEntry->expects('getEntryLabel')->andReturn('address-title');
+        $this->be($this->newUser());
+        $composer = $this->students->getField('address')->getComposer();
 
-        $fieldTypeMock = $this->makePartialMock(RelatesToOneType::class);
-        $fieldTypeMock->expects('getRelatedEntry')
-                      ->with($parentEntry = $this->makeEntryMock())
-                      ->andReturn($relatedEntry);
+        $this->assertEquals($this->addressEntry->router()->dashboardSPA(), $composer->toView($this->studentEntry)->get('meta.link'));
+    }
 
-        $composer = new Composer();
-        $composer->setField($this->makeField('address', $fieldTypeMock));
+    function test__meta_link_should_be_null_if_logged_in_user_is_not_authorized_to_view_the_related_entry()
+    {
+        $this->be($this->newUser(['allow' => null]));
+        $composer = $this->students->getField('address')->getComposer();
 
-        $this->assertEquals('address-title', $composer->toView($parentEntry)->get('value'));
+        $this->assertNull($composer->toView($this->studentEntry)->get('meta.link'));
     }
 
     function test__table()
     {
-        $addresses = sv_resource('tst.addresses');
+        $composer = $this->students->getField('address')->getComposer();
 
-        $students = sv_resource('tst.students');
-        $student = $students->fake(['address_id' => $addresses->create(['title' => 'my address'])->getId()]);
-
-        $field = $students->getField('address');
-        $composer = new Composer();
-        $composer->setField($field);
-
-        $this->assertEquals('my address', $composer->toTable($student)->get('value'));
+        $this->assertEquals('my address', $composer->toTable($this->studentEntry)->get('value'));
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        Builder::create('tst.students', function (Blueprint $resource) {
+        $this->students = Builder::create('tst.students', function (Blueprint $resource) {
             $resource->text('name', 'Student Name')->useAsEntryLabel();
             $resource->relatesToOne('tst.addresses', 'address')
                      ->withLocalKey('address_id')
                      ->showOnLists();
         });
-
-        Builder::create('tst.addresses', function (Blueprint $resource) {
+        $this->addresses = Builder::create('tst.addresses', function (Blueprint $resource) {
             $resource->primaryKey('id')
                      ->number();
             $resource->text('title', 'Address Title')->useAsEntryLabel();
         });
+
+        $this->addressEntry = $this->addresses->create(['title' => 'my address']);
+        $this->studentEntry = $this->students->fake(['address_id' => $this->addressEntry->getId()]);
     }
-//    function  __view()
-//    {
-//        $parentEntry = $this->makeEntryMock('tst.students', ['address_id' => 5]);
-//
-//        $field = $this->makeRelatesToOneField([
-//            'related' => 'tst.addresses',
-//            'local_key' => $localKey = 'address_id',
-//            'owner_key' => $ownerKey = 'aid',
-//        ]);
-//
-//
-//        $entryRepoMock = $this->bindMock(EntryRepositoryInterface::class);
-//        $entryRepoMock->expects('setResource')->with('tst.addresses')->andReturnSelf();
-//        $entryRepoMock->expects('newQuery')->andReturn($queryMock = $this->makeMock(\Illuminate\Database\Eloquent\Builder::class));
-//
-//        $repoMock = $this->bindMock(Repository::class);
-//        $repoMock->expects('setField')->with($field)->andReturnSelf();
-//
-//
-//
-//        $queryMock->expects('where')->with($ownerKey, $parentEntry->getAttribute($localKey))->andReturnSelf();
-//        $queryMock->expects('first')->andReturn($relatedEntry = $this->makeEntryMock());
-//        $relatedEntry->expects('getEntryLabel')->andReturn('entry-label');
-//
-//
-//        $composer = $field->getComposer();
-//        $this->assertInstanceOf(Composer::class, $composer);
-//
-//        $this->assertEquals('entry-label', $composer->toView($parentEntry)->get('value'));
-//
-//    }
+
+    protected function makeComposer(): \SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Composer
+    {
+        $field = $this->students->getField('address');
+        $composer = new Composer();
+        $composer->setField($field);
+
+        return $field->getComposer();
+
+        return $composer;
+    }
 }
