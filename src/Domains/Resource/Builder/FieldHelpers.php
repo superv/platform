@@ -7,7 +7,9 @@ use SuperV\Platform\Domains\Resource\Field\Types\DateTime\DateTimeType;
 use SuperV\Platform\Domains\Resource\Field\Types\File\Blueprint as FileTypeBlueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\File\FileType;
 use SuperV\Platform\Domains\Resource\Field\Types\Number\NumberField;
-use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Blueprint;
+use SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany\Blueprint as RelatesToManyTypeBlueprint;
+use SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany\RelatesToManyType;
+use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Blueprint as RelatesToOneTypeBlueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\RelatesToOneType;
 use SuperV\Platform\Domains\Resource\Field\Types\Select\Blueprint as SelectTypeBlueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\Select\SelectType;
@@ -23,10 +25,16 @@ use SuperV\Platform\Domains\Resource\Field\Types\Textarea\TextareaField;
  */
 trait FieldHelpers
 {
-    public function relatesToOne(string $related, string $fieldName): Blueprint
+    public function relatesToOne(string $related, string $fieldName): RelatesToOneTypeBlueprint
     {
-        /** @var \SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Blueprint $blueprint */
         $blueprint = $this->addField($fieldName, RelatesToOneType::class);
+
+        return $blueprint->related($related);
+    }
+
+    public function relatesToMany(string $related, string $fieldName): RelatesToManyTypeBlueprint
+    {
+        $blueprint = $this->addField($fieldName, RelatesToManyType::class);
 
         return $blueprint->related($related);
     }

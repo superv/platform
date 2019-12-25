@@ -1,12 +1,13 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types;
+namespace SuperV\Platform\Domains\Resource\Field\Types\Email;
 
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class EmailField extends FieldType implements RequiresDbColumn, SortsQuery
+class EmailType extends FieldType implements RequiresDbColumn, SortsQuery, ProvidesFieldComponent
 {
     protected $handle = 'email';
 
@@ -15,5 +16,10 @@ class EmailField extends FieldType implements RequiresDbColumn, SortsQuery
     public function sortQuery($query, $direction)
     {
         $query->orderBy($this->field->getColumnName(), $direction);
+    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
     }
 }

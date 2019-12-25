@@ -2,7 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Form;
 
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class FormRepository
@@ -30,6 +32,11 @@ class FormRepository
         ]);
 
         $resource->getFieldEntries()
+                 ->filter(function (FieldModel $field) {
+                     $type = FieldType::resolveType($field->getType());
+
+                     return $type instanceof ProvidesFieldComponent;
+                 })
                  ->map(function (FieldModel $field) use ($formEntry) {
                      $formEntry->fields()->attach($field->getId());
                  });

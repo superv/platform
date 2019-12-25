@@ -5,21 +5,19 @@ namespace SuperV\Platform\Domains\Resource\Field\Types\Select;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Filter\SelectFilter;
 
-class SelectType extends FieldType implements RequiresDbColumn, ProvidesFilter
+class SelectType extends FieldType implements
+    RequiresDbColumn,
+    ProvidesFilter,
+    ProvidesFieldComponent
 {
     protected $handle = 'select';
 
     protected $component = 'sv_select_field';
-
-//    protected function boot()
-//    {
-//        $this->field->on('view.presenting', $this->presenter());
-//        $this->field->on('table.presenting', $this->presenter());
-//    }
 
     public function driverCreating(
         DriverInterface $driver,
@@ -52,17 +50,9 @@ class SelectType extends FieldType implements RequiresDbColumn, ProvidesFilter
 
         return $options;
     }
-//
-//    protected function presenter()
-//    {
-//        return function ($value) {
-//            if (is_null($value)) {
-//                return null;
-//            }
-//
-//            $options = $this->getOptions();
-//
-//            return array_get($options, $value, $value);
-//        };
-//    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
+    }
 }

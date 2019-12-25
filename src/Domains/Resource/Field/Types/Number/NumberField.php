@@ -6,11 +6,16 @@ use Closure;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class NumberField extends FieldType implements RequiresDbColumn, SortsQuery, HasAccessor
+class NumberField extends FieldType implements
+    RequiresDbColumn,
+    SortsQuery,
+    HasAccessor,
+    ProvidesFieldComponent
 {
     protected $component = 'sv_number_field';
 
@@ -55,22 +60,6 @@ class NumberField extends FieldType implements RequiresDbColumn, SortsQuery, Has
         return $rules;
     }
 
-//    protected function accessor()
-//    {
-//        return function ($value) {
-//            if ($this->getConfigValue('type') === 'decimal') {
-//                return (float)number_format(
-//                    $value,
-//                    $this->getConfigValue('places'),
-//                    $this->getConfigValue('dec_point', '.'),
-//                    $this->getConfigValue('thousands_sep', '')
-//                );
-//            }
-//
-//            return (int)$value;
-//        };
-//    }
-
     public function getAccessor(): Closure
     {
         return function ($value) {
@@ -85,5 +74,10 @@ class NumberField extends FieldType implements RequiresDbColumn, SortsQuery, Has
 
             return (int)$value;
         };
+    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
     }
 }

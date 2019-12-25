@@ -85,7 +85,6 @@ class ComposerTest extends ResourceTestCase
         $this->students = Builder::create('tst.students', function (Blueprint $resource) {
             $resource->text('name', 'Student Name')->useAsEntryLabel();
             $resource->relatesToOne('tst.addresses', 'address')
-                     ->withLocalKey('address_id')
                      ->showOnLists();
         });
         $this->addresses = Builder::create('tst.addresses', function (Blueprint $resource) {

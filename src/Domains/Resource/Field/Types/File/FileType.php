@@ -8,13 +8,15 @@ use SuperV\Platform\Domains\Media\Media;
 use SuperV\Platform\Domains\Media\MediaBag;
 use SuperV\Platform\Domains\Media\MediaOptions;
 use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldRules;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
 class FileType extends FieldType implements
     DoesNotInteractWithTable,
-    SortsQuery
+    SortsQuery,
+    ProvidesFieldComponent
 {
     protected $handle = 'file';
 
@@ -67,5 +69,10 @@ class FileType extends FieldType implements
                            ->disk($this->getConfigValue('disk', 'local'))
                            ->path($this->getConfigValue('path'))
                            ->visibility($this->getConfigValue('visibility', 'private'));
+    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
     }
 }

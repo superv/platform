@@ -8,18 +8,7 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class DatabaseDriverTest extends ResourceTestCase
 {
-    function test__relates_to_one()
-    {
-        Builder::create('sv.posts', function (Blueprint $resource) {
-            $resource->relatesToOne('sv.users', 'user')
-                     ->withLocalKey('user_id');
 
-            $resource->relatesToOne('sv.posts_body', 'body')
-                     ->withRemoteKey('post_id');
-        });
-
-        $this->assertColumnExists('posts', 'user_id');
-    }
 
     function test__primary_keys()
     {
@@ -32,22 +21,18 @@ class DatabaseDriverTest extends ResourceTestCase
 
     function test__run()
     {
-        Builder::create('core.posts', function (Blueprint $resource) {
+        Builder::create('tst.posts', function (Blueprint $resource) {
             $resource->id();
-
-            $resource->text('title');
-
-            $resource->belongsTo('testing.users', 'user')
-                     ->foreignKey('user_id')
-                     ->ownerKey('id');
         });
-
-//        $blueprint->getDriver()->run($blueprint);
 
         $this->assertTableExists('posts');
         $this->assertColumnExists('posts', 'id');
-        $this->assertColumnExists('posts', 'title');
-        $this->assertColumnExists('posts', 'user_id');
 
+        Builder::create('tst.authors', function (Blueprint $resource) {
+            $resource->id('author_id');
+        });
+
+        $this->assertColumnExists('authors', 'author_id');
+        $this->assertColumnNotExists('authors', 'id');
     }
 }

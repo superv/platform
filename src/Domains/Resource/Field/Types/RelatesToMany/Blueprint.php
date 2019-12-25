@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne;
+namespace SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany;
 
 use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 
@@ -43,9 +43,8 @@ class Blueprint extends FieldBlueprint
         return $this;
     }
 
-    public function getForeignKey(): ?string
+    public function getForeignKey(): string
     {
-        return $this->foreignKey ?? $this->fieldHandle.'_id';
+        return $this->foreignKey ?? $this->blueprint->getKey().'_id';
     }
-
 }

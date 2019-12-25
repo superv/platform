@@ -72,7 +72,9 @@ class Fake
     {
         return ! $field->isHidden()
 //            && ! $field->hasFlag('form.hide')
-            && ! $field->doesNotInteractWithTable();
+            && ! $field->doesNotInteractWithTable()
+
+            && $field->getType() !== 'relates_to_many';
     }
 
     protected function fake(FieldInterface $field)

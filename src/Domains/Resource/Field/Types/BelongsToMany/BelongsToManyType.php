@@ -7,11 +7,16 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Types\RelationFieldType;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
-class BelongsToManyType extends RelationFieldType implements HandlesRpc, DoesNotInteractWithTable, HasModifier
+class BelongsToManyType extends RelationFieldType implements
+    HandlesRpc,
+    DoesNotInteractWithTable,
+    ProvidesFieldComponent,
+    HasModifier
 {
     protected $handle = 'belongs_to_many';
 
@@ -39,8 +44,6 @@ class BelongsToManyType extends RelationFieldType implements HandlesRpc, DoesNot
             };
         };
     }
-
-
 
     /**
      * @return \SuperV\Platform\Domains\Resource\Resource
@@ -83,6 +86,11 @@ class BelongsToManyType extends RelationFieldType implements HandlesRpc, DoesNot
 //            $payload->set('placeholder', 'Select '.$this->relatedResource->getSingularLabel());
 //        };
 //    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
+    }
 
     protected function rpcOptions(array $params, array $request = [])
     {

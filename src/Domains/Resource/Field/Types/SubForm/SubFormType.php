@@ -4,6 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Types\SubForm;
 
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldTypeInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Domains\Resource\Form\Features\SubmitForm;
@@ -11,7 +12,7 @@ use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Resource;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
-class SubFormType extends FieldType
+class SubFormType extends FieldType implements ProvidesFieldComponent
 {
     protected $handle = 'sub_form';
 
@@ -118,5 +119,10 @@ class SubFormType extends FieldType
     public function setFormData($formData): void
     {
         $this->formData = $formData;
+    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
     }
 }

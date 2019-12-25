@@ -7,11 +7,17 @@ use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class BooleanType extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier, SortsQuery
+class BooleanType extends FieldType implements
+    RequiresDbColumn,
+    HasAccessor,
+    HasModifier,
+    SortsQuery,
+    ProvidesFieldComponent
 {
     protected $handle = 'boolean';
 
@@ -50,5 +56,10 @@ class BooleanType extends FieldType implements RequiresDbColumn, HasAccessor, Ha
                 'default' => $blueprint->getDefaultValue(),
             ]);
         }
+    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
     }
 }

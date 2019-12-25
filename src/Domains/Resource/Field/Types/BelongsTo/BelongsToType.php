@@ -9,6 +9,7 @@ use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\Types\RelationFieldType;
@@ -22,6 +23,7 @@ use SuperV\Platform\Support\Composer\Payload;
 class BelongsToType extends RelationFieldType implements
     RequiresDbColumn,
     ProvidesFilter,
+    ProvidesFieldComponent,
     InlinesForm,
     HandlesRpc,
     SortsQuery
@@ -210,5 +212,10 @@ class BelongsToType extends RelationFieldType implements
             return;
         }
         $payload->set('meta.link', $relatedEntry->router()->dashboardSPA());
+    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
     }
 }

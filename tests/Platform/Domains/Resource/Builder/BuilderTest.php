@@ -129,6 +129,7 @@ class BuilderTest extends ResourceTestCase
         $this->assertEquals('database@default://tbl_posts', $resource->getDsn());
         $this->assertTableExists('tbl_posts');
         $this->assertEquals('postkey', $resource->config()->getResourceKey());
+        $this->assertEquals('post_id', $resource->config()->getKeyName());
     }
 
     function test__dispatches_event_when_resource_is_created()

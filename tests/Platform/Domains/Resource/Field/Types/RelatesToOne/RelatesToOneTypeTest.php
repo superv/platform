@@ -5,8 +5,8 @@ namespace Tests\Platform\Domains\Resource\Field\Types\RelatesToOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use SuperV\Platform\Domains\Resource\Builder\Blueprint;
 use SuperV\Platform\Domains\Resource\Builder\Builder;
-use SuperV\Platform\Domains\Resource\Database\Entry\ResourceEntry;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesRelationQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Blueprint as RelatesToOne;
@@ -20,72 +20,69 @@ class RelatesToOneTypeTest extends ResourceTestCase
 {
     function test__blueprint()
     {
-        $blueprint = Builder::blueprint('testing.posts', function (Blueprint $resource) {
-            $resource->relatesToOne('testing.users', 'user')
-                     ->ownerKey('post_id')
-                     ->withLocalKey('user_id');
-
-            $resource->relatesToOne('testing.posts_body', 'body')
-                     ->withRemoteKey('post_id');
+        $blueprint = Builder::blueprint('tst.students', function (Blueprint $resource) {
+            $resource->relatesToOne('tst.addresss', 'address');
         });
 
-        $userField = $blueprint->getField('user');
-        $this->assertNotNull($userField);
-        $this->assertInstanceOf(RelatesToOne::class, $userField);
-        $this->assertEquals('testing.users', $userField->getRelated());
-        $this->assertEquals('post_id', $userField->getOwnerKey());
-        $this->assertEquals('user_id', $userField->getLocalKey());
-
-        $bodyField = $blueprint->getField('body');
-        $this->assertNotNull($bodyField);
-        $this->assertInstanceOf(RelatesToOne::class, $bodyField);
-        $this->assertEquals('testing.posts_body', $bodyField->getRelated());
-        $this->assertEquals('post_id', $bodyField->getRemoteKey());
+        /** @var \SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Blueprint $addressField */
+        $addressField = $blueprint->getField('address');
+        $this->assertNotNull($addressField);
+        $this->assertInstanceOf(RelatesToOne::class, $addressField);
+        $this->assertEquals('tst.addresss', $addressField->getRelated());
+        $this->assertEquals('address_id', $addressField->getForeignKey());
     }
 
     function test__builder()
     {
-        $posts = Builder::create('testing.posts', function (Blueprint $resource) {
-            $resource->relatesToOne('testing.users', 'user')
-                     ->ownerKey('post_id')
-                     ->withLocalKey('user_id');
-
-            $resource->relatesToOne('testing.posts_body', 'body')
-                     ->withRemoteKey('post_id');
+        $students = Builder::create('tst.students', function (Blueprint $resource) {
+            $resource->relatesToOne('tst.addresss', 'address')
+                     ->foreignKey('lk_address_id');
         });
 
-        $userField = $posts->getField('user');
-        $this->assertNotNull($userField);
-        $this->assertEquals('relates_to_one', $userField->getType());
+        $addressField = $students->getField('address');
+        $this->assertNotNull($addressField);
+        $this->assertEquals('relates_to_one', $addressField->getType());
 
         $this->assertEquals([
-            'related'   => 'testing.users',
-            'owner_key' => 'post_id',
-            'local_key' => 'user_id',
-        ], $userField->getConfig());
+            'related'     => 'tst.addresss',
+            'foreign_key' => 'lk_address_id',
+        ], $addressField->getConfig());
 
-        $this->assertEquals([
-            'related'    => 'testing.posts_body',
-            'owner_key'  => 'id',
-            'remote_key' => 'post_id',
-        ], $posts->getField('body')->getConfig());
+        $this->assertColumnExists('students', 'lk_address_id');
+    }
+
+    function test__instance()
+    {
+        $fieldType = RelatesToOneType::resolve();
+        $this->assertInstanceOf(HandlesRpc::class, $fieldType);
+        $this->assertInstanceOf(ProvidesFieldComponent::class, $fieldType);
+        $this->assertInstanceOf(ProvidesRelationQuery::class, $fieldType);
+
+        $this->assertEquals('sv_relates_to_one_field', $fieldType->getComponentName());
     }
 
     function test__query()
     {
-        $fieldType = $this->makeFieldType([
-            'related'   => 'platform.resources',
-            'local_key' => 'resource_id',
-            'owner_key' => 'owner_id',
-        ]);
+        Builder::create('tst.addresses', function (Blueprint $resource) {
+            $resource->id('pk_address_id');
+        });
 
-        $query = $fieldType->getRelationQuery($this->partialMock(ResourceEntry::class));
+        $students = Builder::create('tst.students', function (Blueprint $resource) {
+            $resource->id('student_id');
+            $resource->relatesToOne('tst.addresses', 'address')
+                     ->foreignKey('student_address_id');
+        });
+
+        $studentEntry = $students->fake(['student_address_id' => 3]);
+
+        /** @var BelongsTo $query */
+        $query = $students->getField('address')->type()->getRelationQuery($studentEntry);
         $this->assertInstanceOf(BelongsTo::class, $query);
 
-        $this->assertEquals('resource', $query->getRelationName());
-        $this->assertEquals('resource_id', $query->getForeignKeyName());
-        $this->assertEquals('owner_id', $query->getOwnerKeyName());
-        $this->assertEquals('platform.resources', $query->getQuery()->getModel()->getResourceIdentifier());
+        $this->assertEquals('address', $query->getRelationName());
+        $this->assertEquals('student_address_id', $query->getForeignKeyName());
+        $this->assertEquals('pk_address_id', $query->getOwnerKeyName());
+        $this->assertEquals('tst.addresses', $query->getQuery()->getModel()->getResourceIdentifier());
     }
 
     function test__lookup_options()
@@ -108,21 +105,26 @@ class RelatesToOneTypeTest extends ResourceTestCase
         $this->assertEquals($expectedOptions, $fieldType->getRpcResult(['method' => 'options']));
     }
 
-    function test__returns_related()
+    function test__returns_related_entry()
     {
-        $fieldType = $this->makeFieldType(['related' => 'platform.resources']);
+        $addressEntry = Builder::create('tst.addresses', function (Blueprint $resource) { })->create()->fresh();
+
+        $students = Builder::create('tst.students', function (Blueprint $resource) {
+            $resource->id('student_id');
+            $resource->relatesToOne('tst.addresses', 'address');
+        });
+
+        $studentEntry = $students->create(['address_id' => $addressEntry->getId()]);
+
+        /** @var RelatesToOneType $fieldType */
+        $fieldType = $students->getField('address')->type();
 
         /** @var Resource $related */ // stupid PHPSTORM
         $related = $fieldType->getRelated();
         $this->assertInstanceOf(Resource::class, $related);
-        $this->assertEquals('platform.resources', $related->getIdentifier());
-    }
+        $this->assertEquals('tst.addresses', $related->getIdentifier());
 
-    function test__instance()
-    {
-        $fieldType = RelatesToOneType::resolve();
-        $this->assertInstanceOf(HandlesRpc::class, $fieldType);
-        $this->assertInstanceOf(ProvidesRelationQuery::class, $fieldType);
+        $this->assertEquals($addressEntry, $fieldType->getRelatedEntry($studentEntry));
     }
 
     protected function makeFieldType(array $config = []): RelatesToOneType

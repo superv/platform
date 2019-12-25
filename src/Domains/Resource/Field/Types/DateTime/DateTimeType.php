@@ -8,12 +8,17 @@ use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\Contracts\SortsQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Support\Composer\Payload;
 
-class DateTimeType extends FieldType implements RequiresDbColumn, HasPresenter, SortsQuery
+class DateTimeType extends FieldType implements
+    RequiresDbColumn,
+    HasPresenter,
+    SortsQuery,
+    ProvidesFieldComponent
 {
     protected $handle = 'datetime';
 
@@ -89,5 +94,10 @@ class DateTimeType extends FieldType implements RequiresDbColumn, HasPresenter, 
     protected function hasTime()
     {
         return $this->getConfigValue('time') === true;
+    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
     }
 }

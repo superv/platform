@@ -81,6 +81,11 @@ class Blueprint
         return $key;
     }
 
+    public function getKeyName()
+    {
+        return array_values($this->getDriver()->getPrimaryKeys())[0]->getName();
+    }
+
     public function addRelation(string $relatedResource, string $relationName, RelationType $relationType)
     {
         $relationBlueprint = RelationBlueprint::make($this, $relationName, $relationType);

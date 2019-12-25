@@ -1,15 +1,20 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Field\Types;
+namespace SuperV\Platform\Domains\Resource\Field\Types\Dictionary;
 
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class DictionaryField extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier
+class DictionaryType extends FieldType implements
+    RequiresDbColumn,
+    HasAccessor,
+    HasModifier,
+    ProvidesFieldComponent
 {
     protected $handle = 'dictionary';
 
@@ -46,5 +51,10 @@ class DictionaryField extends FieldType implements RequiresDbColumn, HasAccessor
 
             return json_encode($value);
         };
+    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
     }
 }

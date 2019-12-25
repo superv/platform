@@ -4,28 +4,17 @@ namespace SuperV\Platform\Domains\Resource\Field\Types\Textarea;
 
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class TextareaField extends FieldType implements RequiresDbColumn
+class TextareaField extends FieldType implements
+    RequiresDbColumn,
+    ProvidesFieldComponent
 {
     protected $handle = 'textarea';
 
     protected $component = 'sv_textarea_field';
-
-//    protected function boot()
-//    {
-//        $this->field->on('form.composing', $this->composer());
-//    }
-//
-//    protected function composer()
-//    {
-//        return function (Payload $payload) {
-//            if ($this->getConfigValue('rich') === true) {
-//                $payload->set('meta.rich', true);
-//            }
-//        };
-//    }
 
     public function driverCreating(
         DriverInterface $driver,
@@ -34,5 +23,10 @@ class TextareaField extends FieldType implements RequiresDbColumn
         if ($driver instanceof DatabaseDriver) {
             $driver->getTable()->addColumn($this->getColumnName(), 'text');
         }
+    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
     }
 }

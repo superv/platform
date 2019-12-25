@@ -6,10 +6,11 @@ use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
+use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 
-class ArrayField extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier
+class ArrayField extends FieldType implements RequiresDbColumn, HasAccessor, HasModifier, ProvidesFieldComponent
 {
     protected $handle = 'array';
 
@@ -46,5 +47,10 @@ class ArrayField extends FieldType implements RequiresDbColumn, HasAccessor, Has
 
             return json_encode($value);
         };
+    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
     }
 }

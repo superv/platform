@@ -9,18 +9,19 @@ use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 
 class Composer extends FieldComposer
 {
+    /** @var \SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\RelatesToOneType */
+    protected $fieldType;
+
     public function table(?EntryContract $entry = null): void
     {
         if ($entry) {
-            $relatedEntry = $entry->{$this->getFieldHandle()}()->first();
-
-            $this->payload->set('value', $relatedEntry->getEntryLabel());
+            $this->payload->set('value', $this->fieldType->getRelatedEntry($entry)->getEntryLabel());
         }
     }
 
     public function view(EntryContract $entry): void
     {
-        $relatedEntry = $this->field->type()->getRelatedEntry($entry);
+        $relatedEntry = $this->fieldType->getRelatedEntry($entry);
 
         $this->payload->set('value', $relatedEntry->getEntryLabel());
 

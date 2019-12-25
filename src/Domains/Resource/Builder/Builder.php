@@ -121,6 +121,7 @@ class Builder
                 'driver'       => $this->blueprint->getDriver()->toArray(),
                 'nav'          => $this->blueprint->getNav(),
                 'resource_key' => $this->blueprint->getKey(),
+                'key_name'     => $this->blueprint->getKeyName(),
             ]
         );
 
