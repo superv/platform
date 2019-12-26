@@ -74,7 +74,7 @@ class Blueprint
         return $this->primaryKey(...func_get_args());
     }
 
-    public function primaryKey($name = 'id', $type = 'integer', array $options = []): PrimaryKey
+    public function primaryKey($name = 'id'): PrimaryKey
     {
         $this->getDriver()->primaryKey($key = new PrimaryKey($name));
 
@@ -83,7 +83,13 @@ class Blueprint
 
     public function getKeyName()
     {
-        return array_values($this->getDriver()->getPrimaryKeys())[0]->getName();
+        $primaryKeys = $this->getDriver()->getPrimaryKeys();
+
+        if (empty($primaryKeys)) {
+            return null;
+        }
+
+        return array_values($primaryKeys)[0]->getName();
     }
 
     public function addRelation(string $relatedResource, string $relationName, RelationType $relationType)

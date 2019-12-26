@@ -8,8 +8,6 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class DatabaseDriverTest extends ResourceTestCase
 {
-
-
     function test__primary_keys()
     {
         $blueprint = Builder::blueprint('core.posts', function (Blueprint $resource) {
