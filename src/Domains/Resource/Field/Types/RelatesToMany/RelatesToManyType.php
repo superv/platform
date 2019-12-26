@@ -4,15 +4,20 @@ namespace SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany;
 
 use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
+use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
+use SuperV\Platform\Domains\Resource\Action\ModalAction;
+use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
+use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesRelationQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Form\FormFactory;
 use SuperV\Platform\Domains\Resource\Jobs\MakeLookupOptions;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class RelatesToManyType extends FieldType implements
-    HandlesRpc,
-    ProvidesRelationQuery
+    ProvidesRelationQuery,
+    ProvidesTable,
+    AcceptsParentEntry
 {
     protected $handle = 'relates_to_many';
 
@@ -21,10 +26,20 @@ class RelatesToManyType extends FieldType implements
      */
     protected $factory;
 
+    /**
+     * @var \SuperV\Platform\Domains\Database\Model\Contracts\EntryContract
+     */
+    protected $parentEntry;
+
     public function __construct(MakeLookupOptions $lookupOptions, ResourceFactory $factory)
     {
         $this->lookupOptions = $lookupOptions;
         $this->factory = $factory;
+    }
+
+    protected function boot()
+    {
+        $this->field->addFlag('view.hide');
     }
 
     public function getRelatedEntries(EntryContract $parent)
@@ -53,22 +68,52 @@ class RelatesToManyType extends FieldType implements
         return $this->factory->withIdentifier($config['related']);
     }
 
-    public function rpcOptions()
+    public function route($name, EntryContract $entry, array $params = [])
     {
-        $config = $this->field->getConfig();
-        $this->lookupOptions->setResource($this->factory->withIdentifier($config['related']));
+        $params = array_merge([
+            'entry'    => $entry->getId(),
+            'resource' => $entry->getResourceIdentifier(),
+            'relation' => $this->getFieldHandle(),
+        ], $params);
 
-        return $this->lookupOptions->make();
+        return route('relation.'.$name, $params, false);
     }
 
-    public function getRpcResult(array $params, array $request = [])
+    public function makeForm($request = null): \SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface
     {
-        if (! $method = $params['method'] ?? null) {
-            return null;
+        $builder = FormFactory::builderFromResource($this->getRelated());
+        if ($request) {
+            $builder->setRequest($request);
         }
+        $builder->setEntry($childEntry = $this->getRelationQuery($this->parentEntry)->make());
 
-        if (method_exists($this, $method = 'rpc'.studly_case($method))) {
-            return call_user_func_array([$this, $method], [$params, $request]);
-        }
+        $form = $builder->getForm();
+
+        $form->fields()->hide(sv_resource($this->parentEntry)->config()->getResourceKey());
+
+        return $form;
+    }
+
+    public function makeTable()
+    {
+        $relatedResource = $this->getRelated();
+        $editAction = EditEntryAction::make($relatedResource->getChildIdentifier('actions', 'edit'));
+
+        $query = $this->getRelationQuery($this->parentEntry);
+
+        return $relatedResource->resolveTable()
+                               ->setQuery($query)
+                               ->setDataUrl(sv_url()->path().'/data')
+                               ->addRowAction($editAction)
+                               ->addContextAction(
+                                   ModalAction::make($relatedResource->getChildIdentifier('actions', 'create'))
+                                              ->setTitle('New '.str_singular(str_unslug($this->getFieldHandle())))
+                                              ->setModalUrl($this->parentEntry->router()->fieldAction($this->getFieldHandle(), 'create'))
+                               );
+    }
+
+    public function acceptParentEntry(EntryContract $entry)
+    {
+        $this->parentEntry = $entry;
     }
 }

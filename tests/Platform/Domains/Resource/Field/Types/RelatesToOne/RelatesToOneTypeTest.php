@@ -35,8 +35,7 @@ class RelatesToOneTypeTest extends ResourceTestCase
     function test__builder()
     {
         $students = Builder::create('tst.students', function (Blueprint $resource) {
-            $resource->relatesToOne('tst.addresss', 'address')
-                     ->foreignKey('lk_address_id');
+            $resource->relatesToOne('tst.addresses', 'address');
         });
 
         $addressField = $students->getField('address');
@@ -44,11 +43,11 @@ class RelatesToOneTypeTest extends ResourceTestCase
         $this->assertEquals('relates_to_one', $addressField->getType());
 
         $this->assertEquals([
-            'related'     => 'tst.addresss',
-            'foreign_key' => 'lk_address_id',
+            'related'     => 'tst.addresses',
+            'foreign_key' => 'address_id',
         ], $addressField->getConfig());
 
-        $this->assertColumnExists('students', 'lk_address_id');
+        $this->assertColumnExists('students', 'address_id');
     }
 
     function test__instance()

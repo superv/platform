@@ -41,6 +41,24 @@ class EntryRouter
         ]);
     }
 
+    public function fields($field)
+    {
+        return sv_route('resource.entry.fields', [
+            'resource' => $this->entry->getResourceIdentifier(),
+            'entry'    => $this->entry->getId(),
+            'field'    => $field,
+        ]);
+    }
+
+    public function fieldAction($field, $action)
+    {
+        return sv_route('resource.entry.field_actions.'.$action, [
+            'resource' => $this->entry->getResourceIdentifier(),
+            'entry'    => $this->entry->getId(),
+            'field'    => $field,
+        ]);
+    }
+
     public function updateForm()
     {
         return sv_route('sv::forms.display', [

@@ -76,7 +76,7 @@ class ListController extends BaseApiController
         return $this->resolveTableAction();
     }
 
-    public function tableActionPost()
+    public function postTableAction()
     {
         return $this->resolveTableAction()->handleRequest($this->request);
     }

@@ -150,11 +150,6 @@ class Resource implements
      */
     protected $sortable = false;
 
-//    /**
-//     * @var bool
-//     */
-//    protected $extended = false;
-
     public function __construct(array $attributes = [])
     {
         $this->hydrate($attributes);

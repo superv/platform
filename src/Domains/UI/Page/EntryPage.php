@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\UI\Page;
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
+use SuperV\Platform\Domains\Resource\Field\Contracts\FieldInterface;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\UI\Components\ComponentContract;
 
@@ -37,11 +38,7 @@ class EntryPage extends ResourcePage
                      ->setName('sv-page')
                      ->mergeProps([
                          'sections' => $this->buildSections(),
-                         'links'    => array_filter_null(
-                             [
-                                 'image' => $imageUrl ?? '',
-                             ]
-                         ),
+                         'links'    => array_filter_null(['image' => $imageUrl ?? '']),
                      ]);
     }
 
@@ -72,6 +69,7 @@ class EntryPage extends ResourcePage
     protected function buildSections()
     {
         return collect($this->getRelationsSections())
+            ->merge($this->getFieldsSections())
             ->merge(collect($this->sections))
             ->map(function ($section) {
                 return sv_parse($section, ['entry' => $this->entry]);
@@ -88,6 +86,23 @@ class EntryPage extends ResourcePage
             });
     }
 
+    protected function getFieldsSections(): Collection
+    {
+        return $this->resource->fields()
+                              ->keyByName()
+                              ->filter(function (FieldInterface $field) {
+                                  return $field->type() instanceof ProvidesTable;
+                              })
+                              ->map(function (FieldInterface $field) {
+                                  return [
+                                      'identifier' => $field->getHandle(),
+                                      'url'        => $this->entry->router()->fields($field->getHandle()),
+                                      'target'     => 'portal:'.$this->resource->getIdentifier().':'.$this->entry->getId(),
+                                      'title'      => sv_trans($field->getLabel()),
+                                  ];
+                              })->filter()->values();
+    }
+
     protected function getRelationsSections(): Collection
     {
         return $this->resource->getRelations()
@@ -95,7 +110,7 @@ class EntryPage extends ResourcePage
                                   return ! $relation->hasFlag('view.hide');
                               })
                               ->map(function (Relation $relation) {
-                                   if ($relation instanceof ProvidesTable) {
+                                  if ($relation instanceof ProvidesTable) {
                                       $url = $relation->indexRoute($this->entry);
                                   } elseif ($relation instanceof ProvidesForm) {
                                       $url = $relation->route('edit', $this->entry);

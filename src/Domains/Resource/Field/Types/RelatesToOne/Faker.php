@@ -21,6 +21,6 @@ class Faker implements FakerInterface
             }
         }
 
-        return $relatedResource->newQuery()->inRandomOrder()->value('id');
+        return $relatedResource->newQuery()->inRandomOrder()->value($relatedResource->config()->getKeyName());
     }
 }

@@ -5,7 +5,6 @@ namespace Tests\Platform\Domains\Resource\Field\Types\RelatesToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use SuperV\Platform\Domains\Resource\Builder\Blueprint;
 use SuperV\Platform\Domains\Resource\Builder\Builder;
-use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesRelationQuery;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany\Blueprint as RelatesToManyTypeBlueprint;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany\RelatesToManyType;
@@ -50,7 +49,6 @@ class RelatesToManyTypeTest extends ResourceTestCase
     function test__instance()
     {
         $fieldType = RelatesToManyType::resolve();
-        $this->assertInstanceOf(HandlesRpc::class, $fieldType);
         $this->assertInstanceOf(ProvidesRelationQuery::class, $fieldType);
     }
 

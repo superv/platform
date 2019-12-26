@@ -61,7 +61,7 @@ return [
     ],
 
     'POST@'.'sv/res/{resource}/table/actions/{action}' => [
-        'uses' => ListController::at('tableActionPost'),
+        'uses' => ListController::at('postTableAction'),
     ],
 
 

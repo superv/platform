@@ -103,8 +103,10 @@ class ResourceFactory
 
                                       return $field;
                                   });
-
-            return $fields ?? collect();
+            // get rid of eloquent collection
+            //
+            return collect($fields->all());
+//            return $fields ?? collect();
         };
     }
 
