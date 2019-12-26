@@ -51,13 +51,11 @@ class RelatesToManyType extends FieldType implements
     {
         $parentResource = ResourceFactory::make($parent);
 
-        $config = $this->field->getConfig();
-
         return new EloquentHasMany(
             $this->getRelated()->newQuery(),
             $parent,
-            $config['foreign_key'] ?? $parent->getForeignKey(),
-            $parentResource->config()->getKeyName(),
+            $this->field->getConfigValue('foreign_key', $parent->getForeignKey()),
+            $parentResource->config()->getKeyName()
         );
     }
 
