@@ -15,12 +15,12 @@ use SuperV\Platform\Testing\FormComponent;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 /**
- * Class FormTest
+ * Class EntryFormTest
  *
  * @package Tests\Platform\Domains\Resource\Form
  * @group   resource
  */
-class FormTest extends ResourceTestCase
+class EntryFormTest extends ResourceTestCase
 {
     /** @var \SuperV\Platform\Domains\Resource\Resource */
     protected $users;
@@ -88,7 +88,6 @@ class FormTest extends ResourceTestCase
                            ->categories(function (Blueprint $table) {
                                $table->boolean('active')->default(false);
                                $table->string('notes')->nullable();
-//                               $table->file('some')->config(['disk' => 'fakedisk']);
                            });
 
         $category = $categories->create(['title' => 'Books', 'active' => 'TRUE', 'notes' => 'a-b-c']);
@@ -96,7 +95,7 @@ class FormTest extends ResourceTestCase
         $builder->setRequest($this->makePostRequest(['title' => 'Updated Books', 'notes' => 'bad-value']));
 
         $form = $builder->getForm();
-        $form->fields()->hide('notes'); // XXX behh behhhh
+        $form->fields()->hide('notes');
         $form->resolve();
 
         $this->assertEquals(['title' => 'Updated Books', 'active' => true], $form->getData()->get());
@@ -206,13 +205,15 @@ class FormTest extends ResourceTestCase
     {
         parent::setUp();
 
-        $this->users = $this->create('tbl_users', function (Blueprint $table, ResourceConfig $config) {
-            $config->setIdentifier('testing.users');
-            $table->increments('id');
-            $table->string('name');
-            $table->unsignedInteger('age');
-            $table->string('phone')->nullable();
-        });
+        $this->users = $this->create('tbl_users',
+            function (Blueprint $table, ResourceConfig $config) {
+                $config->setIdentifier('testing.users');
+                $table->increments('id');
+                $table->string('name');
+                $table->unsignedInteger('age');
+                $table->string('phone')->nullable();
+            }
+        );
     }
 
     protected function getComposedValue($field, FormInterface $form)

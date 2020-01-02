@@ -9,8 +9,8 @@ return [
      *  Private Forms
      */
     'sv/frm/{form}/{entry?}' => [
-        'as'   => 'sv::forms.display',
-        'uses' => FormController::at('display'),
+        'as'    => 'sv::forms.display',
+        'uses'  => FormController::at('display'),
         'where' => ['entry' => '[0-9]*'],
     ],
 
@@ -19,16 +19,20 @@ return [
         'uses' => FormController::at('submit'),
     ],
 
-    'ANY@'.'sv/frm/{form}/fields/{field?}/{rpc?}' => [
+    'ANY@'.'sv/frm/{form}/fields/{field?}/{rpc}' => [
+        'as'   => 'sv::forms.field_rpc',
+        'uses' => FormController::at('fields'),
+    ],
+
+    'ANY@'.'sv/frm/{form}/fields/{field?}' => [
         'as'   => 'sv::forms.fields',
         'uses' => FormController::at('fields'),
     ],
 
     /**
      *  Public Forms
-     *
      */
-    'sv/pub/frm/{form}'                           => [
+    'sv/pub/frm/{form}'                    => [
         'as'   => 'sv::public_forms.display',
         'uses' => PublicFormController::at('display'),
     ],

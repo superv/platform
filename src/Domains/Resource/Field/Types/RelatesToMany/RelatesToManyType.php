@@ -2,16 +2,23 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentBelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany as EloquentHasMany;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Database\Schema\SchemaService;
 use SuperV\Platform\Domains\Resource\Action\EditEntryAction;
 use SuperV\Platform\Domains\Resource\Action\ModalAction;
+use SuperV\Platform\Domains\Resource\Builder\Builder;
+use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
+use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
+use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesRelationQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
+use SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany\Actions\DetachAction;
+use SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany\Actions\LookupAction;
 use SuperV\Platform\Domains\Resource\Form\FormFactory;
-use SuperV\Platform\Domains\Resource\Jobs\MakeLookupOptions;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
 
 class RelatesToManyType extends FieldType implements
@@ -31,15 +38,32 @@ class RelatesToManyType extends FieldType implements
      */
     protected $parentEntry;
 
-    public function __construct(MakeLookupOptions $lookupOptions, ResourceFactory $factory)
+    /** @var \SuperV\Platform\Domains\Resource\Resource */
+    protected $parent;
+
+    /** @var \SuperV\Platform\Domains\Resource\Resource */
+    protected $related;
+
+    public function __construct(ResourceFactory $factory)
     {
-        $this->lookupOptions = $lookupOptions;
         $this->factory = $factory;
     }
 
     protected function boot()
     {
         $this->field->addFlag('view.hide');
+    }
+
+    public function driverCreating(DriverInterface $driver, FieldBlueprint $blueprint)
+    {
+        /** @var \SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany\Blueprint $blueprint */
+        if ($driver instanceof DatabaseDriver) {
+            if ($pivot = $blueprint->getPivot()) {
+                if (! SchemaService::resolve()->tableExists($pivot->getHandle())) {
+                    Builder::resolve()->save($pivot);
+                }
+            }
+        }
     }
 
     public function getRelatedEntries(EntryContract $parent)
@@ -51,19 +75,44 @@ class RelatesToManyType extends FieldType implements
     {
         $parentResource = ResourceFactory::make($parent);
 
-        return new EloquentHasMany(
+        if (! $pivot = $this->getConfigValue('pivot')) {
+            return new EloquentHasMany(
+                $this->getRelated()->newQuery(),
+                $parent,
+                $this->field->getConfigValue('foreign_key', $parent->getForeignKey()),
+                $parentResource->config()->getKeyName()
+            );
+        }
+
+        $pivotResource = ResourceFactory::make($pivot);
+
+        return new EloquentBelongsToMany(
             $this->getRelated()->newQuery(),
             $parent,
-            $this->field->getConfigValue('foreign_key', $parent->getForeignKey()),
-            $parentResource->config()->getKeyName()
+            $pivotResource->config()->getTable(),
+            $pivotResource->getField($parentResource->config()->getResourceKey())->getConfigValue('foreign_key'),
+            $pivotResource->getField($this->getRelated()->config()->getResourceKey())->getConfigValue('foreign_key'),
+            $parentResource->config()->getKeyName(),
+            $this->getRelated()->config()->getKeyName()
         );
     }
 
     public function getRelated(): \SuperV\Platform\Domains\Resource\Resource
     {
-        $config = $this->field->getConfig();
+        if (! $this->related) {
+            $this->related = $this->factory->withIdentifier($this->getConfigValue('related'));
+        }
 
-        return $this->factory->withIdentifier($config['related']);
+        return $this->related;
+    }
+
+    public function getPivot(): ?\SuperV\Platform\Domains\Resource\Resource
+    {
+        if (! $pivot = $this->getConfigValue('pivot')) {
+            return null;
+        }
+
+        return ResourceFactory::make($pivot);
     }
 
     public function route($name, EntryContract $entry, array $params = [])
@@ -92,8 +141,40 @@ class RelatesToManyType extends FieldType implements
         return $form;
     }
 
+    public function makePivotTable()
+    {
+        $pivot = ResourceFactory::make($this->getConfigValue('pivot'));
+        $pivot->config()->entryLabelField($this->getRelated()->config()->getResourceKey());
+
+        $detachAction = DetachAction::make($this->getRelated()->getChildIdentifier('actions', 'detach'))
+                                    ->setParentEntry($this->parentEntry)
+                                    ->setField($this->field);
+
+        $attachAction = LookupAction::make($this->getRelated()->getChildIdentifier('actions', 'attach'))
+                                    ->setParentEntry($this->parentEntry)
+                                    ->setField($this->field);
+
+//        $attachAction = LookupAction::make($this->getRelated()->getChildIdentifier('actions', 'attach'))
+//                                    ->lookupUrl($lookupUrl);
+//        $viewAction = ViewEntryAction::make($this->getRelated()->getChildIdentifier('actions', 'view'));
+
+        $query = $pivot->newQuery();
+        $parentResource = ResourceFactory::make($this->parentEntry);
+        $query->where($parentResource->config()->getResourceKey().'_id', $this->parentEntry->getId());
+
+        return $pivot->resolveTable()
+                     ->setQuery($query)
+//                               ->addRowAction($viewAction)
+                     ->addRowAction($detachAction)
+                     ->addContextAction($attachAction)
+                     ->setDataUrl(url()->current().'/data');
+    }
+
     public function makeTable()
     {
+        if ($pivot = $this->getConfigValue('pivot')) {
+            return $this->makePivotTable();
+        }
         $relatedResource = $this->getRelated();
         $editAction = EditEntryAction::make($relatedResource->getChildIdentifier('actions', 'edit'));
 

@@ -352,6 +352,11 @@ class Field implements FieldInterface
         return $this->getFieldType()->resolveComposer();
     }
 
+    public function router(): Router
+    {
+        return new Router($this);
+    }
+
     /// config
     public function getConfigValue($key, $default = null)
     {

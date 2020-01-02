@@ -30,6 +30,8 @@ abstract class FieldType implements FieldTypeInterface
     /** @var FieldInterface */
     protected $field;
 
+    protected static $registry = [];
+
     protected function boot() { }
 
     public function __toString()
@@ -92,6 +94,58 @@ abstract class FieldType implements FieldTypeInterface
     {
     }
 
+    public function getComponent(): ?string
+    {
+        return $this->component;
+    }
+
+    public function resolveComposer(): ComposerInterface
+    {
+        $class = str_replace_last(class_basename(get_called_class()), 'Composer', get_called_class());
+
+        if (! class_exists($class)) {
+            $class = FieldComposer::class;
+        }
+
+        return app($class)->setField($this->field);
+    }
+
+    public function resolveFaker(): ?FakerInterface
+    {
+        $className = class_basename(get_called_class());
+
+        $class = str_replace_last($className, 'Faker', get_called_class());
+
+        if (class_exists($class)) {
+            return app($class);
+        }
+
+        return null;
+    }
+
+    public function resolveController()
+    {
+        $className = class_basename(get_called_class());
+
+        $class = str_replace_last($className, 'Controller', get_called_class());
+
+        if (class_exists($class)) {
+            return app($class);
+        }
+
+        return null;
+    }
+
+    public function resolveFieldValue(): ?FieldValueInterface
+    {
+        $class = str_replace_last(class_basename(get_called_class()), 'Value', get_called_class());
+
+        if (class_exists($class)) {
+            return $class::of($this->field);
+        }
+
+        return null;
+    }
 
     public function ____resolveDataFromEntry(FormData $data, EntryContract $entry)
     {
@@ -145,57 +199,6 @@ abstract class FieldType implements FieldTypeInterface
         }
     }
 
-    public function getComponent(): ?string
-    {
-        return $this->component;
-    }
-
-    public function resolveComposer(): ComposerInterface
-    {
-        $class = str_replace_last(class_basename(get_called_class()), 'Composer', get_called_class());
-
-        if (! class_exists($class)) {
-            $class = FieldComposer::class;
-        }
-
-        return app($class)->setField($this->field);
-    }
-
-    public function resolveQuery(): QueryInterface
-    {
-        $class = str_replace_last(class_basename(get_called_class()), 'Query', get_called_class());
-
-        if (! class_exists($class)) {
-            $class = FieldQuery::class;
-        }
-
-        return app($class)->setField($this->field);
-    }
-
-    public function resolveFaker(): ?FakerInterface
-    {
-        $className = class_basename(get_called_class());
-
-        $fakerClass = str_replace_last($className, 'Faker', get_called_class());
-
-        if (class_exists($fakerClass)) {
-            return app($fakerClass);
-        }
-
-        return null;
-    }
-
-    public function resolveFieldValue(): ?FieldValueInterface
-    {
-        $class = str_replace_last(class_basename(get_called_class()), 'Value', get_called_class());
-
-        if (class_exists($class)) {
-            return $class::of($this->field);
-        }
-
-        return null;
-    }
-
     public function mapValueFromEntry(FormData $data, EntryContract $entry)
     {
         $value = $entry->getAttribute($this->getColumnName());
@@ -208,7 +211,14 @@ abstract class FieldType implements FieldTypeInterface
     {
     }
 
-    public static function resolveType($type)
+    public static function register($class)
+    {
+        /** @var FieldTypeInterface $instance */
+        $instance = $class::resolve();
+        static::$registry[$instance->getHandle()] = $class;
+    }
+
+    public static function resolveType($type): FieldTypeInterface
     {
         $class = static::resolveTypeClass($type);
         if (! class_exists($class)) {
@@ -220,6 +230,9 @@ abstract class FieldType implements FieldTypeInterface
 
     public static function resolveTypeClass($type)
     {
+        if ($class = static::$registry[$type] ?? null) {
+            return $class;
+        }
         $base = 'SuperV\Platform\Domains\Resource\Field\Types';
 
         $class = $base."\\".studly_case($type.'_field');

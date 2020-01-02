@@ -12,7 +12,7 @@ interface FormFieldInterface extends FieldInterface
 
     public function getForm(): FormInterface;
 
-    public function setForm(FormInterface $form): void;
+    public function setForm(FormInterface $form): FormFieldInterface;
 
     public function getLocation(): ?FieldLocation;
 

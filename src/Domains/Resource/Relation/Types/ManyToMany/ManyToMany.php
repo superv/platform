@@ -66,7 +66,7 @@ class ManyToMany extends Relation implements ProvidesTable, ProvidesField
     {
         if ($driver instanceof DatabaseDriver) {
             $pivot = $blueprint->getPivot();
-            if ($pivot->shouldCreate() && ! SchemaService::resolve()->tableExists($pivot->getHandle())) {
+            if (! SchemaService::resolve()->tableExists($pivot->getHandle())) {
                 $pivot->id();
 
                 // Owner Field

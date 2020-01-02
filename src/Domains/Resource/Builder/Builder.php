@@ -91,11 +91,12 @@ class Builder
 
     public static function resolveBlueprint($identifier): Blueprint
     {
-        [$namespace, $handle] = explode('.', $identifier);
+//        [$namespace, $handle] = explode('.', $identifier);
 
         $resource = Blueprint::resolve();
-        $resource->namespace($namespace);
-        $resource->handle($handle);
+        $resource->identifier($identifier);
+//        $resource->namespace($namespace);
+//        $resource->handle($handle);
 
         return $resource;
     }

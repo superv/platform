@@ -33,11 +33,6 @@ class Pivot extends Blueprint
      */
     protected $handle;
 
-    /**
-     * @var bool
-     */
-    protected $create = true;
-
     protected $pivot = true;
 
     /**
@@ -50,17 +45,6 @@ class Pivot extends Blueprint
      */
     protected $relatedKey;
 
-    public function setCreate(bool $create): Pivot
-    {
-        $this->create = $create;
-
-        return $this;
-    }
-
-    public function shouldCreate(): bool
-    {
-        return $this->create;
-    }
 
     public function foreignKey(string $foreignKey): Pivot
     {
@@ -92,16 +76,16 @@ class Pivot extends Blueprint
 
         return $this;
     }
-
-    public function getParent(): \SuperV\Platform\Domains\Resource\Builder\Blueprint
-    {
-        return $this->parent;
-    }
-
-    public function relation(\SuperV\Platform\Domains\Resource\Builder\RelationBlueprint $relation): Pivot
-    {
-        $this->relation = $relation;
-
-        return $this;
-    }
+//
+//    public function getParent(): \SuperV\Platform\Domains\Resource\Builder\Blueprint
+//    {
+//        return $this->parent;
+//    }
+//
+//    public function relation(\SuperV\Platform\Domains\Resource\Builder\RelationBlueprint $relation): Pivot
+//    {
+//        $this->relation = $relation;
+//
+//        return $this;
+//    }
 }

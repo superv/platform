@@ -24,6 +24,8 @@ class Blueprint
     protected $handle;
 
     /**
+     * Singular of resource handle used for generating key names
+     *
      * @var string
      */
     protected $key;
@@ -166,6 +168,8 @@ class Blueprint
     {
         [$this->namespace, $this->handle] = explode('.', $identifier);
 
+        $this->key = str_singular($this->handle);
+
         return $this;
     }
 
@@ -276,6 +280,6 @@ class Blueprint
 
     public function getKey(): string
     {
-        return $this->key ?? str_singular($this->getHandle());
+        return $this->key;
     }
 }

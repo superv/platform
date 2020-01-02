@@ -3,11 +3,13 @@
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
 use Closure;
-use SuperV\Platform\Domains\Resource\Field\Composer\DefaultFieldComposer;
+use SuperV\Platform\Domains\Resource\Field\Router;
 use SuperV\Platform\Support\Identifier;
 
 interface FieldInterface
 {
+    public function init(array $attributes = []): FieldInterface;
+
     public function getHandle();
 
     public function getLabel(): string;
@@ -37,6 +39,8 @@ interface FieldInterface
     public function getDefaultValue();
 
     public function getComposer(): ComposerInterface;
+
+    public function router(): Router;
 
     public function getConfig();
 

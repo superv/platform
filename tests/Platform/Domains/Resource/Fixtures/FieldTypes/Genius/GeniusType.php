@@ -9,4 +9,9 @@ class GeniusType extends FieldType
     protected $handle = 'genius';
 
     protected $component = 'sv_genius_field';
+
+    protected function boot()
+    {
+        parent::boot();
+    }
 }

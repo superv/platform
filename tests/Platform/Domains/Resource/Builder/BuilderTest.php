@@ -15,7 +15,6 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class BuilderTest extends ResourceTestCase
 {
-
     function __many_to_many_pivot()
     {
         Builder::create('testing.roles', function (Blueprint $resource) {

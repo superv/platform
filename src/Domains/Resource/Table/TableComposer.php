@@ -84,11 +84,14 @@ class TableComposer
         return $fields;
     }
 
-    /**
-     * @return string
-     */
     protected function makeDataUrl(): string
     {
-        return $this->table->getDataUrl().(request()->query() ? '?'.http_build_query(request()->query()) : '');
+        $dataUrl = $this->table->getDataUrl();
+
+        if (starts_with($dataUrl, 'http')) {
+            return $dataUrl;
+        }
+
+        return $dataUrl.(request()->query() ? '?'.http_build_query(request()->query()) : '');
     }
 }

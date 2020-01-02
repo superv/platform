@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
+use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
 use SuperV\Platform\Http\Controllers\BaseApiController;
@@ -10,6 +11,21 @@ use SuperV\Platform\Http\Controllers\BaseApiController;
 class FieldController extends BaseApiController
 {
     use ResolvesResource;
+
+    public function route($fieldType, $route)
+    {
+        $fieldType = FieldType::resolveType($fieldType);
+
+        if (! $controller = $fieldType->resolveController()) {
+            abort(404);
+        }
+
+        if (! method_exists($controller, $route)) {
+            abort(404);
+        }
+
+        return app()->call([$controller, $route]);
+    }
 
     public function index()
     {

@@ -5,14 +5,9 @@ namespace SuperV\Platform\Domains\Resource\Relation\Types\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as EloquentBelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation as EloquentRelation;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-use SuperV\Platform\Domains\Database\Schema\SchemaService;
 use SuperV\Platform\Domains\Resource\Action\DetachEntryAction;
 use SuperV\Platform\Domains\Resource\Action\ViewEntryAction;
-use SuperV\Platform\Domains\Resource\Builder\Builder;
-use SuperV\Platform\Domains\Resource\Builder\RelationBlueprint;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
-use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
-use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Relation\Actions\LookupAttachablesAction;
 use SuperV\Platform\Domains\Resource\Relation\Contracts\ProvidesField;
 use SuperV\Platform\Domains\Resource\Relation\Relation;
@@ -82,23 +77,23 @@ class BelongsToMany extends Relation implements ProvidesTable, ProvidesField
      * @param \SuperV\Platform\Domains\Resource\Relation\Types\BelongsToMany\Config $blueprint
      * @param \SuperV\Platform\Domains\Resource\Driver\DriverInterface              $driver
      */
-    public function driverCreating(RelationBlueprint $blueprint, DriverInterface $driver)
-    {
-        if ($driver instanceof DatabaseDriver) {
-            $pivot = $blueprint->getPivot();
-            if ($pivot->shouldCreate() && ! SchemaService::resolve()->tableExists($pivot->getHandle())) {
-                $pivot->id();
-
-                // Owner Field
-                $pivot->belongsTo($blueprint->getRelated(), $pivot->getRelatedKey())
-                      ->foreignKey($pivot->getRelatedKey().'_id');
-
-                // Related Field
-                $pivot->belongsTo($blueprint->getParent()->getIdentifier(), $pivot->getForeignKey())
-                      ->foreignKey($pivot->getForeignKey().'_id');
-
-                Builder::resolve()->save($pivot);
-            }
-        }
-    }
+//    public function driverCreating(RelationBlueprint $blueprint, DriverInterface $driver)
+//    {
+//        if ($driver instanceof DatabaseDriver) {
+//            $pivot = $blueprint->getPivot();
+//            if ($pivot->shouldCreate() && ! SchemaService::resolve()->tableExists($pivot->getHandle())) {
+//                $pivot->id();
+//
+//                // Owner Field
+//                $pivot->belongsTo($blueprint->getRelated(), $pivot->getRelatedKey())
+//                      ->foreignKey($pivot->getRelatedKey().'_id');
+//
+//                // Related Field
+//                $pivot->belongsTo($blueprint->getParent()->getIdentifier(), $pivot->getForeignKey())
+//                      ->foreignKey($pivot->getForeignKey().'_id');
+//
+//                Builder::resolve()->save($pivot);
+//            }
+//        }
+//    }
 }

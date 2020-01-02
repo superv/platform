@@ -142,24 +142,17 @@ class FormBuilder implements FormBuilderInterface
         if (! $this->formEntry) {
             return;
         }
-        $formFields = $this->formEntry->getFormFields()
-            ->map(function (FieldModel $field) {
-                $field = FieldFactory::createFromEntry($field, FormField::class);
-
-//                                          if ($this->resource) {
-//                                              $field->setResource($this->resource);
-//                                          }
-
-                return $field;
-            })
-            ->filter(function (FieldInterface $field) {
-                return ! $field instanceof GhostField;
-            })
-            ->map(function (FormField $field) {
-                $field->setForm($this->form);
-
-                return $field;
-            });
+        $formFields =
+            $this->formEntry->getFormFields()
+                            ->map(function (FieldModel $field) {
+                                return FieldFactory::createFromEntry($field, FormField::class);
+                            })
+                            ->filter(function (FieldInterface $field) {
+                                return ! $field instanceof GhostField;
+                            })
+                            ->map(function (FormField $field) {
+                                return $field->setForm($this->form);
+                            });
 
         $this->form->fields()->mergeFields($formFields);
     }

@@ -2,7 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany;
 
+use Closure;
 use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
+use SuperV\Platform\Domains\Resource\Builder\Pivot;
 
 class Blueprint extends FieldBlueprint
 {
@@ -16,6 +18,11 @@ class Blueprint extends FieldBlueprint
      */
     protected $foreignKey;
 
+    /**
+     * @var \SuperV\Platform\Domains\Resource\Builder\Pivot
+     */
+    protected $pivot;
+
     public function related($related)
     {
         $this->related = $related;
@@ -27,7 +34,8 @@ class Blueprint extends FieldBlueprint
     {
         return [
             'related'     => $this->related,
-            'foreign_key' => $this->getForeignKey(),
+            'foreign_key' => $this->pivot ? null : $this->getForeignKey(),
+            'pivot'       => $this->pivot ? $this->pivot->getIdentifier() : null,
         ];
     }
 
@@ -46,5 +54,24 @@ class Blueprint extends FieldBlueprint
     public function getForeignKey(): string
     {
         return $this->foreignKey ?? $this->blueprint->getKey().'_id';
+    }
+
+    public function through(string $identifier, ?Closure $callback = null)
+    {
+        $this->pivot = (new Pivot())->identifier($identifier);
+        $this->pivot->id();
+        $this->pivot->relatesToOne($this->blueprint->getIdentifier(), $this->blueprint->getKey());
+        $this->pivot->relatesToOne($this->getRelated(), str_singular($this->field->getHandle()));
+
+        if ($callback) {
+            $callback($this->pivot);
+        }
+
+        return $this->pivot;
+    }
+
+    public function getPivot(): ?Pivot
+    {
+        return $this->pivot;
     }
 }

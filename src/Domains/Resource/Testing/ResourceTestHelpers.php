@@ -187,8 +187,15 @@ trait ResourceTestHelpers
 
     protected function makeField(string $handle = 'foo', $type = 'text', array $config = []): FieldInterface
     {
+        if (str_contains($handle, '.')) {
+            $identifier = $handle;
+            $handle = sv_identifier($identifier)->getLastNode();
+        } else {
+            $identifier = 'tst.res.fields:'.$handle;
+        }
+
         $field = FieldFactory::createFromArray([
-            'identifier' => 'testing.'.$handle,
+            'identifier' => $identifier,
             'handle'     => $handle,
             'type'       => $type,
             'config'     => $config,

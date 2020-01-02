@@ -106,9 +106,6 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getIdentifier(): string
     {
         return $this->identifier;
@@ -116,7 +113,7 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
 
     public function uuid(): string
     {
-        return $this->uuid;
+        return $this->identifier;
     }
 
     /**
@@ -125,16 +122,11 @@ class Action implements ActionContract, Composable, ProvidesUIComponent
      */
     public static function make(string $identifier)
     {
-        return new static(array_filter(compact('identifier')));
-    }
+        $instance = new static;
+//        $instance->uuid = uuid();
+        $instance->hydrate(array_filter(compact('identifier')));
 
-    /** @return static */
-    public static function make222(?string $title = null, ?string $name = null)
-    {
-//        if ($title && ! $name) {
-//            $name = str_slug($title, '_');
-//        }
-
-        return new static(array_filter(compact('title', 'name')));
+        return $instance;
+//        return new static(array_filter(compact('identifier')));
     }
 }
