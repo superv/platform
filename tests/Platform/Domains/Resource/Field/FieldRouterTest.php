@@ -10,10 +10,11 @@ class FieldRouterTest extends ResourceTestCase
 {
     function test__()
     {
-        $router = $this->makeField('foo', GeniusType::class)->router();
+        $field = $this->makeField('foo', GeniusType::class);
+        $router = $field->router();
         $this->assertInstanceOf(Router::class, $router);
 
-        $this->assertEquals(sv_route('sv::fields.types', ['type'  => 'genius',
+        $this->assertEquals(sv_route('sv::fields.types', ['field' => $field->getIdentifier(),
                                                           'route' => 'lookup']), $router->route('lookup'));
     }
 }

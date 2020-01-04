@@ -2,7 +2,9 @@
 
 namespace SuperV\Platform\Domains\Resource\Http\Controllers;
 
+use Current;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Http\ResolvesResource;
 use SuperV\Platform\Domains\UI\Jobs\MakeComponentTree;
@@ -12,7 +14,26 @@ class FieldController extends BaseApiController
 {
     use ResolvesResource;
 
-    public function route($fieldType, $route)
+    public function route($identifier, $route)
+    {
+        Current::user()->canOrFail($identifier);
+
+        $field = FieldFactory::withIdentifier($identifier);
+
+        $fieldType = $field->type();
+
+        if (! $controller = $fieldType->resolveController()) {
+            abort(404);
+        }
+
+        if (! method_exists($controller, $route)) {
+            abort(404);
+        }
+
+        return app()->call([$controller, $route]);
+    }
+
+    public function routexxx($fieldType, $route)
     {
         $fieldType = FieldType::resolveType($fieldType);
 

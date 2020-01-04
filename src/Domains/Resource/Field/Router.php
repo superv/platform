@@ -19,6 +19,15 @@ class Router
     public function route(string $route)
     {
         return sv_route('sv::fields.types', [
+                'field' => $this->field->getIdentifier(),
+                'route' => $route,
+            ]
+        );
+    }
+
+    public function routex(string $route)
+    {
+        return sv_route('sv::fields.types', [
                 'type'  => $this->field->getType(),
                 'route' => $route,
             ]

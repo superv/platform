@@ -3,7 +3,8 @@
 namespace SuperV\Platform\Domains\Resource;
 
 use Platform;
-use SuperV\Platform\Domains\Resource\Command\ResourceImportCommand;
+use SuperV\Platform\Domains\Resource\Console\ResourceImportCommand;
+use SuperV\Platform\Domains\Resource\Console\ResourceMigrationCommand;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepository;
 use SuperV\Platform\Domains\Resource\Database\Entry\EntryRepositoryInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\FieldValueInterface;
@@ -38,7 +39,10 @@ class ResourceServiceProvider extends BaseServiceProvider
         HookManager::class => HookManager::class,
     ];
 
-    protected $commands = [ResourceImportCommand::class];
+    protected $commands = [
+        ResourceImportCommand::class,
+        ResourceMigrationCommand::class,
+    ];
 
     public function register()
     {

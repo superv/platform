@@ -40,6 +40,10 @@ class FieldRepository
             ValidationException::throw('identifier', 'Field identifier format not valid: ['.$identifier.']');
         }
 
+        if (! isset($attributes['handle'])) {
+            $attributes['handle'] = sv_identifier($identifier)->getTypeId();
+        }
+
         if (! isset($attributes['label'])) {
             $attributes['label'] = str_unslug($attributes['handle']);
         }

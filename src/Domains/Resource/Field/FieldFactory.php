@@ -32,6 +32,13 @@ class FieldFactory
         return $factory->create($resolveFrom);
     }
 
+    public static function withIdentifier(string $identifier)
+    {
+        $fieldEntry = FieldModel::withIdentifier($identifier);
+
+        return static::createFromEntry($fieldEntry);
+    }
+
     /**
      * @param array       $params
      * @param string|null $resolveFrom

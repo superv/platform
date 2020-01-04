@@ -1,6 +1,6 @@
 <?php
 
-namespace SuperV\Platform\Domains\Resource\Command;
+namespace SuperV\Platform\Domains\Resource\Console;
 
 use Illuminate\Support\Facades\DB;
 use SuperV\Platform\Contracts\Command;

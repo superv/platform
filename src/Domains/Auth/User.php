@@ -68,11 +68,6 @@ class User extends ResourceEntry implements
         $this->update(['password' => bcrypt($newPassword)]);
     }
 
-    public function createProfile(array $attributes)
-    {
-        return $this->profile()->create($attributes);
-    }
-
     public function getEmail()
     {
         return $this->email;
