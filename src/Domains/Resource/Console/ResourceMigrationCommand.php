@@ -28,7 +28,7 @@ class ResourceMigrationCommand extends Command
 
         $blueprintData = [
             'table'      => $table,
-            'identifier' => $addon->getName().'.'.$table,
+            'identifier' => $addon->getHandle().'.'.$table,
             'label'      => str_unslug($table),
         ];
 

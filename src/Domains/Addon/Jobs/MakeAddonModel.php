@@ -15,8 +15,14 @@ class MakeAddonModel
      */
     protected $addonType;
 
+    /**
+     * @var string
+     */
     protected $identifier;
 
+    /**
+     * @var string
+     */
     protected $addonPath;
 
     public function __construct(string $identifier, string $addonType)
@@ -28,20 +34,21 @@ class MakeAddonModel
     public function make()
     {
         $addonsDirectory = sv_config('addons.location');
-        $vendor = $this->getVendor();
-        $name = $this->getName();
+        $namespace = $this->parseNamespace();
+        $handle = $this->parseHandle();
         $typePlural = str_plural($this->addonType);
 
         if (! $this->addonPath) {
-            $this->addonPath = sprintf("%s/%s/%s/%s", $addonsDirectory, $vendor, $typePlural, $name);
+            $this->addonPath = sprintf("%s/%s/%s/%s", $addonsDirectory, $namespace, $typePlural, $handle);
         }
 
-        $psrNamespace = ucfirst(camel_case(($vendor == 'superv' ? 'super_v' : $vendor))).'\\'.ucfirst(camel_case($typePlural)).'\\'.ucfirst(camel_case($name));
+        $psrNamespace = ucfirst(camel_case(($namespace == 'superv' ? 'super_v' : $namespace))).'\\'.ucfirst(camel_case($typePlural)).'\\'.ucfirst(camel_case($handle));
 
         return new AddonModel([
-            'identifier'    => $this->getName(),
-            'name'          => $this->getName(),
-            'vendor'        => $this->getVendor(),
+            'namespace'     => $namespace,
+            'handle'        => $handle,
+            'identifier'    => $handle,
+            //            'identifier'    => $namespace.'.'.$handle,
             'type'          => str_singular($this->addonType),
             'path'          => $this->addonPath,
             'psr_namespace' => $psrNamespace,
@@ -49,42 +56,33 @@ class MakeAddonModel
         ]);
     }
 
-    /**
-     * @param mixed $identifier
-     */
     public function setIdentifier($identifier): void
     {
         $this->identifier = $identifier;
     }
 
-    public function getVendor()
+    public function parseNamespace()
     {
         return explode('.', $this->identifier)[0];
     }
 
-    public function getName()
+    public function parseHandle()
     {
-        $name = explode('.', $this->identifier)[1];
+        $handle = explode('.', $this->identifier)[1];
 
         // Strip trailing {-type} from addon name
-        if (ends_with($name, '-'.$this->addonType)) {
-            return str_replace_last('-'.$this->addonType, '', $name);
+        if (ends_with($handle, '-'.$this->addonType)) {
+            return str_replace_last('-'.$this->addonType, '', $handle);
         }
 
-        return $name;
+        return $handle;
     }
 
-    /**
-     * @return mixed
-     */
     public function getAddonPath()
     {
         return $this->addonPath;
     }
 
-    /**
-     * @param mixed $addonPath
-     */
     public function setAddonPath($addonPath): void
     {
         $this->addonPath = $addonPath;

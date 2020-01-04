@@ -46,7 +46,7 @@ class AddonModel extends Entry
      */
     public function addonClass()
     {
-        return $this->getPsrNamespace().'\\'.studly_case($this->getName().'_'.$this->getType());
+        return $this->getPsrNamespace().'\\'.studly_case($this->getHandle().'_'.$this->getType());
     }
 
     public function getRelativePath()
@@ -54,14 +54,14 @@ class AddonModel extends Entry
         return $this->path;
     }
 
-    public function getName()
+    public function getHandle()
     {
-        return $this->name;
+        return $this->handle;
     }
 
-    public function getVendor()
+    public function getNamespace()
     {
-        return $this->vendor;
+        return $this->namespace;
     }
 
     public function getType()
@@ -77,7 +77,7 @@ class AddonModel extends Entry
     public static function byIdentifier($identifier): ?AddonModel
     {
         if (str_is('*.*', $identifier)) {
-            list($vendor, $identifier) = explode('.', $identifier);
+            [$vendor, $identifier] = explode('.', $identifier);
         }
 
         return static::query()->where('identifier', $identifier)

@@ -57,7 +57,7 @@ class AddonServiceProvider extends BaseServiceProvider
             $this->addon->getIdentifier() =>
                 [
                     base_path($this->addon->resourcePath('views')),
-                    resource_path('vendor/'.$this->addon->getVendor().'/'.$this->addon->getIdentifier().'/views'),
+                    resource_path('vendor/'.$this->addon->getNamespace().'/'.$this->addon->getIdentifier().'/views'),
                 ],
         ]);
     }

@@ -69,7 +69,7 @@ class CreateAddonPaths
             'src',
             'routes',
             'tests',
-            'tests/'.studly_case($this->model->getName()),
+            'tests/'.studly_case($this->model->getHandle()),
         ]);
     }
 }

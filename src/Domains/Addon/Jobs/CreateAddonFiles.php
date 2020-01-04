@@ -33,7 +33,7 @@ class CreateAddonFiles
     {
         $this->filesystem = $filesystem;
 
-        $addonLabel = ucfirst(camel_case($this->addon->getName()));
+        $addonLabel = ucfirst(camel_case($this->addon->getHandle()));
         $typeLabel = ucfirst(camel_case($this->addon->getType()));
 
         $tokens = [
@@ -67,8 +67,8 @@ class CreateAddonFiles
                 'panel'    => [
                     'title'           => "{$addonLabel}{$typeLabel}",
                     'label'           => $addonLabel,
-                    'name'            => $this->addon->getName(),
-                    'base_path'       => $this->addon->getName(),
+                    'name'            => $this->addon->getHandle(),
+                    'base_path'       => $this->addon->getHandle(),
                     'port'            => $port->slug(),
                     'dev_server_host' => $port->hostname(),
                     'dev_server_port' => '8091',

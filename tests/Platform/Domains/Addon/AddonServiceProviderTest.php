@@ -44,7 +44,7 @@ class AddonServiceProviderTest extends TestCase
         $hints = $this->app['view']->getFinder()->getHints();
 
         $this->assertArrayContains(base_path($addon->resourcePath('views')), $hints['sample']);
-        $this->assertArrayContains(resource_path('vendor/'.$addon->getVendor().'/'.$addon->getIdentifier().'/views'), $hints['sample']);
+        $this->assertArrayContains(resource_path('vendor/'.$addon->getNamespace().'/'.$addon->getIdentifier().'/views'), $hints['sample']);
         $this->assertDirectoryExists(reset($hints['sample']));
     }
 

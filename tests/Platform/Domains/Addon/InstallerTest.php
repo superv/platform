@@ -54,8 +54,8 @@ class InstallerTest extends TestCase
 
         $this->assertNotNull($entry = AddonModel::byIdentifier('sv.my_addon'));
         $this->assertEquals('sv.my_addon', $entry->getIdentifier());
-        $this->assertEquals('sv', $entry->getVendor());
-        $this->assertEquals('my_addon', $entry->getVendor());
+        $this->assertEquals('sv', $entry->getNamespace());
+        $this->assertEquals('my_addon', $entry->getNamespace());
     }
 
     function test__seeds_addon()

@@ -59,12 +59,11 @@ class Installer
 
         $this->addonEntry = $maker->make();
 
-//        dd($this->addonEntry->toArray());
-
         $this->addonEntry->fill([
-            'identifier' => $this->addonEntry->getName(),
-            'path'       => $this->relativePath(),
-            'enabled'    => true,
+            'title'   => str_unslug($this->addonEntry->getHandle().'_'.$this->addonType),
+            //            'identifier' => $this->addonEntry->getHandle(),
+            'path'    => $this->relativePath(),
+            'enabled' => true,
         ]);
 
         $this->ensureNotInstalledBefore();
@@ -154,18 +153,16 @@ class Installer
         if (! preg_match('/^([a-zA-Z0-9_]+)\/([a-zA-Z0-9_\-]+)$/', $name)) {
             throw new \Exception('Name parameter in composer.json should be formatted like: {vendor}/{package}: '.$name);
         }
-        list($vendor, $addonName) = explode('/', $name);
+        [$vendor, $addonName] = explode('/', $name);
 
         $type = array_get($composer, 'type');
         if (! $type || ! preg_match('/^superv-([a-zA-Z]+)$/', $type)) {
             throw new \Exception('Type parameter in composer.json should be formatted like: superv-{type}: '.$type);
         }
 
-        list(, $this->addonType) = explode('-', $type);
+        [, $this->addonType] = explode('-', $type);
 
         $this->identifier = sprintf('%s.%s', $vendor, $addonName);
-
-
 
         return $this;
     }
@@ -192,11 +189,6 @@ class Installer
         $this->identifier = $identifier;
 
         return $this;
-    }
-
-    public static function resolve(): Installer
-    {
-        return app(static::class);
     }
 
     /**
@@ -237,5 +229,10 @@ class Installer
 //                          ->install();
 //            }
 //        }
+    }
+
+    public static function resolve(): Installer
+    {
+        return app(static::class);
     }
 }
