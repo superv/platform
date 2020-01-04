@@ -142,7 +142,7 @@ class HookManager
         $_identifier = sv_identifier($identifier);
         $subKey = null;
 
-        if ($_identifier->getNodeCount() > 2) {
+        if ($_identifier->getNodeCount() > 3) {
             $hookType = (string)$_identifier->getType();
             $subKey = $_identifier->getTypeId();
             $identifier = $_identifier->getParent();

@@ -11,7 +11,7 @@ class BooleanTypeTest extends ResourceTestCase
 {
     function test__blueprint()
     {
-        $blueprint = Builder::blueprint('testing.posts', function (
+        $blueprint = Builder::blueprint('sv.testing.posts', function (
             \SuperV\Platform\Domains\Resource\Builder\Blueprint $resource
         ) {
             $resource->boolean('active');
@@ -23,11 +23,11 @@ class BooleanTypeTest extends ResourceTestCase
 
     function test__builder()
     {
-        Builder::create('testing.posts', function (\SuperV\Platform\Domains\Resource\Builder\Blueprint $resource) {
+        Builder::create('sv.testing.posts', function (\SuperV\Platform\Domains\Resource\Builder\Blueprint $resource) {
             $resource->boolean('active');
         });
 
-        $posts = ResourceFactory::make('testing.posts');
+        $posts = ResourceFactory::make('sv.testing.posts');
 
         $activeField = $posts->getField('active');
         $this->assertNotNull($activeField);

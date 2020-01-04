@@ -35,7 +35,7 @@ class FieldRepositoryTest extends ResourceTestCase
     {
         $this->expectException(ValidationException::class);
         $this->repo->create($attributes = [
-            'identifier' => 'testing.core.title',
+            'identifier' => 'sv.testing.core.title',
             'handle'     => 'title',
             'type'       => 'text',
         ]);
@@ -47,7 +47,7 @@ class FieldRepositoryTest extends ResourceTestCase
 
         $action = Action::withSlug($field->getIdentifier());
         $this->assertNotNull($action);
-        $this->assertEquals('testing.servers', $action->namespace);
+        $this->assertEquals('sv.testing.servers', $action->namespace);
     }
 
     function test__returns_ghost_if_authorization_fails()

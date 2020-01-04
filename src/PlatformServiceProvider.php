@@ -165,7 +165,7 @@ class PlatformServiceProvider extends BaseServiceProvider
     {
         Collection::macro('toAssoc', function () {
             return $this->reduce(function ($assoc, $keyValuePair) {
-                list($key, $value) = $keyValuePair;
+                [$key, $value] = $keyValuePair;
                 $assoc[$key] = $value;
 
                 return $assoc;
@@ -181,7 +181,7 @@ class PlatformServiceProvider extends BaseServiceProvider
 
     protected function registerMigrationScope(): void
     {
-        MigrationScopes::register('platform', realpath(__DIR__.'/../database/migrations'));
+        MigrationScopes::register('sv.platform', realpath(__DIR__.'/../database/migrations'));
     }
 
     protected function publishConfig(): void

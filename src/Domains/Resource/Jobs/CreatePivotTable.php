@@ -22,6 +22,7 @@ class CreatePivotTable
         }
         if (! \Schema::hasTable($pivotTable)) {
             Schema::create($pivotTable,
+
                 function (Blueprint $table, ResourceConfig $config) use ($pivotColumnsCallback, $relation) {
                     /**
                      * Set pivot resource identifier

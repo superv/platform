@@ -65,7 +65,7 @@ class Platform extends Addon
 
     public function getIdentifier()
     {
-        return 'platform';
+        return 'sv.platform';
     }
 
     public function getPsrNamespace()

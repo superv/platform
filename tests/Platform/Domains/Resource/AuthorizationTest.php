@@ -39,7 +39,7 @@ class AuthorizationTest extends ResourceTestCase
 
     function test__non_authorized_users_can_NOT_create_entry()
     {
-        $user = $this->newUser(['allow' => 'testing.categories.fields:*']);
+        $user = $this->newUser(['allow' => 'sv.testing.categories.fields:*']);
         $resource = $this->blueprints()->categories();
 
         $this->getJsonUser($resource->router()->createForm(), $user)
@@ -57,7 +57,7 @@ class AuthorizationTest extends ResourceTestCase
 
     function test__non_authorized_users_can_NOT_edit_entry()
     {
-        $user = $this->newUser(['allow' => 'testing.categories.fields:*']);
+        $user = $this->newUser(['allow' => 'sv.testing.categories.fields:*']);
         $resource = $this->blueprints()->categories();
         $entry = $resource->fake();
 

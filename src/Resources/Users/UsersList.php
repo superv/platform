@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 
 class UsersList implements ListResolvedHook
 {
-    public static $identifier = 'platform.users.lists:default';
+    public static $identifier = 'sv.platform.users.lists:default';
 
     public function resolved(TableInterface $table, IndexFields $fields)
     {

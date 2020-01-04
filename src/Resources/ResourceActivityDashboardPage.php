@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\UI\Page\ResourcePage;
 
 class ResourceActivityDashboardPage implements PageResolvedHook
 {
-    public static $identifier = 'platform.activities.pages:dashboard';
+    public static $identifier = 'sv.platform.activities.pages:dashboard';
 
     public function resolved(ResourcePage $page, \SuperV\Platform\Domains\Resource\Resource $resource)
     {

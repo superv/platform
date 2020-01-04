@@ -34,7 +34,7 @@ class MorphOneTest extends ResourceTestCase
         $relation = $this->parent->getRelation('tag');
         $this->assertEquals('morph_one', $relation->getType());
         $this->assertEquals([
-            'related_resource' => 'testing.t_tags',
+            'related_resource' => 'sv.testing.t_tags',
             'morph_name'       => 'owner',
         ], $relation->getRelationConfig()->toArray());
     }
@@ -128,9 +128,9 @@ class MorphOneTest extends ResourceTestCase
 
             $table->increments('id');
             $table->string('name');
-            $table->morphOne('testing.t_tags', 'tag', 'owner');
-            $table->morphOne('testing.t_tacs', 'tac', 'owner');
-            $table->morphOne('testing.t_profiles', 'profile', 'owner', TestProfileRepository::class);
+            $table->morphOne('sv.testing.t_tags', 'tag', 'owner');
+            $table->morphOne('sv.testing.t_tacs', 'tac', 'owner');
+            $table->morphOne('sv.testing.t_profiles', 'profile', 'owner', TestProfileRepository::class);
         });
 
         $this->related = $this->create('t_tags', function (Blueprint $table) {

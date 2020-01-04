@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\Field\Field;
 
 class PostsFields
 {
-    public static $identifier = 'testing.posts.fields';
+    public static $identifier = 'sv.testing.posts.fields';
 
     public function resolvedTitle(Field $title)
     {

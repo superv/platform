@@ -66,7 +66,7 @@ class HookManagerTest extends HookTestCase
                 ],
                 'observer' => OrdersObserver::class,
             ],
-            $hook->get('testing.orders')
+            $hook->get('sv.testing.orders')
         );
 
         $this->assertEquals([
@@ -80,7 +80,7 @@ class HookManagerTest extends HookTestCase
                 'default' => PostsForm::class,
                 'manager' => _PostsManagerForm::class,
             ],
-        ], $hook->get('testing.posts'));
+        ], $hook->get('sv.testing.posts'));
 
         $this->assertEquals([
             'lists'    => [
@@ -90,7 +90,7 @@ class HookManagerTest extends HookTestCase
             'pages'    => [
                 'dashboard' => CategoriesDashboardPage::class,
             ],
-        ], $hook->get('testing.categories'));
+        ], $hook->get('sv.testing.categories'));
     }
 
     function test__scans_resources_directory_when_an_addon_is_booted()

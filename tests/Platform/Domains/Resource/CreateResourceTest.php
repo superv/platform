@@ -32,14 +32,14 @@ class CreateResourceTest extends ResourceTestCase
 
         $this->assertDatabaseHas('sv_resources', [
             'name'       => 'test_users',
-            'identifier' => 'testing.test_users',
+            'identifier' => 'sv.testing.test_users',
         ]);
-        $resourceEntry = ResourceModel::withIdentifier('testing.test_users');
+        $resourceEntry = ResourceModel::withIdentifier('sv.testing.test_users');
         $this->assertNotNull($resourceEntry);
         $this->assertNotNull($resourceEntry->uuid);
         $this->assertEquals('test_users', $resourceEntry->getName());
-        $this->assertEquals('testing.test_users', $resourceEntry->getIdentifier());
-        $this->assertEquals('testing', $resourceEntry->getNamespace());
+        $this->assertEquals('sv.testing.test_users', $resourceEntry->getIdentifier());
+        $this->assertEquals('sv.testing', $resourceEntry->getNamespace());
 
         $this->assertEquals([
             'type'   => 'database',
@@ -59,8 +59,8 @@ class CreateResourceTest extends ResourceTestCase
             $config->model(TestUser::class);
         });
 
-        $this->assertEquals(TestUser::class, ResourceModel::withIdentifier('testing.test_users')->getModelClass());
-        $this->assertInstanceOf(TestUser::class, ResourceFactory::make('testing.test_users')->newEntryInstance());
+        $this->assertEquals(TestUser::class, ResourceModel::withIdentifier('sv.testing.test_users')->getModelClass());
+        $this->assertInstanceOf(TestUser::class, ResourceFactory::make('sv.testing.test_users')->newEntryInstance());
     }
 
     function test__driver_config()
@@ -86,7 +86,7 @@ class CreateResourceTest extends ResourceTestCase
         });
 
         $config = $resource->config();
-        $this->assertEquals('testing.servers', $config->getIdentifier());
+        $this->assertEquals('sv.testing.servers', $config->getIdentifier());
 
         $this->assertTrue((\Schema::connection('sqlite')->hasTable('core_servers')));
     }
@@ -128,7 +128,7 @@ class CreateResourceTest extends ResourceTestCase
             $table->belongsToMany('servers', 'servers')
                   ->pivotForeignKey('location_id')
                   ->pivotRelatedKey('server_id')
-                  ->pivotTable('testing.core_location_servers');
+                  ->pivotTable('sv.testing.core_location_servers');
         });
 
         $this->create('core_servers', function (Blueprint $table, Config $config) {
@@ -137,27 +137,27 @@ class CreateResourceTest extends ResourceTestCase
 
             $table->belongsToMany('core_locations', 'locations')->pivotForeignKey('server_id')
                   ->pivotRelatedKey('location_id')
-                  ->pivotTable('testing.core_location_servers');
+                  ->pivotTable('sv.testing.core_location_servers');
         });
 
-        $resource = ResourceFactory::make('testing.servers');
+        $resource = ResourceFactory::make('sv.testing.servers');
         $this->assertNotNull($resource);
 
         $this->assertEquals('core_servers', $resource->config()->getDriver()->getParam('table'));
 
-        $server = ResourceFactory::make('testing.servers')->create([]);
+        $server = ResourceFactory::make('sv.testing.servers')->create([]);
         $this->assertTrue($server->exists());
         $this->assertEquals('core_servers', $server->getTable());
     }
 
     function test__creates_field_when_a_database_column_is_created()
     {
-        $resource = $this->makeResourceModel('testing.test_users', ['username', 'age:integer', 'bio:text']);
+        $resource = $this->makeResourceModel('sv.testing.test_users', ['username', 'age:integer', 'bio:text']);
         $this->assertEquals(3, $resource->fields()->count());
 
         $usernameField = $resource->getField('username');
-//        $this->assertEquals('testing.test_users.fields', $usernameField->getNamespace());
-        $this->assertEquals('testing.test_users.fields:username', $usernameField->getIdentifier());
+//        $this->assertEquals('sv.testing.test_users.fields', $usernameField->getNamespace());
+        $this->assertEquals('sv.testing.test_users.fields:username', $usernameField->getIdentifier());
         $this->assertEquals('username', $usernameField->getHandle());
         $this->assertEquals('string', $usernameField->getColumnType());
 
@@ -176,7 +176,7 @@ class CreateResourceTest extends ResourceTestCase
             $table->number('age')->nullable();
         });
 
-        $this->assertNotNull(sv_resource('testing.test_users')->getField('age'));
+        $this->assertNotNull(sv_resource('sv.testing.test_users')->getField('age'));
     }
 
     function test__fields_are_unique_per_resource()
@@ -207,7 +207,7 @@ class CreateResourceTest extends ResourceTestCase
             $table->select('status')->options(['closed' => 'Closed', 'open' => 'Open'])->default('open');
         });
 
-        $resourceEntry = ResourceModel::withIdentifier('testing.test_users');
+        $resourceEntry = ResourceModel::withIdentifier('sv.testing.test_users');
 
         $statusField = $resourceEntry->getField('status');
         $this->assertEquals('string', $statusField->getColumnType());
@@ -226,7 +226,7 @@ class CreateResourceTest extends ResourceTestCase
         Schema::table('test_users', function (Blueprint $table) {
             $table->string('name')->change()->rules(['min:16', 'max:64']);
         });
-        $resourceEntry = ResourceModel::withIdentifier('testing.test_users');
+        $resourceEntry = ResourceModel::withIdentifier('sv.testing.test_users');
         $nameField = $resourceEntry->getField('name');
 
         $this->assertArrayContains(['min:16', 'max:64'], $nameField->getRules());
@@ -269,7 +269,7 @@ class CreateResourceTest extends ResourceTestCase
             $table->string('title')->default('User');
         });
 
-        $resource = ResourceModel::withIdentifier('testing.test_users');
+        $resource = ResourceModel::withIdentifier('sv.testing.test_users');
         $this->assertEquals('User', $resource->getField('title')->getDefaultValue());
     }
 
@@ -281,7 +281,7 @@ class CreateResourceTest extends ResourceTestCase
 
         Event::assertDispatched(ResourceCreatedEvent::class, function (ResourceCreatedEvent $event) {
             $this->assertInstanceOf(ResourceModel::class, $event->resourceEntry);
-            $this->assertEquals('testing.posts', $event->resourceEntry->getIdentifier());
+            $this->assertEquals('sv.testing.posts', $event->resourceEntry->getIdentifier());
 
             return true;
         });
@@ -289,14 +289,14 @@ class CreateResourceTest extends ResourceTestCase
 
     function test__creates_auth_action_entries()
     {
-        $this->blueprints()->posts('testing');
+        $this->blueprints()->posts();
 
-        $this->assertEquals(1, Action::query()->where('slug', 'testing.posts')->count());
-        $this->assertEquals(1, Action::query()->where('slug', 'testing.posts.*')->count());
-        $this->assertEquals(1, Action::query()->where('slug', 'testing.posts.fields.*')->count());
-        $this->assertEquals(1, Action::query()->where('slug', 'testing.posts.actions.*')->count());
-        $this->assertEquals(2, Action::query()->where('namespace', 'testing')->count());
-        $this->assertEquals(8, Action::query()->where('namespace', 'testing.posts')->count());
+        $this->assertEquals(1, Action::query()->where('slug', 'sv.testing.posts')->count());
+        $this->assertEquals(1, Action::query()->where('slug', 'sv.testing.posts.*')->count());
+        $this->assertEquals(1, Action::query()->where('slug', 'sv.testing.posts.fields.*')->count());
+        $this->assertEquals(1, Action::query()->where('slug', 'sv.testing.posts.actions.*')->count());
+        $this->assertEquals(2, Action::query()->where('namespace', 'sv.testing')->count());
+        $this->assertEquals(8, Action::query()->where('namespace', 'sv.testing.posts')->count());
     }
 
     protected function tearDown(): void

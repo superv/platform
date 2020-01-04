@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 
 class FormsList implements ListResolvedHook
 {
-    public static $identifier = 'platform.forms.lists:default';
+    public static $identifier = 'sv.platform.forms.lists:default';
 
     public function resolved(TableInterface $table, IndexFields $fields)
     {

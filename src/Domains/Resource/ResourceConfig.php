@@ -88,8 +88,9 @@ class ResourceConfig
 
     public function setIdentifier($identifier)
     {
-        [$this->namespace, $this->name] = explode('.', $identifier);
+        [$vendor, $addon, $this->name] = explode('.', $identifier);
 
+        $this->namespace = $vendor.'.'.$addon;
         return $this;
     }
 

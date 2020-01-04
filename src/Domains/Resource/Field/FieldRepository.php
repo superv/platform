@@ -36,7 +36,7 @@ class FieldRepository
             ValidationException::throw('identifier', 'Field identifier is required');
         }
 
-        if (! preg_match('/^(\w+)\.(\w+)\.fields:(\w+)$/', $identifier)) {
+        if (! preg_match('/^(\w+)\.(\w+)\.(\w+)\.fields:(\w+)$/', $identifier)) {
             ValidationException::throw('identifier', 'Field identifier format not valid: ['.$identifier.']');
         }
 
@@ -50,7 +50,7 @@ class FieldRepository
 
         $field = $this->model->newQuery()->create($attributes);
 
-        if (! starts_with($identifier, 'platform.')) {
+        if (! starts_with($identifier, 'sv.platform.')) {
             $identifier = sv_identifier($identifier);
             Action::query()->create([
                 'namespace' => $identifier->getParent(),

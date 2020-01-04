@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\UI\Page\ResourcePage;
 
 class CategoriesDashboardPage implements PageResolvedHook, PageRenderedHook
 {
-    public static $identifier = 'testing.categories.pages:dashboard';
+    public static $identifier = 'sv.testing.categories.pages:dashboard';
 
     public function resolved(ResourcePage $page, \SuperV\Platform\Domains\Resource\Resource $resource)
     {

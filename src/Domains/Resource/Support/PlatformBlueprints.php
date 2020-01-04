@@ -38,7 +38,7 @@ class PlatformBlueprints
 
     public static function createResources()
     {
-        Current::setMigrationScope('platform');
+        Current::setMigrationScope('sv.platform');
 
         foreach (PlatformBlueprints::$resources as $resource => $table) {
             Schema::run($table,
@@ -112,10 +112,10 @@ class PlatformBlueprints
             $config->resourceKey('resource');
             $config->nav('acp.platform.system');
 
-            $table->hasMany('platform.fields', 'fields');
-            $table->hasMany('platform.relations', 'relations');
-            $table->hasMany('platform.forms', 'forms');
-            $table->hasMany('platform.activities', 'activities');
+            $table->hasMany('sv.platform.fields', 'fields');
+            $table->hasMany('sv.platform.relations', 'relations');
+            $table->hasMany('sv.platform.forms', 'forms');
+            $table->hasMany('sv.platform.activities', 'activities');
             $table->dictionary('config')->nullable();
 
             $table->createdBy()->updatedBy();
@@ -149,7 +149,7 @@ class PlatformBlueprints
             $config->resourceKey('field');
             $config->nav('acp.platform.system');
 
-            $table->nullableBelongsTo('platform.resources', 'resource')->showOnIndex();
+            $table->nullableBelongsTo('sv.platform.resources', 'resource')->showOnIndex();
 
             $table->text('flags')->fieldType('array')->nullable();
             $table->dictionary('rules')->nullable();
@@ -192,18 +192,18 @@ class PlatformBlueprints
             $config->nav('acp.platform.system');
             $config->model(FormModel::class);
 
-            $table->nullableBelongsTo('platform.resources', 'resource');
+            $table->nullableBelongsTo('sv.platform.resources', 'resource');
 //            $table->hasUuid()->showOnIndex();
 
             $table->createdBy()->updatedBy();
 
-            $table->belongsToMany('platform.fields', 'fields')
-                ->pivotTable('sv_form_fields', 'platform.form_fields')
-                ->pivotForeignKey('form_id')
-                ->pivotRelatedKey('field_id')
-                ->pivotColumns(function (Blueprint $pivotTable) {
-                    $pivotTable->unsignedInteger('sort_order')->nullable();
-                });
+            $table->belongsToMany('sv.platform.fields', 'fields')
+                  ->pivotTable('sv_form_fields', 'sv.platform.form_fields')
+                  ->pivotForeignKey('form_id')
+                  ->pivotRelatedKey('field_id')
+                  ->pivotColumns(function (Blueprint $pivotTable) {
+                      $pivotTable->unsignedInteger('sort_order')->nullable();
+                  });
         } else {
             $table->unsignedInteger('resource_id')->nullable();
 
@@ -228,7 +228,7 @@ class PlatformBlueprints
             $config->resourceKey('relation');
             $config->nav('acp.platform.system');
 
-            $table->belongsTo('platform.resources', 'resource')->showOnIndex();
+            $table->belongsTo('sv.platform.resources', 'resource')->showOnIndex();
             $table->dictionary('config')->nullable();
         } else {
             $table->unsignedInteger('resource_id');
@@ -253,8 +253,8 @@ class PlatformBlueprints
             $config->resourceKey('nav');
             $config->nav('acp.platform.system');
 
-            $table->nullableBelongsTo('platform.navigation', 'parent')->showOnIndex();
-            $table->nullableBelongsTo('platform.resources', 'resource')->showOnIndex();
+            $table->nullableBelongsTo('sv.platform.navigation', 'parent')->showOnIndex();
+            $table->nullableBelongsTo('sv.platform.resources', 'resource')->showOnIndex();
         } else {
             $table->unsignedInteger('parent_id')->nullable();
             $table->unsignedInteger('resource_id')->nullable();
@@ -282,7 +282,7 @@ class PlatformBlueprints
             $config->nav('acp.platform.system');
             $config->label('Resource Activity');
 
-            $table->belongsTo('platform.resources', 'resource')->showOnIndex();
+            $table->belongsTo('sv.platform.resources', 'resource')->showOnIndex();
             $table->belongsTo('users', 'user')->showOnIndex();
             $table->nullableMorphTo('entry')->showOnIndex();
             $table->dictionary('payload');

@@ -24,7 +24,7 @@ class InlineFormTest extends ResourceTestCase
 
         $subFormField = $form->fields()->get('user');
         $this->assertInstanceOf(BelongsToType::class, $subFormField->getConfigValue('parent_type'));
-        $this->assertEquals('platform.users', $subFormField->getConfigValue('resource'));
+        $this->assertEquals('sv.platform.users', $subFormField->getConfigValue('resource'));
         $this->assertEquals($userField->getColumnName(), $subFormField->getColumnName());
     }
 

@@ -166,8 +166,9 @@ class Blueprint
 
     public function identifier(string $identifier)
     {
-        [$this->namespace, $this->handle] = explode('.', $identifier);
+        [$vendor, $addon, $this->handle] = explode('.', $identifier);
 
+        $this->namespace = $vendor.'.'.$addon;
         $this->key = str_singular($this->handle);
 
         return $this;

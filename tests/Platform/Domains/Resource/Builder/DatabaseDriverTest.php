@@ -10,7 +10,7 @@ class DatabaseDriverTest extends ResourceTestCase
 {
     function test__primary_keys()
     {
-        $blueprint = Builder::blueprint('core.posts', function (Blueprint $resource) {
+        $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
             $resource->primaryKey('title', 'string');
         });
         $blueprint->getDriver()->run($blueprint);
@@ -19,14 +19,14 @@ class DatabaseDriverTest extends ResourceTestCase
 
     function test__run()
     {
-        Builder::create('tst.posts', function (Blueprint $resource) {
+        Builder::create('sv.testing.posts', function (Blueprint $resource) {
             $resource->id();
         });
 
         $this->assertTableExists('posts');
         $this->assertColumnExists('posts', 'id');
 
-        Builder::create('tst.authors', function (Blueprint $resource) {
+        Builder::create('sv.testing.authors', function (Blueprint $resource) {
             $resource->id('author_id');
         });
 

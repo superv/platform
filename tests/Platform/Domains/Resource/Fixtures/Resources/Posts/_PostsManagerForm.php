@@ -9,7 +9,7 @@ use SuperV\Platform\Domains\Resource\Hook\Contracts\HookByRole;
 
 class _PostsManagerForm implements FormResolvingHook, HookByRole
 {
-    public static $identifier = 'testing.posts.forms:default';
+    public static $identifier = 'sv.testing.posts.forms:default';
 
     public function resolving(FormInterface $form, FormFields $fields)
     {

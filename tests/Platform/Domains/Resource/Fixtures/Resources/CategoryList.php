@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 
 class CategoryList implements ListResolvedHook, ListDataHook, ListQueryResolvedHook
 {
-    public static $identifier = 'testing.categories.lists:default';
+    public static $identifier = 'sv.testing.categories.lists:default';
 
     public function resolved(TableInterface $table, IndexFields $fields)
     {

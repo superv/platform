@@ -48,7 +48,7 @@ class EntryRepositoryTest extends ResourceTestCase
         $users = $this->blueprints()->users(function (Blueprint $table, ResourceConfig $config) {
             $config->model(TestUser::class);
         });
-        $entry = sv_resource('testing.users')->create(['name' => 'aaa', 'email' => 'a@h.com', 'group_id' => 1]);
+        $entry = sv_resource('sv.testing.users')->create(['name' => 'aaa', 'email' => 'a@h.com', 'group_id' => 1]);
         $this->assertInstanceOf(TestUser::class, $entry);
         $this->assertEquals($users->getRelations()->keys()->all(), $entry->getRelationKeys());
         $this->assertInstanceOf(BelongsTo::class, $entry->group());

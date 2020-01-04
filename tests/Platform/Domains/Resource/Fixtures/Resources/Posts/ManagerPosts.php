@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Resource;
 
 class ManagerPosts implements ResourceResolvedHook, HookByRole
 {
-    public static $identifier = 'testing.posts';
+    public static $identifier = 'sv.testing.posts';
 
     public function resolved(Resource $resource)
     {

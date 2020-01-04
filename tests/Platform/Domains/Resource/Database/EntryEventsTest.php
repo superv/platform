@@ -19,10 +19,10 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_before_creating()
     {
-        $eventName = sprintf("testing.posts.entry.events:creating");
+        $eventName = sprintf("sv.testing.posts.entry.events:creating");
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
-            $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
+            $this->assertEquals('sv.testing.posts', $entry->getResourceIdentifier());
             $this->assertFalse($entry->exists());
             $this->assertEquals(['title' => 'My New Post'], $entry->toArray());
             $this->dispatchedEvents[$eventName] = true;
@@ -33,10 +33,10 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_after_created()
     {
-        $eventName = sprintf("testing.posts.entry.events:created");
+        $eventName = sprintf("sv.testing.posts.entry.events:created");
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
-            $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
+            $this->assertEquals('sv.testing.posts', $entry->getResourceIdentifier());
             $this->assertTrue($entry->exists());
             $this->assertEquals('My New Post', $entry->getAttribute('title'));
             $this->dispatchedEvents[$eventName] = true;
@@ -47,11 +47,11 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_before_saving()
     {
-        $eventName = sprintf("testing.posts.entry.events:saving");
+        $eventName = sprintf("sv.testing.posts.entry.events:saving");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
-            $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
+            $this->assertEquals('sv.testing.posts', $entry->getResourceIdentifier());
             $this->assertEquals('My Post', $entry->fresh()->title);
             $this->assertEquals('My Post v2', $entry->getAttribute('title'));
             $this->dispatchedEvents[$eventName] = true;
@@ -63,7 +63,7 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_after_saved()
     {
-        $eventName = sprintf("testing.posts.entry.events:saved");
+        $eventName = sprintf("sv.testing.posts.entry.events:saved");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
@@ -78,11 +78,11 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_when_deleted()
     {
-        $eventName = sprintf("testing.posts.entry.events:deleted");
+        $eventName = sprintf("sv.testing.posts.entry.events:deleted");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($eventName) {
-            $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
+            $this->assertEquals('sv.testing.posts', $entry->getResourceIdentifier());
             $this->assertNull($entry->fresh());
             $this->dispatchedEvents[$eventName] = true;
         });
@@ -93,17 +93,17 @@ class EntryEventsTest extends ResourceTestCase
 
     function test__dispatches_event_when_retrieved()
     {
-        $eventName = sprintf("testing.posts.entry.events:retrieved");
+        $eventName = sprintf("sv.testing.posts.entry.events:retrieved");
         $myPost = $this->createPostEntry();
         app('events')->listen(
             $eventName, function (EntryContract $entry) use ($myPost, $eventName) {
-            $this->assertEquals('testing.posts', $entry->getResourceIdentifier());
+            $this->assertEquals('sv.testing.posts', $entry->getResourceIdentifier());
             $this->assertEquals($myPost->toArray(), $entry->toArray());
 
             $this->dispatchedEvents[$eventName] = true;
         });
 
-        sv_resource('testing.posts')->find($myPost->getId());
+        sv_resource('sv.testing.posts')->find($myPost->getId());
         $this->assertArrayHasKey($eventName, $this->dispatchedEvents);
     }
 
@@ -149,7 +149,7 @@ class EntryEventsTest extends ResourceTestCase
     protected function createPostEntry(array $attributes = []): EntryContract
     {
         $myPost = $this->create('posts', function (Blueprint $table, ResourceConfig $config) {
-            $config->setNamespace('testing');
+//            $config->setNamespace('testing');
             $table->id();
             $table->string('title');
         })->fake(array_merge(['title' => 'My Post'], $attributes));

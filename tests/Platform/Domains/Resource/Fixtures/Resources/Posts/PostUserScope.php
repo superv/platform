@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Resource;
 
 class PostUserScope implements ScopeHook
 {
-    public static $identifier = 'testing.posts.scopes:user';
+    public static $identifier = 'sv.testing.posts.scopes:user';
 
     public function scope($query, Resource $resource, User $user)
     {

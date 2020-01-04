@@ -43,7 +43,7 @@ class HookByRoleTest extends HookTestCase
         $_SERVER['__hooks::form.default.resolving'] = null;
         $this->blueprints()->posts();
 
-        $url = sv_route('sv::forms.display', ['form' => 'testing.posts.forms:default']);
+        $url = sv_route('sv::forms.display', ['form' => 'sv.testing.posts.forms:default']);
 
         $response = $this->getJsonUser($url, $this->testUser);
         if (! $response->isOk()) {

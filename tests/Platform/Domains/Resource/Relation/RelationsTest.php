@@ -26,7 +26,7 @@ class RelationsTest extends ResourceTestCase
         $users = $this->create('tbl_users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->belongsTo('testing.groups', 'group');
+            $table->belongsTo('sv.testing.groups', 'group');
         });
 
         $this->assertColumnNotExists('tbl_users', 'posts');
@@ -35,7 +35,7 @@ class RelationsTest extends ResourceTestCase
         $this->assertEquals('belongs_to', $relation->getType());
 
         $this->assertEquals([
-            'related_resource' => 'testing.groups',
+            'related_resource' => 'sv.testing.groups',
             'foreign_key'      => 'group_id',
         ], $relation->getRelationConfig()->toArray());
     }
@@ -46,7 +46,7 @@ class RelationsTest extends ResourceTestCase
             $table->hasMany(TestPost::class, 'posts', 'user_id', 'post_id');
         });
 
-        $users = ResourceFactory::make('testing.users');
+        $users = ResourceFactory::make('sv.testing.users');
         $this->assertColumnNotExists('tbl_users', 'posts');
 
         $relation = $users->getRelation('posts');
@@ -63,7 +63,7 @@ class RelationsTest extends ResourceTestCase
     {
         $this->blueprints()->users();
 
-        $users = ResourceFactory::make('testing.users');
+        $users = ResourceFactory::make('sv.testing.users');
 
         $this->assertColumnNotExists('tbl_users', 'roles');
         $this->assertTableExists('tbl_assigned_roles');
@@ -78,12 +78,12 @@ class RelationsTest extends ResourceTestCase
         $this->assertEquals('belongs_to_many', $relation->getType());
 
         $this->assertEquals([
-            'related_resource'  => 'testing.roles',
+            'related_resource'  => 'sv.testing.roles',
             'pivot_table'       => 'tbl_assigned_roles',
             'pivot_foreign_key' => 'user_id',
             'pivot_related_key' => 'role_id',
             'pivot_columns'     => ['status'],
-            'pivot_identifier'  => 'testing.assigned_roles',
+            'pivot_identifier'  => 'sv.testing.assigned_roles',
         ], $relation->getRelationConfig()->toArray());
     }
 
@@ -95,11 +95,11 @@ class RelationsTest extends ResourceTestCase
         $this->assertEquals(['provision'], $actions->getRelationConfig()->getPivotColumns());
 
         $admins = $this->create('tbl_admins', function (Blueprint $table, ResourceConfig $config) {
-            $config->setIdentifier('testing.admins');
+            $config->setIdentifier('sv.testing.admins');
 
             $table->increments('id');
-            $table->morphToMany('testing.actions', 'actions', 'owner')
-                  ->pivotTable('testing.assigned_actions')
+            $table->morphToMany('sv.testing.actions', 'actions', 'owner')
+                  ->pivotTable('sv.testing.assigned_actions')
                   ->pivotRelatedKey('action_id')
                   ->pivotColumns(function (Blueprint $pivotTable) {
                       $pivotTable->string('provision');

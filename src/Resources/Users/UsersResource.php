@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\Resource;
 
 class UsersResource implements ResourceResolvedHook
 {
-    public static $identifier = 'platform.users';
+    public static $identifier = 'sv.platform.users';
 
     public function resolved(Resource $resource)
     {

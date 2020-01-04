@@ -22,6 +22,6 @@ class DictionaryFieldTest
 
         $this->assertEquals('test-title', $entry->title);
         $this->assertEquals(['foo' => 'bar'], $entry->config);
-//        $this->field->getIdentifier() === 'testing.tmp_table.fields:config'
+//        $this->field->getIdentifier() === 'sv.testing.tmp_table.fields:config'
     }
 }

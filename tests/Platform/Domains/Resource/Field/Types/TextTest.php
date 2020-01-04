@@ -26,7 +26,7 @@ class TextTest extends ResourceTestCase
 
     function test__blueprint()
     {
-        $blueprint = Builder::blueprint('testing.posts', function (
+        $blueprint = Builder::blueprint('sv.testing.posts', function (
             \SuperV\Platform\Domains\Resource\Builder\Blueprint $resource
         ) {
             $resource->text('title')->useAsEntryLabel();

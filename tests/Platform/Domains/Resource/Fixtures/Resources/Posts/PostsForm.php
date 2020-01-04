@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Hook\Contracts\FormResolvingHook;
 
 class PostsForm implements FormResolvingHook
 {
-    public static $identifier = 'testing.posts.forms:default';
+    public static $identifier = 'sv.testing.posts.forms:default';
 
     public function resolving(FormInterface $form, FormFields $fields)
     {

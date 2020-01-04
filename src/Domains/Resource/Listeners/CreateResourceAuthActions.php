@@ -12,7 +12,7 @@ class CreateResourceAuthActions
         $resourceEntry = $event->resourceEntry;
         $namespace = $resourceEntry->getNamespace();
 
-        if ($namespace === 'platform') {
+        if ($namespace === 'sv.platform') {
             return;
         }
 

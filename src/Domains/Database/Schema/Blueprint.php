@@ -68,9 +68,6 @@ class Blueprint extends LaravelBlueprint
         $this->postBuildCallbacks = collect();
         $this->columns = collect($this->columns)->keyBy('name');
 
-//        if (DB::transactionLevel() === 0) {
-//            DB::beginTransaction();
-//        }
         if ($this->creating() || $this->builder->justRun) {
             TableCreatingEvent::dispatch($this->tableName(), $this->columns, $this->resourceConfig(), Current::migrationScope(), $this);
         } else {

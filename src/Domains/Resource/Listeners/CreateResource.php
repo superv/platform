@@ -86,7 +86,7 @@ class CreateResource
         }
 
         if ($this->config->isRestorable()) {
-            $this->event->blueprint->nullableBelongsTo('platform.users', 'deleted_by')->hideOnForms();
+            $this->event->blueprint->nullableBelongsTo('sv.platform.users', 'deleted_by')->hideOnForms();
             $this->event->blueprint->timestamp('deleted_at')->nullable()->hideOnForms();
         }
 
@@ -96,7 +96,7 @@ class CreateResource
 
         if ($userTypeConfig = $this->config->getUserTypeConfig()) {
             $role = array_pull($userTypeConfig, 'role');
-            $this->event->blueprint->belongsTo('platform.users', 'user')
+            $this->event->blueprint->belongsTo('sv.platform.users', 'user')
                                    ->static()
                                    ->config(
                                        [

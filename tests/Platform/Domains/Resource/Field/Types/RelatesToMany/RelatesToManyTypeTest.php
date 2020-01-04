@@ -17,8 +17,8 @@ class RelatesToManyTypeTest extends ResourceTestCase
 {
     function test__blueprint_one_to_many()
     {
-        $blueprint = Builder::blueprint('tst.students', function (Blueprint $resource) {
-            $resource->relatesToMany('tst.payments', 'payments');
+        $blueprint = Builder::blueprint('sv.testing.students', function (Blueprint $resource) {
+            $resource->relatesToMany('sv.testing.payments', 'payments');
         });
 
         /** @var \SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany\Blueprint $payments */
@@ -27,40 +27,40 @@ class RelatesToManyTypeTest extends ResourceTestCase
         $this->assertInstanceOf(RelatesToManyTypeBlueprint::class, $payments);
         $this->assertInstanceOf(RelatesToManyType::class, $payments->getField()->type());
 
-        $this->assertEquals('tst.payments', $payments->getRelated());
+        $this->assertEquals('sv.testing.payments', $payments->getRelated());
         $this->assertEquals('student_id', $payments->getForeignKey());
     }
 
     function test__blueprint_many_to_many()
     {
-        $blueprint = Builder::blueprint('tst.students', function (Blueprint $resource) {
-            $resource->relatesToMany('tst.courses', 'courses')->through('tst.students_courses');
+        $blueprint = Builder::blueprint('sv.testing.students', function (Blueprint $resource) {
+            $resource->relatesToMany('sv.testing.courses', 'courses')->through('sv.testing.students_courses');
         });
 
         /** @var \SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany\Blueprint $courses */
         $courses = $blueprint->getField('courses');
 
-        $this->assertEquals('tst.courses', $courses->getRelated());
+        $this->assertEquals('sv.testing.courses', $courses->getRelated());
 
         $pivot = $courses->getPivot();
-        $this->assertEquals('tst.students_courses', $pivot->getIdentifier());
+        $this->assertEquals('sv.testing.students_courses', $pivot->getIdentifier());
         $this->assertEquals('students_courses', $pivot->getHandle());
 
         $this->assertNotNull($student = $pivot->getField('student'));
         $this->assertInstanceOf(RelatesToOne::class, $student);
-        $this->assertEquals('tst.students', $student->getRelated());
+        $this->assertEquals('sv.testing.students', $student->getRelated());
         $this->assertEquals('student_id', $student->getForeignKey());
 
         $this->assertNotNull($course = $pivot->getField('course'));
         $this->assertInstanceOf(RelatesToOne::class, $course);
-        $this->assertEquals('tst.courses', $course->getRelated());
+        $this->assertEquals('sv.testing.courses', $course->getRelated());
         $this->assertEquals('course_id', $course->getForeignKey());
     }
 
     function test__builder_one_to_many()
     {
-        $students = Builder::create('tst.students', function (Blueprint $resource) {
-            $resource->relatesToMany('tst.payments', 'payments')
+        $students = Builder::create('sv.testing.students', function (Blueprint $resource) {
+            $resource->relatesToMany('sv.testing.payments', 'payments')
                      ->foreignKey('fk_student_id');
         });
 
@@ -68,25 +68,25 @@ class RelatesToManyTypeTest extends ResourceTestCase
         $this->assertEquals('relates_to_many', $paymentsField->getType());
 
         $this->assertEquals([
-            'related'     => 'tst.payments',
+            'related'     => 'sv.testing.payments',
             'foreign_key' => 'fk_student_id',
         ], $paymentsField->getConfig());
     }
 
     function test__builder_many_to_many()
     {
-        $students = Builder::create('tst.students', function (Blueprint $resource) {
-            $resource->relatesToMany('tst.courses', 'courses')->through('tst.students_courses');
+        $students = Builder::create('sv.testing.students', function (Blueprint $resource) {
+            $resource->relatesToMany('sv.testing.courses', 'courses')->through('sv.testing.students_courses');
         });
 
         $courses = $students->getField('courses');
         $this->assertEquals('relates_to_many', $courses->getType());
         $this->assertEquals([
-            'related' => 'tst.courses',
-            'pivot'   => 'tst.students_courses',
+            'related' => 'sv.testing.courses',
+            'pivot'   => 'sv.testing.students_courses',
         ], $courses->getConfig());
 
-        $pivot = ResourceFactory::make('tst.students_courses');
+        $pivot = ResourceFactory::make('sv.testing.students_courses');
         $this->assertTrue($pivot->isPivot());
 
         $this->assertNotNull($pivot->getField('student'));
@@ -101,13 +101,13 @@ class RelatesToManyTypeTest extends ResourceTestCase
 
     function test__query_one_to_many()
     {
-        Builder::create('tst.payments', function (Blueprint $resource) {
-            $resource->relatesToOne('tst.students', 'student')->foreignKey('fk_student_id');
+        Builder::create('sv.testing.payments', function (Blueprint $resource) {
+            $resource->relatesToOne('sv.testing.students', 'student')->foreignKey('fk_student_id');
         });
 
-        $students = Builder::create('tst.students', function (Blueprint $resource) {
+        $students = Builder::create('sv.testing.students', function (Blueprint $resource) {
             $resource->id('student_id');
-            $resource->relatesToMany('tst.payments', 'payments')
+            $resource->relatesToMany('sv.testing.payments', 'payments')
                      ->foreignKey('fk_student_id');
         });
 
@@ -120,15 +120,15 @@ class RelatesToManyTypeTest extends ResourceTestCase
         $this->assertEquals('fk_student_id', $query->getForeignKeyName());
         $this->assertEquals('student_id', $query->getLocalKeyName());
         $this->assertEquals($student->getId(), $query->getParentKey());
-        $this->assertEquals('tst.payments', $query->getQuery()->getModel()->getResourceIdentifier());
+        $this->assertEquals('sv.testing.payments', $query->getQuery()->getModel()->getResourceIdentifier());
     }
 
     function test__query_many_to_many()
     {
-        Builder::create('tst.courses', function (Blueprint $resource) { });
+        Builder::create('sv.testing.courses', function (Blueprint $resource) { });
 
-        $students = Builder::create('tst.students', function (Blueprint $resource) {
-            $resource->relatesToMany('tst.courses', 'courses')->through('tst.students_courses');
+        $students = Builder::create('sv.testing.students', function (Blueprint $resource) {
+            $resource->relatesToMany('sv.testing.courses', 'courses')->through('sv.testing.students_courses');
         });
 
         $student = $students->fake();
@@ -141,18 +141,18 @@ class RelatesToManyTypeTest extends ResourceTestCase
         $this->assertEquals('course_id', $query->getRelatedPivotKeyName());
         $this->assertEquals('students_courses', $query->getTable());
 //        $this->assertEquals($student->getId(), $query->getParentKey());
-//        $this->assertEquals('tst.payments', $query->getQuery()->getModel()->getResourceIdentifier());
+//        $this->assertEquals('sv.testing.payments', $query->getQuery()->getModel()->getResourceIdentifier());
     }
 
     function test__returns_related_entries()
     {
-        $payments = Builder::create('tst.payments', function (Blueprint $resource) {
-            $resource->relatesToOne('tst.students', 'student')->foreignKey('fk_student_id');
+        $payments = Builder::create('sv.testing.payments', function (Blueprint $resource) {
+            $resource->relatesToOne('sv.testing.students', 'student')->foreignKey('fk_student_id');
         });
 
-        $students = Builder::create('tst.students', function (Blueprint $resource) {
+        $students = Builder::create('sv.testing.students', function (Blueprint $resource) {
             $resource->id('student_id');
-            $resource->relatesToMany('tst.payments', 'payments')
+            $resource->relatesToMany('sv.testing.payments', 'payments')
                      ->foreignKey('fk_student_id');
         });
 

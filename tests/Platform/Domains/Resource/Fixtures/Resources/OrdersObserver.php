@@ -10,7 +10,7 @@ use SuperV\Platform\Domains\Resource\Hook\Contracts\AfterSavedHook;
 
 class OrdersObserver implements AfterSavedHook, AfterRetrievedHook, AfterDeletedHook
 {
-    public static $identifier = 'testing.orders';
+    public static $identifier = 'sv.testing.orders';
 
     public function saved(EntryContract $entry)
     {

@@ -36,19 +36,19 @@ class BelongsToTypeTest extends ResourceTestCase
 
     function test__creates_field_type()
     {
-        $users = sv_resource('testing.users');
+        $users = sv_resource('sv.testing.users');
 
         $this->assertColumnExists('tbl_users', 'group_id');
         $belongsTo = $users->getField('group');
 
         $this->assertEquals('belongs_to', $belongsTo->getFieldType());
-        $this->assertEquals('testing.groups', $belongsTo->getConfigValue('related_resource'));
+        $this->assertEquals('sv.testing.groups', $belongsTo->getConfigValue('related_resource'));
         $this->assertEquals('group_id', $belongsTo->getConfigValue('foreign_key'));
     }
 
     function __callbacks()
     {
-        $user = $this->newUser(['allow' => 'testing.groups']);
+        $user = $this->newUser(['allow' => 'sv.testing.groups']);
         $this->be($user);
 
         $callback = $this->belongsToField->getFieldType()->getPresenter('table');
@@ -68,12 +68,12 @@ class BelongsToTypeTest extends ResourceTestCase
             $table->getColumn('email')->nullable();
         });
 
-        $users = sv_resource('testing.users');
-        $groups = sv_resource('testing.groups');
+        $users = sv_resource('sv.testing.users');
+        $groups = sv_resource('sv.testing.groups');
         $this->usersGroup = $groups->create(['id' => 100, 'title' => 'Users']);
         $this->userEntry = $users->create(['name' => 'J', 'group_id' => 100]);
 
-        $this->belongsToField = sv_resource('testing.users')->getField('group');
+        $this->belongsToField = sv_resource('sv.testing.users')->getField('group');
     }
 }
 

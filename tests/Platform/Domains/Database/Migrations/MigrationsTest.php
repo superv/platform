@@ -15,13 +15,13 @@ class MigrationsTest extends TestCase
     {
         $this->installSuperV();
 
-        $this->assertDatabaseHas('migrations', ['namespace' => 'platform']);
+        $this->assertDatabaseHas('migrations', ['namespace' => 'sv.platform']);
     }
 
     function test__adds_scope_column_to_existing_migrations_table()
     {
         $this->installSuperV();
 
-        $this->assertDatabaseHas('migrations', ['namespace' => 'platform']);
+        $this->assertDatabaseHas('migrations', ['namespace' => 'sv.platform']);
     }
 }

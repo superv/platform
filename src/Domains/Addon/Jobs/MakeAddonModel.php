@@ -47,8 +47,8 @@ class MakeAddonModel
         return new AddonModel([
             'namespace'     => $namespace,
             'handle'        => $handle,
-            'identifier'    => $handle,
-            //            'identifier'    => $namespace.'.'.$handle,
+            //            'identifier'    => $handle,
+            'identifier'    => $namespace.'.'.$handle,
             'type'          => str_singular($this->addonType),
             'path'          => $this->addonPath,
             'psr_namespace' => $psrNamespace,

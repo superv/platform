@@ -34,6 +34,7 @@ abstract class HookHandler implements HookHandlerInterface
                 continue;
             }
             $eventName = sprintf("%s.%s:%s.events:%s", $identifier, $this->hookType, $subKey, $eventType);
+
             if (! $subKey) {
                 $eventName = str_replace(':.', '.', $eventName);
             }

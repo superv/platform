@@ -40,15 +40,15 @@ class EntryLabelTest extends ResourceTestCase
     function test__guesses_entry_label_from_string_columns()
     {
         $this->makeResource('A_users', ['name']);
-        $this->assertEquals('{name}', ResourceFactory::make('platform.A_users')->getEntryLabelTemplate());
+        $this->assertEquals('{name}', ResourceFactory::make('sv.testing.A_users')->getEntryLabelTemplate());
 
         $this->makeResource('B_users', ['address', 'age:integer', 'title']);
-        $this->assertEquals('{title}', ResourceFactory::make('platform.B_users')->getEntryLabelTemplate());
+        $this->assertEquals('{title}', ResourceFactory::make('sv.testing.B_users')->getEntryLabelTemplate());
 
         $this->makeResource('C_users', ['height:decimal', 'age:integer', 'address']);
-        $this->assertEquals('{address}', ResourceFactory::make('platform.C_users')->getEntryLabelTemplate());
+        $this->assertEquals('{address}', ResourceFactory::make('sv.testing.C_users')->getEntryLabelTemplate());
 
         $this->makeResource('customers', ['height:decimal', 'age:integer']);
-        $this->assertEquals('Customer #{id}', ResourceFactory::make('platform.customers')->getEntryLabelTemplate());
+        $this->assertEquals('Customer #{id}', ResourceFactory::make('sv.testing.customers')->getEntryLabelTemplate());
     }
 }

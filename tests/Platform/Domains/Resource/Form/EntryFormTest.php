@@ -40,16 +40,16 @@ class EntryFormTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $eventName = 'testing.categories.forms:default.events:resolved';
+        $eventName = 'sv.testing.categories.forms:default.events:resolved';
         Event::fake($eventName);
 
         $this->blueprints()->categories();
 
-        FormComponent::get('testing.categories.forms:default', $this);
+        FormComponent::get('sv.testing.categories.forms:default', $this);
 
         Event::assertDispatched($eventName,
             function ($eventName, $payload) {
-                return $payload['form']->getIdentifier() === 'testing.categories.forms:default';
+                return $payload['form']->getIdentifier() === 'sv.testing.categories.forms:default';
             });
     }
 
@@ -209,7 +209,7 @@ class EntryFormTest extends ResourceTestCase
 
         $this->users = $this->create('tbl_users',
             function (Blueprint $table, ResourceConfig $config) {
-                $config->setIdentifier('testing.users');
+                $config->setIdentifier('sv.testing.users');
                 $table->increments('id');
                 $table->string('name');
                 $table->unsignedInteger('age');

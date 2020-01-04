@@ -37,7 +37,7 @@ class RelationIndexTest extends ResourceTestCase
         //
         $this->withoutExceptionHandling();
 
-        $url = route('relation.index', ['resource' => 'testing.users',
+        $url = route('relation.index', ['resource' => 'sv.testing.users',
                                         'entry'    => $userA->getId(),
                                         'relation' => 'posts']);
         $response = $this->getJsonUser($url);
@@ -56,7 +56,7 @@ class RelationIndexTest extends ResourceTestCase
         // Check the actions url, should point to create new relation form
         //
         $this->assertEquals(
-            sv_route('relation.create', ['resource' => 'testing.users',
+            sv_route('relation.create', ['resource' => 'sv.testing.users',
                                          'entry'    => $userA->getId(),
                                          'relation' => 'posts']),
             sv_url($action->getProp('url')));
@@ -108,7 +108,7 @@ class RelationIndexTest extends ResourceTestCase
         $this->assertEquals(2, count($table->getProp('config.row_actions')));
         $action = HelperComponent::fromArray($table->getProp('config.row_actions.1'));
 
-        $this->assertEquals('sv/res/testing.roles/{entry.id}/view', $action->getProp('url'));
+        $this->assertEquals('sv/res/sv.testing.roles/{entry.id}/view', $action->getProp('url'));
 
         // Check context action ATTACH NEW
         //

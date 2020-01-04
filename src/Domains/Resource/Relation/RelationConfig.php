@@ -263,7 +263,8 @@ class RelationConfig
     {
         if (str_contains($pivotTable, '.')) {
             $pivotIdentifier = $pivotTable;
-            list($this->pivotNamespace, $pivotTable) = explode('.', $pivotTable);
+            [$vendor, $addon, $pivotTable] = explode('.', $pivotTable);
+            $this->pivotNamespace = $vendor.'.'.$addon;
         }
         $this->pivotTable = $pivotTable;
         $this->pivotIdentifier = $pivotIdentifier;

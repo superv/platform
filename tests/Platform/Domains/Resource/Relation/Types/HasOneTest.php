@@ -33,7 +33,7 @@ class HasOneTest extends ResourceTestCase
         $this->assertEquals('has_one', $relation->getType());
 
         $this->assertEquals([
-            'related_resource' => 'testing.profiles',
+            'related_resource' => 'sv.testing.profiles',
             'foreign_key'      => 'user_id',
         ], $relation->getRelationConfig()->toArray());
     }
@@ -69,15 +69,15 @@ class HasOneTest extends ResourceTestCase
     {
         parent::setUp();
         $this->parent = $this->blueprints()->users(function (Blueprint $table) {
-            $table->hasOne('testing.profiles', 'profile', 'user_id');
+            $table->hasOne('sv.testing.profiles', 'profile', 'user_id');
         });
 
         $this->related = $this->create('tbl_profiles', function (Blueprint $table) {
-            $table->resourceConfig()->setIdentifier('testing.profiles');
+            $table->resourceConfig()->setIdentifier('sv.testing.profiles');
 
             $table->increments('id');
             $table->string('address');
-            $table->belongsTo('testing.users', 'user', 'user_id');
+            $table->belongsTo('sv.testing.users', 'user', 'user_id');
         });
     }
 }

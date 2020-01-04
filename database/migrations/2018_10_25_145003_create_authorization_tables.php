@@ -34,8 +34,8 @@ class CreateAuthorizationTables extends Migration
                 $pivotTable->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
             };
 
-            $table->morphToMany('platform.auth_actions', 'actions', 'owner')
-                  ->pivotTable('sv_auth_assigned_actions', 'platform.auth_assigned_actions')
+            $table->morphToMany('sv.platform.auth_actions', 'actions', 'owner')
+                  ->pivotTable('sv_auth_assigned_actions', 'sv.platform.auth_assigned_actions')
                   ->pivotRelatedKey('action_id')
                   ->pivotColumns($pivotColumns);
         });

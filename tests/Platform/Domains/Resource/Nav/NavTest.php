@@ -3,7 +3,6 @@
 namespace Tests\Platform\Domains\Resource\Nav;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
-use SuperV\Platform\Domains\Database\Schema\Schema;
 use SuperV\Platform\Domains\Resource\Nav\Nav;
 use SuperV\Platform\Domains\Resource\Nav\Section;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
@@ -178,8 +177,8 @@ class NavTest extends ResourceTestCase
 
     function test__creates_from_resource_blueprint()
     {
-        Schema::create('tbl_users', function (Blueprint $table, ResourceConfig $config) {
-            $config->setIdentifier('testing.users');
+        $this->create('tbl_users', function (Blueprint $table, ResourceConfig $config) {
+            $config->setIdentifier('sv.testing.users');
             $table->increments('id');
             $config->nav([
                 'parent' => 'acp.settings.auth',
@@ -193,10 +192,10 @@ class NavTest extends ResourceTestCase
             'title'  => 'System Users',
             'handle' => 'users',
             'icon'   => 'user',
-            'url'    => 'sv/res/testing.users',
+            'url'    => 'sv/res/sv.testing.users',
         ], Section::get('acp.settings.auth.users')->compose());
 
-        Schema::create('t_templates', function (Blueprint $table, ResourceConfig $config) {
+        $this->create('t_templates', function (Blueprint $table, ResourceConfig $config) {
             $table->increments('id');
             $config->label('Templates'); // modifies section handle and title
             $config->nav('acp.settings');
@@ -205,7 +204,7 @@ class NavTest extends ResourceTestCase
         $this->assertEquals([
             'title'  => 'Templates',
             'handle' => 'templates',
-            'url'    => 'sv/res/platform.t_templates',
+            'url'    => 'sv/res/sv.testing.t_templates',
         ], Section::get('acp.settings.templates')->fresh()->compose());
     }
 

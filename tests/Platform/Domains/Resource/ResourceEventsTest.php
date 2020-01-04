@@ -81,7 +81,7 @@ class ResourceEventsTest extends ResourceTestCase
         });
         ResourceFactory::wipe();
 
-        Resource::extend('testing.t_confirmations')->with(function (Resource $resource) {
+        Resource::extend('sv.testing.t_confirmations')->with(function (Resource $resource) {
             $resource->onCreated(function (EntryContract $entry) {
                 $entry->load('user')->user->update(['confirmed_at' => $entry->created_at]);
             });

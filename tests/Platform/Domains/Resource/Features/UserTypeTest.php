@@ -19,7 +19,7 @@ class UserTypeTest extends ResourceTestCase
     {
         $managers = $this->create('tbl_managers',
             function (Blueprint $table, Config $config) {
-                $config->setIdentifier('testing.managers');
+                $config->setIdentifier('sv.testing.managers');
                 $config->hasUserWithRole('manager');
 
                 $table->increments('id');
@@ -43,7 +43,7 @@ class UserTypeTest extends ResourceTestCase
 
         $managers = $this->create('tbl_managers',
             function (Blueprint $table, Config $config) {
-                $config->setIdentifier('testing.managers');
+                $config->setIdentifier('sv.testing.managers');
                 $config->hasUserWithRole('manager');
 
                 $table->increments('id');

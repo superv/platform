@@ -20,7 +20,7 @@ class ActivityTest extends ResourceTestCase
 
         $this->getJsonUser($action->router()->view())->assertOk();
 
-        $log = sv_resource('platform.activities')->first();
+        $log = sv_resource('sv.platform.activities')->first();
         $this->assertEquals('sv::entry.view', $log->activity);
         $this->assertEquals($this->testUser->getId(), $log->user_id);
         $this->assertEquals($action->getId(), $log->entry_id);

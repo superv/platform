@@ -72,17 +72,19 @@ class FormControllerTest extends ResourceTestCase
 
     protected function makeForm(array $overrides = []): FormModel
     {
-        $formEntry = FormRepository::resolve()->create('testing', 'foo', array_merge([
-            'title'  => 'Public Form',
+        $formEntry = FormRepository::resolve()->create('sv.testing', 'foo', array_merge([
+            'title' => 'Public Form',
         ], $overrides));
 
-        $formEntry->createField(['identifier' => 'sv.forms.fields:name', 'type' => 'text', 'handle' => 'name']);
-        $formEntry->createField(['identifier' => 'sv.forms.fields:email', 'type' => 'text', 'handle' => 'email']);
-        $formEntry->createField(['identifier' => 'sv.forms.fields:user',
+        $formEntry->createField(['identifier' => 'sv.testing.forms.fields:name', 'type' => 'text', 'handle' => 'name']);
+        $formEntry->createField(['identifier' => 'sv.testing.forms.fields:email',
+                                 'type'       => 'text',
+                                 'handle'     => 'email']);
+        $formEntry->createField(['identifier' => 'sv.testing.forms.fields:user',
                                  'type'       => 'belongs_to',
                                  'handle'     => 'user',
                                  'config'     => [
-                                     'related_resource' => 'platform.users',
+                                     'related_resource' => 'sv.platform.users',
                                  ]]);
 
         return $formEntry;

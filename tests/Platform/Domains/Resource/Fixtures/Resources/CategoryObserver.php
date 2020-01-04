@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Hook\Contracts\BeforeCreatingHook;
 
 class CategoryObserver implements BeforeCreatingHook, AfterCreatedHook
 {
-    public static $identifier = 'testing.categories';
+    public static $identifier = 'sv.testing.categories';
 
     public function creating(EntryContract $entry)
     {

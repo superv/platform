@@ -17,18 +17,18 @@ class MorphToManyTest extends ResourceTestCase
 {
     function test__create_morph_to_many_relation()
     {
-        $this->create('testing.abusers', function (Blueprint $table) {
+        $this->create('sv.testing.abusers', function (Blueprint $table) {
             $table->increments('id');
 
             $table->morphToMany(TestRole::class, 'roles', 'owner')
-                  ->pivotTable('testing.assigned_roles')
+                  ->pivotTable('sv.testing.assigned_roles')
                   ->pivotRelatedKey('role_id')
                   ->pivotColumns(function (Blueprint $pivotTable) {
                       $pivotTable->string('status');
                   });
         });
 
-        $abusers = ResourceFactory::make('testing.abusers');
+        $abusers = ResourceFactory::make('sv.testing.abusers');
 
         $this->assertColumnNotExists('abusers', 'roles');
         $this->assertColumnsExist('assigned_roles', ['id',
@@ -49,8 +49,8 @@ class MorphToManyTest extends ResourceTestCase
             'pivot_related_key' => 'role_id',
             'morph_name'        => 'owner',
             'pivot_columns'     => ['status'],
-            'pivot_namespace'   => 'testing',
-            'pivot_identifier'  => 'testing.assigned_roles',
+            'pivot_namespace'   => 'sv.testing',
+            'pivot_identifier'  => 'sv.testing.assigned_roles',
         ], $relation->getRelationConfig()->toArray());
     }
 }

@@ -20,12 +20,12 @@ class Blueprints
         $clients = $this->create('tbl_clients',
             function (Blueprint $table, Config $config) use ($callback) {
                 $config->resourceKey('client');
-                $config->setNamespace('testing');
+                $config->setNamespace('sv.testing');
                 $config->setName('clients');
 
                 $table->increments('id');
                 $table->string('name')->entryLabel();
-                $table->belongsTo('platform.users', 'user')->static();
+                $table->belongsTo('sv.platform.users', 'user')->static();
 
                 if ($callback) {
                     $callback($table, $config);
@@ -44,7 +44,7 @@ class Blueprints
             function (Blueprint $table, Config $config) use ($callback) {
                 $config->resourceKey('user');
                 $config->label('Users');
-                $config->setNamespace('testing');
+                $config->setNamespace('sv.testing');
                 $config->setName('users');
 
                 $table->increments('id');
@@ -56,10 +56,10 @@ class Blueprints
                 $table->file('avatar')->config(['disk' => 'fakedisk'])
                       ->addRule('image');
 
-                $table->belongsTo('testing.groups', 'group')->showOnIndex();
+                $table->belongsTo('sv.testing.groups', 'group')->showOnIndex();
 
-                $table->belongsToMany('testing.roles', 'roles')
-                      ->pivotTable('tbl_assigned_roles', 'testing.assigned_roles')
+                $table->belongsToMany('sv.testing.roles', 'roles')
+                      ->pivotTable('tbl_assigned_roles', 'sv.testing.assigned_roles')
                       ->pivotForeignKey('user_id')
                       ->pivotRelatedKey('role_id')
                       ->pivotColumns(
@@ -67,16 +67,16 @@ class Blueprints
                               $pivotTable->string('status');
                           });
 
-                $table->morphToMany('testing.actions', 'actions', 'owner')
+                $table->morphToMany('sv.testing.actions', 'actions', 'owner')
                       ->pivotRelatedKey('action_id')
-                      ->pivotTable('assigned_actions', 'testing.assigned_actions')
+                      ->pivotTable('assigned_actions', 'sv.testing.assigned_actions')
                       ->pivotColumns(
                           function (Blueprint $pivotTable) {
                               $pivotTable->string('provision');
                           });
 
-                $table->hasMany('testing.posts', 'posts');
-                $table->hasMany('testing.comments', 'comments');
+                $table->hasMany('sv.testing.posts', 'posts');
+                $table->hasMany('sv.testing.comments', 'comments');
 
                 if ($callback) {
                     $callback($table, $config);
@@ -87,7 +87,7 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function comments($namespace = 'testing')
+    public function comments($namespace = 'sv.testing')
     {
         return $this->create('comments', function (Blueprint $table, Config $config) use ($namespace) {
             $config->label('Comments');
@@ -98,12 +98,12 @@ class Blueprints
             $table->string('comment');
             $table->select('status')->options(['approved', 'pending']);
 
-            $table->belongsTo('testing.users', 'user');
+            $table->belongsTo('sv.testing.users', 'user');
         });
     }
 
     /** @return Resource */
-    public function posts($namespace = 'testing')
+    public function posts($namespace = 'sv.testing')
     {
         return $this->create('tbl_posts', function (Blueprint $table, Config $config) use ($namespace) {
             $config->label('Posts');
@@ -113,7 +113,7 @@ class Blueprints
             $table->increments('id');
             $table->string('title')->entryLabel();
 
-            $table->belongsTo('testing.users', 'user');
+            $table->belongsTo('sv.testing.users', 'user');
         });
     }
 
@@ -124,7 +124,7 @@ class Blueprints
             function (Blueprint $table, Config $config) use ($callback) {
                 $config->label('Categories');
                 $config->setName('categories');
-                $config->setNamespace('testing');
+                $config->setNamespace('sv.testing');
 
                 $table->increments('id');
                 $table->string('title')->entryLabel();
@@ -137,7 +137,7 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function orders($namespace = 'testing')
+    public function orders($namespace = 'sv.testing')
     {
         return $this->create('tbl_orders',
             function (Blueprint $table, Config $config) use ($namespace) {
@@ -155,7 +155,7 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function roles($namespace = 'testing')
+    public function roles($namespace = 'sv.testing')
     {
         $roles = $this->create('tbl_roles', function (Blueprint $table, Config $config) use ($namespace) {
             $config->resourceKey('role');
@@ -172,7 +172,7 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function actions($namespace = 'testing')
+    public function actions($namespace = 'sv.testing')
     {
         $actions = $this->create('tbl_actions', function (Blueprint $table, Config $config) use ($namespace) {
             $config->setNamespace($namespace);
@@ -180,9 +180,9 @@ class Blueprints
             $table->increments('id');
             $table->string('action')->unique()->entryLabel();
 
-            $table->morphToMany('testing.actions', 'actions', 'owner')
+            $table->morphToMany('sv.testing.actions', 'actions', 'owner')
                   ->pivotRelatedKey('action_id')
-                  ->pivotTable('assigned_actions', 'testing.assigned_actions')
+                  ->pivotTable('assigned_actions', 'sv.testing.assigned_actions')
                   ->pivotColumns(
                       function (Blueprint $pivotTable) {
                           $pivotTable->string('provision');
@@ -199,7 +199,7 @@ class Blueprints
     }
 
     /** @return Resource */
-    public function groups($namespace = 'testing')
+    public function groups($namespace = 'sv.testing')
     {
         $groups = $this->create('tbl_groups', function (Blueprint $table, Config $config) use ($namespace) {
             $config->setNamespace($namespace);

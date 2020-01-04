@@ -15,10 +15,10 @@ class ResourceBlueprintTest extends ResourceTestCase
 {
     function __many_to_many_relation()
     {
-        $rolesBlueprint = Builder::blueprint('tst.roles',
+        $rolesBlueprint = Builder::blueprint('sv.testing.roles',
             function (Blueprint $resource) {
-                $resource->manyToMany('tst.actions', 'actions')
-                         ->pivot('tst.roles_actions', function (Blueprint $pivot) {
+                $resource->manyToMany('sv.testing.actions', 'actions')
+                         ->pivot('sv.testing.roles_actions', function (Blueprint $pivot) {
                              $pivot->foreignKey('role');
                              $pivot->relatedKey('action');
                          });
@@ -28,8 +28,8 @@ class ResourceBlueprintTest extends ResourceTestCase
         /** @var \SuperV\Platform\Domains\Resource\Relation\Types\BelongsToMany\Config $actions */
         $actionsRelation = $rolesBlueprint->getRelation('actions');
         $this->assertEquals([
-            'related_resource'  => 'tst.actions',
-            'pivot_identifier'  => 'tst.roles_actions',
+            'related_resource'  => 'sv.testing.actions',
+            'pivot_identifier'  => 'sv.testing.roles_actions',
             'pivot_table'       => 'roles_actions',
             'pivot_foreign_key' => 'role_id',
             'pivot_related_key' => 'action_id',
@@ -42,8 +42,8 @@ class ResourceBlueprintTest extends ResourceTestCase
 
     function test__belongs_to_relation()
     {
-        $blueprint = Builder::blueprint('tst.posts', function (Blueprint $resource) {
-            $resource->belongsTo('tst.users', 'user')
+        $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
+            $resource->belongsTo('sv.testing.users', 'user')
                      ->foreignKey('user_id')
                      ->ownerKey('id');
         });
@@ -53,7 +53,7 @@ class ResourceBlueprintTest extends ResourceTestCase
         $this->assertNotNull($user);
         $this->assertEquals('user', $user->getRelationName());
         $this->assertInstanceOf(Config::class, $user);
-        $this->assertEquals('tst.users', $user->getRelated());
+        $this->assertEquals('sv.testing.users', $user->getRelated());
 
         $this->assertEquals('id', $user->getOwnerKey());
         $this->assertEquals('user_id', $user->getForeignKey());
@@ -62,7 +62,7 @@ class ResourceBlueprintTest extends ResourceTestCase
         $this->assertNotNull($userField);
 
         $this->assertEquals([
-            'related_resource' => 'tst.users',
+            'related_resource' => 'sv.testing.users',
             'foreign_key'      => 'user_id',
             'owner_key'        => 'id',
         ], $userField->getConfig());
@@ -70,8 +70,8 @@ class ResourceBlueprintTest extends ResourceTestCase
 
     function test__has_many_relation()
     {
-        $blueprint = Builder::blueprint('tst.users', function (Blueprint $resource) {
-            $resource->hasMany('tst.posts', 'posts')
+        $blueprint = Builder::blueprint('sv.testing.users', function (Blueprint $resource) {
+            $resource->hasMany('sv.testing.posts', 'posts')
                      ->foreignKey('user_id')
                      ->localKey('post_id');
         });
@@ -82,7 +82,7 @@ class ResourceBlueprintTest extends ResourceTestCase
         $this->assertEquals('posts', $post->getRelationName());
         $this->assertInstanceOf(HasManyBlueprint::class, $post);
         $this->assertInstanceOf(Blueprint::class, $post->getParent());
-        $this->assertEquals('tst.posts', $post->getRelated());
+        $this->assertEquals('sv.testing.posts', $post->getRelated());
 
         $this->assertEquals('post_id', $post->getLocalKey());
         $this->assertEquals('user_id', $post->getForeignKey());
@@ -90,7 +90,7 @@ class ResourceBlueprintTest extends ResourceTestCase
 
     function test__creates_blueprint()
     {
-        $blueprint = Builder::blueprint('tst.posts', function (Blueprint $resource) {
+        $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
             $resource->key('postkey');
 
             $resource->databaseDriver()
@@ -101,14 +101,14 @@ class ResourceBlueprintTest extends ResourceTestCase
         $this->assertInstanceOf(Blueprint::class, $blueprint);
         $this->assertInstanceOf(DriverInterface::class, $blueprint->getDriver());
 
-        $this->assertEquals('tst.posts', $blueprint->getIdentifier());
+        $this->assertEquals('sv.testing.posts', $blueprint->getIdentifier());
         $this->assertEquals('postkey', $blueprint->getKey());
         $this->assertEquals('tbl_posts', $blueprint->getDriver()->getParam('table'));
     }
 
     function test__defaults()
     {
-        $blueprint = Builder::blueprint('tst.posts', function (Blueprint $resource) {
+        $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
 //            $resource->id();
         });
 
@@ -123,7 +123,7 @@ class ResourceBlueprintTest extends ResourceTestCase
 
     function test__pivot_resource()
     {
-        $blueprint = Builder::blueprint('tst.user_posts', function (Blueprint $resource) {
+        $blueprint = Builder::blueprint('sv.testing.user_posts', function (Blueprint $resource) {
             $resource->pivot();
         });
 
@@ -132,7 +132,7 @@ class ResourceBlueprintTest extends ResourceTestCase
 
     function test__primary_key()
     {
-        $blueprint = Builder::blueprint('tst.posts', function (Blueprint $resource) {
+        $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
             $resource->primaryKey('post_id');
             $resource->primaryKey('title')->text();
         });
@@ -149,7 +149,7 @@ class ResourceBlueprintTest extends ResourceTestCase
 
     function test__field_blueprint()
     {
-        $blueprint = Builder::blueprint('tst.posts', function (Blueprint $resource) {
+        $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
             $resource->text('title', 'Post Title');
             $resource->text('email')->label('Owner Email');
             $resource->text('status')->default('draft');
@@ -162,7 +162,7 @@ class ResourceBlueprintTest extends ResourceTestCase
 
     function test__field_rules()
     {
-        $blueprint = Builder::blueprint('tst.posts', function (Blueprint $resource) {
+        $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
             $resource->text('title')->rules('min:6', 'max:32');
             $resource->number('tries')->rules(['max:10']);
             $resource->text('email')->rules('email|unique');
@@ -175,7 +175,7 @@ class ResourceBlueprintTest extends ResourceTestCase
 
     function test__field_flags()
     {
-        $blueprint = Builder::blueprint('tst.posts', function (Blueprint $resource) {
+        $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
             $resource->text('title')->required()->showOnLists();
             $resource->text('email')->unique()->hideOnForms();
             $resource->text('description')->nullable()->hideOnView();
@@ -191,7 +191,7 @@ class ResourceBlueprintTest extends ResourceTestCase
 
     function test__textarea_field()
     {
-        $blueprint = Builder::blueprint('tst.posts', function (Blueprint $resource) {
+        $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
             $resource->textarea('description');
         });
 
@@ -201,7 +201,7 @@ class ResourceBlueprintTest extends ResourceTestCase
 
     function test__select_field()
     {
-        $blueprint = Builder::blueprint('tst.posts', function (Blueprint $resource) {
+        $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
             $resource->select('gender')->options(['m', 'f']);
         });
 

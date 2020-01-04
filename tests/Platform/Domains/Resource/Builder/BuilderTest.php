@@ -17,41 +17,41 @@ class BuilderTest extends ResourceTestCase
 {
     function __many_to_many_pivot()
     {
-        Builder::create('testing.roles', function (Blueprint $resource) {
-            $resource->manyToMany('testing.actions', 'actions')
-                     ->pivot('testing.roles_actions');
+        Builder::create('sv.testing.roles', function (Blueprint $resource) {
+            $resource->manyToMany('sv.testing.actions', 'actions')
+                     ->pivot('sv.testing.roles_actions');
         });
 
-        Builder::create('testing.actions', function (Blueprint $resource) {
-            $resource->manyToMany('testing.roles', 'roles')
-                     ->pivot('testing.roles_actions');
+        Builder::create('sv.testing.actions', function (Blueprint $resource) {
+            $resource->manyToMany('sv.testing.roles', 'roles')
+                     ->pivot('sv.testing.roles_actions');
         });
 
-        $posts = ResourceFactory::make('testing.roles');
+        $posts = ResourceFactory::make('sv.testing.roles');
         $this->assertFalse($posts->isPivot());
 
-        $pivot = ResourceFactory::make('testing.roles_actions');
+        $pivot = ResourceFactory::make('sv.testing.roles_actions');
         $this->assertTrue($pivot->isPivot());
     }
 
     function __many_to_many_relation()
     {
-        Builder::create('testing.roles', function (Blueprint $resource) {
-            $resource->manyToMany('testing.actions', 'actions')
-                     ->pivot('testing.roles_actions');
+        Builder::create('sv.testing.roles', function (Blueprint $resource) {
+            $resource->manyToMany('sv.testing.actions', 'actions')
+                     ->pivot('sv.testing.roles_actions');
         });
 
-        $resource = ResourceFactory::make('testing.roles');
+        $resource = ResourceFactory::make('sv.testing.roles');
         $actionsRelation = $resource->getRelation('actions');
         $this->assertEquals([
-            'related_resource'  => 'testing.actions',
-            'pivot_identifier'  => 'testing.roles_actions',
+            'related_resource'  => 'sv.testing.actions',
+            'pivot_identifier'  => 'sv.testing.roles_actions',
             'pivot_table'       => 'roles_actions',
             'pivot_foreign_key' => 'role_id',
             'pivot_related_key' => 'action_id',
         ], $actionsRelation->getConfig());
 
-        $pivot = ResourceFactory::make('testing.roles_actions');
+        $pivot = ResourceFactory::make('sv.testing.roles_actions');
         $this->assertEquals('action_id', $pivot->getField('action')->getConfigValue('foreign_key'));
         $this->assertEquals('role_id', $pivot->getField('role')->getConfigValue('foreign_key'));
 
@@ -62,30 +62,30 @@ class BuilderTest extends ResourceTestCase
 
     function test__belongs_to_relation()
     {
-        Builder::create('testing.posts', function (Blueprint $resource) {
-            $resource->belongsTo('testing.users', 'user')
+        Builder::create('sv.testing.posts', function (Blueprint $resource) {
+            $resource->belongsTo('sv.testing.users', 'user')
                      ->foreignKey('user_id')
                      ->ownerKey('id');
         });
 
-        $resource = ResourceFactory::make('testing.posts');
+        $resource = ResourceFactory::make('sv.testing.posts');
 
         $userRelation = $resource->getRelation('user');
         $this->assertNotNull($userRelation);
-        $this->assertEquals('testing.users', $userRelation->getConfigValue('related_resource'));
+        $this->assertEquals('sv.testing.users', $userRelation->getConfigValue('related_resource'));
         $this->assertEquals('user_id', $userRelation->getConfigValue('foreign_key'));
         $this->assertEquals('id', $userRelation->getConfigValue('owner_key'));
 
         $userField = $resource->getField('user');
         $this->assertNotNull($userField);
-        $this->assertEquals('testing.users', $userField->getConfigValue('related_resource'));
+        $this->assertEquals('sv.testing.users', $userField->getConfigValue('related_resource'));
         $this->assertEquals('user_id', $userField->getConfigValue('foreign_key'));
         $this->assertEquals('id', $userField->getConfigValue('owner_key'));
     }
 
     function test__creates_fields()
     {
-        Builder::create('testing.posts', function (Blueprint $resource) {
+        Builder::create('sv.testing.posts', function (Blueprint $resource) {
             $resource->text('title', 'Post Title')->useAsEntryLabel();
             $resource->select('gender')->options(['male', 'female'])->hideOnView();
             $resource->text('email')->rules('email|unique')->unique();
@@ -93,7 +93,7 @@ class BuilderTest extends ResourceTestCase
             $resource->boolean('active')->default(false);
         });
 
-        $resource = ResourceFactory::make('testing.posts');
+        $resource = ResourceFactory::make('sv.testing.posts');
 
         $titleField = $resource->getField('title');
         $this->assertEquals('Post Title', $titleField->getLabel());
@@ -114,14 +114,14 @@ class BuilderTest extends ResourceTestCase
 
     function test__creates_resource()
     {
-        $resource = Builder::create('testing.posts', function (Blueprint $resource) {
+        $resource = Builder::create('sv.testing.posts', function (Blueprint $resource) {
             $resource->key('postkey');
             $resource->databaseDriver()
                      ->table('tbl_posts', 'default')
                      ->primaryKey(new PrimaryKey('post_id'));
         });
 
-//        $resource = ResourceFactory::make('testing.posts');
+//        $resource = ResourceFactory::make('sv.testing.posts');
         $this->assertNotNull($resource);
 
         $this->assertEquals('posts', $resource->getHandle());
@@ -135,13 +135,13 @@ class BuilderTest extends ResourceTestCase
     {
         Event::fake([ResourceCreatedEvent::class]);
 
-        Builder::create('testing.posts', function (Blueprint $resource) {
+        Builder::create('sv.testing.posts', function (Blueprint $resource) {
             $resource->id();
         });
 
         Event::assertDispatched(ResourceCreatedEvent::class, function (ResourceCreatedEvent $event) {
             $this->assertInstanceOf(ResourceModel::class, $event->resourceEntry);
-            $this->assertEquals('testing.posts', $event->resourceEntry->getIdentifier());
+            $this->assertEquals('sv.testing.posts', $event->resourceEntry->getIdentifier());
 
             return true;
         });
@@ -149,7 +149,7 @@ class BuilderTest extends ResourceTestCase
 
     function test__invokes_driver()
     {
-        $blueprint = Builder::blueprint('testing.posts');
+        $blueprint = Builder::blueprint('sv.testing.posts');
 
         $driverMock = $this->bindPartialMock(DriverInterface::class, DatabaseDriver::resolve());
         $driverMock->expects('run')->with($blueprint);

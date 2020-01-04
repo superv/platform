@@ -95,7 +95,7 @@ class InstallSuperV
         $platformServiceProvider->bindUserModel();
         app()->register(ResourceServiceProvider::class);
 
-        Current::setMigrationScope('platform');
+        Current::setMigrationScope('sv.platform');
         PlatformBlueprints::createTables();
         PlatformBlueprints::createResources();
 
@@ -106,7 +106,7 @@ class InstallSuperV
 
         config(['superv.installed' => true]);
 
-        Artisan::call('migrate', ['--namespace' => 'platform', '--force' => true]);
+        Artisan::call('migrate', ['--namespace' => 'sv.platform', '--force' => true]);
 
         CreatePlatformResourceForms::dispatch();
 

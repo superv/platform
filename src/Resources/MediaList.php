@@ -10,7 +10,7 @@ use SuperV\Platform\Support\Composer\Payload;
 
 class MediaList implements ListResolvedHook
 {
-    public static $identifier = 'platform.media.lists:default';
+    public static $identifier = 'sv.platform.media.lists:default';
 
     public function resolved(TableInterface $table, IndexFields $fields)
     {

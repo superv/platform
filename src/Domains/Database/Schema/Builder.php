@@ -6,6 +6,7 @@ use Closure;
 use Current;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
+use SuperV\Platform\Domains\Resource\Jobs\GetTableResource;
 use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class Builder extends \Illuminate\Database\Schema\Builder
@@ -69,12 +70,14 @@ class Builder extends \Illuminate\Database\Schema\Builder
 
     public function table($table, Closure $callback)
     {
+        $resource = GetTableResource::dispatch($table, $this->connection->getName());
+        $this->resourceConfig = ResourceConfig::find($resource);
+
         $this->build(tap($this->createBlueprint($table),
                 function (Blueprint $blueprint) use ($table, $callback) {
                     $this->resourceConfig->setName($table);
                     $this->resourceConfig->getDriver()->setParam('table', $table);
 
-//                    $callback($blueprint, $this->resourceConfig);
                     app()->call($callback, [
                         'table'  => $blueprint,
                         'config' => $this->resourceConfig,

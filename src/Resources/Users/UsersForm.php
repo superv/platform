@@ -8,7 +8,7 @@ use SuperV\Platform\Domains\Resource\Hook\Contracts\FormResolvingHook;
 
 class UsersForm implements FormResolvingHook
 {
-    public static $identifier = 'platform.users.forms:default';
+    public static $identifier = 'sv.platform.users.forms:default';
 
     public function resolving(Form $form, FormFields $fields)
     {

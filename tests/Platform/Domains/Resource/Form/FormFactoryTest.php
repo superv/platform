@@ -18,10 +18,10 @@ class FormFactoryTest extends ResourceTestCase
 {
     function test__create_form_entry()
     {
-        $postsResource = $this->create('testing.posts',
+        $postsResource = $this->create('sv.testing.posts',
             function (Blueprint $table) {
                 $table->id();
-                $table->nullableBelongsTo('sv_resources', 'resource');
+                $table->nullableBelongsTo('sv.platform.resources', 'resource');
                 $table->string('title');
                 $table->boolean('is_published');
             });
@@ -34,8 +34,8 @@ class FormFactoryTest extends ResourceTestCase
 
         $this->assertInstanceOf(FormModel::class, $formEntry);
         $this->assertEquals('default', $formEntry->getName());
-        $this->assertEquals('testing.posts', $formEntry->getNamespace());
-        $this->assertEquals('testing.posts.forms:default', $formEntry->getIdentifier());
+        $this->assertEquals('sv.testing.posts', $formEntry->getNamespace());
+        $this->assertEquals('sv.testing.posts.forms:default', $formEntry->getIdentifier());
         $this->assertEquals($postsResource->id(), $formEntry->resource_id);
 
         $formFields = $formEntry->getFormFields()
@@ -43,9 +43,5 @@ class FormFactoryTest extends ResourceTestCase
                                     return FieldFactory::createFromEntry($fieldEntry);
                                 });
         $this->assertEquals($fieldsCount, $formFields->count());
-
-//        $formFields->map(function (Field $field) use ($postsResource) {
-//            $this->assertEquals($postsResource->id(), $field->getResource()->id());
-//        });
     }
 }

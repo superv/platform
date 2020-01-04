@@ -11,7 +11,7 @@ use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
 
 class Posts implements ConfigResolvedHook, ResourceResolvedHook, QueryResolvedHook
 {
-    public static $identifier = 'testing.posts';
+    public static $identifier = 'sv.testing.posts';
 
     public function configResolved(ResourceConfig $config)
     {

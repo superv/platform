@@ -32,7 +32,6 @@ class DeleteResourceTest extends ResourceTestCase
         $resourceEntry = $this->makeResourceModel('test_users', ['name', 'title']);
 
         $this->assertNotNull($resourceEntry->getField('name'));
-
         $this->assertNotNull($resourceEntry->getField('title'));
 
         Schema::table('test_users', function (Blueprint $table) {
@@ -56,19 +55,19 @@ class DeleteResourceTest extends ResourceTestCase
 
     function test__deletes_auth_action_entries()
     {
-        $this->blueprints()->posts('testing');
+        $this->blueprints()->posts();
 
-        DeleteResource::dispatch('testing.posts');
+        DeleteResource::dispatch('sv.testing.posts');
 
-        $this->assertEquals(0, Action::query()->where('slug', 'LIKE', 'testing.posts%')->count());
-        $this->assertEquals(0, Action::query()->where('namespace', 'LIKE', 'testing.posts%')->count());
+        $this->assertEquals(0, Action::query()->where('slug', 'LIKE', 'sv.testing.posts%')->count());
+        $this->assertEquals(0, Action::query()->where('namespace', 'LIKE', 'sv.testing.posts%')->count());
     }
 
     function __deletes_pivot_resources()
     {
         $resource = $this->blueprints()->actions();
         $this->assertTableExists('assigned_actions');
-        $this->assertTrue(Resource::exists('testing.assigned_actions'));
+        $this->assertTrue(Resource::exists('sv.testing.assigned_actions'));
 
         $addon = $this->bindMock(Addon::class);
         $addon->shouldReceive('getIdentifier')->andReturn('testing');

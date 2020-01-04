@@ -21,7 +21,7 @@ class CreateDropsTable extends Migration
             $table->string('identifier')->entryLabel();
             $table->string('handler');
 
-            $table->hasMany('platform.drops', 'drops');
+            $table->hasMany('sv.platform.drops', 'drops');
         });
 
         $this->create('sv_drops', function (Blueprint $table, Config $config) {

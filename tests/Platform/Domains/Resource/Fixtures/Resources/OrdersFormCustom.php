@@ -6,7 +6,7 @@ use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 
 class OrdersFormCustom
 {
-    public static $identifier = 'testing.orders.forms:custom';
+    public static $identifier = 'sv.testing.orders.forms:custom';
 
     public function resolved(FormInterface $form)
     {

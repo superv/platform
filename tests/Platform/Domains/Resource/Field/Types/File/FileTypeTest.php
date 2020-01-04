@@ -32,7 +32,7 @@ class FileTypeTest extends ResourceTestCase
 
     function test__blueprint()
     {
-        $blueprint = Builder::blueprint('testing.posts', $this->blueprintCallback);
+        $blueprint = Builder::blueprint('sv.testing.posts', $this->blueprintCallback);
 
         $contractBlueprint = $blueprint->getField('contract');
         $this->assertInstanceOf(FileTypeBlueprint::class, $contractBlueprint);
@@ -45,7 +45,7 @@ class FileTypeTest extends ResourceTestCase
 
     function test__builder()
     {
-        $resource = Builder::create('testing.posts', $this->blueprintCallback);
+        $resource = Builder::create('sv.testing.posts', $this->blueprintCallback);
 
         $contractField = $resource->getField('contract');
         $this->assertNotNull($contractField);
@@ -126,7 +126,7 @@ class FileTypeTest extends ResourceTestCase
         /** @var \SuperV\Platform\Domains\Media\Media $media */
         $media = $callback($entry, $request);
         $this->assertNotNull($media);
-        $this->assertEquals('testing.tbl', $media->owner_type);
+        $this->assertEquals('sv.testing.tbl', $media->owner_type);
         $this->assertNotNull($field->getComposer()->toView($entry)->get('image_url'));
 
         $this->assertFileExists($media->filePath());
@@ -158,7 +158,7 @@ class FileTypeTest extends ResourceTestCase
 
         $this->resource = $this->create('tmp_table',
             function (Blueprint $table, ResourceConfig $config) {
-                $config->setIdentifier('testing.tbl');
+                $config->setIdentifier('sv.testing.tbl');
                 $table->increments('id');
                 $table->file('avatar')
                       ->config(['disk' => 'fakedisk'])

@@ -8,12 +8,12 @@ use SuperV\Platform\Domains\Resource\Table\Contracts\TableInterface;
 
 class ActionsList implements ListResolvedHook
 {
-    public static $identifier = 'platform.auth_actions.lists:default';
+    public static $identifier = 'sv.platform.auth_actions.lists:default';
 
     public function resolved(TableInterface $table, IndexFields $fields)
     {
         $table->makeSelectable();
 
-        $table->addSelectionAction(DeleteActionsAction::make('platform.auth_actions.actions:bulk'));
+        $table->addSelectionAction(DeleteActionsAction::make('sv.platform.auth_actions.actions:bulk'));
     }
 }

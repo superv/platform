@@ -10,7 +10,7 @@ class AddonInstalledListener
     {
         $addon = $event->addon;
 
-//        sv_resource('platform.namespaces')->create([
+//        sv_resource('sv.platform.namespaces')->create([
 //            'namespace' => $addon->getIdentifier().'::resources',
 //            'type'      => 'resource',
 //        ]);

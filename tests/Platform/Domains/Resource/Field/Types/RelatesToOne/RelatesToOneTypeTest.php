@@ -20,22 +20,22 @@ class RelatesToOneTypeTest extends ResourceTestCase
 {
     function test__blueprint()
     {
-        $blueprint = Builder::blueprint('tst.students', function (Blueprint $resource) {
-            $resource->relatesToOne('tst.addresss', 'address');
+        $blueprint = Builder::blueprint('sv.testing.students', function (Blueprint $resource) {
+            $resource->relatesToOne('sv.testing.addresss', 'address');
         });
 
         /** @var \SuperV\Platform\Domains\Resource\Field\Types\RelatesToOne\Blueprint $addressField */
         $addressField = $blueprint->getField('address');
         $this->assertNotNull($addressField);
         $this->assertInstanceOf(RelatesToOne::class, $addressField);
-        $this->assertEquals('tst.addresss', $addressField->getRelated());
+        $this->assertEquals('sv.testing.addresss', $addressField->getRelated());
         $this->assertEquals('address_id', $addressField->getForeignKey());
     }
 
     function test__builder()
     {
-        $students = Builder::create('tst.students', function (Blueprint $resource) {
-            $resource->relatesToOne('tst.addresses', 'address');
+        $students = Builder::create('sv.testing.students', function (Blueprint $resource) {
+            $resource->relatesToOne('sv.testing.addresses', 'address');
         });
 
         $addressField = $students->getField('address');
@@ -43,7 +43,7 @@ class RelatesToOneTypeTest extends ResourceTestCase
         $this->assertEquals('relates_to_one', $addressField->getType());
 
         $this->assertEquals([
-            'related'     => 'tst.addresses',
+            'related'     => 'sv.testing.addresses',
             'foreign_key' => 'address_id',
         ], $addressField->getConfig());
 
@@ -62,13 +62,13 @@ class RelatesToOneTypeTest extends ResourceTestCase
 
     function test__query()
     {
-        Builder::create('tst.addresses', function (Blueprint $resource) {
+        Builder::create('sv.testing.addresses', function (Blueprint $resource) {
             $resource->id('pk_address_id');
         });
 
-        $students = Builder::create('tst.students', function (Blueprint $resource) {
+        $students = Builder::create('sv.testing.students', function (Blueprint $resource) {
             $resource->id('student_id');
-            $resource->relatesToOne('tst.addresses', 'address')
+            $resource->relatesToOne('sv.testing.addresses', 'address')
                      ->foreignKey('student_address_id');
         });
 
@@ -81,36 +81,36 @@ class RelatesToOneTypeTest extends ResourceTestCase
         $this->assertEquals('address', $query->getRelationName());
         $this->assertEquals('student_address_id', $query->getForeignKeyName());
         $this->assertEquals('pk_address_id', $query->getOwnerKeyName());
-        $this->assertEquals('tst.addresses', $query->getQuery()->getModel()->getResourceIdentifier());
+        $this->assertEquals('sv.testing.addresses', $query->getQuery()->getModel()->getResourceIdentifier());
     }
 
     function test__lookup_options()
     {
         $expectedOptions = ['abc' => 'ABC', 'def' => 'DEF'];
-        $resource = ResourceFactory::make('platform.resources');
+        $resource = ResourceFactory::make('sv.platform.resources');
 
         $this->bindMock(ResourceFactory::class)
-             ->expects('withIdentifier')->with('platform.resources')->andReturn($resource);
+             ->expects('withIdentifier')->with('sv.platform.resources')->andReturn($resource);
 
         $lookupOptionsMock = $this->bindMock(MakeLookupOptions::class);
         $lookupOptionsMock->expects('setResource')->with(\Mockery::on(function ($arg) {
-            return $arg->getIdentifier() === 'platform.resources';
+            return $arg->getIdentifier() === 'sv.platform.resources';
         }));
         $lookupOptionsMock->shouldNotReceive('setQueryParams');
         $lookupOptionsMock->expects('make')->andReturn($expectedOptions);
 
-        $fieldType = $this->makeFieldType(['related' => 'platform.resources']);
+        $fieldType = $this->makeFieldType(['related' => 'sv.platform.resources']);
 
         $this->assertEquals($expectedOptions, $fieldType->getRpcResult(['method' => 'options']));
     }
 
     function test__returns_related_entry()
     {
-        $addressEntry = Builder::create('tst.addresses', function (Blueprint $resource) { })->create()->fresh();
+        $addressEntry = Builder::create('sv.testing.addresses', function (Blueprint $resource) { })->create()->fresh();
 
-        $students = Builder::create('tst.students', function (Blueprint $resource) {
+        $students = Builder::create('sv.testing.students', function (Blueprint $resource) {
             $resource->id('student_id');
-            $resource->relatesToOne('tst.addresses', 'address');
+            $resource->relatesToOne('sv.testing.addresses', 'address');
         });
 
         $studentEntry = $students->create(['address_id' => $addressEntry->getId()]);
@@ -121,7 +121,7 @@ class RelatesToOneTypeTest extends ResourceTestCase
         /** @var Resource $related */ // stupid PHPSTORM
         $related = $fieldType->getRelated();
         $this->assertInstanceOf(Resource::class, $related);
-        $this->assertEquals('tst.addresses', $related->getIdentifier());
+        $this->assertEquals('sv.testing.addresses', $related->getIdentifier());
 
         $this->assertEquals($addressEntry, $fieldType->getRelatedEntry($studentEntry));
     }

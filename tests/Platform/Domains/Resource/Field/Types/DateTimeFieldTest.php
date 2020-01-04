@@ -11,7 +11,7 @@ class DateTimeFieldTest extends ResourceTestCase
 {
     function test__builder()
     {
-        Builder::create('testing.flights', function (Blueprint $resource) {
+        Builder::create('sv.testing.flights', function (Blueprint $resource) {
             $resource->datetime('arrived_at');
             $resource->datetime('cancelled_at')->nullable();
         });

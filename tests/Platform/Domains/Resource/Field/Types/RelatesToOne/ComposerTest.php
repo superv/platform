@@ -82,12 +82,12 @@ class ComposerTest extends ResourceTestCase
     {
         parent::setUp();
 
-        $this->students = Builder::create('tst.students', function (Blueprint $resource) {
+        $this->students = Builder::create('sv.testing.students', function (Blueprint $resource) {
             $resource->text('name', 'Student Name')->useAsEntryLabel();
-            $resource->relatesToOne('tst.addresses', 'address')
+            $resource->relatesToOne('sv.testing.addresses', 'address')
                      ->showOnLists();
         });
-        $this->addresses = Builder::create('tst.addresses', function (Blueprint $resource) {
+        $this->addresses = Builder::create('sv.testing.addresses', function (Blueprint $resource) {
             $resource->primaryKey('id')
                      ->number();
             $resource->text('title', 'Address Title')->useAsEntryLabel();

@@ -69,7 +69,7 @@ class RelationCreateTest extends ResourceTestCase
         $this->blueprints()->comments();
         ResourceFactory::wipe();
 
-        Resource::extend('testing.users', function (Resource $resource) {
+        Resource::extend('sv.testing.users', function (Resource $resource) {
             $resource->getRelation('comments')
                      ->on('create.displaying', function (Form $form) {
                          $form->fields()->hide('status');
@@ -94,7 +94,7 @@ class RelationCreateTest extends ResourceTestCase
         $comments = $this->blueprints()->comments();
         ResourceFactory::wipe();
 
-        Resource::extend('testing.users', function (Resource $resource) {
+        Resource::extend('sv.testing.users', function (Resource $resource) {
             $resource->getRelation('comments')
                      ->on('create.storing', function (Request $request, Form $form, $entry) {
                          $comment = $request->get('comment')." (by {$entry->name})";

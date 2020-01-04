@@ -71,8 +71,8 @@ class FieldTypeTest extends ResourceTestCase
 
     function test__controller_response()
     {
-        $user = $this->newUser(['allow' => 'tst.abc.fields:foo']);
-        $field = FieldFactory::withIdentifier('tst.abc.fields:foo');
+        $user = $this->newUser(['allow' => 'sv.testing.abc.fields:foo']);
+        $field = FieldFactory::withIdentifier('sv.testing.abc.fields:foo');
 
         $response = $this->getJsonUser($field->router()->route('lookup'), $user);
         $response->assertOk();
@@ -83,7 +83,7 @@ class FieldTypeTest extends ResourceTestCase
     function test__controller_auth()
     {
         $user = $this->newUser(['allow' => null]);
-        $field = FieldFactory::withIdentifier('tst.abc.fields:foo');
+        $field = FieldFactory::withIdentifier('sv.testing.abc.fields:foo');
 
         $response = $this->getJsonUser($field->router()->route('lookup'), $user);
         $response->assertStatus(403);
@@ -96,7 +96,7 @@ class FieldTypeTest extends ResourceTestCase
         FieldType::register(GeniusType::class);
 
         FieldRepository::resolve()->create([
-            'identifier' => 'tst.abc.fields:foo',
+            'identifier' => 'sv.testing.abc.fields:foo',
             'type'       => GeniusType::class,
         ]);
     }

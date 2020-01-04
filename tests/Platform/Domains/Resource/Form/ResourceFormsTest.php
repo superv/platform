@@ -101,9 +101,9 @@ class ResourceFormsTest extends ResourceTestCase
         $this->assertEquals('sv_belongs_to_field', $group['component']);
         $this->assertEquals(1, $group['value']);
 
-//        $this->assertEquals(sv_resource('testing.groups')->count(), count($group['meta']['options']));
+//        $this->assertEquals(sv_resource('sv.testing.groups')->count(), count($group['meta']['options']));
 //
-//        $first = sv_resource('testing.groups')->first();
+//        $first = sv_resource('sv.testing.groups')->first();
 //        $this->assertEquals(
 //            ['value' => $first->getId(), 'text' => $first->title],
 //            $group['meta']['options'][0]

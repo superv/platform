@@ -7,7 +7,7 @@ use SuperV\Platform\Domains\Resource\ResourceConfig;
 
 class FormsResource implements ConfigResolvedHook
 {
-    public static $identifier = 'platform.forms';
+    public static $identifier = 'sv.platform.forms';
 
     public function configResolved(ResourceConfig $config)
     {

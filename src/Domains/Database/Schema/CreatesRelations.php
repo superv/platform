@@ -36,7 +36,7 @@ trait CreatesRelations
 
     public function relatedToOne($related, string $relationName = null)
     {
-        list($namespace, $related) = $this->splitRelated($related);
+        [$namespace, $related] = $this->splitRelated($related);
         $relationName = $relationName ?? str_singular($related);
 
         return $this->relation($relationName, RelationType::oneToOne())
@@ -45,7 +45,7 @@ trait CreatesRelations
 
     public function relatedToMany($related, string $relationName = null)
     {
-        list($namespace, $related) = $this->splitRelated($related);
+        [$namespace, $related] = $this->splitRelated($related);
         $relationName = $relationName ?? $related;
 
         return $this->relation($relationName, RelationType::oneToMany())
@@ -54,7 +54,7 @@ trait CreatesRelations
 
     public function relatedManyToMany($related, string $relationName = null)
     {
-        list($namespace, $related) = $this->splitRelated($related);
+        [$namespace, $related] = $this->splitRelated($related);
         $relationName = $relationName ?? $related;
 
         return $this->relation($relationName, RelationType::manyToMany())
@@ -82,7 +82,7 @@ trait CreatesRelations
 
     public function belongsTo($related, $relationName = null, $foreignKey = null, $ownerKey = null): ColumnDefinition
     {
-        list($namespace, $related) = $this->splitRelated($related);
+        [$namespace, $related] = $this->splitRelated($related);
 
         $relationName = $relationName ?? str_singular($related);
 
@@ -101,7 +101,8 @@ trait CreatesRelations
     private function splitRelated($related)
     {
         if (str_contains($related, '.')) {
-            list($namespace, $related) = explode('.', $related);
+            [$vendor, $addon, $related] = explode('.', $related);
+            $namespace = $vendor.'.'.$addon;
         } else {
             $namespace = $this->resourceConfig()->getNamespace();
         }
@@ -162,7 +163,7 @@ trait CreatesRelations
     public function hasMany($related, $relationName, $foreignKey = null, $localKey = null): ColumnDefinition
     {
         if (! class_exists($related)) {
-            list($namespace, $related) = $this->splitRelated($related);
+            [$namespace, $related] = $this->splitRelated($related);
 
             $related = $namespace.'.'.$related;
         }
@@ -178,7 +179,7 @@ trait CreatesRelations
     public function morphToMany($related, $relation, $morphName): Config
     {
         if (! class_exists($related)) {
-            list($namespace, $related) = $this->splitRelated($related);
+            [$namespace, $related] = $this->splitRelated($related);
 
             $related = $namespace.'.'.$related;
         }

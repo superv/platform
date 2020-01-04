@@ -20,19 +20,18 @@ class CreateUsersResource extends Migration
             $table->encrypted('password');
             $table->string('remember_token')->nullable();
 
-            $table->hasOne('platform.profiles', 'profile', 'user_id');
+            $table->hasOne('sv.platform.profiles', 'profile', 'user_id');
 
-            $table->morphToMany('platform.auth_roles', 'roles', 'owner')
-                  ->pivotTable('sv_auth_assigned_roles', 'platform.auth_assigned_roles')
+            $table->morphToMany('sv.platform.auth_roles', 'roles', 'owner')
+                  ->pivotTable('sv_auth_assigned_roles', 'sv.platform.auth_assigned_roles')
                   ->pivotRelatedKey('role_id');
 
-            $table->morphToMany('platform.auth_actions', 'actions', 'owner')
-                  ->pivotTable('sv_auth_assigned_actions', 'platform.auth_assigned_actions')
+            $table->morphToMany('sv.platform.auth_actions', 'actions', 'owner')
+                  ->pivotTable('sv_auth_assigned_actions', 'sv.platform.auth_assigned_actions')
                   ->pivotRelatedKey('action_id')
                   ->pivotColumns(function (Blueprint $pivotTable) {
                       $pivotTable->select('provision')->options(['pass' => 'Pass', 'fail' => 'Fail']);
                   });
-
         });
 
         Schema::table('users', function (Blueprint $table) {

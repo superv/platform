@@ -36,7 +36,7 @@ trait ResourceTestHelpers
     {
         $res = $this->create('any_table', function (Blueprint $table, ResourceConfig $config) {
             $config->label('Any Resource');
-            $config->setNamespace('testing');
+            $config->setNamespace('sv.testing');
             $table->increments('id');
 
             $table->string('title')->entryLabel();
@@ -55,18 +55,12 @@ trait ResourceTestHelpers
     protected function create($table, Closure $callback = null, $connection = null)
     {
         if (str_contains($table, '.')) {
-            [$namespace, $table] = explode('.', $table);
+            [$vendor, $addon, $table] = explode('.', $table);
+            $namespace = $vendor.'.'.$addon;
         } else {
-            $namespace = 'testing';
+            $namespace = 'sv.testing';
         }
-
         Current::setMigrationScope($namespace);
-
-//        $callback = function (Blueprint $table, ResourceConfig $config) use ($callback, $namespace) {
-//            $config->setNamespace($namespace.'.res');
-//
-//            $callback($table, $config);
-//        };
 
         if ($connection) {
             $config = Schema::connection($connection)->create($table, $callback);
@@ -99,9 +93,10 @@ trait ResourceTestHelpers
     protected function makeResource($table, array $columns = ['name'], array $resource = [])
     {
         if (str_contains($table, '.')) {
-            [$namespace, $table] = explode('.', $table);
+            [$vendor, $addon, $table] = explode('.', $table);
+            $namespace = $vendor.'.'.$addon;
         }
-        $identifier = ($namespace ?? 'platform').'.'.$table;
+        $identifier = ($namespace ?? 'sv.testing').'.'.$table;
         $this->makeResourceModel($identifier, $columns, $resource);
 
         return ResourceFactory::make($identifier);
@@ -111,9 +106,10 @@ trait ResourceTestHelpers
     protected function makeResourceModel($table, array $columns, array $resource = [])
     {
         if (str_contains($table, '.')) {
-            [$namespace, $table] = explode('.', $table);
+            [$vendor, $addon, $table] = explode('.', $table);
+            $namespace = $vendor.'.'.$addon;
         } else {
-            $namespace = 'platform';
+            $namespace = 'sv.testing';
         }
         Schema::create($table,
             function (Blueprint $table, ResourceConfig $config) use (
@@ -171,7 +167,7 @@ trait ResourceTestHelpers
     protected function makeFieldAttributes(array $overrides = []): array
     {
         return array_merge([
-            'identifier' => 'testing.servers.fields:title',
+            'identifier' => 'sv.testing.servers.fields:title',
             'handle'     => 'title',
             'type'       => 'text',
         ], $overrides);
@@ -183,7 +179,7 @@ trait ResourceTestHelpers
             $identifier = $handle;
             $handle = sv_identifier($identifier)->getLastNode();
         } else {
-            $identifier = 'tst.res.fields:'.$handle;
+            $identifier = 'sv.tst.res.fields:'.$handle;
         }
 
         $field = FieldFactory::createFromArray([
