@@ -4,7 +4,7 @@ namespace SuperV\Platform\Support;
 
 use Carbon\Carbon;
 use SuperV\Platform\Domains\Auth\Contracts\Users;
-use SuperV\Platform\Domains\Auth\User;
+use SuperV\Platform\Domains\Auth\Guest;
 use SuperV\Platform\Domains\Port\Port;
 
 class Current
@@ -47,7 +47,7 @@ class Current
             if (auth()->guard()->id()) {
                 $this->user = app(Users::class)->find(auth()->guard()->id());
             } else {
-                return new User();
+                return new Guest();
             }
         }
 

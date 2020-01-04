@@ -41,6 +41,8 @@ class MorphOneTest extends ResourceTestCase
 
     function test__makes_form()
     {
+        $this->be($this->newUser());
+
         $user = $this->parent->fake();
 
         $tag = $user->tag()->make(['label' => 'blue']);
@@ -70,6 +72,8 @@ class MorphOneTest extends ResourceTestCase
 
     function test__makes_form_custom_model()
     {
+        $this->be($this->newUser());
+
         $user = $this->parent->fake();
         $relationQuery = $user->tac();
 

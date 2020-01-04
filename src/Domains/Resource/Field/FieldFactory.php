@@ -62,7 +62,7 @@ class FieldFactory
     {
         $this->validate();
 
-        if (Current::hasUser() && ! Current::user()->can($this->params['identifier'])) {
+        if (! Current::user()->can($this->params['identifier'])) {
             $resolveFrom = GhostField::class;
         }
 

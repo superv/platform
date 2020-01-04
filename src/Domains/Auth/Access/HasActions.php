@@ -136,22 +136,12 @@ trait HasActions
         return $roleEntry;
     }
 
-    public function isA($role)
+    public function isA($role): bool
     {
         return $this->roles->pluck('slug')->contains($role);
     }
 
-    public function isAn($role)
-    {
-        return $this->isA($role);
-    }
-
-    public function isNotA($role)
-    {
-        return ! $this->isA($role);
-    }
-
-    public function isNotAn($role)
+    public function isNotA($role): bool
     {
         return ! $this->isA($role);
     }

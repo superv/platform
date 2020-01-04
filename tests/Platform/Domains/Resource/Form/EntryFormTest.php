@@ -205,6 +205,8 @@ class EntryFormTest extends ResourceTestCase
     {
         parent::setUp();
 
+        $this->be($this->newUser());
+
         $this->users = $this->create('tbl_users',
             function (Blueprint $table, ResourceConfig $config) {
                 $config->setIdentifier('testing.users');

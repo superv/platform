@@ -2,29 +2,23 @@
 
 namespace SuperV\Platform\Domains\Auth\Contracts;
 
-use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
-
-interface User extends EntryContract
+interface User
 {
-    public static function query();
-
     public function getEmail();
 
     public function updatePassword($newPassword);
 
     public function assign(string $role);
 
-    public function isA($role);
+    public function isA($role): bool;
 
-    public function isAn($role);
+    public function isNotA($role): bool;
 
-    public function isNotA($role);
+    public function can($action): bool;
 
-    public function isNotAn($role);
-
-    public function can($action);
-
-    public function canNot($action);
+    public function canNot($action): bool;
 
     public function canOrFail($action);
+
+    public function forbidden($action): bool;
 }

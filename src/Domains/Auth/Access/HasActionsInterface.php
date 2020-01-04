@@ -35,9 +35,9 @@ interface HasActionsInterface
 
     public function can($action);
 
-    public function isAn($role);
-
     public function isA($role);
+
+    public function isNot($role);
 
     public function allow($action);
 

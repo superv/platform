@@ -29,9 +29,7 @@ class ActionsTest extends TestCase
         $user = $this->newUser();
 
         $this->assertTrue($user->isA('user'));
-        $this->assertTrue($user->isAn('user'));
         $this->assertTrue($user->isNotA('admin'));
-        $this->assertTrue($user->isNotAn('admin'));
     }
 
     function test__add_actions_to_role()

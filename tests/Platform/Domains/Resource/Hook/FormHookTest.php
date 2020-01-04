@@ -37,6 +37,8 @@ class FormHookTest extends HookTestCase
 
     function test__validating()
     {
+        $this->be($this->newUser());
+
         $_SERVER['__hooks::form.validating'] = null;
         $orders = $this->blueprints()->orders();
 

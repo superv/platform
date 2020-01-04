@@ -13,6 +13,13 @@ use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class SubmitFormTest extends ResourceTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->be($this->newUser());
+    }
+
     function test__submit_success()
     {
         $categories = $this->blueprints()->categories(function (Blueprint $table) {

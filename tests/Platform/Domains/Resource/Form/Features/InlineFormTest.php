@@ -10,6 +10,8 @@ class InlineFormTest extends ResourceTestCase
 {
     function test__add_static_flag_to_field_from_migrations()
     {
+        $this->be($this->newUser());
+
         $form = FormFactory::builderFromResource($this->blueprints()->clients())
                            ->getForm();
 

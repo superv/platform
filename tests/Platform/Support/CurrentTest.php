@@ -4,6 +4,7 @@ namespace Tests\Platform\Support;
 
 use Current;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use SuperV\Platform\Domains\Auth\Guest;
 use SuperV\Platform\Domains\Auth\User;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use Tests\Platform\TestCase;
@@ -12,7 +13,7 @@ class CurrentTest extends TestCase
 {
     use RefreshDatabase;
 
-    function test_returns_current_logged_in_user()
+    function test_returns_authenticated_user()
     {
         $user = User::query()->create([
             'id'       => rand(9, 999),
@@ -22,8 +23,13 @@ class CurrentTest extends TestCase
         ]);
 
         $this->be($user);
-
         $this->assertEquals($user->fresh(), Current::user());
+    }
+
+    function test__returns_guest_if_there_is_no_authenticated_user()
+    {
+        $guest = Current::user();
+        $this->assertInstanceOf(Guest::class, $guest);
     }
 
     function test_request_path()

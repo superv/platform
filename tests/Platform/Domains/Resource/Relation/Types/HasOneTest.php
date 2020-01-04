@@ -40,6 +40,8 @@ class HasOneTest extends ResourceTestCase
 
     function test__makes_form()
     {
+        $this->be($this->newUser());
+
         $user = $this->parent->fake();
         $profile = $user->profile()->make();
         $this->assertNotNull($profile);
