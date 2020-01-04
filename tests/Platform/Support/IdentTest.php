@@ -23,7 +23,7 @@ class IdentTest extends TestCase
     function test__validate()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Not a valid identifier string: [ab]');
+        $this->expectExceptionMessage('Ident string must contain at least 2 nodes: [ab]');
         sv_ident('ab');
     }
 
