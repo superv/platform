@@ -15,7 +15,7 @@ class PanelServiceProvider extends AddonServiceProvider
 
     protected function publishAssets()
     {
-        $vendor = $this->addon->getNamespace();
+        $vendor = $this->addon->getVendor();
         $name = $this->addon->getHandle();
 
         $this->publishes(

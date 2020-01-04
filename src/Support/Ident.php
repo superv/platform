@@ -4,7 +4,7 @@ namespace SuperV\Platform\Support;
 
 use InvalidArgumentException;
 
-class Identifier
+class Ident
 {
     /**
      * @var string
@@ -16,9 +16,10 @@ class Identifier
     protected function __construct(string $identifier)
     {
         $this->identifier = $identifier;
+        $this->nodes = explode('.', $this->identifier);
 
         if ($this->getNodeCount() < 2) {
-            throw new InvalidArgumentException(sprintf("Not a valid identifier string: [%s]", $identifier));
+            throw new InvalidArgumentException(sprintf("Ident string must contain at least 2 nodes: [%s]", $identifier));
         }
     }
 
@@ -27,7 +28,7 @@ class Identifier
         return $this->identifier;
     }
 
-    public function parent(): ?Identifier
+    public function parent(): ?Ident
     {
         if (count($nodes = $this->getNodes()) === 2) {
             return str_contains($this->identifier, ':') ? static::make(explode(':', $this->identifier)[0]) : null;
@@ -37,6 +38,21 @@ class Identifier
         array_pop($nodes);
 
         return static::make(implode('.', $nodes));
+    }
+
+    public function vendor()
+    {
+        return $this->nodes[0];
+    }
+
+    public function addon()
+    {
+        return $this->vendor().'.'.$this->nodes[1];
+    }
+
+    public function resource()
+    {
+        return $this->addon().'.'.$this->nodes[2];
     }
 
     public function getParent(): ?string
@@ -80,9 +96,9 @@ class Identifier
         return $this->getParent().'.'.$this->getTypeId();
     }
 
-    public function type(): ?IdentifierType
+    public function type(): ?IdentType
     {
-        return new IdentifierType($this->getType(), $this->getTypeId());
+        return new IdentType($this->getType(), $this->getTypeId());
     }
 
     public function getTypeId()
@@ -99,10 +115,6 @@ class Identifier
 
     public function getNodes()
     {
-        if (! $this->nodes) {
-            $this->nodes = explode('.', $this->identifier);
-        }
-
         return $this->nodes;
     }
 
@@ -125,9 +137,9 @@ class Identifier
         ]);
     }
 
-    public static function make(string $identifier): Identifier
+    public static function make(string $identifier): Ident
     {
-        return new Identifier($identifier);
+        return new Ident($identifier);
     }
 
     protected function getTypeNode()

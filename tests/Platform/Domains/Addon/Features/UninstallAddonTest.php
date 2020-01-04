@@ -15,29 +15,29 @@ class UninstallAddonTest extends TestCase
     {
         $this->setUpAndSeedAddon('superv.sample');
 
-        UninstallAddonJob::dispatch('sample');
+        UninstallAddonJob::dispatch('superv.sample');
 
-        $this->assertDatabaseMissing('sv_addons', ['identifier' => 'sample']);
+        $this->assertDatabaseMissing('sv_addons', ['identifier' => 'superv.sample']);
     }
 
     function test__rollback_migrations()
     {
         $this->setUpAddon(null, null);
-        $this->assertEquals(3, \DB::table('migrations')->where('namespace', 'sample')->count());
+        $this->assertEquals(3, \DB::table('migrations')->where('namespace', 'superv.sample')->count());
 
-        UninstallAddonJob::dispatch('sample');
+        UninstallAddonJob::dispatch('superv.sample');
 
-        $this->assertEquals(0, \DB::table('migrations')->where('namespace', 'sample')->count());
+        $this->assertEquals(0, \DB::table('migrations')->where('namespace', 'superv.sample')->count());
     }
 
     function test__deletes_resources()
     {
         $this->setUpAddon(null, null);
 
-        $this->assertEquals(1, ResourceModel::query()->where('namespace', 'sample')->count());
+        $this->assertEquals(1, ResourceModel::query()->where('namespace', 'superv.sample')->count());
 
-        UninstallAddonJob::dispatch('sample');
+        UninstallAddonJob::dispatch('superv.sample');
 
-        $this->assertEquals(0, ResourceModel::query()->where('namespace', 'sample')->count());
+        $this->assertEquals(0, ResourceModel::query()->where('namespace', 'superv.sample')->count());
     }
 }

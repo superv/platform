@@ -139,7 +139,7 @@ class HookManager
      */
     protected function parseIdentifier($identifier, $hookClass, $className): array
     {
-        $_identifier = sv_identifier($identifier);
+        $_identifier = sv_ident($identifier);
         $subKey = null;
 
         if ($_identifier->getNodeCount() > 3) {

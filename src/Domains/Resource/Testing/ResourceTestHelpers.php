@@ -177,7 +177,7 @@ trait ResourceTestHelpers
     {
         if (str_contains($handle, '.')) {
             $identifier = $handle;
-            $handle = sv_identifier($identifier)->getLastNode();
+            $handle = sv_ident($identifier)->getLastNode();
         } else {
             $identifier = 'sv.tst.res.fields:'.$handle;
         }

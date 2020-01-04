@@ -13,7 +13,7 @@ use SuperV\Platform\Domains\UI\Nucleo\SvBlock;
 use SuperV\Platform\Domains\UI\Nucleo\SvComponent;
 use SuperV\Platform\Exceptions\PlatformException;
 use SuperV\Platform\Support\Composer\Composer;
-use SuperV\Platform\Support\Identifier;
+use SuperV\Platform\Support\Ident;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
 
@@ -199,9 +199,9 @@ if (! function_exists('superv')) {
     }
 }
 
-function sv_identifier($string)
+function sv_ident($string)
 {
-    return Identifier::make($string);
+    return Ident::make($string);
 }
 
 function sv_console()

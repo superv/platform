@@ -34,21 +34,21 @@ class MakeAddonModel
     public function make()
     {
         $addonsDirectory = sv_config('addons.location');
-        $namespace = $this->parseNamespace();
+        $vendor = $this->parseVendor();
         $handle = $this->parseHandle();
         $typePlural = str_plural($this->addonType);
 
         if (! $this->addonPath) {
-            $this->addonPath = sprintf("%s/%s/%s/%s", $addonsDirectory, $namespace, $typePlural, $handle);
+            $this->addonPath = sprintf("%s/%s/%s/%s", $addonsDirectory, $vendor, $typePlural, $handle);
         }
 
-        $psrNamespace = ucfirst(camel_case(($namespace == 'superv' ? 'super_v' : $namespace))).'\\'.ucfirst(camel_case($typePlural)).'\\'.ucfirst(camel_case($handle));
+        $psrNamespace = ucfirst(camel_case(($vendor == 'superv' ? 'super_v' : $vendor))).'\\'.ucfirst(camel_case($typePlural)).'\\'.ucfirst(camel_case($handle));
 
         return new AddonModel([
-            'namespace'     => $namespace,
+            'vendor'        => $vendor,
             'handle'        => $handle,
             //            'identifier'    => $handle,
-            'identifier'    => $namespace.'.'.$handle,
+            'identifier'    => $vendor.'.'.$handle,
             'type'          => str_singular($this->addonType),
             'path'          => $this->addonPath,
             'psr_namespace' => $psrNamespace,
@@ -61,7 +61,7 @@ class MakeAddonModel
         $this->identifier = $identifier;
     }
 
-    public function parseNamespace()
+    public function parseVendor()
     {
         return explode('.', $this->identifier)[0];
     }

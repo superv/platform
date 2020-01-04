@@ -44,7 +44,7 @@ class EntryRepository implements EntryRepositoryInterface
 
     public function update(string $identifier, array $attributes = [])
     {
-        $identifier = sv_identifier($identifier);
+        $identifier = sv_ident($identifier);
 
         EntryRepository::for($identifier->getParent())
                        ->find($identifier->id())

@@ -11,7 +11,7 @@ class Controller extends FieldController
 {
     public function lookup()
     {
-        $fieldIdentifier = sv_identifier($this->request->get('field'));
+        $fieldIdentifier = sv_ident($this->request->get('field'));
         $resource = ResourceFactory::make($fieldIdentifier->getParent());
         $entry = $resource->find($this->request->get('entry'));
         $field = $resource->getField($fieldIdentifier->getTypeId());
@@ -38,7 +38,7 @@ class Controller extends FieldController
 
     public function attach()
     {
-        $fieldIdentifier = sv_identifier($this->request->get('field'));
+        $fieldIdentifier = sv_ident($this->request->get('field'));
         $resource = ResourceFactory::make($fieldIdentifier->getParent());
         $entry = $resource->find($this->request->get('entry'));
         $field = $resource->getField($fieldIdentifier->getTypeId());
@@ -85,7 +85,7 @@ class Controller extends FieldController
 
     public function detach()
     {
-        $fieldIdentifier = sv_identifier($this->request->get('field'));
+        $fieldIdentifier = sv_ident($this->request->get('field'));
         $resource = ResourceFactory::make($fieldIdentifier->getParent());
         $entry = $resource->find($this->request->get('entry'));
         $field = $resource->getField($fieldIdentifier->getTypeId());

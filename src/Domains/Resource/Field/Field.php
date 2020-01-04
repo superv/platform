@@ -16,7 +16,7 @@ use SuperV\Platform\Domains\Resource\Field\Contracts\MutatorInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 use SuperV\Platform\Support\Concerns\Hydratable;
-use SuperV\Platform\Support\Identifier;
+use SuperV\Platform\Support\Ident;
 
 class Field implements FieldInterface
 {
@@ -112,9 +112,9 @@ class Field implements FieldInterface
         return $this;
     }
 
-    public function identifier(): Identifier
+    public function identifier(): Ident
     {
-        return sv_identifier($this->getIdentifier());
+        return sv_ident($this->getIdentifier());
     }
 
     public function getLabel(): string

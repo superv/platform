@@ -153,10 +153,6 @@ abstract class PlatformTestCase extends OrchestraTestCase
 
         $entry = AddonModel::byIdentifier($identifier);
 
-        if (! $entry) {
-            dd($identifier);
-        }
-
         return $entry->resolveAddon();
     }
 

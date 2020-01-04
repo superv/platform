@@ -12,7 +12,7 @@ use SuperV\Platform\Domains\Resource\Relation\Relation;
 use SuperV\Platform\Domains\Resource\Relation\RelationFactory;
 use SuperV\Platform\Domains\Resource\Relation\RelationModel;
 use SuperV\Platform\Exceptions\PlatformException;
-use SuperV\Platform\Support\Identifier;
+use SuperV\Platform\Support\Ident;
 
 class ResourceFactory
 {
@@ -65,7 +65,7 @@ class ResourceFactory
             $identifier = $identifier->getResourceIdentifier();
         }
 
-        if ($identifier instanceof Identifier) {
+        if ($identifier instanceof Ident) {
             $identifier = $identifier->get();
         }
 

@@ -26,7 +26,7 @@ class InstallerTest extends TestCase
         app('events')->listen(
             AddonInstalledEvent::class,
             function (AddonInstalledEvent $event) use ($installer) {
-                if ($event->addon !== sv_addons('sample')) {
+                if ($event->addon !== sv_addons('superv.sample')) {
                     $this->fail('Failed to match addon in dispatched event');
                 }
             });
@@ -34,13 +34,13 @@ class InstallerTest extends TestCase
         $installer->setPath('tests/Platform/__fixtures__/sample-addon')
                   ->install();
 
-        $addon = AddonModel::query()->where('identifier', 'sample')->first();
+        $addon = AddonModel::query()->where('identifier', 'superv.sample')->first();
         $this->assertNotNull($addon);
 
         $this->assertDatabaseHas('sv_addons', [
-            'name'          => 'sample',
+            'handle'        => 'sample',
             'vendor'        => 'superv',
-            'identifier'    => 'sample',
+            'identifier'    => 'superv.sample',
             'type'          => 'addon',
             'path'          => 'tests/Platform/__fixtures__/sample-addon',
             'enabled'       => true,
@@ -54,8 +54,8 @@ class InstallerTest extends TestCase
 
         $this->assertNotNull($entry = AddonModel::byIdentifier('sv.my_addon'));
         $this->assertEquals('sv.my_addon', $entry->getIdentifier());
-        $this->assertEquals('sv', $entry->getNamespace());
-        $this->assertEquals('my_addon', $entry->getNamespace());
+        $this->assertEquals('sv', $entry->getVendor());
+        $this->assertEquals('my_addon', $entry->getVendor());
     }
 
     function test__seeds_addon()
@@ -82,7 +82,7 @@ class InstallerTest extends TestCase
              ->setPath('tests/Platform/__fixtures__/sample-addon')
              ->install();
 
-        $addon = sv_addons('sample');
+        $addon = sv_addons('superv.sample');
         $this->assertNotNull($addon);
         $this->assertInstanceOf(SampleAddon::class, $addon);
     }

@@ -19,7 +19,7 @@ class CreateAddonsTable extends Migration
             $table->increments('id');
             $table->string('title')->entryLabel()->showOnIndex();
 
-            $table->string('namespace')->showOnIndex();
+            $table->string('vendor')->showOnIndex();
             $table->string('handle')->showOnIndex();
             $table->string('identifier')->showOnIndex()->unique();
 

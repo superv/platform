@@ -41,7 +41,7 @@ class FieldRepository
         }
 
         if (! isset($attributes['handle'])) {
-            $attributes['handle'] = sv_identifier($identifier)->getTypeId();
+            $attributes['handle'] = sv_ident($identifier)->getTypeId();
         }
 
         if (! isset($attributes['label'])) {
@@ -51,7 +51,7 @@ class FieldRepository
         $field = $this->model->newQuery()->create($attributes);
 
         if (! starts_with($identifier, 'sv.platform.')) {
-            $identifier = sv_identifier($identifier);
+            $identifier = sv_ident($identifier);
             Action::query()->create([
                 'namespace' => $identifier->getParent(),
                 'slug'      => $identifier,

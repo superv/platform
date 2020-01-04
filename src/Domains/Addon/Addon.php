@@ -82,9 +82,9 @@ class Addon
         return $this->entry->getPsrNamespace();
     }
 
-    public function getNamespace()
+    public function getVendor()
     {
-        return $this->entry->getNamespace();
+        return $this->entry->getVendor();
     }
 
     public function getHandle()

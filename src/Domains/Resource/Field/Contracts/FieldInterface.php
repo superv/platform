@@ -4,7 +4,7 @@ namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
 use Closure;
 use SuperV\Platform\Domains\Resource\Field\Router;
-use SuperV\Platform\Support\Identifier;
+use SuperV\Platform\Support\Ident;
 
 interface FieldInterface
 {
@@ -16,7 +16,7 @@ interface FieldInterface
 
     public function getIdentifier();
 
-    public function identifier(): Identifier;
+    public function identifier(): Ident;
 
     public function getType(): string;
 

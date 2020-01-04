@@ -59,9 +59,9 @@ class AddonModel extends Entry
         return $this->handle;
     }
 
-    public function getNamespace()
+    public function getVendor()
     {
-        return $this->namespace;
+        return $this->vendor;
     }
 
     public function getType()

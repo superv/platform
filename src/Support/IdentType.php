@@ -2,7 +2,7 @@
 
 namespace SuperV\Platform\Support;
 
-class IdentifierType extends ValueObject
+class IdentType extends ValueObject
 {
     private const FORM = 'forms';
     private const FIELD = 'fields';
