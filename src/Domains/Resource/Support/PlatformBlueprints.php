@@ -186,8 +186,6 @@ class PlatformBlueprints
         $table->string('identifier')->showOnIndex()->unique();
         $table->string('namespace')->showOnIndex()->nullable();
 
-        $table->boolean('public')->default(false);
-
         if ($table instanceof Blueprint) {
             $config->label('Forms');
             $config->resourceKey('form');

@@ -26,10 +26,9 @@ class FormControllerTest extends ResourceTestCase
      */
     protected $formEntry;
 
-    function test__form_page_with_uuid()
+    function test__form_page()
     {
         $form = $this->getUserPage($this->formEntry->getUrl());
-//        $form = HelperComponent::from($page->getProp('blocks.0'));
 
         $this->assertEquals('sv-form', $form->getName());
         $this->assertEquals($this->posts->getFields()->count(), $form->countProp('fields'));
@@ -43,26 +42,9 @@ class FormControllerTest extends ResourceTestCase
         }
     }
 
-    function test__public_form()
+    function test__forms_are_not_accessible_by_public()
     {
-        $this->withoutExceptionHandling();
-        $formEntry = $this->makePublicForm();
-        $this->assertTrue($formEntry->isPublic());
-        $this->getPublicPage($formEntry->getUrl());
-    }
-
-    function test__user_form()
-    {
-        $this->withoutExceptionHandling();
-        $formEntry = $this->makeForm(['public' => false]);
-        $this->assertFalse($formEntry->isPublic());
-        $this->getUserPage($formEntry->getUrl());
-    }
-
-    function test__user_forms_are_not_accessible_by_public()
-    {
-        $formEntry = $this->makeForm(['public' => false]);
-        $this->assertFalse($formEntry->isPublic());
+        $formEntry = $this->makeForm();
         $response = $this->getJson($formEntry->getUrl());
         $response->assertStatus(401);
 
@@ -74,9 +56,9 @@ class FormControllerTest extends ResourceTestCase
     {
         $this->withoutExceptionHandling();
 
-        $formEntry = $this->makePublicForm();
+        $formEntry = $this->makeForm();
 
-        $response = $this->getJson($formEntry->getUrl().'/fields/name');
+        $response = $this->getJsonUser($formEntry->getUrl().'/fields/name');
         $response->assertOk();
 
         $fieldArray = $response->decodeResponseJson('data');
@@ -92,7 +74,6 @@ class FormControllerTest extends ResourceTestCase
     {
         $formEntry = FormRepository::resolve()->create('testing', 'foo', array_merge([
             'title'  => 'Public Form',
-            'public' => false,
         ], $overrides));
 
         $formEntry->createField(['identifier' => 'sv.forms.fields:name', 'type' => 'text', 'handle' => 'name']);
@@ -120,13 +101,5 @@ class FormControllerTest extends ResourceTestCase
 
         /** @var FormModel $postsForm */
         $this->formEntry = FormModel::query()->where('resource_id', $this->posts->id())->first();
-    }
-
-    /**
-     * @return \SuperV\Platform\Domains\Resource\Form\FormModel
-     */
-    protected function makePublicForm(): \SuperV\Platform\Domains\Resource\Form\FormModel
-    {
-        return $this->makeForm(['public' => true]);
     }
 }

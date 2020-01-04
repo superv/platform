@@ -44,8 +44,7 @@ class Composer extends BaseComposer
         if (! is_null($options)) {
             $this->getPayload()->set('meta.options', $options);
         } else {
-            $route = $form->isPublic() ? 'sv::public_forms.fields' : 'sv::forms.fields';
-            $url = sv_route($route, [
+            $url = sv_route('sv::forms.fields', [
                 'form'  => $form->getIdentifier(),
                 'field' => $this->field->getHandle(),
                 'rpc'   => 'options',

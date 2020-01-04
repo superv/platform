@@ -27,14 +27,6 @@ trait ResourceTestHelpers
         return HelperComponent::fromArray($response->decodeResponseJson('data'));
     }
 
-    protected function getPublicPage($url)
-    {
-        $response = $this->getJson($url);
-        $response->assertOk();
-
-        return HelperComponent::fromArray($response->decodeResponseJson('data'));
-    }
-
     protected function blueprints()
     {
         return new Blueprints;

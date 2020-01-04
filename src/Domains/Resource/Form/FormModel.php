@@ -4,7 +4,6 @@ namespace SuperV\Platform\Domains\Resource\Form;
 
 use Illuminate\Support\Collection;
 use SuperV\Platform\Domains\Database\Model\Entry;
-use SuperV\Platform\Domains\Resource\Field\FieldFactory;
 use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Field\FieldRepository;
 use SuperV\Platform\Domains\Resource\ResourceFactory;
@@ -15,20 +14,6 @@ class FormModel extends Entry
     protected $table = 'sv_forms';
 
     protected $ownerResource;
-
-    protected $casts = ['public' => 'boolean'];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::saving(function (FormModel $entry) {
-//            if (is_null($entry->uuid)) {
-//                $entry->setAttribute('uuid', uuid());
-//            }
-//            $entry->setAttribute('rev_id', uuid());
-        });
-    }
 
     public function created_by()
     {
@@ -64,16 +49,6 @@ class FormModel extends Entry
         return $fieldEntry;
     }
 
-    public function isPublic()
-    {
-        return $this->public;
-    }
-
-    public function isPrivate()
-    {
-        return ! $this->public;
-    }
-
     public function getIdentifier()
     {
         return $this->identifier;
@@ -91,9 +66,7 @@ class FormModel extends Entry
 
     public function getUrl()
     {
-        $route = $this->isPublic() ? 'sv::public_forms.display' : 'sv::forms.display';
-
-        return sv_route($route, ['form' => $this->getIdentifier()]);
+        return sv_route('sv::forms.display', ['form' => $this->getIdentifier()]);
     }
 
     public function getTitle()
@@ -124,31 +97,12 @@ class FormModel extends Entry
         return $this->fields()->where('handle', $name)->first();
     }
 
-    public function compileFields(): Collection
-    {
-        return $this->getFormFields()
-                    ->map(function (FieldModel $fieldEntry) {
-                        $field = FieldFactory::createFromEntry($fieldEntry);
-
-//                        if ($this->resource_id > 0) {
-//                            $field->setResource($this->getOwnerResource());
-//                        }
-
-                        return $field;
-                    });
-    }
-
     public static function withIdentifier($identifier): ?FormModel
     {
         return static::query()->where('identifier', $identifier)->first();
     }
 
-    public static function findByUuid($uuid): ?FormModel
-    {
-        return static::query()->where('uuid', $uuid)->first();
-    }
-
-    public static function findByResource($id): ?FormModel
+    public static function withResourceId($id): ?FormModel
     {
         return static::query()->where('resource_id', $id)->first();
     }

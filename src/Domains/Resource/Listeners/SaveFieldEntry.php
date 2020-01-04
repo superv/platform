@@ -122,7 +122,7 @@ class SaveFieldEntry
         /**
          * Attach field to default resource form
          */
-        if ($formEntry = FormModel::findByResource($this->resource->getId())) {
+        if ($formEntry = FormModel::withResourceId($this->resource->getId())) {
             $formEntry->attachField($this->field->getId());
         }
 

@@ -188,9 +188,7 @@ class Form implements FormInterface, ProvidesUIComponent
 
     public function getFieldRpcUrl($fieldHandle, $rpcKey)
     {
-        $route = $this->isPublic() ? 'sv::public_forms.fields' : 'sv::forms.fields';
-
-        return sv_route($route, [
+        return sv_route('sv::forms.fields', [
             'form'  => $this->getIdentifier(),
             'field' => $fieldHandle,
             'rpc'   => 'options',
@@ -287,16 +285,6 @@ class Form implements FormInterface, ProvidesUIComponent
         $this->url = $url;
 
         return $this;
-    }
-
-    public function isPublic(): bool
-    {
-        return $this->public;
-    }
-
-    public function setPublic(bool $public): void
-    {
-        $this->public = $public;
     }
 
     public function getRequest(): ?Request

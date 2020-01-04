@@ -3,6 +3,8 @@
 namespace Tests\Platform\Domains\Resource\Form;
 
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
+use SuperV\Platform\Domains\Resource\Field\FieldFactory;
+use SuperV\Platform\Domains\Resource\Field\FieldModel;
 use SuperV\Platform\Domains\Resource\Form\FormModel;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -31,13 +33,15 @@ class FormFactoryTest extends ResourceTestCase
         $formEntry = FormModel::query()->where('resource_id', $postsResource->id())->first();
 
         $this->assertInstanceOf(FormModel::class, $formEntry);
-        $this->assertTrue($formEntry->isPrivate());
         $this->assertEquals('default', $formEntry->getName());
         $this->assertEquals('testing.posts', $formEntry->getNamespace());
         $this->assertEquals('testing.posts.forms:default', $formEntry->getIdentifier());
         $this->assertEquals($postsResource->id(), $formEntry->resource_id);
 
-        $formFields = $formEntry->compileFields();
+        $formFields = $formEntry->getFormFields()
+                                ->map(function (FieldModel $fieldEntry) {
+                                    return FieldFactory::createFromEntry($fieldEntry);
+                                });
         $this->assertEquals($fieldsCount, $formFields->count());
 
 //        $formFields->map(function (Field $field) use ($postsResource) {
