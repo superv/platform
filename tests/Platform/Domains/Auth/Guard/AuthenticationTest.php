@@ -36,8 +36,6 @@ class AuthenticationTest
             Hub::register(ApiV1Port::class);
             Hub::register(ApiV2Port::class);
         });
-
-        parent::setUp();
     }
 
     /**
