@@ -93,24 +93,24 @@ class Ident
 
     public function withoutType()
     {
-        return $this->getParent().'.'.$this->getTypeId();
+        return $this->getParent().'.'.$this->handle();
     }
 
-    public function type(): ?IdentType
-    {
-        return new IdentType($this->getType(), $this->getTypeId());
-    }
+//    public function type(): ?IdentType
+//    {
+//        return new IdentType($this->getType(), $this->handle());
+//    }
 
-    public function getTypeId()
+    public function handle()
     {
-        [, $typeId] = $this->getTypeNode();
+        [, $handle] = $this->getTypeNode();
 
-        return $typeId ?? null;
+        return $handle ?? null;
     }
 
     public function id()
     {
-        return $this->getTypeId();
+        return $this->handle();
     }
 
     public function getNodes()
@@ -133,7 +133,7 @@ class Ident
         return array_filter([
             'parent'  => $this->parent() ? $this->parent()->get() : null,
             'type'    => $this->getType(),
-            'type_id' => $this->getTypeId(),
+            'type_id' => $this->handle(),
         ]);
     }
 

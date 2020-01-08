@@ -45,8 +45,7 @@ abstract class HookHandler implements HookHandlerInterface
 
     protected function registerListener($eventName, $eventType, $handler)
     {
-        $this->dispatcher->listen(
-            $eventName,
+        $this->dispatcher->listen($eventName,
             function () use ($eventType, $handler, $eventName) {
                 $lock = md5($eventName);
                 if (isset(static::$locks[$lock])) {

@@ -144,7 +144,7 @@ class HookManager
 
         if ($_identifier->getNodeCount() > 3) {
             $hookType = (string)$_identifier->getType();
-            $subKey = $_identifier->getTypeId();
+            $subKey = $_identifier->handle();
             $identifier = $_identifier->getParent();
         } else {
             $parts = explode('_', snake_case($className));

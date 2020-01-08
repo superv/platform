@@ -7,6 +7,15 @@ use SuperV\Platform\Support\Ident;
 use SuperV\Platform\Support\IdentType;
 use Tests\Platform\TestCase;
 
+/**
+ * Class IdentTest
+ * sv.platform.resources:
+ * sv.platform.addons.fields:handle                 sv/platform/res/{res}/fld/handle/act/
+ * sv.platform.forms.lists:default                  sv/platform/res/{res}/lst/default
+ * sv.platform.resources.entry.events:retrieved
+ *
+ * @package Tests\Platform\Support
+ */
 class IdentTest extends TestCase
 {
     function test__nodes()
@@ -44,13 +53,13 @@ class IdentTest extends TestCase
         $this->assertEquals('ab.cd.ef', sv_ident('ab.cd.ef.gab')->parent());
     }
 
-    function test__type()
+    function __type()
     {
         $this->assertEquals('resources', sv_ident('ab.orders')->type());
         $this->assertTrue(sv_ident('ab.orders')->type()->isResource());
 
         $this->assertEquals('entries', sv_ident('ab.orders:1')->type());
-        $this->assertEquals(1, sv_ident('ab.orders:1')->getTypeId());
+        $this->assertEquals(1, sv_ident('ab.orders:1')->handle());
         $this->assertTrue(sv_ident('ab.orders:1')->type()->isEntry());
         $this->assertEquals('ab.orders', sv_ident('ab.orders:1')->parent());
 
@@ -68,14 +77,14 @@ class IdentTest extends TestCase
         $this->assertEquals('ab.orders.title', sv_ident('ab.orders.fields:title')->withoutType());
     }
 
-    function test__typeId()
+    function test__handle()
     {
-        $this->assertEquals(null, sv_ident('ab.orders.forms')->getTypeId());
-        $this->assertEquals('default', sv_ident('ab.orders.forms:default')->getTypeId());
-        $this->assertEquals('1', sv_ident('ab.orders.entries:1')->getTypeId());
+        $this->assertEquals(null, sv_ident('ab.orders.forms')->handle());
+        $this->assertEquals('default', sv_ident('ab.orders.forms:default')->handle());
+        $this->assertEquals('1', sv_ident('ab.orders.entries:1')->handle());
 
-        $this->assertEquals('default', sv_ident('ab.orders.forms:default')->type()->id());
-        $this->assertEquals(1, sv_ident('ab.orders.entries:1')->type()->id());
+//        $this->assertEquals('default', sv_ident('ab.orders.forms:default')->type()->handle());
+//        $this->assertEquals(1, sv_ident('ab.orders.entries:1')->type()->handle());
     }
 
     function test__last_node()

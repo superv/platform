@@ -7,6 +7,11 @@ use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceController;
 use SuperV\Platform\Domains\Resource\Http\Controllers\ResourceViewController;
 
 return [
+
+    '{vendor}/{addon}/res/{resource}/lst/{list?}' => [
+        'uses' => ListController::at('list'),
+    ],
+
     /**
      * RESOURCE DASHBOARD
      */

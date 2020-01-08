@@ -17,6 +17,12 @@ class ListController extends BaseApiController
 {
     use ResolvesResource;
 
+    public function list($vendor, $addon, $resource, $list = 'default')
+    {
+        $ident = sprintf('%s.%s.res:%s.lst:%s', $vendor, $addon, $resource, $list);
+//        ddh($ident, sprintf('%s.%s::res:%s.lst:%s', $vendor, $addon, $resource, $list));
+    }
+
     public function action()
     {
         $resource = $this->resolveResource();

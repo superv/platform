@@ -16,7 +16,10 @@ class Addon
 
     protected $seeder;
 
-    protected $installs;
+    /**
+     * @var
+     */
+    protected $installs = [];
 
     public function __construct(AddonModel $entry)
     {
@@ -98,7 +101,7 @@ class Addon
     }
 
     /**
-     * Return Service Provider Class
+     * Parse Service Provider Class
      *
      * @return string
      */

@@ -9,14 +9,14 @@ class IdentType extends ValueObject
     private const ENTRY = 'entries';
     private const RESOURCE = 'resources';
 
-    protected $id;
+    protected $handle;
 
-    public function __construct(string $value, $id = null)
+    public function __construct(string $type, $handle = null)
     {
-        parent::__construct($value);
+        parent::__construct($type);
 
-        if ($id) {
-            $this->id = $id;
+        if ($handle) {
+            $this->handle = $handle;
         }
     }
 
@@ -40,9 +40,9 @@ class IdentType extends ValueObject
         return $this->equals(static::entry());
     }
 
-    public function id()
+    public function handle()
     {
-        return $this->id;
+        return $this->handle;
     }
 
     public static function resource(): self

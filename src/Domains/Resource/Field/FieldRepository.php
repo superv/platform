@@ -41,7 +41,7 @@ class FieldRepository
         }
 
         if (! isset($attributes['handle'])) {
-            $attributes['handle'] = sv_ident($identifier)->getTypeId();
+            $attributes['handle'] = sv_ident($identifier)->handle();
         }
 
         if (! isset($attributes['label'])) {

@@ -14,7 +14,7 @@ class Controller extends FieldController
         $fieldIdentifier = sv_ident($this->request->get('field'));
         $resource = ResourceFactory::make($fieldIdentifier->getParent());
         $entry = $resource->find($this->request->get('entry'));
-        $field = $resource->getField($fieldIdentifier->getTypeId());
+        $field = $resource->getField($fieldIdentifier->handle());
         $related = $field->getFieldType()->getRelated();
 
         $table = $related->resolveTable();
@@ -41,7 +41,7 @@ class Controller extends FieldController
         $fieldIdentifier = sv_ident($this->request->get('field'));
         $resource = ResourceFactory::make($fieldIdentifier->getParent());
         $entry = $resource->find($this->request->get('entry'));
-        $field = $resource->getField($fieldIdentifier->getTypeId());
+        $field = $resource->getField($fieldIdentifier->handle());
         $related = $field->getFieldType()->getRelated();
 
         // single or multiple
@@ -88,7 +88,7 @@ class Controller extends FieldController
         $fieldIdentifier = sv_ident($this->request->get('field'));
         $resource = ResourceFactory::make($fieldIdentifier->getParent());
         $entry = $resource->find($this->request->get('entry'));
-        $field = $resource->getField($fieldIdentifier->getTypeId());
+        $field = $resource->getField($fieldIdentifier->handle());
         $related = $field->getFieldType()->getRelated();
 
         return $field->type()->getPivot()->newQuery()->where('id', $this->request->get('related'))->delete();
