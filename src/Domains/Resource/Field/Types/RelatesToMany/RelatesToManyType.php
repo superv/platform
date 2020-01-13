@@ -13,7 +13,6 @@ use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Contracts\AcceptsParentEntry;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesTable;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
-use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesRelationQuery;
 use SuperV\Platform\Domains\Resource\Field\FieldType;
 use SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany\Actions\DetachAction;
@@ -54,14 +53,12 @@ class RelatesToManyType extends FieldType implements
         $this->field->addFlag('view.hide');
     }
 
-    public function driverCreating(DriverInterface $driver, FieldBlueprint $blueprint)
+    public function handleDatabaseDriver(DatabaseDriver $driver, FieldBlueprint $blueprint, array $options = [])
     {
         /** @var \SuperV\Platform\Domains\Resource\Field\Types\RelatesToMany\Blueprint $blueprint */
-        if ($driver instanceof DatabaseDriver) {
-            if ($pivot = $blueprint->getPivot()) {
-                if (! SchemaService::resolve()->tableExists($pivot->getHandle())) {
-                    Builder::resolve()->save($pivot);
-                }
+        if ($pivot = $blueprint->getPivot()) {
+            if (! SchemaService::resolve()->tableExists($pivot->getHandle())) {
+                Builder::resolve()->save($pivot);
             }
         }
     }

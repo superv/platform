@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo as EloquentBelongsTo;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
-use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesRelationQuery;
@@ -60,11 +59,9 @@ class RelatesToOneType extends FieldType implements
         return $this->getConfigValue('foreign_key', $this->getFieldHandle().'_id');
     }
 
-    public function driverCreating(DriverInterface $driver, FieldBlueprint $blueprint)
+    public function handleDatabaseDriver(DatabaseDriver $driver, FieldBlueprint $blueprint, array $options = [])
     {
-        if ($driver instanceof DatabaseDriver) {
-            $driver->getTable()->addColumn($blueprint->getForeignKey() ?? $this->getFieldHandle().'_id', 'integer');
-        }
+        $driver->getTable()->addColumn($blueprint->getForeignKey() ?? $this->getFieldHandle().'_id', 'integer', $options);
     }
 
     public function getRelated(): \SuperV\Platform\Domains\Resource\Resource

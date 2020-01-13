@@ -4,10 +4,10 @@ namespace SuperV\Platform\Domains\Resource\Field\Types\BelongsTo;
 
 use Current;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Contracts\InlinesForm;
 use SuperV\Platform\Domains\Resource\Contracts\ProvidesFilter;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
-use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HandlesRpc;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
@@ -62,10 +62,8 @@ class BelongsToType extends RelationFieldType implements
         return $this->getConfigValue('foreign_key', $this->getFieldHandle().'_id');
     }
 
-    public function driverCreating(
-        DriverInterface $driver,
-        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
-    ) {
+    public function handleDatabaseDriver(DatabaseDriver $driver, FieldBlueprint $blueprint, array $options = [])
+    {
         if ($driver instanceof DatabaseDriver) {
             $driver->getTable()->addColumn($this->getColumnName(), 'integer');
         }

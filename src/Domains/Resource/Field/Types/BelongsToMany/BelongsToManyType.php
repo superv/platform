@@ -120,7 +120,6 @@ class BelongsToManyType extends RelationFieldType implements
         return $query->get()
                      ->map(function (EntryContract $item) use ($resource, $entryLabel) {
                          if ($keyName = $resource->config()->getKeyName()) {
-                             // @todo.Ali aga bu neydi ?
                              $item->setKeyName($keyName);
                          }
 

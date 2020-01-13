@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Resource\Field\Contracts;
 
+use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
+use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Form\Contracts\FormInterface;
 use SuperV\Platform\Support\Composer\Payload;
 
@@ -36,6 +38,8 @@ interface FieldTypeInterface
     public function getColumnName();
 
     public function getComponent(): ?string;
+
+    public function handleDriver(DriverInterface $driver, FieldBlueprint $blueprint);
 
     public function resolveComposer(): ComposerInterface;
 

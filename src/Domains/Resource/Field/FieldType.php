@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
+use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ComposerInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\DoesNotInteractWithTable;
@@ -147,6 +148,17 @@ abstract class FieldType implements FieldTypeInterface
         return null;
     }
 
+    public function handleDriver(DriverInterface $driver, FieldBlueprint $blueprint)
+    {
+        if ($driver instanceof DatabaseDriver) {
+            $options = [
+                'Notnull' => ! $blueprint->hasFlag('nullable'),
+                'default' => $blueprint->getDefaultValue(),
+            ];
+            $this->handleDatabaseDriver($driver, $blueprint, array_filter_null($options));
+        }
+    }
+
     public function ____resolveDataFromEntry(FormData $data, EntryContract $entry)
     {
         if ($callback = $this->field->getCallback('resolving_entry')) {
@@ -207,7 +219,7 @@ abstract class FieldType implements FieldTypeInterface
         return $value;
     }
 
-    public function driverCreating(DriverInterface $driver, FieldBlueprint $blueprint)
+    public function handleDatabaseDriver(DatabaseDriver $driver, FieldBlueprint $blueprint, array $options = [])
     {
     }
 

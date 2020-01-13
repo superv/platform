@@ -25,4 +25,9 @@ class TableColumn
     {
         return ! $this->column->getNotnull();
     }
+
+    public function getDefaultValue()
+    {
+        return $this->column->getDefault();
+    }
 }

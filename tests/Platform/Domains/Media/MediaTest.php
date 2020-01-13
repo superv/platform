@@ -111,7 +111,7 @@ class MediaTest extends TestCase
 
     protected function fixtureBase64($filename, $mimeType)
     {
-        list($type, $extension) = explode('/', $mimeType);
+        [$type, $extension] = explode('/', $mimeType);
 
         return "data:{$mimeType};base64,".base64_encode(file_get_contents(__DIR__.'/fixtures/'.$filename.'.'.$extension));
     }
@@ -134,6 +134,5 @@ class OwnerMock extends Entry implements MediaOwner
 
     public function wasRecentlyCreated(): bool
     {
-        // TODO: Implement wasRecentlyCreated() method.
     }
 }

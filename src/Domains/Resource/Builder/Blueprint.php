@@ -259,16 +259,22 @@ class Blueprint
 
     public function createdAt()
     {
+        $this->datetime('created_at')->nullable();
+
         return $this;
     }
 
     public function updatedAt()
     {
+        $this->datetime('updated_at')->nullable();
+
         return $this;
     }
 
     public function deletedAt()
     {
+        $this->datetime('deleted_at')->nullable();
+
         return $this;
     }
 

@@ -3,8 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types\Boolean;
 
 use Closure;
+use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
-use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasModifier;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
@@ -28,11 +28,6 @@ class BooleanType extends FieldType implements
         $query->orderBy($this->field->getColumnName(), $direction);
     }
 
-    protected function formatValue($value)
-    {
-        return ($value === 'false' || ! $value) ? false : true;
-    }
-
     public function getAccessor(): Closure
     {
         return function ($value) {
@@ -47,19 +42,18 @@ class BooleanType extends FieldType implements
         };
     }
 
-    public function driverCreating(
-        DriverInterface $driver,
-        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
-    ) {
-        if ($driver instanceof DatabaseDriver) {
-            $driver->getTable()->addColumn($this->getColumnName(), 'boolean', [
-                'default' => $blueprint->getDefaultValue(),
-            ]);
-        }
+    public function handleDatabaseDriver(DatabaseDriver $driver, FieldBlueprint $blueprint, array $options = [])
+    {
+        $driver->getTable()->addColumn($this->getColumnName(), 'boolean', $options);
     }
 
     public function getComponentName(): string
     {
         return $this->component;
+    }
+
+    protected function formatValue($value)
+    {
+        return ($value === 'false' || ! $value) ? false : true;
     }
 }

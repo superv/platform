@@ -3,8 +3,8 @@
 namespace SuperV\Platform\Domains\Resource\Field\Types\Number;
 
 use Closure;
+use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
-use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasAccessor;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
@@ -29,13 +29,9 @@ class NumberField extends FieldType implements
 //        $this->field->on('view.presenting', $this->accessor());
     }
 
-    public function driverCreating(
-        DriverInterface $driver,
-        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
-    ) {
-        if ($driver instanceof DatabaseDriver) {
-            $driver->getTable()->addColumn($this->getColumnName(), 'integer');
-        }
+    public function handleDatabaseDriver(DatabaseDriver $driver, FieldBlueprint $blueprint, array $options = [])
+    {
+        $driver->getTable()->addColumn($this->getColumnName(), 'integer', $options);
     }
 
     public function sortQuery($query, $direction)

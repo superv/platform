@@ -5,8 +5,8 @@ namespace SuperV\Platform\Domains\Resource\Field\Types\DateTime;
 use Carbon\Carbon;
 use Closure;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
+use SuperV\Platform\Domains\Resource\Builder\FieldBlueprint;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
-use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Contracts\HasPresenter;
 use SuperV\Platform\Domains\Resource\Field\Contracts\ProvidesFieldComponent;
 use SuperV\Platform\Domains\Resource\Field\Contracts\RequiresDbColumn;
@@ -32,14 +32,9 @@ class DateTimeType extends FieldType implements
         $this->field->on('form.composing', $this->formComposer());
     }
 
-    public function driverCreating(
-        DriverInterface $driver,
-        \SuperV\Platform\Domains\Resource\Builder\FieldBlueprint $blueprint
-    ) {
-        if ($driver instanceof DatabaseDriver) {
-            $options = ['Notnull' => ! $blueprint->hasFlag('nullable')];
-            $driver->getTable()->addColumn($this->getColumnName(), 'datetime', $options);
-        }
+    public function handleDatabaseDriver(DatabaseDriver $driver, FieldBlueprint $blueprint, array $options = [])
+    {
+        $driver->getTable()->addColumn($this->getColumnName(), 'datetime', $options);
     }
 
     public function sortQuery($query, $direction)
@@ -60,6 +55,11 @@ class DateTimeType extends FieldType implements
 
             return $value->format($this->getFormat());
         };
+    }
+
+    public function getComponentName(): string
+    {
+        return $this->component;
     }
 
     protected function formComposer()
@@ -94,10 +94,5 @@ class DateTimeType extends FieldType implements
     protected function hasTime()
     {
         return $this->getConfigValue('time') === true;
-    }
-
-    public function getComponentName(): string
-    {
-        return $this->component;
     }
 }

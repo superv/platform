@@ -41,7 +41,7 @@ class DatabaseDriver extends AbstractDriver
         }
 
         $blueprint->getFields()->map(function (FieldBlueprint $field) {
-            $field->getField()->getFieldType()->driverCreating($this, $field);
+            $field->getField()->getFieldType()->handleDriver($this, $field);
         });
 
         $blueprint->getRelations()->map(function (RelationBlueprint $relation) {
