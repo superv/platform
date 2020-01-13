@@ -44,10 +44,6 @@ class DatabaseDriver extends AbstractDriver
             $field->getField()->getFieldType()->handleDriver($this, $field);
         });
 
-        $blueprint->getRelations()->map(function (RelationBlueprint $relation) {
-            $relation->getRelation()->driverCreating($relation, $this);
-        });
-
         $this->table->setPrimaryKey($keys);
 
         SchemaService::resolve()->createTable($this->table);

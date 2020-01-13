@@ -7,87 +7,10 @@ use SuperV\Platform\Domains\Resource\Builder\Builder;
 use SuperV\Platform\Domains\Resource\Builder\PrimaryKey;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Types\Select\Blueprint as SelectTypeBlueprint;
-use SuperV\Platform\Domains\Resource\Relation\Types\BelongsTo\Config;
-use SuperV\Platform\Domains\Resource\Relation\Types\HasMany\HasManyBlueprint;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ResourceBlueprintTest extends ResourceTestCase
 {
-    function __many_to_many_relation()
-    {
-        $rolesBlueprint = Builder::blueprint('sv.testing.roles',
-            function (Blueprint $resource) {
-                $resource->manyToMany('sv.testing.actions', 'actions')
-                         ->pivot('sv.testing.roles_actions', function (Blueprint $pivot) {
-                             $pivot->foreignKey('role');
-                             $pivot->relatedKey('action');
-                         });
-            }
-        );
-
-        /** @var \SuperV\Platform\Domains\Resource\Relation\Types\BelongsToMany\Config $actions */
-        $actionsRelation = $rolesBlueprint->getRelation('actions');
-        $this->assertEquals([
-            'related_resource'  => 'sv.testing.actions',
-            'pivot_identifier'  => 'sv.testing.roles_actions',
-            'pivot_table'       => 'roles_actions',
-            'pivot_foreign_key' => 'role_id',
-            'pivot_related_key' => 'action_id',
-        ], $actionsRelation->getConfig());
-
-        $actionsField = $rolesBlueprint->getField('actions');
-        $this->assertNotNull($actionsField);
-        $this->assertEquals($actionsRelation->getConfig(), $actionsField->getConfig());
-    }
-
-    function test__belongs_to_relation()
-    {
-        $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
-            $resource->belongsTo('sv.testing.users', 'user')
-                     ->foreignKey('user_id')
-                     ->ownerKey('id');
-        });
-
-        /** @var Config $user */
-        $user = $blueprint->getRelation('user');
-        $this->assertNotNull($user);
-        $this->assertEquals('user', $user->getRelationName());
-        $this->assertInstanceOf(Config::class, $user);
-        $this->assertEquals('sv.testing.users', $user->getRelated());
-
-        $this->assertEquals('id', $user->getOwnerKey());
-        $this->assertEquals('user_id', $user->getForeignKey());
-
-        $userField = $blueprint->getField('user');
-        $this->assertNotNull($userField);
-
-        $this->assertEquals([
-            'related_resource' => 'sv.testing.users',
-            'foreign_key'      => 'user_id',
-            'owner_key'        => 'id',
-        ], $userField->getConfig());
-    }
-
-    function test__has_many_relation()
-    {
-        $blueprint = Builder::blueprint('sv.testing.users', function (Blueprint $resource) {
-            $resource->hasMany('sv.testing.posts', 'posts')
-                     ->foreignKey('user_id')
-                     ->localKey('post_id');
-        });
-
-        /** @var HasManyBlueprint $post */
-        $post = $blueprint->getRelation('posts');
-        $this->assertNotNull($post);
-        $this->assertEquals('posts', $post->getRelationName());
-        $this->assertInstanceOf(HasManyBlueprint::class, $post);
-        $this->assertInstanceOf(Blueprint::class, $post->getParent());
-        $this->assertEquals('sv.testing.posts', $post->getRelated());
-
-        $this->assertEquals('post_id', $post->getLocalKey());
-        $this->assertEquals('user_id', $post->getForeignKey());
-    }
-
     function test__creates_blueprint()
     {
         $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {

@@ -6,12 +6,10 @@ use Illuminate\Support\Collection;
 use Psy\Exception\RuntimeException;
 use SuperV\Platform\Domains\Resource\Driver\DatabaseDriver;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
-use SuperV\Platform\Domains\Resource\Relation\RelationType;
 
 class Blueprint
 {
     use FieldHelpers;
-    use RelationHelpers;
 
     /**
      * @var string
@@ -55,20 +53,9 @@ class Blueprint
      */
     protected $fields;
 
-    /**
-     * @var \Illuminate\Support\Collection
-     */
-    protected $relations;
-
     public function __construct()
     {
         $this->fields = collect();
-        $this->relations = collect();
-    }
-
-    public function getRelations(): Collection
-    {
-        return $this->relations;
     }
 
     public function id()
@@ -92,21 +79,6 @@ class Blueprint
         }
 
         return array_values($primaryKeys)[0]->getName();
-    }
-
-    public function addRelation(string $relatedResource, string $relationName, RelationType $relationType)
-    {
-        $relationBlueprint = RelationBlueprint::make($this, $relationName, $relationType);
-        $relationBlueprint->relatedResource($relatedResource);
-
-        $this->relations->put($relationName, $relationBlueprint);
-
-        return $relationBlueprint;
-    }
-
-    public function getRelation($relationName): RelationBlueprint
-    {
-        return $this->relations->get($relationName);
     }
 
     public function addField($fieldName, $fieldTypeClass, string $label = null): FieldBlueprint

@@ -38,13 +38,6 @@ class Builder
         //
         $resourceEntry = $this->repository->create($config, $this->blueprint->isPivot());
 
-        // Run Relation Blueprints
-        //
-        $blueprint->getRelations()
-                  ->map(function (RelationBlueprint $relation) use ($config, $resourceEntry) {
-                      $relation->run($resourceEntry);
-                  });
-
         // Run Field Blueprints
         //
         $blueprint->getFields()
