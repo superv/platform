@@ -100,7 +100,7 @@ class Section extends Entry
         return $this->children;
     }
 
-    public function getChild(string $handle): Section
+    public function getChild(string $handle): ?Section
     {
         return $this->children()->where('handle', $handle)->first();
     }

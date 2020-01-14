@@ -39,6 +39,11 @@ class Blueprint
     protected $nav;
 
     /**
+     * @var string
+     */
+    protected $model;
+
+    /**
      * @var bool
      */
     protected $pivot = false;
@@ -56,6 +61,13 @@ class Blueprint
     public function __construct()
     {
         $this->fields = collect();
+    }
+
+    public function model(string $model): Blueprint
+    {
+        $this->model = $model;
+
+        return $this;
     }
 
     public function id()
@@ -108,35 +120,35 @@ class Blueprint
         return $this->fields;
     }
 
-    public function namespace($namespace): self
+    public function namespace($namespace): Blueprint
     {
         $this->namespace = $namespace;
 
         return $this;
     }
 
-    public function handle($handle): self
+    public function handle($handle): Blueprint
     {
         $this->handle = $handle;
 
         return $this;
     }
 
-    public function label(string $label): self
+    public function label(string $label): Blueprint
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function nav($nav): self
+    public function nav($nav): Blueprint
     {
         $this->nav = $nav;
 
         return $this;
     }
 
-    public function identifier(string $identifier)
+    public function identifier(string $identifier): Blueprint
     {
         [$vendor, $addon, $this->handle] = explode('.', $identifier);
 
@@ -260,5 +272,15 @@ class Blueprint
     public function getKey(): string
     {
         return $this->key;
+    }
+
+    public function getModel(): ?string
+    {
+        return $this->model;
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->label;
     }
 }

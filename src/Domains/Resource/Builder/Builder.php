@@ -109,13 +109,14 @@ class Builder
         // build config from blue print
         //
         $config = ResourceConfig::make([
-                'name'         => $this->blueprint->getHandle(),
+                'label'        => $this->blueprint->getLabel(),
                 'handle'       => $this->blueprint->getHandle(),
                 'namespace'    => $this->blueprint->getNamespace(),
                 'driver'       => $this->blueprint->getDriver()->toArray(),
                 'nav'          => $this->blueprint->getNav(),
                 'resource_key' => $this->blueprint->getKey(),
                 'key_name'     => $this->blueprint->getKeyName(),
+                'model'        => $this->blueprint->getModel(),
             ]
         );
 

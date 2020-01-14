@@ -7,6 +7,7 @@ use SuperV\Platform\Domains\Resource\Builder\Builder;
 use SuperV\Platform\Domains\Resource\Builder\PrimaryKey;
 use SuperV\Platform\Domains\Resource\Driver\DriverInterface;
 use SuperV\Platform\Domains\Resource\Field\Types\Select\Blueprint as SelectTypeBlueprint;
+use Tests\Platform\Domains\Resource\Fixtures\Models\TestPostModel;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
 class ResourceBlueprintTest extends ResourceTestCase
@@ -14,7 +15,10 @@ class ResourceBlueprintTest extends ResourceTestCase
     function test__creates_blueprint()
     {
         $blueprint = Builder::blueprint('sv.testing.posts', function (Blueprint $resource) {
+            $resource->label('The Posts');
             $resource->key('postkey');
+            $resource->nav('acp.blog');
+            $resource->model(TestPostModel::class);
 
             $resource->databaseDriver()
                      ->table('tbl_posts', 'default')
@@ -25,7 +29,11 @@ class ResourceBlueprintTest extends ResourceTestCase
         $this->assertInstanceOf(DriverInterface::class, $blueprint->getDriver());
 
         $this->assertEquals('sv.testing.posts', $blueprint->getIdentifier());
+        $this->assertEquals('The Posts', $blueprint->getLabel());
+        $this->assertEquals('posts', $blueprint->getHandle());
         $this->assertEquals('postkey', $blueprint->getKey());
+        $this->assertEquals('acp.blog', $blueprint->getNav());
+        $this->assertEquals(TestPostModel::class, $blueprint->getModel());
         $this->assertEquals('tbl_posts', $blueprint->getDriver()->getParam('table'));
     }
 

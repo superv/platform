@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Jobs;
 
+use SuperV\Platform\Domains\Resource\Form\FormModel;
 use SuperV\Platform\Domains\Resource\Form\FormRepository;
 use SuperV\Platform\Domains\Resource\ResourceModel;
 use SuperV\Platform\Support\Dispatchable;
@@ -16,6 +17,9 @@ class CreatePlatformResourceForms
 
         $platformResources->map(function (ResourceModel $model) {
             if ($model->getIdentifier() === 'sv.platform.users') {
+                return;
+            }
+            if (FormModel::withIdentifier($model->getIdentifier().'.forms:default')) {
                 return;
             }
             FormRepository::createForResource($model->getIdentifier());

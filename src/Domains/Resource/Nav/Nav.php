@@ -45,11 +45,6 @@ class Nav
         return $this->entry;
     }
 
-    /**
-     * @param                $sectionHandle
-     * @param string|Closure $title
-     * @param null           $url
-     */
     public static function building($sectionHandle, $title, $url = null)
     {
         if ($title instanceof Closure) {
