@@ -6,6 +6,7 @@ use Closure;
 use Event;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Resource\Events\ResourceConfigResolvedEvent as ResolvedEvent;
+use SuperV\Platform\Domains\Resource\ResourceConfig;
 use SuperV\Platform\Domains\Resource\ResourceConfig as Config;
 
 /**
@@ -52,21 +53,6 @@ class ResourceConfigTest extends ResourceTestCase
         $this->assertColumnExists('tbl_users', 'id');
     }
 
-    function __uuid()
-    {
-        // disabled: static issues
-
-        $res = $this->create('tbl_users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->hasUuid();
-        });
-
-        $this->assertColumnExists('tbl_users', 'uuid');
-        $this->assertTrue($res->config()->hasUuid());
-
-        $user = $res->create([]);
-        $this->assertNotNull($user->uuid);
-    }
 
     function test__saves_resource_key()
     {
@@ -124,6 +110,20 @@ class ResourceConfigTest extends ResourceTestCase
 
         $this->assertEquals('SuperV Customers', $customers->getLabel());
         $this->assertEquals('Customer', $customers->getSingularLabel());
+    }
+
+    function test__can_update_database_record()
+    {
+        $customers = $this->create('customers', function (Blueprint $table, Config $config) {
+            $table->increments('id');
+
+            $config->label('Customers');
+        });
+
+        $customers->config()->label('Clients');
+        $customers->config()->save();
+
+        $this->assertEquals('Clients', ResourceConfig::find('sv.testing.customers')->getLabel());
     }
 
     function test__finds_by_resource_handle()

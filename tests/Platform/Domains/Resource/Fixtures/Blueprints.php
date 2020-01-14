@@ -20,8 +20,8 @@ class Blueprints
         $clients = $this->create('tbl_clients',
             function (Blueprint $table, Config $config) use ($callback) {
                 $config->resourceKey('client');
-                $config->setNamespace('sv.testing');
-                $config->setName('clients');
+                $config->namespace('sv.testing');
+                $config->handle('clients');
 
                 $table->increments('id');
                 $table->string('name')->entryLabel();
@@ -44,8 +44,8 @@ class Blueprints
             function (Blueprint $table, Config $config) use ($callback) {
                 $config->resourceKey('user');
                 $config->label('Users');
-                $config->setNamespace('sv.testing');
-                $config->setName('users');
+                $config->namespace('sv.testing');
+                $config->handle('users');
 
                 $table->increments('id');
                 $table->string('name')->entryLabel();
@@ -91,8 +91,8 @@ class Blueprints
     {
         return $this->create('comments', function (Blueprint $table, Config $config) use ($namespace) {
             $config->label('Comments');
-            $config->setName('comments');
-            $config->setNamespace($namespace);
+            $config->handle('comments');
+            $config->namespace($namespace);
 
             $table->increments('id');
             $table->string('comment');
@@ -107,8 +107,8 @@ class Blueprints
     {
         return $this->create('tbl_posts', function (Blueprint $table, Config $config) use ($namespace) {
             $config->label('Posts');
-            $config->setName('posts');
-            $config->setNamespace($namespace);
+            $config->handle('posts');
+            $config->namespace($namespace);
 
             $table->increments('id');
             $table->string('title')->entryLabel();
@@ -123,8 +123,8 @@ class Blueprints
         return $this->create('tbl_categories',
             function (Blueprint $table, Config $config) use ($callback) {
                 $config->label('Categories');
-                $config->setName('categories');
-                $config->setNamespace('sv.testing');
+                $config->handle('categories');
+                $config->namespace('sv.testing');
 
                 $table->increments('id');
                 $table->string('title')->entryLabel();
@@ -142,8 +142,8 @@ class Blueprints
         return $this->create('tbl_orders',
             function (Blueprint $table, Config $config) use ($namespace) {
                 $config->label('Orders');
-                $config->setName('orders');
-                $config->setNamespace($namespace);
+                $config->handle('orders');
+                $config->namespace($namespace);
 
                 $table->increments('id');
                 $table->number('number')->entryLabel();
@@ -159,8 +159,8 @@ class Blueprints
     {
         $roles = $this->create('tbl_roles', function (Blueprint $table, Config $config) use ($namespace) {
             $config->resourceKey('role');
-            $config->setName('roles');
-            $config->setNamespace($namespace);
+            $config->handle('roles');
+            $config->namespace($namespace);
 
             $table->increments('id');
             $table->string('title')->unique()->entryLabel();
@@ -175,8 +175,8 @@ class Blueprints
     public function actions($namespace = 'sv.testing')
     {
         $actions = $this->create('tbl_actions', function (Blueprint $table, Config $config) use ($namespace) {
-            $config->setNamespace($namespace);
-            $config->setName('actions');
+            $config->namespace($namespace);
+            $config->handle('actions');
             $table->increments('id');
             $table->string('action')->unique()->entryLabel();
 
@@ -202,8 +202,8 @@ class Blueprints
     public function groups($namespace = 'sv.testing')
     {
         $groups = $this->create('tbl_groups', function (Blueprint $table, Config $config) use ($namespace) {
-            $config->setNamespace($namespace);
-            $config->setName('groups');
+            $config->namespace($namespace);
+            $config->handle('groups');
             $table->increments('id');
             $table->string('title');
         });

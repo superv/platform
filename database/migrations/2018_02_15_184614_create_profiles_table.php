@@ -11,7 +11,7 @@ class CreateProfilesTable extends Migration
     {
         Schema::create('sv_profiles', function (Blueprint $table, Config $config) {
             $config->label('User Profiles');
-            $config->setName('profiles');
+            $config->handle('profiles');
 
             $table->increments('id');
             $table->belongsTo('users', 'user');

@@ -12,8 +12,6 @@ class ResourceConfig
 {
     use Hydratable;
 
-    protected $name;
-
     protected $handle;
 
     protected $namespace;
@@ -61,14 +59,21 @@ class ResourceConfig
         }
     }
 
+    public function save()
+    {
+        $resourceEntry = ResourceModel::withIdentifier($this->getIdentifier());
+        $resourceEntry->setAttribute('config', $this->toArray());
+        $resourceEntry->save();
+    }
+
     public function getResourceKey()
     {
         if ($this->resourceKey) {
             return $this->resourceKey;
         }
 
-        if ($this->getName()) {
-            return str_singular($this->getName());
+        if ($this->getHandle()) {
+            return str_singular($this->getHandle());
         }
 
         return null;
@@ -83,12 +88,12 @@ class ResourceConfig
 
     public function getIdentifier()
     {
-        return $this->getNamespace().'.'.$this->getName();
+        return $this->getNamespace().'.'.$this->getHandle();
     }
 
     public function setIdentifier($identifier)
     {
-        [$vendor, $addon, $this->name] = explode('.', $identifier);
+        [$vendor, $addon, $this->handle] = explode('.', $identifier);
 
         $this->namespace = $vendor.'.'.$addon;
         return $this;
@@ -149,7 +154,7 @@ class ResourceConfig
 
     public function getLabel()
     {
-        return $this->label ?? ucwords(str_replace('_', ' ', $this->getName()));
+        return $this->label ?? ucwords(str_replace('_', ' ', $this->getHandle()));
     }
 
     public function getModel()
@@ -186,18 +191,6 @@ class ResourceConfig
     public function getEntryLabelField()
     {
         return $this->entryLabelField;
-    }
-
-    public function hasUuid(): bool
-    {
-        return $this->hasUuid ?? false;
-    }
-
-    public function setHasUuid(bool $hasUuid): ResourceConfig
-    {
-        $this->hasUuid = $hasUuid;
-
-        return $this;
     }
 
     public function nav($nav)
@@ -297,27 +290,11 @@ class ResourceConfig
         return $this;
     }
 
-    public function setNamespace($namespace): self
+    public function handle($handle): self
     {
-        return $this->namespace($namespace);
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function setName($name): self
-    {
-        $this->name = $name;
-        $this->handle = $name;
+        $this->handle = $handle;
 
         return $this;
-    }
-
-    public function name($name)
-    {
-        return $this->setName($name);
     }
 
     public function getUserTypeConfig()

@@ -43,7 +43,7 @@ class PlatformBlueprints
         foreach (PlatformBlueprints::$resources as $resource => $table) {
             Schema::run($table,
                 function (Blueprint $table, Config $config) use ($resource) {
-                    $config->setName($resource);
+                    $config->handle($resource);
                     PlatformBlueprints::{$resource}($table, $config);
                 }
             );
@@ -71,7 +71,7 @@ class PlatformBlueprints
 
         if ($table instanceof Blueprint) {
             $config->label('Namespaces');
-            $config->setName('namespaces');
+            $config->handle('namespaces');
 //            $config->nav('acp.platform.system');
 
             $table->select('type', ['resource', 'form', 'field'])->showOnIndex()->addFlag('filter');

@@ -36,7 +36,7 @@ trait ResourceTestHelpers
     {
         $res = $this->create('any_table', function (Blueprint $table, ResourceConfig $config) {
             $config->label('Any Resource');
-            $config->setNamespace('sv.testing');
+            $config->namespace('sv.testing');
             $table->increments('id');
 
             $table->string('title')->entryLabel();
@@ -117,7 +117,7 @@ trait ResourceTestHelpers
                 $resource,
                 $namespace
             ) {
-                $config->setNamespace($namespace);
+                $config->namespace($namespace);
                 $table->increments('id');
 
                 foreach ($columns as $key => $column) {

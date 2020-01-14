@@ -22,7 +22,7 @@ class CreateNavigation
     public function create($nav, $resourceId)
     {
         if (is_string($nav)) {
-            Section::createFromString($handle = $nav.'.'.$this->config->getName());
+            Section::createFromString($handle = $nav.'.'.$this->config->getHandle());
             $section = Section::get($handle);
             $section->update([
                 'resource_id' => $resourceId,

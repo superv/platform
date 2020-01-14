@@ -21,7 +21,7 @@ class CreateAuthorizationTables extends Migration
 
         $this->create('sv_auth_roles', function (Blueprint $table, Config $config) {
             $config->label('Roles');
-            $config->setName('auth_roles');
+            $config->handle('auth_roles');
             $config->model(Role::class);
             $config->nav('acp.platform.auth');
 
@@ -52,7 +52,7 @@ class CreateAuthorizationTables extends Migration
 
         $this->create('sv_auth_actions', function (Blueprint $table, Config $config) {
             $config->label('Actions');
-            $config->setName('auth_actions');
+            $config->handle('auth_actions');
             $config->model(Action::class);
             $config->nav('acp.platform.auth');
 

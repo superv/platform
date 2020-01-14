@@ -12,7 +12,7 @@ class CreateMediaTable extends Migration
         Schema::create('sv_media', function (Blueprint $table, Config $config) {
             $config->label('Media');
 
-            $config->setName('media');
+            $config->handle('media');
 
             $table->increments('id');
             $table->morphTo('owner');
