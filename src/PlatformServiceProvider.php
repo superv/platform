@@ -26,10 +26,12 @@ use SuperV\Platform\Domains\Addon\Listeners\AddonInstalledListener;
 use SuperV\Platform\Domains\Auth\Contracts\User;
 use SuperV\Platform\Domains\Database\Migrations\MigrationServiceProvider;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
-use SuperV\Platform\Domains\Resource\Extension\RegisterExtensions;
+use SuperV\Platform\Domains\Port\PortDetectedEvent;
 use SuperV\Platform\Domains\Resource\Hook\HookManager;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Exceptions\PlatformExceptionHandler;
+use SuperV\Platform\Listeners\PortDetectedListener;
+use SuperV\Platform\Listeners\RouteMatchedListener;
 use SuperV\Platform\Providers\BaseServiceProvider;
 
 class PlatformServiceProvider extends BaseServiceProvider
@@ -55,10 +57,10 @@ class PlatformServiceProvider extends BaseServiceProvider
     ];
 
     protected $listeners = [
-        'Illuminate\Routing\Events\RouteMatched'         => 'SuperV\Platform\Listeners\RouteMatchedListener',
-        'SuperV\Platform\Domains\Port\PortDetectedEvent' => 'SuperV\Platform\Listeners\PortDetectedListener',
-        AddonInstalledEvent::class                       => AddonInstalledListener::class,
-        AddonBootedEvent::class                          => AddonBootedListener::class,
+        \Illuminate\Routing\Events\RouteMatched::class => RouteMatchedListener::class,
+        PortDetectedEvent::class                       => PortDetectedListener::class,
+        AddonInstalledEvent::class                     => AddonInstalledListener::class,
+        AddonBootedEvent::class                        => AddonBootedListener::class,
     ];
 
     protected $commands = [

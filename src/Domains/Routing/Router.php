@@ -28,9 +28,6 @@ class Router
 
     public function portFilesIn($path, $port = null)
     {
-//        dump($path);
-//        $path = sv_real_path($path); //disabled due to problems on windows
-
         $portFiles = [];
 
         /** file based routes */

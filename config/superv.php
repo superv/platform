@@ -69,7 +69,7 @@ return [
     */
 
     'ports' => [
-        'default' => 'SuperV\Platform\Domains\Port\ApiPort',
+        'default' => SuperV\Platform\Domains\Port\ApiPort::class,
     ],
 
     /*

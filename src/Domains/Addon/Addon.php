@@ -2,10 +2,11 @@
 
 namespace SuperV\Platform\Domains\Addon;
 
+use SuperV\Platform\Domains\Addon\Contracts\AddonInterface;
 use SuperV\Platform\Domains\Addon\Events\AddonBootedEvent;
 use SuperV\Platform\Support\Concerns\FiresCallbacks;
 
-class Addon
+class Addon implements AddonInterface
 {
     use FiresCallbacks;
 

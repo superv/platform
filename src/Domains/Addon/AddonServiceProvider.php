@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Addon;
 
+use SuperV\Platform\Domains\Addon\Contracts\AddonInterface;
 use SuperV\Platform\Domains\Database\Migrations\Scopes as MigrationScopes;
 use SuperV\Platform\Domains\Routing\Router;
 use SuperV\Platform\Providers\BaseServiceProvider;
@@ -9,11 +10,11 @@ use SuperV\Platform\Providers\BaseServiceProvider;
 class AddonServiceProvider extends BaseServiceProvider
 {
     /**
-     * @var \SuperV\Platform\Domains\Addon\Addon
+     * @var \SuperV\Platform\Domains\Addon\Contracts\AddonInterface
      */
     protected $addon;
 
-    public function setAddon(Addon $addon)
+    public function setAddon(AddonInterface $addon)
     {
         $this->addon = $addon;
 
