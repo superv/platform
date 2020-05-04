@@ -45,9 +45,10 @@ class Blueprint extends LaravelBlueprint
         // the resource blueprint to each column
         $resourceConfig = $this->builder ? $this->builder->resource() : ResourceConfig::make();
         $this->columns[] = $column = new ColumnDefinition(
-            $resourceConfig,
             array_merge(compact('type', 'name'), $parameters)
         );
+
+        $column->setResourceConfig($resourceConfig);
 
         return $column;
     }
@@ -89,7 +90,6 @@ class Blueprint extends LaravelBlueprint
         $this->applyPostBuildCallbacks();
 
         if (! $this->builder->justRun) {
-
             parent::build($connection, $grammar);
         }
 

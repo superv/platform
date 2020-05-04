@@ -43,6 +43,6 @@ class MigrationCreatorTest extends TestCase
      */
     protected function creator()
     {
-        return app(MigrationCreator::class);
+        return new MigrationCreator(app('files'), \Platform::fullPath('resources/stubs'));
     }
 }

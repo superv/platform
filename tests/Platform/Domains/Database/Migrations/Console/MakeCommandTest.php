@@ -12,21 +12,6 @@ class MakeCommandTest extends TestCase
 
     protected $tmpDirectory = 'test-migrations';
 
-//    /** @test */
-//    function calls_creator_with_proper_arguments()
-//    {
-//        $command = new MigrateMakeCommand(
-//            $creator = m::mock(MigrationCreator::class),
-//            m::mock('Illuminate\Support\Composer')->shouldIgnoreMissing()
-//        );
-//        $command->setLaravel($this->app);
-//
-//        $creator->shouldReceive('setAddon')->with('test-addon')->once();
-//        $creator->shouldReceive('create')->once();
-//
-//        $this->runCommand($command, ['name' => 'CreateMigrationMake', '--namespace' => 'test-addon']);
-//    }
-
     /**
      * @test
      * @group filesystem

@@ -29,6 +29,7 @@
         "php": "^7.4",
         "superv/composer-plugin": "^0.2",
         "laravel/framework": "^7.0",
+        "doctrine/dbal": "^2.9",
         "fruitcake/laravel-cors": "^1.0",
         "tymon/jwt-auth": "^1.0",
         "nicmart/string-template": "~0.1",

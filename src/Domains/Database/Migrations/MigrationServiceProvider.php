@@ -50,7 +50,7 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
     protected function registerCreator()
     {
         $this->app->singleton('migration.creator', function ($app) {
-            return new MigrationCreator($app['files']);
+            return new MigrationCreator($app['files'], \Platform::fullPath('resources/stubs'));
         });
     }
 

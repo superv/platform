@@ -31,9 +31,9 @@ class MigrateCommandTest extends TestCase
 
         Scopes::register('test-addon', __DIR__.'/../migrations/baz');
 
-        $migrator->shouldReceive('repositoryExists')->once()->andReturn(true);
+//        $migrator->shouldReceive('repositoryExists')->once()->andReturn(true);
         $migrator->shouldReceive('setNamespace')->with('test-addon')->once();
-        $migrator->shouldReceive('setOutput')->once()->andReturnSelf();
+//        $migrator->shouldReceive('setOutput')->once()->andReturnSelf();
 
         $this->runCommand($migrateCommand, ['--namespace' => 'test-addon']);
     }

@@ -33,7 +33,7 @@ class UrlGeneratorTest extends TestCase
     {
         $this->setUpCustomPort('api.superv.io', 'v2');
         $this->makeRequest('users');
-        $url = app(UrlGenerator::class);
+        $url = sv_url();
 
 
         $this->assertEquals('http://api.superv.io/v2/users', $url->full());

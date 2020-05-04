@@ -74,17 +74,19 @@ class RouteRegistrarTest extends TestCase
         $webRoute = $getRoutes['superv.ioweb/foo'];
         $this->assertEquals('web', $webRoute->getAction('port'));
         $this->assertEquals('superv.io', $webRoute->getDomain());
-        $this->assertEquals('/', $webRoute->getPrefix());
+//        $this->assertEquals('/', $webRoute->getPrefix());
+        $this->assertNull($webRoute->getPrefix());
 
         $acpRoute = $getRoutes['superv.ioacp/acp/foo'];
         $this->assertEquals('acp', $acpRoute->getAction('port'));
         $this->assertEquals('superv.io', $acpRoute->getDomain());
-        $this->assertEquals('/acp', $acpRoute->getPrefix());
+        $this->assertEquals('acp', $acpRoute->getPrefix());
 
         $apiRoute = $getRoutes['api.superv.ioapi/foo'];
         $this->assertEquals('api', $apiRoute->getAction('port'));
         $this->assertEquals('api.superv.io', $apiRoute->getDomain());
-        $this->assertEquals('/', $apiRoute->getPrefix());
+//        $this->assertEquals('/', $apiRoute->getPrefix());
+        $this->assertNull($apiRoute->getPrefix());
     }
 
     function test__registers_global_routes()

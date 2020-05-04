@@ -20,7 +20,7 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
     /** @var \SuperV\Platform\Domains\Resource\ResourceConfig */
     protected $resourceConfig;
 
-    public function __construct(ResourceConfig $config, $attributes = [])
+    public function __construct($attributes = [])
     {
         foreach ($attributes as $key => $value) {
             $this->attributes[$key] = $value;
@@ -29,8 +29,6 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
         $this->attributes['config'] = [];
         $this->attributes['rules'] = [];
         $this->attributes['flags'] = [];
-
-        $this->resourceConfig = $config;
     }
 
     public function entryLabel()
@@ -218,5 +216,12 @@ class ColumnDefinition extends \Illuminate\Database\Schema\ColumnDefinition
     {
         $visibility = new Visibility();
         $callback($visibility);
+    }
+
+    public function setResourceConfig(\SuperV\Platform\Domains\Resource\ResourceConfig $resourceConfig
+    ): ColumnDefinition {
+        $this->resourceConfig = $resourceConfig;
+
+        return $this;
     }
 }

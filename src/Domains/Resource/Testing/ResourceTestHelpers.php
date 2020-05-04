@@ -4,8 +4,8 @@ namespace SuperV\Platform\Domains\Resource\Testing;
 
 use Closure;
 use Current;
-use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Support\Str;
+use Illuminate\Testing\TestResponse;
 use SuperV\Platform\Domains\Database\Model\Contracts\EntryContract;
 use SuperV\Platform\Domains\Database\Schema\Blueprint;
 use SuperV\Platform\Domains\Database\Schema\Schema;

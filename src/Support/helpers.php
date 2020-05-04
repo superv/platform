@@ -302,7 +302,9 @@ function sv_filename($path)
 
 function sv_url($path = null)
 {
-    $generator = app(UrlGenerator::class);
+    $app = app();
+    $routes = $app['router']->getRoutes();
+    $generator = new UrlGenerator($routes, $app['request']);
     if (is_null($path)) {
         return $generator;
     }
