@@ -2,9 +2,9 @@
 
 namespace SuperV\Platform\Exceptions;
 
-use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Throwable;
 
 class PlatformExceptionHandler extends ExceptionHandler
 {
@@ -25,26 +25,12 @@ class PlatformExceptionHandler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    /**
-     * Report or log an exception.
-     * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
-     *
-     * @param \Exception $exception
-     * @return void
-     */
-    public function report(Exception $exception)
+    public function report(Throwable $exception)
     {
         parent::report($exception);
     }
 
-    /**
-     * Render an exception into an HTTP response.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \Exception               $exception
-     * @return \Illuminate\Http\Response
-     */
-    public function render($request, Exception $exception)
+    public function render($request, Throwable $exception)
     {
         if ($exception instanceof PlatformException) {
             return $exception->toResponse();
@@ -66,13 +52,10 @@ class PlatformExceptionHandler extends ExceptionHandler
         return parent::render($request, $exception);
     }
 
-    protected function ___convertExceptionToArray(Exception $e)
+    protected function convertExceptionToArray(Throwable $e)
     {
-//        if (! $this->isHttpException($e) || Current::envIsLocal()) {
-//            PlatformException::debug(['exception' => get_class($e)]);
-//        }
-
-        return PlatformException::debug(parent::convertExceptionToArray($e));
+        return parent::convertExceptionToArray($e);
+//        return PlatformException::debug(parent::convertExceptionToArray($e));
     }
 
     /**
