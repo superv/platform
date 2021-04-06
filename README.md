@@ -3,9 +3,9 @@
 
 SuperV is a Laravel package that provides an SPA Admin Panel based on your migration files, without generating or requiring additional files.
 
-Please visit https://docs.superv.io for documentation.
+Please visit https://superv.github.io for documentation.
 
-Click [here](https://docs.superv.io/tutorials/videos.html) for video tutorials.
+Click [here](https://superv.github.io/tutorials/videos.html) for video tutorials.
 
 ## Installation
 
