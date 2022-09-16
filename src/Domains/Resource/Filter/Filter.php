@@ -90,7 +90,7 @@ abstract class Filter implements FilterContract, ProvidesField
             return $this->apply($query, $value);
         }
 
-        if (str_contains($this->getIdentifier(), '.')) {
+        if (\Str::contains($this->getIdentifier(), '.')) {
             return $this->applyRelationQuery($query, $this->getIdentifier(), $value);
         }
 

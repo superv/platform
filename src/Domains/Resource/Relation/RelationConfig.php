@@ -261,9 +261,9 @@ class RelationConfig
 
     public function pivotTable(string $pivotTable, string $pivotIdentifier = null): self
     {
-        if (str_contains($pivotTable, '.')) {
+        if (\Str::contains($pivotTable, '.')) {
             $pivotIdentifier = $pivotTable;
-            list($this->pivotNamespace, $pivotTable) = explode('.', $pivotTable);
+            [$this->pivotNamespace, $pivotTable] = explode('.', $pivotTable);
         }
         $this->pivotTable = $pivotTable;
         $this->pivotIdentifier = $pivotIdentifier;

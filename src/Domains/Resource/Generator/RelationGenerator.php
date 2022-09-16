@@ -48,7 +48,7 @@ class RelationGenerator
     {
         $codeBlock = $this->getCodeBlockForMethod($method);
 
-        if (! str_contains($codeBlock, ['$this->hasMany(', '$this->belongsTo('])) {
+        if (! \Str::contains($codeBlock, ['$this->hasMany(', '$this->belongsTo('])) {
             return null;
         }
 

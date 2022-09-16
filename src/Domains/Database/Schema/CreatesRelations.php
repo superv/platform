@@ -100,8 +100,8 @@ trait CreatesRelations
 
     private function splitRelated($related)
     {
-        if (str_contains($related, '.')) {
-            list($namespace, $related) = explode('.', $related);
+        if (\Str::contains($related, '.')) {
+            [$namespace, $related] = explode('.', $related);
         } else {
             $namespace = $this->resourceConfig()->getNamespace();
         }

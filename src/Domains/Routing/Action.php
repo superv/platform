@@ -34,8 +34,8 @@ class Action
 
     public function build()
     {
-        if (str_contains($this->uri, '@')) {
-            list($this->verb, $this->uri) = explode('@', $this->uri);
+        if (\Str::contains($this->uri, '@')) {
+            [$this->verb, $this->uri] = explode('@', $this->uri);
         }
 
         $this->portify();
@@ -99,7 +99,7 @@ class Action
         }
 
         $this->domain = $domain = $this->port->hostname();
-        if (str_contains($domain, ':')) {
+        if (\Str::contains($domain, ':')) {
             $this->domain = explode(':', $domain)[0];
         }
 

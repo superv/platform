@@ -22,7 +22,7 @@ class Media extends ResourceEntry
 
     public function getBasename()
     {
-        return ! str_contains($this->filename, '.') ? $this->filename.'.'.$this->extension
+        return ! \Str::contains($this->filename, '.') ? $this->filename.'.'.$this->extension
             : $this->filename;
     }
 

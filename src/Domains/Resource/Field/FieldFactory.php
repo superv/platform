@@ -66,7 +66,7 @@ class FieldFactory
             $this->params['name'] = $this->params['identifier'];
         }
 
-        if (str_contains($this->params['type'], '\\') && class_exists($this->params['type'])) {
+        if (\Str::contains($this->params['type'], '\\') && class_exists($this->params['type'])) {
             $fieldTypeClass = $this->params['type'];
         } else {
             $fieldTypeClass = FieldType::resolveTypeClass($this->params['type']);

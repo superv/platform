@@ -60,8 +60,8 @@ trait ResourceTestHelpers
      */
     protected function create($table, Closure $callback = null, $connection = null)
     {
-        if (str_contains($table, '.')) {
-            list($namespace, $table) = explode('.', $table);
+        if (\Str::contains($table, '.')) {
+            [$namespace, $table] = explode('.', $table);
         } else {
             $namespace = 'testing';
         }
@@ -104,8 +104,8 @@ trait ResourceTestHelpers
      */
     protected function makeResource($table, array $columns = ['name'], array $resource = [])
     {
-        if (str_contains($table, '.')) {
-            list($namespace, $table) = explode('.', $table);
+        if (\Str::contains($table, '.')) {
+            [$namespace, $table] = explode('.', $table);
         }
         $identifier = ($namespace ?? 'platform').'.'.$table;
         $this->makeResourceModel($identifier, $columns, $resource);
@@ -116,8 +116,8 @@ trait ResourceTestHelpers
     /** @return \SuperV\Platform\Domains\Resource\ResourceModel */
     protected function makeResourceModel($table, array $columns, array $resource = [])
     {
-        if (str_contains($table, '.')) {
-            list($namespace, $table) = explode('.', $table);
+        if (\Str::contains($table, '.')) {
+            [$namespace, $table] = explode('.', $table);
         } else {
             $namespace = 'platform';
         }
