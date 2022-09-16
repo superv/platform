@@ -34,7 +34,7 @@
         "barryvdh/laravel-cors": "^0.11",
         "tymon/jwt-auth": "dev-develop",
         "nicmart/string-template": "~0.1",
-        "wikimedia/composer-merge-plugin": "^1.4"
+        "wikimedia/composer-merge-plugin": "^2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -46,7 +46,11 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "superv/composer-plugin": true,
+            "wikimedia/composer-merge-plugin": true
+        }
     },
     "prefer-stable": true,
     "minimum-stability": "dev",
