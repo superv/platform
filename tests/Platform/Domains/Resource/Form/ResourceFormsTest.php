@@ -85,6 +85,7 @@ class ResourceFormsTest extends ResourceTestCase
         $avatar = $fields->get('avatar');
         $this->assertEquals('sv_file_field', $avatar['component']);
         $this->assertNull($avatar['value'] ?? null);
+        $this->assertNotNull(Media::first());
         $this->assertEquals(Media::first()->getUrl(), $avatar['image_url'] ?? null);
         $this->assertFalse(isset($avatar['config']));
 

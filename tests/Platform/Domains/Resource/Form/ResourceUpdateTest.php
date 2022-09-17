@@ -4,6 +4,7 @@ namespace Tests\Platform\Domains\Resource\Form;
 
 use Storage;
 use SuperV\Platform\Domains\Media\Media;
+use SuperV\Platform\Exceptions\ValidationException;
 use Tests\Platform\Domains\Resource\Http\Controllers\ResponseHelper;
 use Tests\Platform\Domains\Resource\ResourceTestCase;
 
@@ -28,9 +29,13 @@ class ResourceUpdateTest extends ResourceTestCase
             'email' => 'ali@superv.io',
             'group' => 2,
         ];
-//        config(['app.debug' => true]);
-        $response = $this->postJsonUser($user->router()->updateForm(), $post);
-//        dd($response->decodeResponseJson());
+        //  config(['app.debug' => true]);
+        try {
+            $response = $this->postJsonUser($user->router()->updateForm(), $post);
+        } catch (ValidationException $e) {
+            $this->fail("Validation failed..");
+        }
+
         $response->assertOk();
 
         $user = $user->fresh();
@@ -45,7 +50,8 @@ class ResourceUpdateTest extends ResourceTestCase
         $users = $this->blueprints()->users();
         $user = $users->fake();
 
-        $this->postJsonUser($user->router()->updateForm(), ['name' => 'Ali'])->assertOk();
+        $response = $this->postJsonUser($user->router()->updateForm(), ['name' => 'Ali']);
+        $response->assertOk();
         $this->postJsonUser($user->router()->updateForm(), ['email' => 'ali@superv.io'])->assertOk();
     }
 
