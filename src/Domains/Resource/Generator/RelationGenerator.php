@@ -53,13 +53,13 @@ class RelationGenerator
     {
         $codeBlock = $this->getCodeBlockForMethod($method);
 
-        if (! str_contains($codeBlock, ['hasMany(',
-                                        'belongsTo(',
-                                        'hasOne(',
-                                        'morphOne(',
-                                        'morphMany(',
-                                        'morphToMany(',
-                                        'belongsToMany('])) {
+        if (! \Str::contains($codeBlock, ['hasMany(',
+                                          'belongsTo(',
+                                          'hasOne(',
+                                          'morphOne(',
+                                          'morphMany(',
+                                          'morphToMany(',
+                                          'belongsToMany('])) {
             return null;
         }
 

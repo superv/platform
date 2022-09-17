@@ -31,7 +31,7 @@ class Ident
     public function parent(): ?Ident
     {
         if (count($nodes = $this->getNodes()) === 2) {
-            return str_contains($this->identifier, ':') ? static::make(explode(':', $this->identifier)[0]) : null;
+            return \Str::contains($this->identifier, ':') ? static::make(explode(':', $this->identifier)[0]) : null;
         }
 
         // pop the type node
@@ -83,7 +83,7 @@ class Ident
     public function getType(): ?string
     {
         if ($this->getNodeCount() === 2) {
-            return str_contains($this->identifier, ':') ? 'entries' : 'resources';
+            return \Str::contains($this->identifier, ':') ? 'entries' : 'resources';
         }
 
         [$type,] = $this->getTypeNode();
@@ -147,7 +147,7 @@ class Ident
         $nodes = $this->getNodes();
 
         $type = count($nodes) === 2 ? $this->identifier : array_pop($nodes);
-        if (str_contains($type, ':')) {
+        if (\Str::contains($type, ':')) {
             [$type, $typeId] = explode(':', $type);
         }
 

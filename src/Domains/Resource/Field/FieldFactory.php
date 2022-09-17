@@ -95,7 +95,7 @@ class FieldFactory
             return;
         }
 
-        if (str_contains($type, '\\') && class_exists($type)) {
+        if (\Str::contains($type, '\\') && class_exists($type)) {
             $fieldTypeClass = $type;
         } else {
             $fieldTypeClass = FieldType::resolveTypeClass($type);

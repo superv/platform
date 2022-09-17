@@ -100,7 +100,7 @@ trait CreatesRelations
 
     private function splitRelated($related)
     {
-        if (str_contains($related, '.')) {
+        if (\Str::contains($related, '.')) {
             [$vendor, $addon, $related] = explode('.', $related);
             $namespace = $vendor.'.'.$addon;
         } else {

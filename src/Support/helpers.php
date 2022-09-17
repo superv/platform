@@ -102,7 +102,7 @@ function get_callers($limit = 10): Collection
         if (! $class = $trace['class'] ?? '') {
             return $function;
         }
-        if (str_contains($class, 'Illuminate\Support')) {
+        if (\Str::contains($class, 'Illuminate\Support')) {
             return null;
         }
 
@@ -403,13 +403,6 @@ if (! function_exists('snake_case')) {
     function snake_case($value)
     {
         return Str::snake($value);
-    }
-}
-
-if (! function_exists('str_contains')) {
-    function str_contains($haystack, $needles)
-    {
-        return Str::contains($haystack, $needles);
     }
 }
 

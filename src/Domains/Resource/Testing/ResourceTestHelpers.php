@@ -54,7 +54,7 @@ trait ResourceTestHelpers
      */
     protected function create($table, Closure $callback = null, $connection = null)
     {
-        if (str_contains($table, '.')) {
+        if (\Str::contains($table, '.')) {
             [$vendor, $addon, $table] = explode('.', $table);
             $namespace = $vendor.'.'.$addon;
         } else {
@@ -92,7 +92,7 @@ trait ResourceTestHelpers
      */
     protected function makeResource($table, array $columns = ['name'], array $resource = [])
     {
-        if (str_contains($table, '.')) {
+        if (\Str::contains($table, '.')) {
             [$vendor, $addon, $table] = explode('.', $table);
             $namespace = $vendor.'.'.$addon;
         }
@@ -105,7 +105,7 @@ trait ResourceTestHelpers
     /** @return \SuperV\Platform\Domains\Resource\ResourceModel */
     protected function makeResourceModel($table, array $columns, array $resource = [])
     {
-        if (str_contains($table, '.')) {
+        if (\Str::contains($table, '.')) {
             [$vendor, $addon, $table] = explode('.', $table);
             $namespace = $vendor.'.'.$addon;
         } else {
@@ -175,7 +175,7 @@ trait ResourceTestHelpers
 
     protected function makeField(string $handle = 'foo', $type = 'text', array $config = []): FieldInterface
     {
-        if (str_contains($handle, '.')) {
+        if (\Str::contains($handle, '.')) {
             $identifier = $handle;
             $handle = sv_ident($identifier)->getLastNode();
         } else {

@@ -177,7 +177,7 @@ class ResourceModel extends Entry implements ProvidesFields
 
     public static function withIdentifier($identifier): ?self
     {
-//        if (! str_contains($identifier, '.res.')) {
+//        if (! \Str::contains($identifier, '.res.')) {
 //            $identifier = str_replace_last('.', '.res.', $identifier);
 //        }
 

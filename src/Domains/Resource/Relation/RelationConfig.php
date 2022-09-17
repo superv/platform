@@ -261,7 +261,7 @@ class RelationConfig
 
     public function pivotTable(string $pivotTable, string $pivotIdentifier = null): self
     {
-        if (str_contains($pivotTable, '.')) {
+        if (\Str::contains($pivotTable, '.')) {
             $pivotIdentifier = $pivotTable;
             [$vendor, $addon, $pivotTable] = explode('.', $pivotTable);
             $this->pivotNamespace = $vendor.'.'.$addon;

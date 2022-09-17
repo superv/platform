@@ -17,14 +17,14 @@ class SearchFilter extends Filter
         if ($this->getIdentifier() === 'search') {
             $query->where(function ($query) use ($value) {
                 foreach ($this->getFields() as $field) {
-                    if (str_contains($field, '.')) {
+                    if (\Str::contains($field, '.')) {
                         $this->applyRelationQuery($query, $field, "%{$value}%", 'LIKE', 'orWhereHas');
                     } else {
                         $query->orWhere($field, 'LIKE', "%{$value}%");
                     }
                 }
             });
-        } elseif (str_contains($this->getIdentifier(), '.')) {
+        } elseif (\Str::contains($this->getIdentifier(), '.')) {
             $this->applyRelationQuery($query, $this->getIdentifier(), "%{$value}%", 'LIKE');
         }
     }
