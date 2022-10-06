@@ -55,14 +55,6 @@ abstract class PlatformTestCase extends OrchestraTestCase
         return __DIR__.($path ? '/'.$path : '');
     }
 
-    protected function runTestsssss()
-    {
-        try {
-            return parent::runTest();
-        } catch (ValidationException $e) {
-            PlatformException::throw($e);
-        }
-    }
 
     protected function getPackageProviders($app)
     {

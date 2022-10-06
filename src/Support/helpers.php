@@ -22,6 +22,11 @@ function ddh()
     dd('Over here! '.date('H:i:s'), func_get_args());
 }
 
+function dbg($msg)
+{
+    echo $msg.PHP_EOL;
+}
+
 function sv_debug()
 {
     PlatformException::debug(...func_get_args());
