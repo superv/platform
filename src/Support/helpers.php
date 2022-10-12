@@ -17,9 +17,11 @@ use SuperV\Platform\Support\Ident;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
 
-function ddh()
-{
-    dd('Over here! '.date('H:i:s'), func_get_args());
+if (! function_exists('ddh')) {
+    function ddh()
+    {
+        dd('Over here! '.date('H:i:s'), func_get_args());
+    }
 }
 
 function sv_debug()
@@ -112,11 +114,12 @@ function get_callers($limit = 10): Collection
     return collect([$callers]);
 }
 
-function mysql_now()
-{
-    return date('Y-m-d H:i:s');
+if (! function_exists('mysql_now')) {
+    function mysql_now()
+    {
+        return date('Y-m-d H:i:s');
+    }
 }
-
 function array_set_if_not($condition, &$array, $key, $value)
 {
     array_set_if(! $condition, $array, $key, $value);
@@ -129,21 +132,22 @@ function array_set_if($condition, &$array, $key, $value)
     }
 }
 
-function array_filter_null(array $array = [])
-{
-    return array_filter($array, function ($item) {
-        if (is_null($item)) {
-            return false;
-        }
+if (! function_exists('array_filter_null')) {
+    function array_filter_null(array $array = [])
+    {
+        return array_filter($array, function ($item) {
+            if (is_null($item)) {
+                return false;
+            }
 
-        if (is_array($item) && count($item) === 0) {
-            return false;
-        }
+            if (is_array($item) && count($item) === 0) {
+                return false;
+            }
 
-        return true;
-    });
+            return true;
+        });
+    }
 }
-
 function html_attributes($attributes)
 {
     $html = [];

@@ -72,28 +72,4 @@ class BelongsToMany extends Relation implements ProvidesTable, ProvidesField
             $relatedEntryInstance->getKeyName()
         );
     }
-
-    /**
-     * @param \SuperV\Platform\Domains\Resource\Relation\Types\BelongsToMany\Config $blueprint
-     * @param \SuperV\Platform\Domains\Resource\Driver\DriverInterface              $driver
-     */
-//    public function driverCreating(RelationBlueprint $blueprint, DriverInterface $driver)
-//    {
-//        if ($driver instanceof DatabaseDriver) {
-//            $pivot = $blueprint->getPivot();
-//            if ($pivot->shouldCreate() && ! SchemaService::resolve()->tableExists($pivot->getHandle())) {
-//                $pivot->id();
-//
-//                // Owner Field
-//                $pivot->belongsTo($blueprint->getRelated(), $pivot->getRelatedKey())
-//                      ->foreignKey($pivot->getRelatedKey().'_id');
-//
-//                // Related Field
-//                $pivot->belongsTo($blueprint->getParent()->getIdentifier(), $pivot->getForeignKey())
-//                      ->foreignKey($pivot->getForeignKey().'_id');
-//
-//                Builder::resolve()->save($pivot);
-//            }
-//        }
-//    }
 }
