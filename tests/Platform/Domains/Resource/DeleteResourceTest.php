@@ -58,6 +58,7 @@ class DeleteResourceTest extends ResourceTestCase
         $this->blueprints()->posts();
 
         DeleteResource::dispatch('sv.testing.posts');
+        $this->assertFalse(Resource::exists('sv.testing.posts'));
 
         $this->assertEquals(0, Action::query()->where('slug', 'LIKE', 'sv.testing.posts%')->count());
         $this->assertEquals(0, Action::query()->where('namespace', 'LIKE', 'sv.testing.posts%')->count());

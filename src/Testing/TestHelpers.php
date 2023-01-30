@@ -134,13 +134,6 @@ trait TestHelpers
         } else {
             $this->assertEquals($needle, array_intersect($needle, $haystack), 'Failed asserting array contains');
         }
-
-//        if (is_numeric(array_keys($needle)[0])) {
-//            $actual = array_intersect($needle, $haystack);
-//        } else {
-//            $actual = array_intersect_key($needle, $haystack);
-//        }
-//        $this->assertEquals($needle, $actual, 'Failed asserting array contains');
     }
 
     protected function assertColumnNotExists(string $table, string $column)
