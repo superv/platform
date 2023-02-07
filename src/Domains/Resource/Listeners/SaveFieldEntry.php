@@ -2,6 +2,7 @@
 
 namespace SuperV\Platform\Domains\Resource\Listeners;
 
+use Exception;
 use SuperV\Platform\Contracts\Arrayable;
 use SuperV\Platform\Domains\Database\Schema\ColumnDefinition;
 use SuperV\Platform\Domains\Resource\Field\ColumnFieldMapper;
@@ -132,7 +133,7 @@ class SaveFieldEntry
 
     protected function makeConfig(ColumnDefinition $column)
     {
-        if (method_exists($this->fieldType, 'onMakingConfig')) {
+        if ($this->fieldType &&  method_exists($this->fieldType, 'onMakingConfig')) {
             $this->fieldType->onMakingConfig($column->config);
         }
 

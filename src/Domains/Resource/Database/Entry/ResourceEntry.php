@@ -14,10 +14,6 @@ class ResourceEntry extends Entry
 {
     use Restorable;
 
-    use SerializesModels {
-        SerializesModels::__sleep as parentSleep;
-    }
-
     public function getRelationshipFromConfig($name)
     {
         if ($relation = $this->resolveRelation($name)) {
@@ -31,13 +27,6 @@ class ResourceEntry extends Entry
         }
 
         return null;
-    }
-
-    public function __sleep()
-    {
-        $this->resource = null;
-
-        return $this->parentSleep();
     }
 
     public function __call($name, $arguments)
