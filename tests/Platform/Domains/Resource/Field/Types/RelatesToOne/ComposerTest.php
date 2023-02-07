@@ -48,11 +48,14 @@ class ComposerTest extends ResourceTestCase
     {
         $form = $this->makePartialMock(FormFactory::builderFromResource($this->students)->getForm());
 
-        $form->expects('getFieldRpcUrl')->with('address', 'options')->andReturn('rpc-url');
+//        $form->expects('getFieldRpcUrl')->with('address', 'options')->andReturn('rpc-url');
         $field = $this->students->getField('address');
         $payload = $field->getComposer()->toForm($form);
 
-        $this->assertEquals('rpc-url', $payload->get('meta.options'));
+        $this->assertEquals(
+            sv_url('sv/frm/sv.testing.students.forms:default/fields/address/options'),
+            $payload->get('meta.options')
+        );
     }
 
     function test__view()
