@@ -36,6 +36,7 @@ class HandleFieldRpc
             ];
         }
 
+
         if ($field->getFieldType() instanceof HandlesRpc) {
             return $field->getFieldType()
                          ->getRpcResult(['method' => $rpcMethod], $request);

@@ -72,6 +72,7 @@ class RelatesToOneType extends FieldType implements
     public function rpcOptions()
     {
         $config = $this->field->getConfig();
+
         $this->lookupOptions->setResource($this->factory->withIdentifier($config['related']));
 
         return $this->lookupOptions->make();

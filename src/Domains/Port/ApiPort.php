@@ -2,6 +2,8 @@
 
 namespace SuperV\Platform\Domains\Port;
 
+use Fruitcake\Cors\HandleCors;
+
 class ApiPort extends Port
 {
     protected $slug = 'api';
@@ -15,6 +17,6 @@ class ApiPort extends Port
     protected $roles = ['user'];
 
     protected $middlewares = [
-        'Barryvdh\Cors\HandleCors',
+        HandleCors::class
     ];
 }

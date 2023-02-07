@@ -11,6 +11,8 @@ use Tests\Platform\TestCase;
 
 class SuperVUninstallCommandTest extends TestCase
 {
+    protected $shouldInstallPlatform = false;
+
     function test__drops_platform_tables()
     {
         InstallSuperV::dispatch();
