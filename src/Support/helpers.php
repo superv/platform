@@ -24,6 +24,11 @@ if (! function_exists('ddh')) {
     }
 }
 
+function dbg($msg)
+{
+    echo $msg.PHP_EOL;
+}
+
 function sv_debug()
 {
     PlatformException::debug(...func_get_args());

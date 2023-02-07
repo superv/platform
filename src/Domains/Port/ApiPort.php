@@ -17,6 +17,6 @@ class ApiPort extends Port
     protected $roles = ['user'];
 
     protected $middlewares = [
-        HandleCors::class
+        HandleCors::class,
     ];
 }
