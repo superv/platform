@@ -94,7 +94,7 @@ abstract class PlatformTestCase extends OrchestraTestCase
 
         $this->app->register(PlatformServiceProvider::class);
 
-//        $this->loadLaravelMigrations();
+        $this->loadLaravelMigrations();
 
         $this->makeTmpDirectory();
 
