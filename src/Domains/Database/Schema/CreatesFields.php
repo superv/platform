@@ -15,7 +15,7 @@ trait CreatesFields
 {
     public function email($name): ColumnDefinition
     {
-        return $this->string($name)->fieldType('email')->rules(['email:rfc']);
+        return $this->string($name)->fieldType('email')->rules(['email:rfc,dns']);
     }
 
     public function file($name, $path = '/', $disk = 'public'): ColumnDefinition
