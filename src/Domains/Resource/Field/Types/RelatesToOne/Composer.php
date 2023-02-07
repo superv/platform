@@ -32,15 +32,21 @@ class Composer extends FieldComposer
 
     public function form(?FormInterface $form = null): void
     {
-        if (! $options = $this->field->getConfigValue('meta.options')) {
-            if ($form) {
-                $options = $form->getFieldRpcUrl($this->getFieldHandle(), 'options');
-            }
+        $options = $this->field->getConfigValue('meta.options');
+        if (! is_null($options)) {
+            $this->getPayload()->set('meta.options', $options);
+        } else {
+            $url = sv_route('sv::forms.field_rpc', [
+                'form'  => $form->getIdentifier(),
+                'field' => $this->field->getHandle(),
+                'rpc'   => 'options',
+            ]);
+            $this->getPayload()->set('meta.options', $url);
         }
-
-        $this->payload->set('meta.options', $options);
-        $this->payload->set('placeholder', __('Select :Object', [
-            'object' => $this->field->type()->getRelated()->getSingularLabel(),
+        $this->getPayload()->set('placeholder', __('Select :Object', [
+            'object' =>  $this->field->type()->getRelated()->getSingularLabel(),
         ]));
+
+
     }
 }
