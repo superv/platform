@@ -42,7 +42,7 @@ class RelationIndexTest extends ResourceTestCase
                                         'relation' => 'posts']);
         $response = $this->getJsonUser($url);
         $response->assertOk();
-        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->json('data'));
 
         // We should have 1 context action (Create New)
         //
@@ -65,7 +65,7 @@ class RelationIndexTest extends ResourceTestCase
         //
         $response = $this->getJsonUser($table->getProp('config.data_url'));
         $response->assertOk();
-        $rows = $response->decodeResponseJson('data.rows');
+        $rows = $response->json('data.rows');
 
         // check row count
         //
@@ -95,7 +95,7 @@ class RelationIndexTest extends ResourceTestCase
         $response = $this->getJsonUser($url);
         $response->assertOk();
 
-        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->json('data'));
 
         //  Only two fields for this table,
         //  role.title + pivot.status
@@ -124,7 +124,7 @@ class RelationIndexTest extends ResourceTestCase
         $response = $this->getJsonUser($table->getProp('config.data_url'));
         $response->assertOk();
 
-        $rows = $response->decodeResponseJson('data.rows');
+        $rows = $response->json('data.rows');
         $this->assertEquals(2, count($rows));
 
         // first make sure we have the pivot fields on table
@@ -154,7 +154,7 @@ class RelationIndexTest extends ResourceTestCase
         $response = $this->getJsonUser($url);
         $response->assertOk();
 
-        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->json('data'));
 
         //  Only two fields for this table,
         //  action.slug + pivot.provision
@@ -175,7 +175,7 @@ class RelationIndexTest extends ResourceTestCase
         $response = $this->getJsonUser($table->getProp('config.data_url'));
         $response->assertOk();
 
-        $rows = $response->decodeResponseJson('data.rows');
+        $rows = $response->json('data.rows');
         // to avoid race condition
         $rows = collect($rows)->sortBy('id')->values()->all();
 

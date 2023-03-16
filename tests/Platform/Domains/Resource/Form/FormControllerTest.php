@@ -61,7 +61,7 @@ class FormControllerTest extends ResourceTestCase
         $response = $this->getJsonUser($formEntry->getUrl().'/fields/name');
         $response->assertOk();
 
-        $fieldArray = $response->decodeResponseJson('data');
+        $fieldArray = $response->json('data');
 
         $field = FieldFactory::createFromArray($fieldArray);
         $this->assertEquals(

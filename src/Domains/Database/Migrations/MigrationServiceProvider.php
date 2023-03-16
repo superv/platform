@@ -3,6 +3,7 @@
 namespace SuperV\Platform\Domains\Database\Migrations;
 
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
+use Illuminate\Events\Dispatcher;
 use SuperV\Platform\Domains\Database\Migrations\Console\MigrateCommand;
 use SuperV\Platform\Domains\Database\Migrations\Console\MigrateMakeCommand;
 use SuperV\Platform\Domains\Database\Migrations\Console\RefreshCommand;
@@ -66,7 +67,7 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
         $this->app->extend(
             'command.migrate',
             function ($command, $app) {
-                return new MigrateCommand($app['migrator']);
+                return new MigrateCommand($app['migrator'], $app[Dispatcher::class]);
             }
         );
 

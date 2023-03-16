@@ -68,10 +68,10 @@ class FormComponent extends HelperComponent
 
         $response = $testCase->getJsonUser($url);
         if (! $response->isOk()) {
-            dd($response->decodeResponseJson());
+            dd($response->json());
         }
 
-        $self = static::fromArray($response->decodeResponseJson('data'));
+        $self = static::fromArray($response->json('data'));
         $self->testCase = $testCase;
 
         return $self;

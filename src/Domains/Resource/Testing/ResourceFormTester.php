@@ -113,7 +113,7 @@ class ResourceFormTester extends Assert
         $response = $this->getJsonUser($route);
         $response->assertOk();
 
-        $props = $response->decodeResponseJson($this->propsKeys['create']);
+        $props = $response->json($this->propsKeys['create']);
         $this->assertEquals(['url', 'method', 'fields'], array_keys($props));
 
         return $props;
@@ -148,7 +148,7 @@ class ResourceFormTester extends Assert
     protected function getUpdateForm($fake): array
     {
         $response = $this->getJsonUser($fake->route('edit'));
-        $props = $response->decodeResponseJson($this->propsKeys['edit']);
+        $props = $response->json($this->propsKeys['edit']);
         $this->assertEquals(['url', 'method', 'fields'], array_keys($props));
 
         return $props;

@@ -24,7 +24,7 @@ trait ResourceTestHelpers
         $response = $this->getJsonUser($url);
         $response->assertOk();
 
-        return HelperComponent::fromArray($response->decodeResponseJson('data'));
+        return HelperComponent::fromArray($response->json('data'));
     }
 
     protected function blueprints()
@@ -151,7 +151,7 @@ trait ResourceTestHelpers
     protected function getTableConfigOfResource($resource)
     {
         $response = $this->getJsonUser($resource->route('dashboard', null, ['section' => 'table']));
-        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->json('data'));
 
         return $table;
     }
@@ -161,7 +161,7 @@ trait ResourceTestHelpers
         $url = $resource->route('dashboard', null, ['section' => 'table']).'/data'.str_prefix($query, '?', '');
         $response = $this->getJsonUser($url)->assertOk();
 
-        return $response->decodeResponseJson('data.rows');
+        return $response->json('data.rows');
     }
 
     protected function makeFieldAttributes(array $overrides = []): array
@@ -210,7 +210,7 @@ trait ResourceTestHelpers
         return $response;
 //
 //
-//        $entryId = $response->decodeResponseJson('data')['entry']['id'];
+//        $entryId = $response->json('data')['entry']['id'];
 //
 //        return $resource->find($entryId);
     }

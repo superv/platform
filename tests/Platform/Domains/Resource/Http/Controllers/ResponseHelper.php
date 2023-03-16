@@ -11,6 +11,6 @@ trait ResponseHelper
     {
         $response = $this->getJsonUser($entry->router()->view());
 
-        return HelperComponent::fromArray($response->decodeResponseJson('data'));
+        return HelperComponent::fromArray($response->json('data'));
     }
 }

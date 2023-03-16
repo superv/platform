@@ -18,9 +18,9 @@ class AuthenticationTest
 
         $response = $this->postJson('http://localhost/api/v1/login', ['email' => $user->email, 'password' => 'secret']);
 
-        $this->assertEquals('ok', $response->decodeResponseJson('status'));
+        $this->assertEquals('ok', $response->json('status'));
 
-        $accessToken = $response->decodeResponseJson('data.access_token');
+        $accessToken = $response->json('data.access_token');
         $this->assertNotNull($accessToken);
 
         auth()->logout();

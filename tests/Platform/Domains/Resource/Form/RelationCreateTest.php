@@ -31,7 +31,7 @@ class RelationCreateTest extends ResourceTestCase
         $relation = $users->getRelation('comments');
 
         $response = $this->getJsonUser($relation->route('create', $user))->assertOk();
-        $form = HelperComponent::fromArray($response->decodeResponseJson('data'));
+        $form = HelperComponent::fromArray($response->json('data'));
 
         $this->assertEquals(2, count($form->getProp('fields')));
         $this->assertEquals(sv_url($relation->route('store', $user)), $form->getProp('url'));
@@ -55,7 +55,7 @@ class RelationCreateTest extends ResourceTestCase
 
         $response->assertOk();
 
-        $this->assertEquals($comments->first()->getId(), $response->decodeResponseJson('data.entry.id'));
+        $this->assertEquals($comments->first()->getId(), $response->json('data.entry.id'));
 
         $comment = $user->comments()->first();
         $this->assertEquals($user->getId(), $comment->user_id);
@@ -80,7 +80,7 @@ class RelationCreateTest extends ResourceTestCase
         $relation = $users->getRelation('comments');
 
         $response = $this->getJsonUser($relation->route('create', $user))->assertOk();
-        $form = HelperComponent::fromArray($response->decodeResponseJson('data'));
+        $form = HelperComponent::fromArray($response->json('data'));
 
         $this->assertEquals(1, count($form->getProp('fields')));
         $this->assertEquals(sv_url($relation->route('store', $user)), $form->getProp('url'));
@@ -113,7 +113,7 @@ class RelationCreateTest extends ResourceTestCase
             ['comment' => 'abc 123', 'status' => 'approved']
         )->assertOk();
 
-        $this->assertEquals($comments->first()->getId(), $response->decodeResponseJson('data.entry.id'));
+        $this->assertEquals($comments->first()->getId(), $response->json('data.entry.id'));
 
         $comment = $user->comments()->first();
         $this->assertEquals($user->getId(), $comment->user_id);

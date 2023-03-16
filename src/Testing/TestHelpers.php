@@ -117,7 +117,7 @@ trait TestHelpers
     {
         $response = $this->getJsonUser($url)->assertOk();
 
-        return HelperComponent::fromArray($response->decodeResponseJson('data'));
+        return HelperComponent::fromArray($response->json('data'));
     }
 
     protected function assertArrayContains($needle, array $haystack)
@@ -176,7 +176,7 @@ trait TestHelpers
         $response->assertStatus(422);
 
         if ($errorKeys) {
-            $this->assertEquals($errorKeys, array_keys($response->decodeResponseJson('errors')));
+            $this->assertEquals($errorKeys, array_keys($response->json('errors')));
         }
     }
 

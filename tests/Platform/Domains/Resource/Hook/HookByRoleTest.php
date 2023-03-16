@@ -47,7 +47,7 @@ class HookByRoleTest extends HookTestCase
 
         $response = $this->getJsonUser($url, $this->testUser);
         if (! $response->isOk()) {
-            dd($response->decodeResponseJson());
+            dd($response->json());
         }
         $this->assertEquals('PostsForm.PostsManagerForm', $_SERVER['__hooks::form.default.resolving']);
     }

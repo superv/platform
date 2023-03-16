@@ -34,7 +34,7 @@ class RelationLookupTest extends ResourceTestCase
         $url = $relation->route('lookup', $userA);
         $response = $this->getJsonUser($url)->assertOk();
 
-        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->json('data'));
 
         //  Since this is a lookup a table, normal fields should
         //  be displayed
@@ -43,7 +43,7 @@ class RelationLookupTest extends ResourceTestCase
         $this->assertEquals(1, count($fields));
 
         $response = $this->getJsonUser($table->getProp('config.data_url'))->assertOk();
-        $rows = $response->decodeResponseJson('data.rows');
+        $rows = $response->json('data.rows');
 
         // We have 5 actions seeded, and attached 3 above
         // So the remaining two should be listed

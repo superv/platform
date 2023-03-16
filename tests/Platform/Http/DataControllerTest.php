@@ -16,7 +16,7 @@ class DataControllerTest extends TestCase
         $response = $this->getJsonUser(route('sv::data.init'));
         $response->assertOk();
 
-        $payload = $response->decodeResponseJson('data');
+        $payload = $response->json('data');
 
         $this->assertEquals(['id', 'name', 'email'], array_keys($payload['user']));
     }
@@ -29,7 +29,7 @@ class DataControllerTest extends TestCase
         $response = $this->getJsonUser(route('sv::data.nav'));
         $response->assertOk();
 
-        $nav = $response->decodeResponseJson('data.nav');
+        $nav = $response->json('data.nav');
 
         $this->assertEquals('Acp', $nav['title']);
 

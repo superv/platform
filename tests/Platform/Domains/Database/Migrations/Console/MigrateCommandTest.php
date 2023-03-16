@@ -26,7 +26,7 @@ class MigrateCommandTest extends TestCase
     {
         /** @var  \SuperV\Platform\Domains\Database\Migrations\Migrator $migrator */
         $migrator = m::mock(Migrator::class)->shouldIgnoreMissing();
-        $migrateCommand = new MigrateCommand($migrator);
+        $migrateCommand = new MigrateCommand($migrator, $this->app['Illuminate\Events\Dispatcher']);
         $migrateCommand->setLaravel($this->app);
 
         Scopes::register('test-addon', __DIR__.'/../migrations/baz');

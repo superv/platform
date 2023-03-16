@@ -65,7 +65,7 @@ class ResourceUpdateTest extends ResourceTestCase
         $response = $this->postJsonUser($user->router()->updateForm(), ['email' => 'ali@superv.io']);
         $response->assertStatus(422);
 
-        $this->assertEquals(['email'], array_keys($response->decodeResponseJson('errors')));
+        $this->assertEquals(['email'], array_keys($response->json('errors')));
     }
 
     function test__fails_on_nullable_validation()
@@ -76,7 +76,7 @@ class ResourceUpdateTest extends ResourceTestCase
         $response = $this->postJsonUser($user->router()->updateForm(), ['name' => null]);
         $response->assertStatus(422);
 
-        $this->assertEquals(['name'], array_keys($response->decodeResponseJson('errors')));
+        $this->assertEquals(['name'], array_keys($response->json('errors')));
     }
 
     function test__uploads_files()

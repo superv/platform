@@ -81,9 +81,9 @@ class ListComponent extends HelperComponent
 //        Config::set('app.debug', true);
         $response = $this->testCase->getJsonUser($this->getDataUrl(), $this->user);
 
-//        dd($response->decodeResponseJson());
+//        dd($response->json());
 
-        return new ListData($response->decodeResponseJson('data'), $this->testCase);
+        return new ListData($response->json('data'), $this->testCase);
     }
 
     public static function get($resource, PlatformTestCase $testCase, User $user = null)
@@ -99,7 +99,7 @@ class ListComponent extends HelperComponent
             dd($response->content());
         }
 
-        $list = static::fromArray($response->decodeResponseJson('data'));
+        $list = static::fromArray($response->json('data'));
         $list->testCase = $testCase;
         $list->user = $user;
 

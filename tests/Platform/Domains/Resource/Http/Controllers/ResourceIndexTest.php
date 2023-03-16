@@ -36,7 +36,7 @@ class ResourceIndexTest extends ResourceTestCase
         $users = $this->blueprints()->users();
 
         $response = $this->getJsonUser($users->route('table'))->assertOk();
-        $table = HelperComponent::fromArray($response->decodeResponseJson('data'));
+        $table = HelperComponent::fromArray($response->json('data'));
 
         $this->assertEquals($users->route('table').'/data', $table->getProp('config.data_url'));
 

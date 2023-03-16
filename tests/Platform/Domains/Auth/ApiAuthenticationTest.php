@@ -30,7 +30,7 @@ class ApiAuthenticationTest extends TestCase
             'access_token',
             'token_type',
             'expires_in',
-        ], array_keys($response->decodeResponseJson('data')));
+        ], array_keys($response->json('data')));
     }
 
     function test__authenticates_with_the_valid_access_token()
@@ -47,7 +47,7 @@ class ApiAuthenticationTest extends TestCase
         );
         $response->assertStatus(200);
 
-        $me = $response->decodeResponseJson('me');
+        $me = $response->json('me');
         $this->assertNotNull($me);
         $this->assertEquals($this->testUser->getEmail(), $me['email']);
     }
@@ -61,7 +61,7 @@ class ApiAuthenticationTest extends TestCase
 
         $response->assertStatus(401);
 
-        $this->assertNotNull($response->decodeResponseJson('error'));
+        $this->assertNotNull($response->json('error'));
     }
 
     function test__unauthenticated_users_handled_properly()

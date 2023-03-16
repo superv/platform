@@ -138,12 +138,12 @@ class ResourceFormsTest extends ResourceTestCase
             'email' => 'ali@superv.io',
         ];
         $response = $this->postJsonUser($users->router()->createForm(), $post);
-//        dd($response->decodeResponseJson());
+//        dd($response->json());
         $response->assertStatus(422);
 
         $this->assertEquals(
             ['email', 'group_id'],
-            array_keys($response->decodeResponseJson('errors'))
+            array_keys($response->json('errors'))
         );
     }
 
