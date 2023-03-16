@@ -2,6 +2,10 @@
 
 namespace SuperV\Platform\Domains\Database\Migrations;
 
+use Exception;
+use Illuminate\Database\Console\Migrations\FreshCommand;
+use Illuminate\Database\Console\Migrations\InstallCommand;
+use Illuminate\Database\Console\Migrations\StatusCommand;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Illuminate\Events\Dispatcher;
 use SuperV\Platform\Domains\Database\Migrations\Console\MigrateCommand;
@@ -12,6 +16,17 @@ use SuperV\Platform\Domains\Database\Migrations\Console\RollbackCommand;
 
 class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProvider
 {
+    protected $commands = [
+        'Migrate' => MigrateCommand::class,
+        'MigrateFresh' => FreshCommand::class,
+        'MigrateInstall' => InstallCommand::class,
+        'MigrateRefresh' => RefreshCommand::class,
+        'MigrateReset' => ResetCommand::class,
+        'MigrateRollback' => RollbackCommand::class,
+        'MigrateStatus' => StatusCommand::class,
+        'MigrateMake' => MigrateMakeCommand::class,
+    ];
+
     public function register()
     {
         $this->registerRepository();
@@ -20,14 +35,11 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
 
         $this->registerCreator();
 
-        $this->extendMigrationRepository();
+//        $this->extendMigrationRepository();
 
-        // @laravel-6.0
-        if (method_exists($this, 'registerCommands')) {
-            $this->registerCommands($this->commands);
-        }
+        $this->registerCommands($this->commands);
 
-        $this->extendConsoleCommands();
+//        $this->extendConsoleCommands();
     }
 
     protected function registerRepository()
@@ -35,6 +47,8 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
         $this->app->singleton('migration.repository', function ($app) {
             $table = $app['config']['database.migrations'];
 
+            $table = 'migrations';
+            throw new Exception($table);
             return new DatabaseMigrationRepository($app['db'], $table);
         });
     }
@@ -53,6 +67,11 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
         $this->app->singleton('migration.creator', function ($app) {
             return new MigrationCreator($app['files'], \Platform::fullPath('resources/stubs'));
         });
+    }
+
+    protected function extendMigrationRepository(): void
+    {
+        $this->app->bind(MigrationRepositoryInterface::class, DatabaseMigrationRepository::class);
     }
 
     protected function extendConsoleCommands(): void
@@ -91,10 +110,5 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
                 return new RefreshCommand();
             }
         );
-    }
-
-    protected function extendMigrationRepository(): void
-    {
-        $this->app->bind(MigrationRepositoryInterface::class, DatabaseMigrationRepository::class);
     }
 }
