@@ -2,11 +2,10 @@
 
 namespace Tests\Platform\Domains\TaskManager;
 
-use SuperV\Platform\Domains\TaskManager\Contracts\Task;
 use SuperV\Platform\Domains\TaskManager\Contracts\TaskHandler;
 use Tests\Platform\Domains\TaskManager\Fixtures\TestHandler;
 
-class TaskTest extends TaskManagerTest
+class Task extends TaskManager
 {
     function test__create()
     {

@@ -17,16 +17,21 @@ use SuperV\Platform\Support\Ident;
 use SuperV\Platform\Support\Parser;
 use SuperV\Platform\Support\RelativePath;
 
-if (! function_exists('ddh')) {
+if (!function_exists('ddh')) {
     function ddh()
     {
-        dd('Over here! '.date('H:i:s'), func_get_args());
+        dd('Over here! ' . date('H:i:s'), func_get_args());
     }
+}
+
+function dde($message = '')
+{
+    throw new Exception($message);
 }
 
 function dbg($msg)
 {
-    echo $msg.PHP_EOL;
+    echo $msg . PHP_EOL;
 }
 
 function sv_debug()

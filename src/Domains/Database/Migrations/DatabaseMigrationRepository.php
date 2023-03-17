@@ -2,11 +2,19 @@
 
 namespace SuperV\Platform\Domains\Database\Migrations;
 
+use Illuminate\Database\ConnectionResolverInterface as Resolver;
+
 class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\DatabaseMigrationRepository
 {
     protected $migration;
 
     protected $namespace;
+
+    public function __construct(Resolver $resolver, $table)
+    {
+        $this->table = $table;
+        $this->resolver = $resolver;
+    }
 
     public function getAll()
     {
@@ -16,10 +24,10 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
     public function getRan()
     {
         return $this->filterScope($this->table())
-                    ->orderBy('batch', 'asc')
-                    ->orderBy('migration', 'asc')
-                    ->pluck('migration')
-                    ->all();
+            ->orderBy('batch', 'asc')
+            ->orderBy('migration', 'asc')
+            ->pluck('migration')
+            ->all();
     }
 
     public function getMigrations($steps)
@@ -27,9 +35,9 @@ class DatabaseMigrationRepository extends \Illuminate\Database\Migrations\Databa
         $query = $this->table()->where('batch', '>=', '1');
 
         return $this->filterScope($query)
-                    ->orderBy('batch', 'desc')
-                    ->orderBy('migration', 'desc')
-                    ->take($steps)->get()->all();
+            ->orderBy('batch', 'desc')
+            ->orderBy('migration', 'desc')
+            ->take($steps)->get()->all();
     }
 
     public function getLast()

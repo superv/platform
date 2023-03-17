@@ -11,9 +11,9 @@ class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
         return \Platform::fullPath('resources/stubs');
     }
 
-    protected function populateStub($stub, $table)
+    protected function populateStub($name, $stub, $table)
     {
-        $stub = parent::populateStub($stub, $table);
+        $stub = parent::populateStub($name, $stub, $table);
 
         return str_replace('{namespace}', $this->namespace, $stub);
     }

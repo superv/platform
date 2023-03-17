@@ -4,9 +4,8 @@ namespace Tests\Platform\Domains\TaskManager;
 
 use Queue;
 use SuperV\Platform\Domains\TaskManager\Deployer;
-use SuperV\Platform\Domains\TaskManager\DeployTaskJob;
 
-class DeployTaskJobTest extends TaskManagerTest
+class DeployTaskJob extends TaskManager
 {
     function test__queue()
     {

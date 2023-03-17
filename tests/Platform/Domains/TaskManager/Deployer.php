@@ -3,10 +3,9 @@
 namespace Tests\Platform\Domains\TaskManager;
 
 use Exception;
-use SuperV\Platform\Domains\TaskManager\Deployer;
 use Tests\Platform\Domains\TaskManager\Fixtures\TestHandler;
 
-class DeployerTest extends TaskManagerTest
+class Deployer extends TaskManager
 {
     function test__deploy()
     {

@@ -13,8 +13,6 @@ use SuperV\Platform\Domains\Addon\AddonModel;
 use SuperV\Platform\Domains\Addon\Installer;
 use SuperV\Platform\Domains\Port\Port;
 use SuperV\Platform\Domains\Port\PortDetectedEvent;
-use SuperV\Platform\Exceptions\PlatformException;
-use SuperV\Platform\Exceptions\ValidationException;
 use SuperV\Platform\PlatformServiceProvider;
 use Tests\Platform\ComposerLoader;
 
@@ -30,7 +28,9 @@ abstract class PlatformTestCase extends OrchestraTestCase
      */
     protected $tmpDirectory;
 
-    protected $packageProviders = [];
+    protected $packageProviders = [
+        PlatformServiceProvider::class
+    ];
 
     protected $appConfig = [
         'app.key' => 'base64:SkW/b3Bg7pb2vvIOad6noSrFSR7eUS8ZdCXl0LoRQNI=',
@@ -82,6 +82,7 @@ abstract class PlatformTestCase extends OrchestraTestCase
 
     protected function setUp(): void
     {
+
         parent::setUp();
 
         $this->realBasePath = realpath(__DIR__.'/../../../../../');
@@ -92,7 +93,7 @@ abstract class PlatformTestCase extends OrchestraTestCase
             $this->withoutExceptionHandling();
         }
 
-        $this->app->register(PlatformServiceProvider::class);
+//        $this->app->register(PlatformServiceProvider::class);
 
         $this->loadLaravelMigrations();
 
@@ -215,7 +216,7 @@ abstract class PlatformTestCase extends OrchestraTestCase
     {
         config([
             'superv.installed' => true,
-            'jwt.secret'       => 'skdjfslkdfj',
+            'jwt.secret' => 'fADR3O7HTSv9wnybuDByt9J3pHWHTTQ3bwvJfEI91hx2UZly9eiK4QqBziFty3ok',
         ]);
     }
 
