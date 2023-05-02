@@ -34,7 +34,7 @@
         "barryvdh/laravel-cors": "^0.11",
         "tymon/jwt-auth": "^1.0",
         "nicmart/string-template": "~0.1",
-        "wikimedia/composer-merge-plugin": "^1.4"
+        "wikimedia/composer-merge-plugin": "^2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
