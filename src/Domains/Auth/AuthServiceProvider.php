@@ -86,7 +86,7 @@ class AuthServiceProvider extends BaseServiceProvider
 
     protected function registerUserProvider(): void
     {
-        Auth::provider('platform', function ($app) {
+        app('auth')->provider('platform', function ($app) {
             return new PlatformUserProvider($app['hash'], config('superv.auth.user.model'));
         });
 
