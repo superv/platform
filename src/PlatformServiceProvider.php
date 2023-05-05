@@ -52,7 +52,7 @@ class PlatformServiceProvider extends BaseServiceProvider
         'SuperV\Platform\Domains\Auth\Contracts\Users' => 'SuperV\Platform\Domains\Auth\Users',
         'addons'                                       => AddonCollection::class,
         'platform'                                     => \SuperV\Platform\Platform::class,
-        ExceptionHandler::class                        => PlatformExceptionHandler::class,
+        'platform' => \SuperV\Platform\Platform::class,
     ];
 
     protected $listeners = [
@@ -95,6 +95,8 @@ class PlatformServiceProvider extends BaseServiceProvider
         if (! $this->platform->isInstalled()) {
             return;
         }
+
+        $this->registerSingletons([ExceptionHandler::class => PlatformExceptionHandler::class]);
 
         $this->mergeConfigFrom(__DIR__.'/../config/superv.php', 'superv');
 
