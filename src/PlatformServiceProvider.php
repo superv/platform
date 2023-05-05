@@ -53,7 +53,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         'SuperV\Platform\Domains\Auth\Contracts\Users' => 'SuperV\Platform\Domains\Auth\Users',
         'addons'                                       => AddonCollection::class,
         'platform'                                     => \SuperV\Platform\Platform::class,
-        ExceptionHandler::class                        => PlatformExceptionHandler::class,
     ];
 
     protected $listeners = [
@@ -118,9 +117,11 @@ class PlatformServiceProvider extends BaseServiceProvider
             $this->publishConfig();
         }
 
-        if (! $this->platform->isInstalled()) {
+        if (!$this->platform->isInstalled()) {
             return;
         }
+
+        $this->registerSingletons([ExceptionHandler::class => PlatformExceptionHandler::class]);
 
         superv('addons')->put('superv.platform', $this->platform);
 
