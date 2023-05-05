@@ -5,6 +5,7 @@ namespace SuperV\Platform\Domains\Resource\Generator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
 use SuperV\Platform\Domains\Resource\Relation\RelationConfig;
@@ -48,7 +49,7 @@ class RelationGenerator
     {
         $codeBlock = $this->getCodeBlockForMethod($method);
 
-        if (! str_contains($codeBlock, ['$this->hasMany(', '$this->belongsTo('])) {
+        if (!Str::contains($codeBlock, ['$this->hasMany(', '$this->belongsTo('])) {
             return null;
         }
 
