@@ -26,7 +26,7 @@
         }
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.0|^8.1|^8.2",
         "superv/composer-plugin": "^0.3",
         "laravel/framework": "^8.75",
         "doctrine/dbal": "^2.9",
