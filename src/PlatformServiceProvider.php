@@ -83,7 +83,6 @@ class PlatformServiceProvider extends BaseServiceProvider
         $this->registerAliases($this->aliases);
         $this->registerCommands($this->commands);
         $this->registerSingletons($this->_singletons);
-        app()->register(MigrationServiceProvider::class);
 
         $this->registerCollectionMacros();
     }
@@ -92,13 +91,15 @@ class PlatformServiceProvider extends BaseServiceProvider
     {
         $this->registerBase();
 
-        if (! $this->platform->isInstalled()) {
+        if (!$this->platform->isInstalled()) {
             return;
         }
 
+        app()->register(MigrationServiceProvider::class);
+
         $this->registerSingletons([ExceptionHandler::class => PlatformExceptionHandler::class]);
 
-        $this->mergeConfigFrom(__DIR__.'/../config/superv.php', 'superv');
+        $this->mergeConfigFrom(__DIR__ . '/../config/superv.php', 'superv');
 
         $this->bindUserModel();
 
