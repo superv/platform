@@ -2,16 +2,6 @@
     "name": "superv/platform",
     "description": "SuperV Platform Package",
     "license": "MIT",
-    "keywords": [
-        "laravel",
-        "admin",
-        "laravel-admin",
-        "php",
-        "dashboard",
-        "admin-panel",
-        "modular",
-        "laravel-extension"
-    ],
     "autoload": {
         "psr-4": {
             "SuperV\\Platform\\": "src/"
@@ -26,7 +16,7 @@
         }
     },
     "require": {
-        "php": "^8.0|^8.1|^8.2",
+        "php": "^8.2",
         "superv/composer-plugin": "^0.3",
         "laravel/framework": "^8.75",
         "doctrine/dbal": "^2.9",
@@ -39,7 +29,8 @@
     "require-dev": {
         "mockery/mockery": "^1.5.1",
         "orchestra/testbench": "^6.25",
-        "phpunit/phpunit": "^9.5.10"
+        "phpunit/phpunit": "^9.5.10",
+        "brianium/paratest": "^6.8"
     },
     "config": {
         "preferred-install": "dist",
