@@ -28,7 +28,7 @@
     "require": {
         "php": "^7.3|^8.0|^8.1|^8.2",
         "superv/composer-plugin": "^0.3",
-        "laravel/framework": "^5.8|^6|^7|^8",
+        "laravel/framework": "^5.8|^6|^7|^8|^9",
         "fruitcake/laravel-cors": "^2.0",
         "predis/predis": "^2.1",
         "tymon/jwt-auth": "^1.0|^2.0",
