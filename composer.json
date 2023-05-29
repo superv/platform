@@ -1,62 +1,67 @@
 {
-    "name": "superv/platform",
-    "description": "SuperV Platform Package",
-    "license": "MIT",
-    "keywords": [
-        "laravel",
-        "admin",
-        "laravel-admin",
-        "php",
-        "dashboard",
-        "admin-panel",
-        "modular",
-        "laravel-extension"
-    ],
-    "autoload": {
-        "psr-4": {
-            "SuperV\\Platform\\": "src/"
-        },
-        "files": [
-            "src/Support/helpers.php"
-        ]
+  "name": "superv/platform",
+  "description": "SuperV Platform Package",
+  "license": "MIT",
+  "keywords": [
+    "laravel",
+    "admin",
+    "laravel-admin",
+    "php",
+    "dashboard",
+    "admin-panel",
+    "modular",
+    "laravel-extension"
+  ],
+  "autoload": {
+    "psr-4": {
+      "SuperV\\Platform\\": "src/"
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\Platform\\": "tests/Platform/"
-        }
-    },
-    "require": {
-        "php": "^7.3|^8.0|^8.1|^8.2",
-        "superv/composer-plugin": "^0.3",
-        "laravel/framework": "^5.8|^6|^7|^8|^9",
-        "fruitcake/laravel-cors": "^2.0",
-        "predis/predis": "^2.1",
-        "tymon/jwt-auth": "^1.0|^2.0",
-        "nicmart/string-template": "~0.1",
-        "wikimedia/composer-merge-plugin": "^2.0"
-    },
-    "require-dev": {
-        "mockery/mockery": "^1.5.1",
-        "orchestra/testbench": "^6.25",
-        "phpunit/phpunit": "^9.5.10"
-    },
-    "config": {
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "optimize-autoloader": true,
-        "allow-plugins": {
-            "superv/composer-plugin": true,
-            "wikimedia/composer-merge-plugin": true
-        }
-    },
-    "prefer-stable": true,
-    "minimum-stability": "dev",
-    "extra": {
-        "laravel": {
-            "providers": [
-                "SuperV\\Platform\\PlatformServiceProvider"
-            ]
-        }
+    "files": [
+      "src/Support/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Platform\\": "tests/Platform/"
     }
-    
+  },
+  "require": {
+    "php": "^7.3|^8.0|^8.1|^8.2",
+    "superv/composer-plugin": "^0.3",
+    "laravel/framework": "^5.8|^6|^7|^8|^9",
+    "fruitcake/laravel-cors": "^2.0",
+    "predis/predis": "^2.1",
+    "tymon/jwt-auth": "^1.0|^2.0|wo-dev",
+    "nicmart/string-template": "~0.1",
+    "wikimedia/composer-merge-plugin": "^2.0"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.5.1",
+    "orchestra/testbench": "^6.25",
+    "phpunit/phpunit": "^9.5.10"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "allow-plugins": {
+      "superv/composer-plugin": true,
+      "wikimedia/composer-merge-plugin": true
+    }
+  },
+  "prefer-stable": true,
+  "minimum-stability": "dev",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "SuperV\\Platform\\PlatformServiceProvider"
+      ]
+    }
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/aliselcuk/jwt-auth.git"
+    }
+  ]
 }
