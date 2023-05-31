@@ -50,7 +50,7 @@ interface EntryContract
 
     public function fresh();
 
-    public function newQuery(): \Illuminate\Database\Eloquent\Builder;
+    public function newQuery();
 
     public function router(): EntryRouter;
 
