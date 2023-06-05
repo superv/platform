@@ -50,7 +50,7 @@ abstract class Entry extends Eloquent implements EntryContract
         return new Builder($query);
     }
 
-    public function newQuery(): \Illuminate\Database\Eloquent\Builder
+    public function newQuery()
     {
         return parent::newQuery();
     }
